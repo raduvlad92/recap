@@ -1,14 +1,14 @@
-# Source-access proof — approval candidate
+# Source-access proof — approved
 
-Version: **0.1**, 15 October 2026. Status: **proposed; not approved for execution or spending**.
+Version: **0.1**, 15 October 2026. Status: **APPROVED for the bounded experiment and up to €50 total spending**. Q6 response: “Yes — approve the proof, up to €50 total.” Approval does not extend to the full app build.
 
 ## Decision this experiment answers
 
 Can scraping providers supply enough of the original public content, reliably and at a measured cost, for therecap to make accurate daily recaps across the required source families? This is a collector experiment, not the app build or a customer test.
 
-## Scope to approve
+## Approved scope
 
-| Item | Proposed limit |
+| Item | Approved limit |
 | --- | --- |
 | Source families | YouTube, X, Instagram, LinkedIn, podcasts, Substack/newsletters, blogs. |
 | Sample | Five public sources per family; 35 total, chosen independently of vendor showcases. |

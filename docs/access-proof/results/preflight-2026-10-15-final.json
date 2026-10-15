@@ -1,0 +1,1813 @@
+{
+  "runLabel": "preflight-2026-10-15-final",
+  "startedAt": "2026-10-15T01:00:04+00:00",
+  "type": "public_feed_preflight",
+  "manifestSha256": "4dee82d8cb07722fa3b06ed7e8b4b3ea98091bb1b70b7df3218a0e1ae03a8d14",
+  "formalSevenDayBaseline": false,
+  "cashPaidEUR": 0,
+  "paidProviderCalls": 0,
+  "generatedTranscriptionMinutes": 0,
+  "sources": [
+    {
+      "sourceId": "blog-cloudflare",
+      "family": "blogs",
+      "name": "Cloudflare Blog",
+      "checkedAt": "2026-10-15T01:00:04+00:00",
+      "feedUrl": "https://blog.cloudflare.com/rss/",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://blog.cloudflare.com/rss/",
+      "contentType": "application/rss+xml; charset=utf-8",
+      "responseBytes": 323476,
+      "responseSha256": "3b0badd53b275e0fdb487e9abd509c2d59ede3076c455929ae70c2989a735b5d",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/blog-cloudflare.xml",
+      "feedItemsAvailable": 20,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "01M4Y1477Z7DBJHXRZDP6MM2FN",
+          "url": "https://blog.cloudflare.com/yandex-outage/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Yandex outage: Data shows that instead of going dark, malicious bots went on the move",
+          "publishedAt": "2026-10-14T20:24:19+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 20:24:19 GMT",
+          "contentField": "encoded",
+          "contentChars": 11049,
+          "contentSha256": "46e14a73586615d5db0fdf0ec2fbdd3c60a11e9fa2e919b6f906880276e04296",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://blog.cloudflare.com/_emdash/api/media/file/01M4Y142SWPQXA8GMMX3DTNYBY.png",
+              "type": "image/png"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "01M4VK1MXKAPMWG5QXYBFK222G",
+          "url": "https://blog.cloudflare.com/hyperdrive-mysql/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Inside Hyperdrive: How we solved a rare Hyperdrive MySQL caching bug",
+          "publishedAt": "2026-10-14T13:00:00+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 13:00:00 GMT",
+          "contentField": "encoded",
+          "contentChars": 11498,
+          "contentSha256": "3384899c4e6c0bd7cb7c2ec6f1021cb6e8e701e475b8ce71ea1fd9b1da4f1620",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://blog.cloudflare.com/_emdash/api/media/file/01M4VK1DV41VQ8EZCK68R7E0CS.png",
+              "type": "image/png"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "01M4TZM0P3VSCZHV70ZGX58319",
+          "url": "https://blog.cloudflare.com/d1-control-plane/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Under the hood, off the hot path: How D1 scales to millions of databases",
+          "publishedAt": "2026-10-13T16:20:18+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 16:20:18 GMT",
+          "contentField": "encoded",
+          "contentChars": 29724,
+          "contentSha256": "1a7dce6bb07cf6191397e260c4f05fe87e37d54af46f6324a683dac861332ba4",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://blog.cloudflare.com/_emdash/api/media/file/01KW45ADESEJPK73KY57K3T0NX.png",
+              "type": "image/png"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "01M4RYTJWRQG5ZF619XNRPYAZB",
+          "url": "https://blog.cloudflare.com/rewinding-the-exponential/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Rewinding the exponential: How we keep hardware usage down",
+          "publishedAt": "2026-10-13T15:51:41+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 15:51:41 GMT",
+          "contentField": "encoded",
+          "contentChars": 14326,
+          "contentSha256": "aee780bea6df9b9f01bea7a0b312b1c5196a9711f879a02d9a17f3a240819b15",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://blog.cloudflare.com/_emdash/api/media/file/01M4RYXQ3HHM0NCXGK8DBW1JR3.01M4RYXQR4R5Q48PG2RZ86HSR5.png",
+              "type": "image/png"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "01M4HA4SBV0ANTH6C2775H4SSY",
+          "url": "https://blog.cloudflare.com/transformers-on-logpush/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Filter, reshape, and redact logs before export with Transformers",
+          "publishedAt": "2026-10-12T14:44:59+00:00",
+          "publisherDateRaw": "Mon, 12 Oct 2026 14:44:59 GMT",
+          "contentField": "encoded",
+          "contentChars": 11687,
+          "contentSha256": "5e867c7d65e5959d2092a98741dfcd7a91adb356114e85cbeaeb256292bc7eec",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://blog.cloudflare.com/_emdash/api/media/file/01M4HA4PM499GF25H969ZFXCA3.png",
+              "type": "image/png"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "blog-github",
+      "family": "blogs",
+      "name": "GitHub Blog",
+      "checkedAt": "2026-10-15T01:01:34+00:00",
+      "feedUrl": "https://github.blog/feed/",
+      "status": "fetched",
+      "items": [
+        {
+          "sourceItemId": "https://github.blog/?p=99506",
+          "url": "https://github.blog/news-insights/company-news/github-availability-report-september-2026/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "GitHub availability report: September 2026",
+          "publishedAt": "2026-10-14T20:01:35+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 20:01:35 +0000",
+          "contentField": "encoded",
+          "contentChars": 8385,
+          "contentSha256": "7877b0bc4e764854c775bd385150f48e734e9f37637771819af4877fa06b708d",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://github.blog/?p=99364",
+          "url": "https://github.blog/engineering/architecture-optimization/from-2500-requests-to-24-rebuilding-star-history-without-the-stargazers/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "From 2,500 requests to 24: Rebuilding star history without the stargazers",
+          "publishedAt": "2026-10-14T19:11:33+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 19:11:33 +0000",
+          "contentField": "encoded",
+          "contentChars": 10305,
+          "contentSha256": "f2b19e57ca2155932a7029838a42962b22373662280eabcf1c4455e3192746a5",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://github.blog/?p=99413",
+          "url": "https://github.blog/ai-and-ml/githubs-model-for-secret-detection-finding-more-secrets-with-less-noise/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "GitHub’s model for secret detection: Finding more secrets with less noise",
+          "publishedAt": "2026-10-13T17:56:33+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 17:56:33 +0000",
+          "contentField": "encoded",
+          "contentChars": 13297,
+          "contentSha256": "2f74bbc87eacb846a22eaf3d72fbaee4439dd6f9546d0eefc7d07eb4db8388dc",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://github.blog/?p=99409",
+          "url": "https://github.blog/ai-and-ml/github-copilot/github-copilot-app-for-beginners-how-to-teach-copilot-about-your-codebase/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "GitHub Copilot app for Beginners: How to teach Copilot about your codebase",
+          "publishedAt": "2026-10-12T17:43:59+00:00",
+          "publisherDateRaw": "Mon, 12 Oct 2026 17:43:59 +0000",
+          "contentField": "encoded",
+          "contentChars": 5807,
+          "contentSha256": "4ef6a54395a47989d9fb74984a19f14b0df14ef8aa7a791f78adb3f6d0bdb443",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://github.blog/?p=99381",
+          "url": "https://github.blog/developer-skills/career-growth/hack-the-world-why-hackathons-are-still-the-best-place-to-learn-to-build/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Hack the World: Why hackathons are still the best place to learn to build",
+          "publishedAt": "2026-10-09T16:00:00+00:00",
+          "publisherDateRaw": "Fri, 09 Oct 2026 16:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 4752,
+          "contentSha256": "38b5af888e7459046571de51786d575a09b5e5ee17eaed9d7b0ddfc8031a6077",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        }
+      ],
+      "httpStatus": 200,
+      "finalUrl": "https://github.blog/feed/",
+      "contentType": "application/rss+xml; charset=UTF-8",
+      "responseBytes": 2324912,
+      "responseSha256": "5fde622deb06eab4e11e008c599b6df57e6f43c55383268062d46976523e77b0",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15-parser-corrected/blog-github.xml",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network",
+      "feedItemsAvailable": 10,
+      "duplicatesInFeed": 0,
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured"
+    },
+    {
+      "sourceId": "blog-seth-godin",
+      "family": "blogs",
+      "name": "Seth's Blog",
+      "checkedAt": "2026-10-15T01:00:05+00:00",
+      "feedUrl": "https://seths.blog/feed/",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://seths.blog/feed/",
+      "contentType": "application/rss+xml; charset=UTF-8",
+      "responseBytes": 38933,
+      "responseSha256": "fb473d37e4ec13c4debb4dcd96ae6ac10e257238c4eb30c6064d173fe26d1cf4",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/blog-seth-godin.xml",
+      "feedItemsAvailable": 10,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "https://seths.blog/?p=53148",
+          "url": "https://seths.blog/2026/10/things-people-dont-say/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Things people don’t say",
+          "publishedAt": "2026-10-14T09:03:00+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 09:03:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 792,
+          "contentSha256": "9446881d454efa9d10add5947f8c50e2b28f409b470094d193dce8654ade924c",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://seths.blog/?p=54935",
+          "url": "https://seths.blog/2026/10/the-unreliable-witness/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The unreliable witness",
+          "publishedAt": "2026-10-13T09:03:00+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 09:03:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 301,
+          "contentSha256": "e44f4e36fef8c8b53b3b1a199fadf2aded35b4028ae8f62786a767aedc4a77ef",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://seths.blog/?p=54928",
+          "url": "https://seths.blog/2026/10/the-best-in-the-world-is-a-local-problem/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The best in the world is a local problem",
+          "publishedAt": "2026-10-12T09:03:00+00:00",
+          "publisherDateRaw": "Mon, 12 Oct 2026 09:03:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 994,
+          "contentSha256": "4013baf733f15694d9d461c6dac35b24cbb8bc5b1b0fd8b46b38aabec0fd564b",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://seths.blog/?p=57129",
+          "url": "https://seths.blog/2026/10/talent-becomes-media/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Talent becomes media",
+          "publishedAt": "2026-10-11T09:03:00+00:00",
+          "publisherDateRaw": "Sun, 11 Oct 2026 09:03:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 1563,
+          "contentSha256": "32a144b349fd118ce14cd108f638a96e477e63af01eb59f86785c8a2a0861bf8",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://seths.blog/?p=53287",
+          "url": "https://seths.blog/2026/10/productive-dissatisfaction/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Productive dissatisfaction",
+          "publishedAt": "2026-10-10T09:03:00+00:00",
+          "publisherDateRaw": "Sat, 10 Oct 2026 09:03:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 339,
+          "contentSha256": "16609b507ab4abf60522b79bacf84f7109beed009fb62d8c4648b6690bbcb3f5",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "blog-our-world-in-data",
+      "family": "blogs",
+      "name": "Our World in Data",
+      "checkedAt": "2026-10-15T01:00:05+00:00",
+      "feedUrl": "https://ourworldindata.org/atom.xml",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://ourworldindata.org/atom.xml",
+      "contentType": "application/xml",
+      "responseBytes": 9647,
+      "responseSha256": "0228642d2db0c02dc328e3feb56917637109e01d9693291498f8353d15ce829c",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/blog-our-world-in-data.xml",
+      "feedItemsAvailable": 10,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "https://ourworldindata.org/2026-lpi-update",
+          "url": "https://ourworldindata.org/2026-lpi-update",
+          "urlSpecificity": "item_link_unverified",
+          "title": "A 73% average decline in wildlife populations: an overview of the 2026 Living Planet Index report",
+          "publishedAt": "2026-10-08T00:00:00+00:00",
+          "publisherDateRaw": "2026-10-08T00:00:00.000Z",
+          "contentField": "summary",
+          "contentChars": 83,
+          "contentSha256": "462ba155b039c67f467847a49bc136e8740876af4e059ef483c8a606119aab57",
+          "coverage": "feed_summary_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://ourworldindata.org/what-impact-will-climate-change-have-on-malaria",
+          "url": "https://ourworldindata.org/what-impact-will-climate-change-have-on-malaria",
+          "urlSpecificity": "item_link_unverified",
+          "title": "What impact will climate change have on malaria?",
+          "publishedAt": "2026-10-05T00:00:00+00:00",
+          "publisherDateRaw": "2026-10-05T00:00:00.000Z",
+          "contentField": "summary",
+          "contentChars": 90,
+          "contentSha256": "5c22a8a987770a19ee7d3da1a66f9613abf530a584d3658417c94015dc13f7d6",
+          "coverage": "feed_summary_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://ourworldindata.org/how-high-is-current-immigration-to-the-united-states-in-historical-perspective",
+          "url": "https://ourworldindata.org/how-high-is-current-immigration-to-the-united-states-in-historical-perspective",
+          "urlSpecificity": "item_link_unverified",
+          "title": "How high is current immigration to the United States in historical perspective?",
+          "publishedAt": "2026-09-21T00:00:00+00:00",
+          "publisherDateRaw": "2026-09-21T00:00:00.000Z",
+          "contentField": "summary",
+          "contentChars": 127,
+          "contentSha256": "973542726198279aece9b8e40e1a21cd4d6d043d3382e2501857f79caaef12d9",
+          "coverage": "feed_summary_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://ourworldindata.org/is-organic-farming-better-for-the-environment-than-conventional-farming",
+          "url": "https://ourworldindata.org/is-organic-farming-better-for-the-environment-than-conventional-farming",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Is organic farming better for the environment than conventional farming?",
+          "publishedAt": "2026-09-14T00:00:00+00:00",
+          "publisherDateRaw": "2026-09-14T00:00:00.000Z",
+          "contentField": "summary",
+          "contentChars": 153,
+          "contentSha256": "d60c7099febd1b510791e5c2b9cc8b8d5fba48f61688d39ee1a8ab1b29ec5f70",
+          "coverage": "feed_summary_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "https://ourworldindata.org/a-never-ending-childhood-of-malaria",
+          "url": "https://ourworldindata.org/a-never-ending-childhood-of-malaria",
+          "urlSpecificity": "item_link_unverified",
+          "title": "A never-ending childhood of malaria",
+          "publishedAt": "2026-09-07T00:00:00+00:00",
+          "publisherDateRaw": "2026-09-07T00:00:00.000Z",
+          "contentField": "summary",
+          "contentChars": 143,
+          "contentSha256": "18b269c101f41d060acd771b3d2e3c075e97e481a15d1663defba4862ae88108",
+          "coverage": "feed_summary_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "blog-buffer",
+      "family": "blogs",
+      "name": "Buffer Resources",
+      "checkedAt": "2026-10-15T01:00:05+00:00",
+      "feedUrl": "https://buffer.com/resources/rss/",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://buffer.com/resources/rss/",
+      "contentType": "text/xml",
+      "responseBytes": 583543,
+      "responseSha256": "1a990faaccf4bbff12f7ea50329960547a3c2d64f42bb86a3d98a382deccbfd5",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/blog-buffer.xml",
+      "feedItemsAvailable": 15,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "6554899e3f887f0001688391",
+          "url": "https://buffer.com/resources/trending-audio-instagram/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "13 Trending Sounds on Instagram in October 2026 (+ How to Use Them)",
+          "publishedAt": "2026-10-14T07:00:00+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 07:00:00 GMT",
+          "contentField": "encoded",
+          "contentChars": 8076,
+          "contentSha256": "29c0b436dce94a5b178d96edc292708cce1a77c9847ad5018afc84348a25882a",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "67039ffc7512a2000112958a",
+          "url": "https://buffer.com/resources/facebook-cover-photo-size/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The Ideal Facebook Cover Photo Size in 2026 (+ 11 Ideas To Make Yours Stand Out)",
+          "publishedAt": "2026-10-12T11:00:00+00:00",
+          "publisherDateRaw": "Mon, 12 Oct 2026 11:00:00 GMT",
+          "contentField": "encoded",
+          "contentChars": 14430,
+          "contentSha256": "d65e972b6b618a8715dc18958ed36cfcd048c904de166a37911f55b8ef430217",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "662f5808bfa63400010456e5",
+          "url": "https://buffer.com/resources/ai-image-generator/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The 9 Best AI Image Generators for Social Media in 2026 (+ Examples)",
+          "publishedAt": "2026-10-08T05:00:00+00:00",
+          "publisherDateRaw": "Thu, 08 Oct 2026 05:00:00 GMT",
+          "contentField": "encoded",
+          "contentChars": 27278,
+          "contentSha256": "8c387733672a7974c964433c2db1dddb60a51e49a5324ae774beaf96dc7ae871",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "6ac3cf76d7921b0001ea2072",
+          "url": "https://buffer.com/resources/substack-notes-scheduler/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The 6 Best Substack Notes Schedulers in 2026",
+          "publishedAt": "2026-10-06T13:57:51+00:00",
+          "publisherDateRaw": "Tue, 06 Oct 2026 13:57:51 GMT",
+          "contentField": "encoded",
+          "contentChars": 13929,
+          "contentSha256": "062f074d3315c3c163bb453d3f846db27a46b69dcd5d04fb7433830ff696c872",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        },
+        {
+          "sourceItemId": "65994236553b990001cb5422",
+          "url": "https://buffer.com/resources/how-to-increase-linkedin-followers/",
+          "urlSpecificity": "item_link_unverified",
+          "title": "How to Increase Your LinkedIn Followers — What I've Learned From 25K of My Own and Millions of Posts of Buffer Data",
+          "publishedAt": "2026-10-05T09:19:00+00:00",
+          "publisherDateRaw": "Mon, 05 Oct 2026 09:19:00 GMT",
+          "contentField": "encoded",
+          "contentChars": 47671,
+          "contentSha256": "198cbd1d34dba5ea931d9dab0a5be8caa9b8877f24ad8d3e0f309b8ef323def6",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": []
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "newsletter-one-useful-thing",
+      "family": "newsletters",
+      "name": "One Useful Thing",
+      "checkedAt": "2026-10-15T01:00:06+00:00",
+      "feedUrl": "https://www.oneusefulthing.org/feed",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://www.oneusefulthing.org/feed",
+      "contentType": "application/xml; charset=utf-8",
+      "responseBytes": 907151,
+      "responseSha256": "6eeb5ed32d2852c1d8cbf7839d464de2713f4293cf895cdf1e85277e64c020f4",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/newsletter-one-useful-thing.xml",
+      "feedItemsAvailable": 20,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "https://www.oneusefulthing.org/p/the-dot-and-the-swarm",
+          "url": "https://www.oneusefulthing.org/p/the-dot-and-the-swarm",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The Dot and the Swarm",
+          "publishedAt": "2026-10-01T10:54:12+00:00",
+          "publisherDateRaw": "Thu, 01 Oct 2026 10:54:12 GMT",
+          "contentField": "encoded",
+          "contentChars": 10747,
+          "contentSha256": "e1b3c087aed5e2806793e5aaa7ff8950cece7c9b052805c36eb6370f08483c93",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!Narw!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe3014425-47c2-47aa-848b-3528f4dc9517_2912x1632.png",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.oneusefulthing.org/p/the-overhang",
+          "url": "https://www.oneusefulthing.org/p/the-overhang",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The Overhang",
+          "publishedAt": "2026-09-18T17:54:32+00:00",
+          "publisherDateRaw": "Fri, 18 Sep 2026 17:54:32 GMT",
+          "contentField": "encoded",
+          "contentChars": 11393,
+          "contentSha256": "3aedc6ceda518b9955398db7d35b525e67f5995363592c06383c73163c8fe706",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!lOLb!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F47cb24b9-02ec-426b-960f-8429df91be29_1942x1016.png",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.oneusefulthing.org/p/agency-and-agents",
+          "url": "https://www.oneusefulthing.org/p/agency-and-agents",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Agency and Agents",
+          "publishedAt": "2026-08-31T00:24:35+00:00",
+          "publisherDateRaw": "Mon, 31 Aug 2026 00:24:35 GMT",
+          "contentField": "encoded",
+          "contentChars": 13827,
+          "contentSha256": "3a24027b997efa835f5af143167c1dd0bed74e5b94ae30113b3da4c3fe8b71ad",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!LzPL!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F94cee090-1da6-4c8d-a043-01d835708104_1456x816.png",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.oneusefulthing.org/p/an-opinionated-guide-to-which-ai-b22",
+          "url": "https://www.oneusefulthing.org/p/an-opinionated-guide-to-which-ai-b22",
+          "urlSpecificity": "item_link_unverified",
+          "title": "An opinionated guide to which AI to use to do stuff",
+          "publishedAt": "2026-07-23T18:05:24+00:00",
+          "publisherDateRaw": "Thu, 23 Jul 2026 18:05:24 GMT",
+          "contentField": "encoded",
+          "contentChars": 13009,
+          "contentSha256": "7713e17b07cb94b76dcae81214f9de3062d907c935d306a26fbcf2135d8230d3",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!3bzW!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd28dff26-3041-4f2d-afaf-2011b1c59d39_1672x941.png",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.oneusefulthing.org/p/the-twilight-of-the-chatbots",
+          "url": "https://www.oneusefulthing.org/p/the-twilight-of-the-chatbots",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The twilight of the chatbots",
+          "publishedAt": "2026-06-30T22:18:12+00:00",
+          "publisherDateRaw": "Tue, 30 Jun 2026 22:18:12 GMT",
+          "contentField": "encoded",
+          "contentChars": 7152,
+          "contentSha256": "9503a475c9a43745ef18eb032eb776499435eb4a8d2e1690a6272fd194191bfa",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!CQgP!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8215c2ac-ba16-483d-a53d-2957f2add233_1376x864.png",
+              "type": "image/jpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "newsletter-noahpinion",
+      "family": "newsletters",
+      "name": "Noahpinion",
+      "checkedAt": "2026-10-15T01:00:06+00:00",
+      "feedUrl": "https://www.noahpinion.blog/feed",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://www.noahpinion.blog/feed",
+      "contentType": "application/xml; charset=utf-8",
+      "responseBytes": 1573723,
+      "responseSha256": "32e389bf4b30198993d94b9e4487ca253fca7b68b3d7b378d9d33fba6bf6ef7a",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/newsletter-noahpinion.xml",
+      "feedItemsAvailable": 20,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "https://www.noahpinion.blog/p/a-nobel-for-new-keynesian-macro-at",
+          "url": "https://www.noahpinion.blog/p/a-nobel-for-new-keynesian-macro-at",
+          "urlSpecificity": "item_link_unverified",
+          "title": "A Nobel for New Keynesian macro, at last!",
+          "publishedAt": "2026-10-13T05:28:43+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 05:28:43 GMT",
+          "contentField": "encoded",
+          "contentChars": 18321,
+          "contentSha256": "d7a3e91972ba41ff22f210189c05c26ff3259398e914461e2c4c99cf6ea7754f",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!QxZh!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9a0a350e-0f39-4bd9-b3bb-719ead46d2ca_1630x1630.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.noahpinion.blog/p/why-donald-trump-won-in-2024",
+          "url": "https://www.noahpinion.blog/p/why-donald-trump-won-in-2024",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Why Donald Trump won in 2024",
+          "publishedAt": "2026-10-11T07:31:44+00:00",
+          "publisherDateRaw": "Sun, 11 Oct 2026 07:31:44 GMT",
+          "contentField": "encoded",
+          "contentChars": 82824,
+          "contentSha256": "ddeacb86c2905dd4fb08d3437939007211bd928da5378808b8361c6997b114be",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!vRZ5!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F51fc1a78-bd12-4ff0-ba2c-860c969d347e_960x559.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.noahpinion.blog/p/maybe-the-rapture-is-already-here",
+          "url": "https://www.noahpinion.blog/p/maybe-the-rapture-is-already-here",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Maybe the Rapture is already here",
+          "publishedAt": "2026-10-09T09:18:32+00:00",
+          "publisherDateRaw": "Fri, 09 Oct 2026 09:18:32 GMT",
+          "contentField": "encoded",
+          "contentChars": 9284,
+          "contentSha256": "f13b1555152b595c645d508a97b56753543822463c5f4f4c5847cacf161dc32c",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!WgDI!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff1adda31-08f7-48de-a13a-dab9ec2ced33_918x653.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.noahpinion.blog/p/there-is-no-indian-question",
+          "url": "https://www.noahpinion.blog/p/there-is-no-indian-question",
+          "urlSpecificity": "item_link_unverified",
+          "title": "There is no “Indian Question”",
+          "publishedAt": "2026-10-07T09:47:37+00:00",
+          "publisherDateRaw": "Wed, 07 Oct 2026 09:47:37 GMT",
+          "contentField": "encoded",
+          "contentChars": 15451,
+          "contentSha256": "a6db01985f7da9800574e83fa3bdfd2e5e7f8e3ce1fce07043faf753389d073c",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!YwSf!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F90c5c48a-fd0f-4355-ad67-5d4fdcbecaec_704x868.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.noahpinion.blog/p/what-the-ai-boom-is-doing-for-americans",
+          "url": "https://www.noahpinion.blog/p/what-the-ai-boom-is-doing-for-americans",
+          "urlSpecificity": "item_link_unverified",
+          "title": "What the AI boom is doing for Americans",
+          "publishedAt": "2026-10-05T08:12:53+00:00",
+          "publisherDateRaw": "Mon, 05 Oct 2026 08:12:53 GMT",
+          "contentField": "encoded",
+          "contentChars": 15160,
+          "contentSha256": "aff72ba3dfe7c0a7d84fdeca5a0c0335e452cf5be1272cd1db73de0ee98c823e",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!i_BZ!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9b615f36-f89f-4762-94bb-9571f1586f03_1200x800.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "newsletter-experimental-history",
+      "family": "newsletters",
+      "name": "Experimental History",
+      "checkedAt": "2026-10-15T01:00:07+00:00",
+      "feedUrl": "https://www.experimental-history.com/feed",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://www.experimental-history.com/feed",
+      "contentType": "application/xml; charset=utf-8",
+      "responseBytes": 998805,
+      "responseSha256": "eb17f7e80b27d30e89e5a5b41f45b7d44e1fa61de9e6045c4f63564f18155d4f",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/newsletter-experimental-history.xml",
+      "feedItemsAvailable": 20,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "https://www.experimental-history.com/p/claude-dont-touch-my-lump",
+          "url": "https://www.experimental-history.com/p/claude-dont-touch-my-lump",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Claude, don’t touch my lump",
+          "publishedAt": "2026-10-13T21:04:46+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 21:04:46 GMT",
+          "contentField": "encoded",
+          "contentChars": 18496,
+          "contentSha256": "40a44b88265d1b9f891aba1f437f4317c023a78f744bb27a09fc95ae318fcf11",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!y7zZ!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc3691c81-1377-4d42-a95c-7912894bdd2d_985x1280.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.experimental-history.com/p/the-strangest-idea-in-the-world",
+          "url": "https://www.experimental-history.com/p/the-strangest-idea-in-the-world",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The Strangest Idea in the World",
+          "publishedAt": "2026-09-29T14:29:26+00:00",
+          "publisherDateRaw": "Tue, 29 Sep 2026 14:29:26 GMT",
+          "contentField": "encoded",
+          "contentChars": 4562,
+          "contentSha256": "3b9e5eff2944b8a018872cd46bd0dbaa5fdad27d03bb3924075912a0fcd2047c",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!nijU!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fffe4ed28-554b-478e-bd0f-efddc6c5d5d5_1000x1500.png",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.experimental-history.com/p/there-is-no-epidemic-of-loneliness",
+          "url": "https://www.experimental-history.com/p/there-is-no-epidemic-of-loneliness",
+          "urlSpecificity": "item_link_unverified",
+          "title": "There is no epidemic of loneliness, but there is an epidemic of scurvy",
+          "publishedAt": "2026-09-15T12:54:38+00:00",
+          "publisherDateRaw": "Tue, 15 Sep 2026 12:54:38 GMT",
+          "contentField": "encoded",
+          "contentChars": 25467,
+          "contentSha256": "0a2dd3ccc9b0889c4d6cfd49b91719be84254d5618b7b00966601640d5c10864",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!aCqC!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc20f3baf-8076-4e07-9eb6-51eea34f108a_1785x1194.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.experimental-history.com/p/actually-good-advice",
+          "url": "https://www.experimental-history.com/p/actually-good-advice",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Actually good advice",
+          "publishedAt": "2026-08-25T14:28:03+00:00",
+          "publisherDateRaw": "Tue, 25 Aug 2026 14:28:03 GMT",
+          "contentField": "encoded",
+          "contentChars": 367,
+          "contentSha256": "7b639c47c168f4ed33a6850c146a04f2938188e33797b306129cad2940a2fe46",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!8dt5!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ff98b122e-25cd-4c49-a27a-ecb4638d3cab_1749x1166.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.experimental-history.com/p/i-like-em-thick",
+          "url": "https://www.experimental-history.com/p/i-like-em-thick",
+          "urlSpecificity": "item_link_unverified",
+          "title": "I like 'em thick",
+          "publishedAt": "2026-08-18T15:02:15+00:00",
+          "publisherDateRaw": "Tue, 18 Aug 2026 15:02:15 GMT",
+          "contentField": "encoded",
+          "contentChars": 20309,
+          "contentSha256": "c5c7299d67f6fedb2093330af5e7c85275acf0c2dd1f757f65a0debaab3d9d90",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!KGpc!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F56ced727-423b-4a20-b330-8769c728da1c_1146x1623.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "newsletter-honest-broker",
+      "family": "newsletters",
+      "name": "The Honest Broker",
+      "checkedAt": "2026-10-15T01:00:07+00:00",
+      "feedUrl": "https://www.honest-broker.com/feed",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://www.honest-broker.com/feed",
+      "contentType": "application/xml; charset=utf-8",
+      "responseBytes": 538039,
+      "responseSha256": "6fc906293e7645c5d9e143d4c7b887764b03c3da3d18b219331f16c87dc7e59f",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/newsletter-honest-broker.xml",
+      "feedItemsAvailable": 20,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "https://www.honest-broker.com/p/dont-trust-people-who-talk-like-this",
+          "url": "https://www.honest-broker.com/p/dont-trust-people-who-talk-like-this",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Don’t Trust People Who Talk Like This",
+          "publishedAt": "2026-10-14T03:17:32+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 03:17:32 GMT",
+          "contentField": "encoded",
+          "contentChars": 8251,
+          "contentSha256": "22438c20474ccc16cb92b1010844a37b0e91be651d8bfbe1a417bf8fcea7d09d",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substack-post-media.s3.amazonaws.com/public/images/2c709231-b6c6-428f-a67c-1b6b34e25962_1282x1062.png",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.honest-broker.com/p/people-are-rejecting-screensand-returning",
+          "url": "https://www.honest-broker.com/p/people-are-rejecting-screensand-returning",
+          "urlSpecificity": "item_link_unverified",
+          "title": "People Are Rejecting Screens—and Returning to Communal Events",
+          "publishedAt": "2026-10-10T18:06:15+00:00",
+          "publisherDateRaw": "Sat, 10 Oct 2026 18:06:15 GMT",
+          "contentField": "encoded",
+          "contentChars": 3652,
+          "contentSha256": "b5457bfa60263931dc913a18c2ec651cfcd960a231b77ea3084a0d6a1e71895c",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!OApx!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Ffaca376d-445e-43a6-beb4-656864eae7a1_2886x1843.png",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.honest-broker.com/p/why-everybody-loves-glen-campbell",
+          "url": "https://www.honest-broker.com/p/why-everybody-loves-glen-campbell",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Why Everybody Loves Glen Campbell",
+          "publishedAt": "2026-10-06T03:12:50+00:00",
+          "publisherDateRaw": "Tue, 06 Oct 2026 03:12:50 GMT",
+          "contentField": "encoded",
+          "contentChars": 18414,
+          "contentSha256": "a68b6423fc0f0f57eead73d55eb074d299e9322961894538b5dfb52529e0c7b9",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!qrJo!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5e6a1a89-326c-4c5a-ac0a-b5a2822a1b17_743x919.jpeg",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.honest-broker.com/p/the-ai-god-delusion-goes-mainstream",
+          "url": "https://www.honest-broker.com/p/the-ai-god-delusion-goes-mainstream",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The AI God Delusion Goes Mainstream",
+          "publishedAt": "2026-10-02T20:34:00+00:00",
+          "publisherDateRaw": "Fri, 02 Oct 2026 20:34:00 GMT",
+          "contentField": "encoded",
+          "contentChars": 1902,
+          "contentSha256": "c0f9f22be85ba8d0528bff11ed5de65fa3c6858f106867b38931631945087f0a",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substack-post-media.s3.amazonaws.com/public/images/99e2f21d-faa0-4def-94ca-4fb99713dc7f_600x400.webp",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.honest-broker.com/p/17-observations-on-chivalry",
+          "url": "https://www.honest-broker.com/p/17-observations-on-chivalry",
+          "urlSpecificity": "item_link_unverified",
+          "title": "17 Observations on Chivalry",
+          "publishedAt": "2026-09-30T22:16:26+00:00",
+          "publisherDateRaw": "Wed, 30 Sep 2026 22:16:26 GMT",
+          "contentField": "encoded",
+          "contentChars": 3876,
+          "contentSha256": "00507a9a0312b48c57340ffd7dc8aa23442fd2106612056b21664b20817ff6ec",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substack-post-media.s3.amazonaws.com/public/images/5c2d13d4-bb83-4f2a-8574-ba4bff7f8b2a_1250x782.png",
+              "type": "image/jpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "newsletter-not-boring",
+      "family": "newsletters",
+      "name": "Not Boring",
+      "checkedAt": "2026-10-15T01:00:07+00:00",
+      "feedUrl": "https://www.notboring.co/feed",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://www.notboring.co/feed",
+      "contentType": "application/xml; charset=utf-8",
+      "responseBytes": 1463425,
+      "responseSha256": "3a38dd668f8b1e5302dd85ea8be37d9bd5d8adfd4449ff2faf57c3a39c004204",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/newsletter-not-boring.xml",
+      "feedItemsAvailable": 20,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "https://www.notboring.co/p/runway-learning-from-watching-the",
+          "url": "https://www.notboring.co/p/runway-learning-from-watching-the",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Runway: Learning From Watching the World",
+          "publishedAt": "2026-10-13T12:45:27+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 12:45:27 GMT",
+          "contentField": "encoded",
+          "contentChars": 61032,
+          "contentSha256": "7fd607bddf90ad4f98b3cad9d07f97a273a5cb861c28e955fff19010e8d72499",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!ow7z!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb0d2e738-bfbe-4939-94a7-980475bf0f40_960x540.gif",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.notboring.co/p/weekly-dose-of-optimism-214",
+          "url": "https://www.notboring.co/p/weekly-dose-of-optimism-214",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Weekly Dose of Optimism #214",
+          "publishedAt": "2026-10-09T12:48:52+00:00",
+          "publisherDateRaw": "Fri, 09 Oct 2026 12:48:52 GMT",
+          "contentField": "encoded",
+          "contentChars": 13026,
+          "contentSha256": "8a9f8814b1e97b8f3672fff8c91e66bebe2dbb44821a706caaf8a9b5aff30abb",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!LT8i!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7a35f807-b8c8-43c2-a683-b934569d2054_850x478.gif",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.notboring.co/p/weekly-dose-of-optimism-213",
+          "url": "https://www.notboring.co/p/weekly-dose-of-optimism-213",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Weekly Dose of Optimism #213",
+          "publishedAt": "2026-10-02T12:44:11+00:00",
+          "publisherDateRaw": "Fri, 02 Oct 2026 12:44:11 GMT",
+          "contentField": "encoded",
+          "contentChars": 9007,
+          "contentSha256": "183595ff972a4b683dd8f57649294d42e9c29b864553311fbc5649c478b2eadd",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!PePt!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0230459c-43bd-41cd-9eec-338712f5608d_1000x558.gif",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.notboring.co/p/airbound-as-we-may-move",
+          "url": "https://www.notboring.co/p/airbound-as-we-may-move",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Airbound: As We May Move",
+          "publishedAt": "2026-09-28T13:17:35+00:00",
+          "publisherDateRaw": "Mon, 28 Sep 2026 13:17:35 GMT",
+          "contentField": "encoded",
+          "contentChars": 127811,
+          "contentSha256": "b7dc9c4803bee50fdbbb7b6ecb6ce7aa7d3025ff16305a1b6a8a028cfa93ae35",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!ZoEb!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa6b90430-6792-44ee-b53e-9bcb691e55dc_1200x600.png",
+              "type": "image/jpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "https://www.notboring.co/p/weekly-dose-of-optimism-212",
+          "url": "https://www.notboring.co/p/weekly-dose-of-optimism-212",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Weekly Dose of Optimism #212",
+          "publishedAt": "2026-09-25T12:36:02+00:00",
+          "publisherDateRaw": "Fri, 25 Sep 2026 12:36:02 GMT",
+          "contentField": "encoded",
+          "contentChars": 10103,
+          "contentSha256": "7e60c9edab5a1ffab84b0f0870bd03f59a31ae6106bb8038ee686a71cfe1e553",
+          "coverage": "feed_body_unverified",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [],
+          "mediaEnclosures": [
+            {
+              "url": "https://substackcdn.com/image/fetch/$s_!16WU!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F93985c93-c57d-4d75-8203-68dcf44893b5_1200x600.png",
+              "type": "image/jpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "podcast-acquired",
+      "family": "podcasts",
+      "name": "Acquired",
+      "checkedAt": "2026-10-15T01:00:08+00:00",
+      "feedUrl": "https://feeds.transistor.fm/acquired",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://feeds.transistor.fm/acquired",
+      "contentType": "text/xml; charset=utf-8",
+      "responseBytes": 2299619,
+      "responseSha256": "4f9dbb81c1d4bd35bdfdb464245a7f7fa912b103e6b9c8dc3ac34165310f9aa2",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/podcast-acquired.xml",
+      "feedItemsAvailable": 217,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "68b66323-6e74-4c90-8157-ef3f1ed0d042",
+          "url": "https://www.acquired.fm/episodes/home-depot",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The Home Depot",
+          "publishedAt": "2026-09-14T03:35:03+00:00",
+          "publisherDateRaw": "Sun, 13 Sep 2026 20:35:03 -0700",
+          "contentField": "encoded",
+          "contentChars": 2972,
+          "contentSha256": "adea457c7536f58bbc4cba4abf2736bd2fe02a2d2978f9e8dcec11ed4b462c5c",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [
+            {
+              "url": "https://share.transistor.fm/s/8ecb4ed4/transcript.txt",
+              "type": "text/plain"
+            },
+            {
+              "url": "https://share.transistor.fm/s/8ecb4ed4/transcript.vtt",
+              "type": "text/vtt"
+            }
+          ],
+          "audioUrls": [
+            "https://pscrb.fm/rss/p/media.transistor.fm/8ecb4ed4/568b6b7a.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://pscrb.fm/rss/p/media.transistor.fm/8ecb4ed4/568b6b7a.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "dc17bee9-e7e2-4c06-afdd-e80244a0e9db",
+          "url": "https://www.acquired.fm/episodes/disney-the-renaissance-and-the-empire",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Disney: The Renaissance and the Empire",
+          "publishedAt": "2026-08-10T04:41:43+00:00",
+          "publisherDateRaw": "Sun, 09 Aug 2026 21:41:43 -0700",
+          "contentField": "encoded",
+          "contentChars": 3305,
+          "contentSha256": "277c08db4188e879d0c4a34ca398d2f87596e3528039c4a472be2610645a4e89",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [
+            {
+              "url": "https://share.transistor.fm/s/4bcdc326/transcript.txt",
+              "type": "text/plain"
+            }
+          ],
+          "audioUrls": [
+            "https://pscrb.fm/rss/p/media.transistor.fm/4bcdc326/22e5d62f.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://pscrb.fm/rss/p/media.transistor.fm/4bcdc326/22e5d62f.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "9ed84917-8571-497e-b7d0-55fe85470301",
+          "url": "https://www.acquired.fm/episodes/the-walt-disney-company",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The Walt Disney Company",
+          "publishedAt": "2026-06-22T05:54:28+00:00",
+          "publisherDateRaw": "Sun, 21 Jun 2026 22:54:28 -0700",
+          "contentField": "encoded",
+          "contentChars": 3617,
+          "contentSha256": "7fcf80be53b598880a216ab5fc6260fab35cac23b8a1eb14ce4c22dda2ef0ad6",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [
+            {
+              "url": "https://share.transistor.fm/s/04eefe71/transcript.txt",
+              "type": "text/plain"
+            }
+          ],
+          "audioUrls": [
+            "https://pscrb.fm/rss/p/media.transistor.fm/04eefe71/39c635fd.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://pscrb.fm/rss/p/media.transistor.fm/04eefe71/39c635fd.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "465f9bb3-6d71-49ed-a233-de82bc41b034",
+          "url": "https://www.acquired.fm/episodes/vanguard",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Vanguard",
+          "publishedAt": "2026-05-18T03:26:52+00:00",
+          "publisherDateRaw": "Sun, 17 May 2026 20:26:52 -0700",
+          "contentField": "encoded",
+          "contentChars": 3097,
+          "contentSha256": "b6dc6e04ee5629f3b308f96496d8de3f0e336f07df29ff80462852f424ea91f6",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [
+            {
+              "url": "https://share.transistor.fm/s/ee9d0817/transcript.txt",
+              "type": "text/plain"
+            }
+          ],
+          "audioUrls": [
+            "https://pscrb.fm/rss/p/media.transistor.fm/ee9d0817/c12627bd.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://pscrb.fm/rss/p/media.transistor.fm/ee9d0817/c12627bd.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "94dbf581-80c8-4b90-aff2-fa649cd90edd",
+          "url": "https://www.acquired.fm/episodes/rolex",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Rolex",
+          "publishedAt": "2026-05-03T03:34:00+00:00",
+          "publisherDateRaw": "Sat, 02 May 2026 20:34:00 -0700",
+          "contentField": "encoded",
+          "contentChars": 1919,
+          "contentSha256": "aab6602d7886ba33015284d3057afa5485a1a5b44a943464433bfafdd26d9504",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://pscrb.fm/rss/p/media.transistor.fm/7bea4e45/0aa48fa3.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://pscrb.fm/rss/p/media.transistor.fm/7bea4e45/0aa48fa3.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "podcast-freakonomics-radio",
+      "family": "podcasts",
+      "name": "Freakonomics Radio",
+      "checkedAt": "2026-10-15T01:00:08+00:00",
+      "feedUrl": "https://feeds.simplecast.com/Y8lFbOT4",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://feeds.simplecast.com/Y8lFbOT4",
+      "contentType": "application/xml",
+      "responseBytes": 3561026,
+      "responseSha256": "b000a7d7ed2d793dd1e779cf0d443dbcd930a25135eefe1e701f53ac187e9567",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/podcast-freakonomics-radio.xml",
+      "feedItemsAvailable": 941,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "61e9d902-83d9-4d66-b667-42a509974f1d",
+          "url": "https://freakonomics.com",
+          "urlSpecificity": "homepage_link",
+          "title": "690. It’s Show Business, Baby!",
+          "publishedAt": "2026-10-09T10:00:00+00:00",
+          "publisherDateRaw": "Fri, 9 Oct 2026 10:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 1436,
+          "contentSha256": "3d1040f4c6445ecc752b93aca2e1ffd07e0bd0020f83937abae367c3c94e8ac5",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/d8917a50-ae6e-4ee7-8587-fee9ad02456e/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=d8917a50-ae6e-4ee7-8587-fee9ad02456e&feed=Y8lFbOT4"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/d8917a50-ae6e-4ee7-8587-fee9ad02456e/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=d8917a50-ae6e-4ee7-8587-fee9ad02456e&feed=Y8lFbOT4",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "33a2154f-e78c-4a9e-9d7a-62c1ff45dc67",
+          "url": "https://freakonomics.com",
+          "urlSpecificity": "homepage_link",
+          "title": "689. Here’s Why Your Hamburger Just Got So Pricey",
+          "publishedAt": "2026-10-02T10:00:00+00:00",
+          "publisherDateRaw": "Fri, 2 Oct 2026 10:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 1621,
+          "contentSha256": "b343978dd077342b5fd5f9c0c532aa40bb2e2593b5276591b85bda4e0c68305b",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/5819f6b3-f013-480d-a8b8-2cd72079c2df/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=5819f6b3-f013-480d-a8b8-2cd72079c2df&feed=Y8lFbOT4"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/5819f6b3-f013-480d-a8b8-2cd72079c2df/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=5819f6b3-f013-480d-a8b8-2cd72079c2df&feed=Y8lFbOT4",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "3f83f1f8-e9e5-4bc7-b9d8-dc1015948aa4",
+          "url": "https://freakonomics.com",
+          "urlSpecificity": "homepage_link",
+          "title": "688. When Is a Bet Not a Bet?",
+          "publishedAt": "2026-09-25T10:00:00+00:00",
+          "publisherDateRaw": "Fri, 25 Sep 2026 10:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 1039,
+          "contentSha256": "7caec5ad53d3c596cd56b97ca0abb956aa00f48e3968c7356d816abc547a6e41",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/7cc6e44c-25e8-43a6-907e-778ba898d728/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=7cc6e44c-25e8-43a6-907e-778ba898d728&feed=Y8lFbOT4"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/7cc6e44c-25e8-43a6-907e-778ba898d728/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=7cc6e44c-25e8-43a6-907e-778ba898d728&feed=Y8lFbOT4",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "cac7f440-db18-4f95-aa7f-34f2823ff93b",
+          "url": "https://freakonomics.com",
+          "urlSpecificity": "homepage_link",
+          "title": "687. Are Prediction Markets the Best Forecasting Tool Ever — or Just Another Casino?",
+          "publishedAt": "2026-09-18T10:00:00+00:00",
+          "publisherDateRaw": "Fri, 18 Sep 2026 10:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 1218,
+          "contentSha256": "e353b805735171a2fd2b92d93bdcb4b7ca8c5ebbaf471dd65703bd832192cbf9",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/0df0bf2f-fb40-4add-902f-7e35c486c728/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=0df0bf2f-fb40-4add-902f-7e35c486c728&feed=Y8lFbOT4"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/0df0bf2f-fb40-4add-902f-7e35c486c728/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=0df0bf2f-fb40-4add-902f-7e35c486c728&feed=Y8lFbOT4",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "75093d30-0cd5-40e4-bfbe-e6505eed3b47",
+          "url": "https://freakonomics.com",
+          "urlSpecificity": "homepage_link",
+          "title": "How to Be a Double Unicorn, with John Urschel | Better in Person",
+          "publishedAt": "2026-09-16T00:00:00+00:00",
+          "publisherDateRaw": "Wed, 16 Sep 2026 00:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 505,
+          "contentSha256": "15712436ba3866dd78379f7023a1880e48462b54d1433e5d26ca777600837d39",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/f563aed8-5f61-457a-9e78-8872917a83a1/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=f563aed8-5f61-457a-9e78-8872917a83a1&feed=Y8lFbOT4"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/f563aed8-5f61-457a-9e78-8872917a83a1/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=f563aed8-5f61-457a-9e78-8872917a83a1&feed=Y8lFbOT4",
+              "type": "audio/mpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "podcast-99-percent-invisible",
+      "family": "podcasts",
+      "name": "99% Invisible",
+      "checkedAt": "2026-10-15T01:00:08+00:00",
+      "feedUrl": "https://feeds.simplecast.com/BqbsxVfO",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://feeds.simplecast.com/BqbsxVfO",
+      "contentType": "application/xml",
+      "responseBytes": 3507333,
+      "responseSha256": "03921cef843c98004a6c7797c579211e904186cf1bc00f786c69ab4df3cfa53b",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/podcast-99-percent-invisible.xml",
+      "feedItemsAvailable": 833,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "365da1ae-e35e-4665-98ba-d705f0b4dce2",
+          "url": "https://99percentinvisible.org/?p=48197",
+          "urlSpecificity": "item_link_unverified",
+          "title": "The Problem With Football Helmets",
+          "publishedAt": "2026-10-13T08:00:00+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 08:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 466,
+          "contentSha256": "19a0cbb97a2157c557052f30cdb2ddd5ca4a3bc791fb4a12f2bbee48dace1637",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/7c400d37-2342-4e66-a3f0-a345d68d5a26/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=7c400d37-2342-4e66-a3f0-a345d68d5a26&feed=BqbsxVfO"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/7c400d37-2342-4e66-a3f0-a345d68d5a26/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=7c400d37-2342-4e66-a3f0-a345d68d5a26&feed=BqbsxVfO",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "c5d134a1-1a20-47cd-b7e9-6a7865ae29a6",
+          "url": "https://99percentinvisible.org/?p=48749",
+          "urlSpecificity": "item_link_unverified",
+          "title": "(Not Just) Another Brick in the Wall",
+          "publishedAt": "2026-10-06T08:00:00+00:00",
+          "publisherDateRaw": "Tue, 6 Oct 2026 08:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 398,
+          "contentSha256": "999c6bc46ffe2b5dd00a8f428cedb6d75566bbe39080be822ea4c91a75fd1ed2",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/8971dd12-a9a8-449f-8a3d-d22052a9fde8/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=8971dd12-a9a8-449f-8a3d-d22052a9fde8&feed=BqbsxVfO"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/8971dd12-a9a8-449f-8a3d-d22052a9fde8/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=8971dd12-a9a8-449f-8a3d-d22052a9fde8&feed=BqbsxVfO",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "1ea9d484-483c-4ec8-8136-333adbdc516e",
+          "url": "https://99percentinvisible.org/?p=48527",
+          "urlSpecificity": "item_link_unverified",
+          "title": "100 Objects #20: AA Sobriety Chip",
+          "publishedAt": "2026-10-02T07:00:00+00:00",
+          "publisherDateRaw": "Fri, 2 Oct 2026 07:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 910,
+          "contentSha256": "039586074d7e20ce5d1e29b96151fc4e3cd6e5ede585b0e814dffc1f64c1c7c0",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/d677bccf-4326-457a-b391-5d153679c150/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=d677bccf-4326-457a-b391-5d153679c150&feed=BqbsxVfO"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/d677bccf-4326-457a-b391-5d153679c150/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=d677bccf-4326-457a-b391-5d153679c150&feed=BqbsxVfO",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "e617d2ae-6bda-4b0d-ad86-a1c8c02c07ce",
+          "url": "https://99percentinvisible.org/?p=48382",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Tootle of a Devilish Song",
+          "publishedAt": "2026-09-29T08:00:00+00:00",
+          "publisherDateRaw": "Tue, 29 Sep 2026 08:00:00 +0000",
+          "contentField": "encoded",
+          "contentChars": 423,
+          "contentSha256": "7374f49ba260eff04d8b19da5981d06316205d4caf246ce8660b96a1c54a507e",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/cf82af4f-5340-4da1-90b9-cee85bcaf214/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=cf82af4f-5340-4da1-90b9-cee85bcaf214&feed=BqbsxVfO"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/cf82af4f-5340-4da1-90b9-cee85bcaf214/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=cf82af4f-5340-4da1-90b9-cee85bcaf214&feed=BqbsxVfO",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "c3dcdf85-5623-4c85-aa15-62579413997c",
+          "url": "https://99percentinvisible.org/?p=48462",
+          "urlSpecificity": "item_link_unverified",
+          "title": "100 Objects #19: Western Electric 500 Series",
+          "publishedAt": "2026-09-25T13:17:35+00:00",
+          "publisherDateRaw": "Fri, 25 Sep 2026 13:17:35 +0000",
+          "contentField": "encoded",
+          "contentChars": 997,
+          "contentSha256": "6d04d8b9fde5c859a8737f1ff43f6aad15ee03ef6ecf90e9142fdee9d30175a6",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/2aed375c-a6e2-4390-90c1-2562e330c87c/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=2aed375c-a6e2-4390-90c1-2562e330c87c&feed=BqbsxVfO"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/2aed375c-a6e2-4390-90c1-2562e330c87c/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=2aed375c-a6e2-4390-90c1-2562e330c87c&feed=BqbsxVfO",
+              "type": "audio/mpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "podcast-vergecast",
+      "family": "podcasts",
+      "name": "The Vergecast",
+      "checkedAt": "2026-10-15T01:00:09+00:00",
+      "feedUrl": "https://feeds.megaphone.fm/vergecast",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://feeds.megaphone.fm/vergecast",
+      "contentType": "application/xml; charset=utf-8",
+      "responseBytes": 6243976,
+      "responseSha256": "ad8717d4487b3265a21ddb6f5bc13af6f96bce29ef5e22a44d681bc4333af1c5",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/podcast-vergecast.xml",
+      "feedItemsAvailable": 1094,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "4a5106e0-6e7b-11f1-94bf-1fb71a6a68f7",
+          "url": null,
+          "urlSpecificity": "missing",
+          "title": "The $8 million AI music scam",
+          "publishedAt": "2026-10-14T18:29:00+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 18:29:00 -0000",
+          "contentField": "encoded",
+          "contentChars": 1218,
+          "contentSha256": "239d6a58ec41324baac27800499be7fbccee019cc0cd685102fcee7bf0969094",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP9251832124.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP9251832124.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "ca9d312a-c3c7-11f0-8340-8778d9878c4f",
+          "url": null,
+          "urlSpecificity": "missing",
+          "title": "HomeView: Apple just got serious about the smart home | Livestream",
+          "publishedAt": "2026-10-13T20:50:00+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 20:50:00 -0000",
+          "contentField": "encoded",
+          "contentChars": 1210,
+          "contentSha256": "ff5be1c5fec72648800b7d79db07ba04832b38d34da540ccf848727e628d2f49",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP9945514624.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP9945514624.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "cb42cff4-c3c7-11f0-8340-174a62840202",
+          "url": null,
+          "urlSpecificity": "missing",
+          "title": "The AI is in the computer",
+          "publishedAt": "2026-10-09T13:38:00+00:00",
+          "publisherDateRaw": "Fri, 09 Oct 2026 13:38:00 -0000",
+          "contentField": "encoded",
+          "contentChars": 3915,
+          "contentSha256": "d87cce25a1d7ad02e11bc1432041eba4a020a0bb06fcedf9551e5456ef7c3102",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP8833126862.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP8833126862.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "4a1922ac-6e7b-11f1-94bf-3f97b2f47f48",
+          "url": null,
+          "urlSpecificity": "missing",
+          "title": "The many pluses and minuses of Alexa Plus",
+          "publishedAt": "2026-10-08T19:22:00+00:00",
+          "publisherDateRaw": "Thu, 08 Oct 2026 19:22:00 -0000",
+          "contentField": "encoded",
+          "contentChars": 1190,
+          "contentSha256": "9e4cceb03742c7ce90bb553effda6f0f5257841012ce6c29746f58dcf11f3776",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP8056613997.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP8056613997.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "49fcf4c4-6e7b-11f1-94bf-5737d233658f",
+          "url": null,
+          "urlSpecificity": "missing",
+          "title": "The hot new thing in headphones",
+          "publishedAt": "2026-10-07T19:12:00+00:00",
+          "publisherDateRaw": "Wed, 07 Oct 2026 19:12:00 -0000",
+          "contentField": "encoded",
+          "contentChars": 1101,
+          "contentSha256": "d2e9fb817a467d565c425bc4f68c46457cb19200d1a27f0ae0aa75e6d1444f7b",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP2488237973.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP2488237973.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    },
+    {
+      "sourceId": "podcast-bbc-global-news",
+      "family": "podcasts",
+      "name": "Global News Podcast",
+      "checkedAt": "2026-10-15T01:00:10+00:00",
+      "feedUrl": "https://podcasts.files.bbci.co.uk/p02nq0gn.rss",
+      "status": "fetched",
+      "httpStatus": 200,
+      "finalUrl": "https://podcasts.files.bbci.co.uk/p02nq0gn.rss",
+      "contentType": "application/rss+xml",
+      "responseBytes": 1128805,
+      "responseSha256": "8f74b642ff5807e9066b95dc4a42d27908171292c30275268f927c2f3d59cb9b",
+      "rawLocalPath": ".local/access-proof/preflight-2026-10-15/podcast-bbc-global-news.xml",
+      "feedItemsAvailable": 283,
+      "duplicatesInFeed": 0,
+      "items": [
+        {
+          "sourceItemId": "urn:bbc:podcast:p0pgn12v",
+          "url": "http://www.bbc.co.uk/programmes/p0pgn12v",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Russian attacks leave 600,000 Ukrainians without power",
+          "publishedAt": "2026-10-14T14:53:00+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 14:53:00 +0000",
+          "contentField": "description",
+          "contentChars": 1840,
+          "contentSha256": "16360fc28eea239016694adc0de2f39a9a7fc73337d0449a8f202148c4ad5640",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pgmx1w.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pgmx1w.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "urn:bbc:podcast:p0pgjxdp",
+          "url": "http://www.bbc.co.uk/programmes/p0pgjxdp",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Pope has surgery for lung cancer",
+          "publishedAt": "2026-10-14T04:46:00+00:00",
+          "publisherDateRaw": "Wed, 14 Oct 2026 04:46:00 +0000",
+          "contentField": "description",
+          "contentChars": 1824,
+          "contentSha256": "e1190ab7dad86a94aa72e03b190b97d48ed5d6718ebc3e6b72fcaa756a779d12",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pgjx74.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pgjx74.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "urn:bbc:podcast:p0pggr8v",
+          "url": "http://www.bbc.co.uk/programmes/p0pggr8v",
+          "urlSpecificity": "item_link_unverified",
+          "title": "IMF upgrades global economy outlook",
+          "publishedAt": "2026-10-13T14:44:00+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 14:44:00 +0000",
+          "contentField": "description",
+          "contentChars": 1543,
+          "contentSha256": "8abbad17eeea6fcaf2f972af9bbbaa01b778d825ec2870c0b48c6b5b2256630c",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pggq4p.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pggq4p.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "urn:bbc:podcast:p0pgcv8s",
+          "url": "http://www.bbc.co.uk/programmes/p0pgcv8s",
+          "urlSpecificity": "item_link_unverified",
+          "title": "Annual dementia cases could double by 2050",
+          "publishedAt": "2026-10-13T04:26:00+00:00",
+          "publisherDateRaw": "Tue, 13 Oct 2026 04:26:00 +0000",
+          "contentField": "description",
+          "contentChars": 1506,
+          "contentSha256": "8f4f9fc21196ad0a16f4cee45bce3cdb2cd248efaa74c162a00454853ae7edc4",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pgcv5c.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pgcv5c.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        },
+        {
+          "sourceItemId": "urn:bbc:podcast:p0pg9xc5",
+          "url": "http://www.bbc.co.uk/programmes/p0pg9xc5",
+          "urlSpecificity": "item_link_unverified",
+          "title": "French supermarkets say fridges targeted in cyberattack",
+          "publishedAt": "2026-10-12T15:04:00+00:00",
+          "publisherDateRaw": "Mon, 12 Oct 2026 15:04:00 +0000",
+          "contentField": "description",
+          "contentChars": 1749,
+          "contentSha256": "33eaafc33da86dbb8ffa1f64faaf50d3fb0c2bc66edbc170d55b7e90acf3c413",
+          "coverage": "show_notes_only",
+          "publisherTranscriptLinks": [],
+          "audioUrls": [
+            "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pg9vg2.mp3"
+          ],
+          "mediaEnclosures": [
+            {
+              "url": "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pg9vg2.mp3",
+              "type": "audio/mpeg"
+            }
+          ]
+        }
+      ],
+      "completenessAgainstOriginal": "not_measured",
+      "sevenDayReliability": "not_measured",
+      "processingMethod": "final_reviewed_reparse_saved_response_no_network"
+    }
+  ],
+  "finishedAt": "2026-10-15T01:00:10+00:00",
+  "reprocessedAt": "2026-10-15T01:03:58+00:00",
+  "previousEvidenceFile": "preflight-2026-10-15-reviewed.json",
+  "processingNotes": [
+    "Distinct podcast GUIDs take precedence over shared homepage URLs.",
+    "RFC 2822 -0000 publication dates are UTC instants.",
+    "DOCTYPE text inside CDATA is article text, not an XML DTD.",
+    "Fourteen saved responses were reparsed without network requests; GitHub was fetched once because its initial parse failed before the raw response was saved.",
+    "Reviewed: image enclosures remain media metadata and are not labeled audio; no new network requests.",
+    "Reviewed: query-specific episode URLs are item links, not homepages; no new network requests."
+  ],
+  "additionalPublicHTTPGets": 0
+}

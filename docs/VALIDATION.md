@@ -1,6 +1,6 @@
 # Cheapest useful validation, revised to the founder's choices
 
-Status: proposal, 15 October 2026. **No customer trial before broad access is secured.** Scraping with Apify, Bright Data and alternatives is the selected route to investigate. The concrete execution/spending brief is [ACCESS-PROOF.md v0.1](ACCESS-PROOF.md).
+Status: Stage A approved in Q6 on 15 October 2026; Stages B/C remain proposals. **No customer trial before broad access is secured.** Scraping with Apify, Bright Data and alternatives is the selected route. The approved execution/spending brief is [ACCESS-PROOF.md v0.1](ACCESS-PROOF.md).
 
 ## Stage A: prove access before building the app
 
@@ -8,7 +8,7 @@ The free public-document audit is complete. It identifies candidate products, fi
 
 The next useful experiment is a small source-collection proof, separate from the application. No dashboard, login system, payment system or automated customer recap is needed to find out whether the core content can be collected.
 
-Proposed scope, awaiting approval:
+Scope approved in Q6:
 
 - All seven named source families: YouTube, X, Instagram, LinkedIn, podcasts, Substack/newsletters and blogs.
 - Public creators, without those creators joining the app. Choose the sample ourselves rather than accepting only a vendor's showcase accounts.
@@ -34,7 +34,7 @@ Broad access passes only when every mandatory platform meets the agreed usable-c
 
 ### Spending and execution
 
-Public-document research: €0 subscription spending. Actual scraper proof: **proposed €50 total cash cap, not authorized**. Supporting price arithmetic is in docs/RESEARCH.md; this is a bounded risk limit, not a complete quote. Account availability, currency, minimum charges and billable behavior must be checked before any run. No user account, annual contract, paid actor, proxy purchase, or vendor outreach has been initiated.
+Public-document research and initial public-feed checks: €0 subscription spending. Actual scraper proof: **€50 total cash cap approved in Q6**. Supporting price arithmetic is in docs/RESEARCH.md; this is a bounded risk limit, not a complete quote. Account availability, currency, minimum charges and billable behavior must be checked before any metered run. No user account, annual contract, paid actor, proxy purchase, or vendor outreach has been initiated. Current evidence: [preflight report](access-proof/PREFLIGHT.md).
 
 The former limited-source €100 concierge recommendation does not price this broader experiment. Unknown access costs are unknown, not zero.
 

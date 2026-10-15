@@ -1,0 +1,506 @@
+{
+  "schemaVersion": 1,
+  "experiment": "source-access-proof-v0.1",
+  "approvedBy": "Q6",
+  "frozenAt": "2026-10-15T01:00:04+00:00",
+  "revision": 1,
+  "sourceCount": 35,
+  "countsByFamily": {
+    "youtube": 5,
+    "x": 5,
+    "instagram": 5,
+    "linkedin": 5,
+    "podcasts": 5,
+    "newsletters": 5,
+    "blogs": 5
+  },
+  "formalSevenDayBaselineStarted": false,
+  "notes": [
+    "Chosen for collection/format coverage, not evidence of customer demand.",
+    "Preflight HTTP successes are not completeness or seven-day reliability passes.",
+    "Missing public transcripts are not automatically generated; global limit is 150 minutes.",
+    "Keep sources in the denominator when a collector fails; record any replacement as a new manifest revision."
+  ],
+  "sources": [
+    {
+      "id": "youtube-01",
+      "family": "youtube",
+      "name": "Marques Brownlee",
+      "url": "https://www.youtube.com/@mkbhd",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "selectionReason": "large technology; overlap with X and Instagram",
+      "identityEvidenceUrl": "https://mkbhd.com/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "youtube-02",
+      "family": "youtube",
+      "name": "Veritasium",
+      "url": "https://www.youtube.com/@veritasium",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "selectionReason": "large science; long form",
+      "identityEvidenceUrl": "https://www.veritasium.com/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "youtube-03",
+      "family": "youtube",
+      "name": "Simone Giertz",
+      "url": "https://www.youtube.com/@simonegiertz",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "selectionReason": "maker; overlap with Instagram",
+      "identityEvidenceUrl": "https://www.simonegiertz.com/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "youtube-04",
+      "family": "youtube",
+      "name": "Asianometry",
+      "url": "https://www.youtube.com/@Asianometry",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "selectionReason": "focused independent educational creator; long narration",
+      "identityEvidenceUrl": "https://www.youtube.com/@Asianometry",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "youtube-05",
+      "family": "youtube",
+      "name": "No Boilerplate",
+      "url": "https://www.youtube.com/@NoBoilerplate",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "selectionReason": "focused technical creator; narration plus on-screen information",
+      "identityEvidenceUrl": "https://github.com/Noboilerplate/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "x-01",
+      "family": "x",
+      "name": "Marques Brownlee",
+      "url": "https://x.com/MKBHD",
+      "expectedContentTypes": [
+        "text",
+        "media"
+      ],
+      "selectionReason": "large technology; cross-platform overlap",
+      "identityEvidenceUrl": "https://mkbhd.com/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "x-02",
+      "family": "x",
+      "name": "Cassidy Williams",
+      "url": "https://x.com/cassidoo",
+      "expectedContentTypes": [
+        "text",
+        "links"
+      ],
+      "selectionReason": "independent developer; cross-platform overlap",
+      "identityEvidenceUrl": "https://cassidoo.co/for-llms/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "x-03",
+      "family": "x",
+      "name": "swyx",
+      "url": "https://x.com/swyx",
+      "expectedContentTypes": [
+        "text",
+        "media"
+      ],
+      "selectionReason": "AI discussion; cross-platform overlap",
+      "identityEvidenceUrl": "https://www.swyx.io/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "x-04",
+      "family": "x",
+      "name": "Maggie Appleton",
+      "url": "https://x.com/Mappletons",
+      "expectedContentTypes": [
+        "text",
+        "media"
+      ],
+      "selectionReason": "independent design creator; cross-platform overlap",
+      "identityEvidenceUrl": "https://maggieappleton.com/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "x-05",
+      "family": "x",
+      "name": "Tim Urban / Wait But Why",
+      "url": "https://x.com/waitbutwhy",
+      "expectedContentTypes": [
+        "text",
+        "images"
+      ],
+      "selectionReason": "large general-interest writer",
+      "identityEvidenceUrl": "https://waitbutwhy.com/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "instagram-01",
+      "family": "instagram",
+      "name": "Marques Brownlee",
+      "url": "https://www.instagram.com/mkbhd/",
+      "expectedContentTypes": [
+        "image_carousel",
+        "reels"
+      ],
+      "selectionReason": "large technology; cross-platform overlap",
+      "identityEvidenceUrl": "https://mkbhd.com/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "instagram-02",
+      "family": "instagram",
+      "name": "Simone Giertz",
+      "url": "https://www.instagram.com/simonegiertz/",
+      "expectedContentTypes": [
+        "image",
+        "reels"
+      ],
+      "selectionReason": "maker; cross-platform overlap",
+      "identityEvidenceUrl": "https://www.simonegiertz.com/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "instagram-03",
+      "family": "instagram",
+      "name": "Charlie Mackesy",
+      "url": "https://www.instagram.com/charliemackesy/",
+      "expectedContentTypes": [
+        "image",
+        "caption"
+      ],
+      "selectionReason": "large artist; visual text not recoverable from audio alone",
+      "identityEvidenceUrl": "https://www.charliemackesy.com/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "instagram-04",
+      "family": "instagram",
+      "name": "The Happy Pear",
+      "url": "https://www.instagram.com/thehappypear/",
+      "expectedContentTypes": [
+        "reels",
+        "image_carousel"
+      ],
+      "selectionReason": "food/lifestyle; non-technology coverage",
+      "identityEvidenceUrl": "https://thehappypear.ie/",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "instagram-05",
+      "family": "instagram",
+      "name": "Maggie Appleton",
+      "url": "https://www.instagram.com/maggieappleton/",
+      "expectedContentTypes": [
+        "image",
+        "caption"
+      ],
+      "selectionReason": "smaller independent design creator; possible quiet control",
+      "identityEvidenceUrl": "https://uk.linkedin.com/in/maggieappleton",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "linkedin-01",
+      "family": "linkedin",
+      "name": "Ethan Mollick",
+      "url": "https://www.linkedin.com/in/emollick/",
+      "expectedContentTypes": [
+        "text_links",
+        "images"
+      ],
+      "selectionReason": "large professional audience; source references",
+      "identityEvidenceUrl": "https://www.linkedin.com/in/emollick",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "linkedin-02",
+      "family": "linkedin",
+      "name": "Cassidy Williams",
+      "url": "https://www.linkedin.com/in/cassidoo/",
+      "expectedContentTypes": [
+        "text_links",
+        "media"
+      ],
+      "selectionReason": "smaller professional creator; cross-platform overlap",
+      "identityEvidenceUrl": "https://www.linkedin.com/in/cassidoo",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "linkedin-03",
+      "family": "linkedin",
+      "name": "Lenny Rachitsky",
+      "url": "https://www.linkedin.com/in/lennyrachitsky/",
+      "expectedContentTypes": [
+        "text_links",
+        "video"
+      ],
+      "selectionReason": "large product/business creator; sponsors and repost distinctions",
+      "identityEvidenceUrl": "https://www.linkedin.com/in/lennyrachitsky",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "linkedin-04",
+      "family": "linkedin",
+      "name": "swyx",
+      "url": "https://www.linkedin.com/in/shawnswyxwang/",
+      "expectedContentTypes": [
+        "text_links",
+        "reposts"
+      ],
+      "selectionReason": "smaller professional creator; repost attribution edge case",
+      "identityEvidenceUrl": "https://www.linkedin.com/in/shawnswyxwang",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "linkedin-05",
+      "family": "linkedin",
+      "name": "Maggie Appleton",
+      "url": "https://www.linkedin.com/in/maggieappleton/",
+      "expectedContentTypes": [
+        "text_links",
+        "media"
+      ],
+      "selectionReason": "smaller professional creator; quiet-source control",
+      "identityEvidenceUrl": "https://uk.linkedin.com/in/maggieappleton",
+      "evidenceFile": "social-candidates.json",
+      "providerCollectionStatus": "not_run"
+    },
+    {
+      "id": "blog-cloudflare",
+      "family": "blogs",
+      "name": "Cloudflare Blog",
+      "url": "https://blog.cloudflare.com/",
+      "feedUrl": "https://blog.cloudflare.com/rss/",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-14T20:24:19Z"
+    },
+    {
+      "id": "blog-github",
+      "family": "blogs",
+      "name": "GitHub Blog",
+      "url": "https://github.blog/",
+      "feedUrl": "https://github.blog/feed/",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-14T20:01:35Z"
+    },
+    {
+      "id": "blog-seth-godin",
+      "family": "blogs",
+      "name": "Seth's Blog",
+      "url": "https://seths.blog/",
+      "feedUrl": "https://seths.blog/feed/",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-14T09:03:00Z"
+    },
+    {
+      "id": "blog-our-world-in-data",
+      "family": "blogs",
+      "name": "Our World in Data",
+      "url": "https://ourworldindata.org/",
+      "feedUrl": "https://ourworldindata.org/atom.xml",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-08T00:00:00Z"
+    },
+    {
+      "id": "blog-buffer",
+      "family": "blogs",
+      "name": "Buffer Resources",
+      "url": "https://buffer.com/resources/",
+      "feedUrl": "https://buffer.com/resources/rss/",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-14T07:00:00Z"
+    },
+    {
+      "id": "newsletter-one-useful-thing",
+      "family": "newsletters",
+      "name": "One Useful Thing",
+      "url": "https://www.oneusefulthing.org/",
+      "feedUrl": "https://www.oneusefulthing.org/feed",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-01T10:54:12Z"
+    },
+    {
+      "id": "newsletter-noahpinion",
+      "family": "newsletters",
+      "name": "Noahpinion",
+      "url": "https://www.noahpinion.blog/",
+      "feedUrl": "https://www.noahpinion.blog/feed",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-13T05:28:43Z"
+    },
+    {
+      "id": "newsletter-experimental-history",
+      "family": "newsletters",
+      "name": "Experimental History",
+      "url": "https://www.experimental-history.com/",
+      "feedUrl": "https://www.experimental-history.com/feed",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-13T21:04:46Z"
+    },
+    {
+      "id": "newsletter-honest-broker",
+      "family": "newsletters",
+      "name": "The Honest Broker",
+      "url": "https://www.honest-broker.com/",
+      "feedUrl": "https://www.honest-broker.com/feed",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-14T03:17:32Z"
+    },
+    {
+      "id": "newsletter-not-boring",
+      "family": "newsletters",
+      "name": "Not Boring",
+      "url": "https://www.notboring.co/",
+      "feedUrl": "https://www.notboring.co/feed",
+      "expectedContentTypes": [
+        "written_article"
+      ],
+      "evidenceFile": "written-candidates.json",
+      "feedHTTPStatusAtSelection": 200,
+      "latestItemObservedAt": "2026-10-13T12:45:27Z"
+    },
+    {
+      "id": "podcast-acquired",
+      "family": "podcasts",
+      "name": "Acquired",
+      "url": "https://www.acquired.fm/",
+      "feedUrl": "https://feeds.transistor.fm/acquired",
+      "expectedContentTypes": [
+        "audio",
+        "publisher_transcript_if_available"
+      ],
+      "evidenceFile": "podcast-candidates.json",
+      "publisherTranscriptStatus": "publisher_feed_transcript_verified",
+      "preferredBoundedASRSample": false,
+      "sampleDurationSeconds": 12902
+    },
+    {
+      "id": "podcast-freakonomics-radio",
+      "family": "podcasts",
+      "name": "Freakonomics Radio",
+      "url": "https://freakonomics.com/",
+      "feedUrl": "https://feeds.simplecast.com/Y8lFbOT4",
+      "expectedContentTypes": [
+        "audio",
+        "publisher_transcript_if_available"
+      ],
+      "evidenceFile": "podcast-candidates.json",
+      "publisherTranscriptStatus": "publisher_episode_page_transcript_verified",
+      "preferredBoundedASRSample": false,
+      "sampleDurationSeconds": 3710
+    },
+    {
+      "id": "podcast-99-percent-invisible",
+      "family": "podcasts",
+      "name": "99% Invisible",
+      "url": "https://99percentinvisible.org/",
+      "feedUrl": "https://feeds.simplecast.com/BqbsxVfO",
+      "expectedContentTypes": [
+        "audio",
+        "publisher_transcript_if_available"
+      ],
+      "evidenceFile": "podcast-candidates.json",
+      "publisherTranscriptStatus": "not_observed_for_latest_sample",
+      "preferredBoundedASRSample": false,
+      "sampleDurationSeconds": 2599
+    },
+    {
+      "id": "podcast-vergecast",
+      "family": "podcasts",
+      "name": "The Vergecast",
+      "url": "https://www.theverge.com/the-vergecast",
+      "feedUrl": "https://feeds.megaphone.fm/vergecast",
+      "expectedContentTypes": [
+        "audio",
+        "publisher_transcript_if_available"
+      ],
+      "evidenceFile": "podcast-candidates.json",
+      "publisherTranscriptStatus": "not_observed_in_feed_or_checked_show_page",
+      "preferredBoundedASRSample": false,
+      "sampleDurationSeconds": 2280
+    },
+    {
+      "id": "podcast-bbc-global-news",
+      "family": "podcasts",
+      "name": "Global News Podcast",
+      "url": "https://www.bbc.co.uk/programmes/p02nq0gn",
+      "feedUrl": "https://podcasts.files.bbci.co.uk/p02nq0gn.rss",
+      "expectedContentTypes": [
+        "audio",
+        "publisher_transcript_if_available"
+      ],
+      "evidenceFile": "podcast-candidates.json",
+      "publisherTranscriptStatus": "not_observed_in_feed_or_checked_episode_page",
+      "preferredBoundedASRSample": true,
+      "sampleDurationSeconds": 1739
+    }
+  ]
+}

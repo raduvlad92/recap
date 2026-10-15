@@ -20,7 +20,7 @@ Explore three customer groups, without choosing the winner in advance: independe
 - Respect the creator's role through original links, credit and brief, useful context.
 - Preserve a historical line instead of an engagement-driven endless feed.
 
-Source families named by the founder: YouTube, X/Twitter, Instagram, LinkedIn, podcasts, Substack/newsletters and blogs. Treating all seven as the mandatory access gate is a recommendation awaiting explicit confirmation. Private content, paid material, Stories/live streams and complete historical backfill are not implicitly promised.
+Source families named by the founder: YouTube, X/Twitter, Instagram, LinkedIn, podcasts, Substack/newsletters and blogs. Q6 approves testing all seven under source-access proof v0.1. Private content, paid material, Stories/live streams and complete historical backfill are not implicitly promised. The proof approval does not approve this complete product specification.
 
 ## Product behavior requested in the idea
 
@@ -74,7 +74,7 @@ These are proposals, not settled requirements:
 
 ## Still to decide
 
-Broad coverage definition; supported account/content types; access-proof budget; daily frequency and freshness; source/item limits; first-release analysis fields; default recap order; languages; history and deletion behavior; email vs app delivery; pricing by audience; privacy/retention; customer-test thresholds; technical architecture.
+Production supported account/content types; daily frequency and freshness; production source/item limits; first-release analysis fields; default recap order; languages; history and deletion behavior; email vs app delivery; pricing by audience; privacy/retention; customer-test thresholds; technical architecture. The source-proof scope and €50 cap are approved separately in Q6.
 
 ## Approval procedure
 

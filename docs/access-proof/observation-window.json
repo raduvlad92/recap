@@ -1,0 +1,15 @@
+{
+  "experiment": "source-access-proof-v0.1",
+  "status": "preflight_preparation",
+  "formalBaselineStartedAt": null,
+  "formalWindowEndsAt": null,
+  "completedDailyChecks": 0,
+  "requiredDailyChecks": 7,
+  "scheduledTaskId": null,
+  "nextScheduledRunAt": null,
+  "notes": [
+    "Q6 approves seven days of bounded collection; elapsed time before a complete baseline is not a completed observation day.",
+    "Set the start/end and recurring checks only after social-provider access and charging controls are ready.",
+    "Earlier direct public-feed diagnostics remain preflight evidence."
+  ]
+}

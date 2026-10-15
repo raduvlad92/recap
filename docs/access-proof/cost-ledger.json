@@ -1,0 +1,32 @@
+{
+  "experiment": "source-access-proof-v0.1",
+  "approval": "Q6: Yes — approve the proof, up to €50 total",
+  "cashCurrency": "EUR",
+  "cashCap": 50,
+  "cashActuallyPaid": 0,
+  "reservedCashEUR": 0,
+  "generatedTranscriptionMinutesCap": 150,
+  "generatedTranscriptionMinutesUsed": 0,
+  "apify": {
+    "authenticated": false,
+    "availableCreditUSD": null,
+    "paidPlan": null,
+    "meteredRuns": 0
+  },
+  "brightData": {
+    "authenticated": false,
+    "availableCredits": null,
+    "paidPlan": null,
+    "meteredRuns": 0
+  },
+  "transactions": [],
+  "reservations": [],
+  "notes": [
+    "The €50 cap includes subscriptions, deposits, metered use, tax and currency conversion.",
+    "Unknown account credit is null, not zero or a promised free allowance.",
+    "No annual plan, uncapped recharge or continuing paid renewal is authorized.",
+    "Count whole subscriptions/deposits when paid; track included/free credit separately without counting it twice.",
+    "Before submitting a metered job reserve its worst-case charge including tax/FX/retries; spent plus reservations may not exceed €50.",
+    "Public feed HTTPS GETs do not consume Apify/Bright Data credits."
+  ]
+}

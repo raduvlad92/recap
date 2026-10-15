@@ -1,0 +1,1000 @@
+{
+  "schema_version": "0.1",
+  "status": "day_zero_candidate_fetches_not_seven_day_proof",
+  "created_at_utc": "2026-10-15T00:57:32Z",
+  "collection_started_at_utc": "2026-10-15T00:57:31Z",
+  "purpose": "Five public blogs and five public Substack/newsletter publications for the approved 35-source access proof.",
+  "scope": "Public text only; no login, subscription, paid API, generated transcription, comments, outreach or app code.",
+  "external_vendor_spending_eur": 0,
+  "selected_candidate_count": 10,
+  "counts_by_family": {
+    "blogs": 5,
+    "substack_newsletters": 5
+  },
+  "method": "Python standard-library HTTP GET and RSS/Atom parsing; sample linked HTML fetched without authentication. Text counts exclude scripts/styles but include navigation. No article bodies, subscriber identities or credentials stored in this manifest.",
+  "limitations": [
+    "One point-in-time fetch cannot prove seven-day refresh reliability or complete publication coverage.",
+    "Feed-body length and public HTML access do not prove visual, embedded-media or paid-issue completeness.",
+    "Latest feed item timestamps are publisher supplied; updated evergreen posts may need publication/update reconciliation.",
+    "Metadata and content hashes are evidence of fetched responses; full raw responses were not retained.",
+    "No model-generated recap or relevance quality has been evaluated."
+  ],
+  "sources": [
+    {
+      "id": "blog-cloudflare",
+      "family": "blogs",
+      "name": "Cloudflare Blog",
+      "source_url": "https://blog.cloudflare.com/",
+      "rss_url": "https://blog.cloudflare.com/rss/",
+      "topics": [
+        "internet infrastructure",
+        "security",
+        "engineering"
+      ],
+      "notes": [
+        "Official company engineering blog; public technical articles."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://blog.cloudflare.com/rss/",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://blog.cloudflare.com/rss/",
+        "content_type": "application/rss+xml; charset=utf-8",
+        "response_bytes": 323476,
+        "response_sha256": "3b0badd53b275e0fdb487e9abd509c2d59ede3076c455929ae70c2989a735b5d",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 20,
+      "recent_feed_items": [
+        {
+          "title": "Yandex outage: Data shows that instead of going dark, malicious bots went on the move",
+          "item_url": "https://blog.cloudflare.com/yandex-outage/",
+          "published_at_utc": "2026-10-14T20:24:19Z",
+          "published_raw": "Wed, 14 Oct 2026 20:24:19 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 14589,
+          "feed_body_text_chars": 11055,
+          "feed_body_word_count": 1643,
+          "feed_body_sha256": "c7e9abc04c583e9fa062b6e57c27ee6277061760a615638d96f865fecc1215cf",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "Inside Hyperdrive: How we solved a rare Hyperdrive MySQL caching bug",
+          "item_url": "https://blog.cloudflare.com/hyperdrive-mysql/",
+          "published_at_utc": "2026-10-14T13:00:00Z",
+          "published_raw": "Wed, 14 Oct 2026 13:00:00 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 13657,
+          "feed_body_text_chars": 11508,
+          "feed_body_word_count": 1866,
+          "feed_body_sha256": "64cb5505f7085060b5b92a135cbb2553dc77e137e1da6b16c1e210d1a8e8560b",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "Under the hood, off the hot path: How D1 scales to millions of databases",
+          "item_url": "https://blog.cloudflare.com/d1-control-plane/",
+          "published_at_utc": "2026-10-13T16:20:18Z",
+          "published_raw": "Tue, 13 Oct 2026 16:20:18 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 34732,
+          "feed_body_text_chars": 29744,
+          "feed_body_word_count": 4815,
+          "feed_body_sha256": "f54c83f8b9e9ef8a927d95d6445c7a55b46cbda525e506c80d53cdf59f51162b",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://blog.cloudflare.com/yandex-outage/",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://blog.cloudflare.com/yandex-outage/",
+        "content_type": "text/html",
+        "response_bytes": 290600,
+        "response_sha256": "4cf9dd39d719c3cffbaea058fe3014c1fb224c7ec7cd5fbc1e4ecb466fcd7bbe",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 22608,
+        "page_title": "Yandex outage: data shows that instead of going dark, malicious bots went on the move | Cloudflare Blog",
+        "embedded_substack_audience_values": [],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": true,
+        "feed_end_30_normalized_words_found_on_page": true
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_feed_body_and_public_article_page_observed",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": null,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-14T20:24:19Z",
+      "latest_observed_item_age_days": 0.19,
+      "new_item_observed_in_previous_7_days": true
+    },
+    {
+      "id": "blog-github",
+      "family": "blogs",
+      "name": "GitHub Blog",
+      "source_url": "https://github.blog/",
+      "rss_url": "https://github.blog/feed/",
+      "topics": [
+        "software",
+        "engineering",
+        "business operations"
+      ],
+      "notes": [
+        "Official company blog; includes engineering and availability reports."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://github.blog/feed/",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://github.blog/feed/",
+        "content_type": "application/rss+xml; charset=UTF-8",
+        "response_bytes": 2324912,
+        "response_sha256": "5fde622deb06eab4e11e008c599b6df57e6f43c55383268062d46976523e77b0",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 10,
+      "recent_feed_items": [
+        {
+          "title": "GitHub availability report: September 2026",
+          "item_url": "https://github.blog/news-insights/company-news/github-availability-report-september-2026/",
+          "published_at_utc": "2026-10-14T20:01:35Z",
+          "published_raw": "Wed, 14 Oct 2026 20:01:35 +0000",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 14029,
+          "feed_body_text_chars": 8388,
+          "feed_body_word_count": 1261,
+          "feed_body_sha256": "5eee44dec40e6251920995649e02b681401b22a267941de633100ee008fe161a",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "From 2,500 requests to 24: Rebuilding star history without the stargazers",
+          "item_url": "https://github.blog/engineering/architecture-optimization/from-2500-requests-to-24-rebuilding-star-history-without-the-stargazers/",
+          "published_at_utc": "2026-10-14T19:11:33Z",
+          "published_raw": "Wed, 14 Oct 2026 19:11:33 +0000",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 318351,
+          "feed_body_text_chars": 10317,
+          "feed_body_word_count": 1665,
+          "feed_body_sha256": "e86eb8b1ef2f9243054d641aec702ca484eb388e2b15866343dabc94a63d4594",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "GitHub’s model for secret detection: Finding more secrets with less noise",
+          "item_url": "https://github.blog/ai-and-ml/githubs-model-for-secret-detection-finding-more-secrets-with-less-noise/",
+          "published_at_utc": "2026-10-13T17:56:33Z",
+          "published_raw": "Tue, 13 Oct 2026 17:56:33 +0000",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 821352,
+          "feed_body_text_chars": 12367,
+          "feed_body_word_count": 1815,
+          "feed_body_sha256": "81bc3545e37419ff83a429905067e7f135cece1f774145d4d8d306b344e92ca8",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://github.blog/news-insights/company-news/github-availability-report-september-2026/",
+        "observed_at_utc": "2026-10-15T00:57:32Z",
+        "http_status": 200,
+        "final_url": "https://github.blog/news-insights/company-news/github-availability-report-september-2026/",
+        "content_type": "text/html; charset=UTF-8",
+        "response_bytes": 220836,
+        "response_sha256": "ac471c54bf12b9e60a495c948a78851a46bcc59e71fb3aed05f9cf68f5b36beb",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 19592,
+        "page_title": "GitHub availability report: September 2026 - The GitHub Blog",
+        "embedded_substack_audience_values": [],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": true,
+        "feed_end_30_normalized_words_found_on_page": false
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_feed_body_and_public_article_page_observed",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": null,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-14T20:01:35Z",
+      "latest_observed_item_age_days": 0.206,
+      "new_item_observed_in_previous_7_days": true
+    },
+    {
+      "id": "blog-seth-godin",
+      "family": "blogs",
+      "name": "Seth's Blog",
+      "source_url": "https://seths.blog/",
+      "rss_url": "https://seths.blog/feed/",
+      "topics": [
+        "marketing",
+        "leadership",
+        "business"
+      ],
+      "notes": [
+        "Short complete essays are meaningful source content; do not reject solely for low word count."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://seths.blog/feed/",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://seths.blog/feed/",
+        "content_type": "application/rss+xml; charset=UTF-8",
+        "response_bytes": 38933,
+        "response_sha256": "fb473d37e4ec13c4debb4dcd96ae6ac10e257238c4eb30c6064d173fe26d1cf4",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 10,
+      "recent_feed_items": [
+        {
+          "title": "Things people don’t say",
+          "item_url": "https://seths.blog/2026/10/things-people-dont-say/",
+          "published_at_utc": "2026-10-14T09:03:00Z",
+          "published_raw": "Wed, 14 Oct 2026 09:03:00 +0000",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 1336,
+          "feed_body_text_chars": 792,
+          "feed_body_word_count": 135,
+          "feed_body_sha256": "19ade6733f033e29fd5852e530ba54879839141a283f8c5f8b26de13240cddeb",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "The unreliable witness",
+          "item_url": "https://seths.blog/2026/10/the-unreliable-witness/",
+          "published_at_utc": "2026-10-13T09:03:00Z",
+          "published_raw": "Tue, 13 Oct 2026 09:03:00 +0000",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 454,
+          "feed_body_text_chars": 301,
+          "feed_body_word_count": 55,
+          "feed_body_sha256": "e3d64d59f7b0820065108736d103987945d8d6417126a2f096715c82951305a1",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "The best in the world is a local problem",
+          "item_url": "https://seths.blog/2026/10/the-best-in-the-world-is-a-local-problem/",
+          "published_at_utc": "2026-10-12T09:03:00Z",
+          "published_raw": "Mon, 12 Oct 2026 09:03:00 +0000",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 3324,
+          "feed_body_text_chars": 994,
+          "feed_body_word_count": 175,
+          "feed_body_sha256": "a4c15054fe6af66cd04bbb41f3d50a3a2a6ebe919c5a9797dfb092c107a03df9",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://seths.blog/2026/10/things-people-dont-say/",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://seths.blog/2026/10/things-people-dont-say/",
+        "content_type": "text/html; charset=UTF-8",
+        "response_bytes": 95591,
+        "response_sha256": "e2d3407c7269b3329d097a3961972d3bf71f5c76137ea273cb1f38549a640f70",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 1699,
+        "page_title": "Things people don’t say | Seth's Blog",
+        "embedded_substack_audience_values": [],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": true,
+        "feed_end_30_normalized_words_found_on_page": true
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_feed_body_and_public_article_page_observed",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": null,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-14T09:03:00Z",
+      "latest_observed_item_age_days": 0.663,
+      "new_item_observed_in_previous_7_days": true
+    },
+    {
+      "id": "blog-our-world-in-data",
+      "family": "blogs",
+      "name": "Our World in Data",
+      "source_url": "https://ourworldindata.org/",
+      "rss_url": "https://ourworldindata.org/atom.xml",
+      "topics": [
+        "public research",
+        "environment",
+        "health",
+        "economics"
+      ],
+      "notes": [
+        "Atom feed supplies summaries, so the linked article must be fetched for substantive content.",
+        "Charts and interactive graphics require separate treatment; plain text is not complete visual analysis."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://ourworldindata.org/atom.xml",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://ourworldindata.org/atom.xml",
+        "content_type": "application/xml",
+        "response_bytes": 9647,
+        "response_sha256": "0228642d2db0c02dc328e3feb56917637109e01d9693291498f8353d15ce829c",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 10,
+      "recent_feed_items": [
+        {
+          "title": "A 73% average decline in wildlife populations: an overview of the 2026 Living Planet Index report",
+          "item_url": "https://ourworldindata.org/2026-lpi-update",
+          "published_at_utc": "2026-10-08T00:00:00Z",
+          "published_raw": "2026-10-08T00:00:00.000Z",
+          "feed_body_field": "summary",
+          "feed_body_html_chars": 276,
+          "feed_body_text_chars": 83,
+          "feed_body_word_count": 15,
+          "feed_body_sha256": "f35fb5e21910b813c40f36aa58cfe6498e59800f05f15e2c98b2ce4751c0c3aa",
+          "feed_content_classification": "metadata_or_summary_only",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "What impact will climate change have on malaria?",
+          "item_url": "https://ourworldindata.org/what-impact-will-climate-change-have-on-malaria",
+          "published_at_utc": "2026-10-05T00:00:00Z",
+          "published_raw": "2026-10-05T00:00:00.000Z",
+          "feed_body_field": "summary",
+          "feed_body_html_chars": 315,
+          "feed_body_text_chars": 90,
+          "feed_body_word_count": 15,
+          "feed_body_sha256": "7a0252f4a33cd6eb48f9811c01a8c24184d0209731603cfd0e9d926d3aaf6fb6",
+          "feed_content_classification": "metadata_or_summary_only",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "How high is current immigration to the United States in historical perspective?",
+          "item_url": "https://ourworldindata.org/how-high-is-current-immigration-to-the-united-states-in-historical-perspective",
+          "published_at_utc": "2026-09-21T00:00:00Z",
+          "published_raw": "2026-09-21T00:00:00.000Z",
+          "feed_body_field": "summary",
+          "feed_body_html_chars": 383,
+          "feed_body_text_chars": 127,
+          "feed_body_word_count": 21,
+          "feed_body_sha256": "bee8c8b50aaf0b297b926a7489d96cc9e049529b96a46dbf5ce3afdf9c0091d5",
+          "feed_content_classification": "metadata_or_summary_only",
+          "possible_excerpt_marker": false
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://ourworldindata.org/2026-lpi-update",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://ourworldindata.org/2026-lpi-update",
+        "content_type": "text/html; charset=utf-8",
+        "response_bytes": 78158,
+        "response_sha256": "7708706c16816514e3e58e73abe2f97e60f19917405f75f9a3b33714cb709110",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 9859,
+        "page_title": "A 73% average decline in wildlife populations: an overview of the 2026 Living Planet Index report | Our World in Data",
+        "embedded_substack_audience_values": [],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": false,
+        "feed_end_30_normalized_words_found_on_page": false
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_article_page_text_observed_feed_is_summary_only",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": null,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-08T00:00:00Z",
+      "latest_observed_item_age_days": 7.04,
+      "new_item_observed_in_previous_7_days": false
+    },
+    {
+      "id": "blog-buffer",
+      "family": "blogs",
+      "name": "Buffer Resources",
+      "source_url": "https://buffer.com/resources/",
+      "rss_url": "https://buffer.com/resources/rss/",
+      "topics": [
+        "marketing",
+        "social media",
+        "creator business"
+      ],
+      "notes": [
+        "Recent feed items include updates of evergreen articles; preserve publication and update dates separately when available.",
+        "Embedded audio/video examples are not transcribed by fetching article text."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://buffer.com/resources/rss/",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://buffer.com/resources/rss/",
+        "content_type": "text/xml",
+        "response_bytes": 583543,
+        "response_sha256": "1a990faaccf4bbff12f7ea50329960547a3c2d64f42bb86a3d98a382deccbfd5",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 15,
+      "recent_feed_items": [
+        {
+          "title": "13 Trending Sounds on Instagram in October 2026 (+ How to Use Them)",
+          "item_url": "https://buffer.com/resources/trending-audio-instagram/",
+          "published_at_utc": "2026-10-14T07:00:00Z",
+          "published_raw": "Wed, 14 Oct 2026 07:00:00 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 103797,
+          "feed_body_text_chars": 8082,
+          "feed_body_word_count": 1423,
+          "feed_body_sha256": "8b9c6a252952691197ff9b27841dfa8d8ab57f2aae4937d30d04821e3b32b778",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "The Ideal Facebook Cover Photo Size in 2026 (+ 11 Ideas To Make Yours Stand Out)",
+          "item_url": "https://buffer.com/resources/facebook-cover-photo-size/",
+          "published_at_utc": "2026-10-12T11:00:00Z",
+          "published_raw": "Mon, 12 Oct 2026 11:00:00 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 32657,
+          "feed_body_text_chars": 14442,
+          "feed_body_word_count": 2579,
+          "feed_body_sha256": "7627778e5896a6fe729a8917a84fb5cce6e496976163a93ab179f7ccfed8cf04",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "The 9 Best AI Image Generators for Social Media in 2026 (+ Examples)",
+          "item_url": "https://buffer.com/resources/ai-image-generator/",
+          "published_at_utc": "2026-10-08T05:00:00Z",
+          "published_raw": "Thu, 08 Oct 2026 05:00:00 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 59189,
+          "feed_body_text_chars": 27287,
+          "feed_body_word_count": 4448,
+          "feed_body_sha256": "0a774cc68d9241bce5a49f761e5c1fab3a3b2dcb964f50ddc46a1e6c9ffe4c4d",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://buffer.com/resources/trending-audio-instagram/",
+        "observed_at_utc": "2026-10-15T00:57:32Z",
+        "http_status": 200,
+        "final_url": "https://buffer.com/resources/trending-audio-instagram/",
+        "content_type": "text/html; charset=utf-8",
+        "response_bytes": 592302,
+        "response_sha256": "bb9d7233a46dd57ad136459550d26399e19fb39007234c2d32b9cadd2ba3b035",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 14451,
+        "page_title": "13 Trending Sounds on Instagram in October 2026 (+ How to Use Them)",
+        "embedded_substack_audience_values": [],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": true,
+        "feed_end_30_normalized_words_found_on_page": true
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_feed_body_and_public_article_page_observed",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": null,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-14T07:00:00Z",
+      "latest_observed_item_age_days": 0.748,
+      "new_item_observed_in_previous_7_days": true
+    },
+    {
+      "id": "newsletter-one-useful-thing",
+      "family": "substack_newsletters",
+      "name": "One Useful Thing",
+      "source_url": "https://www.oneusefulthing.org/",
+      "rss_url": "https://www.oneusefulthing.org/feed",
+      "topics": [
+        "AI",
+        "work",
+        "education"
+      ],
+      "notes": [
+        "Latest observed issue is older than seven days; useful quiet-source control rather than a promised daily publisher."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://www.oneusefulthing.org/feed",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.oneusefulthing.org/feed",
+        "content_type": "application/xml; charset=utf-8",
+        "response_bytes": 907151,
+        "response_sha256": "6eeb5ed32d2852c1d8cbf7839d464de2713f4293cf895cdf1e85277e64c020f4",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 20,
+      "recent_feed_items": [
+        {
+          "title": "The Dot and the Swarm",
+          "item_url": "https://www.oneusefulthing.org/p/the-dot-and-the-swarm",
+          "published_at_utc": "2026-10-01T10:54:12Z",
+          "published_raw": "Thu, 01 Oct 2026 10:54:12 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 27472,
+          "feed_body_text_chars": 10753,
+          "feed_body_word_count": 1865,
+          "feed_body_sha256": "d1ec8f9be5b9a52f1e886d130de26dced0845cfe856016cb9fc13d4157bcca06",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "The Overhang",
+          "item_url": "https://www.oneusefulthing.org/p/the-overhang",
+          "published_at_utc": "2026-09-18T17:54:32Z",
+          "published_raw": "Fri, 18 Sep 2026 17:54:32 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 36013,
+          "feed_body_text_chars": 11400,
+          "feed_body_word_count": 2103,
+          "feed_body_sha256": "48da812e383a2e4abe18a37376ad83a1db18876f6381495d2481df096a005a88",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "Agency and Agents",
+          "item_url": "https://www.oneusefulthing.org/p/agency-and-agents",
+          "published_at_utc": "2026-08-31T00:24:35Z",
+          "published_raw": "Mon, 31 Aug 2026 00:24:35 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 43023,
+          "feed_body_text_chars": 13838,
+          "feed_body_word_count": 2363,
+          "feed_body_sha256": "011f595eae92a16c24f6900cbbe32f3d364ad74a73aa52c9cebf2e9556bfb701",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://www.oneusefulthing.org/p/the-dot-and-the-swarm",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.oneusefulthing.org/p/the-dot-and-the-swarm",
+        "content_type": "text/html; charset=utf-8",
+        "response_bytes": 218555,
+        "response_sha256": "760cb93b7fab6c43173248180146dfe98336fe87f35e2b899abb762ccabf1b49",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 11530,
+        "page_title": "The Dot and the Swarm - by Ethan Mollick - One Useful Thing",
+        "embedded_substack_audience_values": [
+          "everyone"
+        ],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": true,
+        "feed_end_30_normalized_words_found_on_page": false
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_feed_body_and_public_article_page_observed",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": true,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-01T10:54:12Z",
+      "latest_observed_item_age_days": 13.586,
+      "new_item_observed_in_previous_7_days": false
+    },
+    {
+      "id": "newsletter-noahpinion",
+      "family": "substack_newsletters",
+      "name": "Noahpinion",
+      "source_url": "https://www.noahpinion.blog/",
+      "rss_url": "https://www.noahpinion.blog/feed",
+      "topics": [
+        "economics",
+        "policy",
+        "business"
+      ],
+      "notes": [
+        "Public sample does not establish access to other paid or subscriber-only issues."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://www.noahpinion.blog/feed",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.noahpinion.blog/feed",
+        "content_type": "application/xml; charset=utf-8",
+        "response_bytes": 1573723,
+        "response_sha256": "32e389bf4b30198993d94b9e4487ca253fca7b68b3d7b378d9d33fba6bf6ef7a",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 20,
+      "recent_feed_items": [
+        {
+          "title": "A Nobel for New Keynesian macro, at last!",
+          "item_url": "https://www.noahpinion.blog/p/a-nobel-for-new-keynesian-macro-at",
+          "published_at_utc": "2026-10-13T05:28:43Z",
+          "published_raw": "Tue, 13 Oct 2026 05:28:43 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 41169,
+          "feed_body_text_chars": 18350,
+          "feed_body_word_count": 3118,
+          "feed_body_sha256": "da878e766e591e66e2ff36ceaa23b3f12d0a68d49b23a46ea7a3208b6dc53d23",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "Why Donald Trump won in 2024",
+          "item_url": "https://www.noahpinion.blog/p/why-donald-trump-won-in-2024",
+          "published_at_utc": "2026-10-11T07:31:44Z",
+          "published_raw": "Sun, 11 Oct 2026 07:31:44 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 332678,
+          "feed_body_text_chars": 82967,
+          "feed_body_word_count": 13663,
+          "feed_body_sha256": "f92e6f38232af093f752b8fd0413e21a5507450422acc0acad2ccef88fffc03c",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "Maybe the Rapture is already here",
+          "item_url": "https://www.noahpinion.blog/p/maybe-the-rapture-is-already-here",
+          "published_at_utc": "2026-10-09T09:18:32Z",
+          "published_raw": "Fri, 09 Oct 2026 09:18:32 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 37436,
+          "feed_body_text_chars": 9292,
+          "feed_body_word_count": 1585,
+          "feed_body_sha256": "df49be44b0afa7e30d32ed4dc7edeabb581ee49bcf6b23c6556def37d3415b01",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://www.noahpinion.blog/p/a-nobel-for-new-keynesian-macro-at",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.noahpinion.blog/p/a-nobel-for-new-keynesian-macro-at",
+        "content_type": "text/html; charset=utf-8",
+        "response_bytes": 261703,
+        "response_sha256": "e4cfbc7b187a31c1af14892f5dfde37f18130d2e7924a7aca27487df2d9eeaa3",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 19617,
+        "page_title": "A Nobel for New Keynesian macro, at last! - by Noah Smith",
+        "embedded_substack_audience_values": [
+          "everyone"
+        ],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": true,
+        "feed_end_30_normalized_words_found_on_page": true
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_feed_body_and_public_article_page_observed",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": true,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-13T05:28:43Z",
+      "latest_observed_item_age_days": 1.812,
+      "new_item_observed_in_previous_7_days": true
+    },
+    {
+      "id": "newsletter-experimental-history",
+      "family": "substack_newsletters",
+      "name": "Experimental History",
+      "source_url": "https://www.experimental-history.com/",
+      "rss_url": "https://www.experimental-history.com/feed",
+      "topics": [
+        "psychology",
+        "science",
+        "culture"
+      ],
+      "notes": [
+        "Publication describes an every-other-Tuesday cadence; daily silence is not automatically collection failure.",
+        "Public sample does not establish access to every issue."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://www.experimental-history.com/feed",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.experimental-history.com/feed",
+        "content_type": "application/xml; charset=utf-8",
+        "response_bytes": 998805,
+        "response_sha256": "eb17f7e80b27d30e89e5a5b41f45b7d44e1fa61de9e6045c4f63564f18155d4f",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 20,
+      "recent_feed_items": [
+        {
+          "title": "Claude, don’t touch my lump",
+          "item_url": "https://www.experimental-history.com/p/claude-dont-touch-my-lump",
+          "published_at_utc": "2026-10-13T21:04:46Z",
+          "published_raw": "Tue, 13 Oct 2026 21:04:46 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 67154,
+          "feed_body_text_chars": 18559,
+          "feed_body_word_count": 3277,
+          "feed_body_sha256": "ed7a8b123f70dd90c8755774e3d69dba6a11515376a3cc0806e5530627312a07",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "The Strangest Idea in the World",
+          "item_url": "https://www.experimental-history.com/p/the-strangest-idea-in-the-world",
+          "published_at_utc": "2026-09-29T14:29:26Z",
+          "published_raw": "Tue, 29 Sep 2026 14:29:26 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 19472,
+          "feed_body_text_chars": 4571,
+          "feed_body_word_count": 832,
+          "feed_body_sha256": "f5b8080abb84ec385e9050b839300db01ace9fbc18a13e071033f2fda653c3ba",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "There is no epidemic of loneliness, but there is an epidemic of scurvy",
+          "item_url": "https://www.experimental-history.com/p/there-is-no-epidemic-of-loneliness",
+          "published_at_utc": "2026-09-15T12:54:38Z",
+          "published_raw": "Tue, 15 Sep 2026 12:54:38 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 97482,
+          "feed_body_text_chars": 25521,
+          "feed_body_word_count": 4419,
+          "feed_body_sha256": "30922d47ca8fc1ac164211127777d062dc82c4f7bce06bd1998e4a99cf6c4949",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://www.experimental-history.com/p/claude-dont-touch-my-lump",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.experimental-history.com/p/claude-dont-touch-my-lump",
+        "content_type": "text/html; charset=utf-8",
+        "response_bytes": 312829,
+        "response_sha256": "071cd73acd4f63523e87e89bba4dff58e0da51c0961a2eb2f7ccd9d57685eaff",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 20553,
+        "page_title": "Claude, don’t touch my lump - by Adam Mastroianni",
+        "embedded_substack_audience_values": [
+          "everyone"
+        ],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": true,
+        "feed_end_30_normalized_words_found_on_page": true
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_feed_body_and_public_article_page_observed",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": true,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-13T21:04:46Z",
+      "latest_observed_item_age_days": 1.162,
+      "new_item_observed_in_previous_7_days": true
+    },
+    {
+      "id": "newsletter-honest-broker",
+      "family": "substack_newsletters",
+      "name": "The Honest Broker",
+      "source_url": "https://www.honest-broker.com/",
+      "rss_url": "https://www.honest-broker.com/feed",
+      "topics": [
+        "music",
+        "culture",
+        "creative economy"
+      ],
+      "notes": [
+        "Public sample does not establish access to other paid or subscriber-only issues; a different recent feed item ends with Read more and must be treated as possibly partial."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://www.honest-broker.com/feed",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.honest-broker.com/feed",
+        "content_type": "application/xml; charset=utf-8",
+        "response_bytes": 538039,
+        "response_sha256": "002bec82795354f36233874a38dbcf47dfcfa1faff6f75b4ce77825b1c69e1bc",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 20,
+      "recent_feed_items": [
+        {
+          "title": "Don’t Trust People Who Talk Like This",
+          "item_url": "https://www.honest-broker.com/p/dont-trust-people-who-talk-like-this",
+          "published_at_utc": "2026-10-14T03:17:32Z",
+          "published_raw": "Wed, 14 Oct 2026 03:17:32 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 25480,
+          "feed_body_text_chars": 8261,
+          "feed_body_word_count": 1413,
+          "feed_body_sha256": "e2304f25a8ac7358ecda9ce45db561dc4be1172a8987b19799b25d8c52c71dff",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "People Are Rejecting Screens—and Returning to Communal Events",
+          "item_url": "https://www.honest-broker.com/p/people-are-rejecting-screensand-returning",
+          "published_at_utc": "2026-10-10T18:06:15Z",
+          "published_raw": "Sat, 10 Oct 2026 18:06:15 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 24677,
+          "feed_body_text_chars": 3654,
+          "feed_body_word_count": 634,
+          "feed_body_sha256": "6c0974822704fdc9aa65bbc0ee825361dfa033e4fd65ac30b41ca6f838925c4c",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": true
+        },
+        {
+          "title": "Why Everybody Loves Glen Campbell",
+          "item_url": "https://www.honest-broker.com/p/why-everybody-loves-glen-campbell",
+          "published_at_utc": "2026-10-06T03:12:50Z",
+          "published_raw": "Tue, 06 Oct 2026 03:12:50 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 38876,
+          "feed_body_text_chars": 18427,
+          "feed_body_word_count": 3219,
+          "feed_body_sha256": "857520e20aca2431f16ef8b839c9157e05d747438e4306e7f8743d9a5ffbcc98",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://www.honest-broker.com/p/dont-trust-people-who-talk-like-this",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.honest-broker.com/p/dont-trust-people-who-talk-like-this",
+        "content_type": "text/html; charset=utf-8",
+        "response_bytes": 211741,
+        "response_sha256": "ff6bacc57ada376952a408f64dbb12f883aa84983c40e84f2d4a4b01248530a4",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 8922,
+        "page_title": "Don’t Trust People Who Talk Like This - by Ted Gioia",
+        "embedded_substack_audience_values": [
+          "everyone"
+        ],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": true,
+        "feed_end_30_normalized_words_found_on_page": true
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_feed_body_and_public_article_page_observed",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": true,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-14T03:17:32Z",
+      "latest_observed_item_age_days": 0.903,
+      "new_item_observed_in_previous_7_days": true
+    },
+    {
+      "id": "newsletter-not-boring",
+      "family": "substack_newsletters",
+      "name": "Not Boring",
+      "source_url": "https://www.notboring.co/",
+      "rss_url": "https://www.notboring.co/feed",
+      "topics": [
+        "business",
+        "technology",
+        "investment"
+      ],
+      "notes": [
+        "Public business/technology newsletter; selected sample is AI-related but the ten-source set is not limited to AI.",
+        "Long essays can materially increase token cost; source sponsorship/disclosure language must not be silently discarded."
+      ],
+      "feed_fetch": {
+        "requested_url": "https://www.notboring.co/feed",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.notboring.co/feed",
+        "content_type": "application/xml; charset=utf-8",
+        "response_bytes": 1463425,
+        "response_sha256": "3a38dd668f8b1e5302dd85ea8be37d9bd5d8adfd4449ff2faf57c3a39c004204",
+        "truncated_by_client": false
+      },
+      "feed_item_count": 20,
+      "recent_feed_items": [
+        {
+          "title": "Runway: Learning From Watching the World",
+          "item_url": "https://www.notboring.co/p/runway-learning-from-watching-the",
+          "published_at_utc": "2026-10-13T12:45:27Z",
+          "published_raw": "Tue, 13 Oct 2026 12:45:27 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 118248,
+          "feed_body_text_chars": 61106,
+          "feed_body_word_count": 10536,
+          "feed_body_sha256": "8cf740144102982dd4a87adf76e20f08961501efee05275a37058071631b81c8",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": false
+        },
+        {
+          "title": "Weekly Dose of Optimism #214",
+          "item_url": "https://www.notboring.co/p/weekly-dose-of-optimism-214",
+          "published_at_utc": "2026-10-09T12:48:52Z",
+          "published_raw": "Fri, 09 Oct 2026 12:48:52 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 43862,
+          "feed_body_text_chars": 13038,
+          "feed_body_word_count": 2207,
+          "feed_body_sha256": "a530659e48a557108fd23b67779abef9d2cedab78ac9f634fd7af6e6f15ae1b5",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": true
+        },
+        {
+          "title": "Weekly Dose of Optimism #213",
+          "item_url": "https://www.notboring.co/p/weekly-dose-of-optimism-213",
+          "published_at_utc": "2026-10-02T12:44:11Z",
+          "published_raw": "Fri, 02 Oct 2026 12:44:11 GMT",
+          "feed_body_field": "encoded",
+          "feed_body_html_chars": 22850,
+          "feed_body_text_chars": 9012,
+          "feed_body_word_count": 1556,
+          "feed_body_sha256": "e3b6fcbeced1a38327cd3fc8a58a84e1b30fdbf6878f584416ec9b4b2f9ff62f",
+          "feed_content_classification": "substantive_public_text_observed",
+          "possible_excerpt_marker": true
+        }
+      ],
+      "sample_article_fetch": {
+        "requested_url": "https://www.notboring.co/p/runway-learning-from-watching-the",
+        "observed_at_utc": "2026-10-15T00:57:31Z",
+        "http_status": 200,
+        "final_url": "https://www.notboring.co/p/runway-learning-from-watching-the",
+        "content_type": "text/html; charset=utf-8",
+        "response_bytes": 454554,
+        "response_sha256": "163ab062580bd42a1028438203a52f77adfc8f331f67bf147ff371bb8ea0efc1",
+        "truncated_by_client": false,
+        "visible_page_text_chars_including_navigation": 64498,
+        "page_title": "Runway: Learning From Watching the World",
+        "embedded_substack_audience_values": [
+          "everyone"
+        ],
+        "blocking_paywall_phrase_observed": false,
+        "feed_beginning_30_normalized_words_found_on_page": false,
+        "feed_end_30_normalized_words_found_on_page": true
+      },
+      "sample_result": {
+        "access": "public_http_without_login_or_paid_vendor",
+        "text_vs_metadata": "substantive_feed_body_and_public_article_page_observed",
+        "full_text_claim": "Public textual body observed; visual/media completeness and every issue are not established.",
+        "selected_sample_public_audience_confirmed": true,
+        "seven_day_reliability_pass": false,
+        "comments_collected": false,
+        "audio_transcribed": false
+      },
+      "latest_observed_publication_at_utc": "2026-10-13T12:45:27Z",
+      "latest_observed_item_age_days": 1.508,
+      "new_item_observed_in_previous_7_days": true
+    }
+  ],
+  "rejected_initial_candidate": {
+    "name": "Garbage Day",
+    "source_url": "https://www.garbageday.email/",
+    "feed_probe": {
+      "requested_url": "https://www.garbageday.email/feed",
+      "observed_at_utc": "2026-10-15T00:57:32Z",
+      "http_status": 404,
+      "error": "HTTP Error 404: Not Found"
+    },
+    "reason": "The guessed /feed URL returned HTTP 404. Replaced with The Honest Broker, a directly verified Substack feed. This does not establish that Garbage Day has no other RSS endpoint."
+  }
+}

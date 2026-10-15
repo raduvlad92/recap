@@ -1,0 +1,448 @@
+{
+  "schema_version": "1.0",
+  "checked_at_utc": "2026-10-15T00:58:12.032868Z",
+  "purpose": "Five public podcast candidates for the approved 35-source, seven-day access proof; candidate preflight metadata only.",
+  "verification_scope": [
+    "Unauthenticated ordinary HTTP GET of five public RSS feeds and matching official publisher pages.",
+    "Retrieve publisher text transcript when available; save only metadata, hash and URL here.",
+    "HEAD check of sample audio enclosures; no audio bytes downloaded, no ASR, no paid API calls, no signup and no outreach."
+  ],
+  "cash_incurred_eur": 0,
+  "generated_audio_minutes_incurred": 0,
+  "global_proof_limits": {
+    "cash_eur": 50,
+    "generated_audio_minutes": 150,
+    "applies_across_all_source_families_and_tools": true
+  },
+  "candidates": [
+    {
+      "id": "podcast-acquired",
+      "source_family": "podcasts",
+      "show_name": "Acquired",
+      "categories": [
+        "business",
+        "company history"
+      ],
+      "official_url": "https://www.acquired.fm/",
+      "feed_url": "https://feeds.transistor.fm/acquired",
+      "source_check_utc": "2026-10-15T00:58:07.914113Z",
+      "feed_check": {
+        "checked_at_utc": "2026-10-15T00:58:07.914113Z",
+        "method": "GET",
+        "http_status": 200,
+        "final_url": "https://feeds.transistor.fm/acquired",
+        "content_type": "text/xml; charset=utf-8",
+        "response_bytes": 2299619,
+        "sha256": "4f9dbb81c1d4bd35bdfdb464245a7f7fa912b103e6b9c8dc3ac34165310f9aa2",
+        "body_saved": false
+      },
+      "feed_title": "Acquired",
+      "feed_item_count": 217,
+      "current_activity": {
+        "latest_published_at_utc": "2026-09-14T03:35:03Z",
+        "days_since_latest_at_check": 30.89,
+        "first_three_item_dates": [
+          "Sun, 13 Sep 2026 20:35:03 -0700",
+          "Sun, 09 Aug 2026 21:41:43 -0700",
+          "Sun, 21 Jun 2026 22:54:28 -0700"
+        ]
+      },
+      "sample_episode": {
+        "title": "The Home Depot",
+        "guid": "68b66323-6e74-4c90-8157-ef3f1ed0d042",
+        "published_at_utc": "2026-09-14T03:35:03Z",
+        "duration_seconds": 12902,
+        "feed_item_link": "https://www.acquired.fm/episodes/home-depot",
+        "checked_publisher_page_url": "https://www.acquired.fm/episodes/home-depot",
+        "publisher_page_is_unique_episode": true,
+        "publisher_page_check": {
+          "checked_at_utc": "2026-10-15T00:58:08.262232Z",
+          "method": "GET",
+          "http_status": 200,
+          "final_url": "https://www.acquired.fm/episodes/home-depot",
+          "content_type": "text/html; charset=utf-8",
+          "response_bytes": 525876,
+          "sha256": "45975279c4c7fe64b93768ecf27f6cd2b84702e61f00af47b3b3060796048ce7",
+          "body_saved": false
+        },
+        "rss_description_is_full_transcript": false,
+        "audio": {
+          "feed_enclosure_url": "https://pscrb.fm/rss/p/media.transistor.fm/8ecb4ed4/568b6b7a.mp3",
+          "feed_mime_type": "audio/mpeg",
+          "head_http_status": 200,
+          "audio_bytes_downloaded": 0,
+          "body_get_verified": false,
+          "head_checked_at_utc": "2026-10-15T00:58:10.417805Z",
+          "head_content_type": "audio/mpeg",
+          "head_content_length": "206437320",
+          "redirect_final_host": "audio.transistor.fm",
+          "head_only_limitation": "HEAD 200 demonstrates an exposed audio endpoint, not a successful full audio download or transcription."
+        },
+        "publisher_transcript": {
+          "status": "publisher_feed_transcript_verified",
+          "publisher_transcript_url": "https://share.transistor.fm/s/8ecb4ed4/transcript.txt",
+          "rss_transcript_entries": [
+            {
+              "url": "https://share.transistor.fm/s/8ecb4ed4/transcript.txt",
+              "type": "text/plain"
+            },
+            {
+              "url": "https://share.transistor.fm/s/8ecb4ed4/transcript.vtt",
+              "type": "text/vtt",
+              "rel": "captions"
+            }
+          ],
+          "publisher_transcript_verified": true,
+          "generated_transcription_run": false,
+          "no_transcript_observed_is_not_universal_absence": false,
+          "http_check": {
+            "checked_at_utc": "2026-10-15T00:58:08.566584Z",
+            "method": "GET",
+            "http_status": 200,
+            "final_url": "https://share.transistor.fm/s/8ecb4ed4/transcript.txt",
+            "content_type": "text/plain; charset=utf-8",
+            "response_bytes": 206650,
+            "sha256": "b65b5d6e0ba7d0e9860d4d9b837b39eca39d2331e5eeaeeb116b7bcd286152c2",
+            "body_saved": false
+          },
+          "verification_basis": "Latest RSS item supplies podcast:transcript links; its text/plain transcript was retrieved with HTTP 200."
+        }
+      },
+      "preferred_bounded_asr_sample": false,
+      "notes": [
+        "Irregular/monthly publishing; a seven-day period may legitimately contain no new episode.",
+        "Latest episode is about 215 minutes: use its publisher transcript; do not send this complete episode for generated transcription under the global 150-minute proof cap."
+      ]
+    },
+    {
+      "id": "podcast-freakonomics-radio",
+      "source_family": "podcasts",
+      "show_name": "Freakonomics Radio",
+      "categories": [
+        "business",
+        "economics",
+        "society"
+      ],
+      "official_url": "https://freakonomics.com/",
+      "feed_url": "https://feeds.simplecast.com/Y8lFbOT4",
+      "source_check_utc": "2026-10-15T00:58:08.258424Z",
+      "feed_check": {
+        "checked_at_utc": "2026-10-15T00:58:08.258424Z",
+        "method": "GET",
+        "http_status": 200,
+        "final_url": "https://feeds.simplecast.com/Y8lFbOT4",
+        "content_type": "application/xml",
+        "response_bytes": 3561026,
+        "sha256": "b000a7d7ed2d793dd1e779cf0d443dbcd930a25135eefe1e701f53ac187e9567",
+        "body_saved": false
+      },
+      "feed_title": "Freakonomics Radio",
+      "feed_item_count": 941,
+      "current_activity": {
+        "latest_published_at_utc": "2026-10-09T10:00:00Z",
+        "days_since_latest_at_check": 5.62,
+        "first_three_item_dates": [
+          "Fri, 9 Oct 2026 10:00:00 +0000",
+          "Fri, 2 Oct 2026 10:00:00 +0000",
+          "Fri, 25 Sep 2026 10:00:00 +0000"
+        ]
+      },
+      "sample_episode": {
+        "title": "690. It’s Show Business, Baby!",
+        "guid": "61e9d902-83d9-4d66-b667-42a509974f1d",
+        "published_at_utc": "2026-10-09T10:00:00Z",
+        "duration_seconds": 3710,
+        "feed_item_link": "https://freakonomics.com",
+        "checked_publisher_page_url": "https://freakonomics.com/podcast/its-show-business-baby/",
+        "publisher_page_is_unique_episode": true,
+        "publisher_page_check": {
+          "checked_at_utc": "2026-10-15T00:58:08.945965Z",
+          "method": "GET",
+          "http_status": 200,
+          "final_url": "https://freakonomics.com/podcast/its-show-business-baby/",
+          "content_type": "text/html; charset=UTF-8",
+          "response_bytes": 114635,
+          "sha256": "28d75a5ba409bd84a6fc941fd1a265f4d2763b480a7487e55dc05efd09f2bde8",
+          "body_saved": false
+        },
+        "rss_description_is_full_transcript": false,
+        "audio": {
+          "feed_enclosure_url": "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/d8917a50-ae6e-4ee7-8587-fee9ad02456e/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=d8917a50-ae6e-4ee7-8587-fee9ad02456e&feed=Y8lFbOT4",
+          "feed_mime_type": "audio/mpeg",
+          "head_http_status": 200,
+          "audio_bytes_downloaded": 0,
+          "body_get_verified": false,
+          "head_checked_at_utc": "2026-10-15T00:58:10.339260Z",
+          "head_content_type": "audio/mpeg",
+          "head_content_length": "59373014",
+          "redirect_final_host": "stitcher.simplecastaudio.com",
+          "head_only_limitation": "HEAD 200 demonstrates an exposed audio endpoint, not a successful full audio download or transcription."
+        },
+        "publisher_transcript": {
+          "status": "publisher_episode_page_transcript_verified",
+          "publisher_transcript_url": "https://freakonomics.com/podcast/its-show-business-baby/",
+          "rss_transcript_entries": [],
+          "publisher_transcript_verified": true,
+          "generated_transcription_run": false,
+          "no_transcript_observed_is_not_universal_absence": false,
+          "http_check": {
+            "checked_at_utc": "2026-10-15T00:58:08.945965Z",
+            "method": "GET",
+            "http_status": 200,
+            "final_url": "https://freakonomics.com/podcast/its-show-business-baby/",
+            "content_type": "text/html; charset=UTF-8",
+            "response_bytes": 114635,
+            "sha256": "28d75a5ba409bd84a6fc941fd1a265f4d2763b480a7487e55dc05efd09f2bde8",
+            "body_saved": false
+          },
+          "verification_basis": "Latest matching official episode page contains an Episode Transcript section; full publisher transcript is accessible in ordinary HTTP HTML."
+        }
+      },
+      "preferred_bounded_asr_sample": false,
+      "notes": [
+        "Public ad-supported feed only; private Plus feeds are excluded.",
+        "Feed item link is the show homepage, so resolve episode pages carefully rather than treating that generic link as an episode citation.",
+        "Publisher transcript policy: https://freakonomics.com/about/faq/"
+      ]
+    },
+    {
+      "id": "podcast-99-percent-invisible",
+      "source_family": "podcasts",
+      "show_name": "99% Invisible",
+      "categories": [
+        "general interest",
+        "design",
+        "culture"
+      ],
+      "official_url": "https://99percentinvisible.org/",
+      "feed_url": "https://feeds.simplecast.com/BqbsxVfO",
+      "source_check_utc": "2026-10-15T00:58:08.311145Z",
+      "feed_check": {
+        "checked_at_utc": "2026-10-15T00:58:08.311145Z",
+        "method": "GET",
+        "http_status": 200,
+        "final_url": "https://feeds.simplecast.com/BqbsxVfO",
+        "content_type": "application/xml",
+        "response_bytes": 3507333,
+        "sha256": "03921cef843c98004a6c7797c579211e904186cf1bc00f786c69ab4df3cfa53b",
+        "body_saved": false
+      },
+      "feed_title": "99% Invisible",
+      "feed_item_count": 833,
+      "current_activity": {
+        "latest_published_at_utc": "2026-10-13T08:00:00Z",
+        "days_since_latest_at_check": 1.71,
+        "first_three_item_dates": [
+          "Tue, 13 Oct 2026 08:00:00 +0000",
+          "Tue, 6 Oct 2026 08:00:00 +0000",
+          "Fri, 2 Oct 2026 07:00:00 +0000"
+        ]
+      },
+      "sample_episode": {
+        "title": "The Problem With Football Helmets",
+        "guid": "365da1ae-e35e-4665-98ba-d705f0b4dce2",
+        "published_at_utc": "2026-10-13T08:00:00Z",
+        "duration_seconds": 2599,
+        "feed_item_link": "https://99percentinvisible.org/?p=48197",
+        "checked_publisher_page_url": "https://99percentinvisible.org/episode/687-the-problem-with-football-helmets/",
+        "publisher_page_is_unique_episode": true,
+        "publisher_page_check": {
+          "checked_at_utc": "2026-10-15T00:58:08.612307Z",
+          "method": "GET",
+          "http_status": 200,
+          "final_url": "https://99percentinvisible.org/episode/687-the-problem-with-football-helmets/",
+          "content_type": "text/html; charset=utf-8",
+          "response_bytes": 135711,
+          "sha256": "be7131b9fd957de720a799048abdf2d734048898c398021fe63ee7b8d2b50b28",
+          "body_saved": false
+        },
+        "rss_description_is_full_transcript": false,
+        "audio": {
+          "feed_enclosure_url": "https://mgln.ai/e/2/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/3bb687b0-04af-4257-90f1-39eef4e631b6/episodes/7c400d37-2342-4e66-a3f0-a345d68d5a26/audio/128/default.mp3?aid=rss_feed&awCollectionId=3bb687b0-04af-4257-90f1-39eef4e631b6&awEpisodeId=7c400d37-2342-4e66-a3f0-a345d68d5a26&feed=BqbsxVfO",
+          "feed_mime_type": "audio/mpeg",
+          "head_http_status": 200,
+          "audio_bytes_downloaded": 0,
+          "body_get_verified": false,
+          "head_checked_at_utc": "2026-10-15T00:58:09.887581Z",
+          "head_content_type": "audio/mpeg",
+          "head_content_length": "41925107",
+          "redirect_final_host": "stitcher.simplecastaudio.com",
+          "head_only_limitation": "HEAD 200 demonstrates an exposed audio endpoint, not a successful full audio download or transcription."
+        },
+        "publisher_transcript": {
+          "status": "not_observed_for_latest_sample",
+          "publisher_transcript_url": null,
+          "rss_transcript_entries": [],
+          "publisher_transcript_verified": false,
+          "generated_transcription_run": false,
+          "no_transcript_observed_is_not_universal_absence": true,
+          "verification_basis": "No podcast:transcript tag in checked latest feed item, and no matching publisher transcript link identified on the checked sample page."
+        }
+      },
+      "preferred_bounded_asr_sample": false,
+      "notes": [
+        "The publisher has transcript pages for some episodes, but related older-episode transcript links do not prove availability for the checked episode.",
+        "A direct guessed latest-episode /transcript/ URL timed out; do not report that as a confirmed absence or as verified transcript access."
+      ]
+    },
+    {
+      "id": "podcast-vergecast",
+      "source_family": "podcasts",
+      "show_name": "The Vergecast",
+      "categories": [
+        "technology",
+        "consumer products"
+      ],
+      "official_url": "https://www.theverge.com/the-vergecast",
+      "feed_url": "https://feeds.megaphone.fm/vergecast",
+      "source_check_utc": "2026-10-15T00:58:08.466910Z",
+      "feed_check": {
+        "checked_at_utc": "2026-10-15T00:58:08.466910Z",
+        "method": "GET",
+        "http_status": 200,
+        "final_url": "https://feeds.megaphone.fm/vergecast",
+        "content_type": "application/xml; charset=utf-8",
+        "response_bytes": 6243976,
+        "sha256": "ad8717d4487b3265a21ddb6f5bc13af6f96bce29ef5e22a44d681bc4333af1c5",
+        "body_saved": false
+      },
+      "feed_title": "The Vergecast",
+      "feed_item_count": 1094,
+      "current_activity": {
+        "latest_published_at_utc": "2026-10-14T16:29:00Z",
+        "days_since_latest_at_check": 0.35,
+        "first_three_item_dates": [
+          "Wed, 14 Oct 2026 18:29:00 -0000",
+          "Tue, 13 Oct 2026 20:50:00 -0000",
+          "Fri, 09 Oct 2026 13:38:00 -0000"
+        ]
+      },
+      "sample_episode": {
+        "title": "The $8 million AI music scam",
+        "guid": "4a5106e0-6e7b-11f1-94bf-1fb71a6a68f7",
+        "published_at_utc": "2026-10-14T16:29:00Z",
+        "duration_seconds": 2280,
+        "feed_item_link": null,
+        "checked_publisher_page_url": "https://www.theverge.com/the-vergecast",
+        "publisher_page_is_unique_episode": false,
+        "publisher_page_check": {
+          "checked_at_utc": "2026-10-15T00:58:08.774519Z",
+          "method": "GET",
+          "http_status": 200,
+          "final_url": "https://www.theverge.com/the-vergecast",
+          "content_type": "text/html; charset=utf-8",
+          "response_bytes": 559428,
+          "sha256": "f76c7d1cb27e1526743798058b5fb72d6ea026acd877cd9b8a81c1491fce432b",
+          "body_saved": false
+        },
+        "rss_description_is_full_transcript": false,
+        "audio": {
+          "feed_enclosure_url": "https://www.podtrac.com/pts/redirect.mp3/pdst.fm/e/pscrb.fm/rss/p/mgln.ai/e/257/traffic.megaphone.fm/VMP9251832124.mp3",
+          "feed_mime_type": "audio/mpeg",
+          "head_http_status": 200,
+          "audio_bytes_downloaded": 0,
+          "body_get_verified": false,
+          "head_checked_at_utc": "2026-10-15T00:58:12.022568Z",
+          "head_content_type": "audio/mpeg",
+          "head_content_length": "61642223",
+          "redirect_final_host": "dcs-cached.megaphone.fm",
+          "head_only_limitation": "HEAD 200 demonstrates an exposed audio endpoint, not a successful full audio download or transcription."
+        },
+        "publisher_transcript": {
+          "status": "not_observed_in_feed_or_checked_show_page",
+          "publisher_transcript_url": null,
+          "rss_transcript_entries": [],
+          "publisher_transcript_verified": false,
+          "generated_transcription_run": false,
+          "no_transcript_observed_is_not_universal_absence": true,
+          "verification_basis": "No podcast:transcript tag in checked latest feed item, and no matching publisher transcript link identified on the checked sample page."
+        }
+      },
+      "preferred_bounded_asr_sample": false,
+      "notes": [
+        "Latest feed item has no item link; retain GUID as stable identifier and enclosure URL as the episode audio reference.",
+        "Official show page is not a unique episode page. No publisher transcript was found in the latest sample; availability may differ across episodes.",
+        "Public ad-supported feed only; subscriber/ad-free feeds are excluded."
+      ]
+    },
+    {
+      "id": "podcast-bbc-global-news",
+      "source_family": "podcasts",
+      "show_name": "Global News Podcast",
+      "categories": [
+        "general news",
+        "world affairs"
+      ],
+      "official_url": "https://www.bbc.co.uk/programmes/p02nq0gn",
+      "feed_url": "https://podcasts.files.bbci.co.uk/p02nq0gn.rss",
+      "source_check_utc": "2026-10-15T00:58:08.298280Z",
+      "feed_check": {
+        "checked_at_utc": "2026-10-15T00:58:08.298280Z",
+        "method": "GET",
+        "http_status": 200,
+        "final_url": "https://podcasts.files.bbci.co.uk/p02nq0gn.rss",
+        "content_type": "application/rss+xml",
+        "response_bytes": 1128805,
+        "sha256": "8f74b642ff5807e9066b95dc4a42d27908171292c30275268f927c2f3d59cb9b",
+        "body_saved": false
+      },
+      "feed_title": "Global News Podcast",
+      "feed_item_count": 283,
+      "current_activity": {
+        "latest_published_at_utc": "2026-10-14T14:53:00Z",
+        "days_since_latest_at_check": 0.42,
+        "first_three_item_dates": [
+          "Wed, 14 Oct 2026 14:53:00 +0000",
+          "Wed, 14 Oct 2026 04:46:00 +0000",
+          "Tue, 13 Oct 2026 14:44:00 +0000"
+        ]
+      },
+      "sample_episode": {
+        "title": "Russian attacks leave 600,000 Ukrainians without power",
+        "guid": "urn:bbc:podcast:p0pgn12v",
+        "published_at_utc": "2026-10-14T14:53:00Z",
+        "duration_seconds": 1739,
+        "feed_item_link": "http://www.bbc.co.uk/programmes/p0pgn12v",
+        "checked_publisher_page_url": "https://www.bbc.co.uk/programmes/p0pgn12v",
+        "publisher_page_is_unique_episode": true,
+        "publisher_page_check": {
+          "checked_at_utc": "2026-10-15T00:58:08.571483Z",
+          "method": "GET",
+          "http_status": 200,
+          "final_url": "https://www.bbc.co.uk/programmes/p0pgn12v",
+          "content_type": "text/html; charset=UTF-8",
+          "response_bytes": 137891,
+          "sha256": "6b59e30d1a494a70ff45d76e1602dd66ea47493692c45a7b1a62869e0dd8b45e",
+          "body_saved": false
+        },
+        "rss_description_is_full_transcript": false,
+        "audio": {
+          "feed_enclosure_url": "http://open.live.bbc.co.uk/mediaselector/6/redir/version/2.0/mediaset/audio-nondrm-download-rss-low/proto/http/vpid/p0pgmx1w.mp3",
+          "feed_mime_type": "audio/mpeg",
+          "head_http_status": 200,
+          "audio_bytes_downloaded": 0,
+          "body_get_verified": false,
+          "head_checked_at_utc": "2026-10-15T00:58:09.983436Z",
+          "head_content_type": "audio/mpeg",
+          "head_content_length": "15819833",
+          "redirect_final_host": "bbc.pdn.tritondigital.com",
+          "head_only_limitation": "HEAD 200 demonstrates an exposed audio endpoint, not a successful full audio download or transcription."
+        },
+        "publisher_transcript": {
+          "status": "not_observed_in_feed_or_checked_episode_page",
+          "publisher_transcript_url": null,
+          "rss_transcript_entries": [],
+          "publisher_transcript_verified": false,
+          "generated_transcription_run": false,
+          "no_transcript_observed_is_not_universal_absence": true,
+          "verification_basis": "No podcast:transcript tag in checked latest feed item, and no matching publisher transcript link identified on the checked sample page."
+        }
+      },
+      "preferred_bounded_asr_sample": true,
+      "notes": [
+        "Preferred later bounded-ASR candidate: latest checked public episode is 1,739 seconds (about 29 minutes). No ASR has been run.",
+        "Preserve the stable feed enclosure URL; its redirects contain expiring delivery/tracking parameters and should not be used as permanent stored source URLs."
+      ]
+    }
+  ]
+}

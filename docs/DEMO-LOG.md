@@ -22,6 +22,18 @@ Checked with T3 HTML preview at 728px/dark and 360px/light and dark. Inspected r
 
 Provider readiness check: Apify and Bright Data both show login pages in the shared browser's default profile. No account was created, authenticated or charged.
 
+## 15 October 2026 — approved source-proof preflight
+
+Tasks: P02/A01/A02. Approval: Q6, ACCESS-PROOF.md v0.1, €50 total cap. The app specification remains unapproved.
+
+Actual live data: 35-source sample fixed, 15 public feeds fetched/parsed, five recent updates retained per feed (75 total). Publisher transcripts verified for two selected podcast episodes; social collection remains unrun. [Readable report](access-proof/PREFLIGHT.md), [final reviewed metadata](access-proof/results/preflight-2026-10-15-final.json), [evidence walkthrough](demos/source-proof-preflight.html).
+
+Checks: RSS/Atom parsing, GUID vs shared-link identity, timezone handling, CDATA declarations, image/audio MIME distinction, query-specific episode links, duplicate handling, manifest counts/hash and raw response hashes. Original diagnostics remain saved. Reprocessing reused local responses; only the initial GitHub parse rejection required another public GET.
+
+Cost: €0 external cash, no provider credits, no generated transcription, no downloaded audio body. Limitations: original-coverage completeness and all-platform collection unverified; 0/7 formal daily observations, no running schedule. Next action: provider sign-in and billing controls, then bounded social smoke jobs and all-platform baseline.
+
+The saved evidence walkthrough was visually checked at 728px/dark and 360px/light with the podcast detail expanded. No console errors or horizontal overflow were found. These are report-display checks, not app or scraper passes.
+
 ## Required format for future entries
 
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.

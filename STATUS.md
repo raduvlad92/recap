@@ -1,6 +1,6 @@
 # Current status
 
-Updated: 15 October 2026. Phase: research and specification. Overall specification: **DRAFT — NOT APPROVED**.
+Updated: 15 October 2026. Phase: **approved source proof — feed preflight done; social-provider sign-in needed**. Overall app specification: **DRAFT — NOT APPROVED**.
 
 ## Founder decisions recorded
 
@@ -10,6 +10,7 @@ Updated: 15 October 2026. Phase: research and specification. Overall specificati
 4. Public creators must not need to join or authorize the app.
 5. Require enough underlying content for an accurate recap first. Comment sentiment and audience statistics can be added later.
 6. Use scraping services such as Apify and Bright Data as the proposed collection route. Research and compare specific options.
+7. Q6 approved source-proof v0.1: seven families, five public sources each, seven days, up to 150 generated-audio minutes and €50 total, free credits first.
 
 The original vision also includes daily topics, explicit relevance, original links and a historical timeline. See [SPEC.md](SPEC.md).
 
@@ -21,21 +22,24 @@ The original vision also includes daily topics, explicit relevance, original lin
 - Saved the draft specification, tracked plan, glossary, validation proposal and research.
 - Saved a research comparison at docs/demos/research-briefing.html, checked at desktop/mobile widths and in light/dark appearance. This is an explainer, not an app demo.
 - Independently reviewed document consistency, costs and plan dependencies; checked local document links and whitespace.
+- Recorded Q6 approval and fixed the 35-source sample, with five sources per family.
+- Prepared pinned social-scraper inputs and the shared cash/transcription ledger.
+- Ran actual public-feed checks: 15 feeds fetched and parsed, 75 updates sampled. Verified publisher transcripts separately for two selected podcast episodes. See docs/access-proof/PREFLIGHT.md.
+- Corrected parser issues found in real feeds; preserved original evidence, used cached responses for reprocessing, and completed independent review.
 
 ## In progress / unresolved
 
 - Scraper-specific public-document research is complete. Concrete candidates and price caveats are saved in docs/RESEARCH.md; their actual reliability is untested.
-- What counts as “broad”: proposed interpretation is all seven named source families, with disclosed public-account and content-format exclusions. Not yet explicitly approved.
-- Source-proof spending cap is proposed at €50 total in docs/ACCESS-PROOF.md v0.1; it has not been approved. Production access budgets remain unset.
-- No candidate scraper has been run. Broad access is **not verified**.
+- The all-seven-family public-content experiment and €50 total cap are approved. Production access budgets remain unset.
+- No paid/social scraper has been run. Fifteen public feeds have been checked; broad/full-content access is **not verified**.
 - Both Apify and Bright Data show login pages in the shared browser's default profile. No compatible connector/token is available in the current tool environment. A signed-in account is needed for execution.
 - Delivery details, relevance controls, history/retention, billing, privacy and final acceptance criteria still need decision rounds.
 
 ## Next action
 
-Review docs/ACCESS-PROOF.md v0.1: all seven families, 35 public sources, seven days, 150 generated-audio minutes and a €50 total cash cap, free credits first. The founder's decision should settle that scope and any spending authorization. The proof is separate from the app build; customer testing waits for its result.
+Obtain provider access through sign-in/secure connection and check the plan, credit balance and charging controls before any metered run. The Apify login page is open and a sign-in request is pending. Run bounded social smoke jobs using the prepared inputs, then the complete baseline and saved seven-day schedule. Do not ask for Q6 approval again. Customer testing and the full app build remain gated on later evidence/approvals.
 
-Q6 has been presented and is awaiting a response. After approval, obtain provider access through sign-in/secure connection and check the plan, credit balance and charging controls before any run.
+Formal seven-day window has not started; 0/7 daily observations complete. Do not count the feed preflight as a completed all-platform observation day. No daily schedule is running yet.
 
 ## Evidence and approvals
 
@@ -45,4 +49,4 @@ Q6 has been presented and is awaiting a response. After approval, obtain provide
 - [Validation brief](docs/VALIDATION.md)
 - [Demo/evidence log](docs/DEMO-LOG.md)
 
-No app code, live collection, customer trial, outreach, purchase or deployment has occurred. External spending: **€0**. Founder labor has not been timed. Git has no remote configured at discovery; saving locally is not a remote backup.
+Source-proof collection tooling and live public-feed preflight exist; no app build, social/provider run, customer trial, outreach, purchase or deployment has occurred. External spending: **€0**; generated audio: **0/150 minutes**. Founder labor has not been timed. Git has no remote configured at discovery; saving locally is not a remote backup.

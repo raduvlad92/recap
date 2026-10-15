@@ -1,0 +1,921 @@
+{
+  "artifact": "Social source candidates and actor setup for approved access-proof v0.1",
+  "preparedAt": "2026-10-15T00:59:06.970707+00:00",
+  "status": "prepared_not_executed",
+  "scope": {
+    "socialFamilies": 4,
+    "sourcesPerSocialFamily": 5,
+    "sourceCount": 20,
+    "parentProofFamilies": 7,
+    "parentProofDurationDays": 7,
+    "parentProofGeneratedAudioMinutesMax": 150,
+    "parentProofTotalCashCapEur": 50
+  },
+  "importantLimits": [
+    "These are independently selected candidate public creators, not a scraped dataset or evidence of successful access.",
+    "Creator identity/profile links were checked with primary pages or owner sites. X/Instagram direct reads returned blocks; successful feed collection remains unproven for every candidate.",
+    "Public-profile URLs and known names are a technical fixture, not customer or participant records.",
+    "Sample is deliberately useful for format and cross-platform overlap tests; it is not a representative market-demand sample.",
+    "Expected content formats are selection hypotheses to confirm in baseline collection, not a guarantee of current posts of every format.",
+    "First-source inputs capture one item; after successful schema/cost check expand each to five baseline items per source within the shared proof cap.",
+    "No comment actors are proposed for first sampling. Instagram and other post actors may include incidental preview comments; do not analyze them in the content-first proof.",
+    "YouTube ALWAYS_SUBTITLES never starts generated ASR. IG includeTranscript false also reserves generated audio budget. Later ASR must be admitted by a separate duration ledger, one known-duration item at a time.",
+    "YouTube/Instagram audio transcript alone does not capture visual-only text, charts, labels or brand logos.",
+    "Apidojo X Free plan is documented as demo-only and capped; verify plan before production API use. Bright Data is a fallback if credits allow.",
+    "For X, maxItems is a run-wide limit; one-source runs avoid returning all items from the first account.",
+    "Baseline quietly publishing sources may have nothing inside seven days. Compare latest baseline item and explicit fetch outcome; never infer zero updates from an empty failed run.",
+    "Run API build option accepts build number/tag, not the buildId. Store both for reproducibility. maxTotalChargeUsd belongs in run options/query, not the actor input JSON.",
+    "USD run caps must be reconciled to the shared EUR50 total including any plan purchase/tax/FX. Do not enable auto-recharge or permit ongoing paid renewal."
+  ],
+  "runApiDocumentation": "https://docs.apify.com/api/v2/actors-runs-post",
+  "sources": [
+    {
+      "id": "youtube-01",
+      "family": "youtube",
+      "name": "Marques Brownlee",
+      "url": "https://www.youtube.com/@mkbhd",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "samplePurpose": "large technology; overlap with X and Instagram",
+      "activityExpectation": "active expected; current owner site lists recent videos",
+      "identityEvidenceUrl": "https://mkbhd.com/",
+      "verificationNote": "Owner website links canonical channel UCBJycsmduvYEL83R_U4JriQ; direct channel title returned; feed not extracted.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "youtube-02",
+      "family": "youtube",
+      "name": "Veritasium",
+      "url": "https://www.youtube.com/@veritasium",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "samplePurpose": "large science; long form",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://www.veritasium.com/",
+      "verificationNote": "Owner website links YouTube channel; direct channel wrapper returned Veritasium title.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "youtube-03",
+      "family": "youtube",
+      "name": "Simone Giertz",
+      "url": "https://www.youtube.com/@simonegiertz",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "samplePurpose": "maker; overlap with Instagram",
+      "activityExpectation": "potential lower-frequency source",
+      "identityEvidenceUrl": "https://www.simonegiertz.com/",
+      "verificationNote": "Owner website links canonical channel UC3KEoMzNz8eYnwBC34RaKCQ; direct channel wrapper returned creator name.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "youtube-04",
+      "family": "youtube",
+      "name": "Asianometry",
+      "url": "https://www.youtube.com/@Asianometry",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "samplePurpose": "focused independent educational creator; long narration",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://www.youtube.com/@Asianometry",
+      "verificationNote": "Direct public channel wrapper returned Asianometry title; no video list captured.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "youtube-05",
+      "family": "youtube",
+      "name": "No Boilerplate",
+      "url": "https://www.youtube.com/@NoBoilerplate",
+      "expectedContentTypes": [
+        "video"
+      ],
+      "samplePurpose": "focused technical creator; narration plus on-screen information",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://github.com/Noboilerplate/",
+      "verificationNote": "Creator-owned GitHub organization links this channel; direct YouTube page title returned No Boilerplate.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "x-01",
+      "family": "x",
+      "name": "Marques Brownlee",
+      "url": "https://x.com/MKBHD",
+      "expectedContentTypes": [
+        "text",
+        "media"
+      ],
+      "samplePurpose": "large technology; cross-platform overlap",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://mkbhd.com/",
+      "verificationNote": "Owner website links twitter.com/MKBHD; primary X post also indexed; direct profile fetch returned 403.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "x-02",
+      "family": "x",
+      "name": "Cassidy Williams",
+      "url": "https://x.com/cassidoo",
+      "expectedContentTypes": [
+        "text",
+        "links"
+      ],
+      "samplePurpose": "independent developer; cross-platform overlap",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://cassidoo.co/for-llms/",
+      "verificationNote": "Creator-owned page lists twitter.com/cassidoo; direct X profile fetch returned 403.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "x-03",
+      "family": "x",
+      "name": "swyx",
+      "url": "https://x.com/swyx",
+      "expectedContentTypes": [
+        "text",
+        "media"
+      ],
+      "samplePurpose": "AI discussion; cross-platform overlap",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://www.swyx.io/",
+      "verificationNote": "Owner website links X/Twitter account and own posts; primary X post indexed; direct profile fetch returned 403.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "x-04",
+      "family": "x",
+      "name": "Maggie Appleton",
+      "url": "https://x.com/Mappletons",
+      "expectedContentTypes": [
+        "text",
+        "media"
+      ],
+      "samplePurpose": "independent design creator; cross-platform overlap",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://maggieappleton.com/",
+      "verificationNote": "Current creator homepage links x.com/Mappletons; primary X profile indexed. Do not use @maggieappleton, which is not the owner-linked X handle.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "x-05",
+      "family": "x",
+      "name": "Tim Urban / Wait But Why",
+      "url": "https://x.com/waitbutwhy",
+      "expectedContentTypes": [
+        "text",
+        "images"
+      ],
+      "samplePurpose": "large general-interest writer",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://waitbutwhy.com/",
+      "verificationNote": "Owner website links twitter.com/waitbutwhy; primary X post indexed.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "instagram-01",
+      "family": "instagram",
+      "name": "Marques Brownlee",
+      "url": "https://www.instagram.com/mkbhd/",
+      "expectedContentTypes": [
+        "image_carousel",
+        "reels"
+      ],
+      "samplePurpose": "large technology; cross-platform overlap",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://mkbhd.com/",
+      "verificationNote": "Creator-owned homepage links instagram.com/MKBHD; direct Instagram fetch returned 429.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "instagram-02",
+      "family": "instagram",
+      "name": "Simone Giertz",
+      "url": "https://www.instagram.com/simonegiertz/",
+      "expectedContentTypes": [
+        "image",
+        "reels"
+      ],
+      "samplePurpose": "maker; cross-platform overlap",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://www.simonegiertz.com/",
+      "verificationNote": "Creator-owned homepage links instagram.com/simonegiertz; direct Instagram fetch failed.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "instagram-03",
+      "family": "instagram",
+      "name": "Charlie Mackesy",
+      "url": "https://www.instagram.com/charliemackesy/",
+      "expectedContentTypes": [
+        "image",
+        "caption"
+      ],
+      "samplePurpose": "large artist; visual text not recoverable from audio alone",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://www.charliemackesy.com/",
+      "verificationNote": "Creator-owned homepage links this Instagram profile; direct Instagram fetch failed.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "instagram-04",
+      "family": "instagram",
+      "name": "The Happy Pear",
+      "url": "https://www.instagram.com/thehappypear/",
+      "expectedContentTypes": [
+        "reels",
+        "image_carousel"
+      ],
+      "samplePurpose": "food/lifestyle; non-technology coverage",
+      "activityExpectation": "activity unmeasured",
+      "identityEvidenceUrl": "https://thehappypear.ie/",
+      "verificationNote": "Publisher homepage links instagram.com/thehappypear; direct Instagram fetch failed.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "instagram-05",
+      "family": "instagram",
+      "name": "Maggie Appleton",
+      "url": "https://www.instagram.com/maggieappleton/",
+      "expectedContentTypes": [
+        "image",
+        "caption"
+      ],
+      "samplePurpose": "smaller independent design creator; possible quiet control",
+      "activityExpectation": "potential quiet source; do not confuse with failed collection",
+      "identityEvidenceUrl": "https://uk.linkedin.com/in/maggieappleton",
+      "verificationNote": "Creator primary LinkedIn profile lists instagram.com/maggieappleton. Current public Instagram feed is unverified.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "linkedin-01",
+      "family": "linkedin",
+      "name": "Ethan Mollick",
+      "url": "https://www.linkedin.com/in/emollick/",
+      "expectedContentTypes": [
+        "text_links",
+        "images"
+      ],
+      "samplePurpose": "large professional audience; source references",
+      "activityExpectation": "active in indexed primary snapshot; live cadence unmeasured",
+      "identityEvidenceUrl": "https://www.linkedin.com/in/emollick",
+      "verificationNote": "Primary LinkedIn profile identifies Ethan Mollick and shows public recent activity. Direct live profile fetch failed.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "linkedin-02",
+      "family": "linkedin",
+      "name": "Cassidy Williams",
+      "url": "https://www.linkedin.com/in/cassidoo/",
+      "expectedContentTypes": [
+        "text_links",
+        "media"
+      ],
+      "samplePurpose": "smaller professional creator; cross-platform overlap",
+      "activityExpectation": "public activity present in indexed primary snapshot",
+      "identityEvidenceUrl": "https://www.linkedin.com/in/cassidoo",
+      "verificationNote": "Primary LinkedIn profile identifies Cassidy Williams and shows public activity; direct live profile fetch failed.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "linkedin-03",
+      "family": "linkedin",
+      "name": "Lenny Rachitsky",
+      "url": "https://www.linkedin.com/in/lennyrachitsky/",
+      "expectedContentTypes": [
+        "text_links",
+        "video"
+      ],
+      "samplePurpose": "large product/business creator; sponsors and repost distinctions",
+      "activityExpectation": "active in indexed primary snapshot; live cadence unmeasured",
+      "identityEvidenceUrl": "https://www.linkedin.com/in/lennyrachitsky",
+      "verificationNote": "Primary LinkedIn profile identifies newsletter/podcast creator and shows public text/link/video-style updates.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "linkedin-04",
+      "family": "linkedin",
+      "name": "swyx",
+      "url": "https://www.linkedin.com/in/shawnswyxwang/",
+      "expectedContentTypes": [
+        "text_links",
+        "reposts"
+      ],
+      "samplePurpose": "smaller professional creator; repost attribution edge case",
+      "activityExpectation": "lower-frequency public indexed activity; possible quiet source",
+      "identityEvidenceUrl": "https://www.linkedin.com/in/shawnswyxwang",
+      "verificationNote": "Primary LinkedIn profile identifies swyx and shows public activity. Use this handle, not the unverified /shawntz guess. Direct fetch failed.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    },
+    {
+      "id": "linkedin-05",
+      "family": "linkedin",
+      "name": "Maggie Appleton",
+      "url": "https://www.linkedin.com/in/maggieappleton/",
+      "expectedContentTypes": [
+        "text_links",
+        "media"
+      ],
+      "samplePurpose": "smaller professional creator; quiet-source control",
+      "activityExpectation": "primary profile says not on LinkedIn much",
+      "identityEvidenceUrl": "https://uk.linkedin.com/in/maggieappleton",
+      "verificationNote": "Creator homepage links this LinkedIn profile; primary regional LinkedIn profile identifies creator and says not on LinkedIn much.",
+      "verificationMethod": "read-only web page/title or creator-owned outgoing link; no scraper run",
+      "identityCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicFeedAccessVerified": false,
+      "liveCollectionVerified": false,
+      "baselineItemsExpected": 5
+    }
+  ],
+  "actors": [
+    {
+      "family": "instagram",
+      "actor": "apify/instagram-scraper",
+      "actorId": "shu8hvrXbJbY3Eb9W",
+      "maintainedBy": "apify",
+      "buildNumber": "0.0.816",
+      "buildId": "6XzT3YI3iiQH7lJnX",
+      "buildFinishedAt": "2026-10-14T17:05:57.808Z",
+      "catalogCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicCatalogUrl": "https://api.apify.com/v2/acts/apify~instagram-scraper",
+      "publicBuildMetadataUrl": "https://api.apify.com/v2/acts/apify~instagram-scraper/builds/default",
+      "inputSchemaSha256": "a86f95c769239bdd33b343033461e158b40d0c6b210e97ac99f601aa1e2d65a0",
+      "firstSourceInput": {
+        "directUrls": [
+          "https://www.instagram.com/mkbhd/"
+        ],
+        "resultsType": "posts",
+        "resultsLimit": 1,
+        "addParentData": true
+      },
+      "inputSchemaFields": {
+        "resultsType": {
+          "type": "string",
+          "enum": [
+            "posts",
+            "details",
+            "comments",
+            "reels",
+            "mentions",
+            "stories"
+          ],
+          "default": "posts"
+        },
+        "directUrls": {
+          "type": "array"
+        },
+        "resultsLimit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "onlyPostsNewerThan": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "searchType": {
+          "type": "string",
+          "enum": [
+            "hashtag",
+            "profile",
+            "place",
+            "user"
+          ],
+          "default": "hashtag"
+        },
+        "searchLimit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 250
+        },
+        "addParentData": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "suggestedRunQuery": {
+        "build": "0.0.816",
+        "timeout": 180,
+        "maxTotalChargeUsd": 0.25,
+        "restartOnError": false
+      },
+      "executionStatus": "not_run",
+      "notes": [
+        "Use one source per first smoke run so result caps cannot starve other sources.",
+        "Retain default memory; first run cap is a proposed allocation inside the approved total, not an additional budget."
+      ]
+    },
+    {
+      "family": "instagram_reels_optional",
+      "actor": "apify/instagram-reel-scraper",
+      "actorId": "xMc5Ga1oCONPmWJIa",
+      "maintainedBy": "apify",
+      "buildNumber": "0.0.603",
+      "buildId": "rTB2NuaEfWOsYelJ5",
+      "buildFinishedAt": "2026-10-14T17:06:24.223Z",
+      "catalogCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicCatalogUrl": "https://api.apify.com/v2/acts/apify~instagram-reel-scraper",
+      "publicBuildMetadataUrl": "https://api.apify.com/v2/acts/apify~instagram-reel-scraper/builds/default",
+      "inputSchemaSha256": "ccf94f0947d9260872f05bc1736e2ae4b0300b2fea16bfd006b6656a1790c580",
+      "firstSourceInput": {
+        "username": [
+          "https://www.instagram.com/mkbhd/"
+        ],
+        "resultsLimit": 1,
+        "skipPinnedPosts": true,
+        "skipTrialReels": false,
+        "includeSharesCount": false,
+        "includeTranscript": false,
+        "includeDownloadedVideo": false
+      },
+      "inputSchemaFields": {
+        "username": {
+          "type": "array"
+        },
+        "resultsLimit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "onlyPostsNewerThan": {
+          "type": "string"
+        },
+        "skipPinnedPosts": {
+          "type": "boolean",
+          "default": false
+        },
+        "skipTrialReels": {
+          "type": "boolean",
+          "default": false
+        },
+        "includeSharesCount": {
+          "type": "boolean",
+          "default": false
+        },
+        "includeTranscript": {
+          "type": "boolean",
+          "default": false
+        },
+        "includeDownloadedVideo": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "suggestedRunQuery": {
+        "build": "0.0.603",
+        "timeout": 180,
+        "maxTotalChargeUsd": 0.25,
+        "restartOnError": false
+      },
+      "executionStatus": "not_run",
+      "notes": [
+        "Use one source per first smoke run so result caps cannot starve other sources.",
+        "Retain default memory; first run cap is a proposed allocation inside the approved total, not an additional budget."
+      ]
+    },
+    {
+      "family": "youtube",
+      "actor": "streamers/youtube-scraper",
+      "actorId": "h7sDV53CddomktSi5",
+      "maintainedBy": "apify",
+      "buildNumber": "0.0.314",
+      "buildId": "MZ1Xup1EanfrfOx0s",
+      "buildFinishedAt": "2026-10-14T10:01:13.607Z",
+      "catalogCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicCatalogUrl": "https://api.apify.com/v2/acts/streamers~youtube-scraper",
+      "publicBuildMetadataUrl": "https://api.apify.com/v2/acts/streamers~youtube-scraper/builds/default",
+      "inputSchemaSha256": "1d8ab743eb32dcc69eb5ae6f9afb6d25ff6c8760d163ce649e144437a42faf82",
+      "firstSourceInput": {
+        "startUrls": [
+          {
+            "url": "https://www.youtube.com/@mkbhd/videos"
+          }
+        ],
+        "maxResults": 1,
+        "maxResultsShorts": 0,
+        "maxResultStreams": 0,
+        "transcriptionAndSubtitle": "ALWAYS_SUBTITLES",
+        "subtitlesLanguage": "any",
+        "subtitlesFormat": "srt",
+        "sortVideosBy": "NEWEST",
+        "aiVideoDescription": false,
+        "aiVideoSummary": false
+      },
+      "inputSchemaFields": {
+        "searchQueries": {
+          "type": "array"
+        },
+        "maxResults": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "maximum": 999999
+        },
+        "maxResultsShorts": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 999999,
+          "default": 0
+        },
+        "maxResultStreams": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 999999,
+          "default": 0
+        },
+        "startUrls": {
+          "type": "array",
+          "default": []
+        },
+        "transcriptionAndSubtitle": {
+          "type": "string",
+          "default": "NONE",
+          "enum": [
+            "NONE",
+            "ALWAYS_SUBTITLES",
+            "TRANSCRIPTION_AS_FALLBACK",
+            "ALWAYS_TRANSCRIBE"
+          ]
+        },
+        "subtitlesLanguage": {
+          "type": "string",
+          "default": "en",
+          "enum": [
+            "any",
+            "en",
+            "de",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "ko",
+            "nl",
+            "pt",
+            "ru"
+          ]
+        },
+        "subtitlesFormat": {
+          "type": "string",
+          "default": "srt",
+          "enum": [
+            "srt",
+            "vtt",
+            "xml",
+            "plaintext"
+          ]
+        },
+        "sortingOrder": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "rating",
+            "date",
+            "views"
+          ]
+        },
+        "dateFilter": {
+          "type": "string",
+          "enum": [
+            "hour",
+            "today",
+            "week",
+            "month",
+            "year"
+          ]
+        },
+        "videoType": {
+          "type": "string",
+          "enum": [
+            "video",
+            "movie"
+          ]
+        },
+        "lengthFilter": {
+          "type": "string",
+          "enum": [
+            "under4",
+            "between420",
+            "plus20"
+          ]
+        },
+        "isHD": {
+          "type": "boolean"
+        },
+        "hasSubtitles": {
+          "type": "boolean"
+        },
+        "hasCC": {
+          "type": "boolean"
+        },
+        "is3D": {
+          "type": "boolean"
+        },
+        "isLive": {
+          "type": "boolean"
+        },
+        "isBought": {
+          "type": "boolean"
+        },
+        "is4K": {
+          "type": "boolean"
+        },
+        "is360": {
+          "type": "boolean"
+        },
+        "hasLocation": {
+          "type": "boolean"
+        },
+        "isHDR": {
+          "type": "boolean"
+        },
+        "isVR180": {
+          "type": "boolean"
+        },
+        "oldestPostDate": {
+          "type": "string"
+        },
+        "sortVideosBy": {
+          "type": "string",
+          "enum": [
+            "NEWEST",
+            "POPULAR",
+            "OLDEST"
+          ]
+        },
+        "aiVideoDescription": {
+          "type": "boolean",
+          "default": false
+        },
+        "aiVideoSummary": {
+          "type": "boolean",
+          "default": false
+        },
+        "saveSubsToKVS": {
+          "type": "boolean"
+        },
+        "preferAutoGeneratedSubtitles": {
+          "type": "boolean"
+        }
+      },
+      "suggestedRunQuery": {
+        "build": "0.0.314",
+        "timeout": 180,
+        "maxTotalChargeUsd": 0.25,
+        "restartOnError": false
+      },
+      "executionStatus": "not_run",
+      "notes": [
+        "Use one source per first smoke run so result caps cannot starve other sources.",
+        "Retain default memory; first run cap is a proposed allocation inside the approved total, not an additional budget."
+      ]
+    },
+    {
+      "family": "linkedin",
+      "actor": "harvestapi/linkedin-profile-posts",
+      "actorId": "A3cAPGpwBEG8RJwse",
+      "maintainedBy": "apify_partner",
+      "buildNumber": "0.0.85",
+      "buildId": "Dj1jUb4yP220zW7U4",
+      "buildFinishedAt": "2026-09-25T18:32:34.997Z",
+      "catalogCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicCatalogUrl": "https://api.apify.com/v2/acts/harvestapi~linkedin-profile-posts",
+      "publicBuildMetadataUrl": "https://api.apify.com/v2/acts/harvestapi~linkedin-profile-posts/builds/default",
+      "inputSchemaSha256": "46ca39b24b54a84441fd1114f43c29c5202ba54096be4708c2184bd115dd3cbc",
+      "firstSourceInput": {
+        "targetUrls": [
+          "https://www.linkedin.com/in/emollick/"
+        ],
+        "maxPosts": 1,
+        "postedLimit": "any",
+        "includeQuotePosts": true,
+        "includeReposts": true,
+        "scrapeReactions": false,
+        "scrapeComments": false
+      },
+      "inputSchemaFields": {
+        "targetUrls": {
+          "type": "array"
+        },
+        "maxPosts": {
+          "type": "integer"
+        },
+        "postedLimit": {
+          "type": "string",
+          "enum": [
+            "any",
+            "1h",
+            "24h",
+            "week",
+            "month",
+            "3months",
+            "6months",
+            "year"
+          ]
+        },
+        "postedLimitDate": {
+          "type": "string"
+        },
+        "includeQuotePosts": {
+          "type": "boolean",
+          "default": true
+        },
+        "includeReposts": {
+          "type": "boolean",
+          "default": true
+        },
+        "scrapeReactions": {
+          "type": "boolean",
+          "default": false
+        },
+        "maxReactions": {
+          "type": "integer"
+        },
+        "postNestedReactions": {
+          "type": "boolean"
+        },
+        "scrapeComments": {
+          "type": "boolean",
+          "default": false
+        },
+        "maxComments": {
+          "type": "integer"
+        },
+        "commentsPostedLimit": {
+          "type": "string",
+          "enum": [
+            "any",
+            "1h",
+            "24h",
+            "week",
+            "month"
+          ]
+        },
+        "postNestedComments": {
+          "type": "boolean"
+        },
+        "contextCountry": {
+          "type": "string",
+          "enum": [
+            "any",
+            "US",
+            "GB",
+            "DE",
+            "FR"
+          ]
+        }
+      },
+      "suggestedRunQuery": {
+        "build": "0.0.85",
+        "timeout": 180,
+        "maxTotalChargeUsd": 0.25,
+        "restartOnError": false
+      },
+      "executionStatus": "not_run",
+      "notes": [
+        "Use one source per first smoke run so result caps cannot starve other sources.",
+        "Retain default memory; first run cap is a proposed allocation inside the approved total, not an additional budget."
+      ]
+    },
+    {
+      "family": "x",
+      "actor": "apidojo/twitter-scraper-lite",
+      "actorId": "nfp1fpt5gUlBwPcor",
+      "maintainedBy": "apify_partner",
+      "buildNumber": "0.0.1029",
+      "buildId": "rL2ADQGpA5mZ6wUHB",
+      "buildFinishedAt": "2026-10-14T07:13:06.651Z",
+      "catalogCheckedAt": "2026-10-15T00:59:06.970707+00:00",
+      "publicCatalogUrl": "https://api.apify.com/v2/acts/apidojo~twitter-scraper-lite",
+      "publicBuildMetadataUrl": "https://api.apify.com/v2/acts/apidojo~twitter-scraper-lite/builds/default",
+      "inputSchemaSha256": "14733f988204345c27eba80b2da61a6a0c3780fafcecb138041c25ad781c359e",
+      "firstSourceInput": {
+        "searchTerms": [
+          "from:MKBHD -filter:replies"
+        ],
+        "sort": "Latest",
+        "maxItems": 1,
+        "includeSearchTerms": true
+      },
+      "inputSchemaFields": {
+        "searchTerms": {
+          "type": "array"
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "Top",
+            "Latest",
+            "Latest + Top"
+          ]
+        },
+        "maxItems": {
+          "type": "integer"
+        },
+        "start": {
+          "type": "string"
+        },
+        "end": {
+          "type": "string"
+        },
+        "twitterHandles": {
+          "type": "array"
+        },
+        "startUrls": {
+          "type": "array"
+        },
+        "includeSearchTerms": {
+          "type": "boolean"
+        }
+      },
+      "suggestedRunQuery": {
+        "build": "0.0.1029",
+        "timeout": 180,
+        "maxTotalChargeUsd": 0.25,
+        "restartOnError": false
+      },
+      "executionStatus": "not_run",
+      "notes": [
+        "Use one source per first smoke run so result caps cannot starve other sources.",
+        "Retain default memory; first run cap is a proposed allocation inside the approved total, not an additional budget."
+      ]
+    }
+  ]
+}

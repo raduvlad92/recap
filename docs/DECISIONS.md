@@ -12,6 +12,7 @@ Updated: 15 October 2026. Individual answers below are accepted directions. They
 | D04 | Following public creators must not require those creators to join. | Q4: “Yes — creators should not need to join.” |
 | D05 | Usable content first; comments and audience statistics later. | Q5: “Yes — usable content first; richer analysis later.” |
 | D06 | Investigate scraping through Apify, Bright Data and other suppliers. | Subsequent instruction: “we will scrape with apify, brighdata and others”. |
+| D07 | Execute source-access proof v0.1, all seven families, five public sources each, seven days, 150 generated-audio minutes and €50 total, free credits first. | Q6: “Yes — approve the proof, up to €50 total.” |
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
@@ -36,9 +37,9 @@ Rapid-growth business [accepted]
 │   ├── Content sufficient for a recap [accepted]
 │   ├── Comments and audience statistics later [accepted]
 │   ├── Scraping providers: Apify/Bright Data/alternatives [chosen route]
-│   ├── Exact required platforms/account/content types [open]
+│   ├── All seven platform families, public-content proof scope [approved in D07]
 │   ├── Scraper samples, completeness, costs and risks [research/proof pending]
-│   └── Access proof budget and pass/fail criteria [proposal]
+│   └── Source proof v0.1 scope and €50 cap [approved in D07]
 ├── Daily product
 │   ├── Topic-based recap, source links, relevance, history [requested]
 │   ├── Date order vs priority within a recap [open]
@@ -54,11 +55,11 @@ Rapid-growth business [accepted]
     └── Retention and repeatable acquisition before scaling [proposal]
 ```
 
-The current question frontier is the meaning of broad access and the acceptable cost of proving it. Product detail questions follow once the access scope is settled. Research facts should be supplied by the assistant, not requested from the founder.
+The source-proof scope and cap are settled. Execute the approved experiment and collect the facts needed for later product decisions. Research facts should be supplied by the assistant, not requested from the founder.
 
-## Current round — Q6, awaiting response
+## Q6 — approved
 
-Approve docs/ACCESS-PROOF.md v0.1: all seven source families, five public sources each, seven days, at most 150 generated-audio minutes and a €50 total cash cap, using free credits first. Recommended answer: yes. Alternative: authorize free-credit-only execution or revise the brief. This question approves only the collection experiment, not SPEC.md or app implementation.
+The founder approved docs/ACCESS-PROOF.md v0.1: all seven source families, five public sources each, seven days, at most 150 generated-audio minutes and a €50 total cash cap, using free credits first. Response: “Yes — approve the proof, up to €50 total.” This approves only the collection experiment, not SPEC.md or app implementation.
 
 Execution also requires a signed-in provider account; both Apify and Bright Data currently show login pages in the shared browser. No credentials were requested in chat or saved in the project.
 
@@ -67,7 +68,7 @@ Execution also requires a signed-in provider account; both Apify and Bright Data
 | Artifact | Version/status | Approval evidence |
 | --- | --- | --- |
 | Product specification | 0.1 — draft | None |
-| Source proof brief | docs/ACCESS-PROOF.md v0.1 — approval candidate | None for execution/spending |
+| Source proof brief | docs/ACCESS-PROOF.md v0.1 — APPROVED | Q6: “Yes — approve the proof, up to €50 total.” |
 | Customer pilot | Conditional proposal | None; waits for broad access |
 | Implementation plan | Draft with blocked milestones | None for app implementation |
 

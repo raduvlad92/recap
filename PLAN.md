@@ -8,9 +8,9 @@ Updated: 15 October 2026. This is a gated proposal. “Blocked” describes a de
 | R02 | Official platform and commercial-provider audit / assistant | Done | — | Access findings in research; no live access claimed. |
 | R03 | Compare Apify, Bright Data and scraper alternatives / assistant | Done: desk research | Founder decision D06 | docs/RESEARCH.md; no live scraper result claimed. |
 | P01 | Record business goal, audiences and access direction / founder + assistant | Done | Interview Q1–Q5 and scraper instruction | docs/DECISIONS.md. |
-| P02 | Define broad coverage and source-proof cost envelope / founder + assistant | Awaiting decision | R03 | Versioned access brief with scope and cap. |
-| A01 | Prepare source-proof scope and checklist / assistant | Done: approval candidate | Research | docs/ACCESS-PROOF.md v0.1; final source manifest follows approved scope. |
-| A02 | Run bounded scraper proof / assistant once authorized | Not started; gated | P02, suitable access/account, any necessary paid-run authorization | Redacted sample payloads, completeness/freshness/cost log, deletion/failure cases. |
+| P02 | Define broad coverage and source-proof cost envelope / founder + assistant | Done: approved in Q6 | R03 | docs/ACCESS-PROOF.md v0.1, €50 total cap. |
+| A01 | Prepare source-proof scope, manifest and checklist / assistant | Done | Research, P02 | docs/access-proof/sources.json: five per family; pinned social inputs, ledger and evidence tooling. |
+| A02 | Run bounded scraper proof / assistant | Feed preflight done; social authentication needed; formal 7-day window not started | P02, suitable access/account | docs/access-proof/PREFLIGHT.md: 15 feeds / 75 updates; social run IDs and 7-day checks still pending. |
 | A03 | Review pass/conditional/fail for every required platform / founder + assistant | Blocked | A02 | Platform register; unmet essentials remain failures. |
 | V01 | Approve three-audience paid customer test / founder | Blocked | A03 passes | Offer, sample recap, recruitment plan, cost cap and metrics. |
 | V02 | Run 10-weekday manually checked recap trial / founder + assistant | Blocked | V01 | Consent-aware aggregate results per audience, useful recap examples. |
