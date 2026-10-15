@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>therecap: research and the first proof</title>
+<style>
+body { margin: 0; color: var(--foreground, CanvasText); font-family: var(--font-sans, system-ui); line-height: 1.5; }
+* { box-sizing: border-box; }
+main { width: 100%; }
+h2, h3, p { margin: 0 0 12px; }
+h2 { font-size: 1.35em; font-weight: 500; }
+h3 { font-size: 1em; font-weight: 500; margin-top: 20px; }
+a { color: var(--foreground, LinkText); text-underline-offset: 3px; }
+.meta, .note { color: var(--muted-foreground, GrayText); font-size: .875em; }
+.meta { margin-bottom: 14px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0; }
+button { font: inherit; color: var(--foreground, ButtonText); background: transparent; border: 1px solid var(--border, ButtonBorder); border-radius: var(--radius, 8px); padding: 9px 12px; min-height: 44px; }
+button[aria-selected="true"] { background: var(--primary, Highlight); color: var(--primary-foreground, HighlightText); border-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--ring, Highlight); outline-offset: 3px; }
+[hidden] { display: none !important; }
+table { width: 100%; border-collapse: collapse; font-size: .95em; }
+th, td { padding: 10px 8px 10px 0; text-align: left; border-bottom: 1px solid var(--border, ButtonBorder); vertical-align: top; overflow-wrap: anywhere; }
+th { font-weight: 500; }
+.panel { padding: 16px; background: var(--card, Canvas); border-radius: var(--radius, 8px); }
+.list { margin: 8px 0 16px; padding-left: 22px; }
+.list li { margin-bottom: 8px; }
+.flow { display: grid; gap: 10px; margin: 14px 0; }
+.step { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border, ButtonBorder); }
+.num { color: var(--muted-foreground, GrayText); }
+.choice { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0; }
+.choice label { display: flex; align-items: center; gap: 7px; min-height: 44px; }
+input { accent-color: var(--primary, Highlight); }
+.cost-value { font-size: 1.65em; font-weight: 500; font-variant-numeric: tabular-nums; margin: 4px 0; }
+.cost-rows { display: grid; gap: 8px; margin-top: 12px; }
+.cost-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; border-bottom: 1px solid var(--border, ButtonBorder); padding: 8px 0; }
+.cost-row output { font-variant-numeric: tabular-nums; }
+@media (max-width: 420px) { th, td { padding-right: 6px; } table { font-size: .875em; } .tabs button { flex: 1 1 42%; } }
+</style>
+</head>
+<body>
+<main id="recap-brief">
+<p class="meta">Research checked 15 October 2026 · No scrapes run · €0 spent · Product spec: draft</p>
+<h2>Test the collection before building the app.</h2>
+<p>Apify and Bright Data provide credible public-content collection options. The open question is whether they deliver enough content, reliably and affordably, for your recap.</p>
+<div class="tabs" role="tablist" aria-label="Idea assessment">
+<button id="tab-market" role="tab" aria-controls="market" aria-selected="false" type="button">Demand &amp; rivals</button>
+<button id="tab-access" role="tab" aria-controls="access" aria-selected="true" type="button">Collection</button>
+<button id="tab-money" role="tab" aria-controls="money" aria-selected="false" type="button">Costs &amp; revenue</button>
+<button id="tab-test" role="tab" aria-controls="test" aria-selected="false" type="button">First proof &amp; growth</button>
+</div>
+<section id="market" role="tabpanel" aria-labelledby="tab-market" hidden>
+<p><strong>Demand is plausible; willingness to pay for this app is unproven.</strong> Reuters finds 42% sometimes/often avoid news and 17% pay in its 20-market news-payment basket. This is adjacent evidence, not proof of demand for creator recaps. <a href="https://reutersinstitute.politics.ox.ac.uk/digital-news-report/2026/dnr-executive-summary" target="_blank" rel="noreferrer">Research</a></p>
+<table><thead><tr><th>Close alternative</th><th>What already exists</th><th>Advertised USD price</th></tr></thead><tbody>
+<tr><td><a href="https://www.readless.app/features/ai-synthesis" target="_blank" rel="noreferrer">Readless Max</a></td><td>Chosen sources → themed briefing with citations.</td><td>$9/month</td></tr>
+<tr><td><a href="https://www.inoreader.com/pricing" target="_blank" rel="noreferrer">Inoreader</a></td><td>Feeds, mentions and scheduled intelligence reports.</td><td>Pro $9.99 monthly; reports add-on extra.</td></tr>
+<tr><td><a href="https://twigest.com/" target="_blank" rel="noreferrer">Twigest</a></td><td>X, feeds, YouTube and newsletters → a daily briefing.</td><td>$9–19/month</td></tr>
+</tbody></table>
+<h3>What could make yours worth choosing?</h3>
+<p>Useful changes since the last recap, disagreements across sources, clear personal relevance and honest coverage. These are hypotheses to compare against existing tools.</p>
+<p class="note">Your choice: explore consultants, marketing buyers and general readers, then pivot from evidence. Compare each group separately. No moat or market-size estimate has been established.</p>
+</section>
+<section id="access" role="tabpanel" aria-labelledby="tab-access">
+<table><thead><tr><th>Source family</th><th>Documented starting route</th><th>Check before claiming coverage</th></tr></thead><tbody>
+<tr><td>YouTube</td><td><a href="https://apify.com/streamers/youtube-scraper" target="_blank" rel="noreferrer">Apify scraper</a></td><td>Subtitles vs paid transcription; missing visual meaning.</td></tr>
+<tr><td>Instagram</td><td><a href="https://apify.com/apify/instagram-reel-scraper" target="_blank" rel="noreferrer">Posts + reel scraper</a></td><td>Captions vs speech and carousel/image content.</td></tr>
+<tr><td>LinkedIn</td><td><a href="https://apify.com/harvestapi/linkedin-profile-posts" target="_blank" rel="noreferrer">HarvestAPI</a> / Bright Data</td><td>Recent posts, full text, article/document completeness.</td></tr>
+<tr><td>X</td><td><a href="https://apify.com/apidojo/twitter-scraper-lite" target="_blank" rel="noreferrer">API Dojo</a> / Bright Data</td><td>Query fees, search omissions and duplicates.</td></tr>
+<tr><td>Podcasts</td><td>Public feeds + transcripts / speech-to-text</td><td>Actual spoken content, beyond show notes.</td></tr>
+<tr><td>Substack / newsletters</td><td>Public pages / feeds / scraper</td><td>Public full body vs paid previews or email-only issues.</td></tr>
+<tr><td>Blogs</td><td><a href="https://apify.com/apify/website-content-crawler" target="_blank" rel="noreferrer">Content crawler</a> + feeds</td><td>Clean article text, dates and dynamic pages.</td></tr>
+</tbody></table>
+<p class="note" style="margin-top:12px">These are candidate capabilities, not tested results. Your choices: no creator onboarding; usable content first; comments and audience statistics later. Broad access comes before a customer trial.</p>
+</section>
+<section id="money" role="tabpanel" aria-labelledby="tab-money" hidden>
+<p><strong>A cheap scraped record does not mean a cheap complete recap.</strong> Repeated source checks and missing transcripts can dominate the bill.</p>
+<div class="choice" role="group" aria-label="Illustrative monthly users">
+<label><input type="radio" name="users" value="100" checked>100 paying users</label>
+<label><input type="radio" name="users" value="1000">1,000 paying users</label>
+</div>
+<div class="panel" aria-live="polite">
+<p>Illustrative monthly service subtotal</p>
+<p class="cost-value" id="service-total">$190</p>
+<p class="note">Text AI + basic delivery + repeated scraped records. Before labor, support, tax, acquisition and any other collection charges.</p>
+<div class="cost-rows">
+<div class="cost-row"><span>Text AI + basic delivery</span><output id="text-cost">$55</output></div>
+<div class="cost-row"><span>Repeated records at the example rate</span><output id="scrape-cost">$135</output></div>
+<div class="cost-row"><span>If 20% need generated Apify transcripts, total becomes</span><output id="audio-total">$1,076</output></div>
+</div>
+</div>
+<p class="note" style="margin-top:12px">Assumptions: 30 sources/user; five users share each source; daily checks return five billable rows; 0.2 new items/source/day. Audio case: 20% of new items × 30 minutes at $0.041/minute. Not a vendor quote. Existing captions or a separate transcription service can change the result greatly.</p>
+<p class="note">Prices: <a href="https://brightdata.com/pricing/web-scraper" target="_blank" rel="noreferrer">Bright Data $1.50/1,000 records</a>; <a href="https://apify.com/streamers/youtube-scraper/pricing" target="_blank" rel="noreferrer">Apify transcript minutes</a>. Query charges and endpoint units need verification.</p>
+<h3>Revenue is a hypothesis too</h3>
+<p>At a proposed €12/month, about €9.21 remains after illustrative German VAT, standard card/Billing fees and a refund reserve—<strong>before</strong> running the service. Team buyers may justify a different price. <a href="https://stripe.com/de/pricing" target="_blank" rel="noreferrer">Card fees</a> · <a href="https://stripe.com/de/billing/pricing" target="_blank" rel="noreferrer">Billing</a> · <a href="https://europa.eu/youreurope/business/finance-and-tax/vat/vat-rules-rates/indexamp_en.htm" target="_blank" rel="noreferrer">VAT</a></p>
+</section>
+<section id="test" role="tabpanel" aria-labelledby="tab-test" hidden>
+<div class="panel"><p><strong>Proposed first experiment: €50 total cash cap.</strong></p><p>Seven source families · five public sources each · seven days · free credits first · at most 150 generated-audio minutes. No customer trial or full app build.</p><p class="note">A spending ceiling, not a supplier quote. Check account eligibility and charging models first. Comments stay deferred.</p></div>
+<div class="flow">
+<div class="step"><span class="num">1</span><div><strong>Prove collection.</strong> Save expected vs returned items, content quality, freshness, failures and actual costs. Metadata-only results cannot pass as full content.</div></div>
+<div class="step"><span class="num">2</span><div><strong>If access passes, test usefulness.</strong> Proposed paid trial: five people from each of your three audience groups. Measure repeat use and actual paid continuation separately.</div></div>
+<div class="step"><span class="num">3</span><div><strong>Approve the product specification.</strong> Settle the remaining details and acceptance criteria, then build in milestones with saved demos.</div></div>
+<div class="step"><span class="num">4</span><div><strong>Test growth.</strong> Reach people beyond your contacts, observe two renewals, and repeat a channel. Count recruitment time and support costs as well as cash.</div></div>
+</div>
+<p class="note">Possible channels: consultant communities, agency/brand communities and interest-based creator referrals. No acquisition results are established and no outreach has been sent. A small paid pilot does not establish rapid-growth demand.</p>
+</section>
+</main>
+<script>
+const root = document.getElementById('recap-brief');
+const tabs = Array.from(root.querySelectorAll('[role="tab"]'));
+function activate(tab) {
+  tabs.forEach(item => {
+    const selected = item === tab;
+    item.setAttribute('aria-selected', String(selected));
+    document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
+  });
+}
+tabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => activate(tab));
+  tab.addEventListener('keydown', event => {
+    let next;
+    if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+    if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = tabs.length - 1;
+    if (next !== undefined) { event.preventDefault(); activate(tabs[next]); tabs[next].focus(); }
+  });
+});
+const usd = number => new Intl.NumberFormat('en-US', {style:'currency', currency:'USD', maximumFractionDigits:0}).format(number);
+function updateCosts() {
+  const users = Number(root.querySelector('input[name="users"]:checked').value);
+  const text = users === 100 ? 54.90 : 330;
+  const rows = users * 30 / 5 * 30 * 5;
+  const scrape = rows / 1000 * 1.50;
+  const uniqueItems = users * 30 * .2 * 30 / 5;
+  const audio = uniqueItems * .2 * 30 * .041;
+  document.getElementById('text-cost').textContent = usd(text);
+  document.getElementById('scrape-cost').textContent = usd(scrape);
+  document.getElementById('service-total').textContent = usd(text + scrape);
+  document.getElementById('audio-total').textContent = usd(text + scrape + audio);
+}
+root.querySelectorAll('input[name="users"]').forEach(input => input.addEventListener('change', updateCosts));
+updateCosts();
+console.assert(Math.abs(100 * 30 / 5 * 30 * 5 / 1000 * 1.5 - 135) < .001, 'Record-cost arithmetic');
+console.assert(Math.abs(3600 * .2 * 30 * .041 - 885.6) < .001, 'Transcript arithmetic');
+console.log('Research briefing ready: four panels, local cost comparison, no API calls.');
+</script>
+</body>
+</html>
