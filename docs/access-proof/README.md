@@ -2,6 +2,8 @@
 
 The founder approved [ACCESS-PROOF.md v0.1](../ACCESS-PROOF.md) in Q6. The full product specification remains a draft.
 
+Current direction D08 defers all live scraper checks and authentication; supplier capability is assumed for product planning. No recurring job is running, and no further collection/spending is requested now.
+
 The candidate source files are research inputs. The normalized `sources.json` is the frozen 35-source sample once preparation is complete. Changes need a recorded reason; a failing source must not silently disappear from the denominator.
 
 The sample is now frozen. Start with [PREFLIGHT.md](PREFLIGHT.md) and `results/preflight-2026-10-15-final.json` for the reviewed 15-feed check. Earlier reports preserve parser diagnostics; they are superseded for interpretation by the final report. Social-provider jobs have not run.

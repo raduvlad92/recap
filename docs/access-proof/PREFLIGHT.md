@@ -2,6 +2,8 @@
 
 Q6 approved the source-access experiment and up to €50 total. This report records actual preparation and initial checks, not a completed seven-day proof.
 
+**Current direction D08:** the founder subsequently deferred Apify and all other scraper checks and asked to assume they work for product planning. No sign-in is needed now. The execution steps below are retained for a later return to source verification, not current instructions.
+
 ## What was done
 
 - Fixed a sample of 35 public sources: five in each approved family. See [sources.json](sources.json).

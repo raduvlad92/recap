@@ -10,12 +10,12 @@ Updated: 15 October 2026. This is a gated proposal. “Blocked” describes a de
 | P01 | Record business goal, audiences and access direction / founder + assistant | Done | Interview Q1–Q5 and scraper instruction | docs/DECISIONS.md. |
 | P02 | Define broad coverage and source-proof cost envelope / founder + assistant | Done: approved in Q6 | R03 | docs/ACCESS-PROOF.md v0.1, €50 total cap. |
 | A01 | Prepare source-proof scope, manifest and checklist / assistant | Done | Research, P02 | docs/access-proof/sources.json: five per family; pinned social inputs, ledger and evidence tooling. |
-| A02 | Run bounded scraper proof / assistant | Feed preflight done; social authentication needed; formal 7-day window not started | P02, suitable access/account | docs/access-proof/PREFLIGHT.md: 15 feeds / 75 updates; social run IDs and 7-day checks still pending. |
-| A03 | Review pass/conditional/fail for every required platform / founder + assistant | Blocked | A02 | Platform register; unmet essentials remain failures. |
+| A02 | Run bounded scraper proof / assistant | Deferred by founder D08; feed preflight retained | Resume only when founder returns to supplier verification | docs/access-proof/PREFLIGHT.md: 15 feeds / 75 updates; social runs and formal 7-day checks not started. |
+| A03 | Review pass/conditional/fail for every required platform / founder + assistant | Deferred by D08 | A02 when resumed | Supplier capability is assumed for planning, not passed. |
 | V01 | Approve three-audience paid customer test / founder | Blocked | A03 passes | Offer, sample recap, recruitment plan, cost cap and metrics. |
 | V02 | Run 10-weekday manually checked recap trial / founder + assistant | Blocked | V01 | Consent-aware aggregate results per audience, useful recap examples. |
 | V03 | Compare audiences and choose focus/pivot / founder + assistant | Blocked | V02 | Usage, actual payment/renewal, missing sources, service time and recruitment costs. |
-| S01 | Resolve remaining product decisions and approve SPEC version / founder + assistant | Draft; approval pending | Access evidence; relevant validation findings | Named spec with testable acceptance criteria and explicit approval record. |
+| S01 | Resolve remaining product decisions and approve SPEC version / founder + assistant | In progress; scraper capability assumed under D08 | Founder decision rounds; no supplier-login prerequisite | Named spec with testable acceptance criteria, explicit assumptions and approval record. |
 | B01 | Choose architecture, estimate and cap first build milestones / assistant | Blocked | S01 | Costed milestone proposal grounded in actual collector behavior. |
 | B02 | Build source selection and truthful collection status / assistant | Blocked | B01 | Demo 1: add/remove sources, real update, failed source, empty day. |
 | B03 | Build topic synthesis, citations and relevance / assistant | Blocked | B02 | Demo 2: overlapping/contradictory sources, two reading profiles, correction. |

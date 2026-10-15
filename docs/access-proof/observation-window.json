@@ -1,6 +1,6 @@
 {
   "experiment": "source-access-proof-v0.1",
-  "status": "preflight_preparation",
+  "status": "deferred_by_founder_D08",
   "formalBaselineStartedAt": null,
   "formalWindowEndsAt": null,
   "completedDailyChecks": 0,
@@ -10,6 +10,7 @@
   "notes": [
     "Q6 approves seven days of bounded collection; elapsed time before a complete baseline is not a completed observation day.",
     "Set the start/end and recurring checks only after social-provider access and charging controls are ready.",
-    "Earlier direct public-feed diagnostics remain preflight evidence."
+    "Earlier direct public-feed diagnostics remain preflight evidence.",
+    "Founder said to ignore Apify for now, assume it works, and apply the same to other scrapers. Do not start execution/scheduling or request sign-in while continuing specification."
   ]
 }

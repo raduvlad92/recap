@@ -1,6 +1,6 @@
 # Current status
 
-Updated: 15 October 2026. Phase: **approved source proof — feed preflight done; social-provider sign-in needed**. Overall app specification: **DRAFT — NOT APPROVED**.
+Updated: 15 October 2026. Phase: **product specification — scraper capability assumed; live proof deferred**. Overall app specification: **DRAFT — NOT APPROVED**.
 
 ## Founder decisions recorded
 
@@ -11,6 +11,7 @@ Updated: 15 October 2026. Phase: **approved source proof — feed preflight done
 5. Require enough underlying content for an accurate recap first. Comment sentiment and audience statistics can be added later.
 6. Use scraping services such as Apify and Bright Data as the proposed collection route. Research and compare specific options.
 7. Q6 approved source-proof v0.1: seven families, five public sources each, seven days, up to 150 generated-audio minutes and €50 total, free credits first.
+8. Subsequently defer Apify and every other scraper check; assume they work for continued product planning. No provider sign-in or spending now.
 
 The original vision also includes daily topics, explicit relevance, original links and a historical timeline. See [SPEC.md](SPEC.md).
 
@@ -32,14 +33,16 @@ The original vision also includes daily topics, explicit relevance, original lin
 - Scraper-specific public-document research is complete. Concrete candidates and price caveats are saved in docs/RESEARCH.md; their actual reliability is untested.
 - The all-seven-family public-content experiment and €50 total cap are approved. Production access budgets remain unset.
 - No paid/social scraper has been run. Fifteen public feeds have been checked; broad/full-content access is **not verified**.
-- Both Apify and Bright Data show login pages in the shared browser's default profile. No compatible connector/token is available in the current tool environment. A signed-in account is needed for execution.
+- Supplier authentication and live verification are deferred by the founder. Do not request sign-in or wait for it to continue specification work.
 - Delivery details, relevance controls, history/retention, billing, privacy and final acceptance criteria still need decision rounds.
 
 ## Next action
 
-Obtain provider access through sign-in/secure connection and check the plan, credit balance and charging controls before any metered run. The Apify login page is open and a sign-in request is pending. Run bounded social smoke jobs using the prepared inputs, then the complete baseline and saved seven-day schedule. Do not ask for Q6 approval again. Customer testing and the full app build remain gated on later evidence/approvals.
+Continue the product interview: first-release delivery surface, source selection/onboarding and explicit relevance versus chronological history. Use the founder's scraper-feasibility assumption. Keep the full app specification draft until its remaining decisions and acceptance criteria are approved.
 
-Formal seven-day window has not started; 0/7 daily observations complete. Do not count the feed preflight as a completed all-platform observation day. No daily schedule is running yet.
+Q7–Q9 have been presented: phone-friendly website; editable starter collections/pasted links; dated history with explicit interests. Answers are pending. The earlier provider sign-in request is withdrawn.
+
+Formal seven-day window is deferred and has not started; 0/7 daily observations complete. Do not count the feed preflight as a completed all-platform observation day. No daily schedule is running.
 
 ## Evidence and approvals
 

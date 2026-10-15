@@ -13,7 +13,7 @@ Start with [STATUS.md](STATUS.md) to see the current position and next decision.
 - [Decisions and interview](docs/DECISIONS.md)
 - [Research: demand, competition, money and acquisition](docs/RESEARCH.md)
 - [Source-access proof and later customer validation](docs/VALIDATION.md)
-- [Approved source proof v0.1 — scope and spending cap](docs/ACCESS-PROOF.md)
+- [Source proof v0.1 — approved, execution now deferred](docs/ACCESS-PROOF.md)
 - [Actual source-proof preflight results](docs/access-proof/PREFLIGHT.md)
 - [Demo and evidence log](docs/DEMO-LOG.md)
 - [Project language](GLOSSARY.md)

@@ -2,6 +2,8 @@
 
 Status: Stage A approved in Q6 on 15 October 2026; Stages B/C remain proposals. **No customer trial before broad access is secured.** Scraping with Apify, Bright Data and alternatives is the selected route. The approved execution/spending brief is [ACCESS-PROOF.md v0.1](ACCESS-PROOF.md).
 
+Latest steering D08: Stage A execution is deferred for all scrapers; assume they work while continuing product specification. Do not pursue provider login or spending now. This is not an actual access pass or authorization to run a customer trial. The earlier feed preflight remains valid point-in-time evidence.
+
 ## Stage A: prove access before building the app
 
 The free public-document audit is complete. It identifies candidate products, fields, charges and restrictions. It does not establish that a scraper works or that broad access has been secured.

@@ -22,6 +22,8 @@ Explore three customer groups, without choosing the winner in advance: independe
 
 Source families named by the founder: YouTube, X/Twitter, Instagram, LinkedIn, podcasts, Substack/newsletters and blogs. Q6 approves testing all seven under source-access proof v0.1. Private content, paid material, Stories/live streams and complete historical backfill are not implicitly promised. The proof approval does not approve this complete product specification.
 
+Latest direction, D08: defer actual checks of Apify and all other scrapers; assume usable collection capability while completing the product specification. This is a planning assumption, not verified full-content coverage, reliable refresh or measured production cost. Supplier sign-in is not a prerequisite to continuing this document.
+
 ## Product behavior requested in the idea
 
 1. The reader has an account and chooses sources to follow.
@@ -61,7 +63,7 @@ These are proposals, not settled requirements:
 
 | ID | Proposed acceptance criterion | Evidence required |
 | --- | --- | --- |
-| AC01 | Every agreed platform passes the separate access gate. | Source proof report and saved redacted sample evidence. |
+| AC01 | Claims of working collection reflect actual evidence. Supplier capability is currently assumed for planning under D08. | Clearly label demo fixtures/assumed adapters; record live source proof when the founder returns to integration verification. |
 | AC02 | A reader can select/change/remove supported sources. | Demo with real supported collection and removal behavior. |
 | AC03 | The recap combines related material without losing attribution or materially changing meaning. | Human-reviewed examples, including conflicting sources. |
 | AC04 | Each factual recap statement has a working citation supporting that statement. | Citation checks on the evaluation set and correction cases. |
@@ -79,3 +81,5 @@ Production supported account/content types; daily frequency and freshness; produ
 ## Approval procedure
 
 Continue short decision rounds, revise this document and its acceptance criteria, and present a named final candidate version. Record explicit founder approval and the matching plan in docs/DECISIONS.md before app implementation. Later scope changes require a recorded decision and updated plan; ordinary implementation details can be handled autonomously within approved scope.
+
+Deferred scraper verification must not block these decision rounds. Customer trials, paid launch and claims of complete working coverage are separate from specification approval.

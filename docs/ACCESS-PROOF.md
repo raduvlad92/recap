@@ -1,6 +1,6 @@
-# Source-access proof — approved
+# Source-access proof — approved, execution deferred
 
-Version: **0.1**, 15 October 2026. Status: **APPROVED for the bounded experiment and up to €50 total spending**. Q6 response: “Yes — approve the proof, up to €50 total.” Approval does not extend to the full app build.
+Version: **0.1**, 15 October 2026. Q6 approved the bounded experiment and up to €50 total. **Current status: execution DEFERRED by D08.** The founder subsequently said to ignore Apify for now, assume it works, and do the same for other scrapers. Continue product planning with that assumption; do not pursue sign-in or spending now. The full app build is not approved, and no all-platform access pass is claimed.
 
 ## Decision this experiment answers
 

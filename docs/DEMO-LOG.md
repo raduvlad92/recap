@@ -34,6 +34,10 @@ Cost: €0 external cash, no provider credits, no generated transcription, no do
 
 The saved evidence walkthrough was visually checked at 728px/dark and 360px/light with the podcast detail expanded. No console errors or horizontal overflow were found. These are report-display checks, not app or scraper passes.
 
+## 15 October 2026 — supplier checks deferred
+
+Founder steering D08: ignore Apify for now, assume it works, and apply the same assumption to other scrapers. Further live supplier checks, authentication requests and spending are deferred. The 15-feed preflight remains actual evidence; all-provider feasibility is an assumption. No daily scheduler was started and spending remains €0. Work returns to product decisions Q7–Q9 and specification approval.
+
 ## Required format for future entries
 
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.
