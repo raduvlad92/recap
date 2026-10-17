@@ -12,6 +12,9 @@ Current founder decisions take precedence over earlier recommendations:
 - Public creators should not have to join or authorize this app.
 - Usable underlying content comes first; comments and audience statistics can follow later.
 - Evaluate scraping with Apify, Bright Data and alternatives. A missing official API is not, by itself, a failed access test.
+- First release is a website that works well on phones and computers.
+- Start with editable source collections and pasted creator links; automatic following-list import can come later.
+- Keep history in date order, with topics inside each day prioritized by explicitly chosen interests and an all-updates option.
 
 Do not silently replace those choices with a limited-RSS pilot or creator-only partnership model. Clearly distinguish a publicly documented scraper capability from a scraper that has actually been run and verified. Do not call platform titles/descriptions full-content coverage.
 

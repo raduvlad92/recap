@@ -15,6 +15,10 @@ _Avoid_: Platform, post
 An individual post, article, video, newsletter issue or podcast episode published by a source.
 _Avoid_: Source
 
+**Source collection**:
+A named group of sources a reader can use as a starting point and edit to suit their interests.
+_Avoid_: Fixed subscription bundle
+
 **Platform**:
 The service or publishing format through which sources publish, such as YouTube, LinkedIn or a podcast feed.
 
@@ -31,6 +35,12 @@ _Avoid_: Reference to a source's homepage alone
 
 **Reading profile**:
 The reader's stated interests and priorities used to judge what is relevant to them.
+
+**Relevance**:
+The connection between a topic and the interests explicitly chosen in a reader's reading profile.
+
+**All updates**:
+The available updates from a reader's chosen sources without filtering by the reading profile.
 
 **Historical timeline**:
 A dated sequence of recaps and the developments they describe.

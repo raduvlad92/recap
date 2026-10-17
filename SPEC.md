@@ -1,6 +1,6 @@
 # Product specification
 
-Version: **0.1 — DRAFT**. Date: 15 October 2026. Owner: founder. Approval: **not yet requested for this complete version / not granted**.
+Version: **0.2 — DRAFT**. Date: 17 October 2026. Owner: founder. Approval: **not yet requested for this complete version / not granted**. Q7–Q9 are approved individual decisions; the whole specification remains a draft.
 
 This document separates the founder's agreed direction from recommended details. It is a reviewable starting point, not permission to build everything below.
 
@@ -19,6 +19,9 @@ Explore three customer groups, without choosing the winner in advance: independe
 - Comments and audience statistics can follow after core content access.
 - Respect the creator's role through original links, credit and brief, useful context.
 - Preserve a historical line instead of an engagement-driven endless feed.
+- First release is a website that works well on phones and computers; native apps are deferred (Q7).
+- Onboarding offers editable starter source collections and pasted creator links. Automatic following-list import is deferred (Q8).
+- History stays in date order. Topics within a day follow explicitly chosen interests, with an all-updates option independent of relevance filtering (Q9).
 
 Source families named by the founder: YouTube, X/Twitter, Instagram, LinkedIn, podcasts, Substack/newsletters and blogs. Q6 approves testing all seven under source-access proof v0.1. Private content, paid material, Stories/live streams and complete historical backfill are not implicitly promised. The proof approval does not approve this complete product specification.
 
@@ -34,15 +37,29 @@ Latest direction, D08: defer actual checks of Apify and all other scrapers; assu
 6. A dated history lets them trace developments over time.
 7. The broader vision includes brand/sponsor mentions, source sentiment, reach and comment sentiment. D05 permits staging richer analysis later; exact first-release analysis fields remain open.
 
+## Approved product shape — Q7–Q9
+
+The first release is a phone-friendly website. A reader can start with a source collection or paste creator/publication links, then edit the sources they follow. Automatic import of an entire following list is a later capability.
+
+The daily recap remains the main experience: topics across sources, with original links. Its history is ordered by date, and the reader explicitly chooses the interests used to prioritize topics within a day. An all-updates option exposes available source updates without filtering them by those interests; this is a secondary way to inspect coverage, not a replacement for the topic recap or a full-body copy of the originals.
+
+## Current decision round — Q10–Q12, pending
+
+| Question | Recommended choice | Status |
+| --- | --- | --- |
+| Q10: recap depth | About five minutes, up to five main topics, expandable details, what changed, why it matters, updated-source count, snippets and original links. Quiet days stay short. | Awaiting founder answer. |
+| Q11: delivery | One daily recap at the reader's chosen local time, with an optional email reminder linking back to the website. | Awaiting founder answer. |
+| Q12: analysis scope | Topics, brands mentioned and explicitly disclosed sponsors first; source sentiment later. Snippets and references remain in scope. | Awaiting founder answer. |
+
+Comments and audience statistics were already deferred in Q5. These new recommendations do not change that decision. References currently include citations to original updates; extraction of studies/articles linked within creator content is not yet a settled requirement.
+
 ## Recommended first product, conditional on access and validation
 
 These are proposals, not settled requirements:
 
-- A responsive web app before separate mobile apps.
-- Add public source URLs manually; optional automatic import of following lists only after separately proving that capability. Scraping public posts does not automatically provide a user's following list.
-- Readers state a few interests and work/personal priorities. They can change them and give “more/less like this” feedback. Explain the reason for a relevant item; avoid unexplained numeric relevance scores.
-- A dated recap with 3–5 main topics, a short account of what changed, disagreements when genuinely supported, a relevance explanation, and citations at the statement level.
-- Days ordered by date. Within each day, show topics using an explicit, user-approved relevance rule. “No hidden engagement ranking” is a clearer promise than “no algorithms,” because grouping and relevance still use algorithms.
+- For the approved editable interests, offer a small set of understandable controls and an explanation for why a topic is relevant. “More/less like this” feedback and exact controls remain proposals; avoid unexplained numeric relevance scores.
+- A dated recap with up to five main topics, a short account of what changed, disagreements when genuinely supported, a relevance explanation, and citations at the statement level. Do not invent extra topics to fill a quiet day. This depth is proposed in Q10.
+- The exact relevance rule should follow the approved explicit interests and be explainable. Do not silently replace it with behavior-based ranking or reorder the historical days for engagement.
 - Distinguish sources followed, checked successfully, updated and actually analyzed. Failed checks are never counted as “no update.”
 - Show whether an update was analyzed in full, partly analyzed, or detected without enough content. Partial coverage must be visible.
 - A reader can open originals, save a topic, inspect the day's source coverage and revisit earlier recaps.
@@ -73,10 +90,13 @@ These are proposals, not settled requirements:
 | AC08 | Private inputs and accounts remain isolated. | Auth and data-access checks, including cross-account attempts. |
 | AC09 | Processing and collection costs stay within approved limits. | Measured billable units, retries and a spending-stop demo. |
 | AC10 | Paid operation matches approved billing/cancellation/privacy choices. | End-to-end paid-launch checks when authorized. |
+| AC11 | The first release works on phone and desktop web layouts. | The approved core journey at narrow and wide browser widths, with usable controls. |
+| AC12 | Source onboarding supports editable starter collections and pasted links. | Start from a collection, add a URL, remove a source and handle a duplicate or unsupported URL. |
+| AC13 | The historical date order remains stable while explicit interests affect within-day relevance. | Change interests and inspect the same day's recap, earlier dates and the unfiltered all-updates option. |
 
 ## Still to decide
 
-Production supported account/content types; daily frequency and freshness; production source/item limits; first-release analysis fields; default recap order; languages; history and deletion behavior; email vs app delivery; pricing by audience; privacy/retention; customer-test thresholds; technical architecture. The source-proof scope and €50 cap are approved separately in Q6.
+Production supported account/content types; daily frequency and freshness; production source/item limits; first-release analysis fields; languages; history and deletion behavior; optional email delivery; pricing by audience; privacy/retention; customer-test thresholds; technical architecture. Website-first delivery, source onboarding and the chronology/relevance principle are settled by Q7–Q9. The source-proof scope and €50 cap are approved separately in Q6 and remain deferred under D08.
 
 ## Approval procedure
 

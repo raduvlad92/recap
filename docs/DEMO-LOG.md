@@ -38,6 +38,12 @@ The saved evidence walkthrough was visually checked at 728px/dark and 360px/ligh
 
 Founder steering D08: ignore Apify for now, assume it works, and apply the same assumption to other scrapers. Further live supplier checks, authentication requests and spending are deferred. The 15-feed preflight remains actual evidence; all-provider feasibility is an assumption. No daily scheduler was started and spending remains €0. Work returns to product decisions Q7–Q9 and specification approval.
 
+## 17 October 2026 — product specification v0.2
+
+Type: decision/documentation checkpoint, not an application demo. Q7–Q9 are accepted: phone-friendly website, editable starter source collections/pasted links, dated history with explicit within-day relevance and an all-updates option. Updated SPEC.md v0.2, glossary, ADR 0002, task P03 and the future demo scenarios.
+
+Q10–Q12 are proposed and awaiting answers: recap depth, daily delivery and first-release analysis scope. The complete specification remains draft. No app implementation, supplier run, sign-in, spending or external communication occurred. The prior source evidence is retained without rerunning it or claiming it is current to 17 October. Next action: record the founder's Q10–Q12 answers and continue toward a named full-spec approval candidate.
+
 ## Required format for future entries
 
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.
