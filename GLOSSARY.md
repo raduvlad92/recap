@@ -23,8 +23,12 @@ _Avoid_: Fixed subscription bundle
 The service or publishing format through which sources publish, such as YouTube, LinkedIn or a podcast feed.
 
 **Daily recap**:
-A short account of the day's relevant topics across a reader's chosen sources, with links to the originals.
+A short daily account of relevant topics across a reader's chosen sources, with expandable supporting detail and links to the originals.
 _Avoid_: Feed, full-text archive
+
+**Recap reminder**:
+An optional message telling a reader their daily recap is ready and linking to it.
+_Avoid_: Full newsletter, second recap
 
 **Topic**:
 A subject connecting one or more source updates in a recap.

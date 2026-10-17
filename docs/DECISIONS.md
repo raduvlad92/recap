@@ -1,6 +1,6 @@
 # Decisions and interview
 
-Updated: 17 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Updated: 18 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
 ## Accepted founder decisions
 
@@ -17,6 +17,9 @@ Updated: 17 October 2026. Individual answers below are accepted directions. They
 | D09 | Release a phone-friendly website first; native apps later. | Q7, 17 October: “Yes — phone-friendly website first”. |
 | D10 | Start source onboarding with editable starter collections and pasted creator links; following-list imports later. | Q8, 17 October: “Yes — starter collections and pasted links first”. |
 | D11 | Keep history in date order; use explicitly chosen interests for within-day topic priority and offer all updates. | Q9, 17 October: “Yes — dated history and explicit interest controls”. |
+| D12 | Short briefing, up to five main topics, expandable details, what changed/relevance, source counts, snippets and original links; quiet days stay short. | Q10, 18 October: “Yes — short briefing with expandable details”. |
+| D13 | One daily recap at the reader's chosen local time with an optional email reminder linking to the website. | Q11, 18 October: “Yes — daily recap and optional email reminder”. |
+| D14 | Topics, brand mentions and explicitly disclosed sponsors first; source sentiment labels later. | Q12, 18 October: “Yes — topics, brands and disclosed sponsors first”. |
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
@@ -50,7 +53,10 @@ Rapid-growth business [accepted]
 │   ├── Phone-friendly website first [accepted D09]
 │   ├── Editable starter collections and pasted links [accepted D10]
 │   ├── Date-ordered history; explicit within-day relevance and all updates [accepted D11]
-│   ├── Length, languages, delivery time and notification choices [open]
+│   ├── Short expandable recap, up to five main topics [accepted D12]
+│   ├── Daily chosen local time and optional reminder email [accepted D13]
+│   ├── Topics, brands and disclosed sponsors; sentiment later [accepted D14]
+│   ├── Language, history/references and production allowances [final routine round]
 │   └── Corrections, deletions, missing data and privacy [proposal/open]
 ├── Customer validation [blocked by access gate]
 │   ├── Paid pilot across three groups [proposal]
@@ -78,19 +84,29 @@ At that checkpoint execution required a signed-in provider account. D08 subseque
 
 These are approved individual requirements, recorded in SPEC.md v0.2. They do not approve the whole specification or authorize app implementation. The earlier provider-sign-in question remains withdrawn under D08.
 
-## Current round — Q10–Q12, awaiting answers
+## Q10–Q12 — accepted on 18 October 2026
 
-- Q10: about five minutes, up to five main topics with expandable details, what changed, personal relevance, source counts, snippets and original links. Recommended yes; quiet days stay short.
-- Q11: one daily recap at the reader's local chosen time, optional email reminder linking to the website. Recommended yes; alternative is website-only or more frequent updates.
-- Q12: topics, brand mentions and explicitly disclosed sponsors first; source sentiment later. Recommended yes. Original snippets/references remain; comment sentiment and audience statistics are already deferred by D05.
+- Q10: about five minutes, up to five main topics with expandable details, what changed, personal relevance, source counts, snippets and original links. Accepted; quiet days stay short.
+- Q11: one daily recap at the reader's local chosen time, optional email reminder linking to the website. Accepted.
+- Q12: topics, brand mentions and explicitly disclosed sponsors first; source sentiment later. Accepted. Original snippets/references remain; comment sentiment and audience statistics are already deferred by D05.
 
-Each question was presented on 17 October 2026. None is accepted yet. Later branches include language, source/processing limits, history/deletion, exact reference handling, pricing/validation and privacy/account details. Routine technical choices should be researched and recommended by the assistant, not handed to the non-developer founder.
+These answers are recorded in SPEC.md v0.3. No whole-version approval or implementation authorization is implied. Next, settle language scope, history/reference handling and bounded allowances, then present one consolidated named specification and tracked milestone plan for approval/change. Recommended account/privacy, correction and launch defaults must be visible in that candidate; do not create endless new interview rounds unless an objection or material contradiction appears. Routine technical choices should be researched and recommended by the assistant, not handed to the non-developer founder.
+
+## Final routine round — Q13–Q15, awaiting answers
+
+Presented on 18 October 2026, with yes recommended for each:
+
+- Q13: English interface, English recaps and English-language sources first; other supported languages later.
+- Q14: recap history until user deletion/account deletion; original-update citations and links explicitly included by creators; export/delete controls, visible corrections and unavailable-original notices. This does not promise a full original-content archive.
+- Q15: provisional future-trial allowances: 15 sources/person (max 5 X), one check/day, max 50 new updates/day and 500/month analyzed, 60 generated-transcript minutes/month, visible omissions and no automatic overages. Supporting arithmetic and limitations: docs/ALLOWANCES.md. The earlier €50/150-minute experiment budget is separate.
+
+These are proposals, not accepted decisions. No trial, supplier job or spending starts from the answers. After they are settled, provide one named full-spec and matching milestone-plan approval candidate; branch again only for a real objection or contradiction.
 
 ## Approval register
 
 | Artifact | Version/status | Approval evidence |
 | --- | --- | --- |
-| Product specification | 0.2 — draft | Q7–Q9 individual choices accepted; no whole-version approval yet. |
+| Product specification | 0.3 — draft | Q7–Q12 individual choices accepted; no whole-version approval yet. |
 | Source proof brief | v0.1 approved in Q6; execution DEFERRED by D08 | Supplier capability assumed for planning; no current sign-in/spending action. |
 | Customer pilot | Conditional proposal | None; waits for broad access |
 | Implementation plan | Draft with blocked milestones | None for app implementation |

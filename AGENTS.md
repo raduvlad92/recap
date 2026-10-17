@@ -15,6 +15,9 @@ Current founder decisions take precedence over earlier recommendations:
 - First release is a website that works well on phones and computers.
 - Start with editable source collections and pasted creator links; automatic following-list import can come later.
 - Keep history in date order, with topics inside each day prioritized by explicitly chosen interests and an all-updates option.
+- The main recap is about five minutes, with up to five main topics, expandable details, updated-source counts, snippets and original links; quiet days stay short.
+- Deliver one daily recap at the reader's chosen local time, with an optional email reminder linking to the website.
+- First-release analysis covers topics, brand mentions and explicitly disclosed sponsors. Source sentiment, comment sentiment and audience statistics are later features.
 
 Do not silently replace those choices with a limited-RSS pilot or creator-only partnership model. Clearly distinguish a publicly documented scraper capability from a scraper that has actually been run and verified. Do not call platform titles/descriptions full-content coverage.
 

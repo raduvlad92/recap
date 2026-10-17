@@ -44,6 +44,14 @@ Type: decision/documentation checkpoint, not an application demo. Q7–Q9 are ac
 
 Q10–Q12 are proposed and awaiting answers: recap depth, daily delivery and first-release analysis scope. The complete specification remains draft. No app implementation, supplier run, sign-in, spending or external communication occurred. The prior source evidence is retained without rerunning it or claiming it is current to 17 October. Next action: record the founder's Q10–Q12 answers and continue toward a named full-spec approval candidate.
 
+## 18 October 2026 — recap experience accepted, specification v0.3
+
+Type: documentation/decision checkpoint, not a product demo. Q10–Q12 are accepted: short expandable briefing (up to five main topics), one daily local-time recap with optional reminder email, and topics/brands/explicitly disclosed sponsors in the first release. Source sentiment remains deferred. Updated accepted scope, first-release rules, glossary and acceptance/demo scenarios.
+
+Prepared final routine questions Q13–Q15 on language, history/reference handling and bounded allowances. The allowance recommendation uses public price rechecks and explicit assumptions in docs/ALLOWANCES.md; it is not an all-in operating quote or an approved offer. Answers are pending, then one named specification/plan candidate will be presented for consolidated approval/change.
+
+No new UI/demo, app code, supplier authentication, source collection, generated transcription, customer contact, purchase or deployment. External spending remains €0; scraper capability remains assumed for planning. The 15 October source preflight is retained as historical evidence and was not rerun.
+
 ## Required format for future entries
 
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.

@@ -1,6 +1,6 @@
 # Current status
 
-Updated: 17 October 2026. Phase: **product specification — Q7–Q9 accepted; scraper capability assumed, live proof deferred**. Overall app specification: **v0.2 DRAFT — NOT APPROVED**.
+Updated: 18 October 2026. Phase: **product specification — Q7–Q12 accepted; scraper capability assumed, live proof deferred**. Overall app specification: **v0.3 DRAFT — NOT APPROVED**.
 
 ## Founder decisions recorded
 
@@ -15,6 +15,9 @@ Updated: 17 October 2026. Phase: **product specification — Q7–Q9 accepted; s
 9. First release is a phone-friendly website (Q7).
 10. Start with editable source collections and pasted creator links; following-list import later (Q8).
 11. Date-ordered history, within-day priority from explicit interests and an all-updates option (Q9).
+12. Short expandable recap, up to five main topics, what changed/relevance, source counts, snippets and original links (Q10).
+13. One daily recap at the reader's chosen local time, with optional email reminder linking to the website (Q11).
+14. Topics, brand mentions and explicitly disclosed sponsors first; source sentiment later (Q12).
 
 The original vision also includes daily topics, explicit relevance, original links and a historical timeline. See [SPEC.md](SPEC.md).
 
@@ -31,6 +34,7 @@ The original vision also includes daily topics, explicit relevance, original lin
 - Ran actual public-feed checks: 15 feeds fetched and parsed, 75 updates sampled. Verified publisher transcripts separately for two selected podcast episodes. See docs/access-proof/PREFLIGHT.md.
 - Corrected parser issues found in real feeds; preserved original evidence, used cached responses for reprocessing, and completed independent review.
 - Recorded Q7–Q9 in SPEC.md v0.2, the decision register, glossary and chronology/relevance ADR on 17 October.
+- Recorded Q10–Q12 in SPEC.md v0.3, first-release analysis rules, reminder terminology and future acceptance/demo scenarios on 18 October.
 
 ## In progress / unresolved
 
@@ -38,15 +42,15 @@ The original vision also includes daily topics, explicit relevance, original lin
 - The all-seven-family public-content experiment and €50 total cap are approved. Production access budgets remain unset.
 - No paid/social scraper has been run. Fifteen public feeds have been checked; broad/full-content access is **not verified**.
 - Supplier authentication and live verification are deferred by the founder. Do not request sign-in or wait for it to continue specification work.
-- Daily recap depth, cadence/optional email, first-release analysis scope, languages, history/retention, billing, privacy and final acceptance criteria still need decision rounds. The website, source-onboarding approach and explicit relevance principle are settled.
+- Remaining routine choices: language scope, history/reference handling and bounded production allowances. Account/privacy, corrections, validation and paid-launch defaults will be visible in one consolidated approval candidate; routine technical choices are the assistant's responsibility.
 
 ## Next action
 
-Collect answers to Q10–Q12: short expandable recap, daily local-time delivery with optional email reminder, and topics/brands/disclosed sponsors before source sentiment. These recommendations are saved in SPEC.md v0.2 and docs/DECISIONS.md but are not approved yet. Use the founder's scraper-feasibility assumption and leave supplier work deferred.
+Q13–Q15 have been presented and are awaiting answers: English-first scope; lasting recap history with original and creator-linked references; provisional trial allowances and visible limits/no automatic charges. See SPEC.md v0.3, docs/DECISIONS.md and docs/ALLOWANCES.md. Then assemble one named full-spec approval candidate and matching milestone plan. Use the founder's scraper-feasibility assumption and leave supplier work deferred.
 
-Q7–Q9 are accepted, not pending. Do not ask them again. The earlier provider sign-in request remains withdrawn.
+Q7–Q12 are accepted, not pending. Do not ask them again. The earlier provider sign-in request remains withdrawn.
 
-After Q10–Q12, settle remaining material product choices and prepare a named full-spec approval candidate. No app build is authorized by the individual answers so far.
+No app build is authorized by the individual answers so far. Present the consolidated candidate after the next round; open another branch only for a real objection or material contradiction.
 
 Formal seven-day window is deferred and has not started; 0/7 daily observations complete. Do not count the feed preflight as a completed all-platform observation day. No daily schedule is running.
 
