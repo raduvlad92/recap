@@ -1,6 +1,6 @@
 # Decisions and interview
 
-Updated: 18 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Updated: 19 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
 ## Accepted founder decisions
 
@@ -20,6 +20,9 @@ Updated: 18 October 2026. Individual answers below are accepted directions. They
 | D12 | Short briefing, up to five main topics, expandable details, what changed/relevance, source counts, snippets and original links; quiet days stay short. | Q10, 18 October: “Yes — short briefing with expandable details”. |
 | D13 | One daily recap at the reader's chosen local time with an optional email reminder linking to the website. | Q11, 18 October: “Yes — daily recap and optional email reminder”. |
 | D14 | Topics, brand mentions and explicitly disclosed sponsors first; source sentiment labels later. | Q12, 18 October: “Yes — topics, brands and disclosed sponsors first”. |
+| D15 | Multiple interface and recap languages at launch; exact list not selected by the founder. | Q13, 19 October: “Multiple interface and recap languages at launch”. |
+| D16 | Lasting recap history with original-update citations and creator-linked references; export/delete, visible corrections and unavailable-original notices. | Q14, 19 October: “Yes — lasting recap history and both kinds of references”, accepting the stated Q14 package. |
+| D17 | Use clear limits with larger allowances; the previous numerical package was not approved. | Q15, 19 October: “Use clear limits, but I want larger allowances”. |
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
@@ -30,6 +33,7 @@ Original requested product behavior: topics rather than a simple post list; snip
 - A limited RSS/newsletter-only customer concierge test before broad access: rejected by D03.
 - Requiring creator partnerships as the universal collection route: incompatible with D04.
 - Treating official API availability as the only feasible access route: superseded by D06. Platform documentation remains useful evidence of constraints and risks.
+- English-only launch and the 15-source / 500-monthly-update / 60-minute package: superseded by D15 and D17.
 - Completing supplier proof before continuing product specification: superseded by D08. Actual content access remains unverified; feasibility is assumed for planning. This does not turn the earlier feed preflight into an all-platform pass.
 
 ## Design tree
@@ -56,8 +60,10 @@ Rapid-growth business [accepted]
 │   ├── Short expandable recap, up to five main topics [accepted D12]
 │   ├── Daily chosen local time and optional reminder email [accepted D13]
 │   ├── Topics, brands and disclosed sponsors; sentiment later [accepted D14]
-│   ├── Language, history/references and production allowances [final routine round]
-│   └── Corrections, deletions, missing data and privacy [proposal/open]
+│   ├── Multiple interface/recap languages [accepted D15; exact six-language set proposed]
+│   ├── Lasting history, original/creator-linked references, export/delete/corrections [accepted D16]
+│   ├── Larger clear allowances [accepted D17; exact package proposed]
+│   └── Account/data, late items and detailed controls [v1.0 recommended defaults]
 ├── Customer validation [blocked by access gate]
 │   ├── Paid pilot across three groups [proposal]
 │   └── Repeat use, willingness to pay, source coverage [not measured]
@@ -90,25 +96,33 @@ These are approved individual requirements, recorded in SPEC.md v0.2. They do no
 - Q11: one daily recap at the reader's local chosen time, optional email reminder linking to the website. Accepted.
 - Q12: topics, brand mentions and explicitly disclosed sponsors first; source sentiment later. Accepted. Original snippets/references remain; comment sentiment and audience statistics are already deferred by D05.
 
-These answers are recorded in SPEC.md v0.3. No whole-version approval or implementation authorization is implied. Next, settle language scope, history/reference handling and bounded allowances, then present one consolidated named specification and tracked milestone plan for approval/change. Recommended account/privacy, correction and launch defaults must be visible in that candidate; do not create endless new interview rounds unless an objection or material contradiction appears. Routine technical choices should be researched and recommended by the assistant, not handed to the non-developer founder.
+At that checkpoint these answers were recorded in SPEC.md v0.3, with no whole-version approval or implementation authorization. The next round on language/history/allowances is now answered below; its consolidated successor is SPEC v1.0 / PLAN v1.0. Recommended account/privacy, correction and launch defaults must be visible in that candidate; do not create endless new interview rounds unless an objection or material contradiction appears. Routine technical choices should be researched and recommended by the assistant, not handed to the non-developer founder.
 
-## Final routine round — Q13–Q15, awaiting answers
+## Q13–Q15 — answered on 19 October 2026
 
-Presented on 18 October 2026, with yes recommended for each:
+- Q13: multiple interface and recap languages at launch. Accepted direction; rejects English-only. The founder did not name languages.
+- Q14: lasting history and both kinds of references. Accepted, including the question's export/delete, visible corrections and unavailable-original behavior. This is not a full original-content archive.
+- Q15: clear limits with larger allowances. Accepted principle and request to enlarge; the old 15-source / max-5-X / 50-daily / 500-monthly / 60-minute numerical recommendation was not approved.
 
-- Q13: English interface, English recaps and English-language sources first; other supported languages later.
-- Q14: recap history until user deletion/account deletion; original-update citations and links explicitly included by creators; export/delete controls, visible corrections and unavailable-original notices. This does not promise a full original-content archive.
-- Q15: provisional future-trial allowances: 15 sources/person (max 5 X), one check/day, max 50 new updates/day and 500/month analyzed, 60 generated-transcript minutes/month, visible omissions and no automatic overages. Supporting arithmetic and limitations: docs/ALLOWANCES.md. The earlier €50/150-minute experiment budget is separate.
+The routine interview is complete. SPEC v1.0 and PLAN v1.0 are the consolidated approval candidate. Do not introduce another routine round; surface changes or material contradictions in that candidate.
 
-These are proposals, not accepted decisions. No trial, supplier job or spending starts from the answers. After they are settled, provide one named full-spec and matching milestone-plan approval candidate; branch again only for a real objection or contradiction.
+## Recommended defaults awaiting whole-version approval
+
+- English, German, Spanish, French, Italian and Portuguese (Brazil) for interface/recap/supported source languages, with independent language choices and one selected-language recap/day.
+- 50 sources (max 15 X), 200 new analyzed updates/day, 3,000/month and 300 generated-transcription minutes/month; once-daily reader/source checks with a proposed six-hour shared-check freshness window, visible gaps and no automatic overages. These are proposed design limits, not approved spending. Arithmetic: [ALLOWANCES.md](ALLOWANCES.md).
+- Stable past recaps after profile/language edits; future-only changes, visible late items/corrections, one-level creator-linked references, private individual accounts and raw-input/backup expiry targets in SPEC v1.0.
+- Subscription hypothesis with exact price open. Replace the earlier ten-weekday customer-test proposal with 14 consecutive daily recaps to match Q11; trial execution, offer and aggregate cash/audio/labor limits still require separate approval after access is secured.
+- Local implementation M0–M5 after explicit approval of the named pair. Real supplier/generation execution, external delivery, customer outreach/trials and publication remain separate gates. D08 is not reopened.
+
+These are recommendations being submitted, not founder approvals. The review brief is [APPROVAL.md](APPROVAL.md). No app implementation, source run or spending occurred from the Q13–Q15 answers.
 
 ## Approval register
 
 | Artifact | Version/status | Approval evidence |
 | --- | --- | --- |
-| Product specification | 0.3 — draft | Q7–Q12 individual choices accepted; no whole-version approval yet. |
+| Product specification | 1.0 — approval candidate | Q1–Q15 directions recorded, including revised Q13/Q15; no whole-version approval. Exact language list/allowances are proposed. |
 | Source proof brief | v0.1 approved in Q6; execution DEFERRED by D08 | Supplier capability assumed for planning; no current sign-in/spending action. |
 | Customer pilot | Conditional proposal | None; waits for broad access |
-| Implementation plan | Draft with blocked milestones | None for app implementation |
+| Implementation plan | 1.0 — approval candidate, M0–M5 awaiting approval | No implementation authorization; named SPEC/PLAN pair submitted together. |
 
 Do not infer agreement from silence or convert recommendations into accepted decisions. Record the version, date and founder's response when approval is given.

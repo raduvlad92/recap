@@ -37,6 +37,10 @@ A subject connecting one or more source updates in a recap.
 A reference showing which original source update supports a statement in a recap.
 _Avoid_: Reference to a source's homepage alone
 
+**Creator-linked reference**:
+Material explicitly linked by a creator in a source update or its accompanying notes, retained with the creator and update that linked it.
+_Avoid_: Independently verified evidence, automatically followed source
+
 **Reading profile**:
 The reader's stated interests and priorities used to judge what is relevant to them.
 
@@ -48,6 +52,12 @@ The available updates from a reader's chosen sources without filtering by the re
 
 **Historical timeline**:
 A dated sequence of recaps and the developments they describe.
+
+**Interface language**:
+The language used for the reader's navigation, settings and product controls.
+
+**Recap language**:
+The language in which a reader's daily recap is written, which can differ from the interface and original source languages.
 
 **Brand mention**:
 A source's reference to a named brand or product. A mention does not, by itself, establish sponsorship.

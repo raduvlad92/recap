@@ -145,3 +145,11 @@ No channel performance is established. Do not start with an uncapped free daily 
 Cash acquisition cost = channel spending / new paying customers. Also count founder time: (€0 cash + four hours at an assumed €30/hour) / five paying customers = **€24/customer**, even though no advertising was bought. Conversely €100 advertising producing one paying user means €100/customer regardless of cheap clicks.
 
 For the rapid-growth goal, a small paid pilot is only a first signal. Observe two renewals, measured service costs and a repeated channel before increasing spend. A proposed three-month payback target at €9.21 before service costs permits only €21.63 acquisition spending if actual delivery/support costs €2/month. Those thresholds and the €2 assumption are planning choices, not proven industry benchmarks. Do not invent lifetime value or market size from a tiny pilot.
+
+## 19 October 2026 — larger allowances and multilingual planning update
+
+The founder rejected English-only launch and the smaller allowance recommendation. SPEC v1.0 proposes six interface/recap/source languages and 50 sources (max 15 X), 200 analyzed updates/day, 3,000/month and 300 generated minutes/month. Exact list/limits are pending whole-version approval.
+
+Public prices were rechecked without accounts, supplier execution or spending. [ALLOWANCES.md](ALLOWANCES.md) contains rates, complete arithmetic and limitations. At full use, displayed components total about $36.14/person without reuse or $7.64 with hypothetical five-reader reuse; a 50% text-token stress scenario gives $40.53 / $8.73. These are not all-in costs, measured sharing or hard cash ceilings. One chosen-language recap per reader avoids generating all six renditions. Translation quality and reviewer work remain separate.
+
+The earlier €12 subscription and €15 pilot examples above remain historical hypotheses, not approved prices for the larger package. The revised proposed customer test is fourteen consecutive daily recaps, not ten weekdays. No demand, acquisition, renewal or actual supplier-cost result has been obtained since the original desk research.

@@ -1,120 +1,142 @@
 # Product specification
 
-Version: **0.3 — DRAFT**. Date: 18 October 2026. Owner: founder. Approval: **not yet requested for this complete version / not granted**. Q7–Q12 are approved individual decisions; the whole specification remains a draft.
+Version: **1.0 — APPROVAL CANDIDATE**. Prepared: 19 October 2026. Owner: founder. **Not approved; no app implementation started.** Matching delivery plan: [PLAN.md v1.0](PLAN.md). Quick review: [docs/APPROVAL.md](docs/APPROVAL.md).
 
-This document separates the founder's agreed direction from recommended details. It is a reviewable starting point, not permission to build everything below.
+Q1–Q15 establish the direction below. Details marked **recommended default** are offered together for approval, not treated as answers already given. Approval of this specification and plan authorizes local implementation within this scope. Supplier execution, spending, outreach, trials and publication remain separately deferred or unauthorized.
 
-## Purpose and business goal
+## Purpose and business direction
 
-Help people understand what changed across the creators and publications they chose, without visiting every platform or consuming every original in full. Build toward rapid growth, with evidence of retention, scalable delivery and affordable acquisition.
+Help busy people understand what changed across creators and publications they choose, without visiting every platform or consuming every original in full. The main experience is a short, cited daily briefing with a dated history.
 
-Explore three customer groups, without choosing the winner in advance: independent consultants, marketing/brand-monitoring buyers, and general readers. Their results and willingness to pay must be tracked separately. The marketing group may ultimately need a different product; that is a hypothesis to test.
+Aim for rapid growth. Explore independent consultants, marketing/brand-monitoring buyers and general readers as separate customer hypotheses; choose a focus from evidence. The first product serves individual readers. Marketing buyers participate as readers in validation; team workspaces and campaign reporting are not implicitly included.
 
-## Accepted boundaries
+Demand, willingness to pay, retention, supplier reliability and acquisition costs remain unproven. Existing products overlap substantially. The proposed advantage to test is useful “what changed” synthesis, reader-controlled relevance and honest coverage across chosen sources. See [research](docs/RESEARCH.md) and [validation](docs/VALIDATION.md).
 
-- Broad source access before a customer trial.
-- Public creators do not need to join or authorize this app.
-- Scraping services such as Apify and Bright Data are the chosen route to investigate; official APIs can complement them where useful.
-- Access must contain enough of the source content for an accurate recap. A title, URL or caption alone must not be represented as analysis of an entire video or podcast.
-- Comments and audience statistics can follow after core content access.
-- Respect the creator's role through original links, credit and brief, useful context.
-- Preserve a historical line instead of an engagement-driven endless feed.
-- First release is a website that works well on phones and computers; native apps are deferred (Q7).
-- Onboarding offers editable starter source collections and pasted creator links. Automatic following-list import is deferred (Q8).
-- History stays in date order. Topics within a day follow explicitly chosen interests, with an all-updates option independent of relevance filtering (Q9).
-- The main recap takes about five minutes, with up to five main topics and expandable details. It includes what changed, relevance, updated-source counts, supporting snippets and original links. Quiet days stay short (Q10).
-- One daily recap is ready at the reader's chosen local time. Optional email reminders link to the website; a reminder is not a separate full newsletter (Q11).
-- First-release analysis identifies topics, brand mentions and explicitly disclosed sponsors. Source sentiment labels come later (Q12); comments and audience statistics remain deferred.
+## Accepted founder requirements
 
-Source families named by the founder: YouTube, X/Twitter, Instagram, LinkedIn, podcasts, Substack/newsletters and blogs. Q6 approves testing all seven under source-access proof v0.1. Private content, paid material, Stories/live streams and complete historical backfill are not implicitly promised. The proof approval does not approve this complete product specification.
+| Area | Accepted direction |
+| --- | --- |
+| Sources | YouTube, X/Twitter, Instagram, LinkedIn, podcasts, Substack/newsletters and blogs. Public creators need not join or authorize the app. |
+| Access | Broad usable content before a customer trial. Investigate Apify, Bright Data and alternatives. Titles/descriptions alone do not establish full-content analysis. |
+| Current assumption | D08 assumes scraper capability for planning; provider execution, sign-in requests and spending are deferred. This is not verified access. |
+| Surface and onboarding | Phone-friendly website; editable starter collections and pasted creator links. Automatic following-list import later. |
+| Reader control | Date-ordered history, explicit interests for priority within each day, and all updates independent of interest filtering. |
+| Briefing | About five minutes, up to five main topics, expandable details, what changed, why relevant, updated-source counts, snippets and original links. Quiet days stay short. |
+| Delivery | One daily recap at the reader's chosen local time; optional email reminder linking to the website. |
+| First analysis | Topics, brand mentions and explicitly disclosed sponsors. Source sentiment, comment sentiment and audience statistics later. |
+| Languages | Multiple interface and recap languages at launch. Q13 rejected English-only; exact languages below are proposed. |
+| History/references | Keep dated recaps until user/account deletion, with original-update citations and material explicitly linked by creators. Export/delete controls, visible corrections and unavailable-original notices. |
+| Allowances | Clear limits with larger allowances than the rejected 15-source / 500-update / 60-minute proposal. Revised numbers below are proposed. |
 
-Latest direction, D08: defer actual checks of Apify and all other scrapers; assume usable collection capability while completing the product specification. This is a planning assumption, not verified full-content coverage, reliable refresh or measured production cost. Supplier sign-in is not a prerequisite to continuing this document.
+Public scope does not imply private accounts, paid newsletter access, paywall circumvention, Stories/live streams or full historical backfill. Public Substack articles do not establish access to paid editions. Show supported formats and gaps per source. Credit and link original creators.
 
-## Product behavior requested in the idea
+## Recommended defaults for approval
 
-1. The reader has an account and chooses sources to follow.
-2. A daily recap groups updates by topic rather than listing every post or reproducing full originals.
-3. The recap indicates how many followed sources updated.
-4. The reader sees relevance based on their interests and preferences.
-5. Useful snippets and references let them decide which originals deserve attention.
-6. A dated history lets them trace developments over time.
-7. The broader vision includes brand/sponsor mentions, source sentiment, reach and comment sentiment. Q12 puts topics, brands and disclosed sponsors in the first release; source sentiment, comment analysis and audience statistics remain later features.
+### Six launch languages
 
-## Approved product shape — Q7–Q9
+- Interface, recap and supported source languages: **English, German, Spanish, French, Italian and Portuguese (Brazil)**. The exact set/variant is a recommendation, not a founder-selected list or verified language capability.
+- Interface and recap languages are independent persisted choices, initially defaulted together. One reader gets one daily recap in their chosen language, combining usable sources among the six languages. Do not generate six recaps per reader.
+- Show original source language and preserve names, brands, numbers, uncertainty, negation and URLs. Label translated snippets; make original wording inspectable where available. A translated paraphrase is not a verbatim original quotation.
+- Unsupported/uncertain languages and mixed-language coverage gaps must be visible, not silently skipped or summarized from titles.
+- Interface changes apply immediately; recap-language changes apply to future recaps. Past recaps retain their generation language. Bulk archive translation/regeneration is outside v1.0.
+- Every language must pass interface and recap-quality checks before a six-language launch claim. Failures require a recorded scope change, not a silent English fallback.
 
-The first release is a phone-friendly website. A reader can start with a source collection or paste creator/publication links, then edit the sources they follow. Automatic import of an entire following list is a later capability.
+### Larger starting allowances
 
-The daily recap remains the main experience: topics across sources, with original links. Its history is ordered by date, and the reader explicitly chooses the interests used to prioritize topics within a day. An all-updates option exposes available source updates without filtering them by those interests; this is a secondary way to inspect coverage, not a replacement for the topic recap or a full-body copy of the originals.
+These are configurable design allowances per reader, not a public offer, recurring cash budget or measured operating ceiling.
 
-## Approved recap experience and analysis — Q10–Q12
+| Allowance | v1.0 recommendation |
+| --- | --- |
+| Followed sources | **50 total, including at most 15 X accounts** |
+| Collection cadence | At most one scheduled check per reader/source/local day; reuse a successful shared check from the six hours before cutoff. No manual-refresh loop/backfill. |
+| New updates analyzed | **200/day and 3,000 per monthly usage period**, both apply |
+| Generated transcription | **300 audio minutes per monthly usage period** |
+| Personal recap | One daily recap in one chosen language; optional reminder |
+| Extra charges | None automatically; limits and omissions visible |
 
-| Question | Accepted choice | Status |
+Existing usable captions/publisher transcripts do not consume generated minutes; retrieval and analysis still cost work. Shared processing must not reduce the stated reader allowance or expose reader data. See [cost scenarios](docs/ALLOWANCES.md).
+
+Use a visible monthly reset anchored to the reader's start date and daily limits in their selected timezone. Source/timezone/language changes do not reset usage. Deduplicate the same update; retries and corrections do not consume another reader update slot. Explain counters.
+
+At a processing limit, prioritize by explicit interests, then publication time, and show available unprocessed items/reasons in all updates. Do not silently queue omissions for another day or run extra paid jobs. If a full episode exceeds remaining generated minutes, skip it visibly rather than describing a fragment as complete. Unknown duration needs a bounded stop and truthful partial status. If capture limits prevent knowing how many items were missed, say the check was incomplete.
+
+A separate operator cash ceiling/stop is required before live operation. No quota is permission to spend. The deferred experiment's global €50/150-minute ceiling is separate.
+
+## Reader journey
+
+1. **Set up.** Create a private individual account; choose languages, timezone, delivery time and explicit interests. Reminder email starts off. Edit a starter collection or paste sources; see duplicates, unsupported/private formats, languages and pending checks. Do not request social passwords.
+2. **See value.** Show the reader's latest completed recap for their followed sources where one exists. Collections only help select sources; they do not create separate recaps. Otherwise explain when the first scheduled recap will arrive; do not trigger unapproved on-demand supplier jobs. A fixture preview is labeled a sample, not personal/live coverage.
+3. **Understand coverage.** Distinguish followed sources, successful checks, sources with new updates and analyzed updates. Failed, delayed, quiet, partial and limit-reached states differ. Adapters/fixtures do not establish seven-family live support.
+4. **Read and expand.** Up to five main topics explain what changed and why relevant to selected interests, with attributed snippets and original citations. Expansion reveals source contributions, disagreements, brands, disclosed sponsors and creator-linked references. Extra topics/items remain reachable in all updates; avoid full-original reproduction. Repetition is not independent corroboration.
+5. **Explore history.** Keep days in date order. Profile edits affect future recaps; delivered briefings remain snapshots. All updates for a day ignores interests but retains access/usage gaps. Unfollowing stops future collection and preserves earlier recaps unless deleted.
+6. **Manage.** Edit settings, opt into/out of reminders, inspect usage, export history/profile/source lists, delete a recap or account. No surprise upgrade or overage.
+
+### Citations, references, brands and sponsors
+
+Every factual recap claim must trace to a supporting original update; a creator homepage alone is insufficient. The recap reports what sources say, not automatic independent verification of their claims.
+
+A **creator-linked reference** is material explicitly linked in usable source content/show notes, such as a study or article. Keep URL, available title and which update/creator linked it. Distinguish references from supporting original-update citations. A named study without a URL does not justify inventing a link. Do not automatically subscribe to destinations, crawl their bibliography or independently analyze every linked website. Sponsor/shop/navigation links must not masquerade as supporting evidence. Unavailable/paywalled destinations remain labeled references.
+
+Brand mentions do not prove sponsorship. Label sponsors only from an explicit disclosure, retaining supporting wording/citation. No detected disclosure does not prove an update was unsponsored.
+
+### Daily cutoff, late items and corrections
+
+Use the reader's timezone/delivery time as the daily cutoff. The once-daily collection allowance is per reader/source/local day, not a promise of one global check serving every timezone. A successful shared check may replace that reader's check only if it occurred within the six hours before cutoff; otherwise schedule their one check. This six-hour freshness window is a recommended design target, not measured capability. Readers at different times may require different paid checks; reuse savings depend on scheduling overlap too. Display actual last-check/recap times and stale/failed coverage. Do not silently retry indefinitely or add refreshes; supplier jobs remain deferred and later require an operator budget.
+
+For daylight-saving gaps, use the next valid local time; for repeated times, trigger once. Settings changes affect the next not-yet-created recap and cannot create a second daily recap/reminder. Quiet days stay short; failures are not quiet days.
+
+Delayed collection produces visible partial/delayed coverage. Late discoveries appear in the next recap with original publication time and a late-arrival label. Corrections identify what changed and when; no silent rewrite of historical meaning or second daily reminder. A deleted recap cannot be recreated by a retry/backfill.
+
+### Lasting history, privacy and trust
+
+Keep recaps/reference metadata until user/account deletion, not a full original-content archive. Preserve correction provenance. A failed request does not establish that an original was deleted: distinguish confirmed unavailable, temporarily unreachable and unknown, with last-known status/check date. Continuous checking of every historical link is not promised. When a snippet must be removed, redact it with an explanation while retaining permissible history metadata.
+
+Recommended data targets: remove raw fetched bodies/transcripts within **seven days of collection**, including pending, failed and limit-omitted inputs. Exclude these temporary inputs from durable backups. Retain recap text, permitted brief snippets, citations, references, coverage metadata and a minimal dated update inventory (available title, URL, publication time, analyzed/partial/skipped state and reason). This inventory supports historical all updates after raw inputs expire; it is deleted with the reader's recap/account. More raw retention requires a recorded reason/scope change; supplier retention/reuse restrictions remain unverified under D08.
+
+Export readable recaps plus structured dates, languages, topics, citations, creator-linked references, corrections, availability notices, source lists and profile. Recap deletion removes that reader's copy; account deletion revokes access, cancels pending reminders and removes active personal data. Backups must expire within a documented maximum of **30 days** and cannot restore deleted records into use. These are proposed implementation targets, not an existing system's verified behavior.
+
+Keep accounts/profiles isolated. Reuse public-source analysis only where appropriate/permitted, without another reader's interests/history/private inputs. Source content is untrusted data: embedded instructions cannot change behavior, reveal secrets or trigger external actions. Open external references safely. No credentials or participant identities in Git.
+
+## Revenue, validation and release boundaries
+
+Recommended revenue model: subscriptions, with no paid placement affecting relevance. Price is unsettled. The larger package needs observed collection overlap, transcription and support costs before an offer; the earlier €12/month example is not a commitment. Local demonstrations do not require billing/payment integration.
+
+The cheapest useful business test remains a manually checked **14-day daily briefing trial**, five participants in each of the three audiences, after broad access is actually secured and a separate offer/budget is approved. This tests usefulness before full automation. No recruiting/charging is authorized. The [validation brief](docs/VALIDATION.md) defines payment, repeat-use, trust, renewal and acquisition hypotheses by audience. Fourteen consecutive days align with accepted daily delivery; this replaces the earlier ten-weekday design.
+
+Approving SPEC v1.0 and PLAN v1.0 permits local milestones with labeled fixtures and assumed suppliers. It does not reopen D08, run metered collection, send external emails, start a customer trial or publish. Local completion, verified integrations and public readiness are separate evidence. No fixed launch date or all-in development quote is promised.
+
+## Deferred roadmap retained
+
+- Source sentiment/stance; comment sentiment with sample size/time/selection and no population-opinion claim from a small sample.
+- Named, dated views/likes/audience measures; do not sum them and call the result unique reach.
+- Automatic following-list import, native apps, paid/private-source access, source backfill and more languages.
+- Team workspaces, real-time alerts, archive translation and billing may be considered later; they are not accepted v1.0 requirements.
+
+## Acceptance criteria
+
+Fixtures prove local behavior only; live collection/delivery remain separate gates. Milestone IDs refer to PLAN.md.
+
+| ID | Criterion | Required evidence |
 | --- | --- | --- |
-| Q10: recap depth | About five minutes, up to five main topics, expandable details, what changed, why it matters, updated-source count, snippets and original links. Quiet days stay short. | Accepted 18 October. |
-| Q11: delivery | One daily recap at the reader's chosen local time, with an optional email reminder linking back to the website. | Accepted 18 October. |
-| Q12: analysis scope | Topics, brands mentioned and explicitly disclosed sponsors first; source sentiment later. Snippets and references remain in scope. | Accepted 18 October. |
+| AC01 | Collection claims match provenance. | Fixture/assumed labels throughout; per-family live evidence only when D08 is reopened. M1 / A02–A03. |
+| AC02 | Sources can be selected, edited, removed. | Collection, paste, duplicate/unsupported source and stop-future-collection cases. M1. |
+| AC03 | Topics preserve meaning, attribution and disagreement. | Human-reviewed overlapping, contradictory and repeated-source examples. M2. |
+| AC04 | Factual claims have supporting citations; creator-linked references retain origin. | Citation audit, shared paper linked by two creators, unavailable destination and non-supporting reference. M2. |
+| AC05 | Quiet, failed, delayed, partial and limited states differ. | Known events and truthful source/update counts. M1–M3. |
+| AC06 | Explicit relevance is explainable. | Two profiles/same updates; no hidden behavioral ranking. M2. |
+| AC07 | History, corrections, export and deletion follow policy. | Multi-date snapshots, unfollow, missing vs unreachable original, correction, export, deletion/restore cases. M3. |
+| AC08 | Account isolation and content trust controls hold. | Cross-account attempts and malicious source instructions cannot expose data or trigger actions. M3. |
+| AC09 | Reader allowances and operator costs are controlled separately. | Daily/monthly limits, retries/deduplication, unknown-duration stop, simulated cash stop; measured billing only when live authorized. M3 / A02. |
+| AC10 | Paid operation is separately approved/verified. | Offer, cancellation, privacy and checkout checks before any paid launch. L01. |
+| AC11 | Core journey works on phone/desktop with keyboard/touch. | 360px/desktop and long-label checks in every launch language. M1–M5. |
+| AC12 | Onboarding distinguishes sources from platform/follow-list access. | Editable collection/pasted-link flow and unsupported/private cases. M1. |
+| AC13 | Historical dates and delivered snapshots remain stable. | Change interests/timezone/language; inspect old dates and all updates. M2–M4. |
+| AC14 | Main recap has at most five topics, expandable detail, counts, snippets and links. | Busy/quiet days, extra topics reachable; reader timing later. M2 / V02. |
+| AC15 | Daily local-time recap; reminder separately opt in/out. | DST, changed settings, retries, delayed/quiet days, disabled reminders; local email preview only. M4. |
+| AC16 | Brand mention and disclosed sponsor remain distinct. | Mention-only, disclosed/unclear sponsor cases across languages. M2 / M5. |
+| AC17 | Six-language interface/recap/source support is credible. | Locale matrix, mixed-language topics, preserved numbers/negation, labeled translations, unsupported language and future-only setting change. Qualified language review before public support claims. M1–M5 / L01. |
+| AC18 | Data lifecycle targets are enforceable. | Seven-day-from-collection raw expiry including never-analyzed inputs, retained historical inventory, active-data deletion and 30-day backup expiry/restore checks; deployment dependencies recorded separately. M3 / L01. |
 
-Comments and audience statistics were already deferred in Q5. These accepted choices do not change that decision. References currently include citations to original updates; extraction of studies/articles linked within creator content is not yet a settled requirement.
+## Approval and change control
 
-Brand and sponsor labels must retain the supporting source update. A brand mention is not evidence of sponsorship; sponsorship is labeled only when explicitly disclosed. Absence of a detected disclosure does not establish that a post was unsponsored.
-
-## Final routine decision round — Q13–Q15, pending
-
-- Q13: English interface, English recaps and English-language sources first; add other supported languages later. This is a proposed scope, not a claim of universal translation.
-- Q14: keep dated recap history until the user deletes it or their account, include original-update citations and material explicitly linked by creators, and provide export/delete controls, visible corrections and unavailable-original notices. Keep recaps/references, not a full original-post archive. This is a proposal; current links-to-creator-cited-material scope remains unsettled until answered.
-- Q15: use the provisional future-trial package in [docs/ALLOWANCES.md](docs/ALLOWANCES.md): 15 sources/person (up to 5 X), one check/day, up to 50 new updates/day and 500/month analyzed, 60 generated-transcript minutes/month, visible omissions and no automatic extra charges. Actual provider costs and reuse are unverified. These are configurable trial allowances, not a permanent public-product ceiling.
-
-Answers are pending. After this round, present one named specification and tracked milestone plan for consolidated approval/change, including visible recommended defaults for accounts/privacy, corrections/late updates and separate supplier/paid-launch/validation gates. Do not launch additional routine interview rounds unless an objection or material contradiction emerges.
-
-## Recommended first product, conditional on access and validation
-
-These are proposals, not settled requirements:
-
-- For the approved editable interests, offer a small set of understandable controls and an explanation for why a topic is relevant. “More/less like this” feedback and exact controls remain proposals; avoid unexplained numeric relevance scores.
-- Within the accepted short format, include disagreements when genuinely supported and citations at the statement level. Do not invent extra topics to fill a quiet day. Exact presentation details remain proposals for the consolidated approval candidate.
-- The exact relevance rule should follow the approved explicit interests and be explainable. Do not silently replace it with behavior-based ranking or reorder the historical days for engagement.
-- Distinguish sources followed, checked successfully, updated and actually analyzed. Failed checks are never counted as “no update.”
-- Show whether an update was analyzed in full, partly analyzed, or detected without enough content. Partial coverage must be visible.
-- A reader can open originals, save a topic, inspect the day's source coverage and revisit earlier recaps.
-- Support “nothing new,” late arrivals, provider failures, corrections and deleted originals. History retention must follow source restrictions; a permanent copy of all originals is not promised.
-- Keep any private newsletter inputs and reader profiles separate between users. Reuse analysis only when the material and use permit it; do not share private subscription content.
-- Treat collected content as untrusted material. It must not instruct the application, expose credentials or trigger external actions.
-- Cancellation, account deletion, data export and usage limits should be designed before paid launch. Jurisdictions, retention periods and applicable privacy notices remain to be settled.
-
-## Deferred analysis roadmap
-
-- Source stance on a topic and tone of sampled comments are different measures. Do not infer population opinion from a small comment sample.
-- Use named, dated platform metrics such as views or likes. Do not add them up and call the total unique audience reach.
-- Comment analysis must show sample size, retrieval time and what was sampled.
-- References show what a creator said; a recap does not automatically independently verify the underlying claim.
-
-## Acceptance criteria to approve before implementation
-
-| ID | Proposed acceptance criterion | Evidence required |
-| --- | --- | --- |
-| AC01 | Claims of working collection reflect actual evidence. Supplier capability is currently assumed for planning under D08. | Clearly label demo fixtures/assumed adapters; record live source proof when the founder returns to integration verification. |
-| AC02 | A reader can select/change/remove supported sources. | Demo with real supported collection and removal behavior. |
-| AC03 | The recap combines related material without losing attribution or materially changing meaning. | Human-reviewed examples, including conflicting sources. |
-| AC04 | Each factual recap statement has a working citation supporting that statement. | Citation checks on the evaluation set and correction cases. |
-| AC05 | Coverage distinguishes failed checks, quiet sources, partial content and full analysis. | Failure and no-update demos against known source events. |
-| AC06 | Relevance follows the reader's chosen settings and can be explained. | Two profiles given the same source updates. |
-| AC07 | Dated history, corrections and deleted-source behavior follow the approved policy. | Multi-day walkthrough and deletion/correction cases. |
-| AC08 | Private inputs and accounts remain isolated. | Auth and data-access checks, including cross-account attempts. |
-| AC09 | Processing and collection costs stay within approved limits. | Measured billable units, retries and a spending-stop demo. |
-| AC10 | Paid operation matches approved billing/cancellation/privacy choices. | End-to-end paid-launch checks when authorized. |
-| AC11 | The first release works on phone and desktop web layouts. | The approved core journey at narrow and wide browser widths, with usable controls. |
-| AC12 | Source onboarding supports editable starter collections and pasted links. | Start from a collection, add a URL, remove a source and handle a duplicate or unsupported URL. |
-| AC13 | The historical date order remains stable while explicit interests affect within-day relevance. | Change interests and inspect the same day's recap, earlier dates and the unfiltered all-updates option. |
-| AC14 | The main recap contains at most five main topics with expandable detail, coverage counts, snippets and original links; quiet days are not padded. | Busy-day and quiet-day examples; reader timing is checked in validation rather than promising an identical reading speed for everyone. |
-| AC15 | A reader can choose their daily local delivery time and separately enable or disable reminder email. | Timezone/daylight-saving, quiet-day, delayed-data and email-disabled scenarios; no email is sent without the reader's opt-in. |
-| AC16 | Brand mentions and explicitly disclosed sponsorship remain distinct and traceable. | A mention-only example, a disclosed sponsor example and a no-disclosure/unclear case; do not infer sponsorship from brand presence. |
-
-## Still to decide
-
-Language scope, history/reference handling and bounded production allowances are the remaining routine interview choices. Then present one named specification and milestone plan with visible recommended defaults for account/privacy controls, corrections/late updates and a separate paid-launch/validation gate. Recap depth, daily cadence, optional email and first-release analysis scope are settled by Q10–Q12. Exact operating costs and data freshness remain unverified; do not turn the deferred experiment's €50/150-minute cap into a production budget. Routine technical choices are the assistant's research task, not questions for the founder.
-
-## Approval procedure
-
-Continue short decision rounds, revise this document and its acceptance criteria, and present a named final candidate version. Record explicit founder approval and the matching plan in docs/DECISIONS.md before app implementation. Later scope changes require a recorded decision and updated plan; ordinary implementation details can be handled autonomously within approved scope.
-
-Deferred scraper verification must not block these decision rounds. Customer trials, paid launch and claims of complete working coverage are separate from specification approval.
+Approve **SPEC v1.0 and PLAN v1.0 together**, or name changes. The [approval brief](docs/APPROVAL.md) isolates recommended defaults. Until explicit approval, only documentation/research continues. Record the actual response/date in the decision register; silence is not approval. Material scope changes require a new version/plan. Routine technical choices within approved scope are the assistant's responsibility.

@@ -52,6 +52,20 @@ Prepared final routine questions Q13–Q15 on language, history/reference handli
 
 No new UI/demo, app code, supplier authentication, source collection, generated transcription, customer contact, purchase or deployment. External spending remains €0; scraper capability remains assumed for planning. The 15 October source preflight is retained as historical evidence and was not rerun.
 
+## 19 October 2026 — consolidated specification and plan v1.0 candidate
+
+Tasks: P05/S01. Type: decision/research/documentation review, **not an app demo**. Q13 accepts multiple interface/recap languages; Q14 accepts lasting history and both reference kinds; Q15 requests larger clear limits without approving the former numbers. Exact six-language list and 50-source/3,000-update/300-minute package are recommended defaults pending named whole-version approval.
+
+Saved artifacts: [approval brief](APPROVAL.md), [SPEC v1.0](../SPEC.md), [PLAN v1.0](../PLAN.md), [cost scenarios](ALLOWANCES.md), [review walkthrough](demos/specification-review-v1.html). Revised proposed validation to fourteen consecutive daily recaps and removed the old 60-unique-source constraint/automatic €12 price assumption. No trial begins.
+
+Public price pages were rechecked on 19 October without supplier accounts or jobs. Independent reviews checked cost arithmetic and product consistency. Resolved collection scheduling/reuse freshness, expiry for never-analyzed inputs, historical update inventory and the distinction between starter collections and a reader's single recap. Cost totals are conditional components, not measured usage or all-in quotations.
+
+Visual verification: T3 HTML previews at 728px/dark and 360px/light and dark, including all details expanded on the narrow light view. Corrected an initial transparent preview background that hid dark text contrast. Final previews showed readable content, no horizontal overflow and no assertion/console errors. The three details sections expose history, cost assumptions and approval boundaries. This checks the review document's display, not application behavior, source collection, language quality or live integrations.
+
+Documentation verification: local Markdown targets and whitespace checked; numerical scenarios recalculated; individual decisions remain distinct from proposed defaults/whole-version approval. No application tests exist or were claimed. No new source collection/transcription, supplier sign-in, provider purchase, customer contact, external email, deployment or publication. External spending remains **€0**; generated experiment audio **0/150 minutes**. The 15 October preflight was retained, not rerun; formal observation remains **0/7**, no schedule running.
+
+Next action: founder approves SPEC v1.0 + PLAN v1.0 or requests changes. Only then start local M0–M5. D08 supplier deferral remains in force. Work is saved in the local Git repository; no remote is configured.
+
 ## Required format for future entries
 
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.

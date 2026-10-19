@@ -18,6 +18,9 @@ Current founder decisions take precedence over earlier recommendations:
 - The main recap is about five minutes, with up to five main topics, expandable details, updated-source counts, snippets and original links; quiet days stay short.
 - Deliver one daily recap at the reader's chosen local time, with an optional email reminder linking to the website.
 - First-release analysis covers topics, brand mentions and explicitly disclosed sponsors. Source sentiment, comment sentiment and audience statistics are later features.
+- Launch with multiple interface and recap languages. The exact language list in SPEC v1.0 is proposed until whole-version approval.
+- Keep dated recap history until deletion, with original-update citations and creator-linked references, export/delete controls, visible corrections and unavailable-original notices.
+- Use clear limits with larger allowances than the former 15-source/500-update/60-minute recommendation. Exact revised numbers remain proposed until whole-version approval.
 
 Do not silently replace those choices with a limited-RSS pilot or creator-only partnership model. Clearly distinguish a publicly documented scraper capability from a scraper that has actually been run and verified. Do not call platform titles/descriptions full-content coverage.
 

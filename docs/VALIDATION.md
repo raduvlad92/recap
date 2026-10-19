@@ -4,11 +4,11 @@ Status: Stage A approved in Q6 on 15 October 2026; Stages B/C remain proposals. 
 
 Latest steering D08: Stage A execution is deferred for all scrapers; assume they work while continuing product specification. Do not pursue provider login or spending now. This is not an actual access pass or authorization to run a customer trial. The earlier feed preflight remains valid point-in-time evidence.
 
-## Stage A: prove access before building the app
+## Stage A: prove access before customer testing/live readiness claims
 
 The free public-document audit is complete. It identifies candidate products, fields, charges and restrictions. It does not establish that a scraper works or that broad access has been secured.
 
-The next useful experiment is a small source-collection proof, separate from the application. No dashboard, login system, payment system or automated customer recap is needed to find out whether the core content can be collected.
+When the founder reopens supplier verification, the next useful experiment is a small source-collection proof, separate from the application. It is not the current execution task under D08. No dashboard, login system, payment system or automated customer recap is needed to find out whether the core content can be collected.
 
 Scope approved in Q6:
 
@@ -42,13 +42,16 @@ The former limited-source €100 concierge recommendation does not price this br
 
 ## Stage B: later paid usefulness test across all three audiences
 
+Revised proposal: 19 October 2026, aligned with SPEC v1.0. Exact offer, price, aggregate cash/audio/labor limits and execution remain unapproved.
+
 Only after Stage A passes, prepare a reviewable offer and seek approval for execution. Proposals below are not approved.
 
 - Three labeled groups: consultants, marketing/brand-monitoring buyers and general readers.
 - Start with five paying participants in each group, 15 total. Recruit more suitable prospects than this; do not assume every invitation converts.
-- Ten weekday recaps over approximately two weeks. Offer a clear manually checked trial; proposed price €15 for the trial, then test an actual €12/month continuation. These are price hypotheses, not proven demand or a universal price for all buyers.
+- Fourteen consecutive daily recaps over two weeks, matching the accepted daily delivery. Offer a clearly described manually checked service. The earlier €15 trial / €12 monthly continuation figures remain historical price hypotheses, not the current offer: larger allowances require a newly costed offer before approval.
 - Collect each participant's must-have sources before payment and verify that the passed collection scope serves them. Do not hide a missing essential source to keep the trial cheap.
-- To control manual work, aim for at most 60 unique sources across participants. If essentials exceed that, revise scope/budget openly rather than excluding them silently.
+- Plan around the proposed larger allowances in [ALLOWANCES.md](ALLOWANCES.md), not the superseded 60-unique-source trial cap. Fifteen readers could choose up to 750 distinct sources (including up to 225 X accounts) with no overlap. Actual essentials, overlap, generated-audio demand and billable checks must determine the aggregate budget before recruiting or taking payment. The old source-proof €50/150-minute ceiling cannot fund this implicitly.
+- Test multilingual use with supported-language sources and recaps; arrange qualified reviewers for the chosen combinations before promising them to participants. Do not require every combination in a 15-person trial or claim this small trial verifies all six languages. The six-language product-quality gate remains separate.
 - Deliver a short topic-based recap, what changed, why it may matter, supporting original links, coverage status and a feedback prompt.
 - Compare the same source set against the participant's existing workflow and a relevant competitor. Time saved and useful decisions matter more than summary volume.
 
@@ -57,7 +60,7 @@ Proposed directional gates per original five-person audience group:
 | Measure | Proposed result |
 | --- | --- |
 | Paid start | At least five people actually pay; a waitlist is insufficient. |
-| Repeat usefulness | At least four use at least six of ten recaps, measured through feedback/useful actions; email opens alone are insufficient. |
+| Repeat usefulness | At least four use at least nine of fourteen recaps, measured through feedback/useful actions; email opens alone are insufficient. |
 | Payment after novelty | At least three actually pay for continuation; do not count stated intention. |
 | Coverage | Meet the source-proof criteria for agreed must-have sources; report failures. |
 | Trust | No unresolved serious invented claim or materially misleading citation. |
@@ -65,7 +68,15 @@ Proposed directional gates per original five-person audience group:
 
 Report separately by group, including dropouts. A pooled average can conceal the only promising group. Five participants per group provide direction, not proof of a large market. Use the results to choose the next focus or pivot with the founder.
 
-Labor estimate for 15 participants: roughly 30–60 hours total, depending on source overlap and checking needs. At an assumed €30/hour, that is €900–1,800 of time cost, separate from cash. A defensible cash total depends on actual source charges and test scope.
+The old 30–60-hour estimate covered a smaller ten-weekday plan and must not be reused as a quote. For initial planning only, allowing two to four hours of manual work/day for fourteen days plus eight hours of setup/review gives roughly 36–64 hours (€1,080–1,920 at an assumed €30/hour), before additional language review. High update volume or low source overlap could make this much larger. Estimate against the actual enrolled source set before approval; if the manual workload is impractical, revise timing/budget openly rather than silently reducing promised coverage. Cash and time caps remain unapproved.
+
+## Future acquisition and revenue hypotheses
+
+Begin with subscriptions, with price matched to measured costs and each audience's willingness to pay. The larger package is not established viable at €12/month. No uncapped free daily service or paid placement is proposed for v1.0.
+
+After access/trial approval, test professional contacts or consultant communities for consultants; marketing communities and reader-side monitoring examples for marketing buyers; and topic-specific interest communities for general readers. A sample briefing and editable source collection are proposed acquisition assets. These channels have no measured conversion rate; the founder sends invitations or separately authorizes specific outreach. Save drafts only until then.
+
+Track qualified prospects, source setup, first useful recap, payment and renewal by audience/channel, including founder time. Do not use waitlist totals or cheap clicks as proof of paid demand. Compare the same source set with the participant's existing workflow and a relevant competitor.
 
 ## Stage C: test growth rather than only usefulness
 

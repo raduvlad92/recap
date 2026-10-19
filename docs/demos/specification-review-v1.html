@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>therecap — specification review v1.0</title>
+<style>
+:root{color-scheme:light dark}
+html,body{color:var(--foreground,CanvasText);font-family:var(--font-sans,system-ui);margin:0}
+*{box-sizing:border-box}body{line-height:1.5}main{width:100%;overflow-wrap:anywhere}p{margin:0 0 16px}strong,h2{font-weight:500}h2{font-size:inherit;margin:24px 0 10px}small,.muted{color:var(--muted-foreground,GrayText)}small{font-size:inherit}.status{padding-right:94px;color:var(--muted-foreground,GrayText)}table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:10px 8px 10px 0;border-bottom:1px solid var(--border,GrayText);vertical-align:top;font-weight:400}th{color:var(--muted-foreground,GrayText)}th:first-child,td:first-child{width:37%}td strong{font-variant-numeric:tabular-nums}.langs{display:flex;gap:8px 20px;flex-wrap:wrap;margin:0 0 10px;padding:0;list-style:none}.langs li{white-space:nowrap}ol{padding-left:22px;margin:0}li{padding:3px 0}details{border-top:1px solid var(--border,GrayText);margin-top:20px;padding-top:12px}summary{font-weight:500;min-height:44px}details p{margin:12px 0}a{color:var(--foreground,LinkText);text-underline-offset:3px}.label{color:var(--muted-foreground,GrayText)}.cost{font-variant-numeric:tabular-nums}@media(min-width:600px){.journey{display:grid;grid-template-columns:1fr 1fr;gap:28px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<main id="therecap-review">
+<p class="status">SPEC v1.0 + PLAN v1.0<br>Awaiting your approval</p>
+<p>A daily briefing from your chosen creators: up to five main topics, expandable context, original links and lasting dated history.</p>
+<h2>Proposed languages at launch</h2>
+<ul class="langs" aria-label="Proposed launch languages"><li>English</li><li>German</li><li>Spanish</li><li>French</li><li>Italian</li><li>Portuguese (Brazil)</li></ul>
+<p class="muted">Choose interface and recap languages separately. One daily recap in your chosen language; sources can mix these six languages.</p>
+<h2>Proposed larger package</h2>
+<table aria-label="Proposed reader allowances"><thead><tr><th scope="col">Allowance</th><th scope="col">Starting package</th></tr></thead><tbody>
+<tr><th scope="row">Sources</th><td><strong>50 total</strong>, including up to 15 X accounts</td></tr>
+<tr><th scope="row">Updates analyzed</th><td><strong>200/day · 3,000/month</strong><br>Both limits apply</td></tr>
+<tr><th scope="row">Generated transcripts</th><td><strong>300 minutes/month</strong><br>Usable existing captions do not consume these minutes</td></tr>
+<tr><th scope="row">Collection</th><td>Once daily per reader/source; shared checks within six hours before cutoff. Visible gaps and no automatic extra charges.</td></tr>
+</tbody></table>
+<h2>Saved demos in the implementation plan</h2>
+<ol><li>Source setup, languages and truthful coverage</li><li>Expandable recap, citations, brands and disclosed sponsors</li><li>History, references, privacy, export/delete and limits</li><li>Local-time delivery and reminder previews</li><li>Complete phone and desktop journey</li></ol>
+<details><summary>History and references</summary><p>Keep dated recaps until you delete them or your account. Preserve original citations and material explicitly linked by creators. Changes to interests or recap language affect future recaps. Corrections and unavailable originals stay visible.</p><p>Creator-linked references are links with attribution. They do not trigger automatic research across every linked website.</p></details>
+<details><summary>Cost and subscription pricing</summary><p class="cost">At full use, the example components total about <strong>$36/month per reader without reuse</strong>, or <strong>$8 if shared work averages five readers</strong>. Reuse is unmeasured. These figures exclude costs such as hosting and support; they are not ceilings or an all-in quote. The subscription price remains open.</p><p>Public rate sources, checked 19 October 2026: <a href="https://apify.com/apidojo/twitter-scraper-lite/pricing">X queries</a>, <a href="https://brightdata.com/pricing/web-scraper">record collection</a>, <a href="https://apify.com/streamers/youtube-scraper/pricing">transcription</a>, <a href="https://ai.google.dev/gemini-api/docs/pricing">text processing</a>. Complete assumptions and arithmetic are saved in docs/ALLOWANCES.md.</p></details>
+<details><summary>What approving v1.0 permits</summary><p>Local implementation of this scoped website with saved demos and clearly labeled sample data. Real collection, generated-recap quality and public readiness still need separate evidence.</p><p>Scraper sign-in, execution and spending remain deferred. No customer outreach, paid trial, external email sending or publication starts from this approval.</p><p>Cheapest useful business test: once broad access is secured and a trial is separately approved, manually deliver 14 daily briefings to five people in each of the three audiences before full automation.</p></details>
+<p class="muted" style="margin-top:20px">Documentation review · no app built · €0 spent</p>
+</main>
+<script>
+function checkLayout(){console.assert(document.documentElement.scrollWidth<=innerWidth+1,'No horizontal overflow');console.assert(document.querySelectorAll('.langs li').length===6,'Six proposed languages');console.assert(document.querySelectorAll('ol li').length===5,'Five planned demos');console.log('Review checks',{width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth+1,details:document.querySelectorAll('details').length});}
+addEventListener('load',checkLayout);addEventListener('resize',checkLayout);document.querySelectorAll('details').forEach(el=>el.addEventListener('toggle',checkLayout));
+</script>
+</body>
+</html>
