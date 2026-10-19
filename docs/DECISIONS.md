@@ -116,6 +116,12 @@ The routine interview is complete. SPEC v1.0 and PLAN v1.0 are the consolidated 
 
 These are recommendations being submitted, not founder approvals. The review brief is [APPROVAL.md](APPROVAL.md). No app implementation, source run or spending occurred from the Q13–Q15 answers.
 
+## D18 — visual concept explicitly authorized on 19 October 2026
+
+The founder asked: “prepare a demo on how it will look like (no need to make it functional), use the design skill” and wanted it to show visitors how the product works and make them want it. This authorizes a standalone local visual concept, including lightweight sample interactions, without waiting for whole-spec approval. It does not approve SPEC/PLAN v1.0, the full app, live suppliers, spending, outreach or publication.
+
+Completed visual concept v0.1: [demo and handoff](demos/product-preview/README.md). The design direction, fictional content and local behavior are proposals for feedback, not newly approved product requirements. Saved checks/screenshots distinguish the prototype from actual access and operating evidence.
+
 ## Approval register
 
 | Artifact | Version/status | Approval evidence |
@@ -123,6 +129,7 @@ These are recommendations being submitted, not founder approvals. The review bri
 | Product specification | 1.0 — approval candidate | Q1–Q15 directions recorded, including revised Q13/Q15; no whole-version approval. Exact language list/allowances are proposed. |
 | Source proof brief | v0.1 approved in Q6; execution DEFERRED by D08 | Supplier capability assumed for planning; no current sign-in/spending action. |
 | Customer pilot | Conditional proposal | None; waits for broad access |
-| Implementation plan | 1.0 — approval candidate, M0–M5 awaiting approval | No implementation authorization; named SPEC/PLAN pair submitted together. |
+| Implementation plan | 1.0 — approval candidate, M0–M5 awaiting approval | No full implementation authorization; named SPEC/PLAN pair submitted together. |
+| Visitor visual concept | v0.1 — local concept completed | Explicit request on 19 October, D18; static demo only, not S01 approval. |
 
 Do not infer agreement from silence or convert recommendations into accepted decisions. Record the version, date and founder's response when approval is given.

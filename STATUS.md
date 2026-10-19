@@ -1,6 +1,12 @@
 # Current status
 
-Updated: **19 October 2026**. Phase: **consolidated specification review**. **SPEC v1.0 and PLAN v1.0 are approval candidates, not approved.** No app implementation has begun.
+Updated: **19 October 2026**. Phase: **visitor visual demo ready; consolidated specification review remains open**. **SPEC v1.0 and PLAN v1.0 are approval candidates, not approved.** A separately authorized static visual concept is ready; no production application has been built.
+
+## New: visitor visual demo
+
+The founder explicitly requested a nonfunctional design demo while away. Completed [product-preview/index.html](docs/demos/product-preview/index.html): a polished visitor page with an explorable fictional daily recap, source details/references/sponsor disclosure, dates/quiet day, all updates and preferences previews. Created with the frontend-design skill. It is self-contained and can be opened directly, or viewed through the temporary local server at http://localhost:4187.
+
+[Demo handoff](docs/demos/product-preview/README.md) includes four saved screenshots, design rationale and exact browser-check evidence. Reviewed at 1440/728/390/360px CSS widths and in inline preview; local controls, source/day consistency and overflow checked. No actual collection, generation, signup, delivery or publication is demonstrated. This request approves the visual concept only, not SPEC/PLAN v1.0 or M0–M5.
 
 ## Latest decisions
 
@@ -42,6 +48,6 @@ No customer outreach, trial, payment, external email sending, deployment or publ
 
 ## Next action
 
-Founder reviews and approves **SPEC v1.0 + PLAN v1.0**, or requests changes. Record the actual response/date before implementation. If approved, start M0, then the local milestones with fixtures labeled; do not reopen D08. For another session, read this file, SPEC.md, PLAN.md and docs/DECISIONS.md first.
+Founder reviews the saved visitor demo and gives design feedback. Consolidated **SPEC v1.0 + PLAN v1.0** approval or requested changes is still pending; do not infer it from the demo request. Record the actual response/date before implementation. If approved, start M0, then the local milestones with fixtures labeled; do not reopen D08. For another session, read this file, SPEC.md, PLAN.md and docs/DECISIONS.md first.
 
 Actual new external spending: **€0**. Generated transcription: **0/150 experiment minutes**. Founder labor not timed. No app tests exist yet. Repository has no Git remote; local saving/commits do not provide remote backup.

@@ -1,6 +1,6 @@
 # Product specification
 
-Version: **1.0 — APPROVAL CANDIDATE**. Prepared: 19 October 2026. Owner: founder. **Not approved; no app implementation started.** Matching delivery plan: [PLAN.md v1.0](PLAN.md). Quick review: [docs/APPROVAL.md](docs/APPROVAL.md).
+Version: **1.0 — APPROVAL CANDIDATE**. Prepared: 19 October 2026. Owner: founder. **Not approved; no production application built.** A separately authorized visual concept exists under D18; it does not approve this specification. Matching delivery plan: [PLAN.md v1.0](PLAN.md). Quick review: [docs/APPROVAL.md](docs/APPROVAL.md).
 
 Q1–Q15 establish the direction below. Details marked **recommended default** are offered together for approval, not treated as answers already given. Approval of this specification and plan authorizes local implementation within this scope. Supplier execution, spending, outreach, trials and publication remain separately deferred or unauthorized.
 

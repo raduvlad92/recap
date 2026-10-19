@@ -6,6 +6,8 @@ A daily, source-linked recap of the creators and publications a person chooses t
 
 This project is at consolidated specification review. The founder wants a business aimed at rapid growth. No application has been built, and the specification is not yet approved.
 
+Open the [visitor visual demo](docs/demos/product-preview/index.html), or see its [screenshots and handoff](docs/demos/product-preview/README.md). It uses fictional content and is separate from specification approval.
+
 Start with [STATUS.md](STATUS.md) to see the current position and next decision.
 
 - [Specification and plan approval brief — v1.0 candidate](docs/APPROVAL.md)

@@ -1,6 +1,6 @@
 # Tracked implementation and validation plan
 
-Version: **1.0 — APPROVAL CANDIDATE**. Updated: 19 October 2026. Matches [SPEC v1.0](SPEC.md). **Not approved; local implementation has not started.**
+Version: **1.0 — APPROVAL CANDIDATE**. Updated: 19 October 2026. Matches [SPEC v1.0](SPEC.md). **Not approved; M0–M5 have not started.** A separate static visual concept was explicitly authorized and completed as VD01.
 
 Approving the named pair permits the local M0–M5 work below. All provider execution/authentication/spending remains deferred by D08; customer contact, paid trials and publication require their own approval. Local work uses explicitly labeled fixtures and supplier interfaces, not purported live integration. No fixed launch date is promised.
 
@@ -17,6 +17,7 @@ Approving the named pair permits the local M0–M5 work below. All provider exec
 | P05 | Multilingual launch, lasting history/references, larger limits / founder | Direction recorded | Q13–Q15, D15–D17. Exact languages/numbers await whole-version approval. |
 | A01 | Source manifest and preflight tooling / assistant | Done | 35-source manifest; actual 15-feed/75-update preflight, two publisher-transcript checks. |
 | S01 | Consolidated SPEC v1.0 + PLAN v1.0 / founder + assistant | Candidate ready; approval pending | docs/APPROVAL.md; docs/ALLOWANCES.md; saved review brief. |
+| VD01 | Visitor-facing static visual demo / assistant | Done: separately authorized 19 October | docs/demos/product-preview/index.html, DESIGN.md, checks.json and screenshots. No backend/live-source work; does not pass M1 or approve S01. |
 
 ## Local implementation after S01 approval
 

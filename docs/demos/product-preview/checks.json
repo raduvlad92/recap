@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-19",
+  "type": "static concept / fictional fixtures / local browser checks",
+  "browser": "T3 collaborative Chromium preview; viewport emulation, not physical-device testing",
+  "interactions": {
+    "checks": [
+      {
+        "day": 19,
+        "countsConsistent": true,
+        "audit": {
+          "day": 19,
+          "view": "recap",
+          "fictional": true,
+          "followed": 9,
+          "updated": 7,
+          "checked": 8,
+          "analyzed": 7,
+          "inventory": 7,
+          "topics": 3,
+          "overflow": false,
+          "font": true
+        }
+      },
+      {
+        "day": 18,
+        "countsConsistent": true,
+        "audit": {
+          "day": 18,
+          "view": "recap",
+          "fictional": true,
+          "followed": 9,
+          "updated": 4,
+          "checked": 9,
+          "analyzed": 4,
+          "inventory": 4,
+          "topics": 2,
+          "overflow": false,
+          "font": true
+        }
+      },
+      {
+        "day": 17,
+        "countsConsistent": true,
+        "audit": {
+          "day": 17,
+          "view": "recap",
+          "fictional": true,
+          "followed": 9,
+          "updated": 0,
+          "checked": 9,
+          "analyzed": 0,
+          "inventory": 0,
+          "topics": 0,
+          "overflow": false,
+          "font": true
+        }
+      }
+    ],
+    "originalTitle": "Sample original update",
+    "referenceTitle": "Creator-linked reference",
+    "inventoryRows": 7,
+    "sourceRows": 9,
+    "keyboardWorks": true,
+    "fontLoaded": true,
+    "externalResourceRequests": 0
+  },
+  "viewportChecks": [
+    {
+      "check": "layout",
+      "value": {
+        "width": 360,
+        "audit": {
+          "day": 19,
+          "view": "recap",
+          "fictional": true,
+          "followed": 9,
+          "updated": 7,
+          "checked": 8,
+          "analyzed": 7,
+          "inventory": 7,
+          "topics": 3,
+          "overflow": false,
+          "font": true
+        },
+        "outliers": []
+      }
+    },
+    {
+      "check": "layout",
+      "value": {
+        "width": 728,
+        "audit": {
+          "day": 19,
+          "view": "recap",
+          "fictional": true,
+          "followed": 9,
+          "updated": 7,
+          "checked": 8,
+          "analyzed": 7,
+          "inventory": 7,
+          "topics": 3,
+          "overflow": false,
+          "font": true
+        },
+        "outliers": []
+      }
+    },
+    {
+      "check": "layout",
+      "value": {
+        "width": 1440,
+        "audit": {
+          "day": 19,
+          "view": "recap",
+          "fictional": true,
+          "followed": 9,
+          "updated": 7,
+          "checked": 8,
+          "analyzed": 7,
+          "inventory": 7,
+          "topics": 3,
+          "overflow": false,
+          "font": true
+        },
+        "outliers": []
+      }
+    }
+  ],
+  "reviews": [
+    "Visitor/design review completed; reading size increased and sponsor disclosure exposed.",
+    "Source-consistency review completed; Sunday-specific evidence, cutoff times and quiet-day source status corrected; no remaining blocker."
+  ],
+  "knownLimits": [
+    "No live sources, AI generation, account creation, delivery, backend, customer trial or deployment.",
+    "Interface remains English in this concept; six small recap-language examples are illustrative, not verified multilingual quality.",
+    "Source setup is explanatory only."
+  ],
+  "externalSpendingEUR": 0
+}

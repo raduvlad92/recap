@@ -66,6 +66,16 @@ Documentation verification: local Markdown targets and whitespace checked; numer
 
 Next action: founder approves SPEC v1.0 + PLAN v1.0 or requests changes. Only then start local M0–M5. D08 supplier deferral remains in force. Work is saved in the local Git repository; no remote is configured.
 
+## 19 October 2026 — visitor visual concept v0.1
+
+Task: VD01. Authorization: founder's explicit nonfunctional design-demo request, D18. Skill: frontend-design. [Self-contained demo](demos/product-preview/index.html), [handoff](demos/product-preview/README.md), [design plan/critique](demos/product-preview/DESIGN.md), [checks](demos/product-preview/checks.json). Type: **local interactive concept with fictional fixtures**, not a production app or live collection/generation proof.
+
+Built a product-led visitor page, seven-format fictional source set and three-topic recap. Local exploration includes three dates (including quiet day), all updates/coverage, attributed snippets, source-original and creator-reference previews, disclosed sponsorship/brand mentions, and future-only interest/language/time previews. No signup or sending actions. The font/icons are embedded for reopening without a build or network dependency.
+
+Independent visitor/design and source-consistency reviews completed. Corrected font-variable loading, enlarged reading copy, exposed sponsorship, fixed historical source lookup/times and quiet-day source cards. Final browser checks: 1440/728/390/360px CSS widths, no horizontal overflow; inventories/counts/day states agree; original/reference dialogs distinct; preferences leave archive unchanged; arrow-key tab navigation works. Inline HTML preview at 728px also inspected. Final inspected snapshots showed no console errors. Saved [desktop](demos/product-preview/desktop.png), [mobile](demos/product-preview/mobile.png), [expanded sources](demos/product-preview/source-details.png) and [preferences](demos/product-preview/preferences.png). Viewport checks are not physical-device tests.
+
+External spending €0; no supplier authentication/run, transcription, actual source collection, customer communication, payment or deployment. D08 remains deferred. Full SPEC/PLAN v1.0 approval still pending and M0–M5 unstarted; this demo does not satisfy those implementation/live-quality gates. Temporary local server: http://localhost:4187; file remains available if that process ends. Next: founder reviews visual direction and pending specification; save feedback as design changes without silently promoting them to approved scope.
+
 ## Required format for future entries
 
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.
