@@ -1,6 +1,6 @@
 # Decisions and interview
 
-Updated: 19 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Updated: 21 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
 ## Accepted founder decisions
 
@@ -121,6 +121,14 @@ These are recommendations being submitted, not founder approvals. The review bri
 The founder asked: “prepare a demo on how it will look like (no need to make it functional), use the design skill” and wanted it to show visitors how the product works and make them want it. This authorizes a standalone local visual concept, including lightweight sample interactions, without waiting for whole-spec approval. It does not approve SPEC/PLAN v1.0, the full app, live suppliers, spending, outreach or publication.
 
 Completed visual concept v0.1: [demo and handoff](demos/product-preview/README.md). The design direction, fictional content and local behavior are proposals for feedback, not newly approved product requirements. Saved checks/screenshots distinguish the prototype from actual access and operating evidence.
+
+## 21 October 2026 — reference and recommendation, not a new approval
+
+Founder steering: “I was thinking something more like this,” with a creator-led feed/workspace reference, then a request to compare designs, understand personas and recommend retention/viral features. Treat the image as design input; do not infer that every depicted control, live freshness claim, Threads support, team function or number is an accepted requirement.
+
+Saved [assessment](design/VISION-COMPARISON.md). Assistant recommendation: founder's creator-led workspace as visual/navigation foundation; connected daily recap prominent/default; All updates and creator drill-downs for exploration; evidence-based signals instead of volume alone. Proposed retention priorities: creator continuity, change since last catch-up, history retrieval. Proposed distribution loops: editable source collections and deliberately shared cited insight cards. These are recommendations, not approved additions or demonstrated retention/growth.
+
+The prior three-audience direction, daily cadence and explicit-interest/history decisions remain in force. No demo rebuild or full-spec approval was requested/given. Update a future named candidate if the founder adopts material changes; do not silently rewrite approved answers. Supplier work, customer trials and publication remain deferred/unauthorized.
 
 ## Approval register
 

@@ -1,10 +1,18 @@
 # Current status
 
-Updated: **19 October 2026**. Phase: **visitor visual demo ready; consolidated specification review remains open**. **SPEC v1.0 and PLAN v1.0 are approval candidates, not approved.** A separately authorized static visual concept is ready; no production application has been built.
+Updated: **21 October 2026**. Phase: **reference comparison and product-direction assessment complete; specification review remains open**. **SPEC v1.0 and PLAN v1.0 are approval candidates, not approved.** A separately authorized static visual concept is ready; no production application has been built.
+
+## 21 October: founder reference assessed
+
+The founder supplied a creator-led workspace reference and asked how it compares with the existing concept, who it serves, and what could support return use/sharing. Saved [comparison and recommendation](docs/design/VISION-COMPARISON.md) with the [reference image](docs/design/founder-reference-2026-10-21.png). Compared both images, completed independent persona/scope reviews and refreshed relevant primary product documentation.
+
+Recommendation, **not newly approved scope**: use the founder's creator-led navigation and visual foundation; keep the short daily topic recap prominent/default, with All updates/creator exploration alongside it. Prioritize creator continuity, meaningful change since the previous catch-up and useful history retrieval. Test editable source-collection sharing and small cited insight cards as distribution hypotheses. The three audience groups remain separate hypotheses; no winner is selected from a screenshot.
+
+No demo redesign or product implementation was performed. SPEC/PLAN v1.0 remain unapproved. The local port-4187 server was cancelled by the reported T3 restart and was not needed/restarted for this review. The self-contained demo and screenshots remain saved.
 
 ## New: visitor visual demo
 
-The founder explicitly requested a nonfunctional design demo while away. Completed [product-preview/index.html](docs/demos/product-preview/index.html): a polished visitor page with an explorable fictional daily recap, source details/references/sponsor disclosure, dates/quiet day, all updates and preferences previews. Created with the frontend-design skill. It is self-contained and can be opened directly, or viewed through the temporary local server at http://localhost:4187.
+The founder explicitly requested a nonfunctional design demo while away. Completed [product-preview/index.html](docs/demos/product-preview/index.html): a polished visitor page with an explorable fictional daily recap, source details/references/sponsor disclosure, dates/quiet day, all updates and preferences previews. Created with the frontend-design skill. It is self-contained and can be opened directly, or served locally after restarting the temporary server described in its handoff.
 
 [Demo handoff](docs/demos/product-preview/README.md) includes four saved screenshots, design rationale and exact browser-check evidence. Reviewed at 1440/728/390/360px CSS widths and in inline preview; local controls, source/day consistency and overflow checked. No actual collection, generation, signup, delivery or publication is demonstrated. This request approves the visual concept only, not SPEC/PLAN v1.0 or M0–M5.
 
@@ -48,6 +56,6 @@ No customer outreach, trial, payment, external email sending, deployment or publ
 
 ## Next action
 
-Founder reviews the saved visitor demo and gives design feedback. Consolidated **SPEC v1.0 + PLAN v1.0** approval or requested changes is still pending; do not infer it from the demo request. Record the actual response/date before implementation. If approved, start M0, then the local milestones with fixtures labeled; do not reopen D08. For another session, read this file, SPEC.md, PLAN.md and docs/DECISIONS.md first.
+Founder reviews the comparison/recommendation and may request a revised visual concept. Creator navigation, search/saves, change tracking and sharing additions remain proposals until explicitly adopted. Consolidated **SPEC v1.0 + PLAN v1.0** approval or requested changes is still pending; do not infer it from the demo request. Record the actual response/date before implementation. If approved, start M0, then the local milestones with fixtures labeled; do not reopen D08. For another session, read this file, SPEC.md, PLAN.md and docs/DECISIONS.md first.
 
 Actual new external spending: **€0**. Generated transcription: **0/150 experiment minutes**. Founder labor not timed. No app tests exist yet. Repository has no Git remote; local saving/commits do not provide remote backup.

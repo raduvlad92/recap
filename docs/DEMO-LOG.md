@@ -76,6 +76,12 @@ Independent visitor/design and source-consistency reviews completed. Corrected f
 
 External spending €0; no supplier authentication/run, transcription, actual source collection, customer communication, payment or deployment. D08 remains deferred. Full SPEC/PLAN v1.0 approval still pending and M0–M5 unstarted; this demo does not satisfy those implementation/live-quality gates. Temporary local server: http://localhost:4187; file remains available if that process ends. Next: founder reviews visual direction and pending specification; save feedback as design changes without silently promoting them to approved scope.
 
+## 21 October 2026 — founder reference comparison
+
+Task: R04. Type: **image/document assessment and public-document research**, not a new demo or working-product proof. Saved [founder reference](design/founder-reference-2026-10-21.png) and [comparison](design/VISION-COMPARISON.md). Inspected the supplied image and saved 19 October concept screenshots/source; independent persona/design and scope reviews completed. Verified relevant current feature documentation for Readless, Inoreader, Readwise Reader and Feedly; sources/limits are recorded in the assessment.
+
+Recommended creator-led navigation around the daily recap, with creator exploration and evidence-based signals; prioritized return-use and sharing hypotheses. No redesign or approved requirement changes. No application tests/live source runs, supplier sign-in, purchases, customer outreach, paid trial or publication. External spending €0; generated experiment transcription remains 0/150 minutes; seven-day observation remains deferred at 0/7. T3 restart reportedly cancelled the temporary port-4187 server; assessment used saved images/files and did not need a restart. Next: founder reviews the assessment; any material adopted scope changes require a revised named candidate.
+
 ## Required format for future entries
 
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.
