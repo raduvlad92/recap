@@ -40,4 +40,12 @@ Saved images show synthetic local fixtures, not the owner's collected history or
 
 ## Release evidence
 
-Push, CI, Netlify deployment and hosted owner checks are recorded after release below. No collection job, model execution, transcription, schedule or new supplier spend is part of this increment. Existing hosting/build/database usage is not measured as a total cost.
+Functional commit **`e36082c50417d759c7c3146f39d59509b8621801`** is pushed to main and passed [CI 39674698248](https://github.com/raduvlad92/recap/actions/runs/39674698248). Netlify production deploy **`6ad92748a9a47a09d78ef245`** is ready for that exact commit, published **20:58:10 UTC**. The hosted owner browser loaded `index-CTuPneGz.js`.
+
+The actual existing signed-in owner session was verified through a separate Chrome tab. At the same **1496×882** viewport, the first card moved from **y618.33 to y205**, saving approximately **413px** above the feed. Toolbar is at y114; sort, range, date and Filter share a single row. The tech collection remains active with **269** default-window updates and **278** under All available history. The repeated heading/banner are absent and no sync/archive error appears. Preferences shows the source-material explanation, and its coverage link opens **all 39** stored source rows. No settings/follows were edited, and the range was restored to 30 days.
+
+The actual hosted owner view at **390×844** has two control rows, document width **375px** (within the viewport), **269** updates and first card at y275. Responsive overrides were reset. The owner tab is left on the default collection view. No private follow list, identity, email or original content was saved in screenshots: the live crop contains only controls and an aggregate count.
+
+![Actual deployed toolbar, no private identities or follows](evidence/compact-feed-live-toolbar.png)
+
+Local guest fixture storage was restored and temporary development servers stopped. No collection job, model execution, transcription, schedule or new supplier spend is part of this increment. Existing hosting/build/database usage is not measured as a total cost. The release record is followed by a documentation-only commit; the executable deployment above is the verified functional release.
