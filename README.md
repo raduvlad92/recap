@@ -30,6 +30,8 @@ This runs the meaningful domain/collection tests, TypeScript and production buil
 
 ## Deploy and maintain
 
+A passing GitHub main-branch check triggers a Netlify build through a project-scoped GitHub Actions secret. Netlify clones the private repository with a read-only deploy key; no account-wide Netlify token is shared.
+
 Netlify settings and functions are in `netlify.toml` and `netlify/functions/`; publish only `dist`, not the repository root. `.local/`, `.env*`, `.netlify/`, `supabase/.temp/`, build outputs and test credentials are ignored. Database files are in `supabase/migrations/`; the v0 schema was applied only after an empty-schema preflight on the founder's recap project, with recorded live authorization checks.
 
 Read [AGENTS.md](AGENTS.md), STATUS, SPEC, PLAN and decisions before resuming. Full SPEC/PLAN v1.1 is a broader candidate; founder D20 separately authorizes this v0. Preserve the reference design and scope boundaries, save evidence and update the morning checklist. Font license is served at `/licenses/onest.txt`.

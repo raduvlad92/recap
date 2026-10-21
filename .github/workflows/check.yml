@@ -16,3 +16,10 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
       - run: npm run check
+      - name: Deploy checked main to Netlify
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
+        run: |
+          test -n "$NETLIFY_BUILD_HOOK"
+          curl --fail --silent --show-error --request POST "$NETLIFY_BUILD_HOOK" > /dev/null
