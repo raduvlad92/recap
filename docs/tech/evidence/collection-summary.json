@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "checkedAt": "2026-10-21T12:00:16.865Z",
+  "evidenceType": "actual-bounded-collection-and-private-database-readback",
+  "dateFrom": "2026-09-21T11:01:09.961Z",
+  "dateTo": "2026-10-21T11:01:09.961Z",
+  "selectedSources": 39,
+  "sourcesWithAcceptedUpdates": 20,
+  "sourcesWithoutAcceptedUpdates": 19,
+  "platforms": {
+    "YouTube": {
+      "selected": 21,
+      "withAcceptedUpdates": 13,
+      "acceptedUpdates": 184
+    },
+    "X": {
+      "selected": 10,
+      "withAcceptedUpdates": 3,
+      "acceptedUpdates": 76
+    },
+    "Instagram": {
+      "selected": 8,
+      "withAcceptedUpdates": 4,
+      "acceptedUpdates": 18
+    }
+  },
+  "archiveRowsPrepared": 278,
+  "archiveRowsVerified": 278,
+  "distinctArchiveIds": 278,
+  "contentKinds": {
+    "existingCaptions": 175,
+    "sourceText": 93,
+    "metadataOnly": 10
+  },
+  "coverageStatuses": {
+    "collected_unverified_completeness": 20,
+    "no_items_reported": 11,
+    "no_results_unverified": 7,
+    "failed_or_partial": 1
+  },
+  "allCoverageComplete": false,
+  "cappedSources": 0,
+  "textClippedItems": 2,
+  "textCharacterLimit": 200000,
+  "combinedPrivateOutputSha256": "e6d89fb1fb78a9bc31d54c25f59319a1982a839e1c22d86a534d4dc152e7fcac",
+  "controllerRuns": [
+    {
+      "id": "ljOOTSb0X3LxXSqBo",
+      "build": "0.1.5",
+      "sourceRuns": 38,
+      "acceptedUpdates": 202
+    },
+    {
+      "id": "HqRC9Byt2VJOplL1D",
+      "build": "0.1.7",
+      "sourceRuns": 11,
+      "acceptedUpdates": 76
+    }
+  ],
+  "latestActorBuild": {
+    "id": "w8wei9JLcWWhKwmMK",
+    "build": "0.1.8",
+    "status": "SUCCEEDED",
+    "collectionExecutedOnThisBuild": false
+  },
+  "activity": {
+    "actualRunRecords": 53,
+    "distinctActualActors": 5,
+    "running": 0,
+    "providerReportedRunFees": 53,
+    "buildRecords": 8
+  },
+  "costs": {
+    "observedRunUsageUsd": 1.296381212221,
+    "observedBuildUsageUsd": 0.006867111116,
+    "observedCombinedUsageUsd": 1.303248323337,
+    "observedCostsAreFinal": false,
+    "globalEnvelopeHeldUsd": 45,
+    "childAndBuildCommitmentsUsd": 42.286867111116,
+    "newCashPurchase": false,
+    "newSubscription": false
+  },
+  "generatedTranscriptionMinutes": 0,
+  "aiCalls": 0,
+  "schedules": 0,
+  "privateAccountIdentifiersIncluded": false,
+  "rawSourceBodiesIncluded": false
+}

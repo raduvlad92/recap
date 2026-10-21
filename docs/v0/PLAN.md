@@ -44,8 +44,8 @@ Account management in v0 exposes sign-in/sign-out and workspace deletion. Clerk 
 
 | ID | Assistant-owned next deliverable | Current state / evidence needed |
 | --- | --- | --- |
-| V0-N01 | Durable aggregate paid-collection ledger/stop; privately provision reviewed Apify build, signing secret and operator allowlist; run a bounded real-caption check | Runtime off; per-run gates and tests exist. First next engineering task. Do not treat credential provisioning alone as activation readiness. |
-| V0-N02 | Expand the Apify adapter to the founder's essential social creators and verify useful content per family | No social source verified. Preserve public-feed evidence without making it a substitute for broad access. |
+| V0-N01 | Durable aggregate paid-collection ledger/stop; privately provision reviewed Apify build, signing secret and operator allowlist; run a bounded real-caption check | D22 manual bounded path completed: durable aggregate holds, reviewed private Actor and actual captions verified. Hosted web paid runtime remains off; no recurring collection. See ../tech/VERIFICATION.md. |
+| V0-N02 | Expand the Apify adapter to the founder's essential social creators and verify useful content per family | D22 imported 278 real items from 20 of 39 selected YouTube/X/Instagram sources. All coverage incomplete; 19 sources returned no accepted items. Other source families and broad access remain unfinished. |
 | V0-N03 | Genuine cross-source analysis and cited daily recap generation | Examples only; select model and approve bounded execution costs before paid calls; evaluate fidelity, disclosed sponsorship and multilingual output. |
 | V0-N04 | Daily scheduling, reminder delivery and usage/coverage accounting | Preferences saved only; no schedule or sender active. Test retries, DST and quiet/late days. |
 | V0-N05 | Stable snapshots, corrections, expiry and full cross-service deletion | Workspace state/export/reset/delete present; full history/privacy promises incomplete. |

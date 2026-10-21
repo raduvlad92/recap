@@ -1,31 +1,33 @@
 # Your morning checklist
 
-Updated: 21 October 2026. **The working v0 is live: [Open recap](https://recap-v0-radu.netlify.app).** No setup or payment is needed to explore it. Your existing recap Supabase and Clerk projects are connected; code is backed up in the private [GitHub repository](https://github.com/raduvlad92/recap).
+Updated: 21 October 2026, D22. **[Open recap](https://recap-v0-radu.netlify.app).** Your Recap account and the selected DeleteCookies Apify organization are already connected. No signup, provider login, API token, new account or payment is needed from you. This replaces the earlier setup and creator-selection requests in this checklist.
+
+Your editable **tech** collection now includes **39 official sources: 21 YouTube, 10 X and eight Instagram**, grouped under the researched people and studios. GNSteve is included on official ownership evidence. Your previous preferences, saves and nine sample follows were kept; there are 48 total follows. The tech collection does not mix in fictional sample updates.
+
+The first production release (`d8c78d8`) and your signed-in view have been checked. All 278 archive records have been imported and read back; the assistant is finishing the final fix deployment and fresh browser checks. Exact final evidence will be saved in `docs/tech/VERIFICATION.md`; the numbers below describe retained records, not proof of complete month coverage.
 
 ## Try it in five minutes
 
-1. Open the site. Its quiet three-column layout follows your reference. Start with **Northstar Studio**, then drill into **Maya Chen** and the studio's channels. These are clearly labeled fictional examples to demonstrate your modular creator idea.
-2. Switch between **All updates** and **Today's recap**. Try search, topics, dates, a bookmark and Read later. Open an update to see its details and references.
-3. Sign in with your own account. Saved sources, reading lists and preferences are private to that account. Reload to check your library returns. Clerk is currently using its development instance; this is a review app.
-4. For actual collection, open **Manage sources**, add `https://simonwillison.net/atom/everything/` and choose **Collect**. This exact public feed was tested end to end on the deployed site. It imports up to five recent items and labels them **Collected source**. Feed text can be an excerpt; it is not an AI-written recap.
-5. Open it on your phone. The desktop rails become compact controls; the same account keeps your library available.
+1. Open the site and sign in to your existing Recap account. Choose **tech** in Collections if it is not already selected.
+2. Expand the studios, people and individual channels. The card-identity fix labels an uncredited item with its actual channel, so LTT, ShortCircuit and TechLinked stay distinguishable. A studio relationship never invents a presenter credit.
+3. Browse **All updates**, the date controls and **Last 30 days / All available history**. The daily grouped view uses available source extracts; an AI-written recap has not been generated.
+4. Open **View source coverage**, then an item and its original link. The completed bounded collection produced **278 unique updates: 175 with existing captions, 93 with source/post text and 10 metadata-only items**. Twenty sources returned usable updates; the other 19 show empty/unverified or blocked results. All 39 source reports still mark coverage incomplete. An empty result does not prove a creator was quiet, and metadata-only video items do not contain spoken content.
+5. Try a bookmark or Read later, then reload. Your library is private to your account. On your phone, the source drawer contains the same collection and channel controls. The admin panel and public creator directory remain available from their existing pages.
 
-## The useful input from you
+No new collection run is needed to inspect these items. Earlier instructions to add a test feed, provide Apify access or list your first creators are superseded by the completed setup and this tech collection.
 
-- Note which part best matches what you imagined and the first thing that feels wrong.
-- List three to five actual creators/studios you want next, including their essential channels. That will give the next collection checks a useful target without forcing a customer segment choice now.
-- When ready for paid Apify checks, provide access through a private secret-entry flow or the authorized provider account. **Do not paste a token or password in chat.** No Apify setup is needed to review the current website.
+## What is ready and what comes next
 
-No additional GitHub, Netlify, Clerk or Supabase account creation is needed. Cloudflare was not needed. No subscription upgrade was bought, no paid scraper ran and no email was sent.
+Actual YouTube, X and Instagram source collection has run in the bounded tech slice. Xquik returned actual X posts; earlier supplier demo rows were rejected. This is still a review app using Clerk's development instance, and it does not establish broad access across every planned source family.
 
-## What I still need to implement
+These remaining tasks belong to the assistant:
 
-These are engineering tasks for the assistant, not homework for you. [Tracked continuation](PLAN.md#continuation-work) and [verification](VERIFICATION.md) retain the details.
+- Complete final checked deployment and fresh owner/admin browser readback. Archive import, source diagnostic corrections, 355 tests/build and 53-run/five-Actor accounting are already verified; exact evidence is in [the D22 report](../tech/VERIFICATION.md).
+- Add genuine cross-source AI recaps, accurate topic/brand/disclosed-sponsor extraction and multilingual quality checks. Current collected items are source extracts, not generated analysis.
+- Implement daily generation at the chosen local time and optional email reminders. Saved preferences do not activate collection or delivery schedules.
+- Finish stable historical recap snapshots, corrections/unavailable-original handling, input expiry and full cross-service account deletion. Workspace export/reset/delete does not erase a Clerk account or upstream provider records.
+- Complete production authentication/domain and broader access checks before a separately approved customer trial. No customer outreach or charging has started.
 
-- Activate Apify safely: reviewed actor/build, server-side credentials, operator access and a durable total-spend stop, then verify an actual run. The adapter is present but runtime is off. X, Instagram and LinkedIn collection are not active.
-- Add genuine cross-source AI synthesis and evaluate accurate snippets, topic/brand/disclosed-sponsor extraction and multilingual recaps. Current recap examples demonstrate the experience; collected items retain publisher extracts without invented analysis.
-- Implement daily local-time generation, optional reminder sending and delivery checks. Saving time/language/email preferences does not activate those services.
-- Finish stable historical snapshots, corrections/unavailable-original handling, raw-input expiry and full cross-service account deletion. Current workspace export/reset/delete controls do not erase a Clerk account or upstream provider records.
-- Complete production authentication/domain setup and readiness checks before inviting customers. No customer outreach or trial has started; your broad-access-before-trial decision remains in force.
+Your useful feedback is simply which part feels closest to your idea and what first feels wrong. There is no new access or setup homework.
 
-**Costs:** €0 new cash charges observed; no AI calls or generated transcription. Existing hosting/build/database usage was used and has not been priced as a measured per-reader operating cost. The earlier €50/150-minute source-proof ceiling is not a recurring budget.
+**Costs:** observed run/build usage is about **US$1.30 from existing free credits**. Provider charges remain provisional even after runs finish. The US$45 held aggregate reservation is a spending ceiling, not an incurred charge. No new supplier subscription, upgrade or cash purchase is reported. No AI synthesis or generated transcription ran, and no recurring collection/reminder schedule is active. Hosting/build/database usage has not been measured as a per-reader operating cost.

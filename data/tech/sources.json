@@ -1628,7 +1628,7 @@
         "stream"
       ],
       "language": "en",
-      "scope": "optional",
+      "scope": "included",
       "collectionStatus": "planned",
       "coverage": {
         "status": "not_collected",
@@ -1649,7 +1649,7 @@
           "method": "official_crosslink"
         }
       ],
-      "note": "Visible association; excluded from the default technology backfill. Do not infer presenter/employment credits from ownership."
+      "note": "Confirmed company-owned channel included in the all-media inventory. Its separate personal identity and non-tech subject remain visible; ownership does not infer per-update presenter or employment credits."
     }
   ],
   "candidates": [

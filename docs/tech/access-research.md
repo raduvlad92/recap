@@ -4,7 +4,7 @@ Researched and checked **21 October 2026**. This document records public identit
 
 ## Reviewed inventory
 
-[data/tech/sources.json](../../data/tech/sources.json) contains **38 included sources: 20 YouTube channels, 10 X accounts and eight Instagram accounts**. It also preserves one optional source and nine unresolved relationships separately. This expands the earlier 17-YouTube/five-social checkpoint in [CHANNEL-RESEARCH.md](CHANNEL-RESEARCH.md); the earlier document remains the evidence of that earlier pass.
+[data/tech/sources.json](../../data/tech/sources.json) contains **39 included sources: 21 YouTube channels, 10 X accounts and eight Instagram accounts**. Nine unresolved relationships remain separate; no optional source is excluded by topic alone. The running first controller retains its original 38-source input; GNSteve is a separately bounded follow-up, not a retroactive claim about that run. This expands the earlier 17-YouTube/five-social checkpoint in [CHANNEL-RESEARCH.md](CHANNEL-RESEARCH.md); the earlier document remains the evidence of that earlier pass.
 
 The manifest has three publishing groups, six person/group identities, stable source IDs, exact original-account aliases, observed YouTube channel IDs, and inspected first-party evidence per source. Four exact existing D21 catalogue channel IDs are reused; the other source IDs derive deterministically from their canonical platform account or observed YouTube channel ID. This does not rewrite D21 identity anchors, overwrite live operator edits or import a new catalogue seed.
 
@@ -12,7 +12,7 @@ The manifest has three publishing groups, six person/group identities, stable so
 | --- | --- | --- |
 | Linus Media Group | Linus Tech Tips; ShortCircuit; TechLinked; WAN Show; LMG Clips; Techquickie; GameLinked; Mac Address; Channel Super Fun; They're Just Movies; PSU Circuit | Main LTT accounts on both platforms; ShortCircuit on both; TechLinked on both; GameLinked on both; Mac Address on both; Channel Super Fun on both; They're Just Movies on X. |
 | MKBHD studio | Marques Brownlee; The Studio; Waveform; Auto Focus; Waveform Clips; MKBHD Shorts | Main Marques accounts on both platforms and Waveform on both. |
-| GamersNexus | GamersNexus; GNCA – GamersNexus Consumer Advocacy; GN Extras | Main GamersNexus X. No Instagram account was affirmed. |
+| GamersNexus | GamersNexus; GNCA – GamersNexus Consumer Advocacy; GN Extras; GNSteve (separate personal identity) | Main GamersNexus X. No Instagram account was affirmed. |
 
 All sources are still marked `planned` / `not_collected` in this identity inventory. Included means the public account belongs in the requested collection inventory; it does not assert recent activity, functioning scraping, complete pagination or usable captions. YouTube videos, Shorts and streams are recorded as formats to check, rather than silently excluding the latter two.
 
@@ -27,9 +27,9 @@ All sources are still marked `planned` / `not_collected` in this identity invent
 
 Profile identity metadata and outgoing links were inspected through public HTTP responses; no historical feed was backfilled by this research assignment. Some LTT Labs pages rejected the simple HTTP client, so their rendered public browser-search representation and exact outbound links were inspected instead. HTTP 200, a login screen or a matching name alone was never treated as an identity bridge.
 
-## Optional and unresolved boundaries
+## Confirmed ownership and unresolved boundaries
 
-**GNSteve is separate and optional.** Its [own profile](https://www.youtube.com/@gnsteve8846/about) describes mountain biking and explicitly states that GamersNexus LLC owns the channel. That is evidence of association/ownership; it is not a reason to invent presenter credits, employment dates or contributions to every studio update. Its source is kept separate from the default technology backfill.
+**GNSteve is separate and included.** Its [own profile](https://www.youtube.com/@gnsteve8846/about) describes mountain biking and explicitly states that GamersNexus LLC owns the channel. That is evidence of association/ownership; it is not a reason to invent presenter credits, employment dates or contributions to every studio update. The founder asked for all media from these publishers, so its confirmed company ownership warrants inclusion despite its non-tech subject. It retains a separate personal/source identity and no invented contribution credits.
 
 Four language-branded exLinus accounts are affirmatively featured by LTT, but present ownership/licensing and duplicate-language coverage remain unresolved. **LinusCatTips** resolves to an exact historical account (`UCL81YHgzH8tcrFfOJJwlSQw`), whose profile describes cat videos. The [historical official community discussion](https://linustechtips.com/topic/178711-which-of-linus-content-do-you-watch/) distinguishes it from LMG, but does not provide a current first-party corporate/main-profile ownership bridge. The account remains visible as an unresolved candidate and is not automatically collected under LMG.
 
@@ -64,7 +64,7 @@ All budget tables have RLS, explicit revoked client grants and no ordinary-reade
 
 ## Private source-history archive
 
-[Archive migration](../../supabase/migrations/20261021104534_reader_source_update_archive.sql) stores actual source updates separately from the two-megabyte workspace document. Each row is scoped by reader and update ID, with a user/collection/publication-date index. JSON IDs and publication timestamp must match the indexed columns, and each record is limited to 150,000 UTF-8 bytes.
+[Archive migration](../../supabase/migrations/20261021104534_reader_source_update_archive.sql) stores actual source updates separately from the two-megabyte workspace document. Each row is scoped by reader and update ID, with a user/collection/publication-date index. JSON IDs and publication timestamp must match the indexed columns. The initial per-record cap was 150,000 UTF-8 bytes; subsequent capacity changes belong to the parent's archive migration/evidence. This document does not override that live limit.
 
 Ordinary signed-in readers may only select/delete their own archive rows. Server imports/upserts use the service role; anonymous access and ordinary INSERT/UPDATE are denied. Raw posts/captions and private reader identifiers stay in the private database, never this manifest or Git. An oversized record fails explicitly; the import must not truncate a transcript silently to force it through the limit.
 
@@ -79,3 +79,21 @@ The parent's [atomic history-clear migration](../../supabase/migrations/20261021
 - Public source-manifest validation and ten unsafe-input cases passed offline. These are input/safety checks, not supplier-content evidence.
 
 No provider job, Actor deployment, paid collection, account change or hosted database mutation was performed by this child task. The parent separately reported capped Actor build charges; those belong in its actual ledger and reduce the remaining envelope. Future delivery evidence must separate build charges, actual runs, usable content, historical cutoff completeness and final billed cost. No collection success is asserted here.
+
+## Incremental activity reconciliation
+
+[scripts/reconcile-tech-activity.mjs](../../scripts/reconcile-tech-activity.mjs) prepares or applies activity accounting for an already-running controller and its known child runs. It defaults to **preview**: authenticated provider GETs and database reads only. Its provider reader accepts only `/users/me` and exact `/actor-runs/{id}` paths, sends no start/build/abort request, and refuses redirects. `--apply` permits database ledger/consumer/budget writes; it still cannot mutate a provider job.
+
+The CLI accepts `--identity-file`, `--manifest`, `--controller-file`, `--checkpoint` and `--envelope-file` using the private file contract in the parent task. Identity/controller/checkpoint/envelope files must resolve inside ignored `.local`. Environment names are `VITE_SUPABASE_URL`, `SUPABASE_SECRET_KEY` and `APIFY_API_TOKEN`; values must never be passed into reports or committed.
+
+The reconciler checks the exact recap project, authenticated DeleteCookies provider owner, controller actor/build/run, checkpoint parent and budget identity, and each child's source/reviewed actor/build/actual owner/run/cap before preparing writes. A newer manifest may be a superset of the actual checkpoint: only actual known run entries get child activity, so the original38-source controller and separately bounded GNSteve follow-up remain separate evidence.
+
+Existing jobs are matched by unique provider run reference and their reader/source/provider identities are checked again before updating. New inserts handle a uniqueness race by re-reading and validating, never blindly overwriting another reader. Updates use the server revision, including running-to-running observations. Provider start/finish timestamps are retained; accepted item counts come from completed normalized checkpoint coverage, not raw dataset counts. Missing fees stay null unless an earlier actual observation exists; stale lower observations do not erase a higher fee already seen (final credits require a separate final reconciliation); explicit provider-reported zero is distinct from an absent charge. Later observed fees can rise after terminal status and remain refreshable in the operational ledger.
+
+Every actual child receives its full checkpoint reservation under the existing global envelope. The reconciliation claim binds an existing verified run; it is never authorization to launch another. Every budget binding sends **`actual=null`**, including terminal outcomes. No final budget settlement or envelope close is performed, because provider billing may still change. The parent's [cost precision migration](../../supabase/migrations/20261021111858_collection_cost_precision.sql) preserves up to12 decimal places for observed operational fees.
+
+Stdout contains only aggregate counts and charges. Optional `--private-output .local/tech-reconciled-provider.json` writes provider identity, fresh controller/child metadata and summary with mode0600; it contains no source-post archive or application-owner input object and must remain ignored/private. Errors emit only fixed safe codes. Do not attach the private file to an issue or commit it.
+
+**42 pure reconciliation tests and TypeScript passed**, covering identity/build/owner mismatches, unsafe paths and fees, absent versus explicit-zero costs, rising terminal observations, bounded reservations, manifest/checkpoint subsets, normalized item counts, duplicate runs, another-reader insert races and concurrent revision conflicts. Read-only validation of the then-current actual local input files also passed with23 known child runs; that was not a provider/API refresh or database apply. The child task did not execute the CLI against live services. Actual preview/apply evidence belongs to the parent run report.
+
+The reconciler now resolves each checkpoint's **actual platform + Actor ID + build ID** through the Actor module's immutable review lookup, rather than comparing historical runs with the current default. The legacy apidojo X review and newly selected Xquik review are both accepted only as their exact reviewed pairs; crossed or unknown pairs are rejected. Actor slug, build number and pricing fingerprint must also match that resolved review. Unrelated same-envelope proof holds remain in the budget baseline and do not become checkpoint source activity. The then-completed original38-entry private checkpoint passed read-only local validation after the X default changed; no provider or database request was made by that check. The parent's actual X proof and provider choice remain separate from this compatibility evidence.

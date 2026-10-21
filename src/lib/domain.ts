@@ -106,6 +106,14 @@ export function dateKey(value: string | Date, timezone = 'UTC'): string {
   } catch { return date.toISOString().slice(0, 10); }
 }
 
+/** Use an actual channel identity unless the update explicitly credits a known contributor. */
+export function updateIdentity(update: SourceUpdate, sources: Source[], creators: Creator[]): { name: string; source?: Source; contributor?: Creator; publisher?: Creator } {
+  const source = sources.find(item => item.id === update.sourceId);
+  const contributor = update.contributorIds.map(id => creators.find(creator => creator.id === id)).find((creator): creator is Creator => !!creator);
+  const publisher = source ? source.creatorIds.map(id => creators.find(creator => creator.id === id)).find((creator): creator is Creator => !!creator) : undefined;
+  return { name: contributor?.name || source?.name || 'Unknown source', source, contributor, publisher };
+}
+
 /** Channel ownership is enough to navigate a creator; it does not assert a presenter credit. */
 export function creatorMatchesUpdate(creator: Creator, update: SourceUpdate): boolean {
   return creator.sourceIds.includes(update.sourceId) || update.contributorIds.includes(creator.id);

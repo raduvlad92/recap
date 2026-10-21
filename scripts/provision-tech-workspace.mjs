@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { publicUrl, sourceKey } from '../actors/tech-collector/src/collector.mjs';
 
 const TARGET='zlfdqzabsfndifxiqguo';
+const ARCHIVE_RECORD_MAX_BYTES=1_000_000;
 const PUBLISHER_ASSOCIATION='Official public channel. Publisher association only; per-update presenter credits remain unknown.';
 const object=value=>!!value && typeof value==='object' && !Array.isArray(value);
 const unique=values=>[...new Set(values)];
@@ -88,7 +89,7 @@ function outputWindow(output) {
   if(!object(output) || !Array.isArray(output.updates) || !object(output.manifest) || output.manifest.executionEnabled!==true || !validIsoDate(output.manifest.dateFrom) || !validIsoDate(output.manifest.dateTo) || Date.parse(output.manifest.dateFrom)>=Date.parse(output.manifest.dateTo) || Date.parse(output.manifest.dateTo)-Date.parse(output.manifest.dateFrom)>31*86400000)throw error('invalid_or_unexecuted_actor_output');
   return output.manifest;
 }
-const COVERAGE_STATUSES=new Set(['failed_or_partial','capped','collected_unverified_completeness','no_results_unverified','execution_disabled','not_attempted','ambiguous_start_requires_operator_reconciliation','provider_status_unavailable','provider_build_mismatch','provider_review_changed','aggregate_budget_cap','total_item_cap','provider_still_running','provider_dataset_unavailable','blocked','failed']);
+const COVERAGE_STATUSES=new Set(['failed_or_partial','capped','collected_unverified_completeness','no_results_unverified','no_items_reported','empty_format','provider_demo_only','execution_disabled','not_attempted','ambiguous_start_requires_operator_reconciliation','provider_status_unavailable','provider_build_mismatch','provider_review_changed','aggregate_budget_cap','total_item_cap','provider_still_running','provider_dataset_unavailable','blocked','failed']);
 const PROVIDER_STATUSES=new Set(['SUCCEEDED','FAILED','ABORTED','TIMED-OUT','RUNNING','READY','ABORTING','TIMING-OUT']);
 function coverageMap(manifest,output) {
   const {sources}=manifestData(manifest),known=new Map(sources.map(source=>[source.id,source])),window=outputWindow(output),mapped=new Map();
@@ -101,7 +102,7 @@ function coverageMap(manifest,output) {
     if(entry.sourceUrl!==undefined) {try{if(sourceKey(entry.sourceUrl,source.platform)!==sourceKey(source.url,source.platform))throw error('coverage_source_url_mismatch');}catch{throw error('coverage_source_url_mismatch');}}
     if(entry.providerStatus!==undefined && !PROVIDER_STATUSES.has(entry.providerStatus))throw error('invalid_coverage_provider_status');
     if(entry.providerRunId!==undefined && entry.providerRunId!==null && (typeof entry.providerRunId!=='string' || !/^[A-Za-z0-9_-]{1,100}$/.test(entry.providerRunId)))throw error('invalid_coverage_run_reference');
-    for(const key of ['returnedItems','acceptedItems','transcriptItems','postTextItems','metadataOnlyItems'])if(entry[key]!==undefined && !boundedCount(entry[key]))throw error('invalid_coverage_count');
+    for(const key of ['returnedItems','acceptedItems','transcriptItems','postTextItems','metadataOnlyItems','clippedItems'])if(entry[key]!==undefined && !boundedCount(entry[key]))throw error('invalid_coverage_count');
     for(const key of ['capped','datasetTruncated','complete'])if(entry[key]!==undefined && typeof entry[key]!=='boolean')throw error('invalid_coverage_flag');
     if(entry.complete===true)throw error('unsupported_complete_coverage_claim');
     for(const key of ['dateFrom','dateTo'])if(entry[key]!==undefined && (!validIsoDate(entry[key]) || Date.parse(entry[key])!==Date.parse(window[key])))throw error('coverage_window_mismatch');
@@ -111,10 +112,15 @@ function coverageMap(manifest,output) {
       if(entry[key]===undefined || entry[key]===null)continue;
       if(!object(entry[key]) || Object.keys(entry[key]).length>30 || Object.entries(entry[key]).some(([label,count])=>!/^[_a-z][_a-z0-9]{0,49}$/.test(label) || !boundedCount(count)))throw error('invalid_coverage_count_map');
     }
+    if(entry.diagnosticCodes!==undefined && (!object(entry.diagnosticCodes) || Object.keys(entry.diagnosticCodes).length>4 || Object.entries(entry.diagnosticCodes).some(([code,count])=>!['CHANNEL_HAS_NO_SHORTS','CHANNEL_HAS_NO_LIVE_VIDEOS','CHANNEL_HAS_NO_VIDEOS','DATE_FILTER_TOO_STRICT'].includes(code) || !boundedCount(count))))throw error('invalid_coverage_diagnostic');
+    if(entry.emptyFormats!==undefined && (!Array.isArray(entry.emptyFormats) || entry.emptyFormats.length>3 || new Set(entry.emptyFormats).size!==entry.emptyFormats.length || entry.emptyFormats.some(format=>!['video','shorts','stream'].includes(format))))throw error('invalid_empty_format_diagnostic');
     const updates=output.updates.filter(update=>update?.sourceId===entry.sourceId);
     const counts={acceptedItems:updates.length,transcriptItems:updates.filter(update=>update.contentKind==='transcript').length,postTextItems:updates.filter(update=>update.contentKind==='feed_text').length,metadataOnlyItems:updates.filter(update=>!update.contentKind || update.contentKind==='metadata_only').length};
     for(const [key,value]of Object.entries(counts))if(entry[key]!==undefined && entry[key]!==value)throw error('coverage_update_count_mismatch');
     if(entry.returnedItems!==undefined && entry.returnedItems<updates.length)throw error('coverage_returned_count_mismatch');
+    if(entry.clippedItems!==undefined && entry.clippedItems>updates.length)throw error('coverage_clipped_count_mismatch');
+    if(entry.status==='provider_demo_only' && (updates.length>0 || !entry.rejected?.provider_demo_data || entry.returnedItems!==entry.rejected.provider_demo_data))throw error('invalid_demo_only_coverage');
+    if(['no_items_reported','empty_format'].includes(entry.status) && updates.length>0)throw error('invalid_empty_source_coverage');
     mapped.set(entry.sourceId,{...entry,...counts});
   }
   if(output.updates.some(update=>!mapped.has(update?.sourceId)))throw error('missing_collected_source_coverage');
@@ -127,14 +133,16 @@ export function applyTechCoverage(workspace,manifest,output) {
   state.customSources=state.customSources.map(source=>{
     if(!known.has(source.id))return source;
     const entry=entries.get(source.id),accepted=entry?.acceptedItems ?? 0;
-    const failed=accepted===0 && !!entry && (['FAILED','ABORTED','TIMED-OUT'].includes(entry.providerStatus) || (entry.providerRunId && ['failed_or_partial','blocked','failed','provider_status_unavailable','provider_build_mismatch','provider_dataset_unavailable'].includes(entry.status)) || entry.status==='ambiguous_start_requires_operator_reconciliation');
+    const failed=accepted===0 && !!entry && (['FAILED','ABORTED','TIMED-OUT'].includes(entry.providerStatus) || (entry.providerRunId && ['failed_or_partial','blocked','failed','provider_status_unavailable','provider_build_mismatch','provider_dataset_unavailable'].includes(entry.status)) || ['ambiguous_start_requires_operator_reconciliation','provider_demo_only'].includes(entry.status));
     const status=accepted>0?'ready':failed?'failed':'pending';
     const countText=entry ? `${accepted} updates (${entry.transcriptItems} transcripts, ${entry.postTextItems} public text, ${entry.metadataOnlyItems} metadata only)${entry.returnedItems!==undefined?`; ${entry.returnedItems} provider records returned`:''}.` : 'No source coverage returned for this run.';
-    const labels={failed_or_partial:'Provider errors or a partial collection',capped:'Collection cap reached',collected_unverified_completeness:'Updates collected',no_results_unverified:'No matching results returned; history remains unverified',execution_disabled:'Execution disabled; not attempted',not_attempted:'Not attempted',ambiguous_start_requires_operator_reconciliation:'Launch outcome unknown; operator reconciliation required',provider_status_unavailable:'Provider status could not be read',provider_build_mismatch:'Unreviewed provider build rejected',provider_review_changed:'Provider review changed; not attempted',aggregate_budget_cap:'Spending cap prevented collection',total_item_cap:'Overall item cap prevented collection',provider_still_running:'Provider collection still running',provider_dataset_unavailable:'Provider results could not be read',blocked:'Provider blocked collection',failed:'Collection failed'};
+    const labels={failed_or_partial:'Provider errors or a partial collection',capped:'Collection cap reached',collected_unverified_completeness:'Updates collected',no_results_unverified:'No matching results returned; history remains unverified',no_items_reported:'Provider reported no accessible items for this request; an empty, private or filtered response does not establish a quiet month',empty_format:'Provider reported an empty requested format; full channel history remains unverified',provider_demo_only:'Supplier returned demo placeholders only; no real content was collected',execution_disabled:'Execution disabled; not attempted',not_attempted:'Not attempted',ambiguous_start_requires_operator_reconciliation:'Launch outcome unknown; operator reconciliation required',provider_status_unavailable:'Provider status could not be read',provider_build_mismatch:'Unreviewed provider build rejected',provider_review_changed:'Provider review changed; not attempted',aggregate_budget_cap:'Spending cap prevented collection',total_item_cap:'Overall item cap prevented collection',provider_still_running:'Provider collection still running',provider_dataset_unavailable:'Provider results could not be read',blocked:'Provider blocked collection',failed:'Collection failed'};
     const detail=entry?labels[entry.status]:'Not attempted or unreported';
     const capped=entry && (entry.capped || entry.datasetTruncated || ['capped','aggregate_budget_cap','total_item_cap'].includes(entry.status));
     const errors=entry?.rejected?.provider_error ? ` ${entry.rejected.provider_error} provider error records.` : '';
-    const description=`${PUBLISHER_ASSOCIATION} Window ${window.dateFrom} to ${window.dateTo}. ${countText} ${detail}.${errors}${capped?' A cap or truncated result set limits this coverage.':''} Complete history is not established. No AI analysis or generated transcription.`;
+    const clipped=entry?.clippedItems?` ${entry.clippedItems} items have source text clipped at 200,000 characters.`:'';
+    const diagnostics=entry?.emptyFormats?.length?` Provider-reported empty formats: ${entry.emptyFormats.join(', ')}.`:'';
+    const description=`${PUBLISHER_ASSOCIATION} Window ${window.dateFrom} to ${window.dateTo}. ${countText} ${detail}.${errors}${capped?' A cap or truncated result set limits this coverage.':''}${clipped}${diagnostics} Complete history is not established. No AI analysis or generated transcription.`;
     return {...source,status,description};
   });
   if(jsonBytes(state)>2_000_000)throw error('workspace_metadata_too_large');
@@ -156,7 +164,7 @@ function validateUpdate(update,source,window) {
   const date=Date.parse(update.publishedAt);
   if(date<Date.parse(window.dateFrom) || date>Date.parse(window.dateTo))throw error('archive_update_outside_output_window');
   const serialized=JSON.stringify(update);
-  if(serialized.includes('\\u0000') || Buffer.byteLength(serialized,'utf8')>150000 || jsonBytes(update)>150000)throw error('archive_record_too_large_or_unsupported');
+  if(serialized.includes('\\u0000') || Buffer.byteLength(serialized,'utf8')>ARCHIVE_RECORD_MAX_BYTES || jsonBytes(update)>ARCHIVE_RECORD_MAX_BYTES)throw error('archive_record_too_large_or_unsupported');
 }
 export function buildArchiveRows(userId,manifest,output) {
   if(!/^user_[A-Za-z0-9]{1,100}$/.test(userId || ''))throw error('invalid_private_identity');

@@ -69,7 +69,7 @@ const creator:CatalogueCreator={id:'creator1',slug:'test-creator',name:'Test <Cr
 describe('crawlable honest catalogue pages',()=>{
  it('renders original links, planned coverage, a canonical and an inspectable research reference in HTML',()=>{
   const page=renderCreator(creator,[],'https://app.example');
-  expect(page).toContain('<h1>Test &lt;Creator&gt;</h1>');expect(page).toContain('https://app.example/creators/test-creator/');expect(page).toContain('https://www.youtube.com/@test');expect(page).toContain('Collection planned');expect(page).toContain('Content collection has not been tested');expect(page).toContain('https://example.com/directory');expect(page).toContain('ProfilePage');
+  expect(page).toContain('<h1>Test &lt;Creator&gt;</h1>');expect(page).toContain('https://app.example/creators/test-creator/');expect(page).toContain('https://www.youtube.com/@test');expect(page).toContain('Collection planned');expect(page).toContain('These account references do not establish content availability');expect(page).toContain('https://example.com/directory');expect(page).toContain('ProfilePage');
  });
  it('prevents markup and JSON-LD injection from curated or edited descriptions',()=>{
   const page=renderCreator({...creator,description:'</script><script>steal()</script>'},[],'https://app.example');
@@ -135,6 +135,7 @@ it('renders usable crawlable metadata for every researched creator page',async()
   expect(structured.mainEntity.sameAs).toHaveLength(channels.length);
   expect(structured.mainEntity.name).toBe(item.name);
   expect(page).toContain('https://app.example/creators/'+item.slug+'/');
-  expect(page).toContain('Not collected yet');
+  expect(page).toContain('No public recap preview');
+  expect(page).not.toContain('Content collection has not been tested for this account.');
  }
 });

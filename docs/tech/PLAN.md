@@ -6,22 +6,26 @@ This request reopens collection for this bounded tech slice; it does not authori
 
 ## Current checkpoint
 
-Founder app signup and DeleteCookies Apify organization login completed; both exact identities are verified. No additional owner access step is pending. Source manifest contains38included public accounts:20YouTube,10X,8Instagram. One optional personal channel and nine unresolved identity/ownership candidates remain explicit. [Research and controls](access-research.md).
+Founder app signup and the selected DeleteCookies organization are verified. **No owner access or setup action remains.** The inventory contains **39 included public sources: 21 YouTube, 10 X and eight Instagram**, attached to **six creator records including three groups**. GNSteve is included on official GN LLC ownership evidence. There are zero optional sources and nine unresolved candidates, which stay excluded. [Research and controls](access-research.md).
 
-The actual owner now has a seeded active tech collection with all38sources. Existing preferences, saves and nine sample follows were preserved (47total follows); the named tech view excludes sample sources. The frontend/private archive and aggregate spending controls are implemented;282tests/typecheck/build pass. Hosted migrations, rollback-only authorization/CAS/budget checks and security advisors pass. Private Actor0.1.5 builds in DeleteCookies, with a clean runtime dependency audit. Actual backfill and frontend deployment remain in progress.
+The actual owner's active tech collection includes all 39 sources. Existing preferences, saves and nine sample follows were preserved (**48 total follows**); named tech views exclude sample content. Named collections, studio/person/channel navigation, private paged history, nondiscarding archive retry, atomic revision-checked reset/delete, source-material notices and admin metadata/count integration are implemented. Cards identify actual channels unless an update has a genuine explicit contributor credit.
 
-The existing USD45 shared ledger conservatively respects the old EUR50 approval. This run uses a smaller **USD4.70 combined ceiling including a USD0.40 controller ceiling**, plus separately recorded tiny build charges, to fit the organization's USD5free usage allowance. Unknown charges retain their full holds. No upgrade or subscription is authorized or purchased.
+Both bounded controllers finished: the initial 38-source run and 11-source continuation. Deduplicated actual output contains **278 updates: 175 with existing captions, 93 with source/post text and 10 metadata-only records**. All 39 sources have coverage reports, and **all remain `complete: false`**. The current X route uses Xquik and returned actual posts; the API Dojo `demo:true` rows were rejected, not imported as tweets. No AI synthesis, generated transcription, recurring collection/delivery schedule, subscription or plan upgrade was used.
+
+All **278 unique private archive rows were imported and read back**, independently checking exact IDs and no stale extra rows. Useful updates came from **20 of 39 sources**: 184 YouTube, 76 X, 18 Instagram. The other 19 sources remain visibly empty/unverified or blocked; no source cap was hit, and two text records are explicitly clipped. **355 tests**, TypeScript/build and catalogue reproducibility pass. Private Actor **0.1.8** builds successfully; the collection itself used builds 0.1.5 and 0.1.7. The first production release **`d8c78d8`** and owner view were verified; final fixes await exact-commit deployment and fresh owner/admin browser checks. [Verification](VERIFICATION.md) separates these claims from [synthetic UI evidence](WORKSPACE-CHECKS.md).
+
+The actual reconciled ledger has **53 distinct collection runs across five Actors**, with eight builds recorded separately and zero running jobs. At 11:57 UTC, observed run/build usage was **US$1.303248**, covered by existing free credits; it is not a final invoice. No cash purchase or plan upgrade occurred. The durable **US$45 aggregate reservation is a hold, not spending**, with about US$42.286867 committed to full run caps and builds. Fees can rise after terminal status, so full unknown-charge holds remain. The original controller had a lower USD4.70 combined ceiling including USD0.40 parent; the separately bounded continuation and proofs remain accounted for within the global envelope. No recurring budget is authorized.
 
 ## Tracked work
 
 | ID | Deliverable | State |
 | --- | --- | --- |
-| TECH01 | Primary evidence for every official brand channel and supported format | Complete primary research; see access-research.md and data/tech/sources.json |
-| TECH02 | Actual founder app identity and authenticated Apify account/connection | Verified: actual owner signup and DeleteCookies API identity |
-| TECH03 | Persistent editable tech collection, real creator/source binding and homepage navigation | Implemented locally; owner metadata seeded; deployment pending |
-| TECH04 | Private Apify Actor, reviewed supplier modules, date pagination, deduplication and durable aggregate budget stop | Private Actor0.1.5 built; reviewed providers and durable budget holds verified |
-| TECH05 | Capped 30-day backfill, persistence and per-source coverage/error/cost report | Run in progress; results/coverage/cost pending |
-| TECH06 | Deployed signed-in homepage proof, private-account isolation and durable handoff | Pending actual collection; no fixture or metadata-only pass |
+| TECH01 | Primary evidence for official brand channels and formats | Reviewed inventory: 39 included; zero optional; nine unresolved excluded. GNSteve official ownership included. |
+| TECH02 | Actual owner app identity and authenticated supplier connection | Verified; no owner setup action remains. |
+| TECH03 | Editable tech collection, real creator/channel binding and homepage | Implemented; 39-source owner collection seeded with prior settings/library preserved; first production owner view verified; final fix deployment and fresh readback pending. |
+| TECH04 | Private collector, pinned suppliers, deduplication and durable cost stop | Private build 0.1.8 ready; actual completed controllers used 0.1.5/0.1.7. Xquik real posts verified, demo rows excluded; no schedule. |
+| TECH05 | Bounded backfill, archive persistence and source coverage/cost reports | Complete bounded pass: 278 exact archive rows read back; 39 incomplete coverage reports. 53 actual runs and observed fees reconciled; final invoices unknown. |
+| TECH06 | Final deployed owner/admin proof and durable handoff | First production `d8c78d8` verified. Final fix deployment/readback and `docs/tech/VERIFICATION.md` pending. |
 
 ## Acceptance
 

@@ -51,7 +51,7 @@ export function validateTechManifest(data){
   evidence(s.evidence);if(s.scope==='included')counts[s.platform]++;else optional++;
  }
  for(const c of data.candidates){id(c.id);need(c.scope==='unresolved'&&typeof c.reason==='string'&&c.reason.length>20,'Unresolved relationships need a visible explanation.');if(c.url!==null)publicSourceUrl(c.url);evidence(c.evidence);}
- need(counts.YouTube>=20&&counts.X>=10&&counts.Instagram>=8,'The reviewed official technology scope is unexpectedly incomplete.');
+ need(counts.YouTube>=21&&counts.X>=10&&counts.Instagram>=8,'The reviewed official technology scope is unexpectedly incomplete.');
  return {included:Object.values(counts).reduce((a,b)=>a+b,0),platforms:counts,optional,unresolved:data.candidates.length,groups:data.groups.length,creators:data.creators.length};
 }
 export async function loadTechManifest(path=file){const data=JSON.parse(await readFile(path,'utf8'));validateTechManifest(data);return data;}

@@ -33,7 +33,7 @@ describe('owner workspace preparation',()=>{
   const next=prepareWorkspace(null,manifest,{now});
   const studio=next.customCreators.find((c:{id:string})=>c.id==='tech-creator-mkbhd-studio'),person=next.customCreators.find((c:{name:string})=>c.name==='Marques Brownlee');
   expect(studio.kind).toBe('studio');expect(studio.presenterIds).toContain(person.id);expect(person.kind).toBe('person');expect(person.bio).toContain('does not establish who presented');expect(studio.sourceIds.length).toBeGreaterThanOrEqual(person.sourceIds.length);
-  expect(next.customCreators.some((c:{id:string})=>c.id==='tech-creator-gnsteve')).toBe(false);expect(buildArchiveRows('user_test',manifest,output())[0].record.contributorIds).toEqual([]);
+  const gnSteve=next.customCreators.find((c:{id:string})=>c.id==='tech-creator-gnsteve');expect(gnSteve.kind).toBe('person');expect(gnSteve.sourceIds).toHaveLength(1);expect(buildArchiveRows('user_test',manifest,output())[0].record.contributorIds).toEqual([]);
  });
  it('rejects source ID and preexisting alias conflicts instead of replacing an unrelated saved source',()=>{
   const old=previous();old.customSources.push({...old.customSources[0],id:first.id});expect(()=>prepareWorkspace(old,manifest,{now})).toThrow('existing_source_id_conflict');
@@ -73,6 +73,22 @@ describe('actual source coverage in reader metadata',()=>{
   const next=applyTechCoverage(prepareWorkspace(null,manifest,{now}),manifest,data);
   expect(next.customSources.find((entry:{id:string})=>entry.id===included[0].id).status).toBe('failed');expect(next.customSources.find((entry:{id:string})=>entry.id===included[1].id).status).toBe('pending');
  });
+ it('shows demo-only supplier responses as failed and empty-format/date responses as pending without inventing quiet-month proof',()=>{
+  const data=output([]) as Record<string,any>;
+  data.coverage=[{sourceId:included[0].id,status:'provider_demo_only',providerStatus:'SUCCEEDED',providerRunId:'demo-provider-run',acceptedItems:0,returnedItems:10,transcriptItems:0,postTextItems:0,metadataOnlyItems:0,rejected:{provider_demo_data:10},complete:false},{sourceId:included[1].id,status:'no_items_reported',providerStatus:'SUCCEEDED',providerRunId:'empty-provider-run',acceptedItems:0,returnedItems:3,rejected:{empty_format:2,no_items_reported:1},diagnosticCodes:{CHANNEL_HAS_NO_SHORTS:1,CHANNEL_HAS_NO_LIVE_VIDEOS:1,DATE_FILTER_TOO_STRICT:1},emptyFormats:['shorts','stream'],complete:false}];
+  const next=applyTechCoverage(prepareWorkspace(null,manifest,{now}),manifest,data),demo=next.customSources.find((entry:{id:string})=>entry.id===included[0].id),empty=next.customSources.find((entry:{id:string})=>entry.id===included[1].id);
+  expect(buildArchiveRows('user_test',manifest,data)).toEqual([]);expect(demo.status).toBe('failed');expect(demo.description).toContain('0 updates (0 transcripts, 0 public text, 0 metadata only)');expect(demo.description).toContain('demo placeholders only');expect(demo.description).not.toContain('demo-provider-run');
+  expect(empty.status).toBe('pending');expect(empty.description).toContain('empty, private or filtered response does not establish a quiet month');expect(empty.description).toContain('empty formats: shorts, stream');expect(empty.description).not.toContain('provider error records');expect(empty.description).toContain('Complete history is not established');
+ });
+ it('preserves Instagram empty/private uncertainty and a separate request-block failure in reader source statuses',()=>{
+  const instagram=included.filter((source:{platform:string})=>source.platform==='Instagram'),data=output([]) as Record<string,any>;
+  data.coverage=[{sourceId:instagram[0].id,status:'no_items_reported',providerStatus:'SUCCEEDED',providerRunId:'empty-ig-run',acceptedItems:0,returnedItems:1,rejected:{no_items_reported:1},complete:false},{sourceId:instagram[1].id,status:'failed_or_partial',providerStatus:'SUCCEEDED',providerRunId:'blocked-ig-run',acceptedItems:0,returnedItems:1,rejected:{no_items_reported:1,provider_request_error:1},complete:false}];
+  const next=applyTechCoverage(prepareWorkspace(null,manifest,{now}),manifest,data),empty=next.customSources.find((entry:{id:string})=>entry.id===instagram[0].id),blocked=next.customSources.find((entry:{id:string})=>entry.id===instagram[1].id);
+  expect(empty.status).toBe('pending');expect(empty.description).toContain('no accessible items');expect(empty.description).toContain('empty, private or filtered');expect(empty.description).toContain('does not establish a quiet month');expect(blocked.status).toBe('failed');expect(blocked.description).toContain('Provider errors or a partial collection');
+ });
+ it.each([{status:'provider_demo_only',returnedItems:9,rejected:{provider_demo_data:10}},{status:'provider_demo_only',returnedItems:0,rejected:{provider_demo_data:0}},{diagnosticCodes:{UNKNOWN_PROVIDER_ERROR:1}},{diagnosticCodes:{DATE_FILTER_TOO_STRICT:-1}},{emptyFormats:['shorts','shorts']},{emptyFormats:['arbitrary provider text']},{status:'no_items_reported'}])('rejects contradictory demo/empty coverage and unreviewed diagnostic values (%j)',patch=>{
+  const data=output() as Record<string,any>;Object.assign(data.coverage[0],patch);expect(()=>applyTechCoverage(prepareWorkspace(null,manifest,{now}),manifest,data)).toThrow();
+ });
  it.each([{acceptedItems:-1},{acceptedItems:1.5},{returnedItems:10001},{transcriptItems:0},{postTextItems:99},{complete:true},{capped:'yes'},{notes:['x'.repeat(501)]},{status:'x'.repeat(1000)},{rejected:{provider_error:-1}}])('rejects malformed, inconsistent or oversized coverage instead of copying it (%j)',patch=>{
   const data=output();Object.assign(data.coverage[0],patch);expect(()=>applyTechCoverage(prepareWorkspace(null,manifest,{now}),manifest,data)).toThrow();
  });
@@ -86,6 +102,12 @@ describe('actual source coverage in reader metadata',()=>{
   const next=applyTechCoverage(prepareWorkspace(null,manifest,{now}),manifest,data);
   expect(next.customSources.find((entry:{id:string})=>entry.id===first.id).description).not.toContain('Untrusted provider prose');
  });
+ it('preserves the source-text clipping notice without accepting impossible clipped counts',()=>{
+  const data=output() as Record<string,any>;data.coverage[0].clippedItems=1;
+  const next=applyTechCoverage(prepareWorkspace(null,manifest,{now}),manifest,data);
+  expect(next.customSources.find((entry:{id:string})=>entry.id===first.id).description).toContain('1 items have source text clipped at 200,000 characters');
+  data.coverage[0].clippedItems=2;expect(()=>applyTechCoverage(prepareWorkspace(null,manifest,{now}),manifest,data)).toThrow('coverage_clipped_count_mismatch');
+ });
 });
 
 describe('actual private archive records',()=>{
@@ -95,8 +117,14 @@ describe('actual private archive records',()=>{
  });
  it('prepares metadata without importing any fictional or planned update when no OUTPUT is supplied',()=>expect(buildArchiveRows('user_test',manifest)).toEqual([]));
  it.each([{id:'sample-001'},{id:'contains space'},{sourceId:'unlisted-source'},{isSample:true},{publishedAt:'2026-10-01'},{publishedAt:'2026-09-31T00:00:00Z'},{publishedAt:'2026-08-01T00:00:00Z'},{url:'https://www.youtube.com/watch?v=abc&token=secret'},{url:'https://x.com/elsewhere/status/123'},{contributorIds:['assumed-presenter']},{contentKind:'full_video_body'},{unexpectedField:'private-token'}])('rejects invalid or unsupported real-import claims (%j)',patch=>expect(()=>buildArchiveRows('user_test',manifest,output([update(patch)]))).toThrow());
- it('rejects an oversized UTF-8 record explicitly instead of clipping its transcript',()=>{
-  const record=update({content:'€'.repeat(50_000)});expect(()=>buildArchiveRows('user_test',manifest,output([record]))).toThrow('archive_record_too_large');expect(record.content).toHaveLength(50_000);
+ it('keeps long existing caption records above 150KB intact within the reviewed 1MB archive boundary',()=>{
+  const record=update({content:'captions '.repeat(25000)}),rows=buildArchiveRows('user_test',manifest,output([record]));
+  expect(Buffer.byteLength(JSON.stringify(record),'utf8')).toBeGreaterThan(209485);expect(rows[0].record.content).toBe(record.content);
+  const nearLimit=update({content:'a'.repeat(998000)});expect(buildArchiveRows('user_test',manifest,output([nearLimit]))[0].record.content).toHaveLength(998000);
+ });
+ it('rejects a record beyond 1MB in UTF-8 bytes explicitly instead of clipping its transcript',()=>{
+  const record=update({content:'€'.repeat(333334)});expect(()=>buildArchiveRows('user_test',manifest,output([record]))).toThrow('archive_record_too_large');expect(record.content).toHaveLength(333334);
+  expect(()=>buildArchiveRows('user_test',manifest,output([update({content:'a'.repeat(1000000)})]))).toThrow('archive_record_too_large');
  });
  it('rejects duplicate IDs, unexecuted plans and invalid private identity inputs',()=>{
   expect(()=>buildArchiveRows('user_test',manifest,output([update(),update()]))).toThrow('duplicate_archive_update_id');

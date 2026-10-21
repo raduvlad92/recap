@@ -1,11 +1,23 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
-export const REVIEWED = JSON.parse(readFileSync(new URL('../providers/reviewed-metadata.json', import.meta.url), 'utf8'));
+// Retain the original review unchanged: historical provider runs need their actual pins.
+const ORIGINAL_REVIEWED = JSON.parse(readFileSync(new URL('../providers/reviewed-metadata.json', import.meta.url), 'utf8'));
+const XQUIK_REVIEWED = JSON.parse(readFileSync(new URL('../providers/xquik-reviewed-metadata.json', import.meta.url), 'utf8'));
+export const REVIEWED = {...ORIGINAL_REVIEWED,X:XQUIK_REVIEWED};
+export function reviewedProviderForRun(platform,actorId,buildId) {
+  const candidates=[REVIEWED[platform],ORIGINAL_REVIEWED[platform]].filter(Boolean);
+  const provider=candidates.find(review=>review.actorId===actorId && review.buildId===buildId);
+  if(!provider)throw fault('unreviewed_provider_run');
+  return provider;
+}
 export const TERMINAL = new Set(['SUCCEEDED', 'FAILED', 'ABORTED', 'TIMED-OUT']);
 const MONEY = 1_000_000;
+const TEXT_LIMIT = 200_000;
+const EMPTY_FORMAT_DIAGNOSTICS={CHANNEL_HAS_NO_SHORTS:'shorts',CHANNEL_HAS_NO_LIVE_VIDEOS:'stream',CHANNEL_HAS_NO_VIDEOS:'video'};
 const cents = value => Math.ceil(value * MONEY) / MONEY;
-const text = (value, max = 200_000) => typeof value === 'string' ? value.slice(0, max).trim() : '';
+const sumCapsUsd = values => values.reduce((total,value)=>total+Math.ceil(value*MONEY),0)/MONEY;
+const text = (value, max = TEXT_LIMIT) => typeof value === 'string' ? value.slice(0, max).trim() : '';
 const list = value => Array.isArray(value) ? value : [];
 const digest = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 export const fault = code => Object.assign(new Error(code), { code });
@@ -74,31 +86,40 @@ export function childRequest(source, input, remaining) {
   } else if (source.platform === 'X') {
     const handle = source.key.split('/')[1];
     // Date-only API filters overfetch the boundary days; exact UTC filtering is also applied locally.
-    body = { searchTerms:[`from:${handle}`], sort:'Latest', start:input.dateFrom.slice(0,10), end:new Date(Date.parse(input.dateTo)+86400000).toISOString().slice(0,10), maxItems:count, includeSearchTerms:true };
+    const start=input.dateFrom.slice(0,10),end=new Date(Date.parse(input.dateTo)+86400000).toISOString().slice(0,10);
+    body = {mode:'search',searchTerms:[`from:${handle} since:${start} until:${end}`],queryType:'Latest',maxItems:count,outputVariant:'rich',fieldStyle:'camelCase',includeSearchTerms:true};
   } else {
     body = { directUrls:[source.url], resultsType:'posts', resultsLimit:count, onlyPostsNewerThan:input.dateFrom, addParentData:true };
   }
-  // Conservative Free-tier upper rates; X reserves paid item charges even for the included first ~40.
-  const estimate = source.platform === 'YouTube' ? count * 0.0053 : source.platform === 'X' ? 0.016 + count * 0.0004 : count * 0.0027;
-  const maxChargeUsd = cents(Math.max(provider.pricing.minimalMaxTotalChargeUsd || 0, estimate));
-  return { actor:provider.actor, actorId:provider.actorId, buildId:provider.buildId, buildNumber:provider.buildNumber, pricingUrl:provider.pricingUrl, pricingFingerprint:pricingFingerprint(provider.pricing), maxChargeUsd, maxItems:count, formatLimits:counts || null, body, options:{build:provider.buildNumber, memory:1024, timeout:600, maxTotalChargeUsd:maxChargeUsd,restartOnError:false} };
+  // Xquik charges platform usage separately; its bounded allowance is not a quoted supplier fee.
+  const estimateMicroUsd = source.platform === 'YouTube' ? count * 5300 : source.platform === 'X' ? provider.reservation.platformAllowanceMicroUsd+count*provider.reservation.perItemMicroUsd : count * 2700;
+  const maxChargeUsd = Math.max(Math.ceil((provider.pricing.minimalMaxTotalChargeUsd || 0)*MONEY),estimateMicroUsd)/MONEY;
+  return { actor:provider.actor, actorId:provider.actorId, buildId:provider.buildId, buildNumber:provider.buildNumber, pricingUrl:provider.pricingUrl, pricingFingerprint:pricingFingerprint(provider.pricing), maxChargeUsd, maxItems:count, formatLimits:counts || null, body, options:{build:provider.buildNumber, memory:provider.runOptions?.memory ?? 1024, timeout:provider.runOptions?.timeout ?? 600, maxTotalChargeUsd:maxChargeUsd,restartOnError:false} };
 }
 export function observedCharge(run) {
   return TERMINAL.has(run?.status) && typeof run?.usageTotalUsd === 'number' && Number.isFinite(run.usageTotalUsd) && run.usageTotalUsd >= 0 ? run.usageTotalUsd : null;
 }
+export function plannedBudget(input) {
+  // All source allowances are priced independently; the global item cap can stop earlier.
+  const sourceCaps=input.sources.map(source=>({sourceId:source.id,platform:source.platform,maxChargeUsd:childRequest(source,input,input.maxItemsPerSource).maxChargeUsd}));
+  const plannedFullCapUsd=sumCapsUsd([input.parentMaxChargeUsd,...sourceCaps.map(source=>source.maxChargeUsd)]);
+  return {plannedFullCapUsd,plannedSourceCaps:sourceCaps,allSourceCapsFitBudget:plannedFullCapUsd<=input.maxTotalChargeUsd+0.0000001};
+}
 export function committedUsd(state) {
-  return cents(state.parentMaxChargeUsd + Object.values(state.entries).reduce((sum,e)=>sum+(e.observedCostUsd ?? e.reservedUsd),0));
+  // PPE usage can rise after SUCCEEDED. Observed charges never release launch capacity.
+  return sumCapsUsd([state.parentMaxChargeUsd,...Object.values(state.entries).map(entry=>entry.reservedUsd)]);
 }
 export function reserve(state, source, request) {
   if (state.entries[source.id]) throw fault('duplicate_reservation');
-  if (committedUsd(state) + request.maxChargeUsd > state.maxTotalChargeUsd + 0.0000001) return false;
-  state.entries[source.id] = {sourceId:source.id, actorId:request.actorId, actor:request.actor, buildId:request.buildId, buildNumber:request.buildNumber, pricingUrl:request.pricingUrl, pricingFingerprint:request.pricingFingerprint, reservedUsd:request.maxChargeUsd, observedCostUsd:null, costStatus:'unreported', status:'submitting', providerRunId:null, datasetId:null, maxItems:request.maxItems, formatLimits:request.formatLimits, updates:[], coverage:null};
+  if (sumCapsUsd([committedUsd(state),request.maxChargeUsd]) > state.maxTotalChargeUsd + 0.0000001) return false;
+  state.entries[source.id] = {sourceId:source.id, actorId:request.actorId, actor:request.actor, buildId:request.buildId, buildNumber:request.buildNumber, pricingUrl:request.pricingUrl, pricingFingerprint:request.pricingFingerprint, reservedUsd:request.maxChargeUsd, observedCostUsd:null, costObservedAt:null, costStatus:'unreported', status:'submitting', providerRunId:null, datasetId:null, maxItems:request.maxItems, formatLimits:request.formatLimits, updates:[], coverage:null};
   return true;
 }
 function inlineSubtitles(raw) {
   const tracks = list(raw.subtitles);
   const selected = tracks.find(t=>t?.language==='en' && (t.plaintext || t.srt || t.text)) || tracks.find(t=>t && (t.plaintext || t.srt || t.text));
-  return selected ? text(selected.plaintext || selected.srt || selected.text).split('\n').filter(line=>!/^\s*\d+\s*$/.test(line) && !/-->/.test(line) && !/^WEBVTT/.test(line)).join('\n').replace(/<[^>]*>/g,'').trim() : '';
+  const original=selected ? selected.plaintext || selected.srt || selected.text : '';
+  return {content:text(original).split('\n').filter(line=>!/^\s*\d+\s*$/.test(line) && !/-->/.test(line) && !/^WEBVTT/.test(line)).join('\n').replace(/<[^>]*>/g,'').trim(),clipped:typeof original==='string' && original.length>TEXT_LIMIT};
 }
 function sameSource(source, raw) {
   if (source.platform === 'X') return text(raw.author?.userName || raw.author?.username || raw.author?.screen_name).toLowerCase() === source.key.split('/')[1];
@@ -114,7 +135,22 @@ function sameSource(source, raw) {
   return false;
 }
 export function normalizeItem(source, raw, input) {
-  if (!raw || typeof raw !== 'object' || raw.error) return {reason:'provider_error'};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {reason:'provider_error'};
+  if (raw.demo===true) return {reason:'provider_demo_data'};
+  if (raw.error) {
+    if(source.platform==='YouTube' && Object.hasOwn(EMPTY_FORMAT_DIAGNOSTICS,raw.error))return {reason:'empty_format',diagnosticCode:raw.error,emptyFormat:EMPTY_FORMAT_DIAGNOSTICS[raw.error]};
+    if(source.platform==='YouTube' && raw.error==='DATE_FILTER_TOO_STRICT')return {reason:'no_items_reported',diagnosticCode:raw.error};
+    if(source.platform==='Instagram' && raw.error==='no_items') {
+      const targets=[raw.inputUrl,raw.url].filter(value=>value!==undefined);
+      try {
+        const anchors=new Set([source.url,...source.aliases].map(url=>sourceKey(url,'Instagram')));
+        if(!targets.length || !targets.every(url=>anchors.has(sourceKey(url,'Instagram'))))return {reason:'provider_error'};
+      } catch {return {reason:'provider_error'};}
+      if(raw.requestErrorMessages!==undefined && (!Array.isArray(raw.requestErrorMessages) || raw.requestErrorMessages.length>10000 || raw.requestErrorMessages.some(message=>typeof message!=='string')))return {reason:'provider_error'};
+      return {reason:'no_items_reported',requestErrorCount:list(raw.requestErrorMessages).filter(message=>message.trim()).length};
+    }
+    return {reason:'provider_error'};
+  }
   if (!sameSource(source,raw)) return {reason:'unattributed'};
   const parsedDate = Date.parse(raw.date || raw.timestamp || raw.createdAt || '');
   if (!Number.isFinite(parsedDate)) return {reason:'missing_date'};
@@ -136,41 +172,53 @@ export function normalizeItem(source, raw, input) {
     if (host !== 'instagram.com' || !/^\/(p|reel)\/[A-Za-z0-9_-]+\/?$/.test(u.pathname)) return {reason:'invalid_original_url'};
     url = 'https://www.instagram.com'+u.pathname.replace(/\/$/,'')+'/';
   }
-  const subtitles = source.platform==='YouTube' ? inlineSubtitles(raw) : '';
-  const postText = source.platform==='X' ? text(raw.text) : source.platform==='Instagram' ? text(raw.caption) : '';
+  const subtitleData = source.platform==='YouTube' ? inlineSubtitles(raw) : {content:'',clipped:false};
+  const subtitles=subtitleData.content;
+  const originalPostText=source.platform==='X'?raw.text:source.platform==='Instagram'?raw.caption:'';
+  const postText = text(originalPostText);
   const description = source.platform==='YouTube' ? text(raw.text) : '';
   const content = subtitles || postText || description;
+  const contentClipped=subtitles?subtitleData.clipped:postText?typeof originalPostText==='string' && originalPostText.length>TEXT_LIMIT:typeof raw.text==='string' && raw.text.length>TEXT_LIMIT;
   const contentKind = subtitles ? 'transcript' : postText ? 'feed_text' : 'metadata_only';
-  const coverage = subtitles ? 'Existing YouTube subtitles; no generated transcription or AI analysis.' : source.platform==='YouTube' ? 'Video metadata and description only; spoken content not collected.' : postText ? 'Public post/caption text; linked articles, image text and media audio not collected.' : 'Post metadata only; no usable post text returned.';
+  const coverage = (subtitles ? 'Existing YouTube subtitles; no generated transcription or AI analysis.' : source.platform==='YouTube' ? 'Video metadata and description only; spoken content not collected.' : postText ? 'Public post/caption text; linked articles, image text and media audio not collected.' : 'Post metadata only; no usable post text returned.')+(contentClipped?' Source text was clipped at 200,000 characters; the remaining text is not included.':'');
   const references = [{title:'Original update',url}];
   for (const link of list(raw.descriptionLinks)) { const safe=publicUrl(link?.url); if(safe && references.length<21 && !references.some(r=>r.url===safe)) references.push({title:text(link.text,160)||'Creator-linked reference',url:safe}); }
   const title = text(raw.title,500) || (postText ? postText.slice(0,120) : 'Update from '+source.name);
   const image = publicUrl(raw.thumbnailUrl || raw.displayUrl || raw.extendedEntities?.media?.[0]?.media_url_https);
-  return {update:{id:'tech-'+digest(url).slice(0,24),sourceId:source.id,contributorIds:[],title,summary:content.slice(0,700) || 'No usable content text returned; open the original update.',url,publishedAt,format:source.platform==='YouTube'?'video':'post',topics:[],brands:[],sponsors:[],references,insights:[],...(image?{image}:{}),...(typeof raw.duration==='string'?{duration:text(raw.duration,30)}:{}),isSample:false,coverage,...(content?{content}:{}),contentKind},format:source.platform==='YouTube'?(raw.type || 'unknown'):'post'};
+  return {update:{id:'tech-'+digest(url).slice(0,24),sourceId:source.id,contributorIds:[],title,summary:content.slice(0,700) || 'No usable content text returned; open the original update.',url,publishedAt,format:source.platform==='YouTube'?'video':'post',topics:[],brands:[],sponsors:[],references,insights:[],...(image?{image}:{}),...(typeof raw.duration==='string'?{duration:text(raw.duration,30)}:{}),isSample:false,coverage,...(content?{content}:{}),contentKind},format:source.platform==='YouTube'?(raw.type || 'unknown'):'post',contentClipped};
 }
 export function sourceCoverage(source, entry, rawItems, input, datasetTruncated = false) {
-  const rejected = {}, updates = [], seen = new Set(), dates = [], formats = {};
+  const rejected = {}, updates = [], seen = new Set(), dates = [], formats = {}, diagnosticCodes={}, emptyFormats=new Set();let clippedItems=0,resultRows=0;
   for (const raw of rawItems) {
     const result = normalizeItem(source,raw,input);
+    if(result.diagnosticCode)diagnosticCodes[result.diagnosticCode]=(diagnosticCodes[result.diagnosticCode] || 0)+1;
+    if(result.emptyFormat)emptyFormats.add(result.emptyFormat);
+    if(result.requestErrorCount)rejected.provider_request_error=(rejected.provider_request_error || 0)+1;
+    if(!['empty_format','no_items_reported','provider_demo_data','provider_error'].includes(result.reason))resultRows++;
     if (result.publishedAt) dates.push(result.publishedAt);
     if (!result.update) { rejected[result.reason]=(rejected[result.reason] || 0)+1; continue; }
     dates.push(result.update.publishedAt); formats[result.format]=(formats[result.format] || 0)+1;
     if (seen.has(result.update.id)) {rejected.duplicate=(rejected.duplicate || 0)+1;continue;}
     if (updates.length >= entry.maxItems) {rejected.source_cap=(rejected.source_cap || 0)+1;continue;}
-    seen.add(result.update.id); updates.push(result.update);
+    seen.add(result.update.id); updates.push(result.update);if(result.contentClipped)clippedItems++;
   }
-  const capped = datasetTruncated || rawItems.length>=entry.maxItems || Object.entries(entry.formatLimits || {}).some(([format,limit])=>limit>0 && (formats[format] || 0)>=limit);
-  const failed = entry.status !== 'SUCCEEDED' || !!rejected.provider_error;
+  const capped = datasetTruncated || resultRows>=entry.maxItems || Object.entries(entry.formatLimits || {}).some(([format,limit])=>limit>0 && (formats[format] || 0)>=limit);
+  const demoOnly=rawItems.length>0 && rejected.provider_demo_data===rawItems.length;
+  const failed = entry.status !== 'SUCCEEDED' || !!rejected.provider_error || !!rejected.provider_request_error || !!rejected.provider_demo_data;
+  const reportedEmpty=!!rejected.empty_format || !!rejected.no_items_reported;
   const earliestReached = dates.length ? dates.sort()[0] : null;
-  return {updates,coverage:{sourceId:source.id,sourceUrl:source.url,platform:source.platform,status:failed?'failed_or_partial':capped?'capped':updates.length?'collected_unverified_completeness':'no_results_unverified',providerStatus:entry.status,returnedItems:rawItems.length,acceptedItems:updates.length,earliestReached,dateFrom:input.dateFrom,dateTo:input.dateTo,dateCutoffReached:earliestReached ? earliestReached<=input.dateFrom : null,complete:false,capped,datasetTruncated,formatLimits:entry.formatLimits,formatsSeen:formats,rejected,transcriptItems:updates.filter(u=>u.contentKind==='transcript').length,postTextItems:updates.filter(u=>u.contentKind==='feed_text').length,metadataOnlyItems:updates.filter(u=>u.contentKind==='metadata_only').length,providerRunId:entry.providerRunId,actor:entry.actor,buildId:entry.buildId,observedCostUsd:entry.observedCostUsd,costStatus:entry.costStatus,notes:['Provider success alone does not prove complete 30-day history.','No AI analysis, generated transcription, comments or audience analysis.']}};
+  const status=demoOnly?'provider_demo_only':failed?'failed_or_partial':capped?'capped':updates.length?'collected_unverified_completeness':reportedEmpty?'no_items_reported':'no_results_unverified';
+  return {updates,coverage:{sourceId:source.id,sourceUrl:source.url,platform:source.platform,status,providerStatus:entry.status,returnedItems:rawItems.length,acceptedItems:updates.length,earliestReached,dateFrom:input.dateFrom,dateTo:input.dateTo,dateCutoffReached:earliestReached ? earliestReached<=input.dateFrom : null,complete:false,capped,datasetTruncated,formatLimits:entry.formatLimits,formatsSeen:formats,rejected,diagnosticCodes,emptyFormats:[...emptyFormats],transcriptItems:updates.filter(u=>u.contentKind==='transcript').length,postTextItems:updates.filter(u=>u.contentKind==='feed_text').length,metadataOnlyItems:updates.filter(u=>u.contentKind==='metadata_only').length,clippedItems,providerRunId:entry.providerRunId,actor:entry.actor,buildId:entry.buildId,observedCostUsd:entry.observedCostUsd,costObservedAt:entry.costObservedAt ?? null,costStatus:entry.costStatus,notes:['Provider success alone does not prove complete 30-day history.','No AI analysis, generated transcription, comments or audience analysis.',...(rejected.provider_demo_data?[`${rejected.provider_demo_data} supplier demo rows were excluded; they are not real source content.`]:[]),...(reportedEmpty?['The supplier reported empty formats or no items; this is not proof of exhaustive history.']:[]),...(source.platform==='Instagram' && rejected.no_items_reported?['The Instagram supplier reported empty or private data; quiet and inaccessible accounts cannot be distinguished from this response.']:[]),...(rejected.provider_request_error?[`${rejected.provider_request_error} no-item records also contained request errors; failure evidence is retained.`]:[]),...(clippedItems?[`${clippedItems} items contain source text clipped at 200,000 characters; entire transcripts or post bodies are not established.`]:[])]}};
 }
 export async function runCollector(raw, deps) {
   const input=validateInput(raw,deps.now?.() ?? Date.now());
-  const fingerprint=digest(input), parent=await deps.parentRun();
+  const fingerprint=digest(input), plan=plannedBudget(input), parent=await deps.parentRun();
   if (!parent?.id || !Number.isInteger(parent.options?.memoryMbytes) || parent.options.memoryMbytes<128 || parent.options.memoryMbytes>256 || !Number.isFinite(parent.options?.timeoutSecs) || parent.options.timeoutSecs<=0 || parent.options.timeoutSecs>3600 || typeof parent.options.maxTotalChargeUsd!=='number' || !Number.isFinite(parent.options.maxTotalChargeUsd) || parent.options.maxTotalChargeUsd<=0 || parent.options.maxTotalChargeUsd>input.parentMaxChargeUsd) throw fault('parent_resource_cap_required');
   let state=await deps.load();
   if (state && (state.inputFingerprint!==fingerprint || state.parentRunId!==parent.id)) throw fault('checkpoint_identity_mismatch');
   state ||= {version:1,parentRunId:parent.id,inputFingerprint:fingerprint,budgetReservationId:input.budgetReservationId,maxTotalChargeUsd:input.maxTotalChargeUsd,parentMaxChargeUsd:input.parentMaxChargeUsd,entries:{},skipped:{},publication:'pending',startedAt:new Date(deps.now?.() ?? Date.now()).toISOString()};
+  if(committedUsd(state)>input.maxTotalChargeUsd+0.0000001)throw fault('checkpoint_full_caps_exceed_budget');
+  state.budgetPolicy='hold_submitted_full_caps';state.plannedFullCapUsd=plan.plannedFullCapUsd;
   await deps.save(state);
   if (input.executionEnabled) {
     for (const source of input.sources) {
@@ -196,6 +244,7 @@ export async function runCollector(raw, deps) {
       let run;
       try { run=await deps.wait(entry.providerRunId); } catch {state.skipped[source.id]='provider_status_unavailable';await deps.save(state);continue;}
       entry.status=run.status;entry.datasetId=run.defaultDatasetId || entry.datasetId;entry.observedCostUsd=observedCharge(run);entry.costStatus=entry.observedCostUsd===null?'unreported':'provider_reported';
+      entry.costObservedAt=entry.observedCostUsd===null?null:new Date(deps.now?.() ?? Date.now()).toISOString();
       if (entry.observedCostUsd!==null && entry.observedCostUsd>entry.reservedUsd+0.000001) {await deps.save(state);throw fault('provider_budget_exceeded');}
       if (!TERMINAL.has(run.status)) {state.skipped[source.id]='provider_still_running';await deps.save(state);continue;}
       let dataset;
@@ -204,9 +253,19 @@ export async function runCollector(raw, deps) {
       entry.updates=normalized.updates;entry.coverage=normalized.coverage;delete state.skipped[source.id];await deps.save(state);
     }
   }
-  const coverage=input.sources.map(source=>state.entries[source.id]?.coverage || {sourceId:source.id,sourceUrl:source.url,platform:source.platform,status:input.executionEnabled?(state.skipped[source.id] || 'not_attempted'):'execution_disabled',complete:false,earliestReached:null,dateCutoffReached:null,providerRunId:state.entries[source.id]?.providerRunId || null,observedCostUsd:state.entries[source.id]?.observedCostUsd ?? null});
+  const coverage=input.sources.map(source=>state.entries[source.id]?.coverage || {sourceId:source.id,sourceUrl:source.url,platform:source.platform,status:input.executionEnabled?(state.skipped[source.id] || 'not_attempted'):'execution_disabled',complete:false,earliestReached:null,dateCutoffReached:null,providerRunId:state.entries[source.id]?.providerRunId || null,observedCostUsd:state.entries[source.id]?.observedCostUsd ?? null,costObservedAt:state.entries[source.id]?.costObservedAt ?? null});
   const updates=Object.values(state.entries).flatMap(entry=>entry.updates).sort((a,b)=>b.publishedAt.localeCompare(a.publishedAt));
-  const manifest={version:1,parentRunId:parent.id,budgetReservationId:input.budgetReservationId,executionEnabled:input.executionEnabled,dateFrom:input.dateFrom,dateTo:input.dateTo,sourceCount:input.sources.length,updateCount:updates.length,maxTotalChargeUsd:input.maxTotalChargeUsd,parentReservedUsd:input.parentMaxChargeUsd,parentObservedCostUsd:observedCharge(await deps.parentRun()),committedUsd:committedUsd(state),observedChildCostUsd:cents(Object.values(state.entries).reduce((n,e)=>n+(e.observedCostUsd ?? 0),0)),unknownCostRuns:Object.values(state.entries).filter(e=>e.observedCostUsd===null).length,complete:false,pricingCheckedAt:Object.fromEntries(Object.entries(REVIEWED).map(([p,v])=>[p,v.checkedAt])),providerRuns:Object.values(state.entries).map(({updates,coverage,...entry})=>entry),datasetPublication:state.publication};
+  const parentObservedCostUsd=observedCharge(await deps.parentRun());
+  const budgetSkippedSourceIds=input.sources.filter(source=>state.skipped[source.id]==='aggregate_budget_cap').map(source=>source.id);
+  const manifest={
+    version:1,parentRunId:parent.id,budgetReservationId:input.budgetReservationId,executionEnabled:input.executionEnabled,dateFrom:input.dateFrom,dateTo:input.dateTo,sourceCount:input.sources.length,updateCount:updates.length,
+    maxTotalChargeUsd:input.maxTotalChargeUsd,parentReservedUsd:input.parentMaxChargeUsd,budgetPolicy:state.budgetPolicy,...plan,
+    partialBudgetRun:!plan.allSourceCapsFitBudget || budgetSkippedSourceIds.length>0,budgetSkippedSourceIds,
+    parentObservedCostUsd,parentCostObservedAt:parentObservedCostUsd===null?null:new Date(deps.now?.() ?? Date.now()).toISOString(),
+    committedUsd:committedUsd(state),observedChildCostUsd:cents(Object.values(state.entries).reduce((n,e)=>n+(e.observedCostUsd ?? 0),0)),unknownCostRuns:Object.values(state.entries).filter(e=>e.observedCostUsd===null).length,
+    observedCostsAreFinal:false,costObservationNotice:'Reported fees are point-in-time observations and may rise after terminal status; full child caps remain reserved.',
+    complete:false,pricingCheckedAt:Object.fromEntries(Object.entries(REVIEWED).map(([p,v])=>[p,v.checkedAt])),providerRuns:Object.values(state.entries).map(({updates,coverage,...entry})=>entry),datasetPublication:state.publication
+  };
   const output={manifest,coverage,updates};
   const resultFingerprint=digest({updates,coverage});
   if (state.publication==='published' && state.resultFingerprint!==resultFingerprint) output.manifest.datasetPublication='stale_use_output';
