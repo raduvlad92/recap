@@ -1,0 +1,37 @@
+{
+  "verifiedAt": "2026-10-21T22:37:42.763Z",
+  "functionalCommit": "700a5ba3cff7161535c3eedd5ed0fa0ed2032fe4",
+  "githubCi": {
+    "runId": 39687357951,
+    "conclusion": "success",
+    "url": "https://github.com/raduvlad92/recap/actions/runs/39687357951"
+  },
+  "netlify": {
+    "deployId": "6ad93df078636b862cc05415",
+    "publishedAt": "2026-10-21T22:34:50.100Z",
+    "state": "ready",
+    "url": "https://recap-v0-radu.netlify.app/"
+  },
+  "hostedChecks": {
+    "signedInOwner": true,
+    "asset": "index-C80t4iR0.js",
+    "viewports": [
+      1496,
+      390
+    ],
+    "referenceTakeaways": 6,
+    "referenceKeywords": 9,
+    "conciseComparisonAndHealthAppFirst": true,
+    "captionLabelFixed": true,
+    "infiniteOverflow": true,
+    "pauseResumePassed": true,
+    "fullTranscriptCharacters": 19705,
+    "workspaceSynced": true,
+    "horizontalOverflow": false,
+    "browserErrors": 0,
+    "viewportRestored": true
+  },
+  "localTests": 477,
+  "sourceJobStarted": false,
+  "privateReaderDataIncluded": false
+}
