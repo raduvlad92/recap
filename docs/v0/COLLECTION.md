@@ -38,7 +38,7 @@ YouTube collection is disabled by default. All these gates must be satisfied:
 
 Every start sends the pinned build, a 120-second timeout, maxItems, maxTotalChargeUsd, restartOnError false and the bounded actor input. Input requests newest videos, zero channel Shorts/streams, available inline subtitles using ALWAYS_SUBTITLES and SRT, any available subtitle language, no key-value subtitle copy, no AI video summary and no AI visual description. Generated speech transcription is not requested. Provider-side maxItems is a charging limit for applicable pricing models, not a guaranteed response-size limit; the adapter separately limits normalized rows.
 
-**The per-run charge limit is not a cumulative budget.** Repeated operator requests can add up. Keep paid runtime disabled until a cumulative account/ledger limit or explicitly bounded operator session is configured against the founder's authorized total. The previous experiment's global ceiling cannot be enforced by these per-run caps alone. There is no in-memory counter advertised as durable protection. Deployment configuration and real supplier execution require their own recorded evidence.
+**The per-run charge limit is not a cumulative budget.** Repeated operator requests can add up. Keep paid runtime disabled until a durable cumulative spending ledger/stop is configured against the founder's authorized total. A per-run cap or informal operator session is not the current release activation rule. The previous experiment's global ceiling cannot be enforced by these per-run caps alone. There is no in-memory counter advertised as durable protection. Deployment configuration and real supplier execution require their own recorded evidence.
 
 ## Coverage and data limits
 
