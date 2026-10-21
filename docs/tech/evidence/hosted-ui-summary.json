@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-21",
+  "evidenceType": "actual-hosted-browser-and-database-checks",
+  "functionalCommit": "5b3597dbf156196c20394dd9ef95d6dee44daabd",
+  "ciRun": 39597065036,
+  "netlifyDeploy": "6ad8ab1130415b60a48699de",
+  "publishedAt": "2026-10-21T12:08:15.037Z",
+  "asset": "index-o7xsOcBq.js",
+  "ownerBrowser": {
+    "actualExistingSession": true,
+    "collection": "tech",
+    "selectedChannels": 39,
+    "calendarWindowItems": 269,
+    "allRetainedItems": 278,
+    "firstRenderedCards": 40,
+    "expandedRenderedCards": 80,
+    "sourceCoverageRows": 39,
+    "sourceCoverageLabels": {
+      "returnedItems": 20,
+      "noAvailableItems": 18,
+      "needsAttention": 1
+    },
+    "syncErrors": 0,
+    "sampleNotice": false,
+    "sourceBylineVerified": true,
+    "originalCitationVerified": true,
+    "selfCitationExcludedFromCreatorReferences": true,
+    "studioToChannelDrilldown": true,
+    "restoredDefaultView": true
+  },
+  "adminBrowser": {
+    "usedActors": 5,
+    "recordedJobs": 53,
+    "running": 0,
+    "failedProviderRuns": 0,
+    "observedCollectionCostDisplayedUsd": 1.2964,
+    "feesLabeledProvisional": true,
+    "buildsExcludedExplicitly": true,
+    "privateScreenshotTaken": false
+  },
+  "guestBrowser": {
+    "integrationCommit": "3e4e3c143df47550bf73c20d1bc40c22d1dff304",
+    "finalFocusedRecheckPassed": true,
+    "sampleCards": 9,
+    "privateCollectionVisible": false,
+    "privateHistoryVisible": false,
+    "archiveRequests": 0,
+    "collectionRequests": 0,
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "horizontalOverflow": false
+    },
+    "phone": {
+      "width": 390,
+      "height": 844,
+      "documentWidth": 390,
+      "horizontalOverflow": false
+    },
+    "drawerAndPickerWork": true,
+    "directoryAndCreatorPhoneFit": true,
+    "qualifiedDirectoryNotice": true,
+    "oldBlanketClaimAbsent": true,
+    "storageRestored": true,
+    "viewportReset": true
+  },
+  "privateAccountIdentifiersIncluded": false,
+  "readerFollowRecordsIncluded": false,
+  "ownerScreenshotTaken": false,
+  "localServerStopped": true
+}

@@ -4,9 +4,9 @@
 
 ## Actual result
 
-The actual owner workspace contains the active, editable **tech** collection with **39 researched public sources**. Existing preferences, saves and nine fictional sample follows were preserved. Samples remain outside the tech collection. Six creator identities, including three publishing groups, keep studio, person and channel relationships separate. GNSteve is included on official ownership evidence; nine unresolved properties remain excluded rather than guessed. A channel association does not invent an update's speaker or author credit.
+The actual owner workspace contains the active, editable **tech** collection with **39 researched public sources**. Existing preferences, saves and nine fictional sample follows were preserved. Samples remain outside the tech collection. Six creator identities organized under three publishing groups keep studio, person and channel relationships separate. GNSteve is included on official ownership evidence; nine unresolved properties remain excluded rather than guessed. A channel association does not invent an update's speaker or author credit.
 
-The bounded window is **21 September 2026 11:01:09.961 UTC to 21 October 2026 11:01:09.961 UTC**. Imported and read back **278 unique private archive rows**, with exact ID comparison and no stale extra rows in the collection. Supplier collection succeeded for useful items from **20 of the 39 sources**:
+The bounded window is **21 September 2026 11:01:09.961 UTC to 21 October 2026 11:01:09.961 UTC**. Imported and read back **278 unique private archive rows**, with exact ID comparison and no stale extra rows in the collection. Accepted records came from **20 of the 39 sources**:
 
 | Platform | Selected sources | Sources returning accepted updates | Imported updates |
 | --- | ---: | ---: | ---: |
@@ -53,7 +53,13 @@ Actual provider reconciliation performs GET reads and database accounting only: 
 
 First production code `d8c78d8` passed [CI 39590198838](https://github.com/raduvlad92/recap/actions/runs/39590198838) and Netlify deploy `6ad89e3bead8eda29a0e2a54`. The actual existing Chrome session showed the tech collection and imported private history. This predates the final channel-identity and provider-diagnostic fixes.
 
-Final checked code push, exact-commit deployment and owner/admin browser readback are being completed. They must be recorded here before final handoff; neither local tests nor the previous deployment establishes those results.
+Final functional code **`5b3597dbf156196c20394dd9ef95d6dee44daabd`** is pushed to main, passed [CI 39597065036](https://github.com/raduvlad92/recap/actions/runs/39597065036), and is ready in Netlify production deploy **`6ad8ab1130415b60a48699de`**, published **12:08:15 UTC**. The preceding integration release `3e4e3c1` also passed [CI 39596438810](https://github.com/raduvlad92/recap/actions/runs/39596438810) and exact Netlify deployment `6ad8a9ea335f0bb18c39a62e`. Final documentation is a separate follow-up to this checked functional commit.
+
+Fresh checks used the founder's actual existing authenticated Chrome session, not an impersonation or QA override. After reload, **tech** remained active, with **39 channels** and **269 updates** in the current local-calendar 30-day view. **All available history** showed **278**, and Show more expanded 40 to 80 rendered cards while retaining the full count. No sync/archive error or sample notice appeared. Actual uncredited cards showed TechLinked, GameLinked and LMG Clips as channels, with the studio separately attributed. Expanding Linus Media Group exposed its channels; selecting ShortCircuit showed exactly 22 items with ShortCircuit bylines. Opening an item showed the caption extract and a valid original YouTube link. The original is no longer mislabeled as a creator-linked external reference. All 39 source rows appeared in coverage: 20 returned items, 18 no available items and one needs attention. The tab was restored to the normal default tech view.
+
+Actual server-authorized admin overview displayed **five used Actors / 53 recorded collection jobs / zero running or failed jobs**, **US$1.2964 observed collection cost** and provisional-fee/build-exclusion notices. Job success remains distinct from content-level coverage failure. The unchanged catalogue still shows 120 accounts per requested platform. No reader list/private follow screenshot was taken.
+
+Separate T3 incognito guest checks on the integration release verified actual **1280×800 desktop** and **390×844 phone** viewports without horizontal overflow. Guests saw only All sources and nine labeled samples, with no private tech collection, 278-item history, archive request or collection call. Phone source drawer and picker worked; public search/creator pages also fit. Storage was restored and viewport reset. Final release `5b3597d` loaded **`index-o7xsOcBq.js`** for both guest and owner; a focused guest recheck again showed only samples and no private/archive/collection activity. The corrected directory notice is live and its old blanket no-collection claim is absent. [Sanitized hosted summary](evidence/hosted-ui-summary.json). Local development server was stopped; the deployed site remains available.
 
 ## Remaining work
 
