@@ -82,6 +82,12 @@ Task: R04. Type: **image/document assessment and public-document research**, not
 
 Recommended creator-led navigation around the daily recap, with creator exploration and evidence-based signals; prioritized return-use and sharing hypotheses. No redesign or approved requirement changes. No application tests/live source runs, supplier sign-in, purchases, customer outreach, paid trial or publication. External spending €0; generated experiment transcription remains 0/150 minutes; seven-day observation remains deferred at 0/7. T3 restart reportedly cancelled the temporary port-4187 server; assessment used saved images/files and did not need a restart. Next: founder reviews the assessment; any material adopted scope changes require a revised named candidate.
 
+## 21 October 2026 — backend recommendation checkpoint
+
+Task: R05. Type: **technical desk research and documentation**, not a new demo, benchmark or backend proof. Saved [Convex/Supabase comparison](BACKEND-COMPARISON.md); Supabase recommended, platform choice remains open. Reviewed current official database, search, scheduling/queue, workflow, runtime and pricing documentation, including Supabase documentation search. Independent reviews covered Convex's strengths and pricing/operating trade-offs.
+
+Recorded the founder's positive vision feedback without converting it into full-spec or optional-feature approval. Updated STATUS/PLAN/decision register/research. Checked local Markdown links and whitespace; no app tests apply to this documentation-only change. No services created, account billing inspected, code built, scraper resumed, email sent or publication performed. External cash €0; generated experiment transcription 0/150 minutes; formal source observation remains deferred at 0/7. Next: record the founder's backend choice and any concrete scope adoption; named SPEC/PLAN approval still precedes full implementation.
+
 ## Required format for future entries
 
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.

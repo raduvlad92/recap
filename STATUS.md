@@ -1,6 +1,12 @@
 # Current status
 
-Updated: **21 October 2026**. Phase: **reference comparison and product-direction assessment complete; specification review remains open**. **SPEC v1.0 and PLAN v1.0 are approval candidates, not approved.** A separately authorized static visual concept is ready; no production application has been built.
+Updated: **21 October 2026**. Phase: **backend recommendation saved following positive feedback on the vision comparison; specification review remains open**. **SPEC v1.0 and PLAN v1.0 are approval candidates, not approved.** A separately authorized static visual concept is ready; no production application has been built.
+
+## 21 October: backend recommendation
+
+The founder said “I like it” about the preceding vision assessment and asked whether to use Convex or Supabase. Recommend **Supabase**, giving more weight to flexible queries/reporting across connected creator/topic/reference history and standard PostgreSQL portability. Convex is a credible alternative with integrated TypeScript development, reactive queries and durable scheduling/workflow tools; relationships and search are supported by both. Saved [comparison, current prices and proposed processing shape](docs/BACKEND-COMPARISON.md).
+
+This is a researched recommendation, not a selected platform, running backend or M0 completion. No account provisioning, code, supplier execution or spending. Positive design feedback does not constitute named SPEC/PLAN approval or adoption of every optional feature.
 
 ## 21 October: founder reference assessed
 
@@ -56,6 +62,6 @@ No customer outreach, trial, payment, external email sending, deployment or publ
 
 ## Next action
 
-Founder reviews the comparison/recommendation and may request a revised visual concept. Creator navigation, search/saves, change tracking and sharing additions remain proposals until explicitly adopted. Consolidated **SPEC v1.0 + PLAN v1.0** approval or requested changes is still pending; do not infer it from the demo request. Record the actual response/date before implementation. If approved, start M0, then the local milestones with fixtures labeled; do not reopen D08. For another session, read this file, SPEC.md, PLAN.md and docs/DECISIONS.md first.
+Founder has given positive feedback on the vision comparison; the backend recommendation is Supabase, with platform selection still open. Capture any concrete adopted design changes in the next named candidate; search/saves, change tracking and sharing additions are not blanket-approved. Consolidated **SPEC v1.0 + PLAN v1.0** approval or requested changes is still pending; do not infer it from the demo request or “I like it.” Record the actual response/date before implementation. If approved, start M0 using the backend assessment as input, then the local milestones with fixtures labeled; do not reopen D08. For another session, read this file, SPEC.md, PLAN.md and docs/DECISIONS.md first.
 
 Actual new external spending: **€0**. Generated transcription: **0/150 experiment minutes**. Founder labor not timed. No app tests exist yet. Repository has no Git remote; local saving/commits do not provide remote backup.

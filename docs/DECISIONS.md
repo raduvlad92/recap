@@ -130,6 +130,14 @@ Saved [assessment](design/VISION-COMPARISON.md). Assistant recommendation: found
 
 The prior three-audience direction, daily cadence and explicit-interest/history decisions remain in force. No demo rebuild or full-spec approval was requested/given. Update a future named candidate if the founder adopts material changes; do not silently rewrite approved answers. Supplier work, customer trials and publication remain deferred/unauthorized.
 
+## 21 October 2026 — positive vision feedback and backend question
+
+Founder: “I like it. question, shall this be on convex or supabase/”. Record positive feedback on the preceding vision assessment, without interpreting it as approval of every optional feature or named SPEC/PLAN v1.0. No new routine interview is required.
+
+Assistant recommends **Supabase** after current official-document research and independent reviews of the Convex case and costs. The reason is flexible historical queries/reporting and a standard PostgreSQL foundation for connected creator, topic, brand and reference records. Convex also supports relationships, search, scheduling and durable workflows; its integrated TypeScript experience could make initial delivery simpler. [Detailed assessment](BACKEND-COMPARISON.md) records prices, limitations and the proposed asynchronous pipeline.
+
+**Platform selection remains open**: the founder asked for a recommendation, not setup. No backend provisioned, no M0 pass, no spending, and D08 remains deferred. Record the actual selection if/when given; do not create an accepted architecture ADR from an assistant recommendation alone.
+
 ## Approval register
 
 | Artifact | Version/status | Approval evidence |

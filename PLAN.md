@@ -11,6 +11,7 @@ Approving the named pair permits the local M0–M5 work below. All provider exec
 | R01 | Demand and competition / assistant | Done: desk research | docs/RESEARCH.md; no demand proven. |
 | R02 | Platform constraints and supplier comparison / assistant | Done: desk research | Apify, Bright Data and alternatives; documented capability is not a live pass. |
 | R04 | Compare founder reference, personas and retention/sharing proposals / assistant | Done: 21 October assessment | docs/design/VISION-COMPARISON.md and saved reference. No redesign; recommended changes not yet approved; current competitor feature docs rechecked. |
+| R05 | Compare Convex and Supabase / assistant | Done: 21 October desk research; Supabase recommended | docs/BACKEND-COMPARISON.md; current official capabilities/prices and independent trade-off review. Platform not yet selected; no provisioning or M0 completion. |
 | P01 | Business, audience and access direction / founder + assistant | Done | D01–D08. |
 | P02 | Source-proof design / founder + assistant | Done: Q6 approved | ACCESS-PROOF v0.1; execution subsequently deferred. |
 | P03 | Website, onboarding, chronology/relevance / founder | Done | Q7–Q9, D09–D11. |
