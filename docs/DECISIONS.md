@@ -158,6 +158,7 @@ Recorded [creator model](CREATOR-MODEL.md) and updated the domain glossary. Reco
 | Customer pilot | Conditional proposal | None; waits for broad access |
 | Implementation plan | 1.1 — approval candidate, M0–M5 awaiting approval | No full implementation authorization; named SPEC/PLAN pair submitted together, including AC19 demos. |
 | Visitor visual concept | v0.1 — local concept completed | Explicit request on 19 October, D18; static demo only, not S01 approval. |
+| Working v0 | D20-authorized first increment; deployed and verified | Explicit 21 October autonomous build request and selected Supabase/Clerk/GitHub/Netlify stack. [Scope](v0/PLAN.md), [live evidence](v0/VERIFICATION.md); broader SPEC/PLAN v1.1 remains a candidate. |
 
 Do not infer agreement from silence or convert recommendations into accepted decisions. Record the version, date and founder's response when approval is given.
 
@@ -168,3 +169,10 @@ Founder selected the existing **recap** Supabase org/project and **recap** Clerk
 [docs/v0/PLAN.md](v0/PLAN.md) records the concrete authorized first increment and exact account targets. Deploying the reviewable v0 to Netlify and creating its private GitHub repository are within this request. No public customer recruitment, paid launch, supplier-plan purchase or uncapped recurring collection follows from it. Apify-first adapter work is reopened, while metered runs remain gated until token, pinned actor and aggregate budget controls are verified. The old €50/150-minute source-proof ceiling is retained if that experiment resumes. No other supplier is added now.
 
 Implementation includes the screenshot-based workspace, modular studio/person/channel navigation, private saved library/preferences, native Clerk/Supabase authentication and manual feed collection. Actual generation, seven-family proof, recurring briefing/email delivery and full deletion/retention targets remain separate incomplete work. First working deployment and precise verification results are recorded in STATUS and the demo log.
+
+
+### D20 delivery checkpoint
+
+The authorized first increment is live at https://recap-v0-radu.netlify.app, backed by the private GitHub repository and existing recap Clerk/Supabase resources. Code `660784b` passed 69 local/CI tests, typecheck/build and exact-commit Netlify deployment; actual browser sign-in, five-entry public feed refresh, cloud reload and separate guest state were exercised. Eleven backend authorization checks passed. [Verification](v0/VERIFICATION.md) retains exact IDs and limitations; [morning checklist](v0/MORNING.md) and [continuation plan](v0/PLAN.md#continuation-work) save the next session.
+
+This does not approve or complete the broader candidate by inference. Paid Apify runtime is off, no actual social collection or AI synthesis/delivery occurred, no customer trial/outreach started, and no new cash charge/plan purchase was observed. Cloudflare was unnecessary. The deploy is a reachable review increment using development authentication, not a completed commercial launch.

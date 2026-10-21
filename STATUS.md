@@ -1,6 +1,6 @@
 # Current status
 
-Updated: **21 October 2026**. Phase: **functioning v0 implemented; live-site release verification in progress**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
+Updated: **21 October 2026**. Phase: **functioning v0 deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
 ## Current: working v0 under D20
 
@@ -8,13 +8,13 @@ The founder selected the existing recap Supabase/Clerk resources and explicitly 
 
 The new recap database public schema was confirmed empty before applying the workspace schema; private ownership rules and stale-save protection are active. [Live token/database checks](docs/v0/live-auth-check.json): 11 passed using real Clerk-issued tokens and two synthetic development test accounts. Browser ticket sign-in succeeded, and authenticated UI collection imported five real public feed entries and persisted them to Supabase. No service-role key is used in the browser. Test identities and session credentials remain only in ignored local files.
 
-A private [GitHub repository](https://github.com/raduvlad92/recap) and Netlify project recap-v0-radu now exist. Release/CI checks and screenshots are being finalized; a configured site is not yet claimed as a verified deployment. Cloudflare was not needed. Apify adapter exists with signed jobs, owner/build/item/time/per-run-cost gates; paid runtime remains disabled because aggregate budget controls and credentials/build are not verified. No social scraper or generated transcription ran.
+**Live review app: https://recap-v0-radu.netlify.app.** Private [GitHub repository](https://github.com/raduvlad92/recap), pushed code `660784b`, [passing CI](https://github.com/raduvlad92/recap/actions/runs/39530314814), exact-commit Netlify deployment and hosted browser checks are independently verified. [Release evidence](docs/v0/VERIFICATION.md) records 69 passing tests, typecheck/build, the actual token/database checks, real deployed feed collection, cross-origin cloud reload and responsive checks down to 320px. [Morning checklist](docs/v0/MORNING.md) gives the founder a five-minute walkthrough and separates owner input from remaining assistant engineering work. Cloudflare was not needed. Apify adapter exists with signed jobs, owner/build/item/time/per-run-cost gates; paid runtime remains disabled because aggregate budget controls and credentials/build are not verified. No social scraper or generated transcription ran.
 
 ## 21 October: modular creator model
 
 Founder clarified that a creator can be an entire studio/team with multiple presenters and channels, requiring drill-down and a modular product (D19). Updated [glossary](GLOSSARY.md), [creator model](docs/CREATOR-MODEL.md), SPEC/PLAN v1.1 and [approval brief](docs/APPROVAL.md). Separate group/person/source identities, optional shows, dated affiliations and update credits; support overlapping relationships rather than a fixed ownership tree. Proposed behavior includes studio/person/source follows with visible underlying coverage, source/update deduplication, new-channel confirmation and preserved historical attribution. Publishing teams do not add reader-team accounts.
 
-Independent edge-case review completed. AC19 and M0–M5 demo scenarios now cover multiple presenters/channels, cross-group people, guests vs members/mentions, unknown identity, overlapping follows and changing affiliations. No new demo, identity extraction, backend code or source run. Existing visitor demo predates this model and does not demonstrate it. Supabase remains recommended; no platform has been selected/provisioned.
+Independent edge-case review completed. AC19 and M0–M5 demo scenarios now cover multiple presenters/channels, cross-group people, guests vs members/mentions, unknown identity, overlapping follows and changing affiliations. No new demo, identity extraction, backend code or source run. At that checkpoint the visitor demo predated this model and Supabase was only recommended. D20 subsequently selected Supabase/Clerk; the working v0 above now demonstrates modular drill-down.
 
 ## 21 October: backend recommendation
 
@@ -77,6 +77,6 @@ No customer outreach, paid customer trial, payment or external email sending is 
 
 ## Next action
 
-Finish release checks and deploy the authorized working v0, verify its exact URL, save screenshots/evidence and update [morning checklist](docs/v0/MORNING.md). Continue autonomously within D20; do not reopen the old whole-spec permission loop for this increment. The wider SPEC/PLAN v1.1 goals remain incomplete and future work.
+Founder reviews the [live v0](https://recap-v0-radu.netlify.app) using the [morning checklist](docs/v0/MORNING.md). Next assistant engineering task is V0-N01: durable cumulative Apify budget control, reviewed private configuration and then a bounded verified run; paid runtime remains off. [Continuation tasks](docs/v0/PLAN.md#continuation-work) track AI synthesis, broader platform proof, multilingual quality, scheduling and full history/privacy work. The wider SPEC/PLAN v1.1 goals remain incomplete. Do not reopen the old whole-spec permission loop for this authorized increment.
 
-Actual new cash charged/plan purchases: **€0 observed**; hosting/build usage will be recorded separately where available. Generated transcription: **0/150 experiment minutes**. Formal seven-day proof remains **0/7**, no recurring collection/reminder schedule. Private GitHub origin now exists; pushing/CI/deployment are separate pending verification states.
+Actual new cash charged/plan purchases: **€0 observed**; existing hosting/build/database usage is not a measured production operating-cost estimate. Generated transcription: **0/150 experiment minutes**. Formal seven-day proof remains **0/7**, no recurring collection/reminder schedule. Private GitHub push, CI, exact-commit Netlify deployment and live browser verification all completed; see the separate evidence above.

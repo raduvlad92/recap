@@ -1,12 +1,12 @@
 # Tracked implementation and validation plan
 
-Version: **1.1 — APPROVAL CANDIDATE**. Updated: 21 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is now underway under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
+Version: **1.1 — APPROVAL CANDIDATE**. Updated: 21 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
 
-Approving the named pair permits the local M0–M5 work below. All provider execution/authentication/spending remains deferred by D08; customer contact, paid trials and publication require their own approval. Local work uses explicitly labeled fixtures and supplier interfaces, not purported live integration. No fixed launch date is promised.
+Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
 
 ## Authorized working v0
 
-The founder explicitly requested autonomous implementation on 21 October (D20). [docs/v0/PLAN.md](docs/v0/PLAN.md) tracks that first increment, selected Supabase/Clerk targets, screenshot-based UI and GitHub/Netlify deployment. V0 work is authorized now; the full M0–M5 table below is not a claim of completed production behavior. Its remaining goals, including real AI generation, multilingual quality, scheduling, retention and delivery, still require evidence.
+The founder explicitly requested autonomous implementation on 21 October (D20). [docs/v0/PLAN.md](docs/v0/PLAN.md) tracks that first increment, selected Supabase/Clerk targets, screenshot-based UI and GitHub/Netlify deployment. V0-01–V0-07 are complete for the first increment: [live app](https://recap-v0-radu.netlify.app), [verification](docs/v0/VERIFICATION.md), [morning checklist](docs/v0/MORNING.md). V0-N01–V0-N06 track the continuation. V0 work is authorized now; the full M0–M5 table below is not a claim of completed production behavior. Its remaining goals, including real AI generation, multilingual quality, scheduling, retention and delivery, still require evidence.
 
 ## Completed discovery and decisions
 
@@ -15,7 +15,7 @@ The founder explicitly requested autonomous implementation on 21 October (D20). 
 | R01 | Demand and competition / assistant | Done: desk research | docs/RESEARCH.md; no demand proven. |
 | R02 | Platform constraints and supplier comparison / assistant | Done: desk research | Apify, Bright Data and alternatives; documented capability is not a live pass. |
 | R04 | Compare founder reference, personas and retention/sharing proposals / assistant | Done: 21 October assessment | docs/design/VISION-COMPARISON.md and saved reference. No redesign; recommended changes not yet approved; current competitor feature docs rechecked. |
-| R05 | Compare Convex and Supabase / assistant | Done: 21 October desk research; Supabase recommended | docs/BACKEND-COMPARISON.md; current official capabilities/prices and independent trade-off review. Platform not yet selected; no provisioning or M0 completion. |
+| R05 | Compare Convex and Supabase / assistant | Done: 21 October desk research; Supabase recommended | docs/BACKEND-COMPARISON.md; current official capabilities/prices and independent trade-off review. Historical recommendation; founder subsequently selected Supabase in D20. This research row does not pass the wider M0. |
 | R06 | Model studios, people, sources and update contributions / assistant | Done: 21 October documentation and independent edge-case review | D19, GLOSSARY.md, docs/CREATOR-MODEL.md; AC19 and future demo cases added. No backend or new demo. |
 | P01 | Business, audience and access direction / founder + assistant | Done | D01–D08. |
 | P02 | Source-proof design / founder + assistant | Done: Q6 approved | ACCESS-PROOF v0.1; execution subsequently deferred. |
@@ -43,16 +43,16 @@ Local fixtures can prove navigation, rules and data boundaries. They cannot prov
 
 ## Access, cheapest business test and public readiness
 
-The cheapest useful route remains access proof → manually checked briefing trial → audience decision before a full automated build. The founder currently defers the first step; local design/implementation can still proceed after S01 approval. Do not quietly reopen collection to unblock the business test.
+The cheapest useful route remains access proof → manually checked briefing trial → audience decision before a full automated build. D20 authorizes the working v0 and Apify-first adapters; actual paid collection remains off until its configuration and aggregate cost controls are verified. This is not a replacement RSS-only customer trial.
 
 | ID | Work / owner | Depends on | Status / required evidence |
 | --- | --- | --- | --- |
-| A02 | Bounded supplier proof / assistant | Founder explicitly reopens D08 | **Deferred.** Retain actual feed evidence; no social jobs/formal daily observations yet. Prior €50 total / 150 generated-minute ceiling still applies if resumed, not per-reader quotas. |
+| A02 | Bounded supplier proof / assistant | Founder explicitly reopens D08 | **Not run.** D20 reopens Apify-first adapter work; paid execution awaits credentials/build/aggregate cost controls. Retain actual feed evidence; no social jobs/formal daily observations yet. Prior €50 total / 150 generated-minute ceiling still applies if resumed, not per-reader quotas. |
 | A03 | Review each mandatory family's content/freshness/cost/constraints / founder + assistant | A02 | **Deferred.** Pass/conditional/fail against ACCESS-PROOF; no title-only substitutes. |
 | V01 | Approve 14-day, three-audience manually checked trial / founder | A03 meets broad-access gate | **Not authorized.** Review sample, actual essential sources, language staffing, offer/price, cash/transcription ceiling and founder-time budget. |
 | V02 | Deliver 14 daily recaps to five paying participants per audience / founder + assistant | V01 | **Not authorized.** Track use/payment/renewal, coverage, corrections and costs separately; no app build required for this test. |
 | V03 | Compare audiences; choose focus/pivot and a costed offer / founder + assistant | V02 | **Pending evidence.** Pricing and acquisition hypotheses must fit larger allowances and low-overlap/audio-heavy use. |
-| L01 | Integrate/evaluate real generation and collection, choose host and verify public/paid readiness / assistant + founder | Explicit resumption/budgets; approved scope; access and usefulness evidence before paid launch | **Not authorized.** Actual end-to-end collection→analysis→recap, qualified six-language review, account delivery/security, cash stop, backup/deletion, sender setup, price/cancellation/privacy and deployment checks. Local M5 is insufficient. |
+| L01 | Integrate/evaluate real generation and collection, choose host and verify public/paid readiness / assistant + founder | Explicit resumption/budgets; approved scope; access and usefulness evidence before paid launch | **Incomplete; customer/paid launch not authorized.** D20 selected Netlify and authorized the deployed v0, not commercial readiness. Actual collection→AI analysis→recap, qualified multilingual review, recurring delivery, global cash stop, full backup/deletion, sender, price/cancellation/privacy still need proof. Local M5 alone is insufficient. |
 | G01 | Observe paid cohorts through two renewals / founder + assistant | Approved useful paid offer and launch | **Pending.** Retention, service cost and support by audience/cohort. |
 | G02 | Capped acquisition channel tests / founder + assistant | Approved outreach/marketing budget; useful paid offer | **Not authorized.** Can overlap G01. Track qualified prospects → setup → useful recap → paid/renewal, cash and time. |
 | G03 | Decide whether to scale acquisition / founder | G01 + repeated G02 evidence | **Pending.** No invented lifetime value from a short pilot. |
@@ -65,6 +65,6 @@ At each substantive checkpoint:
 2. Update this plan and docs/DECISIONS.md with approvals, changed scope and remaining gates. Do not promote a proposal to approved through silence.
 3. Save demo source, redacted screenshots/evaluation evidence and reproduction steps under docs/demos/; index exact scenario/provenance/checks/limitations in docs/DEMO-LOG.md.
 4. Run checks appropriate to the changes; record actual results rather than promises. Local code checks, deployment and live end-to-end proof remain separate.
-5. Commit reviewable work locally. A commit is not deployment or remote backup; this repository currently has no remote.
+5. Commit and push verified work to the private GitHub repository. Check CI, Netlify deployment and live behavior separately; one does not substitute for another. Keep credentials and raw QA identities in ignored local files.
 
 Resume by reading STATUS.md, SPEC.md, PLAN.md and docs/DECISIONS.md, then taking the next authorized task. No recurring automation is currently running.

@@ -18,13 +18,15 @@ A reachable website matching the supplied creator-workspace screenshot, with act
 
 | ID | Deliverable | Exit evidence | Status |
 | --- | --- | --- | --- |
-| V0-01 | Record authorization, scope, targets and scaffold | This plan; exact target preflight; pinned dependencies/lockfile | In progress |
-| V0-02 | Screenshot-matched responsive workspace | Desktop/mobile screenshots; functional creator/source navigation, search, format/date filters, recap/detail views | In progress |
-| V0-03 | Real personal library and preferences | Bookmark/read-later/follows/settings persist; guest/account states separated; export; visible save/error/conflict state | In progress |
-| V0-04 | Clerk and Supabase | Login controls; own-row RLS; cross-account/anonymous-denial checks; persistence verification provenance stated | In progress |
-| V0-05 | Modular collection | Authenticated safe feed retrieval; bounded Apify start/poll integration with owner/cost gates; actual live checks distinguished from unit tests | In progress |
-| V0-06 | Tests, GitHub, Netlify and release review | Meaningful domain/collection tests, typecheck/build, remote commit, CI, exact deploy and browser checks separately recorded | Pending |
-| V0-07 | Durable handoff | MORNING.md with exact remaining owner tasks, working URL, verification evidence and limitations; STATUS/PLAN/decisions/demo log updated | Pending |
+| V0-01 | Record authorization, scope, targets and scaffold | This plan; exact target preflight; pinned dependencies/lockfile | Done |
+| V0-02 | Screenshot-matched responsive workspace | Desktop/mobile screenshots; functional creator/source navigation, search, format/date filters, recap/detail views | Done |
+| V0-03 | Real personal library and preferences | Bookmark/read-later/follows/settings persist; guest/account states separated; export; visible save/error/conflict state | Done |
+| V0-04 | Clerk and Supabase | Login controls; own-row RLS; cross-account/anonymous-denial checks; persistence verification provenance stated | Done |
+| V0-05 | Modular collection | Authenticated safe feed retrieval; bounded Apify start/poll integration with owner/cost gates; actual live checks distinguished from unit tests | Done |
+| V0-06 | Tests, GitHub, Netlify and release review | Meaningful domain/collection tests, typecheck/build, remote commit, CI, exact deploy and browser checks separately recorded | Done |
+| V0-07 | Durable handoff | MORNING.md with exact remaining owner tasks, working URL, verification evidence and limitations; STATUS/PLAN/decisions/demo log updated | Done |
+
+V0-01–V0-07 are complete for the first increment. Live URL: https://recap-v0-radu.netlify.app. [Verification](VERIFICATION.md), [morning checklist](MORNING.md) and the demo log distinguish real source/account checks from fixtures and disabled paid adapters.
 
 ## First-increment boundaries
 
@@ -37,3 +39,16 @@ No customer outreach or broad-access customer trial begins. The original seven-d
 Use appropriate unit/integration tests plus rendered desktop/mobile/keyboard checks. Test RLS independently from a real Clerk browser login and report which happened. Commit/push and deployment are separate. Record exact evidence and costs, including what could not be verified. Save a functioning URL even if further provider/owner setup remains; do not substitute the old static mockup for the app.
 
 Account management in v0 exposes sign-in/sign-out and workspace deletion. Clerk account deletion is not offered inside the app until a verified cross-service deletion flow exists; do not claim full account/provider erasure from the workspace-delete action.
+
+## Continuation work
+
+| ID | Assistant-owned next deliverable | Current state / evidence needed |
+| --- | --- | --- |
+| V0-N01 | Durable aggregate paid-collection ledger/stop; privately provision reviewed Apify build, signing secret and operator allowlist; run a bounded real-caption check | Runtime off; per-run gates and tests exist. First next engineering task. Do not treat credential provisioning alone as activation readiness. |
+| V0-N02 | Expand the Apify adapter to the founder's essential social creators and verify useful content per family | No social source verified. Preserve public-feed evidence without making it a substitute for broad access. |
+| V0-N03 | Genuine cross-source analysis and cited daily recap generation | Examples only; select model and approve bounded execution costs before paid calls; evaluate fidelity, disclosed sponsorship and multilingual output. |
+| V0-N04 | Daily scheduling, reminder delivery and usage/coverage accounting | Preferences saved only; no schedule or sender active. Test retries, DST and quiet/late days. |
+| V0-N05 | Stable snapshots, corrections, expiry and full cross-service deletion | Workspace state/export/reset/delete present; full history/privacy promises incomplete. |
+| V0-N06 | Production auth/domain/readiness and customer validation | Development Clerk review app. Broad access still precedes a separately authorized customer trial; no outreach or paid launch started. |
+
+Do not hand these engineering tasks to the non-developer founder. Ask only for private access that cannot be obtained from existing authorization, material product direction or spending beyond the authorized ceiling. The wider candidate's unmet goals stay visible; completion of this v0 table does not mark M0–M5 complete.

@@ -1,6 +1,6 @@
 # Collection v0
 
-Prepared 21 October 2026. This document describes implemented code, not verified deployed integrations. The founder authorized the v0 build separately from the earlier specification candidate. No provider job, account change or spending was performed by this implementation agent.
+Prepared 21 October 2026. This document describes implemented code; the feed/authentication path was subsequently verified on the deployed website, as recorded in [VERIFICATION.md](VERIFICATION.md). Apify remains disabled and unrun. The founder authorized the v0 build separately from the earlier specification candidate. No provider job, account change or spending was performed by this implementation agent.
 
 ## What works in code
 
@@ -61,7 +61,7 @@ DNS has a three-second deadline; each HTTP request has an eight-second deadline.
 
 Local automated checks use mocked provider/feed responses, including real-shaped API fields and cryptographically signed test JWTs. They test missing/expired sessions, unauthorized origins, malformed inputs, private network ranges, unsafe feed discovery, XML rejection, sanitized feed bodies, metadata/transcript distinction, no guessed sponsorship, owner-bound signed jobs and run caps. These checks do not prove live Clerk sign-in, deployed Netlify routing, real feed delivery or a successful Apify run.
 
-Recorded implementation check: npm run test -- tests/collection.test.ts passed all 27 tests on 21 October 2026. The whole-project typecheck at this checkpoint reported only the frontend agent's missing lucide brand-icon exports; no collection-code errors were reported. The root agent owns the final integrated build/deployment check. Provider cash spent and generated audio minutes by this work: zero.
+Historical implementation-agent checkpoint (superseded by the integrated 69-test/build and live-feed evidence in VERIFICATION.md): npm run test -- tests/collection.test.ts passed all 27 tests on 21 October 2026. The whole-project typecheck at this checkpoint reported only the frontend agent's missing lucide brand-icon exports; no collection-code errors were reported. The root agent owns the final integrated build/deployment check. Provider cash spent and generated audio minutes by this work: zero.
 
 The Netlify coding-context tool was called and returned Authentication required. The installed netlify-functions skill was read; the root agent separately fetched the functions context. Modern .mts Request/Response handlers and runtime-only environment variables follow that guidance.
 
@@ -73,4 +73,4 @@ Official documentation checked on 21 October 2026:
 - [Get Actor run](https://docs.apify.com/api/v2/actor-run-get): server-returned run state and dataset.
 - [Clerk manual JWT verification](https://clerk.com/docs/guides/sessions/manual-jwt-verification): signature/session claim checks and authorized parties.
 
-Next authorized verification is sign-in → public feed refresh → persisted extracted result, followed by an explicitly configured, capped provider check. Until that evidence exists, describe this as implemented and locally tested integration code.
+Root release verification subsequently completed sign-in → public feed refresh → persisted extracted result on the live Netlify site. See [VERIFICATION.md](VERIFICATION.md). Next collection work is the aggregate budget guard and private reviewed configuration, then one bounded Apify run; there is no live Apify evidence yet.
