@@ -16,7 +16,13 @@ Actual browser widths **1051, 390 and 320px** had one toolbar row and no horizon
 
 ![Updated local synthetic phone](evidence/compact-feed-v2-phone-fixture.png)
 
-Follow-up push, CI, deployment and actual hosted checks are recorded after release. No supplier/model/transcription execution or new supplier spending occurred. Hosting/build/database totals remain unmeasured.
+Functional **`f4d85e4`** is pushed, passed [CI 39676597103](https://github.com/raduvlad92/recap/actions/runs/39676597103), and is live in exact Netlify deploy **`6ad92a746d0829abd53222ee`**, published **21:11:41 UTC**. Actual signed-in owner checks at 1496×882 and 390×844 passed: one toolbar row, no top-of-feed count or date controls, all six history choices working and Filter retaining exact-date selection. The first card is at y181 desktop/y207 phone; range and viewport restored. The deployed asset is `index-ZvS2TWr9.js`.
+
+Actual stored owner results at verification time were **269/121/63/18/3** items for 30/14/7/3 days and 24h, with **278** in all history. These observed view counts are in the evidence record, not a reinstated middle-column count or proof of complete source coverage. No sync/archive error appeared. Filter's exact-date picker was visible. All available history remains accessible. No follows/preferences or source/archive records were changed.
+
+![Actual deployed three-control toolbar, no private follows or identities](evidence/compact-feed-v2-live-toolbar.png)
+
+No supplier/model/transcription execution or new supplier spending occurred. Hosting/build/database totals remain unmeasured. Temporary fixture storage and browser viewport were restored, and the local server stopped. A documentation-only follow-up records this release; executable deployment identity is the functional commit above.
 
 ## Original D23 release record
 
