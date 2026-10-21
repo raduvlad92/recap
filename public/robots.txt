@@ -1,2 +1,7 @@
 User-agent: *
 Disallow: /
+Allow: /creators
+Allow: /catalogue.css
+Allow: /fonts/
+Allow: /favicon.svg
+Sitemap: https://recap-v0-radu.netlify.app/sitemap.xml

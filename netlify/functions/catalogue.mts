@@ -7,7 +7,6 @@ export default async(request:Request):Promise<Response>=>{
  const url=new URL(request.url),origin=canonicalOrigin(runtimeEnv('APP_URL'));
  if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405,headers:{Allow:'GET, HEAD','x-robots-tag':'noindex'}});
  const bodyResponse=(body:string,status=200,type='text/html; charset=utf-8',index=true)=>new Response(request.method==='HEAD'?null:body,{status,headers:{'content-type':type,'cache-control':status===200?'public, max-age=0, s-maxage=300':'no-store','x-content-type-options':'nosniff','x-robots-tag':index?'index, follow':'noindex, follow','referrer-policy':'strict-origin-when-cross-origin','x-frame-options':'DENY'}});
- if(url.pathname==='/robots.txt')return bodyResponse(`User-agent: *\nDisallow: /\nAllow: /creators\nAllow: /catalogue.css\nAllow: /fonts/\nAllow: /favicon.svg\nSitemap: ${origin}/sitemap.xml\n`,200,'text/plain; charset=utf-8');
  if(url.pathname==='/creators')return Response.redirect(origin+'/creators/'+url.search,301);
  try{
   const db=database(runtimeEnv,false);
@@ -25,4 +24,4 @@ export default async(request:Request):Promise<Response>=>{
   return bodyResponse(renderCreator(creator,related,origin,creators.filter(c=>c.id!==creator.id&&c.name.toLowerCase()===creator.name.toLowerCase())));
  }catch{return bodyResponse('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Catalogue temporarily unavailable | recap</title><main><h1>The creator directory is temporarily unavailable.</h1><p>Please try again shortly. Your saved workspace is separate.</p><a href="/">Open your workspace</a></main></html>',503,undefined,false);}
 };
-export const config:Config={path:['/creators','/creators/*','/robots.txt','/sitemap.xml'],rateLimit:{action:'rate_limit',aggregateBy:['domain','ip'],windowSize:60,windowLimit:120}};
+export const config:Config={path:['/creators','/creators/*','/sitemap.xml'],rateLimit:{action:'rate_limit',aggregateBy:['domain','ip'],windowSize:60,windowLimit:120}};
