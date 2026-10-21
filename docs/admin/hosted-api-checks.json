@@ -1,0 +1,63 @@
+{
+  "checkedAt": "2026-10-21T03:08:11.621Z",
+  "checks": [
+    {
+      "cache": "no-store",
+      "robots": "noindex, nofollow",
+      "section": "access",
+      "status": 200
+    },
+    {
+      "cache": "no-store",
+      "channels": 600,
+      "creators": 560,
+      "jobs": 0,
+      "plannedActors": 2,
+      "robots": "noindex, nofollow",
+      "section": "overview",
+      "status": 200,
+      "usedActors": 0
+    },
+    {
+      "cache": "no-store",
+      "robots": "noindex, nofollow",
+      "section": "users",
+      "status": 200
+    },
+    {
+      "cache": "no-store",
+      "robots": "noindex, nofollow",
+      "section": "creators",
+      "status": 200
+    },
+    {
+      "allPlansDisabled": true,
+      "cache": "no-store",
+      "robots": "noindex, nofollow",
+      "section": "plans",
+      "status": 200
+    },
+    {
+      "cache": "no-store",
+      "robots": "noindex, nofollow",
+      "section": "jobs",
+      "status": 200
+    },
+    {
+      "cache": "no-store",
+      "robots": "noindex, nofollow",
+      "section": "audit",
+      "status": 200
+    },
+    {
+      "section": "anonymous",
+      "status": 401
+    }
+  ],
+  "collectionRunsStarted": 0,
+  "baseUrl": "https://recap-v0-radu.netlify.app",
+  "commit": "6abf9bacd721f10eedd251aadd4a8518680e84e1",
+  "deployment": "6ad82c2e3852294a5febf109",
+  "provenance": "Browser-issued Clerk JWT from a verified allowlisted synthetic development account; actual hosted admin function and existing backend",
+  "temporaryAccess": "Pending removal and final deployment denial check"
+}

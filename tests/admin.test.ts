@@ -88,10 +88,30 @@ describe('private source credentials',()=>{
  });
 });
 
-it('matches reader-normalized follows to researched creator channels, including custom-domain newsletters',()=>{
- const channels=[{id:'catalogue-channel',creator_id:'real-creator',name:'A real creator',platform:'YouTube',url:'https://www.youtube.com/@example/'}] as never;
+it('matches reader-normalized follows to researched channels and their canonical creator identity',()=>{
+ const channels=[{id:'catalogue-channel',creator_id:'real-creator',name:'Example video channel',platform:'YouTube',url:'https://www.youtube.com/@example/',catalogue_creators:{name:'A real creator'}}] as never;
  const summary=userSummary(user,{user_id:user.id,updated_at:'2026-10-21',state:{followedSourceIds:['s1'],customSources:[{id:'s1',name:'example',url:'https://youtube.com/@example',platform:'YouTube',status:'pending'}]}},channels,[]);
- expect(summary.follows[0].creatorNames).toEqual(['A real creator']);expect(summary.follows[0].catalogueCreatorId).toBe('real-creator');
+ expect(summary.follows[0].name).toBe('Example video channel');expect(summary.follows[0].creatorNames).toEqual(['A real creator']);expect(summary.follows[0].catalogueCreatorId).toBe('real-creator');
+});
+it('keeps a Substack publication label separate from its canonical creator name',()=>{
+ const channels=[{id:'newsletter-channel',creator_id:'newsletter-author',name:"Lenny's Newsletter",platform:'Substack',url:'https://www.lennysnewsletter.com/',catalogue_creators:{name:'Lenny Rachitsky'}}] as never;
+ const summary=userSummary(user,{user_id:user.id,updated_at:'2026-10-21',state:{followedSourceIds:['newsletter'],customSources:[{id:'newsletter',name:'lennysnewsletter',url:'https://lennysnewsletter.com',platform:'Blog',status:'pending'}]}},channels,[]);
+ expect(summary.follows[0]).toMatchObject({name:"Lenny's Newsletter",platform:'Substack',creatorNames:['Lenny Rachitsky'],catalogueCreatorId:'newsletter-author'});
+});
+it.each([undefined,null,{name:null},{name:''},{name:'   '}])('leaves the creator identity unknown when its canonical name is missing (%j)',catalogue_creators=>{
+ const channels=[{id:'newsletter-channel',creator_id:'newsletter-author',name:'A publication, not a person',platform:'Substack',url:'https://example.substack.com/',catalogue_creators}] as never;
+ const summary=userSummary(user,{user_id:user.id,updated_at:'2026-10-21',state:{followedSourceIds:['newsletter'],customSources:[{id:'newsletter',name:'Reader-entered label',url:'https://example.substack.com',platform:'Substack',status:'pending'}]}},channels,[]);
+ expect(summary.follows[0].creatorNames).toEqual([]);expect(summary.follows[0].name).toBe('A publication, not a person');
+});
+it('reads canonical creator names through the explicit catalogue foreign key for the admin reader list',async()=>{
+ const channels=[{id:'newsletter-channel',creator_id:'newsletter-author',name:'A publication',platform:'Substack',url:'https://example.substack.com/',catalogue_creators:{name:'An author'}}];
+ const select=vi.fn(()=>({limit:()=>({overrideTypes:async()=>({data:channels,error:null})})}));
+ const insert=vi.fn().mockResolvedValue({error:null});
+ const db={from:(table:string)=>table==='catalogue_channels'?{select}:{insert},rpc:async(name:string)=>({data:name==='admin_workspace_summaries'?[{user_id:user.id,updated_at:'2026-10-21',state:{followedSourceIds:['newsletter'],customSources:[{id:'newsletter',url:'https://example.substack.com'}]}}]:[],error:null})};
+ const handler=createAdminHandler({authorize:async()=>user.id,db:(()=>db) as never,clerk:async path=>path.startsWith('/users/count')?{total_count:1}:[user]});
+ const response=await handler(new Request('https://app.example/api/admin?section=users'));
+ expect(response.status).toBe(200);expect(select).toHaveBeenCalledWith('id,creator_id,name,url,platform,catalogue_creators!catalogue_channels_creator_id_fkey(name)');
+ expect((await response.json()).users[0].follows[0]).toMatchObject({name:'A publication',creatorNames:['An author']});expect(insert).toHaveBeenCalledOnce();
 });
 it('accepts researched legacy YouTube channel links for a planned source list without claiming collection support',async()=>{
  const {normalizeSourceUrl}=await import('../src/lib/domain');

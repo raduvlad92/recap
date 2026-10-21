@@ -1,7 +1,7 @@
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
 import { clerkRequest, database, requireAdmin, userSummary, type ClerkUser, type WorkspaceRow } from './admin-data';
 import { collectionHealth } from './collect-handler';
-import type { CatalogueChannel, CollectionJobRecord } from '../../../src/lib/admin-types';
+import type { AdminChannelIdentity, CollectionJobRecord } from '../../../src/lib/admin-types';
 interface Dependencies { env: Env; authorize: typeof requireAdmin; db: typeof database; clerk: typeof clerkRequest }
 const success = (value: unknown) => { const response=json(value);response.headers.set('x-robots-tag','noindex, nofollow');return response; };
 const unwrap = <T>(result: { data: T; error: {message: string; code?: string} | null }): T => {
@@ -53,10 +53,10 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
     const ids=users.map(u=>u.id);
     const [workspaces,channels,usage,total]=await Promise.all([
      ids.length?db.rpc('admin_workspace_summaries',{p_user_ids:ids}):Promise.resolve({data:[],error:null}),
-     db.from('catalogue_channels').select('id,creator_id,name,url,platform').limit(1000),
+     db.from('catalogue_channels').select('id,creator_id,name,url,platform,catalogue_creators!catalogue_channels_creator_id_fkey(name)').limit(1000).overrideTypes<AdminChannelIdentity[],{merge:false}>(),
      ids.length?db.rpc('admin_user_job_usage',{p_user_ids:ids}):Promise.resolve({data:[],error:null}),
      section==='users'?deps.clerk('/users/count'+(q?'?'+new URLSearchParams({query:q}):''),deps.env):Promise.resolve({total_count:1})]);
-    const rows=unwrap(workspaces) as WorkspaceRow[],allChannels=unwrap(channels) as CatalogueChannel[],usageRows=unwrap(usage) as Array<{user_id:string;job_count:number;actors:string[];observed_cost_usd:number;unknown_cost_jobs:number}>;
+    const rows=unwrap(workspaces) as WorkspaceRow[],allChannels=unwrap(channels) || [],usageRows=unwrap(usage) as Array<{user_id:string;job_count:number;actors:string[];observed_cost_usd:number;unknown_cost_jobs:number}>;
     const summaries=users.map(u=>{const item=userSummary(u,rows.find(w=>w.user_id===u.id),allChannels,[]);const usage=usageRows.find(j=>j.user_id===u.id);return usage?{...item,jobCount:Number(usage.job_count),actorsUsed:usage.actors,observedCostUsd:Number(usage.observed_cost_usd),unknownCostJobs:Number(usage.unknown_cost_jobs)}:item;});
     // Access logging stores record IDs only; no email, follows or copied content.
     const audit=await db.from('admin_audit_events').insert({admin_id:adminId,action:section==='user'?'reader.viewed':'readers.listed',target_id:section==='user'?requestedId:null});

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type { AdminFollow, AdminUser, CatalogueChannel, CollectionJobRecord } from '../../../src/lib/admin-types';
+import type { AdminChannelIdentity, AdminFollow, AdminUser, CollectionJobRecord } from '../../../src/lib/admin-types';
 import { sampleCreators, sampleSources } from '../../../src/lib/fixtures';
 import { normalizeSourceUrl } from '../../../src/lib/domain';
 import { authenticate, CollectionError, publicHttpsUrl, type Env, runtimeEnv } from './security';
@@ -36,7 +36,7 @@ const safeArray = (value: unknown): unknown[] => Array.isArray(value) ? value : 
 const text = (value: unknown, max = 200) => typeof value === 'string' ? value.slice(0,max) : '';
 export const safeLink = (value: unknown) => { try { return publicHttpsUrl(text(value,2048)).href; } catch { return ''; } };
 export interface WorkspaceRow { user_id: string; state: Record<string, unknown>; updated_at: string }
-export function userSummary(user: ClerkUser, workspace: WorkspaceRow | undefined, channels: CatalogueChannel[], jobs: CollectionJobRecord[]): AdminUser {
+export function userSummary(user: ClerkUser, workspace: WorkspaceRow | undefined, channels: AdminChannelIdentity[], jobs: CollectionJobRecord[]): AdminUser {
   const state = workspace?.state || {};
   const canonical=(url:string)=>{try{return normalizeSourceUrl(url).url;}catch{return url.replace(/\/$/,'');}};
   const catalogueByUrl = new Map(channels.map(c => [canonical(c.url),c]));
@@ -48,7 +48,8 @@ export function userSummary(user: ClerkUser, workspace: WorkspaceRow | undefined
     const channel = catalogueByUrl.get(canonical(url));
     const creatorIds = safeArray(source?.creatorIds).filter((v): v is string => typeof v === 'string');
     const creatorNames = creatorIds.map(cid => sampleCreators.find(c => c.id === cid)?.name).filter((v): v is string => !!v);
-    return { id, name: channel?.name || (!url && source?.name === source?.url ? 'Private or unsupported source' : text(source?.name) || 'Unresolved saved source'), url, platform: channel?.platform || text(source?.platform) || 'Unknown', creatorNames: channel ? [channel.name] : creatorNames, ...(channel ? {catalogueCreatorId:channel.creator_id} : {}), sample: sampleSources.some(s => s.id === id), status: text(source?.status) || 'unknown' };
+    const catalogueCreatorName = text(channel?.catalogue_creators?.name).trim();
+    return { id, name: channel?.name || (!url && source?.name === source?.url ? 'Private or unsupported source' : text(source?.name) || 'Unresolved saved source'), url, platform: channel?.platform || text(source?.platform) || 'Unknown', creatorNames: channel ? (catalogueCreatorName ? [catalogueCreatorName] : []) : creatorNames, ...(channel ? {catalogueCreatorId:channel.creator_id} : {}), sample: sampleSources.some(s => s.id === id), status: text(source?.status) || 'unknown' };
   });
   const primary = user.email_addresses.find(e => e.id === user.primary_email_address_id);
   const ownJobs = jobs.filter(j => j.user_id === user.id);
