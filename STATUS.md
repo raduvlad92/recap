@@ -2,7 +2,13 @@
 
 Updated: **21 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
-## Current increment: tech collection and bounded source backfill (D22)
+## Current increment: compact reading column (D23)
+
+The founder requested a much more compact middle column: remove the repeated collection eyebrow/title, descriptive subtitle and channel count; move the source-material explanation and coverage link into Preferences; and put sort, history range, date navigation and Filter on one desktop toolbar without a visible “History” label. The working UI preserves creator/source/library/Today context, an accessible collection heading and responsive toolbar wrapping on phones. [Design and verification record](docs/design/COMPACT-FEED.md).
+
+Final local checks passed **355 tests**, typecheck/build and catalogue reproducibility. Local synthetic browser checks at **1440, 1051, 390 and 320px** verified one desktop/two phone control rows without overflow, long-date ellipsis, sort/range/date behavior and Preferences → source coverage. Screenshots and exact provenance are in [the design record](docs/design/COMPACT-FEED.md). Push, CI and hosted review delivery are in progress; this checkpoint does not claim D23 deployment or signed-in owner verification. No new source/provider run or supplier spend was incurred for this design session; hosting/build/database totals were not measured.
+
+## Historical D22 checkpoint: tech collection and bounded source backfill
 
 The founder requested a private **tech** collection for their existing app account, official LTT/LMG, Marques Brownlee and GamersNexus properties, and actual items from the preceding 30 days. App signup and the selected **DeleteCookies** Apify organization are verified. **No owner access or setup step is pending.** The reviewed inventory now has **39 included sources: 21 YouTube, 10 X and 8 Instagram**, across **six creator records organized under three source groups**. GNSteve is included on official GN LLC ownership evidence; there are **zero optional sources and nine unresolved candidates**, which remain excluded. [Scoped plan](docs/tech/PLAN.md).
 
@@ -96,7 +102,7 @@ No customer outreach, paid customer trial, payment or external email sending is 
 
 ## Next action
 
-The bounded D22 delivery is complete, with exact results saved in [the verification report](docs/tech/VERIFICATION.md). Next assistant work is to investigate the remaining 19 empty/blocked results and incomplete history before proposing further bounded collection; then continue the tracked AI synthesis, scheduling and production-readiness work within its authorization. No additional supplier jobs are started automatically. No provider login, API token, new account or payment is needed from the founder. The founder can review the [live workspace](https://recap-v0-radu.netlify.app), [admin](https://recap-v0-radu.netlify.app/admin/) and [creator directory](https://recap-v0-radu.netlify.app/creators/) using the updated [morning guide](docs/v0/MORNING.md).
+Complete D23 design delivery: push the locally verified work, then record CI, exact review deployment and hosted behavior separately in [the compact-feed record](docs/design/COMPACT-FEED.md). No new source investigation or provider execution is part of this design task. The bounded D22 delivery remains complete, with exact results saved in [the verification report](docs/tech/VERIFICATION.md); its 19 empty/blocked sources and incomplete history remain tracked follow-up work. No provider login, API token, new account or payment is needed from the founder. The founder can review the [live workspace](https://recap-v0-radu.netlify.app), [admin](https://recap-v0-radu.netlify.app/admin/) and [creator directory](https://recap-v0-radu.netlify.app/creators/) using the updated [morning guide](docs/v0/MORNING.md).
 
 The bounded D22 jobs are finished; no recurring collection or reminder schedule is running. Further product engineering remains tracked in the [tech plan](docs/tech/PLAN.md), [admin continuation work](docs/admin/PLAN.md#continuation-work) and [v0 plan](docs/v0/PLAN.md#continuation-work). Broader SPEC/PLAN v1.1 remains a candidate, and customer outreach, paid trials and charging are not authorized.
 

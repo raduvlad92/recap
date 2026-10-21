@@ -26,8 +26,15 @@ Updated: 21 October 2026. Individual answers below are accepted directions. They
 | D18 | Prepare a nonfunctional visitor-facing visual concept. | Explicit 19 October request; full entry below. Does not approve app implementation. |
 | D19 | Creators may be studios/teams with multiple presenters and channels; support drill-down and a modular product model. | 21 October: “a creator can actually be an entire studio or team” and “drill down into each presenter ... or their multiple youtube channels”; “the whole thing has to be very modular”. |
 | D20 | Implement a functioning v0 autonomously using founder-created recap Supabase + Clerk, GitHub/Netlify and Cloudflare only as needed; start with Apify adapters. | 21 October: “Prepare the plan and start implementing the v0 without my involvement”; match supplied screenshot and leave a morning task list. |
+| D23 | Make the middle column much more compact: remove repeated collection headings/subtitle/count, move source-material explanation/coverage access into Preferences, and combine sort, history range, dates and Filter in one desktop row. | 21 October: “let's make it MUCH more compact and remove the fluff”, followed by the explicit removal/control list and screenshot. |
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
+
+## D23 — compact reading column, 21 October 2026
+
+The founder explicitly requested removal of “tech collection”, the repeated “tech” heading, the descriptive collection subtitle, “39 channels in this collection” and the source-material banner from the middle column. Sort, the last-30-days/history dropdown without a visible “History” label, date navigation/“All dates” and Filter belong on one desktop toolbar. Move the source-material explanation and coverage link into the existing Preferences area; phone layouts may wrap the controls to remain usable.
+
+The scoped implementation preserves creator/source/library/Today headings, an accessible collection heading, original filter/history behavior and per-item source provenance. [Design and evidence](design/COMPACT-FEED.md). This authorizes a UI revision to the working v0, not source collection, supplier spending, customer launch or approval of the full SPEC/PLAN v1.1 candidate. Final local **355-test/typecheck/build/catalogue** checks and synthetic responsive interaction checks passed; push, CI and hosted delivery remain in progress at this checkpoint.
 
 ## Recommendations superseded by those decisions
 
