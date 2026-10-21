@@ -10,6 +10,8 @@ The founder explicitly requested autonomous implementation on 21 October (D20). 
 
 ## Authorized admin and creator catalogue increment
 
+New D22 request: [tech collection and 30-day backfill plan](docs/tech/PLAN.md), covering official LTT/LMG, Marques and GamersNexus properties and the founder's specified private app account. Research/preparation is authorized; actual delivery still needs the correct app identity, authenticated Apify connection and implemented aggregate budget controls. Current per-run adapter limits are not a 30-day coverage pass. No job started during readiness checks.
+
 D21 (21 October) authorizes the admin panel, five 120-account research lists, backend catalogue and one public page per canonical creator, plus planning-only Apify/Bright Data comparisons. **Complete:** 560 creators, 600 channels, seven disabled plans, owner-authorized admin and public directory/pages. [Tracked delivery and continuation plan](docs/admin/PLAN.md), [owner guide](docs/admin/README.md), [verification](docs/admin/VERIFICATION.md). Owner-only hosted access, temporary-QA revocation/cleanup and public HTTP checks passed. No source collection or paid jobs are authorized by this increment; do not substitute page publication for verified access.
 
 ## Completed discovery and decisions

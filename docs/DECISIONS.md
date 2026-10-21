@@ -178,6 +178,12 @@ The authorized first increment is live at https://recap-v0-radu.netlify.app, bac
 This does not approve or complete the broader candidate by inference. Paid Apify runtime is off, no actual social collection or AI synthesis/delivery occurred, no customer trial/outreach started, and no new cash charge/plan purchase was observed. Cloudflare was unnecessary. The deploy is a reachable review increment using development authentication, not a completed commercial launch.
 
 
+## D22 — named tech collection and source backfill,21October2026
+
+Founder explicitly requested the **tech** collection with all official public LTT/LMG channels, Marques Brownlee properties and GamersNexus, prioritizing YouTube and including X/Instagram where present; start building an Apify Actor and show actual last 30-day content on the signed-in homepage for the privately specified identity. This supersedes D21's no-collection direction for this bounded slice, within the existing global ceiling. It does not approve recurring jobs, new subscriptions, paid AI calls or an unrelated600-channel backfill. [Plan and readiness evidence](tech/PLAN.md). No duplicate resumption approval is needed for this request; supplier access, actual account binding and budget enforcement must still be verified before jobs.
+
+Readiness check found working app/backend administration, no exact app user for the target email, no configured Apify runtime connection, and an Apify sign-in page in the shared browser. Required owner actions are ordinary app signup/sign-in and provider authentication if access cannot be reused. Channel research and Actor code can proceed independently. No source content collection or metered run has started at this checkpoint. Do not put the specified email or private user IDs in Git.
+
 ## D21 — admin and researched public creator catalogue,21October2026
 
 Founder asked for a comprehensive admin panel showing signups, followed creators/channels, Apify usage and backend operations; separately120creators/accounts on each of YouTube,Instagram,X,Substack andLinkedIn, imported into the backend with one page per canonical creator for discovery/SEO and an honest account of planned collection. The explicit instruction is **do not start collection**, compare Apify andBrightData and choose the cheaper usable route. This authorizes scoped implementation/backendimport/publicpages on the existing stack; it does not start a customer trial, paid scraper job, subscription or daily schedule.

@@ -128,4 +128,6 @@ Next: founder reviews with the [five-minute admin guide](admin/README.md). Furth
 
 ## Required format for future entries
 
+21 October D22 readiness checkpoint: scoped tech collection/30-day request recorded in [tech/PLAN.md](tech/PLAN.md); exact requested app identity checked via Clerk Backend API without storing private identity in Git; app/backend access works, exact app account absent, Apify runtime token/build/signing configuration absent locally/hosted, shared Console at sign-in. Primary channel inventory research underway. No new application demo, source content backfill, provider job, AI call, transcription or schedule. New cash spent:0 observed. This is a readiness check, not proof of 30-day content coverage or Actor deployment. Next: owner app/provider access and the tracked TECH01–TECH06 implementation.
+
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.
