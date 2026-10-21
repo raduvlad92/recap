@@ -1,0 +1,31 @@
+# YouTube cards and Shorts visibility — D24
+
+21 October 2026. Scoped founder request: put channel identity on the video thumbnail, use the actual channel icon and a YouTube logo badge, remove duplicate platform/publisher text, replace the transcript preview with up to six linked bullet points, open the full transcript on demand, and let each source hide Shorts while retaining collection and saved history.
+
+## Design and behavior
+
+Reuse the existing Onest typeface and palette: canvas `#f8f8f6`, paper `#ffffff`, ink `#20231f`, lines `#dedfd9`, teal `#519c8d`, supporting text `#687163`. Channel icon/name/date sit over a restrained thumbnail gradient; the reading area contains title, highlights, Full transcript and existing save/topic controls. YouTube's thumbnail badge is its icon only. Cards omit the repeated YouTube byline and “Published by” row. Other platforms keep their existing card design.
+
+Highlights are deterministic **caption excerpts**, selected across the entire available transcript, with up to six meaningful, diverse points in source order. This is extractive summarization, not a generated AI recap. Real caption cues supply video-minute links; text position or video duration never invents a timestamp. Descriptions/titles without captions do not become pretend full-content summaries. Full transcript renders all saved caption text without the old 1,400-character detail-extract limit. Source coverage remains separate from complete audiovisual coverage.
+
+Show Shorts is available when adding a YouTube source and on its existing Manage sources row. Default visibility stays on for existing accounts. The preference belongs to the reader/source and uses the existing private workspace save path. Hidden Shorts stay followed, collected, archived, saved/exportable and reversible; the preference filters display only. Explicit provider format or a Shorts URL establishes identity; duration alone does not. No schedule is activated.
+
+## Data work and boundaries
+
+Saved supplier metadata covers 184 YouTube items: 142 videos, 38 Shorts and four streams. It includes actual Google-hosted channel icons and 175 existing captions. The old normalized archive omitted format/icon/timing information and clipped two long captions at 200,000 characters. Existing private raw datasets are the identity anchors for enrichment; no seed/provisioner is rerun over owner edits.
+
+Caption text originally had no cue timestamps. For this request, existing timed captions were retrieved directly from YouTube for those already-captioned videos through a separate browser tab, with playback paused. Of 175 attempted videos, 174 exported captions; 171 exports were complete and three explicitly truncated. One video no longer exposed captions. Those four keep their saved plaintext without invented links; nine metadata-only videos have no caption highlights. This is new, bounded timestamp retrieval for the requested cards; it is not a scraper/provider run, generated transcription or broad-access pass. Exports and source text stay in ignored private paths. Explicitly truncated exports do not establish complete timing coverage.
+
+The enrichment script prepares private backups and owner-scoped, revision-checked SQL batches. The initial 9 MB single request was rejected with HTTP 413 before writing; 28 bounded batches then applied successfully. Each batch is atomic, with exact prior record JSON and workspace revision checks; earlier successful batches would remain if a later batch failed. The final batch alone changes source avatars/workspace revision. It matches exact existing source/video identities, preserves record IDs and all unrelated fields, restores only verified clipped text, patches actual source icons/explicit Shorts flags/complete timing, and checks complete prior JSON/revisions before any write. Public catalogue data, source follows, saved items and preferences are preserved. Native SQL connector access is unavailable; the already authenticated official CLI successfully read the exact recap project without a new login. No credentials are stored in this record.
+
+## Verification
+
+- **457 tests / 15 files**, TypeScript, production build and unchanged catalogue reproducibility passed through `npm run check`. A separate read-only React/card review found no release blocker. The existing bundle-size warning remains.
+- Synthetic browser checks at **1440, 1051, 390 and 320px** passed without horizontal overflow. The compact toolbar remains one row. Channel images loaded; identity stays over the image, with save/read-later at the opposite bottom corner from duration. No repeated platform/publisher row or raw-summary text appears on the card.
+- Six actual fixture cue links, late-video points, a **1,508-character** transcript including its end marker, and persistent Shorts hide → reload → re-enable passed. Adding a video source with Shorts off persisted after reload without starting collection. Export retained both stored synthetic videos and the saved Short. Guest test state and viewport were restored.
+- Actual database readback at **21:41:05 UTC** matched all **184 planned video records** exactly, retained all **278 record IDs**, and matched the planned workspace exactly. Existing follows, bookmarks, settings and unrelated data were preserved. **38 explicit Shorts flags**, **171 complete timing arrays**, **13 source avatars** and **two verified long-caption restorations** are present. [Sanitized readback evidence](evidence/youtube-metadata-readback.json). Private before/after backups, caption exports and SQL remain ignored.
+- Across the actual archive, 171 videos produce linked excerpts, four produce untimed caption excerpts and nine have no captions. The maximum is six points; 165 cards yield six. These are source excerpts rather than generated AI summaries.
+
+[Synthetic desktop screenshot](evidence/youtube-cards-desktop-fixture.png) · [Synthetic phone screenshot](evidence/youtube-cards-mobile-fixture.png). These show fictional test content, not collected creator claims.
+
+GitHub CI, exact Netlify publication and signed-in owner evidence follow below after release. No paid supplier/model execution or generated transcription was started; hosting/build/database usage remains unmeasured.

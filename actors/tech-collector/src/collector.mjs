@@ -115,11 +115,34 @@ export function reserve(state, source, request) {
   state.entries[source.id] = {sourceId:source.id, actorId:request.actorId, actor:request.actor, buildId:request.buildId, buildNumber:request.buildNumber, pricingUrl:request.pricingUrl, pricingFingerprint:request.pricingFingerprint, reservedUsd:request.maxChargeUsd, observedCostUsd:null, costObservedAt:null, costStatus:'unreported', status:'submitting', providerRunId:null, datasetId:null, maxItems:request.maxItems, formatLimits:request.formatLimits, updates:[], coverage:null};
   return true;
 }
+/** Read only actual caption cues; plain text and durations never manufacture timing. */
+export function timedSubtitleSegments(value) {
+  if(typeof value!=='string')return [];
+  const seconds=value=>{
+    const match=/^(?:(\d{1,3}):)?([0-5]\d):([0-5]\d)[.,](\d{1,3})$/.exec(value);
+    return match?Number(match[1] || 0)*3600+Number(match[2])*60+Number(match[3])+Number(match[4].padEnd(3,'0'))/1000:null;
+  };
+  const segments=[];
+  for(const block of value.slice(0,TEXT_LIMIT).replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n').split(/\n[\t ]*\n/)) {
+    const lines=block.trim().split('\n');
+    if(/^(?:NOTE(?:\s|$)|STYLE$|REGION$)/.test(lines[0]))continue;
+    const cueIndex=lines.findIndex(line=>/-->/.test(line));
+    if(cueIndex<0)continue;
+    const cue=/^(\S+)\s+-->\s+(\S+)(?:\s+.*)?$/.exec(lines[cueIndex].trim());
+    if(!cue)continue;
+    const startSeconds=seconds(cue[1]),endSeconds=seconds(cue[2]);
+    const caption=lines.slice(cueIndex+1).join('\n').replace(/<[^>]*>/g,'').trim();
+    if(startSeconds===null || endSeconds===null || endSeconds<startSeconds || !caption || caption.length>10000)continue;
+    segments.push({startSeconds,durationSeconds:endSeconds-startSeconds,text:caption});
+  }
+  return segments;
+}
 function inlineSubtitles(raw) {
   const tracks = list(raw.subtitles);
-  const selected = tracks.find(t=>t?.language==='en' && (t.plaintext || t.srt || t.text)) || tracks.find(t=>t && (t.plaintext || t.srt || t.text));
-  const original=selected ? selected.plaintext || selected.srt || selected.text : '';
-  return {content:text(original).split('\n').filter(line=>!/^\s*\d+\s*$/.test(line) && !/-->/.test(line) && !/^WEBVTT/.test(line)).join('\n').replace(/<[^>]*>/g,'').trim(),clipped:typeof original==='string' && original.length>TEXT_LIMIT};
+  const selected = tracks.find(t=>t?.language==='en' && (t.plaintext || t.srt || t.vtt || t.text)) || tracks.find(t=>t && (t.plaintext || t.srt || t.vtt || t.text));
+  const original=selected ? selected.plaintext || selected.srt || selected.vtt || selected.text : '';
+  const transcriptSegments=timedSubtitleSegments(selected?.srt || selected?.vtt || selected?.text || '');
+  return {content:text(original).split('\n').filter(line=>!/^\s*\d+\s*$/.test(line) && !/-->/.test(line) && !/^WEBVTT/.test(line)).join('\n').replace(/<[^>]*>/g,'').trim(),clipped:typeof original==='string' && original.length>TEXT_LIMIT,...(transcriptSegments.length?{transcriptSegments}:{})};
 }
 function sameSource(source, raw) {
   if (source.platform === 'X') return text(raw.author?.userName || raw.author?.username || raw.author?.screen_name).toLowerCase() === source.key.split('/')[1];
@@ -185,10 +208,12 @@ export function normalizeItem(source, raw, input) {
   for (const link of list(raw.descriptionLinks)) { const safe=publicUrl(link?.url); if(safe && references.length<21 && !references.some(r=>r.url===safe)) references.push({title:text(link.text,160)||'Creator-linked reference',url:safe}); }
   const title = text(raw.title,500) || (postText ? postText.slice(0,120) : 'Update from '+source.name);
   const image = publicUrl(raw.thumbnailUrl || raw.displayUrl || raw.extendedEntities?.media?.[0]?.media_url_https);
-  return {update:{id:'tech-'+digest(url).slice(0,24),sourceId:source.id,contributorIds:[],title,summary:content.slice(0,700) || 'No usable content text returned; open the original update.',url,publishedAt,format:source.platform==='YouTube'?'video':'post',topics:[],brands:[],sponsors:[],references,insights:[],...(image?{image}:{}),...(typeof raw.duration==='string'?{duration:text(raw.duration,30)}:{}),isSample:false,coverage,...(content?{content}:{}),contentKind},format:source.platform==='YouTube'?(raw.type || 'unknown'):'post',contentClipped};
+  const sourceAvatarUrl=source.platform==='YouTube' && typeof raw.channelAvatarUrl==='string' && raw.channelAvatarUrl.length<=2000?publicUrl(raw.channelAvatarUrl):'';
+  const isShort=source.platform==='YouTube'?(raw.type==='shorts' || /^\/shorts\//.test(u.pathname)?true:['video','stream'].includes(raw.type)?false:undefined):undefined;
+  return {update:{id:'tech-'+digest(url).slice(0,24),sourceId:source.id,contributorIds:[],title,summary:content.slice(0,700) || 'No usable content text returned; open the original update.',url,publishedAt,format:source.platform==='YouTube'?'video':'post',topics:[],brands:[],sponsors:[],references,insights:[],...(image?{image}:{}),...(typeof raw.duration==='string'?{duration:text(raw.duration,30)}:{}),...(typeof isShort==='boolean'?{isShort}:{}),...(subtitleData.transcriptSegments?{transcriptSegments:subtitleData.transcriptSegments}:{}),isSample:false,coverage,...(content?{content}:{}),contentKind},format:source.platform==='YouTube'?(raw.type || 'unknown'):'post',contentClipped,...(sourceAvatarUrl?{sourceAvatarUrl}:{})};
 }
 export function sourceCoverage(source, entry, rawItems, input, datasetTruncated = false) {
-  const rejected = {}, updates = [], seen = new Set(), dates = [], formats = {}, diagnosticCodes={}, emptyFormats=new Set();let clippedItems=0,resultRows=0;
+  const rejected = {}, updates = [], seen = new Set(), dates = [], formats = {}, diagnosticCodes={}, emptyFormats=new Set();let clippedItems=0,resultRows=0,sourceAvatarUrl='';
   for (const raw of rawItems) {
     const result = normalizeItem(source,raw,input);
     if(result.diagnosticCode)diagnosticCodes[result.diagnosticCode]=(diagnosticCodes[result.diagnosticCode] || 0)+1;
@@ -200,7 +225,7 @@ export function sourceCoverage(source, entry, rawItems, input, datasetTruncated 
     dates.push(result.update.publishedAt); formats[result.format]=(formats[result.format] || 0)+1;
     if (seen.has(result.update.id)) {rejected.duplicate=(rejected.duplicate || 0)+1;continue;}
     if (updates.length >= entry.maxItems) {rejected.source_cap=(rejected.source_cap || 0)+1;continue;}
-    seen.add(result.update.id); updates.push(result.update);if(result.contentClipped)clippedItems++;
+    seen.add(result.update.id); updates.push(result.update);if(result.contentClipped)clippedItems++;if(!sourceAvatarUrl && result.sourceAvatarUrl)sourceAvatarUrl=result.sourceAvatarUrl;
   }
   const capped = datasetTruncated || resultRows>=entry.maxItems || Object.entries(entry.formatLimits || {}).some(([format,limit])=>limit>0 && (formats[format] || 0)>=limit);
   const demoOnly=rawItems.length>0 && rejected.provider_demo_data===rawItems.length;
@@ -208,7 +233,7 @@ export function sourceCoverage(source, entry, rawItems, input, datasetTruncated 
   const reportedEmpty=!!rejected.empty_format || !!rejected.no_items_reported;
   const earliestReached = dates.length ? dates.sort()[0] : null;
   const status=demoOnly?'provider_demo_only':failed?'failed_or_partial':capped?'capped':updates.length?'collected_unverified_completeness':reportedEmpty?'no_items_reported':'no_results_unverified';
-  return {updates,coverage:{sourceId:source.id,sourceUrl:source.url,platform:source.platform,status,providerStatus:entry.status,returnedItems:rawItems.length,acceptedItems:updates.length,earliestReached,dateFrom:input.dateFrom,dateTo:input.dateTo,dateCutoffReached:earliestReached ? earliestReached<=input.dateFrom : null,complete:false,capped,datasetTruncated,formatLimits:entry.formatLimits,formatsSeen:formats,rejected,diagnosticCodes,emptyFormats:[...emptyFormats],transcriptItems:updates.filter(u=>u.contentKind==='transcript').length,postTextItems:updates.filter(u=>u.contentKind==='feed_text').length,metadataOnlyItems:updates.filter(u=>u.contentKind==='metadata_only').length,clippedItems,providerRunId:entry.providerRunId,actor:entry.actor,buildId:entry.buildId,observedCostUsd:entry.observedCostUsd,costObservedAt:entry.costObservedAt ?? null,costStatus:entry.costStatus,notes:['Provider success alone does not prove complete 30-day history.','No AI analysis, generated transcription, comments or audience analysis.',...(rejected.provider_demo_data?[`${rejected.provider_demo_data} supplier demo rows were excluded; they are not real source content.`]:[]),...(reportedEmpty?['The supplier reported empty formats or no items; this is not proof of exhaustive history.']:[]),...(source.platform==='Instagram' && rejected.no_items_reported?['The Instagram supplier reported empty or private data; quiet and inaccessible accounts cannot be distinguished from this response.']:[]),...(rejected.provider_request_error?[`${rejected.provider_request_error} no-item records also contained request errors; failure evidence is retained.`]:[]),...(clippedItems?[`${clippedItems} items contain source text clipped at 200,000 characters; entire transcripts or post bodies are not established.`]:[])]}};
+  return {updates,coverage:{sourceId:source.id,sourceUrl:source.url,platform:source.platform,...(sourceAvatarUrl?{sourceAvatarUrl}:{}),status,providerStatus:entry.status,returnedItems:rawItems.length,acceptedItems:updates.length,earliestReached,dateFrom:input.dateFrom,dateTo:input.dateTo,dateCutoffReached:earliestReached ? earliestReached<=input.dateFrom : null,complete:false,capped,datasetTruncated,formatLimits:entry.formatLimits,formatsSeen:formats,rejected,diagnosticCodes,emptyFormats:[...emptyFormats],transcriptItems:updates.filter(u=>u.contentKind==='transcript').length,postTextItems:updates.filter(u=>u.contentKind==='feed_text').length,metadataOnlyItems:updates.filter(u=>u.contentKind==='metadata_only').length,clippedItems,providerRunId:entry.providerRunId,actor:entry.actor,buildId:entry.buildId,observedCostUsd:entry.observedCostUsd,costObservedAt:entry.costObservedAt ?? null,costStatus:entry.costStatus,notes:['Provider success alone does not prove complete 30-day history.','No AI analysis, generated transcription, comments or audience analysis.',...(rejected.provider_demo_data?[`${rejected.provider_demo_data} supplier demo rows were excluded; they are not real source content.`]:[]),...(reportedEmpty?['The supplier reported empty formats or no items; this is not proof of exhaustive history.']:[]),...(source.platform==='Instagram' && rejected.no_items_reported?['The Instagram supplier reported empty or private data; quiet and inaccessible accounts cannot be distinguished from this response.']:[]),...(rejected.provider_request_error?[`${rejected.provider_request_error} no-item records also contained request errors; failure evidence is retained.`]:[]),...(clippedItems?[`${clippedItems} items contain source text clipped at 200,000 characters; entire transcripts or post bodies are not established.`]:[])]}};
 }
 export async function runCollector(raw, deps) {
   const input=validateInput(raw,deps.now?.() ?? Date.now());

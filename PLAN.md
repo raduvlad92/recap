@@ -8,7 +8,11 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 The founder explicitly requested autonomous implementation on 21 October (D20). [docs/v0/PLAN.md](docs/v0/PLAN.md) tracks that first increment, selected Supabase/Clerk targets, screenshot-based UI and GitHub/Netlify deployment. V0-01–V0-07 are complete for the first increment: [live app](https://recap-v0-radu.netlify.app), [verification](docs/v0/VERIFICATION.md), [morning checklist](docs/v0/MORNING.md). V0-N01–V0-N06 track the continuation. V0 work is authorized now; the full M0–M5 table below is not a claim of completed production behavior. Its remaining goals, including real AI generation, multilingual quality, scheduling, retention and delivery, still require evidence.
 
-## Current authorized design increment — D23
+## Current authorized video-card increment — D24
+
+Deliver the founder's YouTube thumbnail identity/icons, up to six caption-derived minute-linked bullets, full transcript and persistent per-source Show Shorts controls. Keep hidden Shorts collected, retained and exportable; preserve source identities and private owner state. [Design and verification](docs/design/YOUTUBE-CARDS.md). UI/persistence/pipeline work, 171-video complete timestamp recovery, exact existing-row enrichment and 457-test/typecheck/build/catalogue plus responsive local checks are done. Complete GitHub CI, exact deployment and actual signed-in owner verification next. All 278 records and unrelated owner state were preserved. No new supplier subscription/job, model execution, generated transcription or recurring collection is included.
+
+## Historical authorized design increment — D23
 
 Implement the founder's compact middle-column request and follow-up on the existing v0: remove redundant aggregate collection headings, subtitle/channel count and the top-of-feed update count; relocate source-material explanation/coverage access to Preferences; remove all date-toolbar controls and retain exact-date selection in Filter. Keep only sort, unlabeled history range and Filter in one desktop/phone row. History includes 30/14/7/3 reader-calendar days, exact elapsed 24 hours and all available history. Preserve accessible headings, creator/source/library/Today context, source membership and per-item provenance. [Design and evidence](docs/design/COMPACT-FEED.md).
 

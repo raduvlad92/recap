@@ -30,6 +30,12 @@ Updated: 21 October 2026. Individual answers below are accepted directions. They
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
+## D24 — YouTube content cards and Shorts visibility
+
+Founder requested channel name/date and real channel icon on the thumbnail; icon-only YouTube badge; no repeated YouTube/publisher line; up to six bullet points from the whole content linking to video minutes; a full-transcript button; and per-video-source Shorts visibility without stopping collection or losing already pulled items. This authorizes the scoped UI, reader preference and bounded existing-video caption/metadata enrichment, not new supplier jobs, generated transcription, paid model calls or schedules. Actual caption excerpts and real timing remain distinct from an AI-written recap. [Implementation and evidence](design/YOUTUBE-CARDS.md).
+
+D24 local/data checks pass: 457 tests, typecheck/build/catalogue, responsive fixture checks and complete existing-record readback. Final CI/deploy/owner evidence is tracked in the design record. No supplier/model execution or generated transcription.
+
 ## D23 — compact reading column, 21 October 2026
 
 The founder explicitly requested removal of “tech collection”, the repeated “tech” heading, the descriptive collection subtitle, “39 channels in this collection” and the source-material banner from the middle column. Move the source-material explanation and coverage link into the existing Preferences area. The first request combined sort, history range, date navigation/“All dates” and Filter on one desktop toolbar, with phone wrapping allowed.

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useRecapAuth } from './auth';
 import { createDefaultWorkspace, sampleCreators, sampleSources, sampleUpdates } from './fixtures';
-import { applyFollowToggle, followReasons as reasonsFor, mergeCollection, mergeWorkspaceUpdates, normalizeSourceUrl, resolveFollowedSources, removeSourceCollection, saveSourceCollection, sanitizeSettings, sanitizeArchivedUpdate, sanitizeWorkspace, scopesFor, sourceCounts as countSources, sourceIdForUrl, unique } from './domain';
+import { applyFollowToggle, followReasons as reasonsFor, mergeCollection, mergeWorkspaceUpdates, normalizeSourceUrl, resolveFollowedSources, removeSourceCollection, saveSourceCollection, sanitizeSettings, sanitizeArchivedUpdate, sanitizeWorkspace, scopesFor, sourceCounts as countSources, sourceIdForUrl, unique, withSourceShortsPreference } from './domain';
 import type { CollectionResult, ReaderSettings, Source, SourceUpdate, WorkspaceState } from './types';
 
 export type SaveStatus = 'loading' | 'local' | 'saving' | 'saved' | 'error' | 'conflict';
@@ -228,6 +228,7 @@ export function useWorkspace() {
   const toggleSaved = useCallback((id: string) => { mutate(previous => ({ ...previous, savedUpdateIds: previous.savedUpdateIds.includes(id) ? previous.savedUpdateIds.filter(saved => saved !== id) : [...previous.savedUpdateIds, id] })); }, [mutate]);
   const toggleReadLater = useCallback((id: string) => { mutate(previous => ({ ...previous, readLaterIds: previous.readLaterIds.includes(id) ? previous.readLaterIds.filter(saved => saved !== id) : [...previous.readLaterIds, id] })); }, [mutate]);
   const updateSettings = useCallback((settings: Partial<ReaderSettings>) => mutate(previous => ({ ...previous, settings: sanitizeSettings({ ...previous.settings, ...settings }) })), [mutate]);
+  const setSourceShowShorts = useCallback((id: string, enabled: boolean) => mutate(previous => withSourceShortsPreference(previous, id, enabled)), [mutate]);
   const selectSourceCollection = useCallback((id?: string) => mutate(previous => {
     if (id && !previous.sourceCollections?.some(collection => collection.id === id)) throw new Error('This collection no longer exists.');
     const { activeCollectionId: _previousId, ...rest } = previous;
@@ -353,5 +354,5 @@ export function useWorkspace() {
     sourceCounts: countSources(exposedState, sources, updates), toggleSource, toggleCreator,
     isCreatorFollowed: (id: string) => scopesFor(state).some(scope => scope.kind === 'creator' && scope.id === id),
     followReasons: (id: string) => reasonsFor(state, id, creators),
-    selectSourceCollection, saveCollection, deleteSourceCollection, toggleSaved, toggleReadLater, updateSettings, addSource, importCollection, setSourceStatus, resetWorkspace, deleteWorkspace, exportWorkspace, retrySave, retryArchive, reloadWorkspace };
+    selectSourceCollection, saveCollection, deleteSourceCollection, toggleSaved, toggleReadLater, updateSettings, setSourceShowShorts, addSource, importCollection, setSourceStatus, resetWorkspace, deleteWorkspace, exportWorkspace, retrySave, retryArchive, reloadWorkspace };
 }

@@ -88,3 +88,39 @@
   .feed-toolbar .sort-control,.history-control{padding:0 7px;gap:4px}
   .feed-toolbar .sort-control select,.history-control select,.feed-toolbar .filter-button{font-size:11px}
 }
+
+/* Channel identity belongs to the video image; the reading area holds highlights. */
+.creator-avatar>img{width:100%;height:100%;border-radius:inherit;object-fit:cover}
+.youtube-card .youtube-cover{position:relative;display:block;overflow:hidden;flex:none;align-self:stretch;min-height:230px}
+.youtube-thumbnail{position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;text-align:inherit}
+.youtube-thumbnail .artwork{height:100%}
+.youtube-cover-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.76),rgba(0,0,0,.2) 28%,transparent 52%)}
+.youtube-channel{position:absolute;top:16px;left:16px;right:50px;display:flex;align-items:center;gap:9px;padding:0;min-width:0;text-align:left;color:#fff}
+.youtube-channel .creator-avatar{width:34px;height:34px;flex:none;background:#e3e9e4;color:#344c40}
+.youtube-channel>span:last-child{display:grid;gap:4px;min-width:0}
+.youtube-channel strong{font-size:12px;font-weight:500;line-height:1.35;overflow-wrap:anywhere;text-shadow:0 1px 3px #0008}
+.youtube-channel time{font-size:10px;color:#ffffffe0}
+.youtube-card .youtube-platform{right:12px;top:16px;padding:5px 6px;background:#fff;border-radius:7px}
+.youtube-card .update-card-body{position:relative;padding-top:20px}
+.youtube-card-actions{display:flex;justify-content:flex-end;position:absolute;bottom:12px;right:12px;padding:2px;background:#fffffff2;border-radius:22px}.youtube-card-actions .icon-button{width:31px;height:31px;color:#536c62}
+.youtube-card .update-title-button{padding-right:0}
+.youtube-card .update-title-button h2{font-size:23px;line-height:1.3}
+.video-highlights{margin:15px 0 0;padding-left:17px;display:grid;gap:9px;color:#53614f;font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.video-highlights li::marker{color:#7b9587;font-size:10px}
+.video-highlights a{display:block;text-decoration:none}
+.video-highlights a:hover>span:last-child{text-decoration:underline;text-underline-offset:3px}
+.video-point-time{display:inline-block;margin-right:7px;color:#2e7b68;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums}
+.transcript-button{display:inline-flex;align-items:center;gap:6px;margin-top:15px;padding:6px 0;color:#397868;font-size:11px}
+.transcript-button:hover{text-decoration:underline;text-underline-offset:3px}
+.video-unavailable{font-size:12px;line-height:1.7;color:#747c70;margin-top:16px}
+.youtube-card .update-card-bottom{margin-top:auto;padding-top:15px}
+.transcript-title{font-size:22px;margin-bottom:20px;line-height:1.4}
+.full-transcript{white-space:pre-line;overflow-wrap:anywhere;font-size:14px;line-height:1.9;color:#53614f}
+.transcript-coverage{padding:12px 14px;border-radius:10px;background:#f0f4ed;color:#53664f;font-size:12px;line-height:1.7;margin-bottom:18px}
+.shorts-preference{display:flex;align-items:center;gap:7px;margin-top:10px;color:#536c62;font-size:11px;flex-wrap:wrap;cursor:pointer}
+.shorts-preference input{height:15px;width:15px;flex:none;margin:0;accent-color:var(--teal)}
+.shorts-preference small{width:100%;font-size:10px;line-height:1.6;color:#687163}
+.source-add-form>.shorts-preference{display:flex;font-size:12px}
+@media(min-width:1700px){.youtube-channel strong{font-size:14px}.youtube-channel time{font-size:11px}.youtube-card .update-title-button h2{font-size:27px}.video-highlights{font-size:15px}}
+@media(max-width:1250px) and (min-width:781px){.youtube-channel{left:11px;top:13px;right:42px;gap:6px;align-items:flex-start}.youtube-channel .creator-avatar{width:26px;height:26px}.youtube-channel strong{font-size:10px}.youtube-channel time{font-size:9px}.youtube-card .youtube-platform{top:12px;right:8px;padding:4px}.youtube-platform svg{width:16px}.youtube-card .update-title-button h2{font-size:20px}.video-highlights{font-size:12px}}
+@media(max-width:560px){.youtube-card .youtube-cover{height:190px;min-height:0;width:100%}.youtube-card .update-title-button h2{font-size:23px}.youtube-card .update-card-body{padding-top:20px}.video-highlights{font-size:13px;gap:10px}.youtube-channel strong{font-size:13px}.youtube-channel time{font-size:11px}.youtube-channel .creator-avatar{width:35px;height:35px}.transcript-button{font-size:12px;min-height:36px}.full-transcript{font-size:13px}.shorts-preference{font-size:12px;min-height:32px}}

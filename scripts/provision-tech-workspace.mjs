@@ -99,6 +99,7 @@ function coverageMap(manifest,output) {
     if(!object(entry) || !known.has(entry.sourceId) || mapped.has(entry.sourceId) || !COVERAGE_STATUSES.has(entry.status) || jsonBytes(entry)>16000)throw error('invalid_or_duplicate_source_coverage');
     const source=known.get(entry.sourceId);
     if(entry.platform!==undefined && entry.platform!==source.platform)throw error('coverage_platform_mismatch');
+    if(entry.sourceAvatarUrl!==undefined && (source.platform!=='YouTube' || typeof entry.sourceAvatarUrl!=='string' || entry.sourceAvatarUrl.length>2000 || !publicUrl(entry.sourceAvatarUrl)))throw error('invalid_coverage_source_avatar');
     if(entry.sourceUrl!==undefined) {try{if(sourceKey(entry.sourceUrl,source.platform)!==sourceKey(source.url,source.platform))throw error('coverage_source_url_mismatch');}catch{throw error('coverage_source_url_mismatch');}}
     if(entry.providerStatus!==undefined && !PROVIDER_STATUSES.has(entry.providerStatus))throw error('invalid_coverage_provider_status');
     if(entry.providerRunId!==undefined && entry.providerRunId!==null && (typeof entry.providerRunId!=='string' || !/^[A-Za-z0-9_-]{1,100}$/.test(entry.providerRunId)))throw error('invalid_coverage_run_reference');
@@ -143,7 +144,7 @@ export function applyTechCoverage(workspace,manifest,output) {
     const clipped=entry?.clippedItems?` ${entry.clippedItems} items have source text clipped at 200,000 characters.`:'';
     const diagnostics=entry?.emptyFormats?.length?` Provider-reported empty formats: ${entry.emptyFormats.join(', ')}.`:'';
     const description=`${PUBLISHER_ASSOCIATION} Window ${window.dateFrom} to ${window.dateTo}. ${countText} ${detail}.${errors}${capped?' A cap or truncated result set limits this coverage.':''}${clipped}${diagnostics} Complete history is not established. No AI analysis or generated transcription.`;
-    return {...source,status,description};
+    return {...source,status,description,...(entry?.sourceAvatarUrl?{avatarUrl:entry.sourceAvatarUrl}:{})};
   });
   if(jsonBytes(state)>2_000_000)throw error('workspace_metadata_too_large');
   return state;
@@ -151,7 +152,7 @@ export function applyTechCoverage(workspace,manifest,output) {
 function validateUpdate(update,source,window) {
   const requiredStrings=['id','sourceId','title','summary','url','publishedAt','format'];
   const arrays=['contributorIds','topics','brands','sponsors','references','insights'];
-  const allowed=new Set([...requiredStrings,...arrays,'isSample','image','duration','coverage','content','contentKind']);
+  const allowed=new Set([...requiredStrings,...arrays,'isSample','image','duration','coverage','content','contentKind','isShort','transcriptSegments','videoHighlights']);
   if(!object(update) || Object.keys(update).some(key=>!allowed.has(key)) || requiredStrings.some(key=>typeof update[key]!=='string') || arrays.some(key=>!Array.isArray(update[key])) || !id(update.id,200) || update.id.startsWith('sample-') || update.sourceId!==source.id || update.isSample!==false || !['video','article','podcast','post'].includes(update.format) || !validIsoDate(update.publishedAt))throw error('invalid_archive_update');
   if(!publicUrl(update.url) || (update.image!==undefined && !publicUrl(update.image)))throw error('invalid_archive_url');
   for(const key of ['contributorIds','topics','brands','sponsors','insights'])if(!strings(update[key],1000))throw error('invalid_archive_list');
@@ -159,6 +160,10 @@ function validateUpdate(update,source,window) {
   if(update.references.some(reference=>!object(reference) || typeof reference.title!=='string' || !publicUrl(reference.url) || Object.keys(reference).some(key=>!['title','url'].includes(key))))throw error('invalid_archive_reference');
   for(const key of ['image','duration','coverage','content'])if(update[key]!==undefined && typeof update[key]!=='string')throw error('invalid_archive_text');
   if(update.contentKind!==undefined && !['feed_text','transcript','metadata_only'].includes(update.contentKind))throw error('invalid_archive_content_kind');
+  if(update.isShort!==undefined && typeof update.isShort!=='boolean')throw error('invalid_archive_shorts_flag');
+  const seconds=value=>typeof value==='number' && Number.isFinite(value) && value>=0 && value<=Number.MAX_SAFE_INTEGER;
+  if(update.transcriptSegments!==undefined && (!Array.isArray(update.transcriptSegments) || update.transcriptSegments.length>10000 || update.transcriptSegments.some(segment=>!object(segment) || Object.keys(segment).some(key=>!['startSeconds','durationSeconds','text'].includes(key)) || !seconds(segment.startSeconds) || (segment.durationSeconds!==undefined && !seconds(segment.durationSeconds)) || typeof segment.text!=='string' || !segment.text.trim() || segment.text.length>10000)))throw error('invalid_archive_transcript_segments');
+  if(update.videoHighlights!==undefined && (!Array.isArray(update.videoHighlights) || update.videoHighlights.length>6 || update.videoHighlights.some(highlight=>!object(highlight) || Object.keys(highlight).some(key=>!['startSeconds','text'].includes(key)) || (highlight.startSeconds!==undefined && !seconds(highlight.startSeconds)) || typeof highlight.text!=='string' || !highlight.text.trim() || highlight.text.length>2000)))throw error('invalid_archive_video_highlights');
   const host=new URL(update.url).hostname.replace(/^www\./,'');
   if((source.platform==='YouTube' && !['youtube.com','youtu.be'].includes(host)) || (source.platform==='X' && !['x.com','twitter.com'].includes(host)) || (source.platform==='Instagram' && host!=='instagram.com'))throw error('archive_platform_mismatch');
   const date=Date.parse(update.publishedAt);

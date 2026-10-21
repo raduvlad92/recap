@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 // @ts-expect-error The standalone Actor is dependency-free ESM outside the app TypeScript project.
-import { REVIEWED, reviewedProviderForRun, validateInput, sourceKey, childRequest, normalizeItem, sourceCoverage, observedCharge, plannedBudget, committedUsd, reserve, runCollector } from '../actors/tech-collector/src/collector.mjs';
+import { REVIEWED, reviewedProviderForRun, validateInput, sourceKey, childRequest, normalizeItem, timedSubtitleSegments, sourceCoverage, observedCharge, plannedBudget, committedUsd, reserve, runCollector } from '../actors/tech-collector/src/collector.mjs';
 
 const now=Date.parse('2026-10-21T10:00:00Z');
 const yt={id:'source-main',name:'Example studio',platform:'YouTube',url:'https://www.youtube.com/@Example'};
@@ -54,6 +54,39 @@ describe('bounded collector input and identity',()=>{
 });
 
 describe('real-content normalization and coverage',()=>{
+ it('preserves explicit Shorts identity after canonicalizing the original URL without guessing from duration',()=>{
+  const input=validateInput(raw(),now),source=input.sources[0];
+  expect(normalizeItem(source,item({type:'shorts'}),input).update).toMatchObject({isShort:true,url:'https://www.youtube.com/watch?v=abcdef12345'});
+  expect(normalizeItem(source,item({type:'video',url:'https://www.youtube.com/shorts/abcdef12345'}),input).update.isShort).toBe(true);
+  for(const type of ['video','stream'])expect(normalizeItem(source,item({type,duration:'00:30'}),input).update.isShort).toBe(false);
+  const unknown=normalizeItem(source,item({type:undefined,duration:'00:15'}),input).update;
+  expect(unknown).not.toHaveProperty('isShort');expect(unknown.duration).toBe('00:15');
+ });
+ it('keeps actual inline SRT/VTT timestamps with full captions while leaving plain text untimed',()=>{
+  const input=validateInput(raw(),now),source=input.sources[0];
+  const srt='1\r\n00:00:00,000 --> 00:00:02,500\r\nOpening words.\r\n\r\n2\r\n00:02:03,250 --> 00:02:06,750\r\nA later <b>detail</b>.\r\nSecond line.';
+  const normalized=normalizeItem(source,item({subtitles:[{language:'en',plaintext:'Opening words. A later detail. Second line.',srt}]}),input).update;
+  expect(normalized.content).toBe('Opening words. A later detail. Second line.');
+  expect(normalized.transcriptSegments).toEqual([{startSeconds:0,durationSeconds:2.5,text:'Opening words.'},{startSeconds:123.25,durationSeconds:3.5,text:'A later detail.\nSecond line.'}]);
+  const vtt='WEBVTT\n\nNOTE Editorial note\n00:01.000 --> 00:02.000\nDo not import this note.\n\ncue-one\n00:03.500 --> 00:05.250 align:start position:0%\n<v Speaker>Hello.</v>';
+  expect(timedSubtitleSegments(vtt)).toEqual([{startSeconds:3.5,durationSeconds:1.75,text:'Hello.'}]);
+  const plaintext=normalizeItem(source,item({subtitles:[{language:'en',plaintext:'We discuss a change at 2:15 in the video.'}]}),input).update;
+  expect(plaintext.contentKind).toBe('transcript');expect(plaintext).not.toHaveProperty('transcriptSegments');
+  expect(normalizeItem(source,item({subtitles:[{language:'en',vtt:'WEBVTT\n\n00:03.000 --> 00:05.000\nActual words.'}]}),input).update.transcriptSegments).toEqual([{startSeconds:3,durationSeconds:2,text:'Actual words.'}]);
+ });
+ it('rejects invalid caption timing instead of inventing start points',()=>{
+  expect(timedSubtitleSegments('1\n00:65:00,000 --> 00:66:00,000\nInvalid minutes.\n\n2\n00:00:20,000 --> 00:00:10,000\nReversed.\n\n3\nMissing times.\n\n4\n00:00:05,000 --> 00:00:07,000\nGood cue.')).toEqual([{startSeconds:5,durationSeconds:2,text:'Good cue.'}]);
+  expect(timedSubtitleSegments(null)).toEqual([]);expect(timedSubtitleSegments('Plain words with no cue timing.')).toEqual([]);
+ });
+ it('carries a safe avatar only from an accepted channel row into source coverage',()=>{
+  const input=validateInput(raw(),now),source=input.sources[0],request=childRequest(source,input,300);
+  const entry={...request,status:'SUCCEEDED',providerRunId:'test-provider-run',observedCostUsd:null,costStatus:'unreported'};
+  const channelAvatarUrl='https://yt3.googleusercontent.com/official-avatar';
+  const normalized=normalizeItem(source,item({channelAvatarUrl}),input);
+  expect(normalized.sourceAvatarUrl).toBe(channelAvatarUrl);expect(normalized.update).not.toHaveProperty('sourceAvatarUrl');expect(normalized.update).not.toHaveProperty('avatarUrl');
+  expect(sourceCoverage(source,entry,[item({channelUrl:'https://youtube.com/@Foreign',channelAvatarUrl:'https://example.org/foreign'}),item({channelAvatarUrl})],input).coverage.sourceAvatarUrl).toBe(channelAvatarUrl);
+  for(const avatar of ['javascript:alert(1)','https://127.0.0.1/private','https://example.org/photo?token=private'])expect(normalizeItem(source,item({channelAvatarUrl:avatar}),input)).not.toHaveProperty('sourceAvatarUrl');
+ });
  it('uses inline existing subtitles as content, preserving a description-only video as metadata-only',()=>{
   const input=validateInput(raw(),now),source=input.sources[0];
   const transcript=normalizeItem(source,item({subtitles:[{language:'en',srt:'1\n00:00:00,000 --> 00:00:05,000\nActual spoken words.'}]}),input).update;

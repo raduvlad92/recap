@@ -158,6 +158,29 @@ export function removeSourceCollection(state: WorkspaceState, id: string): Works
   return { ...rest, sourceCollections: (state.sourceCollections ?? []).filter(item => item.id !== id), ...(activeCollectionId && activeCollectionId !== id ? { activeCollectionId } : {}) };
 }
 
+/** Shorts remain collected and exportable; these preferences affect presentation only. */
+export function sourceShowsShorts(state: WorkspaceState, sourceId: string): boolean {
+  return state.sourcePreferences?.[sourceId]?.showShorts !== false;
+}
+
+export function withSourceShortsPreference(state: WorkspaceState, sourceId: string, showShorts: boolean): WorkspaceState {
+  if (![...sampleSources, ...state.customSources].some(source => source.id === sourceId)) throw new Error('This source no longer exists.');
+  return { ...state, sourcePreferences: { ...state.sourcePreferences, [sourceId]: { showShorts } } };
+}
+
+/** Provider flags and canonical Shorts links are evidence; duration alone is not. */
+export function isShortUpdate(update: SourceUpdate): boolean {
+  if (update.isShort === true) return true;
+  try {
+    const url = new URL(update.url);
+    return ['youtube.com', 'www.youtube.com', 'm.youtube.com'].includes(url.hostname.toLowerCase()) && /^\/shorts\/[^/]+\/?$/.test(url.pathname);
+  } catch { return false; }
+}
+
+export function updatesForSourcePreferences(updates: SourceUpdate[], state: WorkspaceState): SourceUpdate[] {
+  return updates.filter(update => sourceShowsShorts(state, update.sourceId) || !isShortUpdate(update));
+}
+
 export interface UpdateFilter { query?: string; sourceIds?: string[]; creatorId?: string; day?: string; timezone?: string; platform?: Platform | 'all'; savedIds?: string[]; }
 export function filterUpdates(updates: SourceUpdate[], sources: Source[], filter: UpdateFilter = {}): SourceUpdate[] {
   const query = (filter.query ?? '').trim().toLocaleLowerCase();
@@ -194,7 +217,7 @@ export function sanitizeSettings(value: unknown): ReaderSettings {
 
 function sanitizeSource(value: unknown): Source | null {
   if (!object(value) || typeof value.id !== 'string' || typeof value.url !== 'string' || !isPublicWebUrl(value.url) || !PLATFORMS.includes(value.platform as Platform)) return null;
-  return { id: value.id.slice(0, 200), name: typeof value.name === 'string' ? value.name.slice(0, 200) : value.url, url: value.url.slice(0, 2000), platform: value.platform as Platform, creatorIds: stringList(value.creatorIds, 30), status: ['pending', 'ready', 'failed', 'sample'].includes(value.status as string) ? value.status as Source['status'] : 'pending', ...(typeof value.description === 'string' ? { description: value.description.slice(0, 2000) } : {}), ...(typeof value.feedUrl === 'string' && isPublicWebUrl(value.feedUrl) ? { feedUrl: value.feedUrl.slice(0, 2000) } : {}) };
+  return { id: value.id.slice(0, 200), name: typeof value.name === 'string' ? value.name.slice(0, 200) : value.url, url: value.url.slice(0, 2000), platform: value.platform as Platform, creatorIds: stringList(value.creatorIds, 30), status: ['pending', 'ready', 'failed', 'sample'].includes(value.status as string) ? value.status as Source['status'] : 'pending', ...(typeof value.description === 'string' ? { description: value.description.slice(0, 2000) } : {}), ...(typeof value.feedUrl === 'string' && isPublicWebUrl(value.feedUrl) ? { feedUrl: value.feedUrl.slice(0, 2000) } : {}), ...(typeof value.avatarUrl === 'string' && isPublicWebUrl(value.avatarUrl) ? { avatarUrl: value.avatarUrl.slice(0, 2000) } : {}) };
 }
 
 function sanitizeCreator(value: unknown, sourceIds: Set<string>): Creator | null {
@@ -204,7 +227,10 @@ function sanitizeCreator(value: unknown, sourceIds: Set<string>): Creator | null
 
 export function sanitizeSourceUpdate(value: unknown): SourceUpdate | null {
   if (!object(value) || typeof value.id !== 'string' || typeof value.sourceId !== 'string' || typeof value.url !== 'string' || !isPublicWebUrl(value.url) || typeof value.publishedAt !== 'string' || (value.publishedAt !== '' && !dateKey(value.publishedAt))) return null;
-  return { id: value.id.slice(0, 250), sourceId: value.sourceId.slice(0, 200), title: typeof value.title === 'string' ? value.title.slice(0, 1000) : 'Untitled update', summary: typeof value.summary === 'string' ? value.summary.slice(0, 10000) : '', url: value.url.slice(0, 2000), publishedAt: value.publishedAt ? new Date(value.publishedAt).toISOString() : '', format: ['video', 'article', 'podcast', 'post'].includes(value.format as string) ? value.format as SourceUpdate['format'] : 'article', contributorIds: stringList(value.contributorIds, 30), topics: stringList(value.topics, 30), brands: stringList(value.brands, 50), sponsors: stringList(value.sponsors, 30), insights: stringList(value.insights, 30), references: Array.isArray(value.references) ? value.references.filter(object).filter(reference => typeof reference.url === 'string' && isPublicWebUrl(reference.url)).slice(0, 30).map(reference => ({ title: typeof reference.title === 'string' ? reference.title.slice(0, 500) : 'Reference', url: reference.url as string })) : [], isSample: value.isSample === true, ...(typeof value.coverage === 'string' ? { coverage: value.coverage.slice(0, 2000) } : {}), ...(typeof value.content === 'string' ? { content: value.content.slice(0, 100000) } : {}), ...(['feed_text', 'transcript', 'metadata_only'].includes(value.contentKind as string) ? { contentKind: value.contentKind as SourceUpdate['contentKind'] } : {}), ...(typeof value.duration === 'string' ? { duration: value.duration.slice(0, 100) } : {}), ...(typeof value.image === 'string' && isPublicWebUrl(value.image) ? { image: value.image.slice(0, 2000) } : {}) };
+  const nonnegativeSeconds = (seconds: unknown): seconds is number => typeof seconds === 'number' && Number.isFinite(seconds) && seconds >= 0 && seconds <= Number.MAX_SAFE_INTEGER;
+  const transcriptSegments = Array.isArray(value.transcriptSegments) ? value.transcriptSegments.filter(object).filter(segment => nonnegativeSeconds(segment.startSeconds) && typeof segment.text === 'string' && !!segment.text.trim()).slice(0, 10000).map(segment => ({ startSeconds: segment.startSeconds as number, text: (segment.text as string).slice(0, 10000), ...(nonnegativeSeconds(segment.durationSeconds) ? { durationSeconds: segment.durationSeconds } : {}) })) : undefined;
+  const videoHighlights = Array.isArray(value.videoHighlights) ? value.videoHighlights.filter(object).filter(highlight => typeof highlight.text === 'string' && !!highlight.text.trim()).slice(0, 30).map(highlight => ({ text: (highlight.text as string).slice(0, 2000), ...(nonnegativeSeconds(highlight.startSeconds) ? { startSeconds: highlight.startSeconds } : {}) })) : undefined;
+  return { id: value.id.slice(0, 250), sourceId: value.sourceId.slice(0, 200), title: typeof value.title === 'string' ? value.title.slice(0, 1000) : 'Untitled update', summary: typeof value.summary === 'string' ? value.summary.slice(0, 10000) : '', url: value.url.slice(0, 2000), publishedAt: value.publishedAt ? new Date(value.publishedAt).toISOString() : '', format: ['video', 'article', 'podcast', 'post'].includes(value.format as string) ? value.format as SourceUpdate['format'] : 'article', contributorIds: stringList(value.contributorIds, 30), topics: stringList(value.topics, 30), brands: stringList(value.brands, 50), sponsors: stringList(value.sponsors, 30), insights: stringList(value.insights, 30), references: Array.isArray(value.references) ? value.references.filter(object).filter(reference => typeof reference.url === 'string' && isPublicWebUrl(reference.url)).slice(0, 30).map(reference => ({ title: typeof reference.title === 'string' ? reference.title.slice(0, 500) : 'Reference', url: reference.url as string })) : [], isSample: value.isSample === true, ...(typeof value.coverage === 'string' ? { coverage: value.coverage.slice(0, 2000) } : {}), ...(typeof value.content === 'string' ? { content: value.content.slice(0, 100000) } : {}), ...(['feed_text', 'transcript', 'metadata_only'].includes(value.contentKind as string) ? { contentKind: value.contentKind as SourceUpdate['contentKind'] } : {}), ...(typeof value.duration === 'string' ? { duration: value.duration.slice(0, 100) } : {}), ...(typeof value.image === 'string' && isPublicWebUrl(value.image) ? { image: value.image.slice(0, 2000) } : {}), ...(typeof value.isShort === 'boolean' ? { isShort: value.isShort } : {}), ...(transcriptSegments ? { transcriptSegments } : {}), ...(videoHighlights ? { videoHighlights } : {}) };
 }
 
 /** Private archive content is already stored separately; do not shorten transcripts to fit workspace JSON. */
@@ -222,13 +248,14 @@ export function sanitizeWorkspace(value: unknown): WorkspaceState | null {
   const customIds = new Set(customSources.map(source => source.id));
   const importedUpdates = [...new Map(value.importedUpdates.map(sanitizeSourceUpdate).filter((update): update is SourceUpdate => !!update && !update.isSample && !update.id.startsWith('sample-') && customIds.has(update.sourceId)).slice(0, 3000).map(update => [update.id, update])).values()];
   const knownSourceIds = new Set([...reservedSourceIds, ...customIds]);
+  const sourcePreferences = object(value.sourcePreferences) ? Object.fromEntries(Object.entries(value.sourcePreferences).filter(([id, preference]) => knownSourceIds.has(id) && object(preference) && typeof preference.showShorts === 'boolean').map(([id, preference]) => [id, { showShorts: (preference as Record<string, unknown>).showShorts as boolean }])) : undefined;
   const reservedCreatorIds = new Set(sampleCreators.map(creator => creator.id));
   const customCreators = Array.isArray(value.customCreators) ? [...new Map(value.customCreators.map(creator => sanitizeCreator(creator, knownSourceIds)).filter((creator): creator is Creator => !!creator && !reservedCreatorIds.has(creator.id)).slice(0, 200).map(creator => [creator.id, creator])).values()] : undefined;
   const people = new Set([...sampleCreators, ...(customCreators ?? [])].filter(creator => creator.kind === 'person').map(creator => creator.id));
   customCreators?.forEach(creator => { if (creator.presenterIds) creator.presenterIds = creator.presenterIds.filter(id => people.has(id)); });
   const sourceCollections: SourceCollection[] | undefined = Array.isArray(value.sourceCollections) ? [...new Map(value.sourceCollections.filter(object).filter(collection => typeof collection.id === 'string' && !!collection.id.trim() && typeof collection.name === 'string' && !!collection.name.trim() && typeof collection.createdAt === 'string' && !!dateKey(collection.createdAt)).slice(0, 30).map(collection => { const item: SourceCollection = { id: (collection.id as string).slice(0, 200), name: (collection.name as string).trim().slice(0, 80), createdAt: new Date(collection.createdAt as string).toISOString(), sourceIds: stringList(collection.sourceIds, 200).filter(id => knownSourceIds.has(id)) }; return [item.id, item] as const; })).values()] : undefined;
   const activeCollectionId = typeof value.activeCollectionId === 'string' && sourceCollections?.some(collection => collection.id === value.activeCollectionId) ? value.activeCollectionId : undefined;
-  return { version: 1, followedSourceIds: stringList(value.followedSourceIds, 50), ...(followScopes ? { followScopes } : {}), savedUpdateIds: stringList(value.savedUpdateIds, 3000), readLaterIds: stringList(value.readLaterIds, 3000), settings: sanitizeSettings(value.settings), customSources, importedUpdates, ...(customCreators ? { customCreators } : {}), ...(sourceCollections ? { sourceCollections } : {}), ...(activeCollectionId ? { activeCollectionId } : {}) };
+  return { version: 1, followedSourceIds: stringList(value.followedSourceIds, 50), ...(followScopes ? { followScopes } : {}), savedUpdateIds: stringList(value.savedUpdateIds, 3000), readLaterIds: stringList(value.readLaterIds, 3000), settings: sanitizeSettings(value.settings), customSources, importedUpdates, ...(customCreators ? { customCreators } : {}), ...(sourceCollections ? { sourceCollections } : {}), ...(activeCollectionId ? { activeCollectionId } : {}), ...(sourcePreferences ? { sourcePreferences } : {}) };
 }
 
 /** Archive records are authoritative when the same imported ID exists in both stores. */
@@ -245,10 +272,13 @@ export function mergeCollection(state: WorkspaceState, result: CollectionResult)
   for (const update of nextUpdates) {
     const key = `${update.sourceId}:${update.url}`;
     const previousId = existingByUrl.get(key);
+    const previous = updates.get(update.id) ?? (previousId ? updates.get(previousId) : undefined);
     if (previousId && previousId !== update.id) updates.delete(previousId);
-    updates.set(update.id, update); existingByUrl.set(key, update.id);
+    updates.set(update.id, { ...update, ...(update.isShort === undefined && typeof previous?.isShort === 'boolean' ? { isShort: previous.isShort } : {}) }); existingByUrl.set(key, update.id);
   }
   const importedUpdates = [...updates.values()].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   if (importedUpdates.length > 3000) throw new Error('This early version can store 3,000 collected updates. Export or reset the workspace before collecting more; nothing was silently removed.');
-  return { ...state, customSources: [...state.customSources.filter(item => item.id !== source.id), source], importedUpdates };
+  const previousSource = state.customSources.find(item => item.id === source.id);
+  const updatedSource = { ...source, ...(!source.avatarUrl && previousSource?.avatarUrl ? { avatarUrl: previousSource.avatarUrl } : {}) };
+  return { ...state, customSources: [...state.customSources.filter(item => item.id !== source.id), updatedSource], importedUpdates };
 }

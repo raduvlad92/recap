@@ -50,6 +50,19 @@ describe('owner workspace preparation',()=>{
 });
 
 describe('actual source coverage in reader metadata',()=>{
+ it('applies an existing public channel avatar and retains per-source Shorts preferences during coverage refresh',()=>{
+  const sourceAvatarUrl='https://yt3.googleusercontent.com/official-avatar',state=prepareWorkspace(previous(),manifest,{now}),data=output() as Record<string,any>;
+  state.sourcePreferences={[first.id]:{showShorts:false}};data.coverage[0].sourceAvatarUrl=sourceAvatarUrl;
+  const next=applyTechCoverage(state,manifest,data);
+  expect(next.customSources.find((entry:{id:string})=>entry.id===first.id).avatarUrl).toBe(sourceAvatarUrl);
+  expect(next.sourcePreferences).toEqual(state.sourcePreferences);
+  expect(prepareWorkspace(next,manifest,{now}).customSources.find((entry:{id:string})=>entry.id===first.id).avatarUrl).toBe(sourceAvatarUrl);
+  expect(state.customSources.find((entry:{id:string})=>entry.id===first.id)).not.toHaveProperty('avatarUrl');
+ });
+ it.each(['javascript:alert(1)','https://127.0.0.1/photo','https://example.org/photo?token=private','https://example.org/'+'a'.repeat(2000)])('rejects unsafe or oversized source avatar metadata %s',sourceAvatarUrl=>{
+  const data=output() as Record<string,any>;data.coverage[0].sourceAvatarUrl=sourceAvatarUrl;
+  expect(()=>applyTechCoverage(prepareWorkspace(null,manifest,{now}),manifest,data)).toThrow('invalid_coverage_source_avatar');
+ });
  it('marks collected sources ready with exact content-level counts, window and caps while preserving publisher association',()=>{
   const state=prepareWorkspace(previous(),manifest,{now}),data=output([update(),update({id:'tech-meta-002',contentKind:'metadata_only'})]);
   data.coverage[0].status='capped';data.coverage[0].capped=true;
@@ -111,6 +124,28 @@ describe('actual source coverage in reader metadata',()=>{
 });
 
 describe('actual private archive records',()=>{
+ it('preserves actual Shorts flags, caption timestamps and source-backed highlights without clipping',()=>{
+  const transcriptSegments=[{startSeconds:0,durationSeconds:3.25,text:'Opening words.'},{startSeconds:120.5,text:'A later detail.'}];
+  const record=update({isShort:true,transcriptSegments,videoHighlights:[{text:'A later source-backed detail.',startSeconds:120.5}]});
+  const rows=buildArchiveRows('user_test',manifest,output([record]));
+  expect(rows[0].record).toEqual(record);expect(rows[0].record.transcriptSegments).not.toBe(transcriptSegments);
+  expect(buildArchiveRows('user_test',manifest,output([update({isShort:false})]))[0].record.isShort).toBe(false);
+ });
+ it.each([
+  {isShort:'false'},
+  {transcriptSegments:[{startSeconds:-1,text:'Negative.'}]},
+  {transcriptSegments:[{startSeconds:Infinity,text:'Infinite.'}]},
+  {transcriptSegments:[{startSeconds:'10',text:'String.'}]},
+  {transcriptSegments:[{startSeconds:0,durationSeconds:-1,text:'Negative duration.'}]},
+  {transcriptSegments:[{startSeconds:0,text:''}]},
+  {transcriptSegments:[{startSeconds:0,text:'a'.repeat(10001)}]},
+  {transcriptSegments:[{startSeconds:0,text:'Words.',privateToken:'secret'}]},
+  {transcriptSegments:Array.from({length:10001},()=>({startSeconds:0,text:'Words.'}))},
+  {videoHighlights:[{text:'Untimed is allowed.',startSeconds:NaN}]},
+  {videoHighlights:[{text:'a'.repeat(2001)}]},
+  {videoHighlights:[{text:'Words.',privateToken:'secret'}]},
+  {videoHighlights:Array.from({length:7},()=>({text:'Too many highlights.'}))},
+ ])('rejects malformed, oversized or unreviewed video metadata (%j)',patch=>expect(()=>buildArchiveRows('user_test',manifest,output([update(patch)]))).toThrow());
  it('creates source-linked archive rows while preserving the actual content and original ISO timestamp',()=>{
   const record=update({content:'A complete long transcript.\n'.repeat(2000)}),rows=buildArchiveRows('user_test',manifest,output([record]));
   expect(rows).toHaveLength(1);expect(rows[0]).toMatchObject({user_id:'user_test',id:record.id,source_id:first.id,collection_id:'tech',published_at:record.publishedAt});expect(rows[0].record).toEqual(record);expect(rows[0].record).not.toBe(record);
