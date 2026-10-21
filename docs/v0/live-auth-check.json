@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-10-21T01:43:07.505Z",
+  "target": "recap Supabase project zlfdqzabsfndifxiqguo; recap Clerk development app",
+  "provenance": "Actual Clerk-issued session JWTs and Supabase REST calls using two synthetic development test accounts; no service-role key",
+  "passed": [
+    "Anonymous database access denied",
+    "Real Clerk JWT accepted; own workspace saved to Supabase",
+    "Saved bookmark reloaded from real database",
+    "Second account cannot read first account",
+    "Second account cannot update first account",
+    "Insert cannot assign another owner",
+    "Owner cannot reassign workspace to another user",
+    "Stale concurrent save rejected without overwriting",
+    "Second account cannot delete first account",
+    "Owner can delete disposable test workspace",
+    "Invalid JWT signature denied"
+  ],
+  "limitations": [
+    "This verifies backend token/persistence/isolation, not the browser sign-in UI.",
+    "Synthetic test-user/session IDs and JWTs are private in ignored .local only."
+  ]
+}

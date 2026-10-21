@@ -6,6 +6,8 @@ Your Q13–Q15 answers are recorded: multiple languages at launch, lasting recap
 
 Your modular creator requirement is also recorded: a studio/team can have multiple presenters and channels. [CREATOR-MODEL.md](CREATOR-MODEL.md) explains the proposed overlapping relationships, follow scopes, attribution and saved future demo cases. This does not add reader-team accounts or promise automatic discovery of every guest appearance.
 
+The founder has since separately authorized a functioning v0 under D20. [V0 delivery plan](v0/PLAN.md) is the active implementation scope. This broader review does not block that authorized increment or imply every v1.1 goal is implemented.
+
 ## Recommended defaults included in this approval
 
 | Choice | Recommendation |
@@ -39,4 +41,4 @@ The cheapest useful business validation remains proving broad access and manuall
 - [PLAN v1.1](../PLAN.md): tracked milestones, demos, dependencies and evidence gates.
 - [Decision register](DECISIONS.md): accepted answers versus proposed defaults.
 
-Recommended response: **“Approve SPEC v1.1 and PLAN v1.1”**, or list changes. This named whole-version confirmation is required by the project's AGENTS.md before app implementation; the invoked grilling workflow also says, “Do not act on it until the user confirms you have reached a shared understanding.” No approval is inferred from the individual answers or silence.
+Recommended response: **“Approve SPEC v1.1 and PLAN v1.1”**, or list changes. This named whole-version confirmation is required by the project's AGENTS.md before implementation of the full candidate; scoped v0 implementation is separately authorized by D20; the invoked grilling workflow also says, “Do not act on it until the user confirms you have reached a shared understanding.” No approval is inferred from the individual answers or silence.

@@ -1,8 +1,12 @@
 # Tracked implementation and validation plan
 
-Version: **1.1 — APPROVAL CANDIDATE**. Updated: 21 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Not approved; M0–M5 have not started.** A separate static visual concept was explicitly authorized and completed as VD01.
+Version: **1.1 — APPROVAL CANDIDATE**. Updated: 21 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is now underway under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
 
 Approving the named pair permits the local M0–M5 work below. All provider execution/authentication/spending remains deferred by D08; customer contact, paid trials and publication require their own approval. Local work uses explicitly labeled fixtures and supplier interfaces, not purported live integration. No fixed launch date is promised.
+
+## Authorized working v0
+
+The founder explicitly requested autonomous implementation on 21 October (D20). [docs/v0/PLAN.md](docs/v0/PLAN.md) tracks that first increment, selected Supabase/Clerk targets, screenshot-based UI and GitHub/Netlify deployment. V0 work is authorized now; the full M0–M5 table below is not a claim of completed production behavior. Its remaining goals, including real AI generation, multilingual quality, scheduling, retention and delivery, still require evidence.
 
 ## Completed discovery and decisions
 

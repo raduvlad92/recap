@@ -1,0 +1,5 @@
+project_id = "recap"
+
+[auth.third_party.clerk]
+enabled = true
+domain = "daring-rattler-9886.clerk.accounts.dev"

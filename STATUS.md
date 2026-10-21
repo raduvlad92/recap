@@ -1,6 +1,14 @@
 # Current status
 
-Updated: **21 October 2026**. Phase: **modular studio/person/source requirement recorded; revised specification review remains open**. **SPEC v1.1 and PLAN v1.1 are approval candidates, not approved**, superseding the unapproved v1.0 pair. A separately authorized static visual concept is ready; no production application has been built.
+Updated: **21 October 2026**. Phase: **functioning v0 implemented; live-site release verification in progress**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
+
+## Current: working v0 under D20
+
+The founder selected the existing recap Supabase/Clerk resources and explicitly asked for a working v0 matching the reference, using GitHub/Netlify and Cloudflare only if needed. [V0 plan](docs/v0/PLAN.md) records the authorized first increment and exact targets. Implemented React/Vite workspace, studio/presenter/channel navigation, search/filters/history views, bookmarks/read-later, preferences/export/workspace delete, native Clerk authentication and per-user Supabase saved state. All fictional examples are labeled. Actual source extracts remain distinct from AI synthesis.
+
+The new recap database public schema was confirmed empty before applying the workspace schema; private ownership rules and stale-save protection are active. [Live token/database checks](docs/v0/live-auth-check.json): 11 passed using real Clerk-issued tokens and two synthetic development test accounts. Browser ticket sign-in succeeded, and authenticated UI collection imported five real public feed entries and persisted them to Supabase. No service-role key is used in the browser. Test identities and session credentials remain only in ignored local files.
+
+A private [GitHub repository](https://github.com/raduvlad92/recap) and Netlify project recap-v0-radu now exist. Release/CI checks and screenshots are being finalized; a configured site is not yet claimed as a verified deployment. Cloudflare was not needed. Apify adapter exists with signed jobs, owner/build/item/time/per-run-cost gates; paid runtime remains disabled because aggregate budget controls and credentials/build are not verified. No social scraper or generated transcription ran.
 
 ## 21 October: modular creator model
 
@@ -61,14 +69,14 @@ These exact defaults are proposed, not recorded as founder-selected. No further 
 
 ## Deferred / unverified
 
-D08 still defers **all scraper execution, supplier authentication requests and spending**. Assume capability only for planning. No paid/social scraper ran; broad full-content access, freshness, production costs and reuse remain unverified. Do not resume supplier work or request sign-in unless the founder reopens it.
+D20 reopens Apify-first adapter implementation and scoped v0 integration. **Paid/social scraper execution remains off** until credentials, pinned actor and aggregate cost controls are verified; capability is not an all-platform pass. Real public-feed collection is now available and has been tested separately. Broad full-content access, production costs and reuse remain unverified.
 
 The earlier source experiment retains its **global €50 / 150-generated-minute ceiling if resumed**. It is not a recurring budget or per-reader allowance. Formal seven-day observation has not started: **0/7**, no schedule running. Actual feed evidence must not be described as an all-platform pass.
 
-No customer outreach, trial, payment, external email sending, deployment or publication is authorized. Cheapest useful business test is still access proof, then a separately approved manually checked daily briefing trial before full automation. The revised 14-day trial and prices/budgets are proposals.
+No customer outreach, paid customer trial, payment or external email sending is authorized. The working v0 review deployment is authorized by D20. Cheapest useful business test is still access proof, then a separately approved manually checked daily briefing trial before full automation. The revised 14-day trial and prices/budgets are proposals.
 
 ## Next action
 
-The founder's studio/person/channel requirement is included in the revised **SPEC v1.1 + PLAN v1.1** candidate; whole-version approval or requested changes is still pending. Search/saves, change tracking and sharing additions from the vision assessment are not blanket-approved. Supabase remains the backend recommendation, with platform selection open. Record the actual response/date before implementation. If approved, start M0 using the backend assessment and creator model as inputs, then the local milestones with fixtures labeled; do not reopen D08. For another session, read this file, SPEC.md, PLAN.md and docs/DECISIONS.md first. The saved v1.0 review walkthrough is historical and does not include AC19.
+Finish release checks and deploy the authorized working v0, verify its exact URL, save screenshots/evidence and update [morning checklist](docs/v0/MORNING.md). Continue autonomously within D20; do not reopen the old whole-spec permission loop for this increment. The wider SPEC/PLAN v1.1 goals remain incomplete and future work.
 
-Actual new external spending: **€0**. Generated transcription: **0/150 experiment minutes**. Founder labor not timed. No app tests exist yet. Repository has no Git remote; local saving/commits do not provide remote backup.
+Actual new cash charged/plan purchases: **€0 observed**; hosting/build usage will be recorded separately where available. Generated transcription: **0/150 experiment minutes**. Formal seven-day proof remains **0/7**, no recurring collection/reminder schedule. Private GitHub origin now exists; pushing/CI/deployment are separate pending verification states.

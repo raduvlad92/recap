@@ -25,6 +25,7 @@ Updated: 21 October 2026. Individual answers below are accepted directions. They
 | D17 | Use clear limits with larger allowances; the previous numerical package was not approved. | Q15, 19 October: “Use clear limits, but I want larger allowances”. |
 | D18 | Prepare a nonfunctional visitor-facing visual concept. | Explicit 19 October request; full entry below. Does not approve app implementation. |
 | D19 | Creators may be studios/teams with multiple presenters and channels; support drill-down and a modular product model. | 21 October: “a creator can actually be an entire studio or team” and “drill down into each presenter ... or their multiple youtube channels”; “the whole thing has to be very modular”. |
+| D20 | Implement a functioning v0 autonomously using founder-created recap Supabase + Clerk, GitHub/Netlify and Cloudflare only as needed; start with Apify adapters. | 21 October: “Prepare the plan and start implementing the v0 without my involvement”; match supplied screenshot and leave a morning task list. |
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
@@ -159,3 +160,11 @@ Recorded [creator model](CREATOR-MODEL.md) and updated the domain glossary. Reco
 | Visitor visual concept | v0.1 — local concept completed | Explicit request on 19 October, D18; static demo only, not S01 approval. |
 
 Do not infer agreement from silence or convert recommendations into accepted decisions. Record the version, date and founder's response when approval is given.
+
+## D20 — autonomous functioning v0 authorized, 21 October 2026
+
+Founder selected the existing **recap** Supabase org/project and **recap** Clerk app, limited additional infrastructure to GitHub/Netlify/Cloudflare where needed, chose Apify as the first scraping supplier, and explicitly asked for a functioning v0 without further involvement. This instruction supersedes the earlier documentation-only/no-build boundary for the scoped v0; it is not a retrospective named approval or completion of full SPEC/PLAN v1.1.
+
+[docs/v0/PLAN.md](v0/PLAN.md) records the concrete authorized first increment and exact account targets. Deploying the reviewable v0 to Netlify and creating its private GitHub repository are within this request. No public customer recruitment, paid launch, supplier-plan purchase or uncapped recurring collection follows from it. Apify-first adapter work is reopened, while metered runs remain gated until token, pinned actor and aggregate budget controls are verified. The old €50/150-minute source-proof ceiling is retained if that experiment resumes. No other supplier is added now.
+
+Implementation includes the screenshot-based workspace, modular studio/person/channel navigation, private saved library/preferences, native Clerk/Supabase authentication and manual feed collection. Actual generation, seven-family proof, recurring briefing/email delivery and full deletion/retention targets remain separate incomplete work. First working deployment and precise verification results are recorded in STATUS and the demo log.

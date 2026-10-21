@@ -4,3 +4,12 @@
 !.env.example
 __pycache__/
 *.pyc
+
+node_modules/
+dist/
+.netlify/
+coverage/
+playwright-report/
+test-results/
+supabase/.temp/
+.clerk/

@@ -1,27 +1,35 @@
-<img src="assets/icon.svg" width="64" height="64" alt="">
+# recap/
 
-# therecap
+A working v0 of a reader-controlled creator workspace. Follow studios, presenters and channels; explore dated updates and topic views; save a personal reading library.
 
-A daily, source-linked recap of the creators and publications a person chooses to follow.
+- Review URL: https://recap-v0-radu.netlify.app
+- Owner checklist: [docs/v0/MORNING.md](docs/v0/MORNING.md)
+- Active v0 plan: [docs/v0/PLAN.md](docs/v0/PLAN.md)
+- Progress and verification: [STATUS.md](STATUS.md), [docs/DEMO-LOG.md](docs/DEMO-LOG.md)
+- Modular creator model: [docs/CREATOR-MODEL.md](docs/CREATOR-MODEL.md)
 
-This project is at consolidated specification review. The founder wants a business aimed at rapid growth. No application has been built, and the specification is not yet approved.
+The fictional starter collection is explicitly labeled. Actual feed collection requires sign-in and displays source extracts, not generated AI analysis. Apify's YouTube adapter is implemented but paid execution stays disabled until its activation and aggregate-budget checks are satisfied. Seven-platform access, automatic daily AI recaps, translation, transcription and email delivery are not claimed as working v0 behavior.
 
-Open the [visitor visual demo](docs/demos/product-preview/index.html), or see its [screenshots and handoff](docs/demos/product-preview/README.md). It uses fictional content and is separate from specification approval.
+## Run locally
 
-Start with [STATUS.md](STATUS.md) to see the current position and next decision.
+Node 22.12 or later and npm:
 
-- [Specification and plan approval brief — v1.0 candidate](docs/APPROVAL.md)
-- [Product specification — v1.0 candidate](SPEC.md)
-- [Tracked plan — v1.0 candidate](PLAN.md)
-- [Decisions and interview](docs/DECISIONS.md)
-- [Research: demand, competition, money and acquisition](docs/RESEARCH.md)
-- [Larger allowances and cost scenarios](docs/ALLOWANCES.md)
-- [Source-access proof and later customer validation](docs/VALIDATION.md)
-- [Source proof v0.1 — approved, execution now deferred](docs/ACCESS-PROOF.md)
-- [Actual source-proof preflight results](docs/access-proof/PREFLIGHT.md)
-- [Demo and evidence log](docs/DEMO-LOG.md)
-- [Project language](GLOSSARY.md)
+```sh
+npm ci
+cp .env.example .env.local
+npm run dev
+```
 
-To continue in another session: “Read STATUS.md, SPEC.md, PLAN.md and docs/DECISIONS.md, then continue the next unblocked task. Preserve my decisions and distinguish proposals from approvals.”
+Fill only this app's public configuration in `.env.local`; use the selected Clerk application and Supabase project. Never put an Apify token or any service/secret key in a `VITE_` variable. Account state is protected by native Clerk JWTs and Supabase row-level policies. Guest changes stay on the device; account changes have a visible save state.
 
-Created in [T3 Code](https://t3.codes).
+```sh
+npm run check
+```
+
+This runs the meaningful domain/collection tests, TypeScript and production build. Netlify functions are emulated by the Vite plugin. No Edge Functions, Netlify Database/Blobs or Cloudflare resources are required.
+
+## Deploy and maintain
+
+Netlify settings and functions are in `netlify.toml` and `netlify/functions/`; publish only `dist`, not the repository root. `.local/`, `.env*`, `.netlify/`, `supabase/.temp/`, build outputs and test credentials are ignored. Database files are in `supabase/migrations/`; the v0 schema was applied only after an empty-schema preflight on the founder's recap project, with recorded live authorization checks.
+
+Read [AGENTS.md](AGENTS.md), STATUS, SPEC, PLAN and decisions before resuming. Full SPEC/PLAN v1.1 is a broader candidate; founder D20 separately authorizes this v0. Preserve the reference design and scope boundaries, save evidence and update the morning checklist. Font license is served at `/licenses/onest.txt`.
