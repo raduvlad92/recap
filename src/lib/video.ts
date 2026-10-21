@@ -5,6 +5,7 @@ export type TranscriptSegment = NonNullable<SourceUpdate['transcriptSegments']>[
 
 const MAX_HIGHLIGHTS = 6;
 const EXCERPT_LENGTH = 230;
+const TRANSCRIPT_CHARACTERS_PER_POINT = 700;
 const validSeconds = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
 const cleanText = (value: string): string => value.replace(/<\/?[a-z][^>]*>|<\d{2}:\d{2}(?::\d{2})?[.,]\d{3}>/gi, '').replace(/&(?:amp|quot|apos|nbsp|lt|gt|#39);/gi, entity => ({ '&amp;': '&', '&quot;': '"', '&apos;': "'", '&nbsp;': ' ', '&lt;': '<', '&gt;': '>', '&#39;': "'" })[entity.toLowerCase()] || entity).replace(/\s+/g, ' ').trim();
 
@@ -188,7 +189,10 @@ export function getVideoHighlights(update: SourceUpdate): VideoHighlight[] {
     }
   }
   const chosen: Candidate[] = [];
-  const windows = Math.min(MAX_HIGHLIGHTS, candidates.length);
+  // A Short should not receive the same six-point treatment as a substantial video.
+  // Budget against the full caption text before choosing across chronological regions.
+  const pointBudget = Math.min(MAX_HIGHLIGHTS, Math.ceil(text.length / TRANSCRIPT_CHARACTERS_PER_POINT));
+  const windows = Math.min(pointBudget, candidates.length);
   if (!windows) return [];
   // One salient excerpt per chronological region prevents an introduction-only recap.
   for (let window = 0; window < windows; window++) {

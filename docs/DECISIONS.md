@@ -34,7 +34,7 @@ Original requested product behavior: topics rather than a simple post list; snip
 
 Founder requested channel name/date and real channel icon on the thumbnail; icon-only YouTube badge; no repeated YouTube/publisher line; up to six bullet points from the whole content linking to video minutes; a full-transcript button; and per-video-source Shorts visibility without stopping collection or losing already pulled items. This authorizes the scoped UI, reader preference and bounded existing-video caption/metadata enrichment, not new supplier jobs, generated transcription, paid model calls or schedules. Actual caption excerpts and real timing remain distinct from an AI-written recap. [Implementation and evidence](design/YOUTUBE-CARDS.md).
 
-D24 local/data checks pass: 457 tests, typecheck/build/catalogue, responsive fixture checks and complete existing-record readback. Final CI/deploy/owner evidence is tracked in the design record. No supplier/model execution or generated transcription.
+D24 local/data checks pass: 459 tests, typecheck/build/catalogue, responsive fixture checks and complete existing-record readback. Final CI/deploy/owner evidence is tracked in the design record. No supplier/model execution or generated transcription.
 
 ## D23 — compact reading column, 21 October 2026
 

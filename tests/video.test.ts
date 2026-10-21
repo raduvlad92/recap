@@ -47,13 +47,44 @@ describe('extractive video highlights', () => {
     expect(points.map(point => point.startSeconds)).toEqual(points.map(point => point.startSeconds).sort((a, b) => a! - b!));
     points.forEach(point => expect(transcriptSegments.some(segment => segment.text === point.text && segment.startSeconds === point.startSeconds)).toBe(true));
   });
+  it('gives an approximately 800-character Short two points spanning its beginning and ending', () => {
+    const sentences = [
+      'The navigation redesign puts destination searches directly above the map and keeps route changes visible.',
+      'Drivers can compare alternate routes before departure without leaving the destination overview screen.',
+      'The interface retains saved locations so frequent trips do not require entering the same address again.',
+      'Road closures now appear beside the selected route with the affected junction named in the warning.',
+      'Offline downloads include street names and turn instructions for areas without a cellular connection.',
+      'Downloaded regions can be updated individually when the driver next connects to a wireless network.',
+      'Battery consumption fell during the controlled offline test because the cellular modem stayed idle.',
+      'The final test found that downloaded directions remained usable after the phone lost mobile reception.',
+    ];
+    const transcriptSegments = sentences.map((text, index) => ({ text, startSeconds: index * 6 }));
+    const content = sentences.join(' ');
+    expect(content.length).toBeGreaterThan(700); expect(content.length).toBeLessThan(1400);
+    const points = getVideoHighlights(update({ contentKind: 'transcript', content, transcriptSegments, duration: '0:48', isShort: true }));
+    expect(points).toHaveLength(2);
+    expect(points[0].startSeconds).toBeLessThan(24);
+    expect(points[1].startSeconds).toBeGreaterThanOrEqual(24);
+    points.forEach(point => expect(transcriptSegments).toContainEqual({ text: point.text, startSeconds: point.startSeconds }));
+  });
+  it('uses one salient point for brief captions and retains six for substantial content', () => {
+    const brief = 'The hardware test found lower power consumption under the same controlled workload. The result does not establish better battery life under every condition.';
+    expect(getVideoHighlights(update({ contentKind: 'transcript', content: brief }))).toHaveLength(1);
+    const subjects = ['processor throughput silicon architecture', 'camera focus optical stabilisation', 'battery charging electrical efficiency', 'display contrast colour accuracy', 'keyboard repair replacement switches', 'network stability ethernet latency'];
+    const transcriptSegments = subjects.flatMap((subject, section) => Array.from({ length: 10 }, (_, index) => ({ startSeconds: section * 600 + index * 20, text: `The ${subject} test ${index} found a measurable improvement under controlled conditions.` })));
+    const points = getVideoHighlights(update({ transcriptSegments, duration: '1:00:00' }));
+    expect(points).toHaveLength(6);
+    expect(points[0].startSeconds).toBeLessThan(600);
+    expect(points.at(-1)?.startSeconds).toBeGreaterThanOrEqual(3000);
+    expect(points.every(point => transcriptSegments.some(segment => segment.text === point.text && segment.startSeconds === point.startSeconds))).toBe(true);
+  });
   it('does not summarize a title, description or short saved summary as full video content', () => {
     expect(getVideoHighlights(update())).toEqual([]);
     expect(getVideoHighlights(update({ contentKind: 'metadata_only', content: 'The product launch description contains many detailed claims.' }))).toEqual([]);
     expect(getVideoHighlights(update({ contentKind: 'feed_text', content: 'A long publisher description with enough words for extraction.' }))).toEqual([]);
   });
   it('keeps the complete negative sentence and never invents times for plain transcripts', () => {
-    const content = 'The replacement battery is not compatible with the earlier model despite using the same connector. The external display supports higher resolutions because the cable carries additional bandwidth.';
+    const content = 'The replacement battery is not compatible with the earlier model despite using the same connector.';
     const points = getVideoHighlights(update({ contentKind: 'transcript', content, duration: '130 min' }));
     expect(points.some(point => point.text === 'The replacement battery is not compatible with the earlier model despite using the same connector.')).toBe(true);
     expect(points.every(point => point.startSeconds === undefined)).toBe(true);

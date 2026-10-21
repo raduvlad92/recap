@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-21T21:44:02.191Z",
+  "kind": "synthetic local UI evidence",
+  "viewports": [
+    1440,
+    1051,
+    390,
+    320
+  ],
+  "horizontalOverflow": false,
+  "toolbarRowsAt320": 1,
+  "maxBulletPoints": 6,
+  "actualFixtureCueLinks": true,
+  "channelImagesLoaded": true,
+  "duplicatePlatformByline": false,
+  "publisherRow": false,
+  "rawSummaryOnCard": false,
+  "fullTranscriptLength": 1508,
+  "fullTranscriptEndMarkerVisible": true,
+  "shortsHideReloadReenable": true,
+  "newSourceShortsDisabledPersists": true,
+  "hiddenSavedShortRetainedInExport": true,
+  "guestCacheRestored": true,
+  "viewportRestored": true,
+  "testFiles": 15,
+  "testsPassed": 459,
+  "typecheckPassed": true,
+  "buildPassed": true,
+  "catalogueReproductionPassed": true,
+  "actualCreatorContent": false,
+  "shortCaptionPointBudget": true,
+  "updatedFixturePointCounts": [
+    3,
+    1
+  ]
+}
