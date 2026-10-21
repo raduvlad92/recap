@@ -1,8 +1,8 @@
 # Product specification
 
-Version: **1.0 — APPROVAL CANDIDATE**. Prepared: 19 October 2026. Owner: founder. **Not approved; no production application built.** A separately authorized visual concept exists under D18; it does not approve this specification. Matching delivery plan: [PLAN.md v1.0](PLAN.md). Quick review: [docs/APPROVAL.md](docs/APPROVAL.md).
+Version: **1.1 — APPROVAL CANDIDATE**. Updated: 21 October 2026. Owner: founder. **Not approved; no production application built.** Supersedes the unapproved v1.0 candidate by adding D19's modular studio/person/channel requirement. A separately authorized visual concept exists under D18; it does not approve this specification. Matching delivery plan: [PLAN.md v1.1](PLAN.md). Quick review: [docs/APPROVAL.md](docs/APPROVAL.md).
 
-Q1–Q15 establish the direction below. Details marked **recommended default** are offered together for approval, not treated as answers already given. Approval of this specification and plan authorizes local implementation within this scope. Supplier execution, spending, outreach, trials and publication remain separately deferred or unauthorized.
+Q1–Q15 and D19 establish the direction below. Details marked **recommended default** are offered together for approval, not treated as answers already given. Approval of this specification and plan authorizes local implementation within this scope. Supplier execution, spending, outreach, trials and publication remain separately deferred or unauthorized.
 
 ## Purpose and business direction
 
@@ -17,6 +17,7 @@ Demand, willingness to pay, retention, supplier reliability and acquisition cost
 | Area | Accepted direction |
 | --- | --- |
 | Sources | YouTube, X/Twitter, Instagram, LinkedIn, podcasts, Substack/newsletters and blogs. Public creators need not join or authorize the app. |
+| Creator structure | A creator may be a studio/team with several presenters and channels. Support drill-down into people and individual sources through a modular model. D19. |
 | Access | Broad usable content before a customer trial. Investigate Apify, Bright Data and alternatives. Titles/descriptions alone do not establish full-content analysis. |
 | Current assumption | D08 assumes scraper capability for planning; provider execution, sign-in requests and spending are deferred. This is not verified access. |
 | Surface and onboarding | Phone-friendly website; editable starter collections and pasted creator links. Automatic following-list import later. |
@@ -31,6 +32,14 @@ Demand, willingness to pay, retention, supplier reliability and acquisition cost
 Public scope does not imply private accounts, paid newsletter access, paywall circumvention, Stories/live streams or full historical backfill. Public Substack articles do not establish access to paid editions. Show supported formats and gaps per source. Credit and link original creators.
 
 ## Recommended defaults for approval
+
+### Studios, people and channels
+
+Keep publishing groups, people, sources and update-level contributions separate, with optional show grouping where useful. A presenter can participate in several groups/channels; a group can operate several channels; a guest appearance does not establish membership or ownership. Store known effective dates and attribution evidence; incomplete credits stay unknown rather than guessed. [CREATOR-MODEL.md](docs/CREATOR-MODEL.md) defines the relationships, follow behavior, examples and future demo cases.
+
+Offer studio/person/source drill-down and follow scopes with a visible set of underlying supported sources. New channels require inclusion confirmation; a person follow does not promise every appearance across the internet. Count each actual enabled source once, including overlapping follows; count an analyzed update once regardless of its credited presenters. Removing one follow does not disable a source still included by another active follow; explain this. Distinct cross-posts keep their original provenance. Preserve historical credits when affiliations or ownership change and show later corrections. Presenter filters must be explicit and distinguish filtered from total counts.
+
+Keep collection, identity/relationships, analysis and recap assembly modular; do not tie creator identity to one platform or supplier. Curated/evidenced relationships and available credits are sufficient for local fixtures. Exhaustive people discovery, face/voice recognition, automatic internet-wide guest tracking and visual relationship graphs are outside this candidate. Publishing teams do not imply reader-team accounts.
 
 ### Six launch languages
 
@@ -64,11 +73,11 @@ A separate operator cash ceiling/stop is required before live operation. No quot
 
 ## Reader journey
 
-1. **Set up.** Create a private individual account; choose languages, timezone, delivery time and explicit interests. Reminder email starts off. Edit a starter collection or paste sources; see duplicates, unsupported/private formats, languages and pending checks. Do not request social passwords.
+1. **Set up.** Create a private individual account; choose languages, timezone, delivery time and explicit interests. Reminder email starts off. Edit a starter collection or paste sources; choose supported studio/person/source scope with the actual enabled channels visible. See duplicates, unsupported/private formats, languages and pending checks. Do not request social passwords.
 2. **See value.** Show the reader's latest completed recap for their followed sources where one exists. Collections only help select sources; they do not create separate recaps. Otherwise explain when the first scheduled recap will arrive; do not trigger unapproved on-demand supplier jobs. A fixture preview is labeled a sample, not personal/live coverage.
 3. **Understand coverage.** Distinguish followed sources, successful checks, sources with new updates and analyzed updates. Failed, delayed, quiet, partial and limit-reached states differ. Adapters/fixtures do not establish seven-family live support.
-4. **Read and expand.** Up to five main topics explain what changed and why relevant to selected interests, with attributed snippets and original citations. Expansion reveals source contributions, disagreements, brands, disclosed sponsors and creator-linked references. Extra topics/items remain reachable in all updates; avoid full-original reproduction. Repetition is not independent corroboration.
-5. **Explore history.** Keep days in date order. Profile edits affect future recaps; delivered briefings remain snapshots. All updates for a day ignores interests but retains access/usage gaps. Unfollowing stops future collection and preserves earlier recaps unless deleted.
+4. **Read and expand.** Up to five main topics explain what changed and why relevant to selected interests, with attributed snippets and original citations. Expansion reveals source contributions, disagreements, brands, disclosed sponsors and creator-linked references. Drill into a studio, presenter or channel with known roles/coverage visible. Extra topics/items remain reachable in all updates; avoid full-original reproduction. Repetition is not independent corroboration.
+5. **Explore history.** Keep days in date order. Profile edits affect future recaps; delivered briefings remain snapshots. All updates for a day ignores interests but retains access/usage gaps. Unfollowing stops future coverage through that follow and preserves earlier recaps unless deleted; a source included by another active follow remains enabled, with that reason visible.
 6. **Manage.** Edit settings, opt into/out of reminders, inspect usage, export history/profile/source lists, delete a recap or account. No surprise upgrade or overage.
 
 ### Citations, references, brands and sponsors
@@ -103,14 +112,14 @@ Recommended revenue model: subscriptions, with no paid placement affecting relev
 
 The cheapest useful business test remains a manually checked **14-day daily briefing trial**, five participants in each of the three audiences, after broad access is actually secured and a separate offer/budget is approved. This tests usefulness before full automation. No recruiting/charging is authorized. The [validation brief](docs/VALIDATION.md) defines payment, repeat-use, trust, renewal and acquisition hypotheses by audience. Fourteen consecutive days align with accepted daily delivery; this replaces the earlier ten-weekday design.
 
-Approving SPEC v1.0 and PLAN v1.0 permits local milestones with labeled fixtures and assumed suppliers. It does not reopen D08, run metered collection, send external emails, start a customer trial or publish. Local completion, verified integrations and public readiness are separate evidence. No fixed launch date or all-in development quote is promised.
+Approving SPEC v1.1 and PLAN v1.1 permits local milestones with labeled fixtures and assumed suppliers. It does not reopen D08, run metered collection, send external emails, start a customer trial or publish. Local completion, verified integrations and public readiness are separate evidence. No fixed launch date or all-in development quote is promised.
 
 ## Deferred roadmap retained
 
 - Source sentiment/stance; comment sentiment with sample size/time/selection and no population-opinion claim from a small sample.
 - Named, dated views/likes/audience measures; do not sum them and call the result unique reach.
 - Automatic following-list import, native apps, paid/private-source access, source backfill and more languages.
-- Team workspaces, real-time alerts, archive translation and billing may be considered later; they are not accepted v1.0 requirements.
+- Reader-team workspaces, real-time alerts, archive translation and billing may be considered later; they are not accepted v1.1 requirements.
 
 ## Acceptance criteria
 
@@ -136,7 +145,8 @@ Fixtures prove local behavior only; live collection/delivery remain separate gat
 | AC16 | Brand mention and disclosed sponsor remain distinct. | Mention-only, disclosed/unclear sponsor cases across languages. M2 / M5. |
 | AC17 | Six-language interface/recap/source support is credible. | Locale matrix, mixed-language topics, preserved numbers/negation, labeled translations, unsupported language and future-only setting change. Qualified language review before public support claims. M1–M5 / L01. |
 | AC18 | Data lifecycle targets are enforceable. | Seven-day-from-collection raw expiry including never-analyzed inputs, retained historical inventory, active-data deletion and 30-day backup expiry/restore checks; deployment dependencies recorded separately. M3 / L01. |
+| AC19 | Studio/person/source drill-down preserves identities, coverage and historical attribution. | One studio/multiple channels/presenters; one person across groups; guest vs member vs mention; unknown credits; overlapping follows/source quotas; new-channel confirmation; unfollow with another active route; dated departure/rename/correction. M0–M3 / M5. Fixtures prove navigation/rules, not automatic identity discovery. |
 
 ## Approval and change control
 
-Approve **SPEC v1.0 and PLAN v1.0 together**, or name changes. The [approval brief](docs/APPROVAL.md) isolates recommended defaults. Until explicit approval, only documentation/research continues. Record the actual response/date in the decision register; silence is not approval. Material scope changes require a new version/plan. Routine technical choices within approved scope are the assistant's responsibility.
+Approve **SPEC v1.1 and PLAN v1.1 together**, or name changes. The [approval brief](docs/APPROVAL.md) isolates recommended defaults. Until explicit approval, only documentation/research continues, alongside separately authorized visual concepts. Record the actual response/date in the decision register; silence is not approval. Material scope changes require a new version/plan. Routine technical choices within approved scope are the assistant's responsibility.

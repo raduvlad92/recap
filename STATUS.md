@@ -1,6 +1,12 @@
 # Current status
 
-Updated: **21 October 2026**. Phase: **backend recommendation saved following positive feedback on the vision comparison; specification review remains open**. **SPEC v1.0 and PLAN v1.0 are approval candidates, not approved.** A separately authorized static visual concept is ready; no production application has been built.
+Updated: **21 October 2026**. Phase: **modular studio/person/source requirement recorded; revised specification review remains open**. **SPEC v1.1 and PLAN v1.1 are approval candidates, not approved**, superseding the unapproved v1.0 pair. A separately authorized static visual concept is ready; no production application has been built.
+
+## 21 October: modular creator model
+
+Founder clarified that a creator can be an entire studio/team with multiple presenters and channels, requiring drill-down and a modular product (D19). Updated [glossary](GLOSSARY.md), [creator model](docs/CREATOR-MODEL.md), SPEC/PLAN v1.1 and [approval brief](docs/APPROVAL.md). Separate group/person/source identities, optional shows, dated affiliations and update credits; support overlapping relationships rather than a fixed ownership tree. Proposed behavior includes studio/person/source follows with visible underlying coverage, source/update deduplication, new-channel confirmation and preserved historical attribution. Publishing teams do not add reader-team accounts.
+
+Independent edge-case review completed. AC19 and M0–M5 demo scenarios now cover multiple presenters/channels, cross-group people, guests vs members/mentions, unknown identity, overlapping follows and changing affiliations. No new demo, identity extraction, backend code or source run. Existing visitor demo predates this model and does not demonstrate it. Supabase remains recommended; no platform has been selected/provisioned.
 
 ## 21 October: backend recommendation
 
@@ -34,8 +40,9 @@ All earlier direction remains: rapid growth; explore consultants, marketing buye
 
 ## Ready for one approval review
 
-[docs/APPROVAL.md](docs/APPROVAL.md) summarizes the complete [SPEC v1.0](SPEC.md) and [PLAN v1.0](PLAN.md). Recommended defaults include:
+[docs/APPROVAL.md](docs/APPROVAL.md) summarizes the complete [SPEC v1.1](SPEC.md) and [PLAN v1.1](PLAN.md). Recommended defaults include:
 
+- Separate studios/teams, people, sources and update credits, with drill-down, explicit coverage and dated relationships; see [creator model](docs/CREATOR-MODEL.md).
 - English, German, Spanish, French, Italian and Portuguese (Brazil); interface/recap languages independent, one chosen-language recap/day.
 - 50 sources (max 15 X), 200 analyzed updates/day, 3,000/month and 300 generated-transcript minutes/month; no automatic overages.
 - Stable recap snapshots, creator-linked references one level deep, private individual accounts, raw-input expiry/backup deletion targets and honest coverage/usage states.
@@ -62,6 +69,6 @@ No customer outreach, trial, payment, external email sending, deployment or publ
 
 ## Next action
 
-Founder has given positive feedback on the vision comparison; the backend recommendation is Supabase, with platform selection still open. Capture any concrete adopted design changes in the next named candidate; search/saves, change tracking and sharing additions are not blanket-approved. Consolidated **SPEC v1.0 + PLAN v1.0** approval or requested changes is still pending; do not infer it from the demo request or “I like it.” Record the actual response/date before implementation. If approved, start M0 using the backend assessment as input, then the local milestones with fixtures labeled; do not reopen D08. For another session, read this file, SPEC.md, PLAN.md and docs/DECISIONS.md first.
+The founder's studio/person/channel requirement is included in the revised **SPEC v1.1 + PLAN v1.1** candidate; whole-version approval or requested changes is still pending. Search/saves, change tracking and sharing additions from the vision assessment are not blanket-approved. Supabase remains the backend recommendation, with platform selection open. Record the actual response/date before implementation. If approved, start M0 using the backend assessment and creator model as inputs, then the local milestones with fixtures labeled; do not reopen D08. For another session, read this file, SPEC.md, PLAN.md and docs/DECISIONS.md first. The saved v1.0 review walkthrough is historical and does not include AC19.
 
 Actual new external spending: **€0**. Generated transcription: **0/150 experiment minutes**. Founder labor not timed. No app tests exist yet. Repository has no Git remote; local saving/commits do not provide remote backup.

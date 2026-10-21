@@ -23,6 +23,8 @@ Updated: 21 October 2026. Individual answers below are accepted directions. They
 | D15 | Multiple interface and recap languages at launch; exact list not selected by the founder. | Q13, 19 October: “Multiple interface and recap languages at launch”. |
 | D16 | Lasting recap history with original-update citations and creator-linked references; export/delete, visible corrections and unavailable-original notices. | Q14, 19 October: “Yes — lasting recap history and both kinds of references”, accepting the stated Q14 package. |
 | D17 | Use clear limits with larger allowances; the previous numerical package was not approved. | Q15, 19 October: “Use clear limits, but I want larger allowances”. |
+| D18 | Prepare a nonfunctional visitor-facing visual concept. | Explicit 19 October request; full entry below. Does not approve app implementation. |
+| D19 | Creators may be studios/teams with multiple presenters and channels; support drill-down and a modular product model. | 21 October: “a creator can actually be an entire studio or team” and “drill down into each presenter ... or their multiple youtube channels”; “the whole thing has to be very modular”. |
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
@@ -138,14 +140,22 @@ Assistant recommends **Supabase** after current official-document research and i
 
 **Platform selection remains open**: the founder asked for a recommendation, not setup. No backend provisioned, no M0 pass, no spending, and D08 remains deferred. Record the actual selection if/when given; do not create an accepted architecture ADR from an assistant recommendation alone.
 
+## D19 — modular studios, people and channels, 21 October 2026
+
+The founder explicitly clarified the creator structure and drill-down requirement. This is an accepted individual requirement, not a full-spec approval or instruction to provision a backend. “Team” here means a publishing group; reader-team workspaces remain deferred.
+
+Recorded [creator model](CREATOR-MODEL.md) and updated the domain glossary. Recommended treatment separates groups, people, sources, optional shows, dated affiliations/ownership and per-update contribution roles. This handles shared channels, people working across groups, guests and changing affiliations without treating a mention or membership as a speaking credit. Follow scopes show actual supported sources; overlapping follows count once, new channels need confirmation, and missing attribution remains unknown. These detailed defaults are proposed in the revised candidate, not separately answered founder decisions.
+
+**SPEC v1.1 + PLAN v1.1** supersede the unapproved v1.0 pair. Added AC19 and studio/person/channel scenarios to the future milestones; updated the approval brief. The old static demo and v1.0 review walkthrough remain historical, without a new modular-model demo. Independent edge-case review completed; no implementation, provider work or spending. Supabase remains recommended rather than selected. D08 is unchanged.
+
 ## Approval register
 
 | Artifact | Version/status | Approval evidence |
 | --- | --- | --- |
-| Product specification | 1.0 — approval candidate | Q1–Q15 directions recorded, including revised Q13/Q15; no whole-version approval. Exact language list/allowances are proposed. |
+| Product specification | 1.1 — approval candidate, supersedes unapproved v1.0 | Q1–Q15 and D19 recorded; no whole-version approval. Exact languages/allowances and detailed modular follow/attribution defaults are proposed. |
 | Source proof brief | v0.1 approved in Q6; execution DEFERRED by D08 | Supplier capability assumed for planning; no current sign-in/spending action. |
 | Customer pilot | Conditional proposal | None; waits for broad access |
-| Implementation plan | 1.0 — approval candidate, M0–M5 awaiting approval | No full implementation authorization; named SPEC/PLAN pair submitted together. |
+| Implementation plan | 1.1 — approval candidate, M0–M5 awaiting approval | No full implementation authorization; named SPEC/PLAN pair submitted together, including AC19 demos. |
 | Visitor visual concept | v0.1 — local concept completed | Explicit request on 19 October, D18; static demo only, not S01 approval. |
 
 Do not infer agreement from silence or convert recommendations into accepted decisions. Record the version, date and founder's response when approval is given.

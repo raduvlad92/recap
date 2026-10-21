@@ -88,6 +88,12 @@ Task: R05. Type: **technical desk research and documentation**, not a new demo, 
 
 Recorded the founder's positive vision feedback without converting it into full-spec or optional-feature approval. Updated STATUS/PLAN/decision register/research. Checked local Markdown links and whitespace; no app tests apply to this documentation-only change. No services created, account billing inspected, code built, scraper resumed, email sent or publication performed. External cash €0; generated experiment transcription 0/150 minutes; formal source observation remains deferred at 0/7. Next: record the founder's backend choice and any concrete scope adoption; named SPEC/PLAN approval still precedes full implementation.
 
+## 21 October 2026 — modular creator model and v1.1 candidate
+
+Task: R06/S01. Type: **domain-model/specification checkpoint**, not a new demo, database or identity-extraction proof. Founder requirement D19 accepts studios/teams, multiple presenters/channels, drill-down and modularity. Used the domain-modeling skill; updated [glossary](../GLOSSARY.md), [creator model](CREATOR-MODEL.md), SPEC/PLAN **v1.1**, approval brief, status and decisions. Whole-version approval remains pending; prior v1.0 pair is superseded, with earlier visual artifacts retained as historical.
+
+Independent edge-case review covered shared channels, people moving/across studios, guests vs members/mentions, uncertain identity, overlapping follows, source quotas and expansion. AC19/future milestone demos record these scenarios. No new visual artifact or application behavior was built/tested; existing demo does not show the new model. Local Markdown links, acceptance-criterion coverage and whitespace checked. No provider login/execution, source collection, transcription, spending or publication. External cash €0; experiment audio remains 0/150 minutes and observation deferred at 0/7. Next: review the revised candidate; record named approval before M0.
+
 ## Required format for future entries
 
 Date; milestone/task ID; demo file or URL; whether live/local/simulated; exact scenario; data provenance; checks performed; outcome; limitations; measured cost; related approval/spec version; next action. Save small, redacted evidence in docs/demos/ and keep credentials and participant identities out of Git.

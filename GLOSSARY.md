@@ -5,10 +5,29 @@ Language for a service that turns updates from chosen creators and publications 
 ## Language
 
 **Creator**:
-A person or organization publishing material that a reader follows. One creator can publish through several sources.
+A person or publishing group whose material a reader follows. A creator can be a studio or team and can publish through several sources.
+
+**Publishing group**:
+A studio, team or organization that produces or publishes content with one or more people and sources.
+_Avoid_: Reader workspace
+
+**Presenter**:
+A person who hosts or presents content, independently or with one or more publishing groups. A presenter is a role a person takes, rather than a separate identity for each channel.
+
+**Show**:
+A named recurring programme or series that can appear through one or more sources and have several presenters.
+_Avoid_: Channel
+
+**Affiliation**:
+A person's relationship with a publishing group, such as being a member or regular presenter, during a stated period when known.
+_Avoid_: Proof of participation in every update
+
+**Contribution**:
+A person's credited participation in a particular source update, such as hosting, presenting or appearing as a guest.
+_Avoid_: Brand mention, group membership
 
 **Source**:
-A particular creator channel, account, newsletter, blog or podcast a reader chooses to follow.
+A particular publishing channel, account, newsletter, blog or podcast. A source can carry work from several people or shows and is distinct from the creator behind it.
 _Avoid_: Platform, post
 
 **Source update**:

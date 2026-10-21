@@ -39,3 +39,7 @@ Sources: [Supabase pricing](https://supabase.com/pricing), [Convex pricing](http
 Reviewed official database, search, scheduling/queue, workflow, runtime and pricing documentation; obtained independent reviews of Convex's strongest case and pricing/operating trade-offs. No app code, runtime test, account access, supplier execution or spending. Actual new external cash: **€0**.
 
 The founder's “I like it” is positive feedback on the preceding vision recommendation. It does not approve every optional sharing/search/change-tracking feature, SPEC/PLAN v1.0, or this backend choice. Record an explicit platform selection when given. Supplier proof remains deferred under D08; the platform recommendation does not reopen it.
+
+### Subsequent clarification: modular publishing groups
+
+D19, also on 21 October, requires studios/teams, presenters and multiple channels with drill-down. [CREATOR-MODEL.md](CREATOR-MODEL.md) separates identities, overlapping/datable affiliations, sources and update-level credits. This fits the recommendation's emphasis on connected history without requiring a graph database or changing the backend selection status. SPEC/PLAN v1.1 now supersede the unapproved v1.0 pair; no schema or service has been created.
