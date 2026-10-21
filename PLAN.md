@@ -10,7 +10,7 @@ The founder explicitly requested autonomous implementation on 21 October (D20). 
 
 ## Authorized admin and creator catalogue increment
 
-D21 (21October) authorizes the admin panel, five120-account research lists, backend catalogue and one public page per canonical creator, plus planning-only Apify/BrightData comparisons. [Tracked delivery plan](docs/admin/PLAN.md). No source collection or paid jobs are authorized by this increment; do not substitute page publication for verified access.
+D21 (21 October) authorizes the admin panel, five 120-account research lists, backend catalogue and one public page per canonical creator, plus planning-only Apify/Bright Data comparisons. **Complete:** 560 creators, 600 channels, seven disabled plans, owner-authorized admin and public directory/pages. [Tracked delivery and continuation plan](docs/admin/PLAN.md), [owner guide](docs/admin/README.md), [verification](docs/admin/VERIFICATION.md). Owner-only hosted access, temporary-QA revocation/cleanup and public HTTP checks passed. No source collection or paid jobs are authorized by this increment; do not substitute page publication for verified access.
 
 ## Completed discovery and decisions
 

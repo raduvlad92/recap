@@ -16,14 +16,14 @@ Public directory and creator pages are rendered as HTML with titles/descriptions
 
 | ID | Work | Exit evidence | State |
 | --- | --- | --- | --- |
-| AD01 | Scope/design/security plan and target preflight | This plan; existing recap resources verified | In progress |
-| CA01 | 120 YouTube +120 Instagram accounts | Inspected account evidence, distinct URLs, original descriptions | In progress |
-| CA02 | 120 X +120 LinkedIn accounts | Inspected account evidence, distinct URLs, original descriptions | In progress |
-| CA03 | 120 Substack accounts and supplier cost comparison | Public primary-source prices, equivalent-unit caveats,600totalvalidated | In progress |
-| AD02 | Backend catalogue, plans, job/usage/audit telemetry | Applied reviewed migrations, RLS/advisors, safe import/count checks | Pending |
-| AD03 | Authenticated admin users/follows/operations/catalogue | Live owner view, nonadmin/anonymous denial, honest empty/error states | Pending |
-| CA04 | Import catalogue and publish creator pages/directory | Backend600channels, identity/page counts, build/schema/link/SEO checks | Pending |
-| AD04 | Verification, CI/deploy and durable handoff | Tests, screenshots, exact deployed commit, owner guide/progress | Pending |
+| AD01 | Scope/design/security plan and target preflight | This plan; existing recap resources verified | Complete |
+| CA01 | 120 YouTube +120 Instagram accounts | Inspected account evidence, distinct URLs, original descriptions | Complete |
+| CA02 | 120 X +120 LinkedIn accounts | Inspected account evidence, distinct URLs, original descriptions | Complete |
+| CA03 | 120 Substack accounts and supplier cost comparison | Public primary-source prices, equivalent-unit caveats, 600 total validated | Complete |
+| AD02 | Backend catalogue, plans, job/usage/audit telemetry | Three applied migrations, no advisor issues, 26 actual REST/RPC checks, SQL invariants | Complete |
+| AD03 | Authenticated admin users/follows/operations/catalogue | Hosted verified-email admin accepted; ordinary account403/anonymous401; save/conflict UI exercised | Complete |
+| CA04 | Import catalogue and publish creator pages/directory | 560 canonical pages/600 channels, five platform counts120, live public sitemap/canonical checks | Complete |
+| AD04 | Verification, CI/deploy and durable handoff | 144 tests, screenshots, owner guide, hosted public/admin checks, owner-only deployment and actual QA403/cleanup evidence | Complete |
 
 ## Design plan
 
@@ -34,3 +34,14 @@ Plan review: a generic billing dashboard would misrepresent a pre-collection pro
 ## Verification and next sessions
 
 Record per-platform counts, canonical creator/page count, import hash, exact database target, test results, current public URL and admin authorization method without private account identifiers. Never commit user identities, credentials or private follows. Update STATUS, PLAN, decisions and demo log before handoff. No collection is started as part of verification; provider/job views can be verified with safe synthetic ledger records, labeled and removed or retained only as test records.
+
+## Continuation work
+
+| ID | Work | Current boundary |
+| --- | --- | --- |
+| D21-N01 | Resolve the one Ottolenghi same-name identity pair using a primary cross-link; keep separate until supported | Research and a reviewed catalogue correction, no collection required. |
+| D21-N02 | Improve topic synonyms, editorial descriptions and public page language coverage | English catalogue pages are the current increment; broader multilingual product requirements remain in SPEC. |
+| D21-N03 | Extend actor/run observability to future provider adapters and shared collection | Current ledger records actual manual requests; it does not implement shared scheduled jobs or an aggregate cash stop. |
+| V0-N01 | Durable cumulative provider spending controls, then a separately resumed bounded access check | Do not activate jobs or schedules from D21. No Bright Data runtime was added. |
+
+The founder can review the live admin/directory now. The guide has no API-token or dashboard-configuration task. Signup with the configured owner email may be needed on the first app visit; it is ordinary app use, separate from the Clerk dashboard login.

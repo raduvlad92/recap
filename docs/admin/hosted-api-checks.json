@@ -59,5 +59,18 @@
   "commit": "6abf9bacd721f10eedd251aadd4a8518680e84e1",
   "deployment": "6ad82c2e3852294a5febf109",
   "provenance": "Browser-issued Clerk JWT from a verified allowlisted synthetic development account; actual hosted admin function and existing backend",
-  "temporaryAccess": "Pending removal and final deployment denial check"
+  "temporaryAccess": "Revoked; original owner-only configuration deployed, former authorized account403 before deletion; see owner-only-check.json and qa-cleanup.json",
+  "ordinaryAccount": {
+    "status": 403,
+    "browserDenied": true,
+    "privateMetrics": 0,
+    "adminNavigationLink": false
+  },
+  "updatedCanonicalIdentityCode": {
+    "commit": "8dca45f4ebf690218afa63d77b4cc3c9e371b8da",
+    "readersStatus": 200,
+    "actualFollowsPresent": true,
+    "plansStatus": 200,
+    "allPlansDisabled": true
+  }
 }

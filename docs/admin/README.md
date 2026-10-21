@@ -1,6 +1,6 @@
 # Your recap admin guide
 
-Open [Administration](https://recap-v0-radu.netlify.app/admin/) and sign in with your existing owner email. Owner access is already configured on the server; you do not need to provide tokens or change Supabase settings. Other readers cannot see this panel or its private data. The [current release status](../../STATUS.md) records deployment verification separately from this guide.
+Open [Administration](https://recap-v0-radu.netlify.app/admin/) and use the same owner email you use for the Clerk dashboard. On your first app visit, choose **Sign up** if you have not created an app account yet; a dashboard account and an app account are separate. Verify that same email through the normal sign-in flow. Owner access is already configured on the server; you do not need to provide tokens or change Supabase settings. Other readers cannot see this panel or its private data. The [current release status](../../STATUS.md) records deployment verification separately from this guide.
 
 ## What each area shows
 

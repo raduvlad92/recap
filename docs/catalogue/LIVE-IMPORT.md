@@ -40,7 +40,7 @@ The [import manifest](IMPORT-REPORT.md) records source hashes, identity rules an
 
 ## Verification completed at this checkpoint
 
-- **137 local tests passed**. TypeScript, build and deployment checks are recorded separately in the delivery workflow.
+- **144 local tests passed**. TypeScript, build and deployment checks are recorded separately in the delivery workflow.
 - **26 actual Supabase REST/RPC checks passed** using real Clerk-issued synthetic development-account tokens. The [sanitized result](../admin/live-db-checks.json) includes exact counts, denied anonymous/private access, denied ordinary-reader mutations, stale-edit protection and ownership checks.
 - SQL invariants and Supabase security advisors reported no issues. [Invariant queries](../admin/live-db-invariants.sql) are saved.
 - A disposable unlisted creator and a synthetic **blocked** ledger record exercised database protections without contacting any creator source or supplier. Both were removed; the final catalogue returned to 560 creators and no collection job remained from that test.
