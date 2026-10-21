@@ -1,4 +1,4 @@
-import type { SourceUpdate } from './types';
+import type { SourceUpdate, VideoKeyword } from './types';
 
 export type VideoHighlight = { text: string; startSeconds?: number };
 export type TranscriptSegment = NonNullable<SourceUpdate['transcriptSegments']>[number];
@@ -131,6 +131,7 @@ function similarity(a: Set<string>, b: Set<string>): number {
  * from character position, word count, or the video's advertised duration.
  */
 export function getVideoHighlights(update: SourceUpdate): VideoHighlight[] {
+  if (update.videoSummary?.status === 'unavailable') return [];
   const supplied = Array.isArray(update.videoHighlights) ? update.videoHighlights : [];
   if (supplied.length) {
     const seen = new Set<string>();
@@ -143,6 +144,7 @@ export function getVideoHighlights(update: SourceUpdate): VideoHighlight[] {
     // Publisher-provided chapter labels also need to span the whole video.
     if (clean.length) return clean.length <= MAX_HIGHLIGHTS ? clean : Array.from({ length: MAX_HIGHLIGHTS }, (_, index) => clean[Math.round(index * (clean.length - 1) / (MAX_HIGHLIGHTS - 1))]);
   }
+  if (update.videoSummary) return [];
   const { text, cues } = sourceText(update);
   if (!text) return [];
   const candidates: Candidate[] = [];
@@ -203,4 +205,18 @@ export function getVideoHighlights(update: SourceUpdate): VideoHighlight[] {
     if (eligible[0]) chosen.push(eligible[0]);
   }
   return chosen.sort((a, b) => a.offset - b.offset).map(({ text: excerpt, startSeconds }) => ({ text: excerpt, ...(startSeconds === undefined ? {} : { startSeconds }) }));
+}
+
+export function getVideoKeywords(update: SourceUpdate): VideoKeyword[] {
+  const seen = new Set<string>();
+  return (update.videoKeywords ?? []).filter(keyword => {
+    const key = keyword.label.trim().toLocaleLowerCase();
+    if (!key || seen.has(key)) return false;
+    seen.add(key); return true;
+  }).sort((a, b) => (b.seconds ?? -1) - (a.seconds ?? -1));
+}
+
+export function formatDiscussionTime(seconds?: number): string {
+  if (seconds === undefined || !Number.isFinite(seconds) || seconds <= 0) return '';
+  return seconds < 60 ? '<1 min' : `~${Math.round(seconds / 60)} min`;
 }

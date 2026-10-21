@@ -1,6 +1,6 @@
 # Tracked implementation and validation plan
 
-Version: **1.1 — APPROVAL CANDIDATE**. Updated: 21 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
+Version: **1.1 — APPROVAL CANDIDATE**. Updated: 22 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
 
@@ -8,7 +8,11 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 The founder explicitly requested autonomous implementation on 21 October (D20). [docs/v0/PLAN.md](docs/v0/PLAN.md) tracks that first increment, selected Supabase/Clerk targets, screenshot-based UI and GitHub/Netlify deployment. V0-01–V0-07 are complete for the first increment: [live app](https://recap-v0-radu.netlify.app), [verification](docs/v0/VERIFICATION.md), [morning checklist](docs/v0/MORNING.md). V0-N01–V0-N06 track the continuation. V0 work is authorized now; the full M0–M5 table below is not a claim of completed production behavior. Its remaining goals, including real AI generation, multilingual quality, scheduling, retention and delivery, still require evidence.
 
-## Current authorized video-card increment — D24
+## Current authorized concise-summary increment — D25
+
+Read the complete reference and existing LMG captions, replace literal snippets with concise supported takeaways, create duration-ranked specific keywords and an overflow-only infinite strip beside fixed provenance. Preserve source/account data. Rule and annotations are complete for **144 videos**, with **132 editorial summaries / three promotional-only / nine without captions**; 132 caption-timed and three chapter-timed captioned records. **477 tests**, typecheck/build/catalogue and local motion/resize checks pass. All 15 batches applied; exact readback preserved all 278 records, source text, other creators and the complete owner workspace. Checked hosted delivery remains. [Rule](docs/design/VIDEO-SUMMARY-RULE.md), [evidence](docs/design/LMG-TAKEAWAYS.md). No new collection, provider subscription, generated transcription or recurring model execution is included.
+
+## Historical authorized video-card increment — D24
 
 Deliver the founder's YouTube thumbnail identity/icons, up to six caption-derived minute-linked bullets, full transcript and persistent per-source Show Shorts controls. Keep hidden Shorts collected, retained and exportable; preserve source identities and private owner state. [Design and verification](docs/design/YOUTUBE-CARDS.md). UI/persistence/pipeline work, 171-video complete timestamp recovery, exact existing-row enrichment and 459-test/typecheck/build/catalogue plus responsive local checks are done. Complete: functional **`4776a91`** passed [CI 39681814688](https://github.com/raduvlad92/recap/actions/runs/39681814688), exact Netlify deploy **`6ad9338066d4f42065087597`** is live, and actual signed-in owner desktop/mobile checks plus long-transcript/Shorts persistence checks passed. Short captions receive fewer points. Next: founder design review. All 278 records and unrelated owner state were preserved. No new supplier subscription/job, model execution, generated transcription or recurring collection is included.
 

@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-21T22:30:41.047Z",
+  "exactArchiveReadback": true,
+  "exactWorkspaceUnchanged": true,
+  "allRecordIdsRetained": true,
+  "otherCreatorRecordsUnchanged": true,
+  "archiveRows": 278,
+  "lmgVideos": 144,
+  "captionedVideos": 135,
+  "metadataOnlyVideos": 9,
+  "captionTiming": 132,
+  "chapterTiming": 3,
+  "patches": 144,
+  "editorialSummaries": 132,
+  "promotionalOnly": 3,
+  "takeaways": 543,
+  "keywords": 718,
+  "batches": 15,
+  "sourceTextPreserved": true,
+  "privateReaderDataIncluded": false
+}

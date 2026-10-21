@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-10-21T22:32:10.950Z",
+  "kind": "local reference plus synthetic fitting-list fixture",
+  "testsPassed": 477,
+  "testFiles": 16,
+  "typecheckPassed": true,
+  "buildPassed": true,
+  "catalogueUnchanged": true,
+  "viewports": [
+    1440,
+    1051,
+    390,
+    350,
+    320
+  ],
+  "horizontalOverflow": false,
+  "captionLabelFixedDuringMotion": true,
+  "keywordsMoved": true,
+  "infiniteAnimation": true,
+  "equalWidthRepeatedGroups": true,
+  "staticWhenFitting": true,
+  "overflowRecoversAfterResize": true,
+  "pauseWorks": true,
+  "duplicateKeywordPointerFilterWorks": true,
+  "sourceTextPrivate": true,
+  "privateReaderDataIncluded": false
+}

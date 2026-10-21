@@ -2,6 +2,7 @@
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
+import { validateStoredVideoAnalysis } from './lib/video-analysis.mjs';
 import { publicUrl, sourceKey } from '../actors/tech-collector/src/collector.mjs';
 
 const TARGET='zlfdqzabsfndifxiqguo';
@@ -152,7 +153,7 @@ export function applyTechCoverage(workspace,manifest,output) {
 function validateUpdate(update,source,window) {
   const requiredStrings=['id','sourceId','title','summary','url','publishedAt','format'];
   const arrays=['contributorIds','topics','brands','sponsors','references','insights'];
-  const allowed=new Set([...requiredStrings,...arrays,'isSample','image','duration','coverage','content','contentKind','isShort','transcriptSegments','videoHighlights']);
+  const allowed=new Set([...requiredStrings,...arrays,'isSample','image','duration','coverage','content','contentKind','isShort','transcriptSegments','videoHighlights','videoSummary','videoKeywords']);
   if(!object(update) || Object.keys(update).some(key=>!allowed.has(key)) || requiredStrings.some(key=>typeof update[key]!=='string') || arrays.some(key=>!Array.isArray(update[key])) || !id(update.id,200) || update.id.startsWith('sample-') || update.sourceId!==source.id || update.isSample!==false || !['video','article','podcast','post'].includes(update.format) || !validIsoDate(update.publishedAt))throw error('invalid_archive_update');
   if(!publicUrl(update.url) || (update.image!==undefined && !publicUrl(update.image)))throw error('invalid_archive_url');
   for(const key of ['contributorIds','topics','brands','sponsors','insights'])if(!strings(update[key],1000))throw error('invalid_archive_list');
@@ -164,6 +165,7 @@ function validateUpdate(update,source,window) {
   const seconds=value=>typeof value==='number' && Number.isFinite(value) && value>=0 && value<=Number.MAX_SAFE_INTEGER;
   if(update.transcriptSegments!==undefined && (!Array.isArray(update.transcriptSegments) || update.transcriptSegments.length>10000 || update.transcriptSegments.some(segment=>!object(segment) || Object.keys(segment).some(key=>!['startSeconds','durationSeconds','text'].includes(key)) || !seconds(segment.startSeconds) || (segment.durationSeconds!==undefined && !seconds(segment.durationSeconds)) || typeof segment.text!=='string' || !segment.text.trim() || segment.text.length>10000)))throw error('invalid_archive_transcript_segments');
   if(update.videoHighlights!==undefined && (!Array.isArray(update.videoHighlights) || update.videoHighlights.length>6 || update.videoHighlights.some(highlight=>!object(highlight) || Object.keys(highlight).some(key=>!['startSeconds','text'].includes(key)) || (highlight.startSeconds!==undefined && !seconds(highlight.startSeconds)) || typeof highlight.text!=='string' || !highlight.text.trim() || highlight.text.length>2000)))throw error('invalid_archive_video_highlights');
+  validateStoredVideoAnalysis(update);
   const host=new URL(update.url).hostname.replace(/^www\./,'');
   if((source.platform==='YouTube' && !['youtube.com','youtu.be'].includes(host)) || (source.platform==='X' && !['x.com','twitter.com'].includes(host)) || (source.platform==='Instagram' && host!=='instagram.com'))throw error('archive_platform_mismatch');
   const date=Date.parse(update.publishedAt);

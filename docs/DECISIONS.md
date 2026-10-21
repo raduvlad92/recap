@@ -1,6 +1,6 @@
 # Decisions and interview
 
-Updated: 21 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Updated: 22 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
 ## Accepted founder decisions
 
@@ -29,6 +29,12 @@ Updated: 21 October 2026. Individual answers below are accepted directions. They
 | D23 | Make the middle column much more compact: remove repeated collection headings/subtitle/channel and update counts, move source-material explanation/coverage access into Preferences, and keep sort, expanded history range and Filter in one row. Exact dates remain in Filter; remove date-toolbar controls. | 21 October: “let's make it MUCH more compact and remove the fluff”, explicit removal/control list and screenshot; follow-up removes the update count/date controls and adds 2-week/1-week/3-day/24-hour ranges. |
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
+
+## D25 — concise takeaways and duration-ranked keywords, 22 October 2026
+
+Founder rejected literal/verbose bullet excerpts and asked to read the full Apple Watch Series 12 reference, derive a reusable concise finding/comparison rule, apply it to every existing LMG video, and generate keywords weighted by discussion minutes. Keep “Caption excerpts” fixed while overflowing keywords animate in one infinite line beneath it. This explicitly authorizes the scoped model-authored review batch using existing captions, private annotation persistence and UI publication. It does not authorize new source collection, supplier subscriptions, external model API spending, recurring generation or the full SPEC/PLAN candidate. [Rule](design/VIDEO-SUMMARY-RULE.md), [delivery](design/LMG-TAKEAWAYS.md).
+
+D25 local/data verification: 477 tests, typecheck/build/catalogue and 1440/1051/390/350/320px motion/resize checks passed. All 15 annotation batches applied; exact readback matched the intended 144 records and unchanged captions, other creators and complete owner workspace. Batch output is 543 concise takeaways and 718 duration-ranked keywords. Deployment/owner evidence follows in the delivery record.
 
 ## D24 — YouTube content cards and Shorts visibility
 

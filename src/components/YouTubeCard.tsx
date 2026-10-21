@@ -2,7 +2,8 @@ import { useMemo, type ReactNode } from 'react';
 import { ArrowUpRight, FileText, Play } from 'lucide-react';
 import type { SourceUpdate } from '../lib/types';
 import { Artwork } from './Artwork';
-import { formatTimestamp, getVideoHighlights, getVideoTimestampUrl, getVideoTranscript } from '../lib/video';
+import { formatTimestamp, getVideoHighlights, getVideoTimestampUrl, getVideoTranscript, getVideoKeywords } from '../lib/video';
+import { VideoKeywordStrip } from './VideoKeywordStrip';
 
 interface Props {
   update: SourceUpdate;
@@ -16,11 +17,13 @@ interface Props {
   onChannel: () => void;
   onOpen: () => void;
   onTranscript: () => void;
+  onKeyword?: (label: string) => void;
 }
 
-export function YouTubeCard({ update, channelName, channelIcon, date, actions, topics, provenance, compact, onChannel, onOpen, onTranscript }: Props) {
+export function YouTubeCard({ update, channelName, channelIcon, date, actions, topics, provenance, compact, onChannel, onOpen, onTranscript, onKeyword }: Props) {
   const points = useMemo(() => getVideoHighlights(update), [update]);
   const transcript = useMemo(() => getVideoTranscript(update), [update]);
+  const keywords = useMemo(() => getVideoKeywords(update), [update]);
   return <article className={`update-card youtube-card ${compact ? 'update-card-compact' : ''}`}>
     <div className="update-cover youtube-cover">
       <button className="youtube-thumbnail" aria-label={`Read the details: ${update.title}`} onClick={onOpen}><Artwork update={update} /></button>
@@ -37,9 +40,13 @@ export function YouTubeCard({ update, channelName, channelIcon, date, actions, t
       {points.length > 0 ? <ul className="video-highlights">{points.map((point, index) => {
         const url = point.startSeconds === undefined ? null : getVideoTimestampUrl(update.url, point.startSeconds);
         return <li key={index}>{url ? <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Watch at ${formatTimestamp(point.startSeconds!)}: ${point.text}`}><span className="video-point-time">{formatTimestamp(point.startSeconds!)}</span><span>{point.text}</span></a> : <span>{point.text}</span>}</li>;
-      })}</ul> : <p className="video-unavailable">{update.isSample ? 'Illustrative video. No transcript is connected.' : 'A transcript is not available for this video.'}</p>}
+      })}</ul> : <p className="video-unavailable">{update.isSample ? 'Illustrative video. No transcript is connected.' : transcript ? 'No editorial takeaways in these captions.' : 'A transcript is not available for this video.'}</p>}
       {transcript && <button className="transcript-button" onClick={onTranscript}><FileText size={15} aria-hidden="true" />Full transcript<ArrowUpRight size={14} aria-hidden="true" /></button>}
-      <div className="update-card-bottom"><div className="topic-pills">{topics}</div><span className={`provenance ${update.isSample ? 'provenance-sample' : 'provenance-live'}`}>{provenance}</span></div>
+      <div className={`update-card-bottom ${keywords.length ? 'video-keyword-footer' : ''}`}>
+        {!keywords.length && <div className="topic-pills">{topics}</div>}
+        <span title={update.videoSummary?.status === 'ready' ? 'Concise summaries based on the available captions' : undefined} className={`provenance ${update.isSample ? 'provenance-sample' : 'provenance-live'}`}>{provenance}</span>
+        {keywords.length > 0 && <VideoKeywordStrip keywords={keywords} timingBasis={update.videoSummary?.timingBasis} onKeyword={onKeyword} />}
+      </div>
     </div>
   </article>;
 }

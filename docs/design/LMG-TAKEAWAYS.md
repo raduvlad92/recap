@@ -1,0 +1,33 @@
+# LMG concise video summaries and timed keywords — D25
+
+22 October 2026. The founder rejected D24's literal, verbose caption excerpts and supplied a desired comparison/finding style. The reference is [New Tech, New Software - Apple Watch Series 12](https://www.youtube.com/watch?v=ckEUIfrg_tU). [Reusable writing and keyword rule](VIDEO-SUMMARY-RULE.md), version `takeaways-v1`.
+
+## Result and boundaries
+
+The complete available captions of **135 existing LMG videos** were read and rewritten, including the four full WAN Show transcripts. All **144 LMG video records** are covered by the review batch: **132 editorial summaries**, **three entirely promotional clips with no editorial summary**, and **nine metadata-only videos with no invented spoken-content summary**. A second claim review checked comparisons, numbers, caveats, rumors and advertised versus tested findings. Contradictory source claims were qualified or omitted.
+
+Each bullet states one useful change, comparison, finding or conclusion in fresh wording, typically 15–30 words, with at most six points. The original captions, IDs, source URLs, Shorts flags and unrelated records are preserved. The private audit retains each point's supporting source quotation and full-caption SHA-256; neither source text nor private reader state is committed here.
+
+This is actual one-off, model-authored caption analysis for the founder's requested existing-LMG review batch. It is not the old sentence-selection heuristic, a synthetic fixture, an automatically running generation service, a daily cross-source recap or proof of complete audiovisual coverage. New collection does not silently invoke a model. Other creators keep their prior behavior. No supplier collection, generated transcription, external model API job, subscription or recurring automation was started for this increment; development-session and hosting/database usage have not been priced.
+
+## Reference video
+
+The first two takeaways now state the Ceramic Shield 2 / zirconia versus Ion-X / sapphire comparison and the easier-to-navigate Health app. The subject is Apple Watch Series 12; the transcript mentions iPhones only as a glass-material comparison. Other selected findings cover heart-rate sampling, local camera assessments, audio features/privacy and observed battery/charging performance, preserving the failed 10-watt test caveat. [Saved reference analysis](evidence/apple-watch-summary-review.json).
+
+The reference keywords include Apple Watch Series 12, Health app, Readiness score, mobility assessments, audio intelligence, battery/fast charging, watchOS update, longevity/health age and Apple Watch SE. They are ordered by the union of their actual discussion intervals, not by mention frequency. Parent and subtopics overlap; their minutes must not be added together. Brief buying comparisons can qualify, while sponsor pitches and throwaway outro mentions do not.
+
+**132 caption-timed videos** use real cue boundaries. The **three long videos without complete cue exports** use actual publisher chapter boundaries checked against the full saved captions. Their tooltips identify chapter estimates. Mixed chapters are not assigned wholesale to a narrow subject. Times are approximate section coverage, not word-level attention measurements; no timestamps are guessed from text length or runtime.
+
+## Interface and preservation
+
+“Caption excerpts” stays fixed on the left, with an opaque background covering passing keywords. Its tooltip identifies reviewed bullets as concise caption-based summaries. Only an overflowing keyword list animates, using equal repeated groups and a linear infinite loop. A fitting list remains still, including after resize. Hover/focus and an explicit pause control stop motion; reduced-motion CSS removes animation and permits manual horizontal access. The visual duplicate is hidden from assistive technology but preserves pointer filtering. Topic buttons use the existing topic filter and generated labels are searchable.
+
+Annotations are stored separately from source captions as `videoSummary`, `videoHighlights` and `videoKeywords`; `topics` supplies existing search/filter views. The preparation script reads the exact current owner/archive, matches all 144 caption hashes, validates supporting quotations, word limits, timestamps and interval unions, and prepares bounded SQL batches. It never writes to the database or starts a provider/model job. Each execution batch compares and locks the exact previous workspace revision/JSON and every prior source record, then changes only annotation/topic fields. Partial failure stops execution and requires a fresh plan; it cannot overwrite unrelated owner changes.
+
+## Verification
+
+**477 tests / 16 files**, typecheck, production build and unchanged catalogue reproducibility pass. Tests cover unsupported claims/times, missing captions, promotional-only material, word/point limits, interval double counting, preservation, stale-input rejection, owner scope, exact SQL comparisons, quoting and bounded transport. A separate code review found and fixed duplicate keyword pointer activation and a resize edge where the pause control could sustain false overflow.
+
+Local reference-plus-synthetic checks verify fixed provenance, infinite overflow/equal-width copies, a static fitting list, pause and 320px → 350px overflow recovery without page overflow. The shared preview ignored two phone viewport requests, so Chrome is used for responsive proof. Chrome checks at **1440/1051/390/350/320px** passed without horizontal overflow. The label stayed in the same position while keywords moved; the repeated group had equal width and a visible duplicate keyword successfully applied its topic filter. The 320→350px regression changed the fitting list from animated to static. [Desktop fixture](evidence/lmg-summary-desktop-fixture.png), [phone fixture](evidence/lmg-summary-phone-fixture.png), [sanitized local checks](evidence/lmg-summary-local-checks.json).
+
+All **15 SQL batches** applied. Exact readback at **22:30:41 UTC, 21 October** confirmed all **144 planned records**, all **278 existing record IDs**, the entire unchanged owner workspace/revision, unchanged other creators and unchanged source text. The stored batch contains **543 takeaways and 718 keywords**, with **132 editorial summaries / three promotional-only / nine caption-unavailable** records. [Sanitized readback](evidence/lmg-summary-readback.json). Caption evidence, input/output annotations, SQL and complete private before/after backups remain ignored. GitHub CI, exact deployment and signed-in owner evidence follow after release.

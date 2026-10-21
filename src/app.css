@@ -124,3 +124,22 @@
 @media(min-width:1700px){.youtube-channel strong{font-size:14px}.youtube-channel time{font-size:11px}.youtube-card .update-title-button h2{font-size:27px}.video-highlights{font-size:15px}}
 @media(max-width:1250px) and (min-width:781px){.youtube-channel{left:11px;top:13px;right:42px;gap:6px;align-items:flex-start}.youtube-channel .creator-avatar{width:26px;height:26px}.youtube-channel strong{font-size:10px}.youtube-channel time{font-size:9px}.youtube-card .youtube-platform{top:12px;right:8px;padding:4px}.youtube-platform svg{width:16px}.youtube-card .update-title-button h2{font-size:20px}.video-highlights{font-size:12px}}
 @media(max-width:560px){.youtube-card .youtube-cover{height:190px;min-height:0;width:100%}.youtube-card .update-title-button h2{font-size:23px}.youtube-card .update-card-body{padding-top:20px}.video-highlights{font-size:13px;gap:10px}.youtube-channel strong{font-size:13px}.youtube-channel time{font-size:11px}.youtube-channel .creator-avatar{width:35px;height:35px}.transcript-button{font-size:12px;min-height:36px}.full-transcript{font-size:13px}.shorts-preference{font-size:12px;min-height:32px}}
+
+/* A stationary provenance label masks the moving, duration-ranked keywords. */
+.youtube-card .video-keyword-footer{display:flex;flex-direction:row;align-items:center;gap:0;min-width:0;width:100%;position:relative}
+.video-keyword-footer>.provenance{flex:none;position:relative;z-index:2;background:var(--paper);padding-right:11px;white-space:nowrap;font-size:9px}
+.video-keyword-strip{display:flex;align-items:center;min-width:0;flex:1;gap:3px}
+.video-keyword-viewport{flex:1;min-width:0;overflow:hidden;mask-image:linear-gradient(to right,transparent,#000 10px,#000 calc(100% - 8px),transparent)}
+.video-keyword-track{display:flex;width:max-content;transform:translateX(0)}
+.video-keyword-group{display:flex;align-items:center;gap:13px;padding-right:13px;flex:none;width:max-content}
+.video-keyword{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;padding:5px 0;color:#536c62;font-size:10px;line-height:1.5}
+.video-keyword small{font-size:9px;color:#879382;font-variant-numeric:tabular-nums}
+button.video-keyword:hover{text-decoration:underline;text-underline-offset:3px}
+.is-overflowing .video-keyword-track{animation:video-keyword-loop var(--keyword-loop-duration) linear infinite;will-change:transform}
+.video-keyword-strip:hover .video-keyword-track,.video-keyword-viewport:focus-within .video-keyword-track,.video-keyword-strip.is-paused .video-keyword-track{animation-play-state:paused}
+.keyword-motion-control{display:grid;place-items:center;flex:none;width:24px;height:26px;color:#687163;border-radius:6px}
+.keyword-motion-control:hover{background:#edf1ea}
+@keyframes video-keyword-loop{to{transform:translateX(calc(-1 * var(--keyword-loop-width)))}}
+@media(prefers-reduced-motion:reduce){.is-overflowing .video-keyword-track{animation:none;will-change:auto}.video-keyword-viewport{overflow-x:auto;scrollbar-width:thin}.video-keyword-copy,.keyword-motion-control{display:none}}
+.video-keyword-copy .video-keyword{cursor:pointer}
+.video-keyword-copy .video-keyword:hover{text-decoration:underline;text-underline-offset:3px}

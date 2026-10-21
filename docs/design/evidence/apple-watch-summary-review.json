@@ -1,0 +1,132 @@
+{
+  "title": "New Tech, New Software - Apple Watch Series 12",
+  "url": "https://www.youtube.com/watch?v=ckEUIfrg_tU",
+  "ruleVersion": "takeaways-v1",
+  "captionBased": true,
+  "highlights": [
+    {
+      "text": "Apple Watch Series 12 uses Ceramic Shield 2 front glass and a zirconia back, replacing the Ion-X front glass and sapphire rear sensors on earlier base models.",
+      "startSeconds": 127
+    },
+    {
+      "text": "The redesigned Health app is easier to navigate, with clearer Insights, Longevity and Browse tabs for finding tracked data.",
+      "startSeconds": 184
+    },
+    {
+      "text": "Series 12 tracked heart rate every five seconds in this review, compared with every three to eight minutes on Series 10.",
+      "startSeconds": 315
+    },
+    {
+      "text": "The Health app adds camera-based balance and flexibility assessments that run locally on the phone, though strict positioning can interrupt the tests.",
+      "startSeconds": 506
+    },
+    {
+      "text": "Series 12 adds automatic Shazam, sound recognition, 15-second Live Rewind and Siri Recap; always-listening features raised the reviewer's privacy concerns.",
+      "startSeconds": 728
+    },
+    {
+      "text": "The reviewer got two days of battery life and 25% charge in 15 minutes, but could not reproduce Apple's claimed 10-watt charging.",
+      "startSeconds": 834
+    }
+  ],
+  "keywords": [
+    {
+      "label": "Apple Watch Series 12",
+      "ranges": [
+        {
+          "startSeconds": 0,
+          "endSeconds": 691
+        },
+        {
+          "startSeconds": 728,
+          "endSeconds": 1048
+        }
+      ],
+      "seconds": 1011
+    },
+    {
+      "label": "Health app",
+      "ranges": [
+        {
+          "startSeconds": 184,
+          "endSeconds": 691
+        }
+      ],
+      "seconds": 507
+    },
+    {
+      "label": "Readiness score",
+      "ranges": [
+        {
+          "startSeconds": 240,
+          "endSeconds": 446
+        }
+      ],
+      "seconds": 206
+    },
+    {
+      "label": "Mobility assessments",
+      "ranges": [
+        {
+          "startSeconds": 506,
+          "endSeconds": 691
+        }
+      ],
+      "seconds": 185
+    },
+    {
+      "label": "Audio intelligence",
+      "ranges": [
+        {
+          "startSeconds": 728,
+          "endSeconds": 834
+        }
+      ],
+      "seconds": 106
+    },
+    {
+      "label": "Battery and fast charging",
+      "ranges": [
+        {
+          "startSeconds": 834,
+          "endSeconds": 906
+        }
+      ],
+      "seconds": 72
+    },
+    {
+      "label": "watchOS update",
+      "ranges": [
+        {
+          "startSeconds": 735,
+          "endSeconds": 750
+        },
+        {
+          "startSeconds": 1002,
+          "endSeconds": 1048
+        }
+      ],
+      "seconds": 61
+    },
+    {
+      "label": "Longevity and health age",
+      "ranges": [
+        {
+          "startSeconds": 446,
+          "endSeconds": 506
+        }
+      ],
+      "seconds": 60
+    },
+    {
+      "label": "Apple Watch SE",
+      "ranges": [
+        {
+          "startSeconds": 916,
+          "endSeconds": 930
+        }
+      ],
+      "seconds": 14
+    }
+  ]
+}
