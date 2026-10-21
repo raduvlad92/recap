@@ -1,0 +1,3002 @@
+[
+  {
+    "name": "SemiAnalysis",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "newsletter.semianalysis.com",
+    "url": "https://newsletter.semianalysis.com/",
+    "description": "Reports on semiconductors, AI infrastructure and the businesses building computing hardware.",
+    "topics": [
+      "Technology",
+      "Semiconductors"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links SemiAnalysis - Dylan Patel to this publication domain."
+      },
+      {
+        "url": "https://newsletter.semianalysis.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies SemiAnalysis."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Nate’s Substack",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "natesnewsletter.substack.com",
+    "url": "https://natesnewsletter.substack.com/",
+    "description": "Publishes practical guidance on using AI tools and developing AI strategy at work.",
+    "topics": [
+      "Technology",
+      "Artificial intelligence"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links Nate’s Substack to this publication domain."
+      },
+      {
+        "url": "https://natesnewsletter.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Nate’s Substack."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Gergely Orosz",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "newsletter.pragmaticengineer.com",
+    "url": "https://newsletter.pragmaticengineer.com/",
+    "description": "Writes The Pragmatic Engineer about software engineering careers, engineering management and technology companies.",
+    "topics": [
+      "Technology",
+      "Software engineering"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links The Pragmatic Engineer - Gergely Orosz to this publication domain."
+      },
+      {
+        "url": "https://newsletter.pragmaticengineer.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Pragmatic Engineer."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "ByteByteGo",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "blog.bytebytego.com",
+    "url": "https://blog.bytebytego.com/",
+    "description": "Explains software architecture, distributed systems and engineering design through its newsletter.",
+    "topics": [
+      "Technology",
+      "Software engineering"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links ByteByteGo Newsletter - Alex Xu to this publication domain."
+      },
+      {
+        "url": "https://blog.bytebytego.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies ByteByteGo Newsletter."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Exponential View",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.exponentialview.co",
+    "url": "https://www.exponentialview.co/",
+    "description": "Examines AI developments and their implications for business, investment and society.",
+    "topics": [
+      "Technology",
+      "Artificial intelligence"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links Exponential View - Azeem Azhar to this publication domain."
+      },
+      {
+        "url": "https://www.exponentialview.co/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Exponential View."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Diligence Stack",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.thediligencestack.com",
+    "url": "https://www.thediligencestack.com/",
+    "description": "Researches AI infrastructure, semiconductor supply chains and the companies investing in computing capacity.",
+    "topics": [
+      "Technology",
+      "Investing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links The Diligence Stack - By Creative Strategies to this publication domain."
+      },
+      {
+        "url": "https://www.thediligencestack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Diligence Stack."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Casey Muratori",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.computerenhance.com",
+    "url": "https://www.computerenhance.com/",
+    "description": "Publishes Computer, Enhance!, with programming lessons, performance analysis and developer interviews.",
+    "topics": [
+      "Technology",
+      "Programming"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links Computer, Enhance! - Casey Muratori to this publication domain."
+      },
+      {
+        "url": "https://www.computerenhance.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Computer, Enhance!."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Damnang Research",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.damnang.com",
+    "url": "https://www.damnang.com/",
+    "description": "Analyzes semiconductor companies, chip technology and changes in the computing industry.",
+    "topics": [
+      "Technology",
+      "Semiconductors"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links Damnang Research to this publication domain."
+      },
+      {
+        "url": "https://www.damnang.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Damnang Research."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Aakash Gupta",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.news.aakashg.com",
+    "url": "https://www.news.aakashg.com/",
+    "description": "Writes Product Growth about product management, growth methods and building with AI tools.",
+    "topics": [
+      "Technology",
+      "Product management"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links Product Growth - Aakash Gupta to this publication domain."
+      },
+      {
+        "url": "https://www.news.aakashg.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Product Growth."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Newcomer",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.newcomer.co",
+    "url": "https://www.newcomer.co/",
+    "description": "Reports on venture capital, startup companies and the people shaping the technology industry.",
+    "topics": [
+      "Technology",
+      "Startups"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/technology",
+        "note": "Substack's own directory links Newcomer to this publication domain."
+      },
+      {
+        "url": "https://www.newcomer.co/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Newcomer."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Lenny Rachitsky",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.lennysnewsletter.com",
+    "url": "https://www.lennysnewsletter.com/",
+    "description": "Publishes practical interviews and guidance about product development, growth and careers in technology.",
+    "topics": [
+      "Business",
+      "Product management"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links Lenny's Newsletter - Lenny Rachitsky to this publication domain."
+      },
+      {
+        "url": "https://www.lennysnewsletter.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Lenny's Newsletter."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Noah Smith",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.noahpinion.blog",
+    "url": "https://www.noahpinion.blog/",
+    "description": "Writes Noahpinion, offering commentary on economics, industrial policy and technology.",
+    "topics": [
+      "Business",
+      "Economics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links Noahpinion - Noah Smith to this publication domain."
+      },
+      {
+        "url": "https://www.noahpinion.blog/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Noahpinion."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Emily Sundberg",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.readfeedme.com",
+    "url": "https://www.readfeedme.com/",
+    "description": "Writes Feed Me about business, consumer brands and the culture surrounding commerce.",
+    "topics": [
+      "Business",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links Feed Me - Emily Sundberg to this publication domain."
+      },
+      {
+        "url": "https://www.readfeedme.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Feed Me."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "AI CFO Office",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "cfooffice.io",
+    "url": "https://cfooffice.io/",
+    "description": "Covers finance operations, planning tools and the use of AI in corporate finance.",
+    "topics": [
+      "Business",
+      "Finance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links AI CFO Office to this publication domain."
+      },
+      {
+        "url": "https://cfooffice.io/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies AI CFO Office."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Steve Eisman",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "realeismanplaybook.substack.com",
+    "url": "https://realeismanplaybook.substack.com/",
+    "description": "Publishes investment conversations and commentary on markets through The Real Eisman Playbook.",
+    "topics": [
+      "Business",
+      "Investing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links Steve Eisman to this publication domain."
+      },
+      {
+        "url": "https://realeismanplaybook.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Steve Eisman."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Rachel Karten",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.linkinbio.news",
+    "url": "https://www.linkinbio.news/",
+    "description": "Writes Link in Bio about social media work, brand communication and online publishing.",
+    "topics": [
+      "Business",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links Link in Bio - Rachel Karten to this publication domain."
+      },
+      {
+        "url": "https://www.linkinbio.news/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Link in Bio."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Marc Rubinstein",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.netinterest.co",
+    "url": "https://www.netinterest.co/",
+    "description": "Writes Net Interest, examining financial companies and developments in the banking industry.",
+    "topics": [
+      "Business",
+      "Finance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links Net Interest - Marc Rubinstein to this publication domain."
+      },
+      {
+        "url": "https://www.netinterest.co/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Net Interest."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Linas Beliūnas",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "linas.substack.com",
+    "url": "https://linas.substack.com/",
+    "description": "Publishes commentary on financial technology, AI tools and changes in business operations.",
+    "topics": [
+      "Business",
+      "Financial technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links Linas's Newsletter - Linas Beliūnas to this publication domain."
+      },
+      {
+        "url": "https://linas.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Linas's Newsletter."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Derek Thompson",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.derekthompson.org",
+    "url": "https://www.derekthompson.org/",
+    "description": "Writes essays and interviews about economic progress, technology and public policy.",
+    "topics": [
+      "Business",
+      "Economics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links Derek Thompson to this publication domain."
+      },
+      {
+        "url": "https://www.derekthompson.org/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Derek Thompson."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Prof G Media",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.profgmedia.com",
+    "url": "https://www.profgmedia.com/",
+    "description": "Publishes business analysis and conversations led by Scott Galloway and the Prof G team.",
+    "topics": [
+      "Business",
+      "Media"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/business",
+        "note": "Substack's own directory links Prof G Media to this publication domain."
+      },
+      {
+        "url": "https://www.profgmedia.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Prof G Media."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Citrini Research",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.citriniresearch.com",
+    "url": "https://www.citriniresearch.com/",
+    "description": "Publishes thematic investment research on technology, industry trends and public companies.",
+    "topics": [
+      "Finance",
+      "Investing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links Citrini Research to this publication domain."
+      },
+      {
+        "url": "https://www.citriniresearch.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Citrini Research."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Michael Burry",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "michaeljburry.substack.com",
+    "url": "https://michaeljburry.substack.com/",
+    "description": "Writes Cassandra Unchained, sharing analysis of markets, individual investments and financial history.",
+    "topics": [
+      "Finance",
+      "Investing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links Cassandra Unchained - Michael Burry to this publication domain."
+      },
+      {
+        "url": "https://michaeljburry.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Cassandra Unchained."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Doomberg",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "newsletter.doomberg.com",
+    "url": "https://newsletter.doomberg.com/",
+    "description": "Publishes commentary connecting energy markets, finance, industrial policy and geopolitics.",
+    "topics": [
+      "Finance",
+      "Energy"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links Doomberg to this publication domain."
+      },
+      {
+        "url": "https://newsletter.doomberg.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Doomberg."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "James Bulltard",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.jamesbulltard.com",
+    "url": "https://www.jamesbulltard.com/",
+    "description": "Publishes market commentary focused on options activity and trading in public equities.",
+    "topics": [
+      "Finance",
+      "Markets"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links The Running Of The Bulltards - James Bulltard to this publication domain."
+      },
+      {
+        "url": "https://www.jamesbulltard.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Running Of The Bulltards."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "TMT Breakout",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.tmtbreakout.com",
+    "url": "https://www.tmtbreakout.com/",
+    "description": "Covers technology stocks, company earnings and developments affecting public technology markets.",
+    "topics": [
+      "Finance",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links TMT Breakout to this publication domain."
+      },
+      {
+        "url": "https://www.tmtbreakout.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies TMT Breakout."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Michael Howell",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "capitalwars.substack.com",
+    "url": "https://capitalwars.substack.com/",
+    "description": "Writes Capital Wars about global liquidity, financial conditions and market cycles.",
+    "topics": [
+      "Finance",
+      "Economics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links Capital Wars - Michael Howell to this publication domain."
+      },
+      {
+        "url": "https://capitalwars.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Capital Wars."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Compounding Quality",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.compoundingquality.net",
+    "url": "https://www.compoundingquality.net/",
+    "description": "Publishes investing discussions focused on company quality and long-term equity ownership.",
+    "topics": [
+      "Finance",
+      "Investing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links Compounding Quality to this publication domain."
+      },
+      {
+        "url": "https://www.compoundingquality.net/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Compounding Quality."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Le Shrub",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.shrubstack.com",
+    "url": "https://www.shrubstack.com/",
+    "description": "Writes Reminiscences of a Shrub Operator, offering commentary on investing and market developments.",
+    "topics": [
+      "Finance",
+      "Investing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links Reminiscences of a Shrub Operator - Le Shrub to this publication domain."
+      },
+      {
+        "url": "https://www.shrubstack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Reminiscences of a Shrub Operator."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "FUNDA",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "fundaai.substack.com",
+    "url": "https://fundaai.substack.com/",
+    "description": "Publishes company research and industry interviews focused on technology investments.",
+    "topics": [
+      "Finance",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links FUNDA to this publication domain."
+      },
+      {
+        "url": "https://fundaai.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies FUNDA."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tic Toc Trading",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "tictoctrading.substack.com",
+    "url": "https://tictoctrading.substack.com/",
+    "description": "Publishes trading commentary about options, stocks, futures and market structure.",
+    "topics": [
+      "Finance",
+      "Markets"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/finance",
+        "note": "Substack's own directory links Tic Toc's OrderFlow Newsletter - Tic Toc Trading to this publication domain."
+      },
+      {
+        "url": "https://tictoctrading.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Tic Toc's OrderFlow Newsletter."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Caroline Chambers",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "whattocook.substack.com",
+    "url": "https://whattocook.substack.com/",
+    "description": "Publishes What To Cook When You Don't Feel Like Cooking, featuring accessible complete-meal recipes.",
+    "topics": [
+      "Food",
+      "Home cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links What To Cook When You Don't Feel Like Cooking - Caroline Chambers to this publication domain."
+      },
+      {
+        "url": "https://whattocook.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies What To Cook When You Don't Feel Like Cooking."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Corre Larkin",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "cocolarkincooks.substack.com",
+    "url": "https://cocolarkincooks.substack.com/",
+    "description": "Shares recipes and personal cooking notes through Coco Larkin Cooks.",
+    "topics": [
+      "Food",
+      "Home cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links Coco Larkin Cooks - Corre Larkin to this publication domain."
+      },
+      {
+        "url": "https://cocolarkincooks.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Coco Larkin Cooks."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jenn Lueke",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "jenneatsgoood.substack.com",
+    "url": "https://jenneatsgoood.substack.com/",
+    "description": "Publishes the eat goood newsletter with recipes, meal-preparation ideas and shopping guidance.",
+    "topics": [
+      "Food",
+      "Meal planning"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links the eat goood newsletter - Jenn Lueke to this publication domain."
+      },
+      {
+        "url": "https://jenneatsgoood.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies the eat goood newsletter."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Zoe Barrie",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "restaurantdropout.substack.com",
+    "url": "https://restaurantdropout.substack.com/",
+    "description": "Publishes Restaurant Dropout with dinner menus, recipes and preparation guides.",
+    "topics": [
+      "Food",
+      "Home cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links Restaurant Dropout - Zoe Barrie to this publication domain."
+      },
+      {
+        "url": "https://restaurantdropout.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Restaurant Dropout."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ottolenghi",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "ottolenghi.substack.com",
+    "url": "https://ottolenghi.substack.com/",
+    "description": "Shares recipes, cooking ideas and behind-the-scenes updates from the Ottolenghi food team.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links Ottolenghi - Yotam Ottolenghi to this publication domain."
+      },
+      {
+        "url": "https://ottolenghi.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Ottolenghi."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Violet Witchel",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "violetcooks.substack.com",
+    "url": "https://violetcooks.substack.com/",
+    "description": "Shares recipes, meal plans and shopping lists through Violet’s Substack.",
+    "topics": [
+      "Food",
+      "Meal planning"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links Violet’s Substack - Violet Witchel to this publication domain."
+      },
+      {
+        "url": "https://violetcooks.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Violet’s Substack."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Notorious Foodie",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "notoriousfoodie.substack.com",
+    "url": "https://notoriousfoodie.substack.com/",
+    "description": "Publishes cooking demonstrations, recipes and notes about preparing food.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links Notorious Foodie to this publication domain."
+      },
+      {
+        "url": "https://notoriousfoodie.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Notorious Foodie."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Vittles",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.vittlesmagazine.com",
+    "url": "https://www.vittlesmagazine.com/",
+    "description": "Publishes food journalism and essays about restaurants, food workers and culinary culture.",
+    "topics": [
+      "Food",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links Vittles to this publication domain."
+      },
+      {
+        "url": "https://www.vittlesmagazine.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Vittles."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Claire",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "heresyourbite.substack.com",
+    "url": "https://heresyourbite.substack.com/",
+    "description": "Publishes bite club, sharing approachable recipes, one-pot meals and weeknight dinner ideas.",
+    "topics": [
+      "Food",
+      "Home cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links bite club - Claire to this publication domain."
+      },
+      {
+        "url": "https://heresyourbite.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies bite club."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Katie",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "sundaystack.substack.com",
+    "url": "https://sundaystack.substack.com/",
+    "description": "Publishes the sunday stack with recipes, cooking techniques and notes on hosting.",
+    "topics": [
+      "Food",
+      "Home cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/food",
+        "note": "Substack's own directory links the sunday stack - katie to this publication domain."
+      },
+      {
+        "url": "https://sundaystack.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies the sunday stack."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Katelyn Jetelina",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "yourlocalepidemiologist.substack.com",
+    "url": "https://yourlocalepidemiologist.substack.com/",
+    "description": "Writes Your Local Epidemiologist, explaining public-health research and developments for general readers.",
+    "topics": [
+      "Science",
+      "Public health"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links Your Local Epidemiologist - Katelyn Jetelina to this publication domain."
+      },
+      {
+        "url": "https://yourlocalepidemiologist.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Your Local Epidemiologist."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Nick Norwitz",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "staycuriousmetabolism.substack.com",
+    "url": "https://staycuriousmetabolism.substack.com/",
+    "description": "Publishes StayCurious Metabolism with explanations of metabolic health and nutrition research.",
+    "topics": [
+      "Science",
+      "Health"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links StayCurious Metabolism - Nick Norwitz MD PhD to this publication domain."
+      },
+      {
+        "url": "https://staycuriousmetabolism.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies StayCurious Metabolism."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Scott Alexander",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.astralcodexten.com",
+    "url": "https://www.astralcodexten.com/",
+    "description": "Writes Astral Codex Ten, publishing essays about reasoning, science and contemporary ideas.",
+    "topics": [
+      "Science",
+      "Ideas"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links Astral Codex Ten - Scott Alexander to this publication domain."
+      },
+      {
+        "url": "https://www.astralcodexten.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Astral Codex Ten."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jessica Knurick",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "drjessicaknurick.substack.com",
+    "url": "https://drjessicaknurick.substack.com/",
+    "description": "Writes about nutrition research, public health and evaluating claims about health.",
+    "topics": [
+      "Science",
+      "Nutrition"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links Dr. Jessica Knurick to this publication domain."
+      },
+      {
+        "url": "https://drjessicaknurick.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Dr. Jessica Knurick."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Rob Henderson",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.robkhenderson.com",
+    "url": "https://www.robkhenderson.com/",
+    "description": "Publishes essays on psychology, social class and human behavior.",
+    "topics": [
+      "Science",
+      "Psychology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links Rob Henderson's Newsletter to this publication domain."
+      },
+      {
+        "url": "https://www.robkhenderson.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Rob Henderson's Newsletter."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Sensible Medicine",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.sensible-med.com",
+    "url": "https://www.sensible-med.com/",
+    "description": "Publishes discussions and commentary about medical evidence, clinical practice and health policy.",
+    "topics": [
+      "Science",
+      "Medicine"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links Sensible Medicine - Adam Cifu to this publication domain."
+      },
+      {
+        "url": "https://www.sensible-med.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Sensible Medicine."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Morgan McSweeney",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "drnoc.substack.com",
+    "url": "https://drnoc.substack.com/",
+    "description": "Publishes Dr. Noc, PhD, explaining health research and assessing scientific claims.",
+    "topics": [
+      "Science",
+      "Public health"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links Dr. Noc, PhD - Morgan McSweeney to this publication domain."
+      },
+      {
+        "url": "https://drnoc.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Dr. Noc, PhD."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Eric Topol",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "erictopol.substack.com",
+    "url": "https://erictopol.substack.com/",
+    "description": "Writes Ground Truths about medical research, life sciences and advances in healthcare.",
+    "topics": [
+      "Science",
+      "Medicine"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links Ground Truths - Eric Topol to this publication domain."
+      },
+      {
+        "url": "https://erictopol.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Ground Truths."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "PulmCCM",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.pulmccm.org",
+    "url": "https://www.pulmccm.org/",
+    "description": "Publishes clinical discussions and educational material about critical care and intensive-care medicine.",
+    "topics": [
+      "Science",
+      "Medicine"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links PulmCCM to this publication domain."
+      },
+      {
+        "url": "https://www.pulmccm.org/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies PulmCCM."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "James Butcher",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "newsletter.journalology.com",
+    "url": "https://newsletter.journalology.com/",
+    "description": "Writes Journalology about scholarly publishing, academic journals and developments affecting editors.",
+    "topics": [
+      "Science",
+      "Publishing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/science",
+        "note": "Substack's own directory links Journalology - James Butcher to this publication domain."
+      },
+      {
+        "url": "https://newsletter.journalology.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Journalology."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Selvaggia Lucarelli",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "selvaggialucarelli.substack.com",
+    "url": "https://selvaggialucarelli.substack.com/",
+    "description": "Publishes Vale Tutto in Italian, combining commentary, reported stories and podcast conversations.",
+    "topics": [
+      "Culture",
+      "Media"
+    ],
+    "language": "it",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links Vale Tutto - di Selvaggia Lucarelli to this publication domain."
+      },
+      {
+        "url": "https://selvaggialucarelli.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Vale Tutto."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Diabolical Lies",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.diabolicalliespod.com",
+    "url": "https://www.diabolicalliespod.com/",
+    "description": "Publishes long-form podcast discussions about politics, culture and public debates.",
+    "topics": [
+      "Culture",
+      "Politics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links Diabolical Lies to this publication domain."
+      },
+      {
+        "url": "https://www.diabolicalliespod.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Diabolical Lies."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Niall Harbison",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "niallharbison.substack.com",
+    "url": "https://niallharbison.substack.com/",
+    "description": "Shares Happy Doggo updates about street-dog rescue and the animals in its care.",
+    "topics": [
+      "Culture",
+      "Animals"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links Happy Doggo - Niall Harbison to this publication domain."
+      },
+      {
+        "url": "https://niallharbison.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Happy Doggo."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Fifth Column",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.wethefifth.com",
+    "url": "https://www.wethefifth.com/",
+    "description": "Publishes a conversational podcast analyzing news, politics and media coverage.",
+    "topics": [
+      "Culture",
+      "Politics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links The Fifth Column (A Podcast) to this publication domain."
+      },
+      {
+        "url": "https://www.wethefifth.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Fifth Column (A Podcast)."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Blocked and Reported",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.blockedandreported.org",
+    "url": "https://www.blockedandreported.org/",
+    "description": "Publishes podcast discussions and reporting about internet controversies and public debates.",
+    "topics": [
+      "Culture",
+      "Media"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links Blocked and Reported to this publication domain."
+      },
+      {
+        "url": "https://www.blockedandreported.org/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Blocked and Reported."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Sam Harris",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "samharris.substack.com",
+    "url": "https://samharris.substack.com/",
+    "description": "Publishes essays and Making Sense conversations about ideas, society and technology.",
+    "topics": [
+      "Culture",
+      "Ideas"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links Sam Harris to this publication domain."
+      },
+      {
+        "url": "https://samharris.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Sam Harris."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jessica Reed Kraus",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "jessicareedkraus.substack.com",
+    "url": "https://jessicareedkraus.substack.com/",
+    "description": "Writes House Inhabit, offering commentary on celebrity stories, media and public figures.",
+    "topics": [
+      "Culture",
+      "Media"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links House Inhabit - Jessica Reed Kraus to this publication domain."
+      },
+      {
+        "url": "https://jessicareedkraus.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies House Inhabit."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jessica Valenti",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "jessica.substack.com",
+    "url": "https://jessica.substack.com/",
+    "description": "Writes Abortion, Every Day, tracking reproductive-rights developments and related public policy.",
+    "topics": [
+      "Culture",
+      "Public policy"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links Abortion, Every Day - Jessica Valenti to this publication domain."
+      },
+      {
+        "url": "https://jessica.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Abortion, Every Day."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "TRIGGERnometry",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.triggerpod.co.uk",
+    "url": "https://www.triggerpod.co.uk/",
+    "description": "Publishes interview discussions led by Konstantin Kisin and Francis Foster about current affairs.",
+    "topics": [
+      "Culture",
+      "Current affairs"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links TRIGGERnometry - Triggernometry to this publication domain."
+      },
+      {
+        "url": "https://www.triggerpod.co.uk/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies TRIGGERnometry."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dean Blundell",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "deanblundell.substack.com",
+    "url": "https://deanblundell.substack.com/",
+    "description": "Publishes commentary about Canadian and international politics, news and media.",
+    "topics": [
+      "Culture",
+      "Current affairs"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/culture",
+        "note": "Substack's own directory links Dean Blundell to this publication domain."
+      },
+      {
+        "url": "https://deanblundell.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Dean Blundell."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Lindsey Mackereth",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "lindseymackereth.substack.com",
+    "url": "https://lindseymackereth.substack.com/",
+    "description": "Writes Complexity Edge about neurodivergence, masking and experiences of autism and ADHD.",
+    "topics": [
+      "Health",
+      "Psychology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links Lindsey Mack's Complexity Edge - Lindsey Mackereth to this publication domain."
+      },
+      {
+        "url": "https://lindseymackereth.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Lindsey Mack's Complexity Edge."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Michael Easter",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.twopct.com",
+    "url": "https://www.twopct.com/",
+    "description": "Publishes Two Percent with discussions of fitness, nutrition, mindset and everyday health.",
+    "topics": [
+      "Health",
+      "Fitness"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links Two Percent with Michael Easter to this publication domain."
+      },
+      {
+        "url": "https://www.twopct.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Two Percent with Michael Easter."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Laurie Marbas",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "drlauriemarbas.substack.com",
+    "url": "https://drlauriemarbas.substack.com/",
+    "description": "Publishes The Habit Healers, explaining health research and approaches to everyday habits.",
+    "topics": [
+      "Health",
+      "Habits"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links The Habit Healers - Laurie Marbas to this publication domain."
+      },
+      {
+        "url": "https://drlauriemarbas.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Habit Healers."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Sara Szal",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "saraszalmd.substack.com",
+    "url": "https://saraszalmd.substack.com/",
+    "description": "Publishes The Female Edge about women's health, hormones, menopause and related research.",
+    "topics": [
+      "Health",
+      "Women's health"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links The Female Edge - Sara Szal MD to this publication domain."
+      },
+      {
+        "url": "https://saraszalmd.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Female Edge."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Esther Perel",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "estherperel.substack.com",
+    "url": "https://estherperel.substack.com/",
+    "description": "Publishes Entre Nous with reflections and practices focused on relationships and human connection.",
+    "topics": [
+      "Health",
+      "Relationships"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links Entre Nous with Esther Perel to this publication domain."
+      },
+      {
+        "url": "https://estherperel.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Entre Nous with Esther Perel."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Angie Caruso",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "healthfulradiance.substack.com",
+    "url": "https://healthfulradiance.substack.com/",
+    "description": "Publishes healthful radiance with food-preparation ideas, recipes and everyday wellness notes.",
+    "topics": [
+      "Health",
+      "Food"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links healthful radiance - angie caruso to this publication domain."
+      },
+      {
+        "url": "https://healthfulradiance.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies healthful radiance."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Susan Cain",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "thequietlife.net",
+    "url": "https://thequietlife.net/",
+    "description": "Publishes The Quiet Life with reflections on sensitivity, introversion, creativity and wellbeing.",
+    "topics": [
+      "Health",
+      "Wellbeing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links The Quiet Life with Susan Cain to this publication domain."
+      },
+      {
+        "url": "https://thequietlife.net/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Quiet Life with Susan Cain."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jen Gunter",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "vajenda.substack.com",
+    "url": "https://vajenda.substack.com/",
+    "description": "Writes The Vajenda about women's health, medical information and health misinformation.",
+    "topics": [
+      "Health",
+      "Medicine"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links The Vajenda - Dr. Jen Gunter to this publication domain."
+      },
+      {
+        "url": "https://vajenda.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Vajenda."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Zawn Villines",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "zawn.substack.com",
+    "url": "https://zawn.substack.com/",
+    "description": "Writes Liberating Motherhood about parenting, feminism and the social treatment of mothers.",
+    "topics": [
+      "Health",
+      "Parenting"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links Liberating Motherhood - Zawn Villines to this publication domain."
+      },
+      {
+        "url": "https://zawn.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Liberating Motherhood."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The French Virologist",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "thefrenchvirologist.substack.com",
+    "url": "https://thefrenchvirologist.substack.com/",
+    "description": "Publishes Au Microb'scope in French, explaining virology, immunology and everyday health topics.",
+    "topics": [
+      "Health",
+      "Science"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/health",
+        "note": "Substack's own directory links Au Microb'scope - The French Virologist to this publication domain."
+      },
+      {
+        "url": "https://thefrenchvirologist.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Au Microb'scope."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "John Canzano",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.johncanzano.com",
+    "url": "https://www.johncanzano.com/",
+    "description": "Publishes Bald Faced Truth with reporting and commentary on college and professional sports.",
+    "topics": [
+      "Sports",
+      "Journalism"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links Bald Faced Truth by John Canzano to this publication domain."
+      },
+      {
+        "url": "https://www.johncanzano.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Bald Faced Truth by John Canzano."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kareem Abdul-Jabbar",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "kareem.substack.com",
+    "url": "https://kareem.substack.com/",
+    "description": "Publishes commentary connecting sport, American politics and popular culture.",
+    "topics": [
+      "Sports",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links Kareem Takes on the News - Kareem Abdul-Jabbar to this publication domain."
+      },
+      {
+        "url": "https://kareem.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Kareem Takes on the News."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Split Zone Duo",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.splitzoneduo.com",
+    "url": "https://www.splitzoneduo.com/",
+    "description": "Publishes podcast conversations and analysis covering college football.",
+    "topics": [
+      "Sports",
+      "American football"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links Split Zone Duo to this publication domain."
+      },
+      {
+        "url": "https://www.splitzoneduo.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Split Zone Duo."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ethan Strauss",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.houseofstrauss.com",
+    "url": "https://www.houseofstrauss.com/",
+    "description": "Writes House of Strauss about sports, business, politics and media culture.",
+    "topics": [
+      "Sports",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links House of Strauss - Ethan Strauss to this publication domain."
+      },
+      {
+        "url": "https://www.houseofstrauss.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies House of Strauss."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Joe Posnanski",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.joeposnanski.com",
+    "url": "https://www.joeposnanski.com/",
+    "description": "Writes JoeBlogs, combining sports analysis with reflections on memory and fandom.",
+    "topics": [
+      "Sports",
+      "Baseball"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links JoeBlogs - Joe Posnanski to this publication domain."
+      },
+      {
+        "url": "https://www.joeposnanski.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies JoeBlogs."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Joe Pompliano",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "huddleup.substack.com",
+    "url": "https://huddleup.substack.com/",
+    "description": "Writes Huddle Up about sports businesses, commercial deals and industry finances.",
+    "topics": [
+      "Sports",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links Huddle Up - Joe Pompliano to this publication domain."
+      },
+      {
+        "url": "https://huddleup.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Huddle Up."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tyler Dunne",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.golongtd.com",
+    "url": "https://www.golongtd.com/",
+    "description": "Publishes Go Long with long-form reporting and commentary about the NFL.",
+    "topics": [
+      "Sports",
+      "American football"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links Go Long - Tyler Dunne to this publication domain."
+      },
+      {
+        "url": "https://www.golongtd.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Go Long."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ben Gretch",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "bengretch.substack.com",
+    "url": "https://bengretch.substack.com/",
+    "description": "Writes Stealing Signals about fantasy football and interpreting football performance data.",
+    "topics": [
+      "Sports",
+      "Fantasy sports"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links Stealing Signals - Ben Gretch to this publication domain."
+      },
+      {
+        "url": "https://bengretch.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Stealing Signals."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Cody Alexander",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.matchquarters.com",
+    "url": "https://www.matchquarters.com/",
+    "description": "Publishes MatchQuarters, explaining American-football defensive tactics and coaching concepts.",
+    "topics": [
+      "Sports",
+      "Coaching"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links MatchQuarters by Cody Alexander to this publication domain."
+      },
+      {
+        "url": "https://www.matchquarters.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies MatchQuarters by Cody Alexander."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Marc Stein",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "marcstein.substack.com",
+    "url": "https://marcstein.substack.com/",
+    "description": "Publishes The Stein Line with reporting and commentary about the NBA.",
+    "topics": [
+      "Sports",
+      "Basketball"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/sports",
+        "note": "Substack's own directory links The Stein Line - Marc Stein to this publication domain."
+      },
+      {
+        "url": "https://marcstein.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Stein Line."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Suleika Jaouad",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "theisolationjournals.substack.com",
+    "url": "https://theisolationjournals.substack.com/",
+    "description": "Publishes The Isolation Journals, offering writing prompts and reflections about creative life.",
+    "topics": [
+      "Literature",
+      "Creativity"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links The Isolation Journals with Suleika Jaouad to this publication domain."
+      },
+      {
+        "url": "https://theisolationjournals.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Isolation Journals with Suleika Jaouad."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "George Saunders",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "georgesaunders.substack.com",
+    "url": "https://georgesaunders.substack.com/",
+    "description": "Publishes Story Club, exploring how short stories work and how writers develop their craft.",
+    "topics": [
+      "Literature",
+      "Writing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links Story Club with George Saunders to this publication domain."
+      },
+      {
+        "url": "https://georgesaunders.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Story Club with George Saunders."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ron Charles",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "roncharles.substack.com",
+    "url": "https://roncharles.substack.com/",
+    "description": "Publishes criticism and essays about books, authors and literary culture.",
+    "topics": [
+      "Literature",
+      "Books"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links Ron Charles to this publication domain."
+      },
+      {
+        "url": "https://roncharles.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Ron Charles."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Simon Haisell",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "footnotesandtangents.substack.com",
+    "url": "https://footnotesandtangents.substack.com/",
+    "description": "Publishes Footnotes and Tangents, guiding readers through books with accompanying commentary.",
+    "topics": [
+      "Literature",
+      "Books"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links Footnotes and Tangents - Simon Haisell to this publication domain."
+      },
+      {
+        "url": "https://footnotesandtangents.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Footnotes and Tangents."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Athenaeum Book Club",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "athenaeumbooks.com",
+    "url": "https://athenaeumbooks.com/",
+    "description": "Publishes reading discussions and study material about classic literature and ideas.",
+    "topics": [
+      "Literature",
+      "Books"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links Athenaeum Book Club to this publication domain."
+      },
+      {
+        "url": "https://athenaeumbooks.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Athenaeum Book Club."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Pandora Sykes",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "pandorasykes.substack.com",
+    "url": "https://pandorasykes.substack.com/",
+    "description": "Publishes Books + Bits with reading recommendations and cultural commentary.",
+    "topics": [
+      "Literature",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links Books + Bits - Pandora Sykes to this publication domain."
+      },
+      {
+        "url": "https://pandorasykes.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Books + Bits."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Andrius Tapinas",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "tapinas.substack.com",
+    "url": "https://tapinas.substack.com/",
+    "description": "Publishes Lithuanian writing, podcast conversations, reading discussions and creative-work updates.",
+    "topics": [
+      "Literature",
+      "Culture"
+    ],
+    "language": "lt",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links Andrius Tapinas to this publication domain."
+      },
+      {
+        "url": "https://tapinas.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Andrius Tapinas."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Two Sylvias Press",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "twosylviaspress.substack.com",
+    "url": "https://twosylviaspress.substack.com/",
+    "description": "Publishes Weekly Muse with poetry prompts, writing exercises and publishing opportunities.",
+    "topics": [
+      "Literature",
+      "Poetry"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links Two Sylvias Press' Weekly Muse to this publication domain."
+      },
+      {
+        "url": "https://twosylviaspress.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Two Sylvias Press' Weekly Muse."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Sarah Fay",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.substackwritersatwork.com",
+    "url": "https://www.substackwritersatwork.com/",
+    "description": "Publishes Substack Writers at Work with guidance on writing and developing a publication.",
+    "topics": [
+      "Literature",
+      "Publishing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links Substack Writers at Work with Sarah Fay to this publication domain."
+      },
+      {
+        "url": "https://www.substackwritersatwork.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Substack Writers at Work with Sarah Fay."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Miranda July",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "mirandajuly.substack.com",
+    "url": "https://mirandajuly.substack.com/",
+    "description": "Publishes personal writing, images, audio and conversations connected to her creative work.",
+    "topics": [
+      "Literature",
+      "Art"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/literature",
+        "note": "Substack's own directory links Miranda July to this publication domain."
+      },
+      {
+        "url": "https://mirandajuly.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Miranda July."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Darryl Cooper",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "subscribe.martyrmade.com",
+    "url": "https://subscribe.martyrmade.com/",
+    "description": "Publishes The Martyr Made Substack with historical podcast episodes and accompanying commentary.",
+    "topics": [
+      "History",
+      "Podcasts"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links The Martyr Made Substack - Darryl Cooper to this publication domain."
+      },
+      {
+        "url": "https://subscribe.martyrmade.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Martyr Made Substack."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Adam Tooze",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "adamtooze.substack.com",
+    "url": "https://adamtooze.substack.com/",
+    "description": "Writes Chartbook about economic history, geopolitics and developments in the global economy.",
+    "topics": [
+      "History",
+      "Economics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links Chartbook - Adam Tooze to this publication domain."
+      },
+      {
+        "url": "https://adamtooze.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Chartbook."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Culturist",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.theculturist.io",
+    "url": "https://www.theculturist.io/",
+    "description": "Publishes reading discussions and essays about art, history, books and cultural ideas.",
+    "topics": [
+      "History",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links The Culturist to this publication domain."
+      },
+      {
+        "url": "https://www.theculturist.io/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Culturist."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jemar Tisby",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "jemartisby.substack.com",
+    "url": "https://jemartisby.substack.com/",
+    "description": "Publishes Footnotes about history, Christianity, racial justice and contemporary public debates.",
+    "topics": [
+      "History",
+      "Religion"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links Footnotes by Jemar Tisby to this publication domain."
+      },
+      {
+        "url": "https://jemartisby.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Footnotes by Jemar Tisby."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kahlil Greene",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "historycanthide.substack.com",
+    "url": "https://historycanthide.substack.com/",
+    "description": "Publishes History Can't Hide, examining overlooked history and its connections to current events.",
+    "topics": [
+      "History",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links History Can't Hide from Kahlil Greene to this publication domain."
+      },
+      {
+        "url": "https://historycanthide.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies History Can't Hide from Kahlil Greene."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Niall Ferguson",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "niallferguson.substack.com",
+    "url": "https://niallferguson.substack.com/",
+    "description": "Publishes Time Machine, applying historical analysis to economics and contemporary politics.",
+    "topics": [
+      "History",
+      "Politics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links Niall Ferguson's Time Machine to this publication domain."
+      },
+      {
+        "url": "https://niallferguson.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Niall Ferguson's Time Machine."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jermaine Fowler",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "thehumanityarchive.substack.com",
+    "url": "https://thehumanityarchive.substack.com/",
+    "description": "Publishes The Humanity Archive, connecting historical stories with issues in the present.",
+    "topics": [
+      "History",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links The Humanity Archive - Jermaine Fowler to this publication domain."
+      },
+      {
+        "url": "https://thehumanityarchive.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Humanity Archive."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Curtis Yarvin",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "graymirror.substack.com",
+    "url": "https://graymirror.substack.com/",
+    "description": "Writes Gray Mirror, publishing essays about political systems, ideology and culture.",
+    "topics": [
+      "History",
+      "Political philosophy"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links Gray Mirror - Curtis Yarvin to this publication domain."
+      },
+      {
+        "url": "https://graymirror.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Gray Mirror."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Lucy Worsley",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "lucyworsley.substack.com",
+    "url": "https://lucyworsley.substack.com/",
+    "description": "Publishes My Life in the Past with historical stories and updates on research and writing.",
+    "topics": [
+      "History",
+      "Books"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links My Life in the Past - Lucy Worsley to this publication domain."
+      },
+      {
+        "url": "https://lucyworsley.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies My Life in the Past."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Hussein Aboubakr Mansour",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "critiqueanddigest.substack.com",
+    "url": "https://critiqueanddigest.substack.com/",
+    "description": "Publishes The Abrahamic Metacritique about intellectual history, political ideas and ideology.",
+    "topics": [
+      "History",
+      "Ideas"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/history",
+        "note": "Substack's own directory links The Abrahamic Metacritique - Hussein Aboubakr Mansour to this publication domain."
+      },
+      {
+        "url": "https://critiqueanddigest.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Abrahamic Metacritique."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "David Coggins",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "thecontender.substack.com",
+    "url": "https://thecontender.substack.com/",
+    "description": "Publishes The Contender with writing about travel, style, fishing and design.",
+    "topics": [
+      "Travel",
+      "Lifestyle"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links The Contender - David Coggins to this publication domain."
+      },
+      {
+        "url": "https://thecontender.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Contender."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "FOUND",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "www.itsfound.com",
+    "url": "https://www.itsfound.com/",
+    "description": "Publishes city recommendations and travel guidance about food, shopping and places to visit.",
+    "topics": [
+      "Travel",
+      "City guides"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links FOUND to this publication domain."
+      },
+      {
+        "url": "https://www.itsfound.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies FOUND."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Brian Sumers",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.theairlineobserver.com",
+    "url": "https://www.theairlineobserver.com/",
+    "description": "Writes The Airline Observer about airline companies and the business of air travel.",
+    "topics": [
+      "Travel",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links The Airline Observer - Brian Sumers to this publication domain."
+      },
+      {
+        "url": "https://www.theairlineobserver.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The Airline Observer."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tom Ryan",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "tomryan.substack.com",
+    "url": "https://tomryan.substack.com/",
+    "description": "Publishes personal dispatches, photographs and outdoor stories from Cape Cod and beyond.",
+    "topics": [
+      "Travel",
+      "Outdoors"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links Tom Ryan, Author to this publication domain."
+      },
+      {
+        "url": "https://tomryan.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Tom Ryan, Author."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Yolanda Edwards",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "yolojournal.substack.com",
+    "url": "https://yolojournal.substack.com/",
+    "description": "Publishes Club Yolo with travel recommendations, destination ideas and conversations.",
+    "topics": [
+      "Travel",
+      "Lifestyle"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links Club Yolo - Yolanda Edwards to this publication domain."
+      },
+      {
+        "url": "https://yolojournal.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Club Yolo."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Elizabeth Minchilli",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "elizabethminchilli.substack.com",
+    "url": "https://elizabethminchilli.substack.com/",
+    "description": "Shares writing about Italian food, destinations, tours and everyday experiences in Italy.",
+    "topics": [
+      "Travel",
+      "Food"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links Elizabeth’s Newsletter from Italy - Elizabeth Minchilli to this publication domain."
+      },
+      {
+        "url": "https://elizabethminchilli.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Elizabeth’s Newsletter from Italy."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Chris Arnade",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "walkingtheworld.substack.com",
+    "url": "https://walkingtheworld.substack.com/",
+    "description": "Publishes photographs and written dispatches from walking through places around the world.",
+    "topics": [
+      "Travel",
+      "Photography"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links Chris Arnade Walks the World to this publication domain."
+      },
+      {
+        "url": "https://walkingtheworld.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Chris Arnade Walks the World."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Morgan McDonald",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "markedbymorgan.substack.com",
+    "url": "https://markedbymorgan.substack.com/",
+    "description": "Publishes Marked with New York recommendations, travel ideas and local activities.",
+    "topics": [
+      "Travel",
+      "City guides"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links Marked - Morgan McDonald to this publication domain."
+      },
+      {
+        "url": "https://markedbymorgan.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Marked."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Marissa Klurstein",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "marissaklurstein.substack.com",
+    "url": "https://marissaklurstein.substack.com/",
+    "description": "Publishes Happy Hoteling, sharing hotel recommendations and ideas for travel itineraries.",
+    "topics": [
+      "Travel",
+      "Hotels"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links Happy Hoteling - Marissa Klurstein to this publication domain."
+      },
+      {
+        "url": "https://marissaklurstein.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Happy Hoteling."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "BowTied Bum",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "www.bowtiedbum.io",
+    "url": "https://www.bowtiedbum.io/",
+    "description": "Publishes travel-rewards commentary focused on credit-card points and related strategies.",
+    "topics": [
+      "Travel",
+      "Personal finance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/travel",
+        "note": "Substack's own directory links BowTied Bum to this publication domain."
+      },
+      {
+        "url": "https://www.bowtiedbum.io/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies BowTied Bum."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kelly Wearstler",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "wearstlerworld.substack.com",
+    "url": "https://wearstlerworld.substack.com/",
+    "description": "Publishes WEARSTLERWORLD with reflections on interiors, design practice, fashion and creative influences.",
+    "topics": [
+      "Design",
+      "Interiors"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links WEARSTLERWORLD - Kelly Wearstler to this publication domain."
+      },
+      {
+        "url": "https://wearstlerworld.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies WEARSTLERWORLD."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Lacy Phillips",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "lacyphillips528961.substack.com",
+    "url": "https://lacyphillips528961.substack.com/",
+    "description": "Publishes By Candlelight with personal reflections, lifestyle notes and spiritual themes.",
+    "topics": [
+      "Design",
+      "Lifestyle"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links By Candlelight - Lacy Phillips to this publication domain."
+      },
+      {
+        "url": "https://lacyphillips528961.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies By Candlelight."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Christopher Schwarz",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "christopherschwarz.substack.com",
+    "url": "https://christopherschwarz.substack.com/",
+    "description": "Publishes The American Peasant about furniture making, woodworking and running a craft business.",
+    "topics": [
+      "Design",
+      "Woodworking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links The American Peasant - Christopher Schwarz to this publication domain."
+      },
+      {
+        "url": "https://christopherschwarz.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies The American Peasant."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Amanda Hesser",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "amandahesser.substack.com",
+    "url": "https://amandahesser.substack.com/",
+    "description": "Publishes Homeward about home renovation, interiors and the process of creating a home.",
+    "topics": [
+      "Design",
+      "Interiors"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links Homeward - Amanda Hesser to this publication domain."
+      },
+      {
+        "url": "https://amandahesser.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Homeward."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "W Design Collective",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "wdesign.substack.com",
+    "url": "https://wdesign.substack.com/",
+    "description": "Publishes W.D.C. Journal with interior-design explanations, sourcing ideas and product recommendations.",
+    "topics": [
+      "Design",
+      "Interiors"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links W.D.C. Journal - W Design Collective to this publication domain."
+      },
+      {
+        "url": "https://wdesign.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies W.D.C. Journal."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kate Watson-Smyth",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "katewatsonsmyth.substack.com",
+    "url": "https://katewatsonsmyth.substack.com/",
+    "description": "Publishes Mad About The House with decorating guidance and interior-design recommendations.",
+    "topics": [
+      "Design",
+      "Interiors"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links Mad About The House by Kate Watson-Smyth to this publication domain."
+      },
+      {
+        "url": "https://katewatsonsmyth.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Mad About The House by Kate Watson-Smyth."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Never Sponsored",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "neversponsored.substack.com",
+    "url": "https://neversponsored.substack.com/",
+    "description": "Publishes woodworking-tool reviews by furniture makers Christopher Schwarz and Megan Fitzpatrick.",
+    "topics": [
+      "Design",
+      "Woodworking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links Never Sponsored - Megan Fitzpatrick to this publication domain."
+      },
+      {
+        "url": "https://neversponsored.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Never Sponsored."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Talia Mayden",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "therey0uare.substack.com",
+    "url": "https://therey0uare.substack.com/",
+    "description": "Publishes there_y0u_are with short explorations of art and design.",
+    "topics": [
+      "Design",
+      "Art"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links there_y0u_are - Talia to this publication domain."
+      },
+      {
+        "url": "https://therey0uare.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies there_y0u_are."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Shea McGee",
+    "kind": "person",
+    "platform": "Substack",
+    "handle": "loveshea.substack.com",
+    "url": "https://loveshea.substack.com/",
+    "description": "Publishes Love, Shea with personal notes on design, style and creative work.",
+    "topics": [
+      "Design",
+      "Interiors"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links Love, Shea - Shea McGee to this publication domain."
+      },
+      {
+        "url": "https://loveshea.substack.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Love, Shea."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Design Better",
+    "kind": "group",
+    "platform": "Substack",
+    "handle": "designbetterpodcast.com",
+    "url": "https://designbetterpodcast.com/",
+    "description": "Publishes interviews and discussions about the craft of design and designers' careers.",
+    "topics": [
+      "Design",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://substack.com/top/design",
+        "note": "Substack's own directory links Design Better - The Curiosity Department to this publication domain."
+      },
+      {
+        "url": "https://designbetterpodcast.com/",
+        "note": "Inspected the public publication page reached from the directory; its title identifies Design Better."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  }
+]

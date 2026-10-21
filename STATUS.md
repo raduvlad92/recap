@@ -2,6 +2,14 @@
 
 Updated: **21 October 2026**. Phase: **functioning v0 deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
+## Current increment: admin and creator catalogue under D21
+
+Founder explicitly authorized this increment: a comprehensive admin panel, 120 researched accounts on each of YouTube, Instagram, X, Substack and LinkedIn, backend import and public creator pages. The backend import is complete: **600 channels across 560 canonical creators, 33 with multiple evidenced channels, seven disabled collection plans**. One same-name Ottolenghi identity pair stays separate and visibly unconfirmed. [Import evidence](docs/catalogue/LIVE-IMPORT.md), [delivery plan](docs/admin/PLAN.md), [owner guide](docs/admin/README.md).
+
+Implemented server-authorized admin views for signups (including readers without a workspace), actual follows, creators/channels, editable descriptions/listing, provider plans, jobs, observed costs and audit history. Public directory and creator pages are server-rendered, with provenance, original links, planned coverage, search/filter/pagination, metadata and a public-only sitemap. Local checks: **137 tests**, typecheck/build, **26 actual database authorization/import checks**, transactional invariants and no security-advisor issues. Hosted deployment and final browser evidence are being completed; see [verification](docs/admin/VERIFICATION.md).
+
+**No source collection, paid job, schedule or subscription started for D21.** Costs are supplier price research rather than incurred bills. Prior v0 feed data remains historical. A CLI command unexpectedly printed two server credentials; both were replaced, both old keys return 401, ignored local and hosted variables were updated, and no values are in Git/public artifacts. [Sanitized replacement evidence](docs/admin/CREDENTIAL-REPLACEMENT.md). Owner access uses an explicit server-only allowlist and a verified Clerk primary email, never the first signup or client metadata.
+
 ## Current: working v0 under D20
 
 The founder selected the existing recap Supabase/Clerk resources and explicitly asked for a working v0 matching the reference, using GitHub/Netlify and Cloudflare only if needed. [V0 plan](docs/v0/PLAN.md) records the authorized first increment and exact targets. Implemented React/Vite workspace, studio/presenter/channel navigation, search/filters/history views, bookmarks/read-later, preferences/export/workspace delete, native Clerk authentication and per-user Supabase saved state. All fictional examples are labeled. Actual source extracts remain distinct from AI synthesis.

@@ -150,3 +150,27 @@ describe('bounded signed provider jobs', () => {
     expect(provider.mock.calls[2][0]).toContain('/datasets/Dataset123456/items?');
   });
 });
+
+describe('durable collection observability',()=>{
+  it('records an owned request before a feed call and then records its result with explicit zero supplier fee',async()=>{
+    const order:string[]=[];
+    const startJob=vi.fn(async()=>{order.push('ledger');return'00000000-0000-4000-8000-000000000001';});
+    const collect=vi.fn(async()=>{order.push('source');return{source:feedSource,updates:[]};});
+    const finishJob=vi.fn(async()=>{});
+    const handler=createCollectHandler({authenticate:async()=> 'user_operator',startJob,finishJob,collectFeed:collect});
+    const response=await handler(new Request('https://recap.example/api/collect',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({source:feedSource})}));
+    expect(response.status).toBe(200);expect(order).toEqual(['ledger','source']);expect(finishJob).toHaveBeenCalledWith('00000000-0000-4000-8000-000000000001','user_operator',expect.objectContaining({status:'succeeded',resultCount:0,observedCostUsd:0,costStatus:'no_provider_charge'}),expect.any(Function));
+  });
+  it('fails closed before contacting a source or paid provider when request tracking fails',async()=>{
+    const source=vi.fn(),provider=vi.fn();
+    const handler=createCollectHandler({authenticate:async()=> 'user_operator',startJob:async()=>{throw new Error('ledger down');},collectFeed:source,startApify:provider});
+    const response=await handler(new Request('https://recap.example/api/collect',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({source:youtubeSource})}));
+    expect(response.status).toBeGreaterThanOrEqual(400);expect(source).not.toHaveBeenCalled();expect(provider).not.toHaveBeenCalled();
+  });
+  it('uses only the verified poll capability to select an owned ledger row and withholds private telemetry',async()=>{
+    const finishJob=vi.fn(async()=>{});
+    const handler=createCollectHandler({authenticate:async()=> 'user_operator',finishJob,pollApify:async()=>({status:'completed',result:{source:youtubeSource,updates:[]},telemetry:{ledgerId:'00000000-0000-4000-8000-000000000001',providerRunId:'Run12345',cost:null}})});
+    const response=await handler(new Request('https://recap.example/api/collect?ledgerId=attacker',{headers:{'x-collection-job':'verified-in-adapter'}}));
+    expect(response.status).toBe(200);expect(finishJob).toHaveBeenCalledWith('00000000-0000-4000-8000-000000000001','user_operator',expect.objectContaining({status:'succeeded',providerRunId:'Run12345'}),expect.any(Function));expect(JSON.stringify(await response.json())).not.toContain('telemetry');
+  });
+});

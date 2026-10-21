@@ -25,6 +25,7 @@ export function normalizeSourceUrl(input: string): { url: string; platform: Plat
   const candidate = /^[a-z][a-z\d+.-]*:/i.test(trimmed) ? trimmed : `https://${trimmed}`;
   if (!isPublicWebUrl(candidate)) throw new Error('Paste a public website or creator link. Private addresses, passwords and unsupported link types are not accepted.');
   const url = new URL(candidate);
+  if([...url.searchParams.keys()].some(key=>/^(?:access_token|token|auth|authorization|api[_-]?key|secret|password|x-amz-.+|signature)$/i.test(key))) throw new Error('Use a public source link without an access token, password or signed-link credential.');
   url.protocol = 'https:'; url.port = ''; url.hash = '';
   for (const key of [...url.searchParams.keys()]) if (/^utm_/i.test(key) || ['fbclid', 'gclid', 'mc_cid', 'mc_eid'].includes(key.toLowerCase())) url.searchParams.delete(key);
   url.searchParams.sort();
@@ -37,7 +38,10 @@ export function normalizeSourceUrl(input: string): { url: string; platform: Plat
   let platform: Platform = 'Blog';
   if (host === 'youtube.com') {
     platform = 'YouTube';
-    if (!(parts[0]?.startsWith('@') || parts[0] === 'channel')) throw new Error('Paste the YouTube @handle or /channel/ link, rather than a video or legacy channel page.');
+    if(parts.length>1 && ['videos','featured','shorts','streams'].includes(parts.at(-1)!) && (parts[0].startsWith('@') || ['channel','user','c'].includes(parts[0]))) { parts.pop(); url.pathname='/'+parts.join('/'); }
+    const named=parts.length===1 && /^[A-Za-z0-9_@.-]+$/.test(parts[0]||'') && !['watch','results','feed','playlist','shorts','gaming','premium','account','upload','live','subscriptions'].includes(parts[0].toLowerCase());
+    const prefixed=parts.length===2 && ['channel','user','c'].includes(parts[0]) && /^[A-Za-z0-9_.-]+$/.test(parts[1]);
+    if (!(named || prefixed)) throw new Error('Paste a public YouTube channel link, rather than a video, playlist or account page.');
   } else if (host === 'youtu.be') throw new Error('Paste the YouTube channel link, rather than a video link.');
   else if (host === 'x.com') {
     platform = 'X';

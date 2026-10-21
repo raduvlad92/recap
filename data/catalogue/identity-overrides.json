@@ -1,0 +1,229 @@
+{
+  "version": 1,
+  "checkedAt": "2026-10-21",
+  "note": "Reviewed identity bridges only. No memberships, source updates or collection runs are inferred. Exact official profile URL anchors are used only when they explicitly cross-link the researched accounts.",
+  "identityGroups": [
+    {
+      "identityKey": "stevemould.com",
+      "name": "Steve Mould",
+      "kind": "person",
+      "accounts": [
+        "https://www.youtube.com/stevemould",
+        "https://www.instagram.com/stevemouldscience/"
+      ],
+      "evidence": [
+        {
+          "url": "https://stevemould.com/",
+          "note": "Official Steve Mould homepage links the exact YouTube /stevemould channel."
+        },
+        {
+          "url": "https://stevemould.com/contact/",
+          "note": "Official contact page links the exact Instagram /stevemouldscience account; its link target was inspected."
+        }
+      ]
+    },
+    {
+      "identityKey": "unboxtherapy.com",
+      "name": "Unbox Therapy",
+      "kind": "group",
+      "accounts": [
+        "https://www.youtube.com/channel/UCsTcErHg8oDvUnTzoqsYeNw",
+        "https://www.instagram.com/unboxtherapy/"
+      ],
+      "evidence": [
+        {
+          "url": "https://unboxtherapy.com/",
+          "note": "Official Unbox Therapy site links YouTube channel UCsTcErHg8oDvUnTzoqsYeNw."
+        },
+        {
+          "url": "https://www.youtube.com/channel/UCsTcErHg8oDvUnTzoqsYeNw/about",
+          "note": "Inspected primary channel metadata: matching externalId and an explicit instagram.com/unboxtherapy link. This joins the publishing brand's channels without inventing a presenter relationship."
+        }
+      ]
+    },
+    {
+      "identityKey": "https://www.youtube.com/channel/UCXGgrKt94gR6lmN4aN3mYTg",
+      "name": "Austin Evans",
+      "kind": "person",
+      "accounts": [
+        "https://www.youtube.com/channel/UCXGgrKt94gR6lmN4aN3mYTg",
+        "https://www.instagram.com/austinnotduncan/"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/channel/UCXGgrKt94gR6lmN4aN3mYTg/about",
+          "note": "Primary YouTube metadata gives externalId UCXGgrKt94gR6lmN4aN3mYTg and sameAs https://www.instagram.com/austinnotduncan. Exact official-channel anchor replaces an unavailable independent-domain anchor."
+        }
+      ]
+    },
+    {
+      "identityKey": "jerryrigeverything.com",
+      "name": "JerryRigEverything",
+      "kind": "person",
+      "accounts": [
+        "https://www.youtube.com/channel/UCWFKCr40YwOZQx8FHU_ZqqQ",
+        "https://www.instagram.com/zacksjerryrig/"
+      ],
+      "evidence": [
+        {
+          "url": "https://jerryrigeverything.com/",
+          "note": "Official JerryRigEverything website identifies Zack Nelson and his technology-review video work."
+        },
+        {
+          "url": "https://www.youtube.com/channel/UCWFKCr40YwOZQx8FHU_ZqqQ/about",
+          "note": "Primary channel metadata has externalId UCWFKCr40YwOZQx8FHU_ZqqQ and explicitly links instagram.com/zacksjerryrig."
+        }
+      ]
+    },
+    {
+      "identityKey": "garyvaynerchuk.com",
+      "name": "Gary Vaynerchuk",
+      "kind": "person",
+      "accounts": [
+        "https://www.youtube.com/channel/UCctXZhXmG-kf3tlIXgVZUlw",
+        "https://www.linkedin.com/in/garyvaynerchuk"
+      ],
+      "evidence": [
+        {
+          "url": "https://garyvaynerchuk.com/",
+          "note": "Official creator site links linkedin.com/in/garyvaynerchuk and youtube.com/garyvee."
+        },
+        {
+          "url": "https://www.youtube.com/garyvee",
+          "note": "Inspected primary YouTube metadata confirms GaryVee alias externalId UCctXZhXmG-kf3tlIXgVZUlw, matching the researched account."
+        }
+      ]
+    },
+    {
+      "identityKey": "karaandnate.com",
+      "name": "Kara and Nate",
+      "kind": "group",
+      "accounts": [
+        "https://www.youtube.com/channel/UC4ijq8Cg-8zQKx8OH12dUSw",
+        "https://www.instagram.com/karaandnate/"
+      ],
+      "evidence": [
+        {
+          "url": "https://karaandnate.com/about-us/",
+          "note": "Official About Us page links the exact YouTube channel UC4ijq8Cg-8zQKx8OH12dUSw and Instagram /karaandnate accounts."
+        }
+      ]
+    },
+    {
+      "identityKey": "thebucketlistfamily.com",
+      "name": "The Bucket List Family",
+      "kind": "group",
+      "accounts": [
+        "https://www.youtube.com/channel/UCuAHfJyWROB4XRReS43EWUw",
+        "https://www.instagram.com/thebucketlistfamily/"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.thebucketlistfamily.com/",
+          "note": "Inspected official homepage HTML links YouTube channel UCuAHfJyWROB4XRReS43EWUw and Instagram /thebucketlistfamily. No children or private family details are imported."
+        }
+      ]
+    },
+    {
+      "identityKey": "thebodycoach.com",
+      "name": "Joe Wicks",
+      "kind": "person",
+      "accounts": [
+        "https://www.instagram.com/thebodycoach/",
+        "https://x.com/thebodycoach"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.thebodycoach.com/",
+          "note": "Official Body Coach site identifies Joe Wicks and links both Instagram /thebodycoach and X /thebodycoach."
+        }
+      ]
+    },
+    {
+      "identityKey": "jeffnippard.com",
+      "name": "Jeff Nippard",
+      "kind": "person",
+      "accounts": [
+        "https://www.instagram.com/jeffnippard/",
+        "https://x.com/jeffnippard"
+      ],
+      "evidence": [
+        {
+          "url": "https://jeffnippard.com/",
+          "note": "Official Jeff Nippard website directly links Instagram /jeffnippard."
+        },
+        {
+          "url": "https://twitter.com/JeffNippard/articles?lang=en&sub_id=undefined",
+          "note": "Inspected search-indexed primary X profile identifies Jeff Nippard and links linktr.ee/jeffnippard; direct X loading was blocked, not treated as failure proof."
+        },
+        {
+          "url": "https://linktr.ee/jeffnippard",
+          "note": "Inspected creator Linktree links jeffnippard.com and its newsletter/training pages, completing the X-to-official-domain bridge."
+        }
+      ]
+    },
+    {
+      "identityKey": "https://www.scripps.edu/faculty/topol/",
+      "name": "Eric Topol",
+      "kind": "person",
+      "accounts": [
+        "https://x.com/EricTopol",
+        "https://erictopol.substack.com/"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.scripps.edu/faculty/topol/",
+          "note": "Official institutional faculty page identifies Eric Topol and links exact Twitter /EricTopol and Substack erictopol.substack.com destinations. The faculty-profile URL is the identity anchor, not the generic institutional domain."
+        }
+      ]
+    },
+    {
+      "identityKey": "chasedimond.com",
+      "name": "Chase Dimond",
+      "kind": "person",
+      "accounts": [
+        "https://x.com/ecomchasedimond",
+        "https://www.linkedin.com/in/chasedimond"
+      ],
+      "evidence": [
+        {
+          "url": "https://chasedimond.com/",
+          "note": "Inspected official homepage HTML links both x.com/ecomchasedimond and linkedin.com/in/chasedimond."
+        }
+      ]
+    },
+    {
+      "identityKey": "lennysnewsletter.com",
+      "name": "Lenny Rachitsky",
+      "kind": "person",
+      "accounts": [
+        "https://www.lennysnewsletter.com/",
+        "https://www.linkedin.com/in/lennyrachitsky"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/lennyrachitsky",
+          "note": "Inspected search-indexed primary LinkedIn profile explicitly lists lennysnewsletter.com as Lenny Rachitsky's personal website; direct profile loading returned a platform block."
+        },
+        {
+          "url": "https://linktr.ee/LennyRachitsky",
+          "note": "Inspected creator Linktree directly links exact linkedin.com/in/lennyrachitsky and lennysnewsletter.com/subscribe."
+        },
+        {
+          "url": "https://www.lennysnewsletter.com/",
+          "note": "Inspected primary Lenny's Newsletter publication reached from the official Substack directory; the cross-linked newsletter domain is its public channel."
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "name": "Ottolenghi",
+      "accounts": [
+        "https://www.instagram.com/ottolenghi/",
+        "https://ottolenghi.substack.com/"
+      ],
+      "reason": "The official restaurant site affirms its Instagram and mentions a Substack, but inspected pages did not link the precise publication domain; the publication describes the team. Retain separate group records until an exact bridge is inspected."
+    }
+  ]
+}

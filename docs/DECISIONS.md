@@ -176,3 +176,10 @@ Implementation includes the screenshot-based workspace, modular studio/person/ch
 The authorized first increment is live at https://recap-v0-radu.netlify.app, backed by the private GitHub repository and existing recap Clerk/Supabase resources. Code `660784b` passed 69 local/CI tests, typecheck/build and exact-commit Netlify deployment; actual browser sign-in, five-entry public feed refresh, cloud reload and separate guest state were exercised. Eleven backend authorization checks passed. [Verification](v0/VERIFICATION.md) retains exact IDs and limitations; [morning checklist](v0/MORNING.md) and [continuation plan](v0/PLAN.md#continuation-work) save the next session.
 
 This does not approve or complete the broader candidate by inference. Paid Apify runtime is off, no actual social collection or AI synthesis/delivery occurred, no customer trial/outreach started, and no new cash charge/plan purchase was observed. Cloudflare was unnecessary. The deploy is a reachable review increment using development authentication, not a completed commercial launch.
+
+
+## D21 — admin and researched public creator catalogue,21October2026
+
+Founder asked for a comprehensive admin panel showing signups, followed creators/channels, Apify usage and backend operations; separately120creators/accounts on each of YouTube,Instagram,X,Substack andLinkedIn, imported into the backend with one page per canonical creator for discovery/SEO and an honest account of planned collection. The explicit instruction is **do not start collection**, compare Apify andBrightData and choose the cheaper usable route. This authorizes scoped implementation/backendimport/publicpages on the existing stack; it does not start a customer trial, paid scraper job, subscription or daily schedule.
+
+[Admin/catalogue plan](admin/PLAN.md) records architecture, exact deliverables and evidence. Public directory account evidence, full-content access, actual jobs and invoice costs must remain separate. Reuse canonical identities only with evidence; keep people,groups andchannels modular. Private reader emails/follows are admin-only and never included in public pages or Git.

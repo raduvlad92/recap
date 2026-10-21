@@ -20,7 +20,7 @@ function ClerkBridge({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const clerk = useClerk();
   const token = useCallback(async () => getToken(), [getToken]);
-  const signIn = useCallback(() => { void clerk.openSignIn({ fallbackRedirectUrl: window.location.origin }); }, [clerk]);
+  const signIn = useCallback(() => { void clerk.openSignIn({ fallbackRedirectUrl: window.location.origin + window.location.pathname + window.location.search }); }, [clerk]);
   const signOut = useCallback(async () => { await clerk.signOut(); }, [clerk]);
   const value = useMemo<RecapAuth>(() => ({ userId: userId ?? null, isSignedIn: Boolean(isSignedIn), isLoaded, isConfigured: true, displayName: user?.firstName || user?.username || 'Your workspace', getToken: token, signIn, signOut }), [userId, isSignedIn, isLoaded, user?.firstName, user?.username, token, signIn, signOut]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

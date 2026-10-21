@@ -11,9 +11,11 @@
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "npm run test && npm run build",
+    "check": "npm run catalogue:check && npm run test && npm run build",
     "preview": "vite preview --host 127.0.0.1",
-    "dev:netlify": "netlify dev"
+    "dev:netlify": "netlify dev",
+    "catalogue:check": "node scripts/build-catalogue.mjs --check",
+    "catalogue:build": "node scripts/build-catalogue.mjs"
   },
   "dependencies": {
     "@clerk/react": "6.18.0",

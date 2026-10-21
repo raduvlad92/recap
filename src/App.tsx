@@ -119,13 +119,35 @@ export default function App() {
   const saveLabel = workspace.saveStatus === 'saved' ? t('synced') : workspace.saveStatus === 'saving' ? t('syncing') : workspace.saveStatus === 'error' || workspace.saveStatus === 'conflict' ? t('syncError') : t('local');
 
   useEffect(() => { document.documentElement.lang = state.settings.interfaceLanguage; }, [state.settings.interfaceLanguage]);
-  useEffect(() => { requestEpoch.current += 1; activeRequests.current.forEach((controller) => controller.abort()); activeRequests.current.clear(); setJobs({}); setDialog(null); setNotice(''); setQuery(''); setDate(''); setSelection({ kind: 'all' }); setTopicFilter(''); setPlatformFilter(''); setSourceError(''); setLinkInput(''); }, [owner]);
+  useEffect(() => {
+    requestEpoch.current += 1;
+    activeRequests.current.forEach((controller) => controller.abort()); activeRequests.current.clear();
+    setJobs({}); setDialog(null); setNotice(''); setQuery(''); setDate(''); setSelection({ kind: 'all' });
+    setTopicFilter(''); setPlatformFilter(''); setSourceError(''); setLinkInput('');
+    if (!auth.isLoaded) return;
+    // A catalogue link is public navigation intent, not saved account data. Keep it
+    // in the URL until Add or dismissal so sign-in can return to the same choice.
+    const source = new URL(window.location.href).searchParams.get('addSource');
+    if (!source || source.length > 2048) return;
+    try {
+      const parsed = new URL(source);
+      if (parsed.protocol !== 'https:' || parsed.username || parsed.password) return;
+    } catch { return; }
+    setLinkInput(source); setDialog({ kind: 'sources' });
+  }, [owner, auth.isLoaded]);
   useEffect(() => () => { activeRequests.current.forEach((controller) => controller.abort()); }, []);
   useEffect(() => { if (!notice) return; const timer = window.setTimeout(() => setNotice(''), 4800); return () => window.clearTimeout(timer); }, [notice]);
   useEffect(() => { if (dialog?.kind === 'settings') { setSettingsDraft(state.settings); setInterestDraft(state.settings.interests.join(', ')); } }, [dialog?.kind]);
 
   function chooseView(next: View) { setView(next); if (isLibrary || next === 'saved' || next === 'later') { setDate(''); setSelection({ kind: 'all' }); setTopicFilter(''); } }
-  function chooseSelection(next: Selection) { setSelection(next); setDialog(null); if (isLibrary) setView('all'); }
+  function clearSourceHandoff() {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('addSource')) return;
+    url.searchParams.delete('addSource');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+  }
+  function closeDialog() { if (dialog?.kind === 'sources') clearSourceHandoff(); setDialog(null); }
+  function chooseSelection(next: Selection) { setSelection(next); closeDialog(); if (isLibrary) setView('all'); }
   function clearFilters() { setDate(''); setTopicFilter(''); setPlatformFilter(''); setQuery(''); }
   function stepDay(direction: number) { const index = allDays.indexOf(recapDay); const target = allDays[index + direction]; if (target) setDate(target); }
   function openSettings() { setSettingsDraft(state.settings); setInterestDraft(state.settings.interests.join(', ')); setDialog({ kind: 'settings' }); }
@@ -165,7 +187,7 @@ export default function App() {
     event.preventDefault(); setSourceError('');
     const result = workspace.addSource(linkInput.trim());
     if (result.error) { setSourceError(result.error); return; }
-    setLinkInput(''); setNotice(t('sourceAdded'));
+    clearSourceHandoff(); setLinkInput(''); setNotice(t('sourceAdded'));
   }
   function saveSettings(event: FormEvent) {
     event.preventDefault();
@@ -247,11 +269,11 @@ export default function App() {
       </main>
       <aside className="right-rail"><div className="rail-section-heading"><span>{t('signal')}</span><button className="icon-button" onClick={() => setDialog({ kind: 'coverage' })} aria-label={t('coverage')}><HelpCircle size={18} /></button></div><div className="signal-card"><div className="signal-card-top"><span className="signal-icon"><LayoutGrid size={20} /></span><span>{t('thisView')}</span></div><strong className="signal-number">{visible.length}</strong><p>{t('newUpdates')}</p><div className="signal-bars" role="group" aria-label={chartDays.map((day, index) => `${day}: ${chartCounts[index]}`).join(', ')}>{chartCounts.length ? chartCounts.map((count, index) => <button key={chartDays[index]} style={{ height: `${Math.max(count / chartMax * 70, 5)}px` }} className={index === chartCounts.length - 1 ? 'current' : ''} title={`${chartDays[index]}: ${count} ${t('updates')}`} aria-label={`${t('selectDate')} ${chartDays[index]}`} onClick={() => setDate(chartDays[index])} />) : <span className="chart-empty">{t('noResults')}</span>}</div></div>
         <section className="top-topics"><div className="rail-section-heading"><span>{t('topTopics')}</span><span className="hash-mark">#</span></div>{topicCounts.slice(0, 6).map(([topic, count], index) => <button key={topic} className={topicFilter === topic ? 'active' : ''} onClick={() => setTopicFilter((current) => current === topic ? '' : topic)}><span className="rank">{String(index + 1).padStart(2, '0')}</span><span>{topic}</span><small>{count}</small></button>)}{!topicCounts.length && <p className="small-copy">{t('noUpdatesForTopic')}</p>}</section>
-        <section className="right-interests"><div className="rail-section-heading"><span>{t('interest')}</span><button className="icon-button" onClick={openSettings} aria-label={t('settings')}><SlidersHorizontal size={16} /></button></div><div className="interest-pills">{state.settings.interests.slice(0, 5).map((interest) => <span key={interest}>{interest}</span>)}</div></section><div className="collection-invitation"><Globe2 size={23} /><h3>{t('addReal')}</h3><p>{t('sourceHelp')}</p><button className="text-button" onClick={() => setDialog({ kind: 'sources' })}>{t('addSource')}<Plus size={16} /></button></div>
+        <section className="right-interests"><div className="rail-section-heading"><span>{t('interest')}</span><button className="icon-button" onClick={openSettings} aria-label={t('settings')}><SlidersHorizontal size={16} /></button></div><div className="interest-pills">{state.settings.interests.slice(0, 5).map((interest) => <span key={interest}>{interest}</span>)}</div></section><div className="collection-invitation"><a className="text-button" href="/creators/">Explore creator directory<ArrowUpRight size={16} /></a><Globe2 size={23} /><h3>{t('addReal')}</h3><p>{t('sourceHelp')}</p><button className="text-button" onClick={() => setDialog({ kind: 'sources' })}>{t('addSource')}<Plus size={16} /></button></div>
       </aside>
     </div>
     {notice && <div className="toast" role="status"><CheckCircle2 size={18} /><span>{notice}</span><button onClick={() => setNotice('')} aria-label={t('close')}><X size={15} /></button></div>}
-    {dialog && <Modal title={dialog.kind === 'sources' ? t('manage') : dialog.kind === 'settings' ? t('settingsTitle') : dialog.kind === 'filters' ? t('filter') : dialog.kind === 'coverage' ? t('coverage') : dialog.kind === 'delete' ? t('deleteTitle') : dialog.kind === 'reset' ? t('resetTitle') : dialog.kind === 'mobile' ? t('following') : dialog.kind === 'topic' ? dialog.topic.name : t('details')} onClose={() => setDialog(null)} wide={dialog.kind === 'sources' || dialog.kind === 'topic'}>
+    {dialog && <Modal title={dialog.kind === 'sources' ? t('manage') : dialog.kind === 'settings' ? t('settingsTitle') : dialog.kind === 'filters' ? t('filter') : dialog.kind === 'coverage' ? t('coverage') : dialog.kind === 'delete' ? t('deleteTitle') : dialog.kind === 'reset' ? t('resetTitle') : dialog.kind === 'mobile' ? t('following') : dialog.kind === 'topic' ? dialog.topic.name : t('details')} onClose={closeDialog} wide={dialog.kind === 'sources' || dialog.kind === 'topic'}>
       {dialog.kind === 'mobile' && <div className="mobile-sidebar-content">{sidebar()}</div>}
       {dialog.kind === 'update' && updateDetails(dialog.update)}
       {dialog.kind === 'topic' && <div className="topic-modal"><p className="dialog-intro">{t('topicInsightNote')}</p>{dialog.topic.items.map((update) => <section className="topic-source-detail" key={update.id}>{updateDetails(update)}</section>)}</div>}

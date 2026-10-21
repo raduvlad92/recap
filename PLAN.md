@@ -8,6 +8,10 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 The founder explicitly requested autonomous implementation on 21 October (D20). [docs/v0/PLAN.md](docs/v0/PLAN.md) tracks that first increment, selected Supabase/Clerk targets, screenshot-based UI and GitHub/Netlify deployment. V0-01–V0-07 are complete for the first increment: [live app](https://recap-v0-radu.netlify.app), [verification](docs/v0/VERIFICATION.md), [morning checklist](docs/v0/MORNING.md). V0-N01–V0-N06 track the continuation. V0 work is authorized now; the full M0–M5 table below is not a claim of completed production behavior. Its remaining goals, including real AI generation, multilingual quality, scheduling, retention and delivery, still require evidence.
 
+## Authorized admin and creator catalogue increment
+
+D21 (21October) authorizes the admin panel, five120-account research lists, backend catalogue and one public page per canonical creator, plus planning-only Apify/BrightData comparisons. [Tracked delivery plan](docs/admin/PLAN.md). No source collection or paid jobs are authorized by this increment; do not substitute page publication for verified access.
+
 ## Completed discovery and decisions
 
 | ID | Work / owner | Status | Evidence |

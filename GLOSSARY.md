@@ -83,3 +83,10 @@ A source's reference to a named brand or product. A mention does not, by itself,
 
 **Sponsor**:
 A party whose commercial support of a source update is explicitly disclosed in that material.
+
+
+**Creator catalogue**:
+The shared researched directory of creators and their publishing channels. An entry can be planned for collection without having been collected or followed by any reader.
+
+**Collection job**:
+One recorded attempt to retrieve material from a source. A job is distinct from a creator, a channel, a scraper tool and the readers who may use its results.

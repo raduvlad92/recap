@@ -1,0 +1,2542 @@
+[
+  {
+    "name": "Greta Thunberg",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@gretathunberg",
+    "url": "https://x.com/gretathunberg",
+    "description": "Shares climate activism and perspectives on climate justice.",
+    "topics": [
+      "Climate",
+      "Activism"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/climate_change_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Naomi Klein",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@naomiaklein",
+    "url": "https://x.com/naomiaklein",
+    "description": "Writes about climate, economic systems and political culture.",
+    "topics": [
+      "Climate",
+      "Politics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/climate_change_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Bill McKibben",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@billmckibben",
+    "url": "https://x.com/billmckibben",
+    "description": "Discusses climate change, environmental action and energy.",
+    "topics": [
+      "Climate",
+      "Energy"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/climate_change_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Peter Kalmus",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@climatehuman",
+    "url": "https://x.com/climatehuman",
+    "description": "Discusses climate science and responses to global warming.",
+    "topics": [
+      "Climate",
+      "Science"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/climate_change_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Katharine Hayhoe",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@khayhoe",
+    "url": "https://x.com/khayhoe",
+    "description": "Explains climate science and communicating about climate change.",
+    "topics": [
+      "Climate",
+      "Science communication"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/climate_change_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dr. Jacquelyn Gill",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@jacquelyngill",
+    "url": "https://x.com/jacquelyngill",
+    "description": "Discusses ecology, biodiversity and a changing climate.",
+    "topics": [
+      "Ecology",
+      "Climate"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/climate_change_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ed Hawkins",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@ed_hawkins",
+    "url": "https://x.com/ed_hawkins",
+    "description": "Communicates climate data through visualizations and explanations.",
+    "topics": [
+      "Climate",
+      "Data visualization"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/climate_change_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dr. Marshall Shepherd",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@drshepherd2013",
+    "url": "https://x.com/drshepherd2013",
+    "description": "Explains weather, climate and atmospheric science.",
+    "topics": [
+      "Weather",
+      "Climate"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/climate_change_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Antonio Grasso",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@antgrasso",
+    "url": "https://x.com/antgrasso",
+    "description": "Discusses AI, digital transformation and business technology.",
+    "topics": [
+      "Technology",
+      "AI"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fintech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Mike Quindazzi",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@mikequindazzi",
+    "url": "https://x.com/mikequindazzi",
+    "description": "Shares perspectives on technology trends and business leadership.",
+    "topics": [
+      "Technology",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fintech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Spiros Margaris",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@spirosmargaris",
+    "url": "https://x.com/spirosmargaris",
+    "description": "Discusses financial technology, banking and AI.",
+    "topics": [
+      "Fintech",
+      "AI"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fintech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Al Leong",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@iDesignStrategy",
+    "url": "https://x.com/iDesignStrategy",
+    "description": "Explores blockchain technology, Web3 and digital marketing.",
+    "topics": [
+      "Blockchain",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fintech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jim Marous",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@jimmarous",
+    "url": "https://x.com/jimmarous",
+    "description": "Discusses banking innovation and digital financial services.",
+    "topics": [
+      "Banking",
+      "Fintech"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fintech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Michael Kitces",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@michaelkitces",
+    "url": "https://x.com/michaelkitces",
+    "description": "Explains financial planning and technology for financial advisers.",
+    "topics": [
+      "Financial planning",
+      "Fintech"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fintech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Chris Gledhill",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@cgledhill",
+    "url": "https://x.com/cgledhill",
+    "description": "Discusses financial technology, education technology and emerging trends.",
+    "topics": [
+      "Fintech",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fintech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Brett King",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@brettking",
+    "url": "https://x.com/brettking",
+    "description": "Explores the future of banking and financial technology.",
+    "topics": [
+      "Banking",
+      "Fintech"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fintech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Brian Feroldi",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@BrianFeroldi",
+    "url": "https://x.com/BrianFeroldi",
+    "description": "Teaches how to evaluate businesses and understand investing.",
+    "topics": [
+      "Investing",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/investing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Liz Ann Sonders",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@LizAnnSonders",
+    "url": "https://x.com/LizAnnSonders",
+    "description": "Shares perspectives on markets, the economy and investing.",
+    "topics": [
+      "Investing",
+      "Economics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/investing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Morgan Housel",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@morganhousel",
+    "url": "https://x.com/morganhousel",
+    "description": "Writes about money, investing and financial behavior.",
+    "topics": [
+      "Personal finance",
+      "Psychology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/investing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Andrew Lokenauth",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@fluentinfinance",
+    "url": "https://x.com/fluentinfinance",
+    "description": "Explains personal finance, investing and economic developments.",
+    "topics": [
+      "Personal finance",
+      "Economics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/investing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ben Carlson",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@awealthofcs",
+    "url": "https://x.com/awealthofcs",
+    "description": "Discusses financial markets and long-term investing.",
+    "topics": [
+      "Investing",
+      "Finance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/investing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ian Cassel",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@iancassel",
+    "url": "https://x.com/iancassel",
+    "description": "Discusses finding and evaluating small public companies.",
+    "topics": [
+      "Investing",
+      "Small business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/investing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Deepak Shenoy",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@deepakshenoy",
+    "url": "https://x.com/deepakshenoy",
+    "description": "Shares perspectives on Indian financial markets and investing.",
+    "topics": [
+      "Investing",
+      "Finance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/investing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ajay Bagga",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@ajay_bagga",
+    "url": "https://x.com/ajay_bagga",
+    "description": "Discusses markets, economic trends and long-term investing.",
+    "topics": [
+      "Investing",
+      "Economics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/investing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dann",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@DannPetty",
+    "url": "https://x.com/DannPetty",
+    "description": "Shares design work and lessons about creative businesses.",
+    "topics": [
+      "Design",
+      "Creative business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/web_design_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Susan Jarema",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@susanjarema",
+    "url": "https://x.com/susanjarema",
+    "description": "Discusses websites, search optimization and marketing strategy.",
+    "topics": [
+      "Web design",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/web_design_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Karmen K",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@iamkarmenk",
+    "url": "https://x.com/iamkarmenk",
+    "description": "Shares web-design and product-marketing perspectives.",
+    "topics": [
+      "Web design",
+      "Product marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/web_design_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Nate Hoffelder",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@inkbitspixels",
+    "url": "https://x.com/inkbitspixels",
+    "description": "Discusses author websites, newsletters and online publishing.",
+    "topics": [
+      "Web design",
+      "Publishing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/web_design_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Benten Woodring",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@bentenwoodring",
+    "url": "https://x.com/bentenwoodring",
+    "description": "Shares web-design projects and creative process.",
+    "topics": [
+      "Web design",
+      "Design"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/web_design_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jonathan Denwood",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@jonathandenwood",
+    "url": "https://x.com/jonathandenwood",
+    "description": "Discusses WordPress, website hosting and running online businesses.",
+    "topics": [
+      "WordPress",
+      "Small business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/web_design_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Michelle Pircher",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@MichellePircher",
+    "url": "https://x.com/MichellePircher",
+    "description": "Discusses web design, search optimization and social marketing.",
+    "topics": [
+      "Web design",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/web_design_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Matt Doyle",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@ElatedDotCom",
+    "url": "https://x.com/ElatedDotCom",
+    "description": "Publishes website-development tutorials and WordPress guidance.",
+    "topics": [
+      "Web development",
+      "WordPress"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/web_design_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dr. Amalina Bakri",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@DrAmalinaBakri",
+    "url": "https://x.com/DrAmalinaBakri",
+    "description": "Discusses clinical research, surgery and healthcare technology.",
+    "topics": [
+      "Healthcare",
+      "Research"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/biotech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Eric Topol",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@EricTopol",
+    "url": "https://x.com/EricTopol",
+    "description": "Explains medical research and developments in healthcare.",
+    "topics": [
+      "Healthcare",
+      "Science"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/biotech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Peter Hotez",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@PeterHotez",
+    "url": "https://x.com/PeterHotez",
+    "description": "Discusses vaccine research, infectious diseases and science communication.",
+    "topics": [
+      "Healthcare",
+      "Science"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/biotech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Helen Branswell",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@HelenBranswell",
+    "url": "https://x.com/HelenBranswell",
+    "description": "Reports on infectious diseases and public-health developments.",
+    "topics": [
+      "Healthcare",
+      "Journalism"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/biotech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Adam Feuerstein",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@adamfeuerstein",
+    "url": "https://x.com/adamfeuerstein",
+    "description": "Reports on biotechnology companies and drug development.",
+    "topics": [
+      "Biotechnology",
+      "Journalism"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/biotech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Brad Loncar",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@bradloncar",
+    "url": "https://x.com/bradloncar",
+    "description": "Discusses biotechnology and interviews people working in the sector.",
+    "topics": [
+      "Biotechnology",
+      "Interviews"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/biotech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jonathan Reiner",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@JReinerMD",
+    "url": "https://x.com/JReinerMD",
+    "description": "Discusses cardiovascular medicine, healthcare and public health.",
+    "topics": [
+      "Healthcare",
+      "Science communication"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/biotech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "David R. Liu",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@davidrliu",
+    "url": "https://x.com/davidrliu",
+    "description": "Shares research at the intersection of chemistry, biology and therapeutics.",
+    "topics": [
+      "Biology",
+      "Research"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/biotech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Steven W. Anderson",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@web20classroom",
+    "url": "https://x.com/web20classroom",
+    "description": "Discusses education technology and teaching practice.",
+    "topics": [
+      "Education",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/edtech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Richard Byrne",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@rmbyrne",
+    "url": "https://x.com/rmbyrne",
+    "description": "Shares educational technology tools and teaching resources.",
+    "topics": [
+      "Education",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/edtech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dr. Alec Couros",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@courosa",
+    "url": "https://x.com/courosa",
+    "description": "Discusses digital learning, media and education.",
+    "topics": [
+      "Education",
+      "Media literacy"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/edtech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Monica Burns",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@classtechtips",
+    "url": "https://x.com/classtechtips",
+    "description": "Explains classroom technology tools and teaching workflows.",
+    "topics": [
+      "Education",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/edtech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Shelly Sanchez Terrell",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@shellterrell",
+    "url": "https://x.com/shellterrell",
+    "description": "Shares resources about digital teaching and professional learning.",
+    "topics": [
+      "Education",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/edtech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Erin Klein",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@kleinerin",
+    "url": "https://x.com/kleinerin",
+    "description": "Discusses classroom practice and educational technology.",
+    "topics": [
+      "Education",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/edtech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tom Vander Ark",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@tvanderark",
+    "url": "https://x.com/tvanderark",
+    "description": "Writes about learning, schools and educational innovation.",
+    "topics": [
+      "Education",
+      "Learning"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/edtech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Christopher Pappas",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@cpappas",
+    "url": "https://x.com/cpappas",
+    "description": "Discusses e-learning, workplace training and online education.",
+    "topics": [
+      "Education",
+      "Workplace learning"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/edtech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Hiten Shah",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@hnshah",
+    "url": "https://x.com/hnshah",
+    "description": "Shares lessons about software businesses, growth and teams.",
+    "topics": [
+      "Startups",
+      "Growth"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/ecommerce_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tobi Lutke",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@tobi",
+    "url": "https://x.com/tobi",
+    "description": "Discusses software, entrepreneurship and online commerce.",
+    "topics": [
+      "Ecommerce",
+      "Software"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/ecommerce_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Marsha Collier",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@marshacollier",
+    "url": "https://x.com/marshacollier",
+    "description": "Shares guidance about ecommerce, technology and customer service.",
+    "topics": [
+      "Ecommerce",
+      "Customer service"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/ecommerce_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Nik Sharma",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@mrsharma",
+    "url": "https://x.com/mrsharma",
+    "description": "Discusses direct-to-consumer brands and growth marketing.",
+    "topics": [
+      "Ecommerce",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/ecommerce_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Chase Dimond",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@ecomchasedimond",
+    "url": "https://x.com/ecomchasedimond",
+    "description": "Shares email-marketing ideas for ecommerce businesses.",
+    "topics": [
+      "Email marketing",
+      "Ecommerce"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/ecommerce_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Web Smith",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@web",
+    "url": "https://x.com/web",
+    "description": "Discusses commerce, retail brands and business strategy.",
+    "topics": [
+      "Retail",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/ecommerce_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Zach Stuck",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@zachmstuck",
+    "url": "https://x.com/zachmstuck",
+    "description": "Shares lessons from building ecommerce brands and agencies.",
+    "topics": [
+      "Ecommerce",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/ecommerce_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Social Savannah",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@social_savannah",
+    "url": "https://x.com/social_savannah",
+    "description": "Shares examples and advice about social advertising creative.",
+    "topics": [
+      "Advertising",
+      "Social media"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/ecommerce_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "William Tincup",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@williamtincup",
+    "url": "https://x.com/williamtincup",
+    "description": "Discusses recruiting, workplace technology and industry trends.",
+    "topics": [
+      "Hiring",
+      "HR technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/hr_tech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Meghan M. Biro",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@MeghanMBiro",
+    "url": "https://x.com/MeghanMBiro",
+    "description": "Explores workplace culture, recruiting and the future of work.",
+    "topics": [
+      "Workplace",
+      "HR technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/hr_tech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Josh Bersin",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@Josh_Bersin",
+    "url": "https://x.com/Josh_Bersin",
+    "description": "Publishes perspectives on HR technology and talent management.",
+    "topics": [
+      "HR technology",
+      "Management"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/hr_tech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Steve Boese",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@SteveBoese",
+    "url": "https://x.com/SteveBoese",
+    "description": "Discusses workplace technology and human resources.",
+    "topics": [
+      "HR technology",
+      "Workplace"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/hr_tech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Trish Steed",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@Trish_Steed",
+    "url": "https://x.com/Trish_Steed",
+    "description": "Shares analysis and interviews about work and HR technology.",
+    "topics": [
+      "HR technology",
+      "Interviews"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/hr_tech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tim Sackett",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@TimSackett",
+    "url": "https://x.com/TimSackett",
+    "description": "Discusses recruitment, talent acquisition and workplace technology.",
+    "topics": [
+      "Hiring",
+      "HR technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/hr_tech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Stacy Donovan Zapar",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@StacyZapar",
+    "url": "https://x.com/StacyZapar",
+    "description": "Shares recruiting strategies and talent-acquisition training.",
+    "topics": [
+      "Hiring",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/hr_tech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Laszlo Bock",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@laszlobock",
+    "url": "https://x.com/laszlobock",
+    "description": "Discusses people management, workplace behavior and organizational culture.",
+    "topics": [
+      "Management",
+      "Workplace"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/hr_tech_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Nico Rosberg",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@nicorosberg",
+    "url": "https://x.com/nicorosberg",
+    "description": "Discusses sustainability, entrepreneurship and technology investing.",
+    "topics": [
+      "Sustainability",
+      "Investing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/green_technology_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Arik Ring",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@arikring",
+    "url": "https://x.com/arikring",
+    "description": "Explores solar energy, energy efficiency and clean technology.",
+    "topics": [
+      "Energy",
+      "Sustainability"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/green_technology_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ken Caldeira",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@kencaldeira",
+    "url": "https://x.com/kencaldeira",
+    "description": "Discusses climate science, energy and environmental research.",
+    "topics": [
+      "Climate",
+      "Research"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/green_technology_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Katie Fehrenbacher",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@katiefehren",
+    "url": "https://x.com/katiefehren",
+    "description": "Reports on climate technology and related business developments.",
+    "topics": [
+      "Climate technology",
+      "Journalism"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/green_technology_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Darin Olien",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@darinolien",
+    "url": "https://x.com/darinolien",
+    "description": "Discusses wellness, environmental issues and sustainable living.",
+    "topics": [
+      "Wellness",
+      "Sustainability"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/green_technology_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Alf Poor",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@alf_poor",
+    "url": "https://x.com/alf_poor",
+    "description": "Discusses electric vehicles and commercial clean-technology adoption.",
+    "topics": [
+      "Electric vehicles",
+      "Climate technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/green_technology_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Anton Boym",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@antonboym",
+    "url": "https://x.com/antonboym",
+    "description": "Shares perspectives on sustainable cities and climate technology.",
+    "topics": [
+      "Sustainability",
+      "Climate technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/green_technology_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Heather Clancy",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@greentechlady",
+    "url": "https://x.com/greentechlady",
+    "description": "Reports on technology and corporate sustainability.",
+    "topics": [
+      "Sustainability",
+      "Journalism"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/green_technology_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Barbara McQuade",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@BarbMcQuade",
+    "url": "https://x.com/BarbMcQuade",
+    "description": "Discusses legal issues, democracy and public institutions.",
+    "topics": [
+      "Law",
+      "Public affairs"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/legal_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ian Runkle",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@IanRunkle",
+    "url": "https://x.com/IanRunkle",
+    "description": "Explains legal cases and questions for a general audience.",
+    "topics": [
+      "Law",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/legal_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Andrew Esquire",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@TheLegalMindset",
+    "url": "https://x.com/TheLegalMindset",
+    "description": "Discusses legal developments and public affairs.",
+    "topics": [
+      "Law",
+      "Public affairs"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/legal_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Alyte Mazeika",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@legalbytesmedia",
+    "url": "https://x.com/legalbytesmedia",
+    "description": "Explains legal cases and their connections to popular culture.",
+    "topics": [
+      "Law",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/legal_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Haben Girma",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@HabenGirma",
+    "url": "https://x.com/HabenGirma",
+    "description": "Discusses disability rights, accessibility and inclusive design.",
+    "topics": [
+      "Accessibility",
+      "Human rights"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/legal_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Bob Ambrogi",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@bobambrogi",
+    "url": "https://x.com/bobambrogi",
+    "description": "Reports on legal technology and changes in legal practice.",
+    "topics": [
+      "Legal technology",
+      "Journalism"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/legal_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ross Guberman",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@legalwritingpro",
+    "url": "https://x.com/legalwritingpro",
+    "description": "Shares guidance about clear and persuasive legal writing.",
+    "topics": [
+      "Writing",
+      "Law"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/legal_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Colin S. Levy",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@Clevy_Law",
+    "url": "https://x.com/Clevy_Law",
+    "description": "Discusses legal technology and the practice of law.",
+    "topics": [
+      "Legal technology",
+      "Law"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/legal_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Joey Swoll",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@thejoeyswoll",
+    "url": "https://x.com/thejoeyswoll",
+    "description": "Discusses gym culture and positive behavior in fitness spaces.",
+    "topics": [
+      "Fitness",
+      "Community"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fitness_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dr. Rhonda Patrick",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@foundmyfitness",
+    "url": "https://x.com/foundmyfitness",
+    "description": "Explores research about nutrition, exercise, aging and health.",
+    "topics": [
+      "Nutrition",
+      "Health research"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fitness_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Obi Obadike",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@Obi_Obadike",
+    "url": "https://x.com/Obi_Obadike",
+    "description": "Shares perspectives on exercise, nutrition and fitness.",
+    "topics": [
+      "Fitness",
+      "Nutrition"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fitness_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Joe Wicks",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@thebodycoach",
+    "url": "https://x.com/thebodycoach",
+    "description": "Shares home-workout ideas and encouragement for everyday fitness.",
+    "topics": [
+      "Fitness",
+      "Wellness"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fitness_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Layne Norton",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@BioLayne",
+    "url": "https://x.com/BioLayne",
+    "description": "Discusses nutrition science, strength training and fitness claims.",
+    "topics": [
+      "Nutrition",
+      "Fitness"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fitness_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jeff Nippard",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@jeffnippard",
+    "url": "https://x.com/jeffnippard",
+    "description": "Explains bodybuilding and strength training using research.",
+    "topics": [
+      "Fitness",
+      "Science communication"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fitness_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Cassey Ho",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@blogilates",
+    "url": "https://x.com/blogilates",
+    "description": "Discusses fitness, activewear design and entrepreneurship.",
+    "topics": [
+      "Fitness",
+      "Consumer brands"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fitness_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Adam Bornstein",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@bornfitness",
+    "url": "https://x.com/bornfitness",
+    "description": "Shares practical perspectives on exercise, nutrition and health.",
+    "topics": [
+      "Fitness",
+      "Nutrition"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/fitness_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Bojan Tunguz",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@tunguz",
+    "url": "https://x.com/tunguz",
+    "description": "Discusses machine learning, data science and technology.",
+    "topics": [
+      "Machine learning",
+      "Data science"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/data_science_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Samuel Sinyangwe",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@samswey",
+    "url": "https://x.com/samswey",
+    "description": "Uses data to discuss policing and public policy.",
+    "topics": [
+      "Data science",
+      "Public policy"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/data_science_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kareem Carr",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@kareem_carr",
+    "url": "https://x.com/kareem_carr",
+    "description": "Explains statistics and reasoning about scientific evidence.",
+    "topics": [
+      "Statistics",
+      "Science communication"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/data_science_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Meghan Chayka",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@meghanchayka",
+    "url": "https://x.com/meghanchayka",
+    "description": "Discusses hockey analytics and applying data in sport.",
+    "topics": [
+      "Sports analytics",
+      "Data science"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/data_science_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Renee Teate",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@becomingdatasci",
+    "url": "https://x.com/becomingdatasci",
+    "description": "Shares data-science learning resources and professional perspectives.",
+    "topics": [
+      "Data science",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/data_science_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Monica Rogati",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@mrogati",
+    "url": "https://x.com/mrogati",
+    "description": "Discusses applied data science and AI strategy.",
+    "topics": [
+      "Data science",
+      "AI"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/data_science_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Sophia Yang",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@sophiamyang",
+    "url": "https://x.com/sophiamyang",
+    "description": "Shares educational material about AI tools and open-source software.",
+    "topics": [
+      "AI",
+      "Open source"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/data_science_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jeffrey Shaffer",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@dataplusscience",
+    "url": "https://x.com/dataplusscience",
+    "description": "Explains data visualization, analytics and AI applications.",
+    "topics": [
+      "Data visualization",
+      "AI"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/data_science_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Franz Russo",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@franzrusso",
+    "url": "https://x.com/franzrusso",
+    "description": "Discusses social media, digital communication and technology in Italian.",
+    "topics": [
+      "Social media",
+      "Technology"
+    ],
+    "language": "it",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/content_marketing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Mark Traphagen",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@marktraphagen",
+    "url": "https://x.com/marktraphagen",
+    "description": "Discusses search optimization and content marketing.",
+    "topics": [
+      "SEO",
+      "Content marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/content_marketing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Zied Ben Soltana",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@zbensoltana",
+    "url": "https://x.com/zbensoltana",
+    "description": "Shares ideas about inbound marketing, social media and growth.",
+    "topics": [
+      "Marketing",
+      "Growth"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/content_marketing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jean Wandimi",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@Jeanwandimi",
+    "url": "https://x.com/Jeanwandimi",
+    "description": "Discusses content strategy, brand communication and digital marketing.",
+    "topics": [
+      "Content marketing",
+      "Brand strategy"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://x.feedspot.com/content_marketing_twitter_influencers/",
+        "note": "Public topic directory pairs the creator name with this exact X profile link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "3Blue1Brown",
+    "kind": "group",
+    "platform": "X",
+    "handle": "@3blue1brown",
+    "url": "https://x.com/3blue1brown",
+    "description": "Explains mathematics through visual stories and animated lessons.",
+    "topics": [
+      "Mathematics",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.3blue1brown.com",
+        "note": "Official creator website links https://x.com/3blue1brown; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "3blue1brown.com"
+  },
+  {
+    "name": "Kurzgesagt",
+    "kind": "group",
+    "platform": "X",
+    "handle": "@Kurz_Gesagt",
+    "url": "https://x.com/Kurz_Gesagt",
+    "description": "Publishes animated explanations of science and humanity's future.",
+    "topics": [
+      "Science",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://kurzgesagt.org",
+        "note": "Official creator website links https://twitter.com/Kurz_Gesagt; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "kurzgesagt.org"
+  },
+  {
+    "name": "Marques Brownlee",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@MKBHD",
+    "url": "https://x.com/MKBHD",
+    "description": "Reviews consumer technology and discusses product design.",
+    "topics": [
+      "Technology",
+      "Product design"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://mkbhd.com",
+        "note": "Official creator website links https://twitter.com/MKBHD; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "mkbhd.com"
+  },
+  {
+    "name": "Arun Maini",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@Mrwhosetheboss",
+    "url": "https://x.com/Mrwhosetheboss",
+    "description": "Reviews consumer gadgets and explains technology developments.",
+    "topics": [
+      "Technology",
+      "Consumer products"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://mrwhosetheboss.com",
+        "note": "Official creator website links https://x.com/Mrwhosetheboss?s=20; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "mrwhosetheboss.com"
+  },
+  {
+    "name": "Justine Ezarik",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@ijustine",
+    "url": "https://x.com/ijustine",
+    "description": "Shares technology reviews and hands-on experiences with consumer devices.",
+    "topics": [
+      "Technology",
+      "Consumer products"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.ijustine.com/",
+        "note": "Official creator website links http://x.com/ijustine; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "ijustine.com"
+  },
+  {
+    "name": "Dave Lee",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@dave2d",
+    "url": "https://x.com/dave2d",
+    "description": "Reviews laptops, computers and other consumer technology.",
+    "topics": [
+      "Technology",
+      "Computing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.dave2d.com/",
+        "note": "Official creator website links http://twitter.com/dave2d; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "dave2d.com"
+  },
+  {
+    "name": "Codie Sanchez",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@Codie_Sanchez",
+    "url": "https://x.com/Codie_Sanchez",
+    "description": "Discusses acquiring and operating small businesses.",
+    "topics": [
+      "Entrepreneurship",
+      "Small business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://codiesanchez.com",
+        "note": "Official creator website links https://twitter.com/Codie_Sanchez; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "codiesanchez.com"
+  },
+  {
+    "name": "Brian Tracy",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@briantracy",
+    "url": "https://x.com/briantracy",
+    "description": "Shares ideas about sales, productivity and personal development.",
+    "topics": [
+      "Productivity",
+      "Sales"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.briantracy.com",
+        "note": "Official creator website links https://twitter.com/briantracy; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "briantracy.com"
+  },
+  {
+    "name": "Minimalist Baker",
+    "kind": "group",
+    "platform": "X",
+    "handle": "@minimalistbaker",
+    "url": "https://x.com/minimalistbaker",
+    "description": "Publishes approachable recipes and practical cooking ideas.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://minimalistbaker.com",
+        "note": "Official creator website links https://twitter.com/minimalistbaker; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "minimalistbaker.com"
+  },
+  {
+    "name": "Rick Steves' Europe",
+    "kind": "group",
+    "platform": "X",
+    "handle": "@RickStevesEur",
+    "url": "https://x.com/RickStevesEur",
+    "description": "Shares European travel guidance, destinations and cultural perspectives.",
+    "topics": [
+      "Travel",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.ricksteves.com",
+        "note": "Official creator website links https://twitter.com/RickStevesEur; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "ricksteves.com"
+  },
+  {
+    "name": "Christian LeBlanc",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@lostleblanc",
+    "url": "https://x.com/lostleblanc",
+    "description": "Shares travel stories and advice about creating visual content.",
+    "topics": [
+      "Travel",
+      "Content creation"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://lostleblanc.com",
+        "note": "Official creator website links https://x.com/lostleblanc; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "lostleblanc.com"
+  },
+  {
+    "name": "Fitness Blender",
+    "kind": "group",
+    "platform": "X",
+    "handle": "@FitnessBlender",
+    "url": "https://x.com/FitnessBlender",
+    "description": "Publishes home workouts and structured exercise programs.",
+    "topics": [
+      "Fitness",
+      "Wellness"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.fitnessblender.com",
+        "note": "Official creator website links https://x.com/FitnessBlender; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "fitnessblender.com"
+  },
+  {
+    "name": "Scott Herman",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@Scott_Herman",
+    "url": "https://x.com/Scott_Herman",
+    "description": "Teaches strength-training exercises and fitness techniques.",
+    "topics": [
+      "Fitness",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.scotthermanfitness.com",
+        "note": "Official creator website links https://www.twitter.com/Scott_Herman; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "scotthermanfitness.com"
+  },
+  {
+    "name": "Drew Binsky",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@drewbinsky",
+    "url": "https://x.com/drewbinsky",
+    "description": "Shares travel stories and encounters with cultures around the world.",
+    "topics": [
+      "Travel",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://drewbinsky.com/",
+        "note": "Official creator website links https://twitter.com/drewbinsky; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "drewbinsky.com"
+  },
+  {
+    "name": "Paul Nicklen",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@PaulNicklen",
+    "url": "https://x.com/PaulNicklen",
+    "description": "Shares wildlife photography and perspectives on environmental conservation.",
+    "topics": [
+      "Photography",
+      "Conservation"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://paulnicklen.com/",
+        "note": "Official creator website links https://twitter.com/PaulNicklen; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "paulnicklen.com"
+  },
+  {
+    "name": "Jimmy Chin",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@jimkchin",
+    "url": "https://x.com/jimkchin",
+    "description": "Shares adventure photography, filmmaking and climbing projects.",
+    "topics": [
+      "Photography",
+      "Adventure"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://jimmychin.com/",
+        "note": "Official creator website links https://twitter.com/jimkchin; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "jimmychin.com"
+  },
+  {
+    "name": "Bill Nye",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@BillNye",
+    "url": "https://x.com/BillNye",
+    "description": "Explains science and discusses scientific issues for general audiences.",
+    "topics": [
+      "Science",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.billnye.com/",
+        "note": "Official creator website links https://twitter.com/BillNye; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "billnye.com"
+  },
+  {
+    "name": "Marc Randolph",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@marcrandolph",
+    "url": "https://x.com/marcrandolph",
+    "description": "Shares lessons about startup ideas and building businesses.",
+    "topics": [
+      "Startups",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.marcrandolph.com",
+        "note": "Official creator website links https://x.com/marcrandolph; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "marcrandolph.com"
+  },
+  {
+    "name": "Sahil Bloom",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@SahilBloom",
+    "url": "https://x.com/SahilBloom",
+    "description": "Writes about personal growth, wealth and life decisions.",
+    "topics": [
+      "Personal development",
+      "Personal finance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.sahilbloom.com",
+        "note": "Official creator website links https://twitter.com/SahilBloom; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "sahilbloom.com"
+  },
+  {
+    "name": "Ankur Warikoo",
+    "kind": "person",
+    "platform": "X",
+    "handle": "@warikoo",
+    "url": "https://x.com/warikoo",
+    "description": "Shares perspectives on work, money and personal development.",
+    "topics": [
+      "Personal development",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.ankurwarikoo.com",
+        "note": "Official creator website links https://x.com/warikoo; normalized to the same handle on X."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "ankurwarikoo.com"
+  }
+]

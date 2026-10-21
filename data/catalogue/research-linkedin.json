@@ -1,0 +1,2549 @@
+[
+  {
+    "name": "Rory Flynn",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "rory-flynn-ai",
+    "url": "https://www.linkedin.com/in/rory-flynn-ai",
+    "description": "Explains AI tools and workflows for marketing teams.",
+    "topics": [
+      "AI",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Alex Xu",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "alexxubyte",
+    "url": "https://www.linkedin.com/in/alexxubyte",
+    "description": "Publishes illustrated explanations of software architecture and system design.",
+    "topics": [
+      "Software engineering",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Anton Osika",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "antonosika",
+    "url": "https://www.linkedin.com/in/antonosika",
+    "description": "Shares lessons from building AI software products and startups.",
+    "topics": [
+      "AI",
+      "Startups"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Will McTighe",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "will-mctighe",
+    "url": "https://www.linkedin.com/in/will-mctighe",
+    "description": "Discusses B2B marketing, technology and business growth.",
+    "topics": [
+      "Marketing",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Andrew Bolis",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "andrewbolis",
+    "url": "https://www.linkedin.com/in/andrewbolis",
+    "description": "Explains practical AI applications for marketing and business.",
+    "topics": [
+      "AI",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Yann LeCun",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "yann-lecun",
+    "url": "https://www.linkedin.com/in/yann-lecun",
+    "description": "Discusses machine learning research and debates about AI.",
+    "topics": [
+      "AI",
+      "Research"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Pascal Bornet",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "pascalbornet",
+    "url": "https://www.linkedin.com/in/pascalbornet",
+    "description": "Explores intelligent automation and its implications for work.",
+    "topics": [
+      "AI",
+      "Future of work"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Roland Busch",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "buschroland",
+    "url": "https://www.linkedin.com/in/buschroland",
+    "description": "Shares perspectives on industrial technology, infrastructure and AI.",
+    "topics": [
+      "Industry",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ishan Sharma",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "ishansharma7390",
+    "url": "https://www.linkedin.com/in/ishansharma7390",
+    "description": "Creates educational material about technology, AI and careers.",
+    "topics": [
+      "Technology",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Fidji Simo",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "fidjisimo",
+    "url": "https://www.linkedin.com/in/fidjisimo",
+    "description": "Discusses AI products and the teams building them.",
+    "topics": [
+      "AI",
+      "Product"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-ai",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "John C. Maxwell",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "officialjohnmaxwell",
+    "url": "https://www.linkedin.com/in/officialjohnmaxwell",
+    "description": "Shares ideas about leadership and personal development.",
+    "topics": [
+      "Leadership",
+      "Personal development"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-leadership",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Colby Kultgen",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "colby-kultgen",
+    "url": "https://www.linkedin.com/in/colby-kultgen",
+    "description": "Writes about habits, self-development and leadership.",
+    "topics": [
+      "Personal development",
+      "Leadership"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-leadership",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Alex Hormozi",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "alexhormozi",
+    "url": "https://www.linkedin.com/in/alexhormozi",
+    "description": "Discusses business growth, entrepreneurship and leading teams.",
+    "topics": [
+      "Business",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-leadership",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Reese Witherspoon",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "reesewitherspoon",
+    "url": "https://www.linkedin.com/in/reesewitherspoon",
+    "description": "Shares perspectives on producing, entrepreneurship and women's leadership.",
+    "topics": [
+      "Culture",
+      "Leadership"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-leadership",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Rob Dance",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "robdance",
+    "url": "https://www.linkedin.com/in/robdance",
+    "description": "Writes about workplace leadership and building businesses.",
+    "topics": [
+      "Leadership",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-leadership",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Justine Ezarik",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "justineezarik",
+    "url": "https://www.linkedin.com/in/justineezarik",
+    "description": "Shares technology reviews and experiences with consumer devices.",
+    "topics": [
+      "Technology",
+      "Consumer products"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.ijustine.com/",
+        "note": "Official creator website links this precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "ijustine.com"
+  },
+  {
+    "name": "Mel Robbins",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "melrobbins",
+    "url": "https://www.linkedin.com/in/melrobbins",
+    "description": "Explores personal growth, confidence and everyday behavior.",
+    "topics": [
+      "Personal development",
+      "Psychology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.melrobbins.com",
+        "note": "Official creator website links this precise LinkedIn profile."
+      },
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-leadership",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "melrobbins.com"
+  },
+  {
+    "name": "Rafael Juan",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "rafaeljuan",
+    "url": "https://www.linkedin.com/in/rafaeljuan",
+    "description": "Shares Spanish-language perspectives on leadership and business operations.",
+    "topics": [
+      "Leadership",
+      "Business"
+    ],
+    "language": "es",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-leadership",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kunal Shah",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "kunalshah1",
+    "url": "https://www.linkedin.com/in/kunalshah1",
+    "description": "Discusses entrepreneurship, decision-making and human behavior.",
+    "topics": [
+      "Entrepreneurship",
+      "Psychology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-leadership",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Justin Wright",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "jwmba",
+    "url": "https://www.linkedin.com/in/jwmba",
+    "description": "Offers leadership frameworks and advice for managers.",
+    "topics": [
+      "Leadership",
+      "Management"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-leadership",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jahnavi Shah",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "jahnshah",
+    "url": "https://www.linkedin.com/in/jahnshah",
+    "description": "Creates educational content about AI, technology and career development.",
+    "topics": [
+      "AI",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dan Mian",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "danmian",
+    "url": "https://www.linkedin.com/in/danmian",
+    "description": "Shares job-search guidance and advice for early-career professionals.",
+    "topics": [
+      "Careers",
+      "Job search"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ryan Yockey",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "ryan-yockey",
+    "url": "https://www.linkedin.com/in/ryan-yockey",
+    "description": "Discusses personal branding and building independent professional businesses.",
+    "topics": [
+      "Personal branding",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jean Kang",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "advicewithjean",
+    "url": "https://www.linkedin.com/in/advicewithjean",
+    "description": "Shares career advice and perspectives on working in technology.",
+    "topics": [
+      "Careers",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tim Denning",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "timcdenning",
+    "url": "https://www.linkedin.com/in/timcdenning",
+    "description": "Writes about independent work, digital businesses and personal growth.",
+    "topics": [
+      "Writing",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Véronique Barrot",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "veroniquebarrot",
+    "url": "https://www.linkedin.com/in/veroniquebarrot",
+    "description": "Discusses professional visibility and personal branding for women leaders.",
+    "topics": [
+      "Personal branding",
+      "Leadership"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Thomas Pearce",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "thomas-pearce4",
+    "url": "https://www.linkedin.com/in/thomas-pearce4",
+    "description": "Shares personal-branding advice and perspectives on career growth.",
+    "topics": [
+      "Personal branding",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Reno Perry",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "renoperry",
+    "url": "https://www.linkedin.com/in/renoperry",
+    "description": "Offers job-search and career-development guidance for experienced professionals.",
+    "topics": [
+      "Careers",
+      "Job search"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Gary Vaynerchuk",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "garyvaynerchuk",
+    "url": "https://www.linkedin.com/in/garyvaynerchuk",
+    "description": "Discusses marketing, entrepreneurship and building audiences.",
+    "topics": [
+      "Marketing",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dr. Miro Bada",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "drmirobada",
+    "url": "https://www.linkedin.com/in/drmirobada",
+    "description": "Writes about careers, workplace expectations and personal development.",
+    "topics": [
+      "Careers",
+      "Personal development"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-career-development",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tori Dunlap",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "toridunlap",
+    "url": "https://www.linkedin.com/in/toridunlap",
+    "description": "Explains personal finance and financial independence for women.",
+    "topics": [
+      "Personal finance",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Joseph Cass",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "josephcass",
+    "url": "https://www.linkedin.com/in/josephcass",
+    "description": "Writes stories about investors and financial decision-making.",
+    "topics": [
+      "Investing",
+      "Finance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kevin O'Leary",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "kevinolearytv",
+    "url": "https://www.linkedin.com/in/kevinolearytv",
+    "description": "Discusses investing, entrepreneurship and financial decisions.",
+    "topics": [
+      "Investing",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Éric Larchevêque",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "ericlarch",
+    "url": "https://www.linkedin.com/in/ericlarch",
+    "description": "Writes in French about entrepreneurship, investing and digital assets.",
+    "topics": [
+      "Entrepreneurship",
+      "Finance"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Anushka Rathod",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "anushka-rathod",
+    "url": "https://www.linkedin.com/in/anushka-rathod",
+    "description": "Creates accessible explanations of money and personal finance.",
+    "topics": [
+      "Personal finance",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Anthony Bourbon",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "anthony-bourbon",
+    "url": "https://www.linkedin.com/in/anthony-bourbon",
+    "description": "Discusses startup investing and building businesses in French.",
+    "topics": [
+      "Startups",
+      "Investing"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Thasunda Brown Duckett",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "thasunda-brown-duckett-22b15523",
+    "url": "https://www.linkedin.com/in/thasunda-brown-duckett-22b15523",
+    "description": "Shares perspectives on financial security and inclusive leadership.",
+    "topics": [
+      "Finance",
+      "Leadership"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ray Dalio",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "raydalio",
+    "url": "https://www.linkedin.com/in/raydalio",
+    "description": "Discusses economic cycles, investing and decision-making principles.",
+    "topics": [
+      "Economics",
+      "Investing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Thomas Kehl",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "thomas-a-kehl",
+    "url": "https://www.linkedin.com/in/thomas-a-kehl",
+    "description": "Explains personal finance and investing in German.",
+    "topics": [
+      "Personal finance",
+      "Investing"
+    ],
+    "language": "de",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Codie A. Sanchez",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "codiesanchez",
+    "url": "https://www.linkedin.com/in/codiesanchez",
+    "description": "Discusses acquiring and operating small businesses.",
+    "topics": [
+      "Entrepreneurship",
+      "Small business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://codiesanchez.com",
+        "note": "Official creator website links this precise LinkedIn profile."
+      },
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-finance",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "codiesanchez.com"
+  },
+  {
+    "name": "Gianrico Farrugia",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "gianricofarrugia",
+    "url": "https://www.linkedin.com/in/gianricofarrugia",
+    "description": "Shares perspectives on healthcare delivery, research and medical innovation.",
+    "topics": [
+      "Healthcare",
+      "Research"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-healthcare",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Joanna Sadowska",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "joanna-sadowska-phd",
+    "url": "https://www.linkedin.com/in/joanna-sadowska-phd",
+    "description": "Covers pharmaceutical developments, therapies and biotechnology research.",
+    "topics": [
+      "Biotechnology",
+      "Healthcare"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-healthcare",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Drew Binsky",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "drewbinsky",
+    "url": "https://www.linkedin.com/in/drewbinsky",
+    "description": "Shares travel stories and perspectives on cultures around the world.",
+    "topics": [
+      "Travel",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://drewbinsky.com/",
+        "note": "Official creator website links this precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "drewbinsky.com"
+  },
+  {
+    "name": "Dr. Martha Boeckenfeld",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "drmarthaboeckenfeld",
+    "url": "https://www.linkedin.com/in/drmarthaboeckenfeld",
+    "description": "Explores emerging technology and applications in healthcare.",
+    "topics": [
+      "Technology",
+      "Healthcare"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-healthcare",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Léa Vigier",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "léa-vigier-🧭-9bba1797",
+    "url": "https://www.linkedin.com/in/léa-vigier-🧭-9bba1797",
+    "description": "Writes in French about mental health and lived experience.",
+    "topics": [
+      "Mental health",
+      "Personal development"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-healthcare",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Virgílio Bento",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "vbento",
+    "url": "https://www.linkedin.com/in/vbento",
+    "description": "Discusses AI applications in clinical care and healthcare businesses.",
+    "topics": [
+      "Healthcare",
+      "AI"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-healthcare",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Mark Cuban",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "mark-cuban-06a0755b",
+    "url": "https://www.linkedin.com/in/mark-cuban-06a0755b",
+    "description": "Discusses drug pricing, healthcare access and entrepreneurship.",
+    "topics": [
+      "Healthcare",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-healthcare",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Benjamin Louis",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "handisport",
+    "url": "https://www.linkedin.com/in/handisport",
+    "description": "Writes in French about disability inclusion and adaptive sport.",
+    "topics": [
+      "Accessibility",
+      "Sport"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-healthcare",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Thomas Schinecker",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "thomasschinecker",
+    "url": "https://www.linkedin.com/in/thomasschinecker",
+    "description": "Shares perspectives on medical research, diagnostics and healthcare.",
+    "topics": [
+      "Healthcare",
+      "Research"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-healthcare",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ellie Middleton",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "elliemidds",
+    "url": "https://www.linkedin.com/in/elliemidds",
+    "description": "Writes about neurodiversity, autism, ADHD and inclusion.",
+    "topics": [
+      "Neurodiversity",
+      "Workplace"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-healthcare",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Rachel Mitchell",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "rachelmitchell333",
+    "url": "https://www.linkedin.com/in/rachelmitchell333",
+    "description": "Discusses media visibility, professional relationships and business storytelling.",
+    "topics": [
+      "Media",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Selina Hehl",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "selina-hehl-psychologin",
+    "url": "https://www.linkedin.com/in/selina-hehl-psychologin",
+    "description": "Explains psychology, behavior and mental wellbeing in German.",
+    "topics": [
+      "Psychology",
+      "Mental health"
+    ],
+    "language": "de",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ankur Warikoo",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "warikoo",
+    "url": "https://www.linkedin.com/in/warikoo",
+    "description": "Shares ideas about work, money and personal development.",
+    "topics": [
+      "Personal development",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.ankurwarikoo.com",
+        "note": "Official creator website links this precise LinkedIn profile."
+      },
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "ankurwarikoo.com"
+  },
+  {
+    "name": "James Caan",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "jamescaancbe",
+    "url": "https://www.linkedin.com/in/jamescaancbe",
+    "description": "Discusses entrepreneurship, hiring and business leadership.",
+    "topics": [
+      "Entrepreneurship",
+      "Leadership"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ken Cheng",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "ken-cheng-991849b6",
+    "url": "https://www.linkedin.com/in/ken-cheng-991849b6",
+    "description": "Writes satirical and emotional stories about business and work.",
+    "topics": [
+      "Workplace",
+      "Humor"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tony Robbins",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "officialtonyrobbins",
+    "url": "https://www.linkedin.com/in/officialtonyrobbins",
+    "description": "Shares perspectives on personal development and business mindset.",
+    "topics": [
+      "Personal development",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Chase Dimond",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "chasedimond",
+    "url": "https://www.linkedin.com/in/chasedimond",
+    "description": "Explains ecommerce email marketing and customer communication.",
+    "topics": [
+      "Marketing",
+      "Ecommerce"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dr. Elizabeth Lindsey",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "elizabethlindsey",
+    "url": "https://www.linkedin.com/in/elizabethlindsey",
+    "description": "Writes about cultural knowledge, human connection and exploration.",
+    "topics": [
+      "Culture",
+      "Personal development"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Claire Mounier-Vehier",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "claire-mounier-vehier-4115181a9",
+    "url": "https://www.linkedin.com/in/claire-mounier-vehier-4115181a9",
+    "description": "Discusses cardiovascular health, prevention and women's health in French.",
+    "topics": [
+      "Healthcare",
+      "Education"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Raj Shamani",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "rajshamani",
+    "url": "https://www.linkedin.com/in/rajshamani",
+    "description": "Shares business interviews and perspectives on entrepreneurship.",
+    "topics": [
+      "Entrepreneurship",
+      "Interviews"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-psychology",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dharmesh Shah",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "dharmesh",
+    "url": "https://www.linkedin.com/in/dharmesh",
+    "description": "Discusses building software companies, marketing and AI.",
+    "topics": [
+      "Startups",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Lenny Rachitsky",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "lennyrachitsky",
+    "url": "https://www.linkedin.com/in/lennyrachitsky",
+    "description": "Writes about product management, growth and startup operations.",
+    "topics": [
+      "Product",
+      "Growth"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Carolina Sojoguti",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "carolina-sojoguti-0608b71a0",
+    "url": "https://www.linkedin.com/in/carolina-sojoguti-0608b71a0",
+    "description": "Discusses brand strategy and marketing for beauty businesses.",
+    "topics": [
+      "Brand strategy",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Lanzi Weideman",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "lanzi-weideman",
+    "url": "https://www.linkedin.com/in/lanzi-weideman",
+    "description": "Shares personal-branding strategies for founders and executives.",
+    "topics": [
+      "Personal branding",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jordan Lee",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "jordan-james-lee",
+    "url": "https://www.linkedin.com/in/jordan-james-lee",
+    "description": "Explores AI tools and applications for businesses.",
+    "topics": [
+      "AI",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Sanvi Khandelwal",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "sanvi-khandelwal-1436041aa",
+    "url": "https://www.linkedin.com/in/sanvi-khandelwal-1436041aa",
+    "description": "Discusses content strategy, professional writing and audience growth.",
+    "topics": [
+      "Content marketing",
+      "Writing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Haoma Worgwu",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "connectwithhaomaworgwu",
+    "url": "https://www.linkedin.com/in/connectwithhaomaworgwu",
+    "description": "Shares LinkedIn content and professional audience-building advice.",
+    "topics": [
+      "Personal branding",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Evan Chi",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "evanchi",
+    "url": "https://www.linkedin.com/in/evanchi",
+    "description": "Discusses branding, founder visibility and building companies.",
+    "topics": [
+      "Brand strategy",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jade Bonacolta",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "jadebonacolta",
+    "url": "https://www.linkedin.com/in/jadebonacolta",
+    "description": "Writes about personal development, work and building independent income.",
+    "topics": [
+      "Personal development",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Chad Janis",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "chadjanis",
+    "url": "https://www.linkedin.com/in/chadjanis",
+    "description": "Shares lessons from building and marketing a consumer brand.",
+    "topics": [
+      "Consumer brands",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-marketing",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Henry Schuck",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "hschuck",
+    "url": "https://www.linkedin.com/in/hschuck",
+    "description": "Discusses sales technology, business data and commercial partnerships.",
+    "topics": [
+      "Sales",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Carolyn Christie",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "carolyn-christie-bb15656",
+    "url": "https://www.linkedin.com/in/carolyn-christie-bb15656",
+    "description": "Shares perspectives on recruitment, hiring and growing businesses.",
+    "topics": [
+      "Hiring",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Federico Donatone",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "federicodonatone",
+    "url": "https://www.linkedin.com/in/federicodonatone",
+    "description": "Discusses B2B selling and developing sales organizations.",
+    "topics": [
+      "Sales",
+      "B2B"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Mariam Gogidze",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "mariam-gogidze",
+    "url": "https://www.linkedin.com/in/mariam-gogidze",
+    "description": "Shares founder perspectives on sales pipelines and company building.",
+    "topics": [
+      "Sales",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Gal Aga",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "galaga",
+    "url": "https://www.linkedin.com/in/galaga",
+    "description": "Discusses B2B sales, buyer collaboration and sales careers.",
+    "topics": [
+      "Sales",
+      "B2B"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Sara Uy",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "saraplowman",
+    "url": "https://www.linkedin.com/in/saraplowman",
+    "description": "Shares sales advice and experiences from working in sales.",
+    "topics": [
+      "Sales",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Giulio Segantini",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "underdogsales",
+    "url": "https://www.linkedin.com/in/underdogsales",
+    "description": "Teaches cold-calling skills and practical sales techniques.",
+    "topics": [
+      "Sales",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Daniel Disney",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "danieldisney",
+    "url": "https://www.linkedin.com/in/danieldisney",
+    "description": "Discusses social selling and using LinkedIn for sales.",
+    "topics": [
+      "Sales",
+      "Social media"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Zack Deris",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "zdnft",
+    "url": "https://www.linkedin.com/in/zdnft",
+    "description": "Explores sales, business automation and company building.",
+    "topics": [
+      "Sales",
+      "Automation"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Michael Aguilar",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "michaelaguilarconferencier",
+    "url": "https://www.linkedin.com/in/michaelaguilarconferencier",
+    "description": "Writes in French about selling, persuasion and professional development.",
+    "topics": [
+      "Sales",
+      "Personal development"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-sales",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Milan Jovanović",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "milan-jovanovic",
+    "url": "https://www.linkedin.com/in/milan-jovanovic",
+    "description": "Teaches backend development, .NET and software architecture.",
+    "topics": [
+      "Software engineering",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Venkata Naga Sai Kumar Bysani",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "saibysani18",
+    "url": "https://www.linkedin.com/in/saibysani18",
+    "description": "Shares data-analysis material with a focus on healthcare.",
+    "topics": [
+      "Data science",
+      "Healthcare"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Zach Wilson",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "eczachly",
+    "url": "https://www.linkedin.com/in/eczachly",
+    "description": "Teaches data engineering and discusses careers in data.",
+    "topics": [
+      "Data engineering",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Julien Chaumond",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "julienchaumond",
+    "url": "https://www.linkedin.com/in/julienchaumond",
+    "description": "Discusses open-source machine learning tools and models.",
+    "topics": [
+      "AI",
+      "Open source"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Allie K. Miller",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "alliekmiller",
+    "url": "https://www.linkedin.com/in/alliekmiller",
+    "description": "Explains AI adoption and its implications for businesses.",
+    "topics": [
+      "AI",
+      "Business"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dawn Choo",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "data-dawn",
+    "url": "https://www.linkedin.com/in/data-dawn",
+    "description": "Shares data-science learning resources and career perspectives.",
+    "topics": [
+      "Data science",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Shalini Goyal",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "goyalshalini",
+    "url": "https://www.linkedin.com/in/goyalshalini",
+    "description": "Explains software engineering and database fundamentals.",
+    "topics": [
+      "Software engineering",
+      "Databases"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Bhanu Singh Yede",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "bhanu-singh-yede-a04012255",
+    "url": "https://www.linkedin.com/in/bhanu-singh-yede-a04012255",
+    "description": "Creates educational material about AI and data science.",
+    "topics": [
+      "AI",
+      "Data science"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Andreas Horn",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "andreashorn1",
+    "url": "https://www.linkedin.com/in/andreashorn1",
+    "description": "Discusses AI operations and enterprise technology adoption.",
+    "topics": [
+      "AI",
+      "Enterprise technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Brij kishore Pandey",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "brijpandeyji",
+    "url": "https://www.linkedin.com/in/brijpandeyji",
+    "description": "Explains generative AI architecture and technical concepts.",
+    "topics": [
+      "AI",
+      "Software engineering"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-data-science",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Hala Taha",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "htaha",
+    "url": "https://www.linkedin.com/in/htaha",
+    "description": "Shares business interviews and lessons from entrepreneurship.",
+    "topics": [
+      "Entrepreneurship",
+      "Interviews"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Marc Randolph",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "marcrandolph",
+    "url": "https://www.linkedin.com/in/marcrandolph",
+    "description": "Discusses startup creation, business ideas and founder decisions.",
+    "topics": [
+      "Startups",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.marcrandolph.com",
+        "note": "Official creator website links this precise LinkedIn profile."
+      },
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "marcrandolph.com"
+  },
+  {
+    "name": "Jesse Chan",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "jessectchan",
+    "url": "https://www.linkedin.com/in/jessectchan",
+    "description": "Shares personal-branding advice for founders.",
+    "topics": [
+      "Personal branding",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Cristina Grancea",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "cristinagrancea",
+    "url": "https://www.linkedin.com/in/cristinagrancea",
+    "description": "Discusses building home-care businesses and franchise operations.",
+    "topics": [
+      "Entrepreneurship",
+      "Healthcare"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Sahil Bloom",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "sahilbloom",
+    "url": "https://www.linkedin.com/in/sahilbloom",
+    "description": "Writes about personal growth, wealth and life decisions.",
+    "topics": [
+      "Personal development",
+      "Personal finance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://www.sahilbloom.com",
+        "note": "Official creator website links this precise LinkedIn profile."
+      },
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "sahilbloom.com"
+  },
+  {
+    "name": "Shweta Kukreja",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "shwetakukreja",
+    "url": "https://www.linkedin.com/in/shwetakukreja",
+    "description": "Discusses personal branding and business growth for founders.",
+    "topics": [
+      "Personal branding",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "René van der Zel",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "rené-van-der-zel",
+    "url": "https://www.linkedin.com/in/rené-van-der-zel",
+    "description": "Shares Dutch-language perspectives on entrepreneurship and brand building.",
+    "topics": [
+      "Entrepreneurship",
+      "Consumer brands"
+    ],
+    "language": "nl",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Chris Donnelly",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "donnellychris",
+    "url": "https://www.linkedin.com/in/donnellychris",
+    "description": "Discusses entrepreneurship, leadership and business systems.",
+    "topics": [
+      "Entrepreneurship",
+      "Leadership"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Katie A.",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "katiepeppermint",
+    "url": "https://www.linkedin.com/in/katiepeppermint",
+    "description": "Documents building a fashion startup and running a business.",
+    "topics": [
+      "Fashion",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Lara Acosta",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "laraacostar",
+    "url": "https://www.linkedin.com/in/laraacostar",
+    "description": "Shares personal-branding strategies and lessons from independent business.",
+    "topics": [
+      "Personal branding",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-entrepreneurship",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Leila Hormozi",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "leilahormozi",
+    "url": "https://www.linkedin.com/in/leilahormozi",
+    "description": "Discusses business operations, hiring and team management.",
+    "topics": [
+      "Management",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dan Martell",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "dmartell",
+    "url": "https://www.linkedin.com/in/dmartell",
+    "description": "Shares advice about delegation, time management and software businesses.",
+    "topics": [
+      "Productivity",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "George Stern",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "george-stern",
+    "url": "https://www.linkedin.com/in/george-stern",
+    "description": "Discusses workplace leadership, careers and business operations.",
+    "topics": [
+      "Leadership",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Guillaume Guerra",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "guillaume-guerra-9586a65",
+    "url": "https://www.linkedin.com/in/guillaume-guerra-9586a65",
+    "description": "Writes in French about wealth management and business.",
+    "topics": [
+      "Finance",
+      "Business"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ben Meer",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "benmeer",
+    "url": "https://www.linkedin.com/in/benmeer",
+    "description": "Shares practical systems for productivity and personal development.",
+    "topics": [
+      "Productivity",
+      "Personal development"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "James Clear",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "jamesclear",
+    "url": "https://www.linkedin.com/in/jamesclear",
+    "description": "Writes about habits, behavior change and consistent improvement.",
+    "topics": [
+      "Habits",
+      "Personal development"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Victoria Repa",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "victoria-repa-115a1987",
+    "url": "https://www.linkedin.com/in/victoria-repa-115a1987",
+    "description": "Discusses managing teams, wellness technology and entrepreneurship.",
+    "topics": [
+      "Management",
+      "Wellness"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ronnie Kinsey",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "ronniekinseymba",
+    "url": "https://www.linkedin.com/in/ronniekinseymba",
+    "description": "Shares executive-coaching perspectives on leadership and emotional intelligence.",
+    "topics": [
+      "Leadership",
+      "Psychology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Eric Partaker",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "ericpartaker",
+    "url": "https://www.linkedin.com/in/ericpartaker",
+    "description": "Offers management ideas and advice for company leaders.",
+    "topics": [
+      "Management",
+      "Leadership"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Carsten Maschmeyer",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "carsten-maschmeyer",
+    "url": "https://www.linkedin.com/in/carsten-maschmeyer",
+    "description": "Writes in German about entrepreneurship, investing and management.",
+    "topics": [
+      "Entrepreneurship",
+      "Management"
+    ],
+    "language": "de",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-management",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Simon Squibb",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "simonsquibb",
+    "url": "https://www.linkedin.com/in/simonsquibb",
+    "description": "Discusses entrepreneurship education and starting businesses.",
+    "topics": [
+      "Entrepreneurship",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ahmed Ben Hamouda",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "benhamouda",
+    "url": "https://www.linkedin.com/in/benhamouda",
+    "description": "Teaches project management and professional certification topics.",
+    "topics": [
+      "Project management",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Angela Duckworth",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "angeladuckworth",
+    "url": "https://www.linkedin.com/in/angeladuckworth",
+    "description": "Explains learning, motivation, perseverance and human behavior.",
+    "topics": [
+      "Education",
+      "Psychology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kriti Khanna",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "kritiiii",
+    "url": "https://www.linkedin.com/in/kritiiii",
+    "description": "Shares perspectives on business education, product management and careers.",
+    "topics": [
+      "Education",
+      "Product"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Anaïs Marie-Axelle Allou",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "anaïs-marie-axelle-allou-629b2a180",
+    "url": "https://www.linkedin.com/in/anaïs-marie-axelle-allou-629b2a180",
+    "description": "Shares French-language education resources, scholarships and study-abroad guidance.",
+    "topics": [
+      "Education",
+      "Careers"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Daniel Bilbao",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "danielbilbao",
+    "url": "https://www.linkedin.com/in/danielbilbao",
+    "description": "Discusses building technology companies and business education.",
+    "topics": [
+      "Technology",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Usman Asif",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "therealusman",
+    "url": "https://www.linkedin.com/in/therealusman",
+    "description": "Shares perspectives on technology businesses and professional education.",
+    "topics": [
+      "Technology",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Scott Galloway",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "profgalloway",
+    "url": "https://www.linkedin.com/in/profgalloway",
+    "description": "Discusses business, markets, higher education and society.",
+    "topics": [
+      "Business",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Mister Manu",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "mister-manu-victor-9a4b7b67",
+    "url": "https://www.linkedin.com/in/mister-manu-victor-9a4b7b67",
+    "description": "Shares French-language resources for apprenticeships, internships and student careers.",
+    "topics": [
+      "Education",
+      "Job search"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Youssef Koutari",
+    "kind": "person",
+    "platform": "LinkedIn",
+    "handle": "youssefkoutari",
+    "url": "https://www.linkedin.com/in/youssefkoutari",
+    "description": "Documents entrepreneurship and lessons from building companies in French.",
+    "topics": [
+      "Entrepreneurship",
+      "Business"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://magicpost.in/blog/top-linkedin-creators-education",
+        "note": "Public editorial directory links this named creator to the precise LinkedIn profile."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  }
+]

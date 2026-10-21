@@ -1,0 +1,445 @@
+{
+  "checkedAt": "2026-10-21",
+  "currency": "USD",
+  "status": "planning_only",
+  "collectionEnabled": false,
+  "actualSourceCollectionRuns": 0,
+  "note": "Public vendor documentation and read-only Actor metadata. No account-specific quote or provider execution. Rates must be rechecked before activation. minimumAcceptedRunBudgetUsd is a minimum allowed cap parameter, not a minimum invoice charge.",
+  "apifyPublicActorTariffs": [
+    {
+      "actor": "streamers/youtube-scraper",
+      "sourceUrl": "https://api.apify.com/v2/acts/streamers~youtube-scraper",
+      "pricingPage": "https://apify.com/streamers/youtube-scraper/pricing",
+      "checkedAt": "2026-10-21",
+      "effectiveFrom": "2026-09-02T13:52:04.236Z",
+      "pricingModel": "PAY_PER_EVENT",
+      "minimumAcceptedRunBudgetUsd": null,
+      "events": [
+        {
+          "key": "result",
+          "description": "Each video written to the dataset.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.004,
+            "BRONZE": 0.003
+          }
+        },
+        {
+          "key": "date-filter",
+          "description": "Extra cost when date filtering is used on channels.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.0013,
+            "BRONZE": 0.001
+          }
+        },
+        {
+          "key": "ai-video-description",
+          "description": "Extra cost for timestamped AI description of a video per minute.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.015,
+            "BRONZE": 0.01
+          }
+        },
+        {
+          "key": "ai-video-summary",
+          "description": "Extra cost for AI summary of a video per minute.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.015,
+            "BRONZE": 0.01
+          }
+        },
+        {
+          "key": "transcribeMinute",
+          "description": "Extra cost charged per started minute per video",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.048,
+            "BRONZE": 0.041
+          }
+        }
+      ],
+      "platformUsageSeparatelyPaidByUser": false
+    },
+    {
+      "actor": "apify/instagram-scraper",
+      "sourceUrl": "https://api.apify.com/v2/acts/apify~instagram-scraper",
+      "pricingPage": "https://apify.com/apify/instagram-scraper/pricing",
+      "checkedAt": "2026-10-21",
+      "effectiveFrom": "2026-02-20T12:24:59.754Z",
+      "pricingModel": "PAY_PER_EVENT",
+      "minimumAcceptedRunBudgetUsd": 0.0027,
+      "events": [
+        {
+          "key": "result",
+          "description": "Each result written to the dataset",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.0027,
+            "BRONZE": 0.0023
+          }
+        }
+      ],
+      "platformUsageSeparatelyPaidByUser": false
+    },
+    {
+      "actor": "apify/instagram-reel-scraper",
+      "sourceUrl": "https://api.apify.com/v2/acts/apify~instagram-reel-scraper",
+      "pricingPage": "https://apify.com/apify/instagram-reel-scraper/pricing",
+      "checkedAt": "2026-10-21",
+      "effectiveFrom": "2026-03-11T14:56:04.494Z",
+      "pricingModel": "PAY_PER_EVENT",
+      "minimumAcceptedRunBudgetUsd": 0.0073,
+      "events": [
+        {
+          "key": "reel",
+          "description": "Each reel written to the dataset.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.0026,
+            "BRONZE": 0.0023
+          }
+        },
+        {
+          "key": "actor-start",
+          "description": "Flat charge for starting an Actor run.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.001,
+            "BRONZE": 0.001
+          }
+        },
+        {
+          "key": "shares-count",
+          "description": "Extra cost per reel scraped with a shares count.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.007,
+            "BRONZE": 0.006
+          }
+        },
+        {
+          "key": "transcript",
+          "description": "Charged per started minute per reel.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.048,
+            "BRONZE": 0.041
+          }
+        },
+        {
+          "key": "video-download",
+          "description": "Charged per started 1 MB downloaded per reel.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.02,
+            "BRONZE": 0.015
+          }
+        }
+      ],
+      "platformUsageSeparatelyPaidByUser": false
+    },
+    {
+      "actor": "apidojo/twitter-scraper-lite",
+      "sourceUrl": "https://api.apify.com/v2/acts/apidojo~twitter-scraper-lite",
+      "pricingPage": "https://apify.com/apidojo/twitter-scraper-lite/pricing",
+      "checkedAt": "2026-10-21",
+      "effectiveFrom": "2026-06-09T15:17:20.237Z",
+      "pricingModel": "PAY_PER_EVENT",
+      "minimumAcceptedRunBudgetUsd": 0.02,
+      "events": [
+        {
+          "key": "list-query",
+          "description": "Price for processing a search term, profile handle, or Twitter query. Includes first ~40 results.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.016,
+            "BRONZE": 0.016
+          }
+        },
+        {
+          "key": "get-tweet-query",
+          "description": "Price for retrieving data from a specific tweet URL.",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.05,
+            "BRONZE": 0.05
+          }
+        },
+        {
+          "key": "dataset-item-tier-one",
+          "description": "Pricing for dataset items in small batches (≤5 queries per run).",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.0004,
+            "BRONZE": 0.0004
+          }
+        },
+        {
+          "key": "dataset-item-tier-two",
+          "description": "Pricing for dataset items in medium batches (6-10 queries per run).",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.0008,
+            "BRONZE": 0.0008
+          }
+        },
+        {
+          "key": "dataset-item-tier-three",
+          "description": "Pricing for dataset items in regular batches (11-30 queries per run).",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.0012,
+            "BRONZE": 0.0012
+          }
+        },
+        {
+          "key": "dataset-item-tier-four",
+          "description": "Pricing for dataset items in large batches (31-100 queries per run).",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.0016,
+            "BRONZE": 0.0016
+          }
+        },
+        {
+          "key": "dataset-item-tier-five",
+          "description": "Pricing for dataset items in extensive batches (>100 queries per run).",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.002,
+            "BRONZE": 0.002
+          }
+        }
+      ],
+      "platformUsageSeparatelyPaidByUser": false
+    },
+    {
+      "actor": "harvestapi/linkedin-profile-posts",
+      "sourceUrl": "https://api.apify.com/v2/acts/harvestapi~linkedin-profile-posts",
+      "pricingPage": "https://apify.com/harvestapi/linkedin-profile-posts/pricing",
+      "checkedAt": "2026-10-21",
+      "effectiveFrom": "2026-03-09T17:56:27.322Z",
+      "pricingModel": "PAY_PER_EVENT",
+      "minimumAcceptedRunBudgetUsd": 0.002,
+      "events": [
+        {
+          "key": "apify-actor-start",
+          "description": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+          "usd": 5e-05,
+          "tierUsd": {}
+        },
+        {
+          "key": "post",
+          "description": "Post result item",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.002,
+            "BRONZE": 0.002
+          }
+        },
+        {
+          "key": "reaction",
+          "description": "Post reaction result, if selected to scrape reactions",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.002,
+            "BRONZE": 0.002
+          }
+        },
+        {
+          "key": "comment",
+          "description": "Post comment result, if selected to scrape comments",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.002,
+            "BRONZE": 0.002
+          }
+        },
+        {
+          "key": "no-result",
+          "description": "Charged for scraping post pages that don't contain posts",
+          "usd": 0.001,
+          "tierUsd": {}
+        }
+      ],
+      "platformUsageSeparatelyPaidByUser": false
+    },
+    {
+      "actor": "boundary/substack-newsletter-scraper",
+      "sourceUrl": "https://api.apify.com/v2/acts/boundary~substack-newsletter-scraper",
+      "pricingPage": "https://apify.com/boundary/substack-newsletter-scraper/pricing",
+      "checkedAt": "2026-10-21",
+      "effectiveFrom": "2026-03-14T13:38:17.048Z",
+      "pricingModel": "PAY_PER_EVENT",
+      "minimumAcceptedRunBudgetUsd": null,
+      "events": [
+        {
+          "key": "apify-actor-start",
+          "description": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+          "usd": 5e-05,
+          "tierUsd": {}
+        },
+        {
+          "key": "apify-default-dataset-item",
+          "description": "One scraped newsletter post with full content and metadata",
+          "usd": 0.003,
+          "tierUsd": {}
+        }
+      ],
+      "platformUsageSeparatelyPaidByUser": true
+    },
+    {
+      "actor": "hata1234/substack-scraper",
+      "sourceUrl": "https://api.apify.com/v2/acts/hata1234~substack-scraper",
+      "pricingPage": "https://apify.com/hata1234/substack-scraper/pricing",
+      "checkedAt": "2026-10-21",
+      "effectiveFrom": "2026-03-09T17:49:42.616Z",
+      "pricingModel": "PAY_PER_EVENT",
+      "minimumAcceptedRunBudgetUsd": null,
+      "platformUsageSeparatelyPaidByUser": false,
+      "events": [
+        {
+          "key": "apify-actor-start",
+          "description": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+          "usd": 0.005,
+          "tierUsd": {}
+        },
+        {
+          "key": "apify-default-dataset-item",
+          "description": "Single scraped Substack article",
+          "usd": 0.001,
+          "tierUsd": {}
+        }
+      ]
+    },
+    {
+      "actor": "automation-lab/substack-scraper",
+      "sourceUrl": "https://api.apify.com/v2/acts/automation-lab~substack-scraper",
+      "pricingPage": "https://apify.com/automation-lab/substack-scraper/pricing",
+      "checkedAt": "2026-10-21",
+      "effectiveFrom": "2026-08-25T20:07:18.777Z",
+      "pricingModel": "PAY_PER_EVENT",
+      "minimumAcceptedRunBudgetUsd": null,
+      "platformUsageSeparatelyPaidByUser": false,
+      "events": [
+        {
+          "key": "start",
+          "description": "One-time fee per run",
+          "usd": 0.005,
+          "tierUsd": {}
+        },
+        {
+          "key": "post-metadata",
+          "description": "Per post scraped without content",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.00115,
+            "BRONZE": 0.001
+          }
+        },
+        {
+          "key": "post-with-content",
+          "description": "Per post scraped with full HTML content",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.0023,
+            "BRONZE": 0.002
+          }
+        },
+        {
+          "key": "comment",
+          "description": "Per comment scraped (including replies)",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.000575,
+            "BRONZE": 0.0005
+          }
+        }
+      ]
+    },
+    {
+      "actor": "fatihtahta/substack-scraper",
+      "sourceUrl": "https://api.apify.com/v2/acts/fatihtahta~substack-scraper",
+      "pricingPage": "https://apify.com/fatihtahta/substack-scraper/pricing",
+      "checkedAt": "2026-10-21",
+      "effectiveFrom": "2026-04-23T15:08:04.029Z",
+      "pricingModel": "PAY_PER_EVENT",
+      "minimumAcceptedRunBudgetUsd": 0.1,
+      "platformUsageSeparatelyPaidByUser": false,
+      "events": [
+        {
+          "key": "outputrecord",
+          "description": "Price per 1000 results is $1.99",
+          "usd": null,
+          "tierUsd": {
+            "FREE": 0.0025,
+            "BRONZE": 0.00199
+          }
+        }
+      ]
+    }
+  ],
+  "brightData": {
+    "readyMadePaygUsdPer1000DeliveredRecords": 1.5,
+    "studioPaygUsdPer1000PageLoads": 1.5,
+    "monthlyFreeSharedCreditsAdvertised": 5000,
+    "sourceUrls": [
+      "https://brightdata.com/pricing/web-scraper",
+      "https://brightdata.com/products/web-scraper/substack",
+      "https://docs.brightdata.com/general/account/billing-and-pricing/free-tier"
+    ]
+  },
+  "platformRecommendations": [
+    {
+      "platform": "YouTube",
+      "primaryProvider": "Apify",
+      "actor": "streamers/youtube-scraper",
+      "reason": "Explicit existing-caption and optional generated-transcript route; Bright Data lower record price does not yet establish equivalent transcript output.",
+      "fallbackProvider": "Bright Data",
+      "activation": "off",
+      "proofStatus": "documented_only"
+    },
+    {
+      "platform": "Instagram",
+      "primaryProvider": "Bright Data",
+      "reason": "Cheaper documented comparable public caption/post records; route video audio separately only when needed.",
+      "fallbackProvider": "Apify",
+      "fallbackActor": "apify/instagram-scraper",
+      "transcriptActor": "apify/instagram-reel-scraper",
+      "activation": "off",
+      "proofStatus": "documented_only"
+    },
+    {
+      "platform": "X",
+      "primaryProvider": "Apify",
+      "actor": "apidojo/twitter-scraper-lite",
+      "reason": "Explicit profile/search monitoring; Bright Data cheaper for known post URLs but complete profile-post discovery is not established by inspected output.",
+      "fallbackProvider": "Bright Data",
+      "activation": "off",
+      "proofStatus": "documented_only"
+    },
+    {
+      "platform": "Substack",
+      "primaryProvider": "Publisher RSS",
+      "reason": "No scraper-vendor record fee for public RSS discovery. Verify body completeness; compare lowest documented Apify body candidate against Bright Data page-load route on cost per usable public body.",
+      "fallbackProvider": "Apify",
+      "fallbackActor": "hata1234/substack-scraper",
+      "alternativeProvider": "Bright Data Scraper Studio",
+      "activation": "off",
+      "proofStatus": "documented_only",
+      "alternativeActor": "automation-lab/substack-scraper"
+    },
+    {
+      "platform": "LinkedIn",
+      "primaryProvider": "Bright Data",
+      "reason": "Cheaper documented public post text records; verify recent-post limits and article/document completeness.",
+      "fallbackProvider": "Apify",
+      "fallbackActor": "harvestapi/linkedin-profile-posts",
+      "activation": "off",
+      "proofStatus": "documented_only"
+    }
+  ]
+}

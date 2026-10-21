@@ -63,17 +63,17 @@ function providerId(value: unknown): string {
   return value;
 }
 
-export async function startApify(source: Source, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<{ status: 'running'; jobToken: string; message: string }> {
+export async function startApify(source: Source, userId: string, env: Env, fetcher: Fetcher = fetch, ledgerId?: string): Promise<{ status: 'running'; jobToken: string; message: string; providerRunId: string }> {
   const config = requireConfig(env, userId);
   const input = youtubeInput(source, config.maxItems);
   const params = new URLSearchParams({ build: config.build, timeout: '120', maxItems: String(config.maxItems), maxTotalChargeUsd: String(config.maxCharge), restartOnError: 'false', waitForFinish: '0' });
   const response = object(await apifyRequest('actors/' + YOUTUBE_ACTOR + '/runs?' + params, config, fetcher, { method: 'POST', body: JSON.stringify(input) }));
   const run = object(response.data);
   const runId = providerId(run.id), actorId = providerId(run.actId);
-  const jobToken = await new SignJWT({ runId, actorId, source, maxItems: config.maxItems })
+  const jobToken = await new SignJWT({ runId, actorId, source, maxItems: config.maxItems, ...(ledgerId ? {ledgerId} : {}) })
     .setProtectedHeader({ alg: 'HS256', typ: 'JWT' }).setSubject(userId).setIssuer('therecap-collection').setAudience('collection-job')
     .setIssuedAt().setExpirationTime('20m').sign(new TextEncoder().encode(config.secret));
-  return { status: 'running', jobToken, message: 'Collecting up to ' + config.maxItems + ' recent videos and available captions. Missing captions will remain metadata only.' };
+  return { status: 'running', jobToken, providerRunId: runId, message: 'Collecting up to ' + config.maxItems + ' recent videos and available captions. Missing captions will remain metadata only.' };
 }
 
 export function captionsText(value: unknown): string {
@@ -118,7 +118,7 @@ export function normalizeYouTubeItems(items: unknown, source: Source, maxItems =
   return [...updates.values()];
 }
 
-export async function pollApify(jobToken: string, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<{ status: string; message?: string; result?: CollectionResult }> {
+export async function pollApify(jobToken: string, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<{ status: string; message?: string; result?: CollectionResult; telemetry?: {ledgerId: string; providerRunId: string; cost: number | null} }> {
   const config = requireConfig(env, userId);
   if (!jobToken || jobToken.length > 8000) throw new CollectionError(400, 'invalid_job', 'This collection job is missing or invalid.');
   let claims;
@@ -132,11 +132,12 @@ export async function pollApify(jobToken: string, userId: string, env: Env, fetc
   const response = object(await apifyRequest('actor-runs/' + runId, config, fetcher));
   const run = object(response.data);
   if (run.id !== runId || run.actId !== actorId) throw new CollectionError(403, 'invalid_job', 'The provider job does not match this request.');
-  if (['READY', 'RUNNING', 'TIMING-OUT', 'ABORTING'].includes(String(run.status))) return { status: 'running', message: 'Collection is still running.' };
-  if (run.status !== 'SUCCEEDED') return { status: 'failed', message: 'The provider job stopped without a complete result. No automatic retry was started.' };
+  const telemetry = typeof claims.ledgerId === 'string' && /^[0-9a-f-]{36}$/i.test(claims.ledgerId) ? { ledgerId: claims.ledgerId, providerRunId: runId, cost: typeof run.usageTotalUsd === 'number' && Number.isFinite(run.usageTotalUsd) && run.usageTotalUsd >= 0 ? run.usageTotalUsd : null } : undefined;
+  if (['READY', 'RUNNING', 'TIMING-OUT', 'ABORTING'].includes(String(run.status))) return { status: 'running', message: 'Collection is still running.',telemetry };
+  if (run.status !== 'SUCCEEDED') return { status: 'failed', message: 'The provider job stopped without a complete result. No automatic retry was started.',telemetry };
   const datasetId = providerId(run.defaultDatasetId);
   const maxItems = Math.min(config.maxItems, Number(claims.maxItems) || 1, 5);
   const items = await apifyRequest('datasets/' + datasetId + '/items?clean=true&format=json&limit=' + maxItems, config, fetcher);
   const updates = normalizeYouTubeItems(items, source, maxItems);
-  return { status: 'completed', result: { source: { ...source, status: 'ready' }, updates, notice: 'Collected a bounded recent sample, not a complete channel history. Text is extracted source material, not an AI recap. Descriptions are not video-content coverage.' } };
+  return { status: 'completed', telemetry, result: { source: { ...source, status: 'ready' }, updates, notice: 'Collected a bounded recent sample, not a complete channel history. Text is extracted source material, not an AI recap. Descriptions are not video-content coverage.' } };
 }

@@ -1,0 +1,2606 @@
+[
+  {
+    "name": "Vsauce",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UC6nSFpj9HTCZ5t-N3Rm3-HA",
+    "url": "https://www.youtube.com/channel/UC6nSFpj9HTCZ5t-N3Rm3-HA",
+    "description": "Science questions about perception, everyday life and the universe.",
+    "topics": [
+      "Science"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates Vsauce with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kurzgesagt",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "@kurzgesagt",
+    "url": "https://www.youtube.com/@kurzgesagt",
+    "description": "Animated explainers about science, society and possible futures.",
+    "topics": [
+      "Science",
+      "Animation"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates Kurzgesagt with this exact account link."
+      },
+      {
+        "url": "https://kurzgesagt.org",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "kurzgesagt.org"
+  },
+  {
+    "name": "TKOR",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UC1zZE_kJ8rQHgLTVfobLi_g",
+    "url": "https://www.youtube.com/channel/UC1zZE_kJ8rQHgLTVfobLi_g",
+    "description": "Practical experiments, unusual builds and hands-on science demonstrations.",
+    "topics": [
+      "Science",
+      "DIY"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates TKOR with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "AsapSCIENCE",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCC552Sd-3nyi_tk2BudLUzA",
+    "url": "https://www.youtube.com/channel/UCC552Sd-3nyi_tk2BudLUzA",
+    "description": "Illustrated answers to science questions from everyday life.",
+    "topics": [
+      "Science",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates AsapSCIENCE with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "SmarterEveryDay",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC6107grRI4m0o2-emgoDnAA",
+    "url": "https://www.youtube.com/channel/UC6107grRI4m0o2-emgoDnAA",
+    "description": "Engineering experiments and explanations of how things work.",
+    "topics": [
+      "Science",
+      "Engineering"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates SmarterEveryDay with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "3Blue1Brown",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "@3blue1brown",
+    "url": "https://www.youtube.com/@3blue1brown",
+    "description": "Visual explanations of mathematics, physics and computer science.",
+    "topics": [
+      "Mathematics",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates 3Blue1Brown with this exact account link."
+      },
+      {
+        "url": "https://www.3blue1brown.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "3blue1brown.com"
+  },
+  {
+    "name": "minutephysics",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCUHW94eEFW7hkUMVaZz4eDg",
+    "url": "https://www.youtube.com/channel/UCUHW94eEFW7hkUMVaZz4eDg",
+    "description": "Short illustrated explanations of physics concepts and questions.",
+    "topics": [
+      "Physics",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates minutephysics with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Steve Mould",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "stevemould",
+    "url": "https://www.youtube.com/stevemould",
+    "description": "Experiments, demonstrations and explanations of surprising scientific effects.",
+    "topics": [
+      "Science",
+      "Engineering"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates Steve Mould with this exact account link."
+      },
+      {
+        "url": "https://www.stevemould.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "stevemould.com"
+  },
+  {
+    "name": "Professor Dave Explains",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@ProfessorDaveExplains",
+    "url": "https://www.youtube.com/@ProfessorDaveExplains",
+    "description": "Lessons explaining chemistry, physics and other academic subjects.",
+    "topics": [
+      "Science",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates Professor Dave Explains with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dianna Cowern",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC7DdEm33SyaTDtWYGO2CwdA",
+    "url": "https://www.youtube.com/channel/UC7DdEm33SyaTDtWYGO2CwdA",
+    "description": "Physics demonstrations and explorations of everyday scientific phenomena.",
+    "topics": [
+      "Physics",
+      "Science"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates Dianna Cowern with this exact account link."
+      },
+      {
+        "url": "https://physicsgirl.org",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "physicsgirl.org"
+  },
+  {
+    "name": "Cody'sLab",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCu6mSoMNzHQiBIOCkHUa2Aw",
+    "url": "https://www.youtube.com/channel/UCu6mSoMNzHQiBIOCkHUa2Aw",
+    "description": "Hands-on experiments involving chemistry, materials and practical projects.",
+    "topics": [
+      "Science",
+      "Chemistry"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates Cody'sLab with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "ScienceEtonnante",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCaNlbnghtwlsGF-KzAFThqA",
+    "url": "https://www.youtube.com/channel/UCaNlbnghtwlsGF-KzAFThqA",
+    "description": "French-language explanations of mathematics, physics and other sciences.",
+    "topics": [
+      "Science",
+      "Mathematics"
+    ],
+    "language": "fr",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates ScienceEtonnante with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Isaac Arthur",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCZFipeZtQM5CKUjx6grh54g",
+    "url": "https://www.youtube.com/channel/UCZFipeZtQM5CKUjx6grh54g",
+    "description": "Long-form explorations of future technology and space development.",
+    "topics": [
+      "Space",
+      "Futurism"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates Isaac Arthur with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Arvin Ash",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCpMcsdZf2KkAnfmxiq2MfMQ",
+    "url": "https://www.youtube.com/channel/UCpMcsdZf2KkAnfmxiq2MfMQ",
+    "description": "Visual explanations of difficult physics and science concepts.",
+    "topics": [
+      "Physics",
+      "Science"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates Arvin Ash with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Domain of Science",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCxqAWLTk1CmBvZFPzeZMd9A",
+    "url": "https://www.youtube.com/channel/UCxqAWLTk1CmBvZFPzeZMd9A",
+    "description": "Visual maps and explanations connecting different scientific disciplines.",
+    "topics": [
+      "Science",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/science_youtube_channels/",
+        "note": "Public category directory associates Domain of Science with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Unbox Therapy",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCsTcErHg8oDvUnTzoqsYeNw",
+    "url": "https://www.youtube.com/channel/UCsTcErHg8oDvUnTzoqsYeNw",
+    "description": "Gadget demonstrations, product unboxings and consumer technology discussion.",
+    "topics": [
+      "Technology",
+      "Consumer electronics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Unbox Therapy with this exact account link."
+      },
+      {
+        "url": "https://unboxtherapy.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "unboxtherapy.com"
+  },
+  {
+    "name": "Austin Evans",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCXGgrKt94gR6lmN4aN3mYTg",
+    "url": "https://www.youtube.com/channel/UCXGgrKt94gR6lmN4aN3mYTg",
+    "description": "Hands-on coverage of computers, gaming hardware and gadgets.",
+    "topics": [
+      "Technology",
+      "Gaming"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Austin Evans with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Arun Maini",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@Mrwhosetheboss",
+    "url": "https://www.youtube.com/@Mrwhosetheboss",
+    "description": "Consumer technology comparisons, gadget tests and smartphone reviews.",
+    "topics": [
+      "Technology",
+      "Consumer electronics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Arun Maini with this exact account link."
+      },
+      {
+        "url": "https://mrwhosetheboss.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "mrwhosetheboss.com"
+  },
+  {
+    "name": "Marques Brownlee",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCBJycsmduvYEL83R_U4JriQ",
+    "url": "https://www.youtube.com/channel/UCBJycsmduvYEL83R_U4JriQ",
+    "description": "Consumer technology reviews, product comparisons and gadget explainers.",
+    "topics": [
+      "Technology",
+      "Consumer electronics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Marques Brownlee with this exact account link."
+      },
+      {
+        "url": "https://mkbhd.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "mkbhd.com"
+  },
+  {
+    "name": "JerryRigEverything",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCWFKCr40YwOZQx8FHU_ZqqQ",
+    "url": "https://www.youtube.com/channel/UCWFKCr40YwOZQx8FHU_ZqqQ",
+    "description": "Device durability tests, teardowns and hands-on engineering projects.",
+    "topics": [
+      "Technology",
+      "Engineering"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates JerryRigEverything with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "EverythingApplePro",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCj34AOIMl_k1fF7hcBkD_dw",
+    "url": "https://www.youtube.com/channel/UCj34AOIMl_k1fF7hcBkD_dw",
+    "description": "Apple-device coverage, smartphone comparisons and technology news.",
+    "topics": [
+      "Technology",
+      "Consumer electronics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates EverythingApplePro with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Justine Ezarik",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "ijustine",
+    "url": "https://www.youtube.com/ijustine",
+    "description": "Technology reviews, gaming, product launches and creator vlogs.",
+    "topics": [
+      "Technology",
+      "Gaming"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Justine Ezarik with this exact account link."
+      },
+      {
+        "url": "https://ijustine.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "ijustine.com"
+  },
+  {
+    "name": "Dave Lee",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "dave2d",
+    "url": "https://www.youtube.com/dave2d",
+    "description": "Reviews and comparisons of laptops and other technology.",
+    "topics": [
+      "Technology",
+      "Computers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Dave Lee with this exact account link."
+      },
+      {
+        "url": "https://dave2d.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "dave2d.com"
+  },
+  {
+    "name": "Geekyranjit",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCO2WJZKQoDW4Te6NHx4KfTg",
+    "url": "https://www.youtube.com/channel/UCO2WJZKQoDW4Te6NHx4KfTg",
+    "description": "English-language gadget reviews and consumer technology explanations.",
+    "topics": [
+      "Technology",
+      "Consumer electronics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Geekyranjit with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Hayls World",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCIxLxlan8q9WA7sjuq6LdTQ",
+    "url": "https://www.youtube.com/channel/UCIxLxlan8q9WA7sjuq6LdTQ",
+    "description": "Consumer technology tips, smartphone features and gadget reviews.",
+    "topics": [
+      "Technology",
+      "Consumer electronics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Hayls World with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Flossy Carter",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@FlossyCarter",
+    "url": "https://www.youtube.com/@FlossyCarter",
+    "description": "Detailed smartphone, audio-device and consumer gadget reviews.",
+    "topics": [
+      "Technology",
+      "Consumer electronics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Flossy Carter with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Nick Ackerman",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCWsEZ9v1KC8b5VYjYbEewJA",
+    "url": "https://www.youtube.com/channel/UCWsEZ9v1KC8b5VYjYbEewJA",
+    "description": "Smartphone speed tests, product comparisons and device reviews.",
+    "topics": [
+      "Technology",
+      "Consumer electronics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Nick Ackerman with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Matthew Moniz",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCVlMUh4WsDQvOxCJJXmWwdw",
+    "url": "https://www.youtube.com/channel/UCVlMUh4WsDQvOxCJJXmWwdw",
+    "description": "Reviews of phones, computers and other consumer technology.",
+    "topics": [
+      "Technology",
+      "Computers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Matthew Moniz with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Karl Conrad",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC0MYNOsIrz6jmXfIMERyRHQ",
+    "url": "https://www.youtube.com/channel/UC0MYNOsIrz6jmXfIMERyRHQ",
+    "description": "Consumer technology coverage, product reviews and lifestyle videos.",
+    "topics": [
+      "Technology",
+      "Lifestyle"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates Karl Conrad with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "MobileTechReview",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCW6J17hZ_Vgr6cQgd_kHt5A",
+    "url": "https://www.youtube.com/channel/UCW6J17hZ_Vgr6cQgd_kHt5A",
+    "description": "Reviews of laptops, tablets, smartphones and mobile hardware.",
+    "topics": [
+      "Technology",
+      "Computers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/technology_youtube_channels/",
+        "note": "Public category directory associates MobileTechReview with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Company Man",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCQMyhrt92_8XM0KgZH6VnRg",
+    "url": "https://www.youtube.com/channel/UCQMyhrt92_8XM0KgZH6VnRg",
+    "description": "Explainers about companies, business history and brand decisions.",
+    "topics": [
+      "Business",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Company Man with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Codie Sanchez",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC5fI3kxC-ewZ6ZXEYgznM7g",
+    "url": "https://www.youtube.com/channel/UC5fI3kxC-ewZ6ZXEYgznM7g",
+    "description": "Small-business ownership, acquisitions and entrepreneurial decision-making.",
+    "topics": [
+      "Business",
+      "Entrepreneurship"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Codie Sanchez with this exact account link."
+      },
+      {
+        "url": "https://codiesanchez.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "codiesanchez.com"
+  },
+  {
+    "name": "Grant Cardone",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCdlNK1xcy-Sn8liq7feNxWw",
+    "url": "https://www.youtube.com/channel/UCdlNK1xcy-Sn8liq7feNxWw",
+    "description": "Sales training, business growth and entrepreneurship commentary.",
+    "topics": [
+      "Business",
+      "Sales"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Grant Cardone with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Brian Tracy",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "BrianTracySpeaker",
+    "url": "https://www.youtube.com/user/BrianTracySpeaker",
+    "description": "Business skills, sales, productivity and personal development.",
+    "topics": [
+      "Business",
+      "Productivity"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Brian Tracy with this exact account link."
+      },
+      {
+        "url": "https://www.briantracy.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "briantracy.com"
+  },
+  {
+    "name": "Wholesale Ted",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCC8wczy7734jKPhiR2UkS9A",
+    "url": "https://www.youtube.com/channel/UCC8wczy7734jKPhiR2UkS9A",
+    "description": "E-commerce tutorials and explanations of online business models.",
+    "topics": [
+      "Business",
+      "E-commerce"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Wholesale Ted with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Marie Forleo",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@marieforleo",
+    "url": "https://www.youtube.com/@marieforleo",
+    "description": "Interviews and practical lessons on business and work.",
+    "topics": [
+      "Business",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Marie Forleo with this exact account link."
+      },
+      {
+        "url": "https://www.marieforleo.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "marieforleo.com"
+  },
+  {
+    "name": "Adam Snyder",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCGSS2mBuqH5MGDLP0Q5C7Kw",
+    "url": "https://www.youtube.com/channel/UCGSS2mBuqH5MGDLP0Q5C7Kw",
+    "description": "Entrepreneurship, personal finance and business-building discussions.",
+    "topics": [
+      "Business",
+      "Finance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Adam Snyder with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "This Week in Startups",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCkkhmBWfS7pILYIk0izkc3A",
+    "url": "https://www.youtube.com/channel/UCkkhmBWfS7pILYIk0izkc3A",
+    "description": "Founder interviews and discussions of startups and technology.",
+    "topics": [
+      "Startups",
+      "Technology"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates This Week in Startups with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Companies Expert",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "TheCompaniesExpert",
+    "url": "https://www.youtube.com/c/TheCompaniesExpert",
+    "description": "Business explanations and advice for jobseekers and entrepreneurs.",
+    "topics": [
+      "Business",
+      "Careers"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates The Companies Expert with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Pat Flynn",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCGk1LitxAZVnqQn0_nt5qxw",
+    "url": "https://www.youtube.com/channel/UCGk1LitxAZVnqQn0_nt5qxw",
+    "description": "Online business experiments, audience building and creator entrepreneurship.",
+    "topics": [
+      "Business",
+      "Creator economy"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Pat Flynn with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Gary Vaynerchuk",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCctXZhXmG-kf3tlIXgVZUlw",
+    "url": "https://www.youtube.com/channel/UCctXZhXmG-kf3tlIXgVZUlw",
+    "description": "Marketing discussions, entrepreneur interviews and business questions.",
+    "topics": [
+      "Business",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Gary Vaynerchuk with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Video Influencers",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCVOfW9GXHgj8YCnXNHKRnPA",
+    "url": "https://www.youtube.com/channel/UCVOfW9GXHgj8YCnXNHKRnPA",
+    "description": "Interviews and guidance about building a video-creator business.",
+    "topics": [
+      "Creator economy",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Video Influencers with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Business School 101",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCvPWBVQS3m1KtXJaLKijn4Q",
+    "url": "https://www.youtube.com/channel/UCvPWBVQS3m1KtXJaLKijn4Q",
+    "description": "Business education covering management, strategy and related disciplines.",
+    "topics": [
+      "Business",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Business School 101 with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Business Casual",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UC_E4px0RST-qFwXLJWBav8Q",
+    "url": "https://www.youtube.com/channel/UC_E4px0RST-qFwXLJWBav8Q",
+    "description": "Documentary-style stories about companies and their business histories.",
+    "topics": [
+      "Business",
+      "History"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Business Casual with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Alanis Business Academy",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCO17pDLFQBKGitI2F7_c_JQ",
+    "url": "https://www.youtube.com/channel/UCO17pDLFQBKGitI2F7_c_JQ",
+    "description": "Lessons in management, personal finance and business strategy.",
+    "topics": [
+      "Business",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/business_youtube_channels/",
+        "note": "Public category directory associates Alanis Business Academy with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Simple History",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UC510QYlOlKNyhy_zdQxnGYw",
+    "url": "https://www.youtube.com/channel/UC510QYlOlKNyhy_zdQxnGYw",
+    "description": "Animated explanations of historical events and everyday life.",
+    "topics": [
+      "History",
+      "Animation"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Simple History with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Max Miller",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCsaGKqPZnGp_7N80hcHySGQ",
+    "url": "https://www.youtube.com/channel/UCsaGKqPZnGp_7N80hcHySGQ",
+    "description": "Historical recipes paired with stories from their eras.",
+    "topics": [
+      "History",
+      "Food"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Max Miller with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Armchair Historian",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCeUJFQ0D9qs6aVNyUt9fkeQ",
+    "url": "https://www.youtube.com/channel/UCeUJFQ0D9qs6aVNyUt9fkeQ",
+    "description": "Animated documentaries explaining military history and historical conflicts.",
+    "topics": [
+      "History",
+      "Animation"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates The Armchair Historian with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Great War",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCUcyEsEjhPEDf69RRVhRh4A",
+    "url": "https://www.youtube.com/channel/UCUcyEsEjhPEDf69RRVhRh4A",
+    "description": "Documentaries about the First World War and aftermath.",
+    "topics": [
+      "History",
+      "Documentaries"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates The Great War with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Steve Heimler",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC_bOoi0e3L3SJ1xx5TZWHPw",
+    "url": "https://www.youtube.com/channel/UC_bOoi0e3L3SJ1xx5TZWHPw",
+    "description": "Lessons and exam preparation for history students.",
+    "topics": [
+      "History",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Steve Heimler with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Epimetheus",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCp9ZtilfKJds0iWytR_pnOQ",
+    "url": "https://www.youtube.com/channel/UCp9ZtilfKJds0iWytR_pnOQ",
+    "description": "Animated accounts of nations, empires and historical people.",
+    "topics": [
+      "History",
+      "Animation"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Epimetheus with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Garrett Ryan",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCqBiWcuTF8IaLH7wBqnihsQ",
+    "url": "https://www.youtube.com/channel/UCqBiWcuTF8IaLH7wBqnihsQ",
+    "description": "Explanations of life in ancient Greece and Rome.",
+    "topics": [
+      "History",
+      "Ancient world"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Garrett Ryan with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Mr. Terry History",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCCbJSm-pLHjna1JW9X31N8g",
+    "url": "https://www.youtube.com/channel/UCCbJSm-pLHjna1JW9X31N8g",
+    "description": "History lessons and reactions from a classroom teacher.",
+    "topics": [
+      "History",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Mr. Terry History with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "House of History",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCjvbQ_ZRQ0EH6qVYQ9ApXCw",
+    "url": "https://www.youtube.com/channel/UCjvbQ_ZRQ0EH6qVYQ9ApXCw",
+    "description": "Documentaries about historical events, people and political developments.",
+    "topics": [
+      "History",
+      "Documentaries"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates House of History with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Daily Bellringer",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCSp33mayhMy2KInAglKAaLw",
+    "url": "https://www.youtube.com/channel/UCSp33mayhMy2KInAglKAaLw",
+    "description": "Short history lessons and discussion prompts for students.",
+    "topics": [
+      "History",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates The Daily Bellringer with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Ancient History Guy",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC6gQS5SByUgXeS8DwjTgSuw",
+    "url": "https://www.youtube.com/channel/UC6gQS5SByUgXeS8DwjTgSuw",
+    "description": "Animated explanations of ancient societies and historical events.",
+    "topics": [
+      "History",
+      "Ancient world"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Ancient History Guy with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Alternate Historian",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCi61CvyRnbmUJ55bolV5CnQ",
+    "url": "https://www.youtube.com/channel/UCi61CvyRnbmUJ55bolV5CnQ",
+    "description": "Counterfactual discussions exploring how history might have changed.",
+    "topics": [
+      "History",
+      "Alternative history"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates The Alternate Historian with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Lindsay Holiday",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@LindsayHoliday",
+    "url": "https://www.youtube.com/@LindsayHoliday",
+    "description": "Historical documentaries about royalty, women and social life.",
+    "topics": [
+      "History",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Lindsay Holiday with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kevin Hicks",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@thehistorysquad",
+    "url": "https://www.youtube.com/@thehistorysquad",
+    "description": "History storytelling, demonstrations and explanations of historical objects.",
+    "topics": [
+      "History",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Kevin Hicks with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Dan Davis",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@DanDavisHistory",
+    "url": "https://www.youtube.com/@DanDavisHistory",
+    "description": "Documentaries exploring prehistory, ancient cultures and historical societies.",
+    "topics": [
+      "History",
+      "Ancient world"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/history_youtube_channels/",
+        "note": "Public category directory associates Dan Davis with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Rosanna Pansino",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCjwmbv6NE4mOh8Z8VhPUx1Q",
+    "url": "https://www.youtube.com/channel/UCjwmbv6NE4mOh8Z8VhPUx1Q",
+    "description": "Baking projects, themed recipes and food entertainment.",
+    "topics": [
+      "Food",
+      "Baking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Rosanna Pansino with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Mark Wiens",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCyEd6QBSgat5kkC6svyjudA",
+    "url": "https://www.youtube.com/channel/UCyEd6QBSgat5kkC6svyjudA",
+    "description": "Travel videos exploring street food and local cuisines.",
+    "topics": [
+      "Food",
+      "Travel"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Mark Wiens with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Babish Culinary Universe",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCJHA_jMfCvEnv-3kRjTCQXw",
+    "url": "https://www.youtube.com/channel/UCJHA_jMfCvEnv-3kRjTCQXw",
+    "description": "Cooking tutorials, culinary experiments and film-inspired recipes.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Babish Culinary Universe with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Trevor James",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCiAq_SU0ED1C6vWFMnw8Ekg",
+    "url": "https://www.youtube.com/channel/UCiAq_SU0ED1C6vWFMnw8Ekg",
+    "description": "Food-travel videos exploring street food and regional cooking.",
+    "topics": [
+      "Food",
+      "Travel"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Trevor James with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Food Wishes",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCRIZtPl9nb9RiXc9btSTQNw",
+    "url": "https://www.youtube.com/channel/UCRIZtPl9nb9RiXc9btSTQNw",
+    "description": "Step-by-step cooking demonstrations and recipes presented by Chef John.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Food Wishes with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Mike Greenfield",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCzH5n3Ih5kgQoiDAQt2FwLw",
+    "url": "https://www.youtube.com/channel/UCzH5n3Ih5kgQoiDAQt2FwLw",
+    "description": "Home-cooking methods, kitchen experiments and approachable food projects.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Mike Greenfield with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "You Suck at Cooking",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCekQr9znsk2vWxBo3YiLq2w",
+    "url": "https://www.youtube.com/channel/UCekQr9znsk2vWxBo3YiLq2w",
+    "description": "Cooking demonstrations presented with absurdist humor and sketches.",
+    "topics": [
+      "Food",
+      "Comedy"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates You Suck at Cooking with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Laura Vitale",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCNbngWUqL2eqRw12yAwcICg",
+    "url": "https://www.youtube.com/channel/UCNbngWUqL2eqRw12yAwcICg",
+    "description": "Home-cooking tutorials including Italian dishes and family recipes.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Laura Vitale with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "emmymade",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCzqbfYjQmf9nLQPMxVgPhiA",
+    "url": "https://www.youtube.com/channel/UCzqbfYjQmf9nLQPMxVgPhiA",
+    "description": "Food tastings, unusual recipes and international cooking experiments.",
+    "topics": [
+      "Food",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates emmymade with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Clean & Delicious",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCj0V0aG4LcdHmdPJ7aTtSCQ",
+    "url": "https://www.youtube.com/channel/UCj0V0aG4LcdHmdPJ7aTtSCQ",
+    "description": "Home-cooking recipes and discussions about everyday eating habits.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Clean & Delicious with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Seonkyoung Longest",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCIvA9ZGeoR6CH2e0DZtvxzw",
+    "url": "https://www.youtube.com/channel/UCIvA9ZGeoR6CH2e0DZtvxzw",
+    "description": "Asian home-cooking recipes and practical cooking demonstrations.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Seonkyoung Longest with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Recipe30",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCy_iF2lqOucgmK1BLCl-6vQ",
+    "url": "https://www.youtube.com/channel/UCy_iF2lqOucgmK1BLCl-6vQ",
+    "description": "Step-by-step demonstrations of meals prepared at home.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Recipe30 with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Divas Can Cook",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@divascancook",
+    "url": "https://www.youtube.com/@divascancook",
+    "description": "Southern cooking, home-baking recipes and kitchen demonstrations.",
+    "topics": [
+      "Food",
+      "Baking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Divas Can Cook with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Tasty",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCJFp8uSYCjXOMnkUyb3CQ3Q",
+    "url": "https://www.youtube.com/channel/UCJFp8uSYCjXOMnkUyb3CQ3Q",
+    "description": "Short recipe demonstrations, cooking ideas and food entertainment.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Tasty with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Gordon Ramsay",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCIEv3lZ_tNXHzL3ox-_uUGQ",
+    "url": "https://www.youtube.com/channel/UCIEv3lZ_tNXHzL3ox-_uUGQ",
+    "description": "Cooking demonstrations, restaurant stories and television food clips.",
+    "topics": [
+      "Food",
+      "Cooking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/food_youtube_channels/",
+        "note": "Public category directory associates Gordon Ramsay with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Kara and Nate",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UC4ijq8Cg-8zQKx8OH12dUSw",
+    "url": "https://www.youtube.com/channel/UC4ijq8Cg-8zQKx8OH12dUSw",
+    "description": "Travel documentaries and adventures from a married filmmaking duo.",
+    "topics": [
+      "Travel",
+      "Adventure"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Kara and Nate with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jorden Tually",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC9hCQoT-VY7vVRaC62WJOJw",
+    "url": "https://www.youtube.com/channel/UC9hCQoT-VY7vVRaC62WJOJw",
+    "description": "Travel stories and destination explorations around the world.",
+    "topics": [
+      "Travel",
+      "Adventure"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Jorden Tually with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Rick Steves' Europe",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "ricksteves",
+    "url": "https://www.youtube.com/ricksteves",
+    "description": "European travel guides, cultural explanations and destination tours.",
+    "topics": [
+      "Travel",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Rick Steves' Europe with this exact account link."
+      },
+      {
+        "url": "https://www.ricksteves.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "ricksteves.com"
+  },
+  {
+    "name": "Sailing La Vagabonde",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCZdQjaSoLjIzFnWsDQOv4ww",
+    "url": "https://www.youtube.com/channel/UCZdQjaSoLjIzFnWsDQOv4ww",
+    "description": "Life aboard a sailboat and ocean-travel adventures.",
+    "topics": [
+      "Travel",
+      "Sailing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Sailing La Vagabonde with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Louis Cole",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCVrvnobbNGGMsS5n2mJwfOg",
+    "url": "https://www.youtube.com/channel/UCVrvnobbNGGMsS5n2mJwfOg",
+    "description": "Travel vlogs, personal adventures and destination experiences.",
+    "topics": [
+      "Travel",
+      "Lifestyle"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Louis Cole with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Christian LeBlanc",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@lostleblanc",
+    "url": "https://www.youtube.com/@lostleblanc",
+    "description": "Travel filmmaking, destination guides and creator-business discussions.",
+    "topics": [
+      "Travel",
+      "Filmmaking"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Christian LeBlanc with this exact account link."
+      },
+      {
+        "url": "https://lostleblanc.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "lostleblanc.com"
+  },
+  {
+    "name": "Indigo Traveller",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCXulruMI7BHj3kGyosNa0jA",
+    "url": "https://www.youtube.com/channel/UCXulruMI7BHj3kGyosNa0jA",
+    "description": "Travel documentaries exploring places beyond conventional tourist routes.",
+    "topics": [
+      "Travel",
+      "Documentaries"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Indigo Traveller with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "David Hoffmann",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC9SSUKnJIJxUjTD3eBaymLQ",
+    "url": "https://www.youtube.com/channel/UC9SSUKnJIJxUjTD3eBaymLQ",
+    "description": "Destination videos exploring food, culture and local history.",
+    "topics": [
+      "Travel",
+      "Food"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates David Hoffmann with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Bucket List Family",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCuAHfJyWROB4XRReS43EWUw",
+    "url": "https://www.youtube.com/channel/UCuAHfJyWROB4XRReS43EWUw",
+    "description": "Family travel films and experiences from different destinations.",
+    "topics": [
+      "Travel",
+      "Family"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates The Bucket List Family with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Eva zu Beck",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCDTINI9skkeZNY2ZXnBqIkQ",
+    "url": "https://www.youtube.com/channel/UCDTINI9skkeZNY2ZXnBqIkQ",
+    "description": "Adventure travel, remote journeys and life on the road.",
+    "topics": [
+      "Travel",
+      "Adventure"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Eva zu Beck with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Wolters World",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCFr3sz2t3bDp6Cux08B93KQ",
+    "url": "https://www.youtube.com/channel/UCFr3sz2t3bDp6Cux08B93KQ",
+    "description": "Practical travel advice, destination comparisons and cultural observations.",
+    "topics": [
+      "Travel",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Wolters World with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Flying the Nest",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UC3CxEBKx2l38nl1_SFsC2gg",
+    "url": "https://www.youtube.com/channel/UC3CxEBKx2l38nl1_SFsC2gg",
+    "description": "Family travel films and destination experiences.",
+    "topics": [
+      "Travel",
+      "Family"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Flying the Nest with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Gone with the Wynns",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCBo9TLJiZ5HI5CXFsCxOhmA",
+    "url": "https://www.youtube.com/channel/UCBo9TLJiZ5HI5CXFsCxOhmA",
+    "description": "Sailing, road travel and independent life on the move.",
+    "topics": [
+      "Travel",
+      "Sailing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Gone with the Wynns with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Gareth Leonard",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCheCB_ewJf_L2kTk0649ZDQ",
+    "url": "https://www.youtube.com/channel/UCheCB_ewJf_L2kTk0649ZDQ",
+    "description": "Travel stories focused on local people, food and culture.",
+    "topics": [
+      "Travel",
+      "Culture"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates Gareth Leonard with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Endless Adventure",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCEDrRCC0qRtPd5-sSa1hajw",
+    "url": "https://www.youtube.com/channel/UCEDrRCC0qRtPd5-sSa1hajw",
+    "description": "Travel adventures, regional food and life on the road.",
+    "topics": [
+      "Travel",
+      "Food"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/travel_youtube_channels/",
+        "note": "Public category directory associates The Endless Adventure with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Graphic Design How To",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCPw8OhTFjtWfEQxwZrJocOQ",
+    "url": "https://www.youtube.com/channel/UCPw8OhTFjtWfEQxwZrJocOQ",
+    "description": "Tutorials about graphic-design software, techniques and career development.",
+    "topics": [
+      "Design",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Graphic Design How To with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Canva",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCEDLeLo3HNQZiJOTR2svg2A",
+    "url": "https://www.youtube.com/channel/UCEDLeLo3HNQZiJOTR2svg2A",
+    "description": "Design tutorials and demonstrations using Canva tools.",
+    "topics": [
+      "Design",
+      "Marketing"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Canva with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Will Paterson",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "@willpatersondesign",
+    "url": "https://www.youtube.com/@willpatersondesign",
+    "description": "Logo design, lettering and brand-identity design discussions.",
+    "topics": [
+      "Design",
+      "Branding"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Will Paterson with this exact account link."
+      },
+      {
+        "url": "https://www.willpaterson.design",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "willpaterson.design"
+  },
+  {
+    "name": "TastyTuts",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UC64eec0UYHxflyEWgyZOvLA",
+    "url": "https://www.youtube.com/channel/UC64eec0UYHxflyEWgyZOvLA",
+    "description": "Courses and tutorials covering graphic design and digital art.",
+    "topics": [
+      "Design",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates TastyTuts with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "ZBrush",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCEh_IoMVGA7NPsx6-2H8Bqw",
+    "url": "https://www.youtube.com/channel/UCEh_IoMVGA7NPsx6-2H8Bqw",
+    "description": "Digital sculpting demonstrations, artist sessions and software tutorials.",
+    "topics": [
+      "Design",
+      "3D art"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates ZBrush with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Eric Vasquez",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCLhO-f-44EY1cHSAEh5d34w",
+    "url": "https://www.youtube.com/channel/UCLhO-f-44EY1cHSAEh5d34w",
+    "description": "Graphic-design tutorials covering illustration and Adobe software.",
+    "topics": [
+      "Design",
+      "Illustration"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Eric Vasquez with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Elias Sarantopoulos",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCPq0a0HP6JvculGSNYu-pSQ",
+    "url": "https://www.youtube.com/channel/UCPq0a0HP6JvculGSNYu-pSQ",
+    "description": "Design and software lessons for visual creative professionals.",
+    "topics": [
+      "Design",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Elias Sarantopoulos with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Brian Salisbury",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCiaIJEb_xIJmFLuCNRItCUQ",
+    "url": "https://www.youtube.com/channel/UCiaIJEb_xIJmFLuCNRItCUQ",
+    "description": "Computer-graphics lessons drawing on film and games workflows.",
+    "topics": [
+      "Design",
+      "3D art"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Brian Salisbury with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Chris Spooner",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC_mkC8ChfzCJcuSqSMwvUWw",
+    "url": "https://www.youtube.com/channel/UC_mkC8ChfzCJcuSqSMwvUWw",
+    "description": "Photoshop and Illustrator tutorials for graphic-design projects.",
+    "topics": [
+      "Design",
+      "Illustration"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Chris Spooner with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Zimri Mayfield",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCbqd2YmFeHMwxlj4NcN5zPQ",
+    "url": "https://www.youtube.com/channel/UCbqd2YmFeHMwxlj4NcN5zPQ",
+    "description": "Illustrator tutorials, creative design projects and visual critiques.",
+    "topics": [
+      "Design",
+      "Branding"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Zimri Mayfield with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Teela Cunningham",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC7LfMHlnCxEJWZ-m5BN7_ig",
+    "url": "https://www.youtube.com/channel/UC7LfMHlnCxEJWZ-m5BN7_ig",
+    "description": "Illustrator, Photoshop and hand-lettering tutorials for different levels.",
+    "topics": [
+      "Design",
+      "Lettering"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Teela Cunningham with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Julian Ball",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCeaSgd_wuEWpqINS9nLfBxQ",
+    "url": "https://www.youtube.com/channel/UCeaSgd_wuEWpqINS9nLfBxQ",
+    "description": "Graphic-design tutorials and digital creative project demonstrations.",
+    "topics": [
+      "Design",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Julian Ball with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Mt. Mograph",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCSUSgx9qc_NydrOL59xbJIA",
+    "url": "https://www.youtube.com/channel/UCSUSgx9qc_NydrOL59xbJIA",
+    "description": "Tutorials covering motion graphics, animation and digital design.",
+    "topics": [
+      "Design",
+      "Animation"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Mt. Mograph with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Matt Borchert",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC34_SxzRr7FOYdKfjLpVBzw",
+    "url": "https://www.youtube.com/channel/UC34_SxzRr7FOYdKfjLpVBzw",
+    "description": "Software tips and tutorials for graphic-design workflows.",
+    "topics": [
+      "Design",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Matt Borchert with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Design Cuts",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCX7xWfhniiy9j4y9uGlQkSw",
+    "url": "https://www.youtube.com/channel/UCX7xWfhniiy9j4y9uGlQkSw",
+    "description": "Graphic-design tutorials, creative techniques and artist discussions.",
+    "topics": [
+      "Design",
+      "Education"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/graphic_design_youtube_channels/",
+        "note": "Public category directory associates Design Cuts with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "The Fitness Marshall",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCyqR7WkL8i1b6xtSssDmW9w",
+    "url": "https://www.youtube.com/channel/UCyqR7WkL8i1b6xtSssDmW9w",
+    "description": "Follow-along dance workouts set to popular music.",
+    "topics": [
+      "Fitness",
+      "Dance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates The Fitness Marshall with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Fitness Blender",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "FitnessBlender",
+    "url": "https://www.youtube.com/user/FitnessBlender",
+    "description": "Follow-along home workouts and structured exercise programs.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Fitness Blender with this exact account link."
+      },
+      {
+        "url": "https://www.fitnessblender.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "fitnessblender.com"
+  },
+  {
+    "name": "Walk at Home",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCVl6ZdslZz2Zj-34bMJFPbg",
+    "url": "https://www.youtube.com/channel/UCVl6ZdslZz2Zj-34bMJFPbg",
+    "description": "Indoor walking workouts and accessible movement routines.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Walk at Home with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Scott Herman",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "ScottHermanFitness",
+    "url": "https://www.youtube.com/user/ScottHermanFitness",
+    "description": "Exercise demonstrations and strength-training technique explanations.",
+    "topics": [
+      "Fitness",
+      "Strength training"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Scott Herman with this exact account link."
+      },
+      {
+        "url": "https://www.scotthermanfitness.com",
+        "note": "Official creator or publisher website directly links this public YouTube account."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "official_crosslink",
+    "identityKey": "scotthermanfitness.com"
+  },
+  {
+    "name": "Lucy Wyndham-Read",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCag7XoiJLutjBTsM0tAzUzg",
+    "url": "https://www.youtube.com/channel/UCag7XoiJLutjBTsM0tAzUzg",
+    "description": "Home exercise routines and short follow-along workouts.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Lucy Wyndham-Read with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "MattDoesFitness",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCeqR0F3O1V11CiiOaJbd1pw",
+    "url": "https://www.youtube.com/channel/UCeqR0F3O1V11CiiOaJbd1pw",
+    "description": "Strength training, fitness challenges and personal workout videos.",
+    "topics": [
+      "Fitness",
+      "Strength training"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates MattDoesFitness with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "FitnessFAQs",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UC1CVzH-XVr3E-kTT6D8hhfg",
+    "url": "https://www.youtube.com/channel/UC1CVzH-XVr3E-kTT6D8hhfg",
+    "description": "Bodyweight exercise tutorials and calisthenics training explanations.",
+    "topics": [
+      "Fitness",
+      "Calisthenics"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates FitnessFAQs with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "HASfit",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCXIJ2-RSIGn53HA-x9RDevA",
+    "url": "https://www.youtube.com/channel/UCXIJ2-RSIGn53HA-x9RDevA",
+    "description": "Follow-along home workouts for different fitness levels.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates HASfit with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Zuzka Light",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCrd4Hfglr4EczsLXKdGvCLA",
+    "url": "https://www.youtube.com/channel/UCrd4Hfglr4EczsLXKdGvCLA",
+    "description": "Workout routines and discussions of active daily living.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Zuzka Light with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jump Rope Dudes",
+    "kind": "group",
+    "platform": "YouTube",
+    "handle": "UCmYew1VwdbpHnSFG-CQ1A-A",
+    "url": "https://www.youtube.com/channel/UCmYew1VwdbpHnSFG-CQ1A-A",
+    "description": "Jump-rope workouts, technique lessons and exercise routines.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Jump Rope Dudes with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Jessica Bass James",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCqVof1x_T_7xEcv4_LQetOg",
+    "url": "https://www.youtube.com/channel/UCqVof1x_T_7xEcv4_LQetOg",
+    "description": "Dance-fitness classes and follow-along movement routines.",
+    "topics": [
+      "Fitness",
+      "Dance"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Jessica Bass James with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "BodyFit by Amy",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCA9k6Z3B9ywXmwKh-zpBwfw",
+    "url": "https://www.youtube.com/channel/UCA9k6Z3B9ywXmwKh-zpBwfw",
+    "description": "Follow-along workouts for a range of home-exercise needs.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates BodyFit by Amy with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Rebecca-Louise",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCi0AqmA_3DGPFCu5qY0LLSg",
+    "url": "https://www.youtube.com/channel/UCi0AqmA_3DGPFCu5qY0LLSg",
+    "description": "Follow-along workout sessions and fitness-routine guidance.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Rebecca-Louise with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Love Sweat Fitness",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCXxIurzUx2ztE6D5IzcyTcw",
+    "url": "https://www.youtube.com/channel/UCXxIurzUx2ztE6D5IzcyTcw",
+    "description": "Home workouts and discussions about sustainable exercise routines.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Love Sweat Fitness with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  },
+  {
+    "name": "Caroline Jordan",
+    "kind": "person",
+    "platform": "YouTube",
+    "handle": "UCkadh1ZnrCDOF8awC9NbAbA",
+    "url": "https://www.youtube.com/channel/UCkadh1ZnrCDOF8awC9NbAbA",
+    "description": "Exercise routines, mobility sessions and workplace-wellness movement.",
+    "topics": [
+      "Fitness",
+      "Exercise"
+    ],
+    "language": "en",
+    "evidence": [
+      {
+        "url": "https://videos.feedspot.com/fitness_youtube_channels/",
+        "note": "Public category directory associates Caroline Jordan with this exact account link."
+      }
+    ],
+    "checkedAt": "2026-10-21",
+    "verification": "public_directory"
+  }
+]
