@@ -1,0 +1,19 @@
+{
+  "name": "recap-tech-collector",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/main.mjs",
+    "check": "node --check src/main.mjs && node --check src/collector.mjs"
+  },
+  "dependencies": {
+    "apify": "3.7.2"
+  },
+  "overrides": {
+    "basic-ftp": "6.2.1"
+  }
+}

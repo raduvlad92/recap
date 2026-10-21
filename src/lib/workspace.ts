@@ -2,12 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useRecapAuth } from './auth';
 import { createDefaultWorkspace, sampleCreators, sampleSources, sampleUpdates } from './fixtures';
-import { applyFollowToggle, followReasons as reasonsFor, mergeCollection, normalizeSourceUrl, resolveFollowedSources, sanitizeSettings, sanitizeWorkspace, scopesFor, sourceCounts as countSources, sourceIdForUrl, unique } from './domain';
-import type { CollectionResult, ReaderSettings, Source, WorkspaceState } from './types';
+import { applyFollowToggle, followReasons as reasonsFor, mergeCollection, mergeWorkspaceUpdates, normalizeSourceUrl, resolveFollowedSources, removeSourceCollection, saveSourceCollection, sanitizeSettings, sanitizeArchivedUpdate, sanitizeWorkspace, scopesFor, sourceCounts as countSources, sourceIdForUrl, unique } from './domain';
+import type { CollectionResult, ReaderSettings, Source, SourceUpdate, WorkspaceState } from './types';
 
 export type SaveStatus = 'loading' | 'local' | 'saving' | 'saved' | 'error' | 'conflict';
 interface Cache { state: WorkspaceState; updatedAt: string | null; dirty: boolean }
 interface View { owner: string; state: WorkspaceState; loaded: boolean }
+interface Archive { owner: string; updates: SourceUpdate[]; error: string | null; loading?: boolean }
+const EMPTY_UPDATES: SourceUpdate[] = [];
 const CACHE_PREFIX = 'therecap.workspace.v1.';
 const cacheKey = (owner: string) => `${CACHE_PREFIX}${encodeURIComponent(owner)}`;
 const blankWorkspace = (): WorkspaceState => ({ ...createDefaultWorkspace(), followedSourceIds: [], followScopes: [], savedUpdateIds: [], readLaterIds: [], customSources: [], importedUpdates: [] });
@@ -26,6 +28,23 @@ function writeCache(owner: string, cache: Cache): boolean {
 }
 const messageFor = (error: unknown) => error instanceof Error ? error.message : 'The workspace could not be saved. Please try again.';
 
+export async function readArchiveRecords(readPage: (offset: number, signal: AbortSignal) => Promise<unknown[]>, knownSourceIds: string[], signal: AbortSignal): Promise<{ updates: SourceUpdate[]; rejected: number }> {
+  const updates: SourceUpdate[] = [];
+  const knownSources = new Set(knownSourceIds);
+  let rejected = 0;
+  for (let offset = 0; ; offset += 1000) {
+    if (signal.aborted) throw new DOMException('Archive read cancelled.', 'AbortError');
+    const records = await readPage(offset, signal);
+    if (signal.aborted) throw new DOMException('Archive read cancelled.', 'AbortError');
+    for (const record of records) {
+      const update = sanitizeArchivedUpdate(record);
+      if (!update || update.isSample || update.id.startsWith('sample-') || !knownSources.has(update.sourceId)) { rejected++; continue; }
+      updates.push(update);
+    }
+    if (records.length < 1000) return { updates, rejected };
+  }
+}
+
 export function useWorkspace() {
   const auth = useRecapAuth();
   const owner = auth.isSignedIn && auth.userId ? auth.userId : 'guest';
@@ -33,6 +52,12 @@ export function useWorkspace() {
   const ownerRef = useRef(owner); ownerRef.current = owner;
   const [view, setView] = useState<View>(() => ({ owner: '', state: createDefaultWorkspace(), loaded: false }));
   const viewRef = useRef(view);
+  const [archive, setArchive] = useState<Archive>({ owner: '', updates: [], error: null });
+  const archiveRef = useRef(archive); archiveRef.current = archive;
+  const archivedUpdates = archive.owner === owner ? archive.updates : EMPTY_UPDATES;
+  const archiveError = archive.owner === owner ? archive.error : null;
+  const archiveRetryAbort = useRef<AbortController | null>(null);
+  const archiveRequest = useRef(0);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('loading');
   const [error, setError] = useState<string | null>(null);
   const [loadRequest, setLoadRequest] = useState(0);
@@ -49,7 +74,8 @@ export function useWorkspace() {
   const isLoaded = auth.isLoaded && view.owner === owner && view.loaded;
   const state = view.owner === owner ? view.state : createDefaultWorkspace();
   const sources = useMemo(() => [...sampleSources.filter(source => !state.customSources.some(custom => custom.id === source.id)), ...state.customSources], [state.customSources]);
-  const updates = useMemo(() => [...sampleUpdates, ...state.importedUpdates].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)), [state.importedUpdates]);
+  const creators = useMemo(() => [...sampleCreators, ...(state.customCreators ?? [])], [state.customCreators]);
+  const updates = useMemo(() => [...sampleUpdates, ...mergeWorkspaceUpdates(state.importedUpdates, archivedUpdates)].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)), [state.importedUpdates, archivedUpdates]);
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
   const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
   const client = useMemo(() => {
@@ -65,12 +91,13 @@ export function useWorkspace() {
   useEffect(() => {
     if (!auth.isLoaded) return;
     const current = ++generation.current;
+    archiveRetryAbort.current?.abort(); archiveRequest.current++;
     const abort = new AbortController();
     const cache = discardCacheOnReload.current ? null : readCache(owner);
     discardCacheOnReload.current = false;
     dirty.current = false; revision.current = 0; remoteTimestamp.current = cache?.updatedAt ?? null; remoteReady.current = false; saving.current = false; deleting.current = false;
     install({ owner, state: cache?.state ?? createDefaultWorkspace(), loaded: false });
-    setSaveStatus('loading'); setError(null);
+    setSaveStatus('loading'); setError(null); setArchive({ owner, updates: [], error: null });
     const finish = () => { if (generation.current === current) loadResolvers.current.splice(0).forEach(resolve => resolve()); };
     if (owner === 'guest') {
       const next = cache?.state ?? createDefaultWorkspace();
@@ -96,6 +123,21 @@ export function useWorkspace() {
         const conflict = cache?.dirty && cache.updatedAt !== remoteTimestamp.current;
         const next = conflict || (cache?.dirty && cache.updatedAt === remoteTimestamp.current) ? cache!.state : remote ?? createDefaultWorkspace();
         dirty.current = conflict ? false : !!cache?.dirty || !data;
+        if (Array.isArray(next.sourceCollections)) {
+          try {
+            const { updates, rejected } = await readArchiveRecords(async (offset, signal) => {
+              const result = await client.from('reader_source_updates').select('record').eq('user_id', owner).order('id', { ascending: true }).range(offset, offset + 999).abortSignal(signal);
+              if (result.error) throw new Error(result.error.message);
+              return (result.data ?? []).map(row => row.record);
+            }, next.customSources.map(source => source.id), abort.signal);
+            if (generation.current !== current || ownerRef.current !== owner || abort.signal.aborted) return;
+            setArchive({ owner, updates, error: rejected ? `${rejected} archived updates could not be displayed because their source or record is invalid. Your collection and other history are preserved.` : null });
+          } catch (archiveLoadError) {
+            if (generation.current !== current || ownerRef.current !== owner || abort.signal.aborted) return;
+            setArchive({ owner, updates: [], error: `Collected history could not be loaded: ${messageFor(archiveLoadError)} Your sources and collection are preserved. Retry to refresh history only.` });
+          }
+        }
+        if (generation.current !== current || ownerRef.current !== owner || abort.signal.aborted) return;
         install({ owner, state: next, loaded: true });
         if (conflict) {
           // Keep the local draft's original base revision. Editing a conflicted
@@ -119,10 +161,10 @@ export function useWorkspace() {
 
   // A serialized conditional update prevents stale tabs from silently winning.
   useEffect(() => {
-    if (!isLoaded || owner === 'guest' || !client || !dirty.current || !remoteReady.current || saving.current) return;
+    if (!isLoaded || owner === 'guest' || !client || !dirty.current || !remoteReady.current || saving.current || deleting.current) return;
     const current = generation.current;
     const timer = setTimeout(() => {
-      if (current !== generation.current || ownerRef.current !== owner || saving.current || !dirty.current) return;
+      if (current !== generation.current || ownerRef.current !== owner || saving.current || deleting.current || !dirty.current) return;
       const snapshot = viewRef.current.state;
       const snapshotRevision = revision.current;
       const expected = remoteTimestamp.current;
@@ -181,24 +223,41 @@ export function useWorkspace() {
     } catch (mutationError) { setError(messageFor(mutationError)); return false; }
   }, [install, owner]);
 
-  const toggleSource = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'source', id }, sampleCreators, [...sampleSources, ...previous.customSources])); }, [mutate]);
-  const toggleCreator = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'creator', id }, sampleCreators, [...sampleSources, ...previous.customSources])); }, [mutate]);
+  const toggleSource = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'source', id }, [...sampleCreators, ...(previous.customCreators ?? [])], [...sampleSources, ...previous.customSources])); }, [mutate]);
+  const toggleCreator = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'creator', id }, [...sampleCreators, ...(previous.customCreators ?? [])], [...sampleSources, ...previous.customSources])); }, [mutate]);
   const toggleSaved = useCallback((id: string) => { mutate(previous => ({ ...previous, savedUpdateIds: previous.savedUpdateIds.includes(id) ? previous.savedUpdateIds.filter(saved => saved !== id) : [...previous.savedUpdateIds, id] })); }, [mutate]);
   const toggleReadLater = useCallback((id: string) => { mutate(previous => ({ ...previous, readLaterIds: previous.readLaterIds.includes(id) ? previous.readLaterIds.filter(saved => saved !== id) : [...previous.readLaterIds, id] })); }, [mutate]);
   const updateSettings = useCallback((settings: Partial<ReaderSettings>) => mutate(previous => ({ ...previous, settings: sanitizeSettings({ ...previous.settings, ...settings }) })), [mutate]);
+  const selectSourceCollection = useCallback((id?: string) => mutate(previous => {
+    if (id && !previous.sourceCollections?.some(collection => collection.id === id)) throw new Error('This collection no longer exists.');
+    const { activeCollectionId: _previousId, ...rest } = previous;
+    return { ...rest, ...(id ? { activeCollectionId: id } : {}) };
+  }), [mutate]);
+  const saveCollection = useCallback((name: string, sourceIds: string[], id?: string) => mutate(previous => {
+    const existing = previous.sourceCollections?.find(collection => collection.id === id);
+    return saveSourceCollection(previous, { id: existing?.id ?? `collection-${crypto.randomUUID()}`, name, sourceIds, createdAt: existing?.createdAt ?? new Date().toISOString() }, [...sampleSources, ...previous.customSources]);
+  }), [mutate]);
+  const deleteSourceCollection = useCallback((id: string) => mutate(previous => removeSourceCollection(previous, id)), [mutate]);
   const addSource = useCallback((input: string): { source?: Source; error?: string } => {
     try {
       if (!viewRef.current.loaded || viewRef.current.owner !== ownerRef.current) throw new Error('Wait for your workspace to finish loading.');
       const normalized = normalizeSourceUrl(input);
       const currentSources = [...sampleSources, ...viewRef.current.state.customSources];
       const existing = currentSources.find(source => source.url === normalized.url);
-      if (existing) return { source: existing };
+      if (existing) {
+        const ok = mutate(previous => {
+          const next = previous.followedSourceIds.includes(existing.id) ? previous : applyFollowToggle(previous, { kind: 'source', id: existing.id }, [...sampleCreators, ...(previous.customCreators ?? [])], currentSources);
+          return { ...next, sourceCollections: next.sourceCollections?.map(collection => collection.id === next.activeCollectionId ? { ...collection, sourceIds: unique([...collection.sourceIds, existing.id]) } : collection) };
+        });
+        return ok ? { source: existing } : { error: 'This source could not be added to your current selection.' };
+      }
       let id = sourceIdForUrl(normalized.url);
       for (let suffix = 1; currentSources.some(source => source.id === id); suffix++) id = `${sourceIdForUrl(normalized.url)}-${suffix}`;
       const source: Source = { ...normalized, id, creatorIds: [], status: 'pending', description: 'Added by you. Content and supported formats have not been checked yet.' };
       const ok = mutate(previous => {
         const customSources = [...previous.customSources, source];
-        return applyFollowToggle({ ...previous, customSources }, { kind: 'source', id }, sampleCreators, [...sampleSources, ...customSources]);
+        const next = applyFollowToggle({ ...previous, customSources }, { kind: 'source', id }, [...sampleCreators, ...(previous.customCreators ?? [])], [...sampleSources, ...customSources]);
+        return { ...next, sourceCollections: next.sourceCollections?.map(collection => collection.id === next.activeCollectionId ? { ...collection, sourceIds: unique([...collection.sourceIds, id]) } : collection) };
       });
       return ok ? { source } : { error: 'The source was not added. Check the workspace message and your source allowance.' };
     } catch (addError) { const message = messageFor(addError); setError(message); return { error: message }; }
@@ -208,8 +267,45 @@ export function useWorkspace() {
     return mergeCollection(previous, result);
   }), [mutate]);
   const setSourceStatus = useCallback((id: string, status: Source['status']) => { mutate(previous => ({ ...previous, customSources: previous.customSources.map(source => source.id === id ? { ...source, status } : source) })); }, [mutate]);
-  const resetWorkspace = useCallback(() => mutate(() => createDefaultWorkspace()), [mutate]);
-  const exportWorkspace = useCallback(() => JSON.stringify({ ...viewRef.current.state, exportedAt: new Date().toISOString(), notice: 'Contains your private workspace and clearly labelled fictional sample identities. Collected source content is not proof of full coverage or AI analysis.' }, null, 2), []);
+  // One server transaction checks the expected workspace revision before changing either store.
+  const clearStoredWorkspace = useCallback(async (next: WorkspaceState | null): Promise<boolean> => {
+    if (ownerRef.current !== owner || !viewRef.current.loaded || viewRef.current.owner !== owner) return false;
+    if (owner === 'guest') {
+      const state = next ?? blankWorkspace();
+      const ok = mutate(() => state);
+      if (!next && ok) { try { localStorage.removeItem(cacheKey(owner)); } catch { /* Empty in-memory state remains. */ } }
+      return ok;
+    }
+    const expected = remoteTimestamp.current;
+    if (!client || !remoteReady.current || !expected || saving.current || deleting.current || dirty.current) { setError('Wait for your current changes to save, or load the cloud workspace before clearing collected history.'); return false; }
+    const current = generation.current;
+    archiveRetryAbort.current?.abort(); archiveRequest.current++;
+    saving.current = true; deleting.current = true; setSaveStatus('saving');
+    try {
+      const result = await client.rpc('clear_reader_workspace', { p_expected_updated_at: expected, p_next_state: next });
+      if (generation.current !== current || ownerRef.current !== owner) return false;
+      if (result.error) {
+        if (result.error.code === 'PT409') { remoteReady.current = false; setSaveStatus('conflict'); setError('Your cloud workspace changed elsewhere. Nothing was cleared. Export your changes, then load the saved version.'); return false; }
+        throw new Error(`Could not clear your workspace: ${result.error.message}`);
+      }
+      const updatedAt = result.data?.updatedAt;
+      if (next && (typeof updatedAt !== 'string' || !Number.isFinite(Date.parse(updatedAt)))) throw new Error('The server did not confirm the workspace revision. Reload before making further changes.');
+      dirty.current = false; remoteTimestamp.current = next ? updatedAt : null; revision.current++;
+      setArchive({ owner, updates: [], error: null });
+      const state = next ?? blankWorkspace();
+      install({ owner, state, loaded: true });
+      if (next) writeCache(owner, { state, updatedAt, dirty: false });
+      else { try { localStorage.removeItem(cacheKey(owner)); } catch { /* Cloud deletion succeeded. */ } }
+      setSaveStatus('saved'); setError(null); return true;
+    } catch (clearError) { if (generation.current === current) { setSaveStatus('error'); setError(messageFor(clearError)); } return false; }
+    finally { if (generation.current === current) { saving.current = false; deleting.current = false; } }
+  }, [client, install, mutate, owner]);
+  const resetWorkspace = useCallback(() => clearStoredWorkspace({ ...createDefaultWorkspace(), sourceCollections: [] }), [clearStoredWorkspace]);
+  const deleteWorkspace = useCallback(() => clearStoredWorkspace(null), [clearStoredWorkspace]);
+  const exportWorkspace = useCallback(() => {
+    if (!viewRef.current.loaded || viewRef.current.owner !== ownerRef.current) return JSON.stringify({ notice: 'Wait for your current workspace to finish loading before exporting.' });
+    return JSON.stringify({ ...viewRef.current.state, archivedUpdates: archiveRef.current.owner === ownerRef.current ? archiveRef.current.updates : [], ...(archiveRef.current.owner === ownerRef.current && archiveRef.current.error ? { archiveNotice: archiveRef.current.error } : {}), exportedAt: new Date().toISOString(), notice: 'Contains your private workspace and clearly labelled fictional sample identities. Collected source content is not proof of full coverage or AI analysis.' }, null, 2);
+  }, []);
   const reloadWorkspace = useCallback((): Promise<void> => {
     discardCacheOnReload.current = true;
     return new Promise(resolve => { loadResolvers.current.push(resolve); setLoadRequest(value => value + 1); });
@@ -219,32 +315,25 @@ export function useWorkspace() {
     setSaveRequest(value => value + 1);
   }, []);
 
-  const deleteWorkspace = useCallback(async (): Promise<boolean> => {
-    const selectedOwner = ownerRef.current;
-    if (selectedOwner !== owner || !viewRef.current.loaded || viewRef.current.owner !== selectedOwner) return false;
-    if (selectedOwner === 'guest') {
-      const next = blankWorkspace(); install({ owner: selectedOwner, state: next, loaded: true });
-      try { localStorage.removeItem(cacheKey(selectedOwner)); } catch { /* Empty state remains visible. */ }
-      setSaveStatus('local'); setError(null); return true;
-    }
-    if (!client || !remoteReady.current || saving.current) { setError('Wait for saving to finish, or load the cloud workspace before deleting account data.'); return false; }
-    const current = generation.current;
-    const expected = remoteTimestamp.current;
-    saving.current = true; deleting.current = true; setSaveStatus('saving');
+  const retryArchive = useCallback(async (): Promise<void> => {
+    if (!client || ownerRef.current !== owner || !viewRef.current.loaded || viewRef.current.owner !== owner || deleting.current) return;
+    archiveRetryAbort.current?.abort();
+    const abort = new AbortController(); archiveRetryAbort.current = abort;
+    const current = generation.current, request = ++archiveRequest.current;
+    const stillCurrent = () => !abort.signal.aborted && ownerRef.current === owner && generation.current === current && archiveRequest.current === request;
+    setArchive(previous => previous.owner === owner ? { ...previous, loading: true } : { owner, updates: [], error: null, loading: true });
     try {
-      if (expected) {
-        const { data, error: deleteError } = await client.from('reader_workspaces').delete().eq('user_id', selectedOwner).eq('updated_at', expected).select('user_id');
-        if (deleteError) throw new Error(`Could not delete the cloud workspace: ${deleteError.message}`);
-        if (!data?.length) throw new Error('Your cloud workspace changed elsewhere. Reload it before deleting.');
-      }
-      if (generation.current !== current || ownerRef.current !== selectedOwner) return false;
-      dirty.current = false; remoteTimestamp.current = null; revision.current++;
-      const next = blankWorkspace(); install({ owner: selectedOwner, state: next, loaded: true });
-      try { localStorage.removeItem(cacheKey(selectedOwner)); } catch { /* Cloud deletion succeeded. */ }
-      setSaveStatus('saved'); setError(null); return true;
-    } catch (deleteError) { if (generation.current === current) { setSaveStatus('error'); setError(messageFor(deleteError)); } return false; }
-    finally { if (generation.current === current) { saving.current = false; deleting.current = false; } }
-  }, [client, install, owner]);
+      const { updates, rejected } = await readArchiveRecords(async (offset, signal) => {
+        const result = await client.from('reader_source_updates').select('record').eq('user_id', owner).order('id', { ascending: true }).range(offset, offset + 999).abortSignal(signal);
+        if (result.error) throw new Error(result.error.message);
+        return (result.data ?? []).map(row => row.record);
+      }, viewRef.current.state.customSources.map(source => source.id), abort.signal);
+      if (stillCurrent()) setArchive({ owner, updates, error: rejected ? `${rejected} archived updates could not be displayed because their source or record is invalid. Your collection and other history are preserved.` : null });
+    } catch (archiveLoadError) {
+      if (stillCurrent()) setArchive(previous => ({ owner, updates: previous.owner === owner ? previous.updates : [], error: `Collected history could not be loaded: ${messageFor(archiveLoadError)} Your sources, local changes and collection are preserved. Retry to refresh history only.` }));
+    } finally { if (archiveRetryAbort.current === abort) archiveRetryAbort.current = null; }
+  }, [client, owner]);
+  useEffect(() => () => { archiveRetryAbort.current?.abort(); }, []);
 
   // A changed tab is deliberately surfaced rather than merged without a user's knowledge.
   useEffect(() => {
@@ -258,11 +347,11 @@ export function useWorkspace() {
   }, [owner, isLoaded]);
 
   // Normalize the derived inventory whenever legacy state did not carry scope intent.
-  const followed = unique(resolveFollowedSources(scopesFor(state), sampleCreators, sources));
+  const followed = unique(resolveFollowedSources(scopesFor(state), creators, sources));
   const exposedState = followed.join('|') === state.followedSourceIds.join('|') ? state : { ...state, followedSourceIds: followed };
-  return { state: exposedState, sources, updates, creators: sampleCreators, isLoaded, saveStatus: isLoaded ? saveStatus : 'loading' as SaveStatus, error,
+  return { state: exposedState, sources, updates, creators, isLoaded, saveStatus: isLoaded ? saveStatus : 'loading' as SaveStatus, error: [error, archiveError].filter(Boolean).join(' ') || null, archiveError, archiveLoading: archive.owner === owner && archive.loading === true,
     sourceCounts: countSources(exposedState, sources, updates), toggleSource, toggleCreator,
     isCreatorFollowed: (id: string) => scopesFor(state).some(scope => scope.kind === 'creator' && scope.id === id),
-    followReasons: (id: string) => reasonsFor(state, id, sampleCreators),
-    toggleSaved, toggleReadLater, updateSettings, addSource, importCollection, setSourceStatus, resetWorkspace, deleteWorkspace, exportWorkspace, retrySave, reloadWorkspace };
+    followReasons: (id: string) => reasonsFor(state, id, creators),
+    selectSourceCollection, saveCollection, deleteSourceCollection, toggleSaved, toggleReadLater, updateSettings, addSource, importCollection, setSourceStatus, resetWorkspace, deleteWorkspace, exportWorkspace, retrySave, retryArchive, reloadWorkspace };
 }

@@ -4,23 +4,23 @@ Requested 21 October 2026. Create an editable source collection named **tech** f
 
 This request reopens collection for this bounded tech slice; it does not authorize unrelated catalogue-wide collection, a recurring schedule, a new supplier subscription, customer outreach or an increased budget. The existing global **€50 total /150 generated-transcription minutes** ceiling remains an upper bound. First use existing public captions; account for actual supplier charges and reservation/stop behavior before execution. Paid AI synthesis is a separate scope/budget and is not needed merely to show source items.
 
-## Readiness checkpoint
+## Current checkpoint
 
-- Existing recap app, Supabase and Clerk access are available; the backend target is unchanged.
-- Exact verified-email lookup found no app account for the specified identity. A Clerk dashboard login is separate from an app signup. The founder needs to sign up/sign in to the live app once so the private collection can be bound to the correct actual user; do not create an impersonated verified owner account or overwrite another reader's workspace.
-- No Apify API token, pinned build or collection signing secret is currently configured locally or in the hosted runtime. The shared T3 browser opened the Apify Console sign-in page. An authenticated provider connection has not been established; another browser's saved login is not yet verified. App-generated signing secrets and build selection are assistant-owned work, not a token checklist for the founder.
-- The current YouTube adapter is deliberately capped at five items and excludes Shorts/streams. It must be expanded or replaced for a dated backfill. Existing source rows and fixture creator navigation are not a named, persistent researched collection.
-- Initial primary-site research confirms several LMG YouTube properties and LTT social accounts, four Marques YouTube properties with main X/Instagram, and GamersNexus YouTube/X. Complete the channel inventory from primary cross-links, keeping unresolved and historical accounts explicit. No creator content has been backfilled at this checkpoint.
+Founder app signup and DeleteCookies Apify organization login completed; both exact identities are verified. No additional owner access step is pending. Source manifest contains38included public accounts:20YouTube,10X,8Instagram. One optional personal channel and nine unresolved identity/ownership candidates remain explicit. [Research and controls](access-research.md).
+
+The actual owner now has a seeded active tech collection with all38sources. Existing preferences, saves and nine sample follows were preserved (47total follows); the named tech view excludes sample sources. The frontend/private archive and aggregate spending controls are implemented;282tests/typecheck/build pass. Hosted migrations, rollback-only authorization/CAS/budget checks and security advisors pass. Private Actor0.1.5 builds in DeleteCookies, with a clean runtime dependency audit. Actual backfill and frontend deployment remain in progress.
+
+The existing USD45 shared ledger conservatively respects the old EUR50 approval. This run uses a smaller **USD4.70 combined ceiling including a USD0.40 controller ceiling**, plus separately recorded tiny build charges, to fit the organization's USD5free usage allowance. Unknown charges retain their full holds. No upgrade or subscription is authorized or purchased.
 
 ## Tracked work
 
 | ID | Deliverable | State |
 | --- | --- | --- |
-| TECH01 | Primary evidence for every official brand channel and supported format | In progress; see CHANNEL-RESEARCH.md when available |
-| TECH02 | Actual founder app identity and authenticated Apify account/connection | Access steps pending |
-| TECH03 | Persistent editable tech collection, real creator/source binding and homepage navigation | Planned |
-| TECH04 | Private Apify Actor, reviewed supplier modules, date pagination, deduplication and durable aggregate budget stop | Planned; local code can be prepared without provider access |
-| TECH05 | Capped 30-day backfill, persistence and per-source coverage/error/cost report | Not run |
+| TECH01 | Primary evidence for every official brand channel and supported format | Complete primary research; see access-research.md and data/tech/sources.json |
+| TECH02 | Actual founder app identity and authenticated Apify account/connection | Verified: actual owner signup and DeleteCookies API identity |
+| TECH03 | Persistent editable tech collection, real creator/source binding and homepage navigation | Implemented locally; owner metadata seeded; deployment pending |
+| TECH04 | Private Apify Actor, reviewed supplier modules, date pagination, deduplication and durable aggregate budget stop | Private Actor0.1.5 built; reviewed providers and durable budget holds verified |
+| TECH05 | Capped 30-day backfill, persistence and per-source coverage/error/cost report | Run in progress; results/coverage/cost pending |
 | TECH06 | Deployed signed-in homepage proof, private-account isolation and durable handoff | Pending actual collection; no fixture or metadata-only pass |
 
 ## Acceptance

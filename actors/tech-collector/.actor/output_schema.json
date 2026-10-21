@@ -1,0 +1,16 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Backfill evidence",
+  "properties": {
+    "manifest": {
+      "title": "Canonical updates, source coverage and cost evidence",
+      "type": "string",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/OUTPUT"
+    },
+    "dataset": {
+      "title": "Updates, coverage rows and manifest",
+      "type": "string",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
+    }
+  }
+}

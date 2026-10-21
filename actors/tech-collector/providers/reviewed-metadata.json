@@ -1,0 +1,2515 @@
+{
+  "YouTube": {
+    "actorId": "h7sDV53CddomktSi5",
+    "actor": "streamers/youtube-scraper",
+    "buildId": "kOLogYtrERZU9YfGW",
+    "buildNumber": "0.0.319",
+    "checkedAt": "2026-10-21T10:39:29.513385+00:00",
+    "metadataUrl": "https://api.apify.com/v2/acts/streamers~youtube-scraper",
+    "buildUrl": "https://api.apify.com/v2/actor-builds/kOLogYtrERZU9YfGW",
+    "pricingUrl": "https://apify.com/streamers/youtube-scraper/pricing",
+    "pricing": {
+      "minimalMaxTotalChargeUsd": null,
+      "pricingModel": "PAY_PER_EVENT",
+      "isPriceChangeNotificationSuppressed": true,
+      "pricingPerEvent": {
+        "actorChargeEvents": {
+          "result": {
+            "eventTitle": "Video",
+            "eventDescription": "Each video written to the dataset.",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.004
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.003
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.0026
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.0024
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.0015
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.001
+              }
+            },
+            "isPrimaryEvent": true
+          },
+          "date-filter": {
+            "eventTitle": "Add-on: Date range for channels",
+            "eventDescription": "Extra cost when date filtering is used on channels.",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.0013
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.001
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.0008
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.0006
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.0003
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.00017
+              }
+            }
+          },
+          "ai-video-description": {
+            "eventTitle": "Add-on: AI description",
+            "eventDescription": "Extra cost for timestamped AI description of a video per minute.",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.015
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.01
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.0085
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.007
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.0043
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.0021
+              }
+            }
+          },
+          "ai-video-summary": {
+            "eventTitle": "Add-on: AI summary",
+            "eventDescription": "Extra cost for AI summary of a video per minute.",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.015
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.01
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.0085
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.007
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.0043
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.0021
+              }
+            }
+          },
+          "transcribeMinute": {
+            "eventTitle": "Add-on: Transcript minute",
+            "eventDescription": "Extra cost charged per started minute per video",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.048
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.041
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.033
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.027
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.02
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.015
+              }
+            }
+          }
+        }
+      },
+      "createdAt": "2026-09-02T13:52:04.236Z",
+      "startedAt": "2026-09-02T13:52:04.236Z",
+      "apifyMarginPercentage": 0.2
+    },
+    "inputSchema": {
+      "title": "Input schema for the youtube-search-scraper actor",
+      "description": "Scrape YouTube search results using a search term, or directly input a video, channel, or results page URL. Feel free to try it out with our default settings by hitting &#9655;<b> Start</b>. If you need any help, have a read through <a href='https://blog.apify.com/how-to-scrape-youtube/' target='_blank' rel='noopener'>this tutorial</a>.",
+      "type": "object",
+      "schemaVersion": 1,
+      "properties": {
+        "searchQueries": {
+          "title": "Search terms",
+          "type": "array",
+          "editor": "stringList",
+          "description": "Enter search terms just like you would enter it in YouTube's search bar.",
+          "prefill": [
+            "Crawlee"
+          ],
+          "example": [
+            "web scraping tutorials"
+          ],
+          "nullable": false
+        },
+        "maxResults": {
+          "title": "Maximum videos per search term",
+          "type": "integer",
+          "description": "Limit the number of videos you want to crawl. If you scrape a channel, acts as a limit for regular videos.",
+          "minimum": 0,
+          "default": 0,
+          "maximum": 999999,
+          "prefill": 10,
+          "example": 10,
+          "unit": "Videos"
+        },
+        "maxResultsShorts": {
+          "title": "Maximum shorts per search term",
+          "type": "integer",
+          "description": "Limit the number of Shorts videos you want to crawl.",
+          "minimum": 0,
+          "maximum": 999999,
+          "default": 0,
+          "prefill": 0,
+          "example": 5,
+          "unit": "Videos"
+        },
+        "maxResultStreams": {
+          "title": "Maximum streams per search term",
+          "type": "integer",
+          "description": "Limit the number of Stream videos you want to crawl.",
+          "minimum": 0,
+          "maximum": 999999,
+          "default": 0,
+          "prefill": 0,
+          "example": 0,
+          "unit": "Videos"
+        },
+        "startUrls": {
+          "title": "Direct URLs",
+          "type": "array",
+          "description": "Enter a link to a <a href='https://www.youtube.com/watch?v=xObhZ0Ga7EQ' target='_blank' rel='noopener'>YouTube video</a>, <a href='https://www.youtube.com/c/Apify' target='_blank' rel='noopener'>channel</a>, <a href='https://www.youtube.com/playlist?list=PLObrtcm1Kw6PmbXg8bmfJN-o2Hgx8sidf' target='_blank' rel='noopener'>playlist</a> or <a href='https://www.youtube.com/results?search_query=crawlee' target='_blank' rel='noopener'>search results page</a>. You can also import a CSV file or Google Sheet with a list of URLs.<br><b>Note:</b> Input from <i>Search term</i> will be ignored when using this option. If you only want to scrape shorts/streams, set Maximum search results to 0, otherwise they represented number of regular videos requested",
+          "default": [],
+          "editor": "requestListSources",
+          "example": [
+            {
+              "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            }
+          ],
+          "sectionCaption": "\ud83d\udd17 Direct URLs"
+        },
+        "transcriptionAndSubtitle": {
+          "title": "Transcription & subtitles",
+          "type": "string",
+          "editor": "select",
+          "default": "NONE",
+          "description": "Choose whether to download subtitles, transcribe the video using speech-to-text AI, or both. Leave empty to skip subtitles and transcription. Subtitles are added to the dataset items, while transcripts are stored in the key-value store",
+          "enum": [
+            "NONE",
+            "ALWAYS_SUBTITLES",
+            "TRANSCRIPTION_AS_FALLBACK",
+            "ALWAYS_TRANSCRIBE"
+          ],
+          "enumTitles": [
+            "None",
+            "Only download subtitles (when present on the video)",
+            "Download subtitles + transcribe videos without subtitles (using speech-to-text models) ($)",
+            "Always transcribe ($)"
+          ],
+          "sectionCaption": "\ud83d\uddb9 Download YouTube transcript",
+          "nullable": true
+        },
+        "subtitlesLanguage": {
+          "title": "Subtitle language",
+          "type": "string",
+          "description": "Language to download subtitles in.<br><b>Note:</b> a subtitle-downloading option must be selected in <i>Transcription & subtitles</i> for this to work.",
+          "editor": "select",
+          "default": "en",
+          "example": "en",
+          "enum": [
+            "any",
+            "en",
+            "de",
+            "es",
+            "fr",
+            "it",
+            "ja",
+            "ko",
+            "nl",
+            "pt",
+            "ru"
+          ],
+          "enumTitles": [
+            "Any",
+            "English",
+            "German",
+            "Spanish",
+            "French",
+            "Italian",
+            "Japanese",
+            "Korean",
+            "Holland",
+            "Portuguese",
+            "Russian"
+          ]
+        },
+        "subtitlesFormat": {
+          "title": "Subtitle format",
+          "type": "string",
+          "description": "Select in what format you want to download subtitles",
+          "editor": "select",
+          "default": "srt",
+          "example": "srt",
+          "enum": [
+            "srt",
+            "vtt",
+            "xml",
+            "plaintext"
+          ],
+          "enumTitles": [
+            "SRT",
+            "WEBVTT",
+            "XML",
+            "plaintext"
+          ]
+        },
+        "sortingOrder": {
+          "title": "Sorting order",
+          "type": "string",
+          "description": "Select Youtube sorting parameter for search",
+          "sectionCaption": "\u2705 Add filters",
+          "sectionDescription": "Specify the parameters you want to sort/filter videos by. They will be applied as if you manually did so on Youtube's search page. Only works if you provide search term, not for the direct URLs.\n \n \u26a0\ufe0f Using YouTube filters may mix Shorts with regular videos. This is a limitation on YouTube's side. We recommend checking it manually.",
+          "editor": "select",
+          "example": "relevance",
+          "enum": [
+            "relevance",
+            "rating",
+            "date",
+            "views"
+          ],
+          "enumTitles": [
+            "Relevance",
+            "Rating",
+            "Upload date",
+            "View count"
+          ],
+          "nullable": true
+        },
+        "dateFilter": {
+          "title": "Date filter",
+          "type": "string",
+          "description": "Select Youtube upload date filter for search",
+          "editor": "select",
+          "example": "month",
+          "enum": [
+            "hour",
+            "today",
+            "week",
+            "month",
+            "year"
+          ],
+          "enumTitles": [
+            "Last hour",
+            "Today",
+            "This week",
+            "This month",
+            "This year"
+          ],
+          "nullable": true
+        },
+        "videoType": {
+          "title": "Video type filter",
+          "type": "string",
+          "description": "Select Youtube video type filter for search",
+          "editor": "select",
+          "example": "video",
+          "enum": [
+            "video",
+            "movie"
+          ],
+          "enumTitles": [
+            "Video",
+            "Film"
+          ],
+          "nullable": true
+        },
+        "lengthFilter": {
+          "title": "Length filter",
+          "type": "string",
+          "description": "Select Youtube video length filter for search",
+          "editor": "select",
+          "example": "between420",
+          "enum": [
+            "under4",
+            "between420",
+            "plus20"
+          ],
+          "enumTitles": [
+            "Under 4 minutes",
+            "4-20 minutes",
+            "Over 20 minutes"
+          ],
+          "nullable": true
+        },
+        "isHD": {
+          "title": "HD",
+          "type": "boolean",
+          "description": "Will apply the HD filter for search",
+          "editor": "checkbox",
+          "groupCaption": "Features",
+          "groupDescription": "What you could select under the Features section of the Filtering&Sorting menu on Youtube",
+          "nullable": true
+        },
+        "hasSubtitles": {
+          "title": "Subtitles/CC",
+          "type": "boolean",
+          "description": "Will apply the Subtitles/CC filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "hasCC": {
+          "title": "Creative Commons",
+          "type": "boolean",
+          "description": "Will apply the Creative Commons filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "is3D": {
+          "title": "3D",
+          "type": "boolean",
+          "description": "Will apply the 3D filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "isLive": {
+          "title": "Live",
+          "type": "boolean",
+          "description": "Will apply the Live filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "isBought": {
+          "title": "Purchased",
+          "type": "boolean",
+          "description": "Will apply the Purchased filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "is4K": {
+          "title": "4K",
+          "type": "boolean",
+          "description": "Will apply the 4K filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "is360": {
+          "title": "360 degrees",
+          "type": "boolean",
+          "description": "Will apply the 360 degrees filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "hasLocation": {
+          "title": "Location",
+          "type": "boolean",
+          "description": "Will apply the Location filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "isHDR": {
+          "title": "HDR",
+          "type": "boolean",
+          "description": "Will apply the HDR filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "isVR180": {
+          "title": "VR180",
+          "type": "boolean",
+          "description": "Will apply the VR180 filter for search",
+          "editor": "checkbox",
+          "nullable": true
+        },
+        "oldestPostDate": {
+          "title": "Scrape videos published after [date]",
+          "type": "string",
+          "editor": "datepicker",
+          "dateType": "absoluteOrRelative",
+          "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])(T[0-2]\\d:[0-5]\\d(:[0-5]\\d)?(\\.\\d+)?Z?)?$|^(\\d+)\\s*(minute|hour|day|week|month|year)s?$",
+          "description": "Only posts uploaded after or on this date will be scraped. Alternatively, specify how old the scraped videos should be in days. Putting <code>1 day</code> will get you only today's posts, <code>2 days</code> - yesterday's and today's, and so on. Note, that if you select this, sorting parameter will be auto-reset to NEWEST",
+          "example": "2024-01-01",
+          "sectionCaption": "\ud83d\udcc5 Date range (applicable only to scraping by channels URL) ($)"
+        },
+        "sortVideosBy": {
+          "title": "Sort by",
+          "type": "string",
+          "editor": "select",
+          "enum": [
+            "NEWEST",
+            "POPULAR",
+            "OLDEST"
+          ],
+          "description": "Maps to the sorting buttons on the top of the channel's 'Videos', 'Shorts' and 'Live' pages.",
+          "example": "NEWEST",
+          "enumTitles": [
+            "Newest",
+            "Popular",
+            "Oldest"
+          ]
+        },
+        "aiVideoDescription": {
+          "title": "Add-on: AI video description ($)",
+          "type": "boolean",
+          "description": "If enabled, uses AI to generate a time-segmented description of the video, covering both visual and audio content for each segment.",
+          "example": false,
+          "default": false,
+          "sectionCaption": "\ud83e\udd16 AI video analysis ($)"
+        },
+        "aiVideoSummary": {
+          "title": "Add-on: AI video summary ($)",
+          "type": "boolean",
+          "description": "If enabled, uses AI to generate a concise conceptual summary of the video covering both visual and audio content.",
+          "example": false,
+          "default": false
+        },
+        "saveSubsToKVS": {
+          "title": "Save subtitles to key-value store",
+          "type": "boolean",
+          "description": "If set to true, the scraper will save the downloaded subtitles to the key-value store. Transcripts are always saved to the key-value store",
+          "example": false,
+          "editor": "hidden"
+        },
+        "preferAutoGeneratedSubtitles": {
+          "title": "Prefer automatically generated subtitles.",
+          "description": "If set to true, automatically generated subtitles are preferred to user subtitles.<b> Note:</b> a subtitle language must be selected and a subtitle-downloading option must be selected in <i>Transcription & subtitles</i> for this to work.",
+          "type": "boolean",
+          "example": false,
+          "editor": "hidden"
+        }
+      },
+      "required": []
+    },
+    "outputSchema": {
+      "actorSpecification": 1,
+      "fields": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The title of the YouTube video",
+            "nullable": true,
+            "example": "Amazing Tutorial Video"
+          },
+          "id": {
+            "type": "string",
+            "description": "The unique YouTube video ID",
+            "nullable": false,
+            "example": "dQw4w9WgXcQ"
+          },
+          "url": {
+            "type": "string",
+            "description": "The full URL of the video",
+            "nullable": false,
+            "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+          },
+          "viewCount": {
+            "type": "number",
+            "description": "The number of views on the video",
+            "nullable": true,
+            "example": 100
+          },
+          "date": {
+            "type": "string",
+            "description": "The publish date of the video",
+            "nullable": true,
+            "example": "2024-08-27T07:47:39.000Z"
+          },
+          "duration": {
+            "type": "string",
+            "description": "The length of the video in time format",
+            "nullable": true,
+            "example": "00:03:27"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "video",
+              "shorts",
+              "stream"
+            ],
+            "description": "The type of video content",
+            "nullable": false,
+            "example": "video"
+          },
+          "thumbnailUrl": {
+            "type": "string",
+            "description": "URL of the video thumbnail image",
+            "nullable": true,
+            "example": "https://i.ytimg.com/vi/abc/maxresdefault.jpg"
+          },
+          "input": {
+            "type": "string",
+            "description": "The input provided by the user (URL, channel name, or search query)",
+            "nullable": false,
+            "example": "https://www.youtube.com/watch?v=abc123"
+          },
+          "channelName": {
+            "type": "string",
+            "description": "The name of the channel that published the video",
+            "nullable": true,
+            "example": "TechReviewer"
+          },
+          "channelUrl": {
+            "type": "string",
+            "description": "The URL of the channel",
+            "nullable": true,
+            "example": "https://www.youtube.com/@Apify"
+          },
+          "channelUsername": {
+            "type": "string",
+            "description": "The @username handle of the channel",
+            "nullable": true,
+            "example": "Apify"
+          },
+          "translatedTitle": {
+            "type": "string",
+            "description": "The translated title if YouTube provided a translation",
+            "nullable": true,
+            "example": "Incre\u00edble Video Tutorial"
+          },
+          "translatedText": {
+            "type": "string",
+            "description": "The translated description if YouTube provided a translation",
+            "nullable": true,
+            "example": "Crawlee te ayuda a crear scrapers confiables. R\u00e1pido."
+          },
+          "likes": {
+            "type": "number",
+            "description": "The number of likes on the video",
+            "nullable": true,
+            "example": 15000
+          },
+          "location": {
+            "type": "string",
+            "description": "Geographic location associated with the video",
+            "nullable": true,
+            "example": "United States"
+          },
+          "channelId": {
+            "type": "string",
+            "description": "The unique channel ID",
+            "nullable": true,
+            "example": "UC123456789abcdef"
+          },
+          "commentsCount": {
+            "type": "number",
+            "description": "The total number of comments on the video",
+            "nullable": true,
+            "example": 1250
+          },
+          "text": {
+            "type": "string",
+            "description": "The video description text",
+            "nullable": true,
+            "example": "Crawlee helps you build reliable scrapers. Fast."
+          },
+          "descriptionLinks": {
+            "type": "array",
+            "description": "Links found in the video description",
+            "nullable": true,
+            "example": [
+              {
+                "url": "https://crawlee.dev/",
+                "text": "https://crawlee.dev/"
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "url": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          "subtitles": {
+            "type": "array",
+            "description": "Available subtitles for the video",
+            "nullable": true,
+            "example": [
+              {
+                "srtUrl": null,
+                "type": "user_generated",
+                "language": "en",
+                "srt": "1\n00:00:0,640 --> 00:00:5,674\nExample subtitle text\n"
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "srtUrl": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "type": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "language": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "srt": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          "aiVideoDescription": {
+            "type": "array",
+            "description": "AI-generated, time-segmented description of the video (only when AI enrichment is enabled)",
+            "nullable": true,
+            "example": [
+              {
+                "startSecond": 0,
+                "endSecond": 12,
+                "displayTime": "0:00 - 0:12",
+                "description": "The host introduces Crawlee and outlines what the tutorial covers."
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "startSecond": {
+                  "type": "integer"
+                },
+                "endSecond": {
+                  "type": "integer"
+                },
+                "displayTime": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "aiVideoSummary": {
+            "type": "string",
+            "description": "AI-generated summary of the video (only when AI enrichment is enabled)",
+            "nullable": true,
+            "example": "A walkthrough of building a reliable scraper with Crawlee, covering setup, request handling, and data extraction."
+          },
+          "transcriptionUrl": {
+            "type": "string",
+            "description": "URL of the AI-generated transcript stored in the key-value store. Present only when a transcription option is selected in 'Transcription & subtitles'",
+            "nullable": true,
+            "example": "https://api.apify.com/v2/key-value-stores/abc123/records/transcription-dQw4w9WgXcQ"
+          },
+          "fromYTUrl": {
+            "type": "string",
+            "description": "The YouTube URL where this video was found (e.g. search results or channel page)",
+            "nullable": true,
+            "example": "https://www.youtube.com/results?search_query=Crawlee"
+          },
+          "order": {
+            "type": "number",
+            "description": "The position of the video in the list as it appeared on the source page",
+            "nullable": true,
+            "example": 21
+          },
+          "commentsTurnedOff": {
+            "type": "boolean",
+            "description": "Whether comments are disabled on the video",
+            "nullable": true,
+            "example": false
+          },
+          "isMonetized": {
+            "type": "boolean",
+            "description": "Whether the video is monetized",
+            "nullable": true,
+            "example": true
+          },
+          "hashtags": {
+            "type": "array",
+            "description": "Hashtags associated with the video",
+            "nullable": false,
+            "example": [
+              "#tech",
+              "#tutorial"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "isMembersOnly": {
+            "type": "boolean",
+            "description": "Whether the video is restricted to channel members",
+            "nullable": false,
+            "example": false
+          },
+          "collaborators": {
+            "type": "array",
+            "description": "Collaborators on the video",
+            "nullable": true,
+            "example": [
+              {
+                "name": "Apify",
+                "username": "@Apify",
+                "url": "https://www.youtube.com/@Apify"
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "username": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "url": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          "isPaidContent": {
+            "type": "boolean",
+            "description": "Whether the video requires payment to access",
+            "nullable": false,
+            "example": false
+          },
+          "numberOfSubscribers": {
+            "type": "number",
+            "description": "Number of subscribers to the channel",
+            "nullable": true,
+            "example": 500
+          },
+          "channelTotalVideos": {
+            "type": "number",
+            "description": "Total number of videos on the channel",
+            "nullable": true,
+            "example": 1234
+          },
+          "channelDescription": {
+            "type": "string",
+            "description": "The channel's description",
+            "nullable": true,
+            "example": "Apify is the platform where developers build, deploy, share, and monitor web scraping and automation tools."
+          },
+          "channelLocation": {
+            "type": "string",
+            "description": "The channel's location",
+            "nullable": true,
+            "example": "United States"
+          },
+          "channelJoinedDate": {
+            "type": "string",
+            "description": "When the channel was created",
+            "nullable": true,
+            "example": "2015-03-01T00:00:00.000Z"
+          },
+          "channelTotalViews": {
+            "type": "number",
+            "description": "Total views across all channel videos",
+            "nullable": true,
+            "example": 50000000
+          },
+          "isChannelVerified": {
+            "type": "boolean",
+            "description": "Whether the channel is verified",
+            "nullable": true,
+            "example": true
+          },
+          "channelBannerUrl": {
+            "type": "string",
+            "description": "URL of the channel banner",
+            "nullable": true,
+            "example": "https://yt3.googleusercontent.com/abc123/banner.jpg"
+          },
+          "channelAvatarUrl": {
+            "type": "string",
+            "description": "URL of the channel avatar",
+            "nullable": true,
+            "example": "https://yt3.googleusercontent.com/abc123/avatar.jpg"
+          },
+          "isAgeRestricted": {
+            "type": "boolean",
+            "description": "Whether the channel is age-restricted",
+            "nullable": true,
+            "example": false
+          }
+        },
+        "required": [],
+        "additionalProperties": true
+      },
+      "views": {
+        "overview": {
+          "title": "Overview",
+          "description": "Overview of scraped YouTube videos with key information",
+          "transformation": {
+            "fields": [
+              "title",
+              "channelName",
+              "viewCount",
+              "likes",
+              "date",
+              "duration",
+              "type",
+              "url",
+              "commentsCount"
+            ]
+          },
+          "display": {
+            "component": "table",
+            "properties": {
+              "title": {
+                "label": "Video Title",
+                "format": "text"
+              },
+              "channelName": {
+                "label": "Channel",
+                "format": "text"
+              },
+              "viewCount": {
+                "label": "Views",
+                "format": "number"
+              },
+              "likes": {
+                "label": "Likes",
+                "format": "number"
+              },
+              "date": {
+                "label": "Published",
+                "format": "text"
+              },
+              "duration": {
+                "label": "Duration",
+                "format": "text"
+              },
+              "type": {
+                "label": "Type",
+                "format": "text"
+              },
+              "url": {
+                "label": "Video URL",
+                "format": "link"
+              },
+              "commentsCount": {
+                "label": "Comments",
+                "format": "number"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "X": {
+    "actorId": "nfp1fpt5gUlBwPcor",
+    "actor": "apidojo/twitter-scraper-lite",
+    "buildId": "yaoXYYsyMoS92pVsj",
+    "buildNumber": "0.0.1037",
+    "checkedAt": "2026-10-21T10:39:30.742337+00:00",
+    "metadataUrl": "https://api.apify.com/v2/acts/apidojo~twitter-scraper-lite",
+    "buildUrl": "https://api.apify.com/v2/actor-builds/yaoXYYsyMoS92pVsj",
+    "pricingUrl": "https://apify.com/apidojo/twitter-scraper-lite/pricing",
+    "pricing": {
+      "minimalMaxTotalChargeUsd": 0.02,
+      "pricingModel": "PAY_PER_EVENT",
+      "isPriceChangeNotificationSuppressed": false,
+      "pricingPerEvent": {
+        "actorChargeEvents": {
+          "list-query": {
+            "eventTitle": "Search/Profile/List etc Query",
+            "eventDescription": "Price for processing a search term, profile handle, or Twitter query. Includes first ~40 results.",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.016
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.016
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.016
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.016
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.016
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.016
+              }
+            }
+          },
+          "get-tweet-query": {
+            "eventTitle": "Single Tweet URL Query",
+            "eventDescription": "Price for retrieving data from a specific tweet URL.",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.05
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.05
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.05
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.05
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.05
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.05
+              }
+            }
+          },
+          "dataset-item-tier-one": {
+            "eventTitle": "Dataset Item Tier 1",
+            "eventDescription": "Pricing for dataset items in small batches (\u22645 queries per run).",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.0004
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.0004
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.0004
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.0004
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.0004
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.0004
+              }
+            },
+            "isPrimaryEvent": true
+          },
+          "dataset-item-tier-two": {
+            "eventTitle": "Dataset Item Tier 2",
+            "eventDescription": "Pricing for dataset items in medium batches (6-10 queries per run).",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.0008
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.0008
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.0008
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.0008
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.0008
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.0008
+              }
+            }
+          },
+          "dataset-item-tier-three": {
+            "eventTitle": "Dataset Item Tier 3",
+            "eventDescription": "Pricing for dataset items in regular batches (11-30 queries per run).",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.0012
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.0012
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.0012
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.0012
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.0012
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.0012
+              }
+            }
+          },
+          "dataset-item-tier-four": {
+            "eventTitle": "Dataset Item Tier 4",
+            "eventDescription": "Pricing for dataset items in large batches (31-100 queries per run).",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.0016
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.0016
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.0016
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.0016
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.0016
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.0016
+              }
+            }
+          },
+          "dataset-item-tier-five": {
+            "eventTitle": "Dataset Item Tier 5",
+            "eventDescription": "Pricing for dataset items in extensive batches (>100 queries per run).",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.002
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.002
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.002
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.002
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.002
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.002
+              }
+            }
+          }
+        }
+      },
+      "startedAt": "2026-06-09T15:17:20.237Z",
+      "createdAt": "2026-06-09T15:17:22.982Z",
+      "apifyMarginPercentage": 0.2
+    },
+    "inputSchema": {
+      "title": "Twitter Scraper Lite",
+      "description": "Light as a feather, cheap as a chips! This Twitter scraper is a lightweight version of the Tweet Scraper. It's perfect for scraping tweets by search terms, Twitter handles, or Twitter URLs. It's also great for scraping tweets by date. The scraper is built to be fast and efficient, so you can get the data you need quickly.",
+      "type": "object",
+      "schemaVersion": 1,
+      "properties": {
+        "searchTerms": {
+          "title": "What search terms do you want to scrape?",
+          "type": "array",
+          "description": "If you add search terms, the scraper will find and extract tweets that mention those terms. Alternatively, see further down to scrape by Twitter URL.",
+          "editor": "stringList",
+          "prefill": [
+            "apify"
+          ],
+          "example": [
+            "apify"
+          ]
+        },
+        "sort": {
+          "title": "Do you want to filter by content?",
+          "type": "string",
+          "description": "Sorts search results. If you are getting low results, try Top instead of Latest. Latest + Top runs both simultaneously to maximize results but may return some duplicate tweets.",
+          "editor": "select",
+          "prefill": "Latest",
+          "example": "Latest",
+          "enum": [
+            "Top",
+            "Latest",
+            "Latest + Top"
+          ]
+        },
+        "maxItems": {
+          "title": "Maximum number of tweets",
+          "type": "integer",
+          "description": "This value lets you set the maximum number of tweets to retrieve. Twitter has a default limit of around 800 tweets per query. Check the README for workarounds.",
+          "editor": "number",
+          "prefill": 1000,
+          "example": 1000
+        },
+        "start": {
+          "title": "Tweets from this date",
+          "type": "string",
+          "description": "Scrape tweets starting from this date",
+          "editor": "datepicker",
+          "sectionCaption": "Do you want to set specific dates?",
+          "sectionDescription": "You can choose to scrape only tweets older or newer than a specific date. You can use YYYY-MM-DD format."
+        },
+        "end": {
+          "title": "Tweets until this date",
+          "type": "string",
+          "description": "Scrape tweets until this date",
+          "editor": "datepicker"
+        },
+        "twitterHandles": {
+          "title": "Do you want to scrape by Twitter handle?",
+          "type": "array",
+          "description": "You can add the twitter handles of specific profiles you want to scrape. This is a shortcut so that you don't have to add full username URLs like https://twitter.com/apify",
+          "editor": "stringList",
+          "sectionCaption": "Scrape by Twitter handle or Twitter URL",
+          "sectionDescription": "The default option is to scrape using search terms, but you can also scrape by Twitter handles or Twitter URLs."
+        },
+        "startUrls": {
+          "title": "Do you want to scrape by Twitter URL?",
+          "type": "array",
+          "description": "This lets you tell the scraper where to start. You can enter Twitter URLs one by one. You can also link to or upload a text file with a list of URLs",
+          "editor": "stringList"
+        },
+        "includeSearchTerms": {
+          "title": "Include Search Terms",
+          "type": "boolean",
+          "description": "If selected, a field will be added to each tweets about the search term that was used to find it.",
+          "editor": "checkbox"
+        }
+      }
+    },
+    "outputSchema": {
+      "actorSpecification": 1,
+      "views": {
+        "overview": {
+          "title": "Summary Data (check Storage tab for all fields)",
+          "transformation": {
+            "fields": [
+              "url",
+              "twitterUrl",
+              "id",
+              "text",
+              "retweetCount",
+              "replyCount",
+              "likeCount",
+              "quoteCount",
+              "createdAt",
+              "bookmarkCount",
+              "isRetweet",
+              "isQuote"
+            ]
+          },
+          "display": {
+            "component": "table",
+            "properties": {
+              "url": {
+                "label": "URL",
+                "format": "link"
+              },
+              "twitterUrl": {
+                "label": "Twitter URL",
+                "format": "link"
+              },
+              "id": {
+                "label": "ID",
+                "format": "text"
+              },
+              "text": {
+                "label": "Text",
+                "format": "text"
+              },
+              "retweetCount": {
+                "label": "Retweet Count",
+                "format": "number"
+              },
+              "replyCount": {
+                "label": "Reply Count",
+                "format": "number"
+              },
+              "likeCount": {
+                "label": "Like Count",
+                "format": "number"
+              },
+              "quoteCount": {
+                "label": "Quote Count",
+                "format": "number"
+              },
+              "createdAt": {
+                "label": "Created At",
+                "format": "text"
+              },
+              "bookmarkCount": {
+                "label": "Bookmark Count",
+                "format": "number"
+              },
+              "isRetweet": {
+                "label": "Is Retweet",
+                "format": "boolean"
+              },
+              "isQuote": {
+                "label": "Is Quote",
+                "format": "boolean"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "Instagram": {
+    "actorId": "shu8hvrXbJbY3Eb9W",
+    "actor": "apify/instagram-scraper",
+    "buildId": "f15AnzQQyjtSsCgl0",
+    "buildNumber": "0.0.827",
+    "checkedAt": "2026-10-21T10:39:32.056789+00:00",
+    "metadataUrl": "https://api.apify.com/v2/acts/apify~instagram-scraper",
+    "buildUrl": "https://api.apify.com/v2/actor-builds/f15AnzQQyjtSsCgl0",
+    "pricingUrl": "https://apify.com/apify/instagram-scraper/pricing",
+    "pricing": {
+      "minimalMaxTotalChargeUsd": 0.0027,
+      "pricingModel": "PAY_PER_EVENT",
+      "isPriceChangeNotificationSuppressed": true,
+      "pricingPerEvent": {
+        "actorChargeEvents": {
+          "result": {
+            "eventTitle": "Result",
+            "eventDescription": "Each result written to the dataset",
+            "isOneTimeEvent": false,
+            "eventTieredPricingUsd": {
+              "FREE": {
+                "tieredEventPriceUsd": 0.0027
+              },
+              "BRONZE": {
+                "tieredEventPriceUsd": 0.0023
+              },
+              "SILVER": {
+                "tieredEventPriceUsd": 0.0019
+              },
+              "GOLD": {
+                "tieredEventPriceUsd": 0.0015
+              },
+              "PLATINUM": {
+                "tieredEventPriceUsd": 0.0009
+              },
+              "DIAMOND": {
+                "tieredEventPriceUsd": 0.0005
+              }
+            },
+            "isPrimaryEvent": true
+          }
+        }
+      },
+      "createdAt": "2026-02-20T12:24:59.754Z",
+      "startedAt": "2026-02-20T12:24:59.754Z",
+      "apifyMarginPercentage": 0.2
+    },
+    "inputSchema": {
+      "title": "Instagram Scraper",
+      "type": "object",
+      "description": "**Scrape public Instagram posts, reels, comments, profiles, mentions, and more. Add URLs, profile IDs, or search by hashtag, user, or place.**<br><br>**What you can scrape:**<ul><li><b>Posts</b> \u2192 from a profile URL/ID, post URL, or hashtag URL</li><li><b>Reels</b> \u2192 from a profile URL/ID, reel URL, or hashtag URL</li><li><b>Comments</b> \u2192 from a post or reel URL</li><li><b>Mentions</b> \u2192 from a profile URL</li><li><b>Profile info</b> \u2192 from a profile URL</li><li><b>Hashtag volume</b> \u2192 from a hashtag URL or search query</li><li><b>Place details</b> \u2192 from a location URL or search query</li><li><b>User search</b> \u2192 from a search query</li></ul>**Need more?** Try dedicated scrapers for <a href=\"https://console.apify.com/actors/JJghSZmShuco4j9gJ\">Instagram Ads</a>, <a href=\"https://console.apify.com/actors/xMc5Ga1oCONPmWJIa\">Reel downloads and transcripts</a>, or <a href=\"https://console.apify.com/actors/dSCLg0C3YEZ83HzYX\">profile location and verification data</a>. Browse all <a href=\"https://console.apify.com/collection/instagram-scrapers\">Instagram scrapers</a>.<br><br>**Before you start:**<ul><li>URLs always take priority over search queries \u2014 and they cannot be combined.</li><li>Use <code>/p/</code> for posts and comments and <code>/username/</code> for profiles.</li><li>For search queries, you can enter multiple terms separated by a comma.</li><li>Date filters use UTC, not local time.</li></ul>**Related:** Learn [How to scrape data from Instagram](https://blog.apify.com/scrape-instagram-posts-comments-and-more-21d05506aeb3/). Using the API? [Run Actor and retrieve data via API](https://docs.apify.com/academy/api/run-actor-and-retrieve-data-via-api/).",
+      "schemaVersion": 1,
+      "properties": {
+        "resultsType": {
+          "title": "Content to scrape",
+          "type": "string",
+          "description": "**Posts** returns a feed of content. **Profile, hashtag, or place details** returns metadata about the page: follower count, bio, post count, and profile picture.<br><br>Comments only work with post URLs, e.g. `instagram.com/p/ABC123xyz/` not `instagram.com/username/`.",
+          "editor": "select",
+          "enum": [
+            "posts",
+            "details",
+            "comments",
+            "reels",
+            "mentions",
+            "stories"
+          ],
+          "enumTitles": [
+            "Posts",
+            "Profile, hashtag, or place details",
+            "Comments",
+            "Reels",
+            "Mentions",
+            " "
+          ],
+          "default": "posts",
+          "prefill": "posts"
+        },
+        "directUrls": {
+          "title": "Instagram URLs based on content type",
+          "type": "array",
+          "description": "Add one or more Instagram URLs to scrape.<br><br>URL format must match your content type:<ul><li><code>/p/</code> for posts and comments</li><li><code>/reel/</code> for reels</li><li><code>/username/</code> for profile details</li></ul><br>Leave blank if using the search query instead.",
+          "editor": "stringList",
+          "prefill": [
+            "https://www.instagram.com/humansofny/"
+          ],
+          "items": {
+            "type": "string",
+            "pattern": "^(https:\\/\\/)?(www\\.)?instagram\\.com\\/[A-Za-z0-9._-]+(\\/.*)?$"
+          },
+          "uniqueItems": true
+        },
+        "resultsLimit": {
+          "title": "Results limit per URL",
+          "type": "integer",
+          "description": "Set how many posts or comments to scrape per Instagram URL. Higher values increase compute usage and cost.<br><br>\u26a0\ufe0f Free usage gets only the top 15 comments, sorted by newest, and around 21 mentions. Upgrade to <a href='https://console.apify.com/billing/subscription' target='_blank' rel='noopener'> Starter plan</a> for full access.<br><br>Use `1` to retrieve a single post per page.",
+          "editor": "number",
+          "prefill": 100,
+          "minimum": 1
+        },
+        "onlyPostsNewerThan": {
+          "title": "Filter by date",
+          "type": "string",
+          "description": "Limit how far back to scrape. Enter a date in `YYYY-MM-DD`, ISO format, or as a relative value, e.g. `1 day`, `2 months`, `3 years`.<br><br>Times are in UTC, not local time. New York is UTC-5 in winter, UTC-4 in summer. Pinned posts may still appear even with this filter set.",
+          "editor": "datepicker",
+          "dateType": "absoluteOrRelative",
+          "pattern": "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])(T[0-2]\\d:[0-5]\\d(:[0-5]\\d)?(\\.\\d+)?Z?)?$|^(\\d+)\\s*(minute|hour|day|week|month|year)s?$"
+        },
+        "search": {
+          "title": "Search query",
+          "type": "string",
+          "description": "Search for Instagram hashtags, profiles, or places.<br>Use `#` for hashtags, e.g. `#travel`.",
+          "editor": "textfield",
+          "sectionCaption": "Search by query instead of URLs",
+          "sectionDescription": "Instagram search uses public Instagram data and Google search to find profiles, places, and hashtags.<br>**Results may differ from what you see in your personal feed when logged in.**"
+        },
+        "searchType": {
+          "title": "Search type",
+          "type": "string",
+          "description": "Hashtag search returns posts tagged with that term. Profile search returns matching accounts. Place search returns matching locations.",
+          "editor": "select",
+          "enum": [
+            "hashtag",
+            "profile",
+            "place",
+            "user"
+          ],
+          "enumTitles": [
+            "Hashtag",
+            "Profile",
+            "Place",
+            " "
+          ],
+          "default": "hashtag",
+          "prefill": "hashtag"
+        },
+        "searchLimit": {
+          "title": "Search results limit",
+          "type": "integer",
+          "description": "Set how many profiles, places, or hashtags to find.<br>To limit posts per result, use Results limit per URL.<br>Higher values increase compute usage and cost.",
+          "editor": "number",
+          "prefill": 10,
+          "minimum": 1,
+          "maximum": 250
+        },
+        "addParentData": {
+          "title": "Add metadata",
+          "type": "boolean",
+          "description": "This applies only to feed items. Adds a dataSource field to each result: profile posts are labeled `profile`, and tag posts are labeled `hashtag`.",
+          "editor": "hidden",
+          "default": false
+        }
+      },
+      "required": []
+    },
+    "outputSchema": {
+      "actorSpecification": 1,
+      "fields": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "number",
+              "null"
+            ],
+            "examples": [
+              "1234567890123456789"
+            ],
+            "description": "Unique identifier of the post or user"
+          },
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "Image"
+            ],
+            "description": "Type of the post (Image, Video, Sidecar, etc.) \u2014 post results only"
+          },
+          "shortCode": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "ABCdef1234g"
+            ],
+            "description": "Short code used in the post URL \u2014 post results only"
+          },
+          "caption": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "This is an example caption for a post."
+            ],
+            "description": "Caption text of the post \u2014 post results only"
+          },
+          "hashtags": {
+            "examples": [
+              [
+                "travel",
+                "photography"
+              ]
+            ],
+            "description": "Hashtags extracted from the post caption \u2014 post results only",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "mentions": {
+            "examples": [
+              [
+                "exampleuser"
+              ]
+            ],
+            "description": "User mentions extracted from the post caption \u2014 post results only",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://www.instagram.com/p/ABCdef1234g/"
+            ],
+            "description": "URL of the post or profile"
+          },
+          "commentsCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              42
+            ],
+            "description": "Number of comments on the post \u2014 post results only"
+          },
+          "firstComment": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "Great post!"
+            ],
+            "description": "Text of the first comment on the post \u2014 post results only"
+          },
+          "latestComments": {
+            "examples": [
+              [
+                {
+                  "id": "123456789",
+                  "text": "Great post!",
+                  "ownerUsername": "exampleuser"
+                }
+              ]
+            ],
+            "description": "Array of the most recent comments on the post \u2014 post results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "dimensionsHeight": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              1080
+            ],
+            "description": "Height of the post image or video in pixels \u2014 post results only"
+          },
+          "dimensionsWidth": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              1080
+            ],
+            "description": "Width of the post image or video in pixels \u2014 post results only"
+          },
+          "originalHeight": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              2800
+            ],
+            "description": "Height of the originally uploaded photo in pixels, before Instagram's resize. Instagram serves images at most 1080px wide, so this may be larger than dimensionsHeight."
+          },
+          "originalWidth": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              2100
+            ],
+            "description": "Width of the originally uploaded photo in pixels, before Instagram's resize. Instagram serves images at most 1080px wide, so this may be larger than dimensionsWidth."
+          },
+          "displayUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://example.com/post/image_thumbnail_123.jpg"
+            ],
+            "description": "URL of the post thumbnail image \u2014 post results only"
+          },
+          "images": {
+            "examples": [
+              [
+                "https://example.com/post/image1.jpg"
+              ]
+            ],
+            "description": "URLs of all images in the post (carousel posts have multiple) \u2014 post results only",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "videoUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://example.com/post/video_123.mp4"
+            ],
+            "description": "URL of the post video file \u2014 post results only"
+          },
+          "audioUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://example.com/post/audio_123.mp4"
+            ],
+            "description": "URL of the audio stream for reel posts with separate audio \u2014 post results only"
+          },
+          "alt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "A photo of a sunset over the ocean."
+            ],
+            "description": "Accessibility caption (alt text) of the post image \u2014 post results only"
+          },
+          "likesCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              1234
+            ],
+            "description": "Number of likes on the post \u2014 post results only"
+          },
+          "videoViewCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              50000
+            ],
+            "description": "Number of views for video posts \u2014 post results only. Deprecated by Instagram; may be null or stale. Prefer videoPlayCount."
+          },
+          "videoPlayCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              48000
+            ],
+            "description": "Number of plays for video posts \u2014 post results only"
+          },
+          "igPlayCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              47500
+            ],
+            "description": "Instagram-specific play count for video posts \u2014 post results only"
+          },
+          "fbLikeCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              300
+            ],
+            "description": "Number of Facebook likes on the post \u2014 post results only"
+          },
+          "fbPlayCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              1500
+            ],
+            "description": "Number of Facebook plays for video posts \u2014 post results only"
+          },
+          "reshareCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              null
+            ],
+            "description": "Deprecated: always empty, because Instagram no longer sends this value. Use `sharesCount` instead."
+          },
+          "sharesCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              150
+            ],
+            "description": "Number of times the post was shared, for hashtag results only. Null when the owner hides the share count."
+          },
+          "timestamp": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "2025-01-15T12:00:00.000Z"
+            ],
+            "description": "ISO 8601 timestamp when the post was published \u2014 post results only"
+          },
+          "childPosts": {
+            "examples": [
+              []
+            ],
+            "description": "Child posts in a carousel (sidecar) post \u2014 post results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "ownerUsername": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "exampleuser"
+            ],
+            "description": "Username of the post author \u2014 post results only"
+          },
+          "ownerId": {
+            "type": [
+              "string",
+              "number",
+              "null"
+            ],
+            "examples": [
+              "123456789"
+            ],
+            "description": "Instagram user ID of the post author \u2014 post results only"
+          },
+          "ownerFullName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "Example User"
+            ],
+            "description": "Full display name of the post author \u2014 post results only"
+          },
+          "isPinned": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the post is pinned to the top of the profile \u2014 post results only"
+          },
+          "productType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "feed"
+            ],
+            "description": "Product type of the post (e.g., feed, clips, igtv) \u2014 post results only"
+          },
+          "videoDuration": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              30.5
+            ],
+            "description": "Duration of the video in seconds \u2014 post results only"
+          },
+          "paidPartnership": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the post is a paid partnership \u2014 post results only"
+          },
+          "affiliate": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the post contains affiliate content \u2014 post results only"
+          },
+          "sponsors": {
+            "examples": [
+              []
+            ],
+            "description": "Sponsors tagged in a paid partnership post \u2014 post results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "taggedUsers": {
+            "examples": [
+              [
+                {
+                  "username": "taggeduser",
+                  "full_name": "Tagged User"
+                }
+              ]
+            ],
+            "description": "Users tagged in the post by the author \u2014 post results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "musicInfo": {
+            "examples": [
+              {
+                "artist_name": "Example Artist",
+                "song_name": "Example Song"
+              }
+            ],
+            "description": "Music or audio attribution information for the post \u2014 post results only",
+            "additionalProperties": {},
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "coauthorProducers": {
+            "examples": [
+              []
+            ],
+            "description": "Co-author producers credited on the post \u2014 post results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "locationName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "New York, New York"
+            ],
+            "description": "Name of the location tagged in the post \u2014 post results only"
+          },
+          "locationId": {
+            "type": [
+              "string",
+              "number",
+              "null"
+            ],
+            "examples": [
+              "213385402"
+            ],
+            "description": "ID of the location tagged in the post \u2014 post results only"
+          },
+          "pk": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "2841234567890123456"
+            ],
+            "description": "Primary key of the post from the Instagram API \u2014 post results only"
+          },
+          "redirectedFromUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://www.instagram.com/reel/ABCdef1234g/"
+            ],
+            "description": "Original URL that redirected to this post \u2014 post results only"
+          },
+          "isCommentsDisabled": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether comments are disabled on the post \u2014 post results only"
+          },
+          "username": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "exampleuser"
+            ],
+            "description": "Instagram username of the profile \u2014 profile results only"
+          },
+          "fullName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "Example User"
+            ],
+            "description": "Full display name of the user \u2014 profile results only"
+          },
+          "biography": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "This is an example biography."
+            ],
+            "description": "Profile biography text \u2014 profile results only"
+          },
+          "externalUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://example.com"
+            ],
+            "description": "External URL linked in the profile bio \u2014 profile results only"
+          },
+          "externalUrlShimmed": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://l.instagram.com/?u=https%3A%2F%2Fexample.com"
+            ],
+            "description": "Shimmed version of the external URL \u2014 profile results only"
+          },
+          "externalUrls": {
+            "examples": [
+              [
+                {
+                  "url": "https://example.com",
+                  "title": "My Website"
+                }
+              ]
+            ],
+            "description": "All bio links added to the profile \u2014 profile results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "followersCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              50000
+            ],
+            "description": "Number of followers the profile has \u2014 profile results only"
+          },
+          "followsCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              500
+            ],
+            "description": "Number of accounts the profile follows \u2014 profile results only"
+          },
+          "hasChannel": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the profile has an Instagram broadcast channel \u2014 profile results only"
+          },
+          "highlightReelCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              5
+            ],
+            "description": "Number of highlight reels on the profile \u2014 profile results only"
+          },
+          "isBusinessAccount": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the account is a business account \u2014 profile results only"
+          },
+          "joinedRecently": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the account joined Instagram recently \u2014 profile results only"
+          },
+          "businessCategoryName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "Clothing (Brand)"
+            ],
+            "description": "Business category of the account \u2014 profile results only"
+          },
+          "private": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the profile is private \u2014 profile results only"
+          },
+          "verified": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the profile has a verified badge \u2014 profile results only"
+          },
+          "profilePicUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://example.com/profile/pic/123456.jpg"
+            ],
+            "description": "URL of the profile picture \u2014 profile results only"
+          },
+          "profilePicUrlHD": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://example.com/profile/pic/123456_hd.jpg"
+            ],
+            "description": "URL of the high-resolution profile picture \u2014 profile results only"
+          },
+          "igtvVideoCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              12
+            ],
+            "description": "Number of IGTV videos on the profile \u2014 profile results only"
+          },
+          "relatedProfiles": {
+            "examples": [
+              []
+            ],
+            "description": "Related Instagram profiles suggested by Instagram \u2014 profile results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "latestIgtvVideos": {
+            "examples": [
+              []
+            ],
+            "description": "Most recent IGTV videos from the profile \u2014 profile results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "postsCount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              150
+            ],
+            "description": "Total number of posts on the profile or for the hashtag \u2014 profile and hashtag results only"
+          },
+          "latestPosts": {
+            "examples": [
+              []
+            ],
+            "description": "Most recent posts from the profile, or latest hashtag posts (when enabled) \u2014 profile and hashtag results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "hasPublicStory": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the profile currently has a public story \u2014 profile results only"
+          },
+          "isRestrictedProfile": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "examples": [
+              false
+            ],
+            "description": "Whether the profile is restricted \u2014 profile results only"
+          },
+          "restrictionReason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "Age-restricted content"
+            ],
+            "description": "Reason the profile is restricted, if applicable \u2014 profile results only"
+          },
+          "businessAddress": {
+            "examples": [
+              {
+                "street_address": "123 Example St",
+                "city_name": "Example City"
+              }
+            ],
+            "description": "Business address associated with the profile \u2014 profile results only",
+            "additionalProperties": {},
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "fbid": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "17841400123456789"
+            ],
+            "description": "Facebook ID linked to the Instagram profile \u2014 profile results only"
+          },
+          "facebookPage": {
+            "examples": [
+              "examplefbpage"
+            ],
+            "description": "Connected Facebook page \u2014 profile results only (string) or search enrichment (object)",
+            "additionalProperties": {},
+            "type": [
+              "string",
+              "object"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "Example Cafe"
+            ],
+            "description": "Name of the place or hashtag \u2014 location and hashtag results only"
+          },
+          "location_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "258096160"
+            ],
+            "description": "Unique identifier of the place \u2014 location results only"
+          },
+          "lat": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              40.748817
+            ],
+            "description": "Latitude coordinate of the place \u2014 location results only"
+          },
+          "lng": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "examples": [
+              -73.985428
+            ],
+            "description": "Longitude coordinate of the place \u2014 location results only"
+          },
+          "address": {
+            "examples": [
+              {
+                "street_address": "123 Example St",
+                "city_name": "Example City",
+                "country_code": "US"
+              }
+            ],
+            "description": "Street address of the place \u2014 location results only",
+            "additionalProperties": {},
+            "type": [
+              "object",
+              "string"
+            ]
+          },
+          "website": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://example.com"
+            ],
+            "description": "Website URL of the place \u2014 location results only"
+          },
+          "phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "+1 555-123-4567"
+            ],
+            "description": "Phone number of the place \u2014 location results only"
+          },
+          "hours": {
+            "examples": [
+              {
+                "monday": "9:00 AM - 9:00 PM",
+                "tuesday": "9:00 AM - 9:00 PM"
+              }
+            ],
+            "description": "Opening hours of the place \u2014 location results only",
+            "additionalProperties": {},
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "posts": {
+            "examples": [
+              []
+            ],
+            "description": "Recent posts at the location \u2014 location results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "string"
+            ]
+          },
+          "related": {
+            "examples": [
+              [
+                {
+                  "hash": "travelling",
+                  "info": "1B posts"
+                }
+              ]
+            ],
+            "description": "Related hashtags \u2014 hashtag results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "frequent": {
+            "examples": [
+              [
+                {
+                  "hash": "nature",
+                  "info": "900M posts"
+                }
+              ]
+            ],
+            "description": "Frequently co-occurring hashtags \u2014 hashtag results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "topPosts": {
+            "examples": [
+              []
+            ],
+            "description": "Top posts for the hashtag (when includeTopPosts is enabled) \u2014 hashtag results only",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "inputUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "https://www.instagram.com/p/ABCdef1234g/"
+            ],
+            "description": "Input URL that was used to find this item"
+          },
+          "searchTerm": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "travel photography"
+            ],
+            "description": "Search term used to find this item"
+          },
+          "searchSource": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "facebook-ads"
+            ],
+            "description": "Source of the search that found this item"
+          },
+          "threadsNetProfile": {
+            "examples": [
+              {
+                "username": "exampleuser"
+              }
+            ],
+            "description": "Threads.net profile linked to this account \u2014 profile results only",
+            "additionalProperties": {},
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "metaData": {
+            "examples": [
+              {
+                "id": "123456789",
+                "username": "exampleuser"
+              }
+            ],
+            "description": "Additional metadata from the parent profile (present when addParentData is enabled) \u2014 post results only",
+            "additionalProperties": {},
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "not_found"
+            ],
+            "description": "Error code if the item could not be fully scraped"
+          },
+          "errorDescription": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "Post does not exist"
+            ],
+            "description": "Human-readable description of the error"
+          },
+          "requestErrorMessages": {
+            "examples": [
+              [
+                "Error: BLOCKED\n    at getRouteDefinition ..."
+              ]
+            ],
+            "description": "Array of error messages encountered during scraping",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        }
+      },
+      "views": {},
+      "$schema": "https://apify.com/schemas/v1/dataset.json"
+    }
+  }
+}

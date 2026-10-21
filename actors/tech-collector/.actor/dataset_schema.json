@@ -1,0 +1,77 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "type": "string",
+        "enum": [
+          "source-update",
+          "coverage",
+          "manifest"
+        ]
+      },
+      "sourceId": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "url": {
+        "type": "string"
+      },
+      "publishedAt": {
+        "type": "string"
+      },
+      "contentKind": {
+        "type": "string"
+      },
+      "complete": {
+        "type": "boolean"
+      }
+    }
+  },
+  "views": {
+    "updates": {
+      "title": "Collected updates and explicit coverage",
+      "transformation": {
+        "fields": [
+          "recordType",
+          "sourceId",
+          "title",
+          "url",
+          "publishedAt",
+          "contentKind",
+          "coverage"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "recordType": {
+            "label": "Record"
+          },
+          "sourceId": {
+            "label": "Source"
+          },
+          "title": {
+            "label": "Title"
+          },
+          "url": {
+            "label": "Original",
+            "format": "link"
+          },
+          "publishedAt": {
+            "label": "Published"
+          },
+          "contentKind": {
+            "label": "Content level"
+          },
+          "coverage": {
+            "label": "Limits"
+          }
+        }
+      }
+    }
+  }
+}

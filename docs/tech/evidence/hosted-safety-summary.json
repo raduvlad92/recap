@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-21",
+  "projectRef": "zlfdqzabsfndifxiqguo",
+  "result": "passed",
+  "scope": "actual database transaction; synthetic fixtures rolled back; no supplier request",
+  "checks": [
+    "global envelope hold preserved",
+    "competing global allocation denied",
+    "idempotent child reservation",
+    "child overallocation denied",
+    "one-shot launch replay denied",
+    "unknown cost hold retained",
+    "anonymous archive/budget/clear denied",
+    "own archive read/delete isolation",
+    "ordinary archive insert/update denied",
+    "record identity/date/size constraints",
+    "stale clear leaves history intact",
+    "invalid reset rolls back history deletion",
+    "valid clear affects own account and returns revision",
+    "admin archive count deduplication and malformed optional metadata guard"
+  ],
+  "remainingFixtures": 0,
+  "securityAdvisorIssues": 0,
+  "sqlSha256": "b06e5c1f88b61a97a0e21cec00004d26accbc0dd816924ca938c55f6b462388a"
+}

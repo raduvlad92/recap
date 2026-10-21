@@ -1,0 +1,238 @@
+{
+  "actorSpecification": 1,
+  "name": "recap-tech-collector",
+  "title": "recap tech collector",
+  "description": "Private, bounded, evidence-producing public tech source backfill. No AI, generated transcription or schedules.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "input": {
+    "title": "recap tech collector",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+      "sources": {
+        "title": "Explicit public channel sources",
+        "type": "array",
+        "editor": "json",
+        "description": "Objects with id, url, platform (YouTube/X/Instagram), optional name, verified channelId and official URL aliases. No account IDs or credentials.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "title": "Stable source ID",
+              "description": "Reuse the reviewed manifest source ID."
+            },
+            "url": {
+              "type": "string",
+              "title": "Official public channel URL",
+              "description": "Public HTTPS profile/channel URL, without credentials."
+            },
+            "platform": {
+              "type": "string",
+              "enum": [
+                "YouTube",
+                "X",
+                "Instagram"
+              ],
+              "title": "Platform",
+              "description": "The public source family."
+            },
+            "name": {
+              "type": "string",
+              "title": "Source display name",
+              "description": "Public channel label, not a guessed presenter."
+            },
+            "channelId": {
+              "type": "string",
+              "title": "Verified YouTube channel ID",
+              "description": "Only a directly observed stable YouTube channel ID."
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "title": "Verified official URL aliases",
+              "description": "Only affirmatively researched aliases for this same channel."
+            }
+          },
+          "required": [
+            "id",
+            "url",
+            "platform"
+          ]
+        },
+        "minItems": 1,
+        "maxItems": 80
+      },
+      "dateFrom": {
+        "title": "Start UTC (inclusive)",
+        "type": "string",
+        "editor": "textfield",
+        "description": "ISO UTC timestamp; at most 31 days before dateTo."
+      },
+      "dateTo": {
+        "title": "End UTC (inclusive)",
+        "type": "string",
+        "editor": "textfield",
+        "description": "Explicit bounded collector setting: dateTo."
+      },
+      "executionEnabled": {
+        "title": "Explicitly enable this bounded run",
+        "type": "boolean",
+        "editor": "checkbox",
+        "default": false,
+        "description": "False produces a plan/coverage manifest only. This does not enable a recurring schedule."
+      },
+      "budgetReservationId": {
+        "title": "Existing root budget reservation",
+        "type": "string",
+        "editor": "textfield",
+        "description": "Opaque reservation ID; required for execution. Parent application reserves the full envelope before launch."
+      },
+      "maxTotalChargeUsd": {
+        "title": "Combined parent and child ceiling (USD)",
+        "type": "number",
+        "editor": "number",
+        "minimum": 0.05,
+        "maximum": 45,
+        "default": 45,
+        "description": "Explicit bounded collector setting: maxTotalChargeUsd."
+      },
+      "parentMaxChargeUsd": {
+        "title": "Reserved parent platform ceiling (USD)",
+        "type": "number",
+        "editor": "number",
+        "minimum": 0.02,
+        "maximum": 2,
+        "default": 2,
+        "description": "Launch this parent with matching or lower API maxTotalChargeUsd, at most 256MB and a 3600-second timeout."
+      },
+      "maxItemsPerSource": {
+        "title": "Maximum returned records per source",
+        "type": "integer",
+        "editor": "number",
+        "minimum": 3,
+        "maximum": 1000,
+        "default": 300,
+        "description": "YouTube divides this across videos/Shorts/streams and reports each cap. A hit cap is incomplete coverage."
+      },
+      "maxItemsTotal": {
+        "title": "Maximum normalized updates overall",
+        "type": "integer",
+        "editor": "number",
+        "minimum": 1,
+        "maximum": 5000,
+        "default": 4000,
+        "description": "Explicit bounded collector setting: maxItemsTotal."
+      }
+    },
+    "required": [
+      "sources",
+      "dateFrom",
+      "dateTo",
+      "maxTotalChargeUsd"
+    ],
+    "description": "Explicit bounded collector setting: recap tech collector input."
+  },
+  "output": {
+    "actorOutputSchemaVersion": 1,
+    "title": "Backfill evidence",
+    "properties": {
+      "manifest": {
+        "title": "Canonical updates, source coverage and cost evidence",
+        "type": "string",
+        "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/OUTPUT"
+      },
+      "dataset": {
+        "title": "Updates, coverage rows and manifest",
+        "type": "string",
+        "template": "{{links.apiDefaultDatasetUrl}}/items"
+      }
+    }
+  },
+  "storages": {
+    "dataset": {
+      "actorSpecification": 1,
+      "fields": {
+        "type": "object",
+        "properties": {
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "source-update",
+              "coverage",
+              "manifest"
+            ]
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string"
+          },
+          "contentKind": {
+            "type": "string"
+          },
+          "complete": {
+            "type": "boolean"
+          }
+        }
+      },
+      "views": {
+        "updates": {
+          "title": "Collected updates and explicit coverage",
+          "transformation": {
+            "fields": [
+              "recordType",
+              "sourceId",
+              "title",
+              "url",
+              "publishedAt",
+              "contentKind",
+              "coverage"
+            ]
+          },
+          "display": {
+            "component": "table",
+            "properties": {
+              "recordType": {
+                "label": "Record"
+              },
+              "sourceId": {
+                "label": "Source"
+              },
+              "title": {
+                "label": "Title"
+              },
+              "url": {
+                "label": "Original",
+                "format": "link"
+              },
+              "publishedAt": {
+                "label": "Published"
+              },
+              "contentKind": {
+                "label": "Content level"
+              },
+              "coverage": {
+                "label": "Limits"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "defaultMemoryMbytes": 256,
+  "minMemoryMbytes": 128,
+  "maxMemoryMbytes": 256,
+  "usesStandbyMode": false
+}

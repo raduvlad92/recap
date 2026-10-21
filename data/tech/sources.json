@@ -1,0 +1,1826 @@
+{
+  "version": 1,
+  "checkedAt": "2026-10-21",
+  "collection": {
+    "id": "tech",
+    "name": "tech",
+    "description": "Official technology properties across LMG, MKBHD and GamersNexus. Historical channels stay visible; unresolved associations do not execute.",
+    "defaultScope": "included"
+  },
+  "groups": [
+    {
+      "id": "tech-group-lmg",
+      "name": "Linus Media Group",
+      "creatorId": "tech-creator-lmg",
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Official corporate page links its channels and main public social accounts.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-group-mkbhd",
+      "name": "MKBHD studio",
+      "creatorId": "tech-creator-mkbhd-studio",
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Official site links MKBHD, The Studio, Waveform and AutoFocus as distinct properties.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-group-gamersnexus",
+      "name": "GamersNexus",
+      "creatorId": "tech-creator-gamersnexus",
+      "evidence": [
+        {
+          "url": "https://gamersnexus.net/",
+          "note": "Official publication links its main YouTube and X accounts.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    }
+  ],
+  "creators": [
+    {
+      "id": "tech-creator-lmg",
+      "name": "Linus Media Group",
+      "kind": "group",
+      "groupId": "tech-group-lmg",
+      "description": "Publishing group behind technology, gaming and related entertainment properties.",
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Official corporate page links its channels and main public social accounts.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "creator-1b25d74460d249839134",
+      "name": "Linus Tech Tips",
+      "kind": "group",
+      "groupId": "tech-group-lmg",
+      "description": "The Linus Tech Tips technology publication and its main public accounts.",
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Official corporate page links its channels and main public social accounts.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-creator-mkbhd-studio",
+      "name": "MKBHD studio",
+      "kind": "group",
+      "groupId": "tech-group-mkbhd",
+      "description": "Studio publishing technology reviews, production features, automotive videos and Waveform.",
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Official site links MKBHD, The Studio, Waveform and AutoFocus as distinct properties.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "creator-b138206f7729d6cd189e",
+      "name": "Marques Brownlee",
+      "kind": "person",
+      "groupId": "tech-group-mkbhd",
+      "description": "Technology reviewer publishing as MKBHD. A studio link does not credit him in every update.",
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Official site links MKBHD, The Studio, Waveform and AutoFocus as distinct properties.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-creator-gamersnexus",
+      "name": "GamersNexus",
+      "kind": "group",
+      "groupId": "tech-group-gamersnexus",
+      "description": "Technology publication with hardware reviews, investigations and consumer advocacy properties.",
+      "evidence": [
+        {
+          "url": "https://gamersnexus.net/",
+          "note": "Official publication links its main YouTube and X accounts.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-creator-gnsteve",
+      "name": "GNSteve",
+      "kind": "person",
+      "groupId": "tech-group-gamersnexus",
+      "description": "Separate personally presented mountain-biking channel associated with GamersNexus. No per-update contribution or employment credits are inferred.",
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@gnsteve8846/about",
+          "note": "The profile describes mountain biking and says the channel is owned by GamersNexus LLC; it remains a separate non-tech personal source.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "tech-source-db6b56f30e142e6840fa",
+      "name": "Linus Tech Tips",
+      "platform": "YouTube",
+      "creatorId": "creator-1b25d74460d249839134",
+      "creatorIds": [
+        "creator-1b25d74460d249839134",
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UCXuqSBlHAE6Xw-yeJA0Tunw",
+      "aliases": [
+        "https://www.youtube.com/@LinusTechTips",
+        "https://www.youtube.com/@LinusTechTips/videos"
+      ],
+      "youtubeChannelId": "UCXuqSBlHAE6Xw-yeJA0Tunw",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Official corporate page links this account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-8cd9052ce41f64f00083",
+      "name": "ShortCircuit",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UCdBK94H6oZT2Q7l0-b0xmMg",
+      "aliases": [
+        "https://www.youtube.com/@ShortCircuit"
+      ],
+      "youtubeChannelId": "UCdBK94H6oZT2Q7l0-b0xmMg",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Official corporate page links this account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-7199c29fde5d49d9980b",
+      "name": "TechLinked",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UCeeFfhMcJa1kjtfZAGskOCA",
+      "aliases": [
+        "https://www.youtube.com/@techlinked"
+      ],
+      "youtubeChannelId": "UCeeFfhMcJa1kjtfZAGskOCA",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Official corporate page links this account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-60dc0340bd32a6508172",
+      "name": "WAN Show",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UCVlfe3MRSCZSeIWByrWHhkg",
+      "aliases": [
+        "https://www.youtube.com/@WANShowYT"
+      ],
+      "youtubeChannelId": "UCVlfe3MRSCZSeIWByrWHhkg",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Official corporate page links this account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-e60987f103cf96ddb51f",
+      "name": "LMG Clips",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UCFLFc8Lpbwt4jPtY1_Ai5yA",
+      "aliases": [
+        "https://www.youtube.com/@LMGClipsYT",
+        "https://www.youtube.com/@LMGClips"
+      ],
+      "youtubeChannelId": "UCFLFc8Lpbwt4jPtY1_Ai5yA",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Official corporate page links this account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-84ffefa5ae3a613b745f",
+      "name": "Techquickie",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UC0vBXGSyV14uvJ4hECDOl0Q",
+      "aliases": [
+        "https://www.youtube.com/@techquickie"
+      ],
+      "youtubeChannelId": "UC0vBXGSyV14uvJ4hECDOl0Q",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Official corporate page links this account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-3765e5315ad35f026582",
+      "name": "GameLinked",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UCHDxYLv8iovIbhrfl16CNyg",
+      "aliases": [
+        "https://www.youtube.com/@GameLinked"
+      ],
+      "youtubeChannelId": "UCHDxYLv8iovIbhrfl16CNyg",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@LinusTechTips/about",
+          "note": "Official LTT profile features this exact channel and channel ID. Association does not establish current activity.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-9c0cca89cdc70459f749",
+      "name": "Mac Address",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UC0KfjyvabuE2J-RBC6ko2Lw",
+      "aliases": [
+        "https://www.youtube.com/@macaddress"
+      ],
+      "youtubeChannelId": "UC0KfjyvabuE2J-RBC6ko2Lw",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@LinusTechTips/about",
+          "note": "Official LTT profile features this exact channel and channel ID. Association does not establish current activity.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-93676530a6080c347408",
+      "name": "Channel Super Fun",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UCBZiUUYeLfS5rIj4TQvgSvA",
+      "aliases": [
+        "https://www.youtube.com/@ChannelSuperFun"
+      ],
+      "youtubeChannelId": "UCBZiUUYeLfS5rIj4TQvgSvA",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@LinusTechTips/about",
+          "note": "Official LTT profile features this exact channel and channel ID. Association does not establish current activity.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-c20f06397e7114d95d51",
+      "name": "They're Just Movies",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UCt-oJR5teQIjOAxCmIQvcgA",
+      "aliases": [
+        "https://www.youtube.com/@TheyreJustMovies"
+      ],
+      "youtubeChannelId": "UCt-oJR5teQIjOAxCmIQvcgA",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@LinusTechTips/about",
+          "note": "Official LTT profile features this exact channel and channel ID. Association does not establish current activity.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "tech-source-a2a27912db4f9b29833b",
+      "name": "PSU Circuit",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.youtube.com/channel/UCeQwQIoGPvEQFZ3jJ1NEJMQ",
+      "aliases": [
+        "https://www.youtube.com/@PSUCircuit"
+      ],
+      "youtubeChannelId": "UCeQwQIoGPvEQFZ3jJ1NEJMQ",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.lttlabs.com/articles/2024/05/31/gary-promised-mice-so-heres-a-sneak-peek",
+          "note": "LTT Labs explicitly links its PSUCircuit YouTube channel.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@PSUCircuit/about",
+          "note": "Official account supplies this stable channel ID and links back to LTT Labs.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Recent activity has not been checked; historical/quiet channels remain represented."
+    },
+    {
+      "id": "channel-b78f4d29257a98c61e93",
+      "name": "Marques Brownlee",
+      "platform": "YouTube",
+      "creatorId": "creator-b138206f7729d6cd189e",
+      "creatorIds": [
+        "creator-b138206f7729d6cd189e",
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://www.youtube.com/channel/UCBJycsmduvYEL83R_U4JriQ",
+      "aliases": [
+        "https://www.youtube.com/@mkbhd",
+        "https://www.youtube.com/channel/UCBJycsmduvYEL83R_U4JriQ"
+      ],
+      "youtubeChannelId": "UCBJycsmduvYEL83R_U4JriQ",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Official MKBHD site directly links this property.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@mkbhd/about",
+          "note": "Official property profile resolves this stable channel ID.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "catalogueChannelId": "channel-b78f4d29257a98c61e93",
+      "catalogueCreatorId": "creator-b138206f7729d6cd189e"
+    },
+    {
+      "id": "tech-source-9c186651be82632e8c02",
+      "name": "The Studio",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-mkbhd-studio",
+      "creatorIds": [
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://www.youtube.com/channel/UCG7J20LhUeLl6y_Emi7OJrA",
+      "aliases": [
+        "https://www.youtube.com/@TheStudio"
+      ],
+      "youtubeChannelId": "UCG7J20LhUeLl6y_Emi7OJrA",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Official MKBHD site directly links this property.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@TheStudio/about",
+          "note": "Official property profile resolves this stable channel ID.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-f66ec0a3557a59f1f901",
+      "name": "Waveform",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-mkbhd-studio",
+      "creatorIds": [
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://www.youtube.com/channel/UCEcrRXW3oEYfUctetZTAWLw",
+      "aliases": [
+        "https://www.youtube.com/@Waveform",
+        "https://youtube.com/Waveform"
+      ],
+      "youtubeChannelId": "UCEcrRXW3oEYfUctetZTAWLw",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Official MKBHD site directly links this property.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@Waveform/about",
+          "note": "Official property profile resolves this stable channel ID.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-07f57c50490f6a412635",
+      "name": "Auto Focus",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-mkbhd-studio",
+      "creatorIds": [
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://www.youtube.com/channel/UC2J-0g_nxlwcD9JBK1eTleQ",
+      "aliases": [
+        "https://www.youtube.com/@AutoFocus",
+        "https://youtube.com/autofocus"
+      ],
+      "youtubeChannelId": "UC2J-0g_nxlwcD9JBK1eTleQ",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Official MKBHD site directly links this property.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@AutoFocus/about",
+          "note": "Official property profile resolves this stable channel ID.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-1d0c45586039ef1074ef",
+      "name": "Waveform Clips",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-mkbhd-studio",
+      "creatorIds": [
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://www.youtube.com/channel/UCc_ycus0q7DSd85ZkmEY5ig",
+      "aliases": [
+        "https://www.youtube.com/@WaveformClips"
+      ],
+      "youtubeChannelId": "UCc_ycus0q7DSd85ZkmEY5ig",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@Waveform/about",
+          "note": "Official Waveform profile features this exact channel under Channels.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@WaveformClips/about",
+          "note": "The profile resolves this exact channel ID and describes official MKBHD Shorts or Waveform clips.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-45222bcf7f9cb0f31fb0",
+      "name": "MKBHD Shorts",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-mkbhd-studio",
+      "creatorIds": [
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://www.youtube.com/channel/UC1DoqbBY6dl8CEMVV9SK2FA",
+      "aliases": [
+        "https://www.youtube.com/@MKBHDShort"
+      ],
+      "youtubeChannelId": "UC1DoqbBY6dl8CEMVV9SK2FA",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@Waveform/about",
+          "note": "Official Waveform profile features this exact channel under Channels.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@MKBHDShort/about",
+          "note": "The profile resolves this exact channel ID and describes official MKBHD Shorts or Waveform clips.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-f0bda3156ab710d87f15",
+      "name": "GamersNexus",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-gamersnexus",
+      "creatorIds": [
+        "tech-creator-gamersnexus"
+      ],
+      "groupId": "tech-group-gamersnexus",
+      "url": "https://www.youtube.com/channel/UChIs72whgZI9w6d6FhwGGHA",
+      "aliases": [
+        "https://www.youtube.com/@GamersNexus",
+        "https://www.youtube.com/user/GamersNexus",
+        "https://www.youtube.com/gamersnexus"
+      ],
+      "youtubeChannelId": "UChIs72whgZI9w6d6FhwGGHA",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://gamersnexus.net/",
+          "note": "Official site links the main YouTube property.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-8302a351f3e479556409",
+      "name": "GNCA - GamersNexus Consumer Advocacy",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-gamersnexus",
+      "creatorIds": [
+        "tech-creator-gamersnexus"
+      ],
+      "groupId": "tech-group-gamersnexus",
+      "url": "https://www.youtube.com/channel/UCgGw5WSITWvDISNjydXPW3A",
+      "aliases": [
+        "https://www.youtube.com/@GNCAInvestigates"
+      ],
+      "youtubeChannelId": "UCgGw5WSITWvDISNjydXPW3A",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@GamersNexus/about",
+          "note": "Official main profile lists this exact channel under Our Other Channel.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@GNCAInvestigates/about",
+          "note": "The brand extension links back to GamersNexus and identifies its purpose.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-2ea923aba6e82994dac3",
+      "name": "GN Extras",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-gamersnexus",
+      "creatorIds": [
+        "tech-creator-gamersnexus"
+      ],
+      "groupId": "tech-group-gamersnexus",
+      "url": "https://www.youtube.com/channel/UCgeS8J9W62B-uLBgzp14BtQ",
+      "aliases": [
+        "https://www.youtube.com/@gnextras"
+      ],
+      "youtubeChannelId": "UCgeS8J9W62B-uLBgzp14BtQ",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@GamersNexus/about",
+          "note": "Official main profile lists this exact channel under Our Other Channel.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@gnextras/about",
+          "note": "The brand extension links back to GamersNexus and identifies its purpose.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-e618871dec818ccf40d0",
+      "name": "Linus Tech Tips on X",
+      "platform": "X",
+      "creatorId": "creator-1b25d74460d249839134",
+      "creatorIds": [
+        "creator-1b25d74460d249839134",
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://x.com/LinusTech",
+      "aliases": [
+        "https://x.com/LinusTech",
+        "https://twitter.com/LinusTech"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Corporate footer links this exact public X account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@LinusTechTips/about",
+          "note": "Official channel description links the same Twitter account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "channel-77d37481b86ee9a5173f",
+      "name": "Linus Tech Tips on Instagram",
+      "platform": "Instagram",
+      "creatorId": "creator-1b25d74460d249839134",
+      "creatorIds": [
+        "creator-1b25d74460d249839134",
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://www.instagram.com/linustech/",
+      "aliases": [
+        "https://www.instagram.com/linustech/"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post",
+        "reel"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/",
+          "note": "Corporate footer links this exact Instagram account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "catalogueChannelId": "channel-77d37481b86ee9a5173f",
+      "catalogueCreatorId": "creator-1b25d74460d249839134"
+    },
+    {
+      "id": "channel-228feec5591b9937c722",
+      "name": "Marques Brownlee on X",
+      "platform": "X",
+      "creatorId": "creator-b138206f7729d6cd189e",
+      "creatorIds": [
+        "creator-b138206f7729d6cd189e",
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://x.com/MKBHD",
+      "aliases": [
+        "https://x.com/MKBHD",
+        "https://twitter.com/MKBHD"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Official social navigation links this exact main account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "catalogueChannelId": "channel-228feec5591b9937c722",
+      "catalogueCreatorId": "creator-b138206f7729d6cd189e"
+    },
+    {
+      "id": "channel-42ec2b8935fb8a7a2fc3",
+      "name": "Marques Brownlee on Instagram",
+      "platform": "Instagram",
+      "creatorId": "creator-b138206f7729d6cd189e",
+      "creatorIds": [
+        "creator-b138206f7729d6cd189e",
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://www.instagram.com/mkbhd/",
+      "aliases": [
+        "https://www.instagram.com/mkbhd/",
+        "https://instagram.com/MKBHD"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post",
+        "reel"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Official social navigation links this exact main account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "catalogueChannelId": "channel-42ec2b8935fb8a7a2fc3",
+      "catalogueCreatorId": "creator-b138206f7729d6cd189e"
+    },
+    {
+      "id": "tech-source-b7eb15c52accea622a87",
+      "name": "GamersNexus on X",
+      "platform": "X",
+      "creatorId": "tech-creator-gamersnexus",
+      "creatorIds": [
+        "tech-creator-gamersnexus"
+      ],
+      "groupId": "tech-group-gamersnexus",
+      "url": "https://x.com/gamersnexus",
+      "aliases": [
+        "https://x.com/gamersnexus",
+        "https://twitter.com/gamersnexus"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://gamersnexus.net/",
+          "note": "Official footer links this public account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@GamersNexus/about",
+          "note": "Official main profile links the same Twitter account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-2c10937ceb8aeb9d4d9d",
+      "name": "ShortCircuit on X",
+      "platform": "X",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://x.com/shrtcrctyt",
+      "aliases": [
+        "https://x.com/shrtcrctyt",
+        "https://twitter.com/ShrtCrctYT"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@ShortCircuit/about",
+          "note": "This official property profile links the exact public X account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-d7811a740f5793e2e7b6",
+      "name": "ShortCircuit on Instagram",
+      "platform": "Instagram",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://instagram.com/shortcircuityt/",
+      "aliases": [
+        "https://instagram.com/shortcircuityt/",
+        "https://www.instagram.com/shortcircuityt/"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post",
+        "reel"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@ShortCircuit/about",
+          "note": "This official property profile links the exact public Instagram account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-320d365d5964742d601e",
+      "name": "TechLinked on X",
+      "platform": "X",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://x.com/techlinkedyt",
+      "aliases": [
+        "https://x.com/techlinkedyt",
+        "https://twitter.com/techlinkedyt"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@techlinked/about",
+          "note": "This official property profile links the exact public X account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-10b7c885960f65f0b5fe",
+      "name": "TechLinked on Instagram",
+      "platform": "Instagram",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://instagram.com/techlinkedyt/",
+      "aliases": [
+        "https://instagram.com/techlinkedyt/",
+        "https://www.instagram.com/techlinkedyt/"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post",
+        "reel"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@techlinked/about",
+          "note": "This official property profile links the exact public Instagram account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-8ab96dc939ff323ffffa",
+      "name": "GameLinked on X",
+      "platform": "X",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://x.com/gamelinkedyt",
+      "aliases": [
+        "https://x.com/gamelinkedyt",
+        "https://twitter.com/GameLinkedYT"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@GameLinked/about",
+          "note": "This official property profile links the exact public X account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-71459a3595bca18c0366",
+      "name": "GameLinked on Instagram",
+      "platform": "Instagram",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://instagram.com/ytgamelinked/",
+      "aliases": [
+        "https://instagram.com/ytgamelinked/",
+        "https://www.instagram.com/ytgamelinked/"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post",
+        "reel"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@GameLinked/about",
+          "note": "This official property profile links the exact public Instagram account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-f26aa0553b0ba1cd4622",
+      "name": "Mac Address on X",
+      "platform": "X",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://x.com/macaddressyt",
+      "aliases": [
+        "https://x.com/macaddressyt",
+        "https://twitter.com/MacAddressYT"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@macaddress/about",
+          "note": "This official property profile links the exact public X account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-4d52195413d0550cde44",
+      "name": "Mac Address on Instagram",
+      "platform": "Instagram",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://instagram.com/macaddressyt/",
+      "aliases": [
+        "https://instagram.com/macaddressyt/",
+        "https://www.instagram.com/MacAddressYT"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post",
+        "reel"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@macaddress/about",
+          "note": "This official property profile links the exact public Instagram account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-6b0909e159f6ed1c2248",
+      "name": "Channel Super Fun on X",
+      "platform": "X",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://x.com/channelsuperfun",
+      "aliases": [
+        "https://x.com/channelsuperfun",
+        "https://twitter.com/channelsuperfun"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@ChannelSuperFun/about",
+          "note": "This official property profile links the exact public X account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-5690a6d9dd537d734279",
+      "name": "Channel Super Fun on Instagram",
+      "platform": "Instagram",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://instagram.com/channelsuperfun/",
+      "aliases": [
+        "https://instagram.com/channelsuperfun/",
+        "https://www.instagram.com/channelsuperfun/"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post",
+        "reel"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@ChannelSuperFun/about",
+          "note": "This official property profile links the exact public Instagram account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-47e4ff8958ee8d925639",
+      "name": "They're Just Movies on X",
+      "platform": "X",
+      "creatorId": "tech-creator-lmg",
+      "creatorIds": [
+        "tech-creator-lmg"
+      ],
+      "groupId": "tech-group-lmg",
+      "url": "https://x.com/tjmpod",
+      "aliases": [
+        "https://x.com/tjmpod",
+        "https://twitter.com/TJMpod"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@TheyreJustMovies/about",
+          "note": "This official property profile links the exact public X account.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-37bc836d606d216204f1",
+      "name": "Waveform on X",
+      "platform": "X",
+      "creatorId": "tech-creator-mkbhd-studio",
+      "creatorIds": [
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://x.com/WVFRM",
+      "aliases": [
+        "https://x.com/WVFRM",
+        "https://twitter.com/WVFRM"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://podcasts.voxmedia.com/show/waveform-the-mkbhd-podcast",
+          "note": "Official publisher show page directly links the following RSS feed.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://feeds.megaphone.fm/STU4418364045",
+          "note": "Publisher-authored show notes label this exact profile as Waveform social media. Individual hosts and guest links are not treated as studio accounts.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-3b438daf66fd1489ed1e",
+      "name": "Waveform on Instagram",
+      "platform": "Instagram",
+      "creatorId": "tech-creator-mkbhd-studio",
+      "creatorIds": [
+        "tech-creator-mkbhd-studio"
+      ],
+      "groupId": "tech-group-mkbhd",
+      "url": "https://www.instagram.com/waveformpodcast/",
+      "aliases": [
+        "https://www.instagram.com/waveformpodcast/"
+      ],
+      "youtubeChannelId": null,
+      "formats": [
+        "post",
+        "reel"
+      ],
+      "language": "en",
+      "scope": "included",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://podcasts.voxmedia.com/show/waveform-the-mkbhd-podcast",
+          "note": "Official publisher show page directly links the following RSS feed.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://feeds.megaphone.fm/STU4418364045",
+          "note": "Publisher-authored show notes label this exact profile as Waveform social media. Individual hosts and guest links are not treated as studio accounts.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-source-1a0eb16b051274782384",
+      "name": "GNSteve",
+      "platform": "YouTube",
+      "creatorId": "tech-creator-gnsteve",
+      "creatorIds": [
+        "tech-creator-gnsteve",
+        "tech-creator-gamersnexus"
+      ],
+      "groupId": "tech-group-gamersnexus",
+      "url": "https://www.youtube.com/channel/UClbZahXiEFVawqXjhVoh3iw",
+      "aliases": [
+        "https://www.youtube.com/@gnsteve8846"
+      ],
+      "youtubeChannelId": "UClbZahXiEFVawqXjhVoh3iw",
+      "formats": [
+        "video",
+        "short",
+        "stream"
+      ],
+      "language": "en",
+      "scope": "optional",
+      "collectionStatus": "planned",
+      "coverage": {
+        "status": "not_collected",
+        "windowDays": 30,
+        "notice": "Identity research only. Publication dates, usable content, transcripts and complete history have not been collected or verified."
+      },
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@GamersNexus/about",
+          "note": "Main profile links this separate channel under Our Other Channel.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://www.youtube.com/@gnsteve8846/about",
+          "note": "The account describes mountain biking and explicitly says it is owned by GamersNexus LLC. It is kept as a separate personally presented non-tech source, not a credit in studio updates.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ],
+      "note": "Visible association; excluded from the default technology backfill. Do not infer presenter/employment credits from ownership."
+    }
+  ],
+  "candidates": [
+    {
+      "id": "tech-candidate-c7bbaf26c6f545892c92",
+      "name": "exLinusPortuguês",
+      "platform": "YouTube",
+      "url": "https://www.youtube.com/@exlinuspt",
+      "youtubeChannelId": "UC7kB7lMNF_0drgmcCc6z3Uw",
+      "scope": "unresolved",
+      "reason": "The official main profile features this localized account, but present ownership/licensing and duplicate-language coverage remain unconfirmed. Not automatically owned or included.",
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@LinusTechTips/about",
+          "note": "Exact featured account and channel ID observed; association alone is not ownership.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-candidate-5ac52dc4ee5e4362550c",
+      "name": "exLinusFr",
+      "platform": "YouTube",
+      "url": "https://www.youtube.com/@exLinus_FR",
+      "youtubeChannelId": "UC-Rue3okSONOLMdCwRsglig",
+      "scope": "unresolved",
+      "reason": "The official main profile features this localized account, but present ownership/licensing and duplicate-language coverage remain unconfirmed. Not automatically owned or included.",
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@LinusTechTips/about",
+          "note": "Exact featured account and channel ID observed; association alone is not ownership.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-candidate-1e5aa556ad67b9c8c29f",
+      "name": "exlinusEspañol",
+      "platform": "YouTube",
+      "url": "https://www.youtube.com/@Linus_ES",
+      "youtubeChannelId": "UCYjOBtLXNluAL4kvtvXclTQ",
+      "scope": "unresolved",
+      "reason": "The official main profile features this localized account, but present ownership/licensing and duplicate-language coverage remain unconfirmed. Not automatically owned or included.",
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@LinusTechTips/about",
+          "note": "Exact featured account and channel ID observed; association alone is not ownership.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-candidate-3add24ddaf9ac96df307",
+      "name": "exLinusDeutsch",
+      "platform": "YouTube",
+      "url": "https://www.youtube.com/@Linus_DE",
+      "youtubeChannelId": "UCVLymBFEnhkLzG9vcJIDNAA",
+      "scope": "unresolved",
+      "reason": "The official main profile features this localized account, but present ownership/licensing and duplicate-language coverage remain unconfirmed. Not automatically owned or included.",
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@LinusTechTips/about",
+          "note": "Exact featured account and channel ID observed; association alone is not ownership.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-candidate-e742609d7bbe52666b9f",
+      "name": "LinusCatTips",
+      "platform": "YouTube",
+      "url": "https://www.youtube.com/@LinusCatTips",
+      "youtubeChannelId": "UCL81YHgzH8tcrFfOJJwlSQw",
+      "scope": "unresolved",
+      "reason": "The exact historical cat-video account resolves, but current publisher/group ownership and a first-party bridge from the corporate/main channel remain unconfirmed. Keep separate from LMG collection.",
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/user/LinusCatTips/about",
+          "note": "Public profile resolves the exact channel identity and describes cat videos. It does not identify group ownership.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        },
+        {
+          "url": "https://linustechtips.com/topic/178711-which-of-linus-content-do-you-watch/",
+          "note": "Historical official community administrator discussion treats the cat channel separately; a community discussion is not an affirmative current ownership bridge.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-candidate-2e7419e911a79c9ab4c0",
+      "name": "GamersNexus Instagram",
+      "platform": "Instagram",
+      "url": null,
+      "youtubeChannelId": null,
+      "scope": "unresolved",
+      "reason": "No Instagram account was affirmatively cross-linked from the inspected official site, store or main channel profile. An unconfirmed same-name handle is not an official account.",
+      "evidence": [
+        {
+          "url": "https://www.youtube.com/@GamersNexus/about",
+          "note": "Inspected first-party relationship page; absence of an affirmative link is recorded as uncertainty, not proof that an account does not exist.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-candidate-7082bfb1f0fb9e742dc9",
+      "name": "The Studio-specific X/Instagram",
+      "platform": "X/Instagram",
+      "url": null,
+      "youtubeChannelId": null,
+      "scope": "unresolved",
+      "reason": "No studio-specific X or Instagram account was linked by the inspected official site or property profile.",
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Inspected first-party relationship page; absence of an affirmative link is recorded as uncertainty, not proof that an account does not exist.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-candidate-eacf17b61123ca5c8881",
+      "name": "AutoFocus-specific X/Instagram",
+      "platform": "X/Instagram",
+      "url": null,
+      "youtubeChannelId": null,
+      "scope": "unresolved",
+      "reason": "No AutoFocus-specific X or Instagram account was linked by the inspected official site or property profile.",
+      "evidence": [
+        {
+          "url": "https://mkbhd.com/",
+          "note": "Inspected first-party relationship page; absence of an affirmative link is recorded as uncertainty, not proof that an account does not exist.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    },
+    {
+      "id": "tech-candidate-3efe9b69ad04367d1f4b",
+      "name": "LTT Labs separate YouTube channel",
+      "platform": "YouTube",
+      "url": null,
+      "youtubeChannelId": null,
+      "scope": "unresolved",
+      "reason": "LTT Labs is an evidenced business/site and it links PSU Circuit. A separate Labs-branded YouTube account was not confirmed; do not invent one.",
+      "evidence": [
+        {
+          "url": "https://linusmediagroup.com/teams",
+          "note": "Inspected first-party relationship page; absence of an affirmative link is recorded as uncertainty, not proof that an account does not exist.",
+          "checkedAt": "2026-10-21",
+          "method": "official_crosslink"
+        }
+      ]
+    }
+  ],
+  "policy": {
+    "executionEnabled": false,
+    "ownerIdentityIncluded": false,
+    "identityResearchOnly": true,
+    "recentActivityVerified": false,
+    "providerAccessVerified": false,
+    "captionCoverageVerified": false,
+    "generatedTranscriptionEnabled": false,
+    "unknownAssociationNeverAutoIncluded": true
+  }
+}

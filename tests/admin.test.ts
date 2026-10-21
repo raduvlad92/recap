@@ -58,6 +58,12 @@ describe('server-owned administrator authorization',()=>{
   const summary=userSummary(user,{user_id:user.id,updated_at:'2026-10-21',state:{followedSourceIds:['s1'],customSources:[{id:'s1',name:'Real source',url:'javascript:steal()',platform:'X',status:'pending'}],savedCount:5,importedCount:2,privateToken:'must-not-appear',importedUpdates:[{content:'private full article'}]}},[],[]);
   expect(summary.follows[0].url).toBe('');expect(summary.savedCount).toBe(5);expect(summary.importedCount).toBe(2);expect(JSON.stringify(summary)).not.toContain('private full article');expect(JSON.stringify(summary)).not.toContain('must-not-appear');
  });
+ it('resolves private collection studios without exposing their private content',()=>{
+  const summary=userSummary(user,{user_id:user.id,updated_at:'2026-10-21',state:{followedSourceIds:['studio-channel'],customSources:[{id:'studio-channel',name:'Hardware channel',url:'https://www.youtube.com/@hardware',platform:'YouTube',creatorIds:['hardware-studio'],status:'ready'}],customCreators:[{id:'hardware-studio',name:'Hardware Studio',bio:'private bio omitted'}],importedCount:34}},[],[]);
+  expect(summary.follows[0].creatorNames).toEqual(['Hardware Studio']);
+  expect(summary.importedCount).toBe(34);
+  expect(JSON.stringify(summary)).not.toContain('private bio omitted');
+ });
 });
 const creator:CatalogueCreator={id:'creator1',slug:'test-creator',name:'Test <Creator>',kind:'person',description:'Independent technology writing & teaching.',topics:['Technology'],language:'en',is_listed:true,researched_at:'2026-10-21',updated_at:'2026-10-21T01:00:00Z',catalogue_channels:[{id:'ch1',creator_id:'creator1',platform:'YouTube',name:'Test channel',handle:'@test',url:'https://www.youtube.com/@test',description:'Technology tutorials and explanations.',language:'en',verification:'public_directory',evidence:[{url:'https://example.com/directory',note:'Public account link inspected'}],researched_at:'2026-10-21',collection_status:'planned'}]};
 describe('crawlable honest catalogue pages',()=>{

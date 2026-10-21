@@ -184,6 +184,12 @@ Founder explicitly requested the **tech** collection with all official public LT
 
 Readiness check found working app/backend administration, no exact app user for the target email, no configured Apify runtime connection, and an Apify sign-in page in the shared browser. Required owner actions are ordinary app signup/sign-in and provider authentication if access cannot be reused. Channel research and Actor code can proceed independently. No source content collection or metered run has started at this checkpoint. Do not put the specified email or private user IDs in Git.
 
+### D22 continuation: owner access and bounded execution
+
+The founder confirmed app signup and explicitly directed execution inside their existing **DeleteCookies** Apify organization. Exact owner/app and organization identities were verified. No repeated resumption/setup permission is needed. The active tech collection includes38confirmed public accounts with editable membership; optional/unresolved affiliations remain separate. Named-collection history is stored in a private paged archive, while settings/follows/bookmarks stay in the small owner workspace document. Reset/delete uses one revision-checked database transaction so stale tabs cannot erase newer history.
+
+Use a conservative shared USD45 ceiling within the earlier EUR50 approval, with durable envelope/job reservations and no expiry release of unknown charges. This first run is capped lower at USD4.70combined (USD0.40controller), to fit existing USD5free credit without buying an upgrade. Provider/build pins and actual charges must be reconciled; source-content-only cards must not be presented as AI recaps, transcripts when only descriptions exist, or verified full-month coverage. Supplier schedules and the old public refresh runtime remain disabled.
+
 ## D21 — admin and researched public creator catalogue,21October2026
 
 Founder asked for a comprehensive admin panel showing signups, followed creators/channels, Apify usage and backend operations; separately120creators/accounts on each of YouTube,Instagram,X,Substack andLinkedIn, imported into the backend with one page per canonical creator for discovery/SEO and an honest account of planned collection. The explicit instruction is **do not start collection**, compare Apify andBrightData and choose the cheaper usable route. This authorizes scoped implementation/backendimport/publicpages on the existing stack; it does not start a customer trial, paid scraper job, subscription or daily schedule.

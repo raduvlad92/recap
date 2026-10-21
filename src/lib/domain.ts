@@ -1,5 +1,5 @@
-import type { CollectionResult, Creator, FollowScope, Platform, ReaderSettings, Source, SourceUpdate, WorkspaceState } from './types';
-import { createDefaultWorkspace, sampleSources } from './fixtures';
+import type { CollectionResult, Creator, FollowScope, Platform, ReaderSettings, Source, SourceCollection, SourceUpdate, WorkspaceState } from './types';
+import { createDefaultWorkspace, sampleCreators, sampleSources } from './fixtures';
 
 export const LIMITS = { sources: 50, xSources: 15, dailyUpdates: 200, monthlyUpdates: 3000, generatedAudioMinutes: 300 } as const;
 export const LANGUAGES = ['en', 'de', 'es', 'fr', 'it', 'pt-BR'] as const;
@@ -106,6 +106,41 @@ export function dateKey(value: string | Date, timezone = 'UTC'): string {
   } catch { return date.toISOString().slice(0, 10); }
 }
 
+/** Channel ownership is enough to navigate a creator; it does not assert a presenter credit. */
+export function creatorMatchesUpdate(creator: Creator, update: SourceUpdate): boolean {
+  return creator.sourceIds.includes(update.sourceId) || update.contributorIds.includes(creator.id);
+}
+
+/** Collection time windows use the reader's calendar days and never borrow another source's items. */
+export function updatesForCollection(updates: SourceUpdate[], collection: SourceCollection | undefined, options: { days?: number; timezone?: string; now?: Date } = {}): SourceUpdate[] {
+  if (!collection) return updates;
+  const sourceIds = new Set(collection.sourceIds);
+  if (!options.days) return updates.filter(update => sourceIds.has(update.sourceId));
+  const today = dateKey(options.now ?? new Date(), options.timezone);
+  const start = new Date(`${today}T12:00:00Z`);
+  start.setUTCDate(start.getUTCDate() - options.days + 1);
+  const firstDay = start.toISOString().slice(0, 10);
+  return updates.filter(update => {
+    const day = dateKey(update.publishedAt, options.timezone);
+    return sourceIds.has(update.sourceId) && !!day && day >= firstDay && day <= today;
+  });
+}
+
+export function saveSourceCollection(state: WorkspaceState, collection: SourceCollection, sources: Source[]): WorkspaceState {
+  const name = collection.name.trim().slice(0, 80);
+  if (!name) throw new Error('Give this collection a name.');
+  const existing = state.sourceCollections ?? [];
+  if (!existing.some(item => item.id === collection.id) && existing.length >= 30) throw new Error('This workspace allows 30 collections.');
+  const available = new Set(sources.map(source => source.id));
+  const saved = { ...collection, name, sourceIds: unique(collection.sourceIds).filter(id => available.has(id)).slice(0, 200) };
+  return { ...state, sourceCollections: [...existing.filter(item => item.id !== saved.id), saved], activeCollectionId: saved.id };
+}
+
+export function removeSourceCollection(state: WorkspaceState, id: string): WorkspaceState {
+  const { activeCollectionId, ...rest } = state;
+  return { ...rest, sourceCollections: (state.sourceCollections ?? []).filter(item => item.id !== id), ...(activeCollectionId && activeCollectionId !== id ? { activeCollectionId } : {}) };
+}
+
 export interface UpdateFilter { query?: string; sourceIds?: string[]; creatorId?: string; day?: string; timezone?: string; platform?: Platform | 'all'; savedIds?: string[]; }
 export function filterUpdates(updates: SourceUpdate[], sources: Source[], filter: UpdateFilter = {}): SourceUpdate[] {
   const query = (filter.query ?? '').trim().toLocaleLowerCase();
@@ -145,9 +180,21 @@ function sanitizeSource(value: unknown): Source | null {
   return { id: value.id.slice(0, 200), name: typeof value.name === 'string' ? value.name.slice(0, 200) : value.url, url: value.url.slice(0, 2000), platform: value.platform as Platform, creatorIds: stringList(value.creatorIds, 30), status: ['pending', 'ready', 'failed', 'sample'].includes(value.status as string) ? value.status as Source['status'] : 'pending', ...(typeof value.description === 'string' ? { description: value.description.slice(0, 2000) } : {}), ...(typeof value.feedUrl === 'string' && isPublicWebUrl(value.feedUrl) ? { feedUrl: value.feedUrl.slice(0, 2000) } : {}) };
 }
 
-function sanitizeUpdate(value: unknown): SourceUpdate | null {
+function sanitizeCreator(value: unknown, sourceIds: Set<string>): Creator | null {
+  if (!object(value) || typeof value.id !== 'string' || !value.id.trim() || typeof value.name !== 'string' || !value.name.trim() || !['person', 'studio'].includes(value.kind as string)) return null;
+  return { id: value.id.slice(0, 200), name: value.name.slice(0, 200), kind: value.kind as Creator['kind'], handle: typeof value.handle === 'string' ? value.handle.slice(0, 200) : '', bio: typeof value.bio === 'string' ? value.bio.slice(0, 2000) : '', color: typeof value.color === 'string' && /^#[a-f0-9]{6}$/i.test(value.color) ? value.color : '#e3e9e4', initials: typeof value.initials === 'string' ? value.initials.slice(0, 6) : value.name.slice(0, 2), sourceIds: stringList(value.sourceIds, 200).filter(id => sourceIds.has(id)), ...(value.kind === 'studio' ? { presenterIds: stringList(value.presenterIds, 100) } : {}) };
+}
+
+export function sanitizeSourceUpdate(value: unknown): SourceUpdate | null {
   if (!object(value) || typeof value.id !== 'string' || typeof value.sourceId !== 'string' || typeof value.url !== 'string' || !isPublicWebUrl(value.url) || typeof value.publishedAt !== 'string' || (value.publishedAt !== '' && !dateKey(value.publishedAt))) return null;
   return { id: value.id.slice(0, 250), sourceId: value.sourceId.slice(0, 200), title: typeof value.title === 'string' ? value.title.slice(0, 1000) : 'Untitled update', summary: typeof value.summary === 'string' ? value.summary.slice(0, 10000) : '', url: value.url.slice(0, 2000), publishedAt: value.publishedAt ? new Date(value.publishedAt).toISOString() : '', format: ['video', 'article', 'podcast', 'post'].includes(value.format as string) ? value.format as SourceUpdate['format'] : 'article', contributorIds: stringList(value.contributorIds, 30), topics: stringList(value.topics, 30), brands: stringList(value.brands, 50), sponsors: stringList(value.sponsors, 30), insights: stringList(value.insights, 30), references: Array.isArray(value.references) ? value.references.filter(object).filter(reference => typeof reference.url === 'string' && isPublicWebUrl(reference.url)).slice(0, 30).map(reference => ({ title: typeof reference.title === 'string' ? reference.title.slice(0, 500) : 'Reference', url: reference.url as string })) : [], isSample: value.isSample === true, ...(typeof value.coverage === 'string' ? { coverage: value.coverage.slice(0, 2000) } : {}), ...(typeof value.content === 'string' ? { content: value.content.slice(0, 100000) } : {}), ...(['feed_text', 'transcript', 'metadata_only'].includes(value.contentKind as string) ? { contentKind: value.contentKind as SourceUpdate['contentKind'] } : {}), ...(typeof value.duration === 'string' ? { duration: value.duration.slice(0, 100) } : {}), ...(typeof value.image === 'string' && isPublicWebUrl(value.image) ? { image: value.image.slice(0, 2000) } : {}) };
+}
+
+/** Private archive content is already stored separately; do not shorten transcripts to fit workspace JSON. */
+export function sanitizeArchivedUpdate(value: unknown): SourceUpdate | null {
+  const update = sanitizeSourceUpdate(value);
+  if (update && object(value) && typeof value.content === 'string') update.content = value.content;
+  return update;
 }
 
 export function sanitizeWorkspace(value: unknown): WorkspaceState | null {
@@ -156,14 +203,26 @@ export function sanitizeWorkspace(value: unknown): WorkspaceState | null {
   const reservedSourceIds = new Set(sampleSources.map(source => source.id));
   const customSources = [...new Map(value.customSources.map(sanitizeSource).filter((source): source is Source => !!source && !reservedSourceIds.has(source.id)).slice(0, 200).map(source => [source.id, source])).values()];
   const customIds = new Set(customSources.map(source => source.id));
-  const importedUpdates = [...new Map(value.importedUpdates.map(sanitizeUpdate).filter((update): update is SourceUpdate => !!update && !update.isSample && !update.id.startsWith('sample-') && customIds.has(update.sourceId)).slice(0, 3000).map(update => [update.id, update])).values()];
-  return { version: 1, followedSourceIds: stringList(value.followedSourceIds, 50), ...(followScopes ? { followScopes } : {}), savedUpdateIds: stringList(value.savedUpdateIds, 3000), readLaterIds: stringList(value.readLaterIds, 3000), settings: sanitizeSettings(value.settings), customSources, importedUpdates };
+  const importedUpdates = [...new Map(value.importedUpdates.map(sanitizeSourceUpdate).filter((update): update is SourceUpdate => !!update && !update.isSample && !update.id.startsWith('sample-') && customIds.has(update.sourceId)).slice(0, 3000).map(update => [update.id, update])).values()];
+  const knownSourceIds = new Set([...reservedSourceIds, ...customIds]);
+  const reservedCreatorIds = new Set(sampleCreators.map(creator => creator.id));
+  const customCreators = Array.isArray(value.customCreators) ? [...new Map(value.customCreators.map(creator => sanitizeCreator(creator, knownSourceIds)).filter((creator): creator is Creator => !!creator && !reservedCreatorIds.has(creator.id)).slice(0, 200).map(creator => [creator.id, creator])).values()] : undefined;
+  const people = new Set([...sampleCreators, ...(customCreators ?? [])].filter(creator => creator.kind === 'person').map(creator => creator.id));
+  customCreators?.forEach(creator => { if (creator.presenterIds) creator.presenterIds = creator.presenterIds.filter(id => people.has(id)); });
+  const sourceCollections: SourceCollection[] | undefined = Array.isArray(value.sourceCollections) ? [...new Map(value.sourceCollections.filter(object).filter(collection => typeof collection.id === 'string' && !!collection.id.trim() && typeof collection.name === 'string' && !!collection.name.trim() && typeof collection.createdAt === 'string' && !!dateKey(collection.createdAt)).slice(0, 30).map(collection => { const item: SourceCollection = { id: (collection.id as string).slice(0, 200), name: (collection.name as string).trim().slice(0, 80), createdAt: new Date(collection.createdAt as string).toISOString(), sourceIds: stringList(collection.sourceIds, 200).filter(id => knownSourceIds.has(id)) }; return [item.id, item] as const; })).values()] : undefined;
+  const activeCollectionId = typeof value.activeCollectionId === 'string' && sourceCollections?.some(collection => collection.id === value.activeCollectionId) ? value.activeCollectionId : undefined;
+  return { version: 1, followedSourceIds: stringList(value.followedSourceIds, 50), ...(followScopes ? { followScopes } : {}), savedUpdateIds: stringList(value.savedUpdateIds, 3000), readLaterIds: stringList(value.readLaterIds, 3000), settings: sanitizeSettings(value.settings), customSources, importedUpdates, ...(customCreators ? { customCreators } : {}), ...(sourceCollections ? { sourceCollections } : {}), ...(activeCollectionId ? { activeCollectionId } : {}) };
+}
+
+/** Archive records are authoritative when the same imported ID exists in both stores. */
+export function mergeWorkspaceUpdates(imported: SourceUpdate[], archived: SourceUpdate[]): SourceUpdate[] {
+  return [...new Map([...imported, ...archived].map(update => [update.id, update])).values()].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 export function mergeCollection(state: WorkspaceState, result: CollectionResult): WorkspaceState {
   const source = sanitizeSource(result.source);
   if (!source) throw new Error('The collector returned an invalid source. Nothing was imported.');
-  const nextUpdates = result.updates.map(sanitizeUpdate).filter((update): update is SourceUpdate => !!update && update.sourceId === source.id);
+  const nextUpdates = result.updates.map(sanitizeSourceUpdate).filter((update): update is SourceUpdate => !!update && update.sourceId === source.id);
   const updates = new Map(state.importedUpdates.map(update => [update.id, update]));
   const existingByUrl = new Map(state.importedUpdates.map(update => [`${update.sourceId}:${update.url}`, update.id]));
   for (const update of nextUpdates) {

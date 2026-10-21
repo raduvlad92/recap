@@ -126,6 +126,14 @@ Costs/boundaries: no source collection, paid Actor run, generated transcription,
 
 Next: founder reviews with the [five-minute admin guide](admin/README.md). Further research/editorial cleanup and operational telemetry follow [continuation tasks](admin/PLAN.md#continuation-work); collection stays disabled until explicitly resumed.
 
+## 21 October2026 — D22 implementation and first real backfill checkpoint
+
+Authorized tech collection now seeded for the founder's actual verified app account:38researched included channels20YouTube/10X/8Instagram, preserving existing preferences/saves. Exact DeleteCookies organization verified. Private collector0.1.5 builds in Apify, with a clean dependency audit. One bounded30-day backfill is running, without schedules, AI calls or generated transcription. The first completed YouTube child returned32accepted dated LTT updates,23with existing captions; these are source material, not AI recaps or evidence of full-month completeness. Interim imports use completed, normalized durable checkpoint records; canonical OUTPUT replaces the interim evidence at completion.
+
+Implemented saved collections, phone/desktop source drill-down, private paged archive, visible source-only/partial-coverage notices, archive-only retry preserving drafts, atomic revision-checked reset/delete, and admin metadata/count integration.282tests, typecheck/build and catalogue reproducibility pass. Hosted exact recap schema migrations and rollback-only budget/RLS/CAS checks pass with zero surviving synthetic fixtures; security advisors report no issues. Supplier fees are still being reconciled, and frontend deployment/owner browser proof are pending at this checkpoint. No supplier subscription or additional owner setup is required.
+
+[Local synthetic responsive evidence](tech/WORKSPACE-CHECKS.md), [source research and controls](tech/access-research.md), [tracked delivery](tech/PLAN.md). The eventual release/collection report must distinguish source counts, actual run outcomes, content levels, coverage gaps, observed charges and invoices; provider terminal usage was observed to change after completion and must be reread.
+
 ## Required format for future entries
 
 21 October D22 readiness checkpoint: scoped tech collection/30-day request recorded in [tech/PLAN.md](tech/PLAN.md); exact requested app identity checked via Clerk Backend API without storing private identity in Git; app/backend access works, exact app account absent, Apify runtime token/build/signing configuration absent locally/hosted, shared Console at sign-in. Primary channel inventory research underway. No new application demo, source content backfill, provider job, AI call, transcription or schedule. New cash spent:0 observed. This is a readiness check, not proof of 30-day content coverage or Actor deployment. Next: owner app/provider access and the tracked TECH01–TECH06 implementation.
