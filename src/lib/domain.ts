@@ -119,10 +119,19 @@ export function creatorMatchesUpdate(creator: Creator, update: SourceUpdate): bo
   return creator.sourceIds.includes(update.sourceId) || update.contributorIds.includes(creator.id);
 }
 
-/** Collection time windows use the reader's calendar days and never borrow another source's items. */
-export function updatesForCollection(updates: SourceUpdate[], collection: SourceCollection | undefined, options: { days?: number; timezone?: string; now?: Date } = {}): SourceUpdate[] {
+/** Collection windows use reader calendar days or exact rolling hours and keep source membership. */
+export function updatesForCollection(updates: SourceUpdate[], collection: SourceCollection | undefined, options: { days?: number; hours?: number; timezone?: string; now?: Date } = {}): SourceUpdate[] {
   if (!collection) return updates;
   const sourceIds = new Set(collection.sourceIds);
+  if (options.hours !== undefined) {
+    const now = (options.now ?? new Date()).getTime();
+    const firstInstant = now - options.hours * 60 * 60 * 1000;
+    return updates.filter(update => {
+      if (!sourceIds.has(update.sourceId)) return false;
+      const publishedAt = Date.parse(update.publishedAt);
+      return Number.isFinite(publishedAt) && publishedAt >= firstInstant && publishedAt <= now;
+    });
+  }
   if (!options.days) return updates.filter(update => sourceIds.has(update.sourceId));
   const today = dateKey(options.now ?? new Date(), options.timezone);
   const start = new Date(`${today}T12:00:00Z`);

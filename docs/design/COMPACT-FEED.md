@@ -1,5 +1,27 @@
 # Compact collection feed — 21 October 2026
 
+## Current follow-up: fewer controls and more history ranges
+
+The founder subsequently requested removal of the middle-column update count and duplicate **All dates** control, plus **Last 30 days, Last 2 weeks, Last week, Last 3 days and Last 24h**. The toolbar now contains only sort, history range and **Filter**, in one row down to 320px. The existing **All available history** option remains. Filter opens the same exact-date/platform/topic popup; date arrows were removed with the duplicate date control. The standalone count/divider row is gone; a single divider belongs to the toolbar.
+
+The 30/14/7/3-day presets retain reader-timezone calendar boundaries. Last 24h is an exact elapsed 24-hour window, including its cutoff and excluding invalid/future timestamps. Both retain collection membership. Choosing a range clears a stale exact-date filter and resets pagination; saved state, follows and source/archive records are unchanged.
+
+Local automated checks: **366 tests across 12 files**, catalogue reproducibility, TypeScript and production build pass. Eleven new domain cases cover calendar boundaries, source isolation, invalid/future timestamps, precise 24-hour cutoffs, year boundaries and daylight-saving transitions. The final CSS adjustment was followed by a fresh build and browser checks.
+
+A synthetic local guest fixture contained seven explicitly synthetic example.org items aged 0, 0.5, 2, 5, 10, 20 and 45 days. Selecting 30/14/7/3 days, 24h and all history returned exactly **6/5/4/3/2/7** cards. Filter's exact-date control reduced the feed to one expected card; choosing a wider range cleared the date chip and restored five. This proves interface behavior with fixtures, not live source collection.
+
+Actual browser widths **1051, 390 and 320px** had one toolbar row and no horizontal overflow. The count/date controls were absent. First card is at **y181** on the 1051px desktop and **y204** on both tested phone widths. Temporary guest fixture storage and viewport were restored. Screenshots contain only synthetic material.
+
+![Updated local synthetic desktop](evidence/compact-feed-v2-desktop-fixture.png)
+
+![Updated local synthetic phone](evidence/compact-feed-v2-phone-fixture.png)
+
+Follow-up push, CI, deployment and actual hosted checks are recorded after release. No supplier/model/transcription execution or new supplier spending occurred. Hosting/build/database totals remain unmeasured.
+
+## Original D23 release record
+
+The record below describes the first D23 release; the follow-up above supersedes its count and date-navigation design.
+
 Founder request D23: remove the repeated collection introduction and put the reading controls together, so the feed starts near the top of the middle column. This is a scoped design change to the existing v0.
 
 ## Design and implementation

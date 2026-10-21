@@ -75,7 +75,7 @@ describe('persistent reader collections and real creator hierarchy', () => {
   });
 });
 
-describe('collection-specific 30-day history', () => {
+describe('collection-specific history windows', () => {
   const history = [
     item('today', 'tech-main', '2026-10-21T10:00:00Z'),
     item('first-day', 'tech-main', '2026-09-21T23:30:00Z'), // Sep 22 in Berlin, day 30.
@@ -96,6 +96,55 @@ describe('collection-specific 30-day history', () => {
   });
   it('leaves an empty real collection empty instead of substituting sample items', () => {
     expect(updatesForCollection(history, { ...collection, sourceIds: [] })).toEqual([]);
+  });
+  it.each([
+    { days: 30, now: '2026-10-21T12:00:00Z', firstInstant: '2026-09-22T00:00:00+02:00' },
+    { days: 14, now: '2026-10-21T12:00:00Z', firstInstant: '2026-10-08T00:00:00+02:00' },
+    { days: 7, now: '2026-10-21T12:00:00Z', firstInstant: '2026-10-15T00:00:00+02:00' },
+    { days: 3, now: '2026-10-21T12:00:00Z', firstInstant: '2026-10-19T00:00:00+02:00' },
+    { days: 3, now: '2027-01-02T12:00:00Z', firstInstant: '2026-12-31T00:00:00+01:00' },
+    { days: 3, now: '2026-03-30T10:00:00Z', firstInstant: '2026-03-28T00:00:00+01:00' },
+    { days: 3, now: '2026-10-26T11:00:00Z', firstInstant: '2026-10-24T00:00:00+02:00' },
+  ])('starts $days calendar days at Berlin midnight for $now', ({ days, now, firstInstant }) => {
+    const first = new Date(firstInstant);
+    const entries = [
+      item('before-window', 'tech-main', new Date(first.getTime() - 1).toISOString()),
+      item('first-instant', 'tech-main', first.toISOString()),
+      item('now', 'tech-person', now),
+      item('next-day', 'tech-main', new Date(new Date(now).getTime() + 24 * 60 * 60 * 1000).toISOString()),
+      item('other-source', 'other-channel', now),
+      { ...item('invalid', 'tech-main', ''), publishedAt: 'not-a-date' },
+    ];
+    expect(updatesForCollection(entries, collection, { days, timezone: 'Europe/Berlin', now: new Date(now) }).map(update => update.id)).toEqual(['first-instant', 'now']);
+  });
+  it('uses an inclusive exact 24-hour window and rejects invalid, future and unrelated items', () => {
+    const entries = [
+      item('too-old', 'tech-main', '2026-10-20T12:34:56.788Z'),
+      item('boundary', 'tech-main', '2026-10-20T12:34:56.789Z'),
+      item('recent', 'tech-person', '2026-10-21T10:00:00Z'),
+      item('now', 'tech-main', '2026-10-21T12:34:56.789Z'),
+      item('future', 'tech-main', '2026-10-21T12:34:56.790Z'),
+      item('other-source', 'other-channel', '2026-10-21T10:00:00Z'),
+      item('undated', 'tech-main', ''),
+      { ...item('invalid', 'tech-main', ''), publishedAt: 'not-a-date' },
+    ];
+    expect(updatesForCollection(entries, collection, { hours: 24, timezone: 'Europe/Berlin', now: new Date('2026-10-21T12:34:56.789Z') }).map(update => update.id)).toEqual(['boundary', 'recent', 'now']);
+    expect(updatesForCollection(entries, { ...collection, sourceIds: [] }, { hours: 24, now: new Date('2026-10-21T12:34:56.789Z') })).toEqual([]);
+  });
+  it.each([
+    { now: '2027-01-01T12:00:00Z', firstInstant: '2026-12-31T12:00:00Z' },
+    { now: '2026-03-29T10:00:00Z', firstInstant: '2026-03-28T10:00:00Z' },
+    { now: '2026-10-25T11:00:00Z', firstInstant: '2026-10-24T11:00:00Z' },
+  ])('keeps 24 elapsed hours across year and clock changes for $now', ({ now, firstInstant }) => {
+    const first = new Date(firstInstant);
+    const entries = [
+      item('too-old', 'tech-main', new Date(first.getTime() - 1).toISOString()),
+      item('boundary', 'tech-main', firstInstant),
+      item('now', 'tech-main', now),
+    ];
+    for (const timezone of ['Europe/Berlin', 'America/New_York', 'UTC']) {
+      expect(updatesForCollection(entries, collection, { hours: 24, timezone, now: new Date(now) }).map(update => update.id)).toEqual(['boundary', 'now']);
+    }
   });
 });
 
