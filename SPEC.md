@@ -86,6 +86,8 @@ Every factual recap claim must trace to a supporting original update; a creator 
 
 A **creator-linked reference** is material explicitly linked in usable source content/show notes, such as a study or article. Keep URL, available title and which update/creator linked it. Distinguish references from supporting original-update citations. A named study without a URL does not justify inventing a link. Do not automatically subscribe to destinations, crawl their bibliography or independently analyze every linked website. Sponsor/shop/navigation links must not masquerade as supporting evidence. Unavailable/paywalled destinations remain labeled references.
 
+D28 scoped clarification (23 October): keywords identify explicit brands, products, named games, technologies and concrete categories throughout usable content, including casual comparisons, sponsor segments and closing seconds. They are distinct from summarized claims. The [keyword rule](docs/design/KEYWORD-EXTRACTION-RULE.md) defines separate completeness review and private low-confidence decisions; this does not imply that all historical items or an automatic future model service are complete.
+
 Brand mentions do not prove sponsorship. Label sponsors only from an explicit disclosure, retaining supporting wording/citation. No detected disclosure does not prove an update was unsponsored.
 
 ### Daily cutoff, late items and corrections

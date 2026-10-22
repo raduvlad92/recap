@@ -1,0 +1,74 @@
+{
+  "checkedAt": "2026-10-22T22:27:38.095408+00:00",
+  "functionalCommit": "e885f16fc1eae96f16a363abb9845b95a0f4c098",
+  "functionalCi": {
+    "id": 39864027572,
+    "status": "success",
+    "url": "https://github.com/raduvlad92/recap/actions/runs/39864027572"
+  },
+  "functionalDeploy": {
+    "id": "6ada8bf9dabf29178ed94c44",
+    "state": "ready",
+    "publishedAt": "2026-10-22T22:20:05.167Z"
+  },
+  "integratedDeploy": {
+    "id": "6ada8c4b17026cf6df4b0b5d",
+    "commit": "a50027430e76c3b81b321143b7c35e0377f35f34",
+    "state": "ready",
+    "publishedAt": "2026-10-22T22:21:25.386Z",
+    "includesKeywordCommit": true
+  },
+  "localChecks": {
+    "tests": 655,
+    "files": 20,
+    "typecheck": true,
+    "build": true,
+    "catalogueUnchanged": true
+  },
+  "actualOwnerAdmin": {
+    "serverAccess": true,
+    "pending": 36,
+    "below50": 18,
+    "labelAndTypeControls": true,
+    "mobileWidth": 320,
+    "mobileScrollWidth": 320,
+    "pendingForms": 36,
+    "syntheticApprovalAndKindCorrection": true,
+    "syntheticRejection": true,
+    "resolvedRowsReadOnly": true,
+    "browserErrors": 0
+  },
+  "syntheticCleanup": {
+    "archiveRows": 278,
+    "fixtureArchiveRemoved": true,
+    "fixtureQueueRemoved": true,
+    "fixtureWorkspaceRemoved": true,
+    "pendingRealReviews": 36
+  },
+  "actualOwnerReader": {
+    "desktopWidth": 1496,
+    "desktopScrollWidth": 1496,
+    "mobileWidth": 320,
+    "mobileScrollWidth": 320,
+    "keywords": 26,
+    "hasNvidiaRtx5090GpuDlss5TapeToTape": true,
+    "tapeToTapeKeywordFilterShowsReference": true,
+    "matchingCards": 1,
+    "noInventedFactorio": true,
+    "removedSummaryKeyword": true,
+    "browserErrors": 0,
+    "integratedAsset": "index-DNnvd6DZ.js"
+  },
+  "httpAuthorization": {
+    "anonymousGet": 401,
+    "originlessBackendTokens": 401,
+    "ordinaryReader403": "covered by unit authorizer tests; this session did not obtain a fresh browser-origin ordinary-reader token",
+    "databaseAnonAndAuthenticatedQueuePrivileges": "denied in actual rollback checks"
+  },
+  "browserFallback": "T3 snapshot timed out twice; Chrome was used",
+  "recurringModelServiceImplemented": false,
+  "legacyBatchFullyReprocessed": false,
+  "newSupplierJobs": 0,
+  "newExternalModelApiCalls": 0,
+  "infrastructureCost": "unmeasured"
+}
