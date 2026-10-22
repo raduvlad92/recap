@@ -113,9 +113,99 @@
     ],
     "width": 320
   },
-  "review": "PASS \u2014 independent read-only source review",
+  "review": "PASS — independent read-only source review",
   "nativePreview": "Two snapshot attempts timed out after 15000ms; Chrome fallback used",
-  "release": "Pending",
+  "release": {
+    "functionalCommit": "a50027430e76c3b81b321143b7c35e0377f35f34",
+    "pushed": true,
+    "ci": {
+      "id": 39864176472,
+      "conclusion": "success",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/39864176472"
+    },
+    "deploy": {
+      "id": "6ada8c4b17026cf6df4b0b5d",
+      "state": "ready",
+      "commit_ref": "a50027430e76c3b81b321143b7c35e0377f35f34",
+      "published_at": "2026-10-22T22:21:25.386Z",
+      "error_message": null
+    },
+    "hosted": {
+      "asset": "/assets/index-DNnvd6DZ.js",
+      "clip": {
+        "height": 439,
+        "width": 578,
+        "x": 591,
+        "y": 224
+      },
+      "pageOverflow": false,
+      "points": [
+        {
+          "accessibleTextFirst": true,
+          "bodyFont": "13px",
+          "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=127s",
+          "time": "2:07",
+          "timeColor": "rgb(104, 123, 111)",
+          "timeFont": "10px",
+          "trailing": true
+        },
+        {
+          "accessibleTextFirst": true,
+          "bodyFont": "13px",
+          "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=184s",
+          "time": "3:04",
+          "timeColor": "rgb(104, 123, 111)",
+          "timeFont": "10px",
+          "trailing": true
+        },
+        {
+          "accessibleTextFirst": true,
+          "bodyFont": "13px",
+          "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=315s",
+          "time": "5:15",
+          "timeColor": "rgb(104, 123, 111)",
+          "timeFont": "10px",
+          "trailing": true
+        },
+        {
+          "accessibleTextFirst": true,
+          "bodyFont": "13px",
+          "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=506s",
+          "time": "8:26",
+          "timeColor": "rgb(104, 123, 111)",
+          "timeFont": "10px",
+          "trailing": true
+        },
+        {
+          "accessibleTextFirst": true,
+          "bodyFont": "13px",
+          "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=728s",
+          "time": "12:08",
+          "timeColor": "rgb(104, 123, 111)",
+          "timeFont": "10px",
+          "trailing": true
+        },
+        {
+          "accessibleTextFirst": true,
+          "bodyFont": "13px",
+          "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=834s",
+          "time": "13:54",
+          "timeColor": "rgb(104, 123, 111)",
+          "timeFont": "10px",
+          "trailing": true
+        }
+      ],
+      "title": "New Tech, New Software - Apple Watch Series 12",
+      "transcript": true,
+      "viewport": {
+        "height": 663,
+        "width": 1496
+      },
+      "browserErrors": 0,
+      "screenshot": "timestamp-live-card.png",
+      "scope": "Actual signed-in public reference card; screenshot excludes private follow list and account identity"
+    }
+  },
   "localReleaseCheck": {
     "command": "npm run check",
     "scope": "Isolated HEAD archive plus only the two timestamp source edits; concurrent keyword changes excluded",
@@ -124,5 +214,14 @@
     "catalogue": "pass",
     "typecheck": "pass",
     "productionBuild": "pass"
+  },
+  "integratedReleaseCheck": {
+    "command": "npm run check",
+    "tests": 655,
+    "testFiles": 20,
+    "catalogue": "pass",
+    "typecheck": "pass",
+    "productionBuild": "pass",
+    "commit": "a50027430e76c3b81b321143b7c35e0377f35f34"
   }
 }

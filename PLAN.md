@@ -10,7 +10,7 @@ The founder explicitly requested autonomous implementation on 21 October (D20). 
 
 ## Authorized trailing video timestamps — D29
 
-Put the recap first, followed by a smaller muted minute reference. Preserve wording, timestamp seek behavior and Full transcript. Implementation, independent review, 1496/320px synthetic checks and 602 isolated-release tests/typecheck/build/catalogue pass. [Scope and evidence](docs/design/TIMESTAMP-HIERARCHY.md). Next: push, CI, exact deployment and hosted verification; then founder review. No source/database/provider work is included.
+Put the recap first, followed by a smaller muted minute reference. Preserve wording, timestamp seek behavior and Full transcript. **Complete:** independent review, 1496/320px synthetic checks, 602 isolated-release tests and 655 integrated tests with typecheck/build/catalogue. Functional **`a500274`** is pushed, passed [CI 39864176472](https://github.com/raduvlad92/recap/actions/runs/39864176472), and exact Netlify deploy **`6ada8c4b17026cf6df4b0b5d`** published at **22 October, 22:21:25 UTC** (23 October local). Actual signed-in reference card checks pass: six trailing smaller timestamps, exact seek URLs, no overflow/errors. [Scope and evidence](docs/design/TIMESTAMP-HIERARCHY.md). Next: founder review. No source/database/provider work is included in D29.
 
 ## Authorized entity-keyword correction and private admin review — D28
 

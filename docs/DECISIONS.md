@@ -32,7 +32,7 @@ Original requested product behavior: topics rather than a simple post list; snip
 
 ## D29 — recap text before minute references, 23 October 2026
 
-Founder requested the minute reference at the end of each takeaway with a smaller font, prioritizing the update/recap. This authorizes the scoped presentation adjustment and review publication. Keep actual seek links and recap wording; no data reannotation or source collection is implied. [Implementation and evidence](design/TIMESTAMP-HIERARCHY.md).
+Founder requested the minute reference at the end of each takeaway with a smaller font, prioritizing the update/recap. This authorizes the scoped presentation adjustment and review publication. Keep actual seek links and recap wording; no data reannotation or source collection is implied. Implemented and verified locally and on the actual hosted reference card in functional `a500274`. [Implementation and evidence](design/TIMESTAMP-HIERARCHY.md).
 
 ## D28 — entity-first keywords and private review, 23 October 2026
 
