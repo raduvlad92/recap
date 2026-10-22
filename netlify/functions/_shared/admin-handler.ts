@@ -2,6 +2,7 @@ import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type
 import { clerkRequest, database, requireAdmin, userSummary, type ClerkUser, type WorkspaceRow } from './admin-data';
 import { collectionHealth } from './collect-handler';
 import type { AdminChannelIdentity, CollectionJobRecord } from '../../../src/lib/admin-types';
+import { listKeywordReviews, reviewKeyword } from './keyword-admin';
 interface Dependencies { env: Env; authorize: typeof requireAdmin; db: typeof database; clerk: typeof clerkRequest }
 const success = (value: unknown) => { const response=json(value);response.headers.set('x-robots-tag','noindex, nofollow');return response; };
 const unwrap = <T>(result: { data: T; error: {message: string; code?: string} | null }): T => {
@@ -27,6 +28,7 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
     if(!request.headers.get('content-type')?.includes('application/json')) throw new CollectionError(415,'json_required','Send JSON.');
     let body:Record<string,unknown>;try {body=JSON.parse(await readTextLimited(new Response(request.body),16000));}catch{throw new CollectionError(400,'invalid_input','The saved details could not be read.');}
     if(!body||Array.isArray(body)||typeof body!=='object') throw new CollectionError(400,'invalid_input','Send record details.');
+    if(body.action==='keyword') return success(await reviewKeyword(db,body,adminId));
     const id=exactText(body.id,160),expected=exactText(body.expectedUpdatedAt,60);
     if(!id||!expected||!Number.isFinite(Date.parse(expected))) throw new CollectionError(400,'invalid_input','Reload the record before editing.');
     if(body.action==='creator') {
@@ -41,6 +43,7 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
     }
     throw new CollectionError(400,'invalid_action','Choose an editable record.');
    }
+   if(section==='keywords') return success(await listKeywordReviews(db,url,page,adminId));
    if(section==='overview') {
     const [metrics,count] = await Promise.all([db.rpc('admin_operating_metrics'),deps.clerk('/users/count',deps.env)]);
     const health=collectionHealth(deps.env);

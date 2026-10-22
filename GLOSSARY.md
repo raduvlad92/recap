@@ -52,6 +52,10 @@ _Avoid_: Full newsletter, second recap
 **Topic**:
 A subject connecting one or more source updates in a recap.
 
+**Keyword**:
+A short name or category identifying something mentioned in a source update, including a brand, product, named game or technology. A brief or casual mention still counts.
+_Avoid_: A short summary of a claim
+
 **Citation**:
 A reference showing which original source update supports a statement in a recap.
 _Avoid_: Reference to a source's homepage alone
@@ -79,7 +83,7 @@ The language used for the reader's navigation, settings and product controls.
 The language in which a reader's daily recap is written, which can differ from the interface and original source languages.
 
 **Brand mention**:
-A source's reference to a named brand or product. A mention does not, by itself, establish sponsorship.
+A source's reference to a named brand or product, including a named video game. A mention does not, by itself, establish sponsorship.
 
 **Sponsor**:
 A party whose commercial support of a source update is explicitly disclosed in that material.

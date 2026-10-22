@@ -16,11 +16,19 @@ Read the complete available transcript before choosing points. Write the answer 
 
 For the reference video, the material comparison concerns **Apple Watch Series 12**, not iPhone 12. A useful first point states the Ceramic Shield 2 / zirconia change versus the earlier Ion-X / sapphire materials. A useful second point states that the redesigned Health app is easier to navigate. Neither should retain the speaker's spoken filler.
 
-## Keyword rule
+## Keyword rule — superseded by D28 entities-v2
 
-Choose specific products, software changes and substantial subjects actually covered by the transcript. Merge aliases into one readable label. Prefer “Apple Watch Series 12” or “watchOS update” over generic “technology.” Brief buying comparisons such as Apple Watch SE can qualify; a throwaway outro mention does not. Sponsor reads are not editorial topics.
+Keywords identify **what is mentioned**, rather than summarizing **what is said about it**. Use the [complete keyword rule](KEYWORD-EXTRACTION-RULE.md) for new work across videos, posts, articles and podcasts. Keep the concise takeaway rule above separate.
 
-For each keyword, mark the actual intervals during which it is discussed. Merge overlapping intervals for that keyword and sum their lengths; sort keywords by descending discussion time. Related parent/subtopics may overlap, so their minutes are not additive. Use caption cues when available, otherwise actual publisher chapters with explicit timing provenance. Duration labels are approximate section coverage, not a measurement of every spoken word. Leave unverified time unknown rather than inventing minutes.
+Include every explicitly mentioned brand, product, named game, software/service, technology and clear category across the complete usable content. Casual examples, comparisons, sponsor reads and the final seconds qualify. A named game is a brand/product mention. Duration and editorial importance affect order, never eligibility. Keep Nvidia, RTX 5090, GPU and DLSS 5 distinct; add Tape to Tape when mentioned. The hypothetical sentence “a game like Tape to Tape or Factorio” yields both games. Do not insert Factorio into a real item that does not mention it.
+
+Use short identity/category labels. “Console performance stagnation”, “RTX 5090 discontinuation rumor” and “Consumer GPU roadmap and DLSS 5” are summary phrases; use Consoles, RTX 5090, GPU and DLSS 5 as appropriate. Preserve punctuation-sensitive names such as C++ and C#. Merge genuine aliases, preserving separate parent brands and product/version identities. A brand mention still does not establish sponsorship.
+
+A separate second reader must inspect the whole original without seeing the first inventory. Reconcile the union of both inventories. Exact source hashes/mention offsets and full-content coverage are mandatory. Candidates below 50/100, unknown scores, unresolved aliases and disagreements go to the private admin review queue; invalid evidence blocks the batch. The initial score is uncalibrated review confidence, never a measured probability or a measure of importance. No top-ten cutoff; technical capacity errors stop processing explicitly.
+
+Retain real caption/chapter timing where supported, union overlapping ranges and order by descending approximate discussion time. Untimed mentions remain eligible with unknown time. Do not estimate time from character position or invent minutes for posts. The second pass checks the final chunk explicitly. Two passes reduce omissions; declared coverage is not proof that every possible entity was found.
+
+D25's exclusion of throwaway outro mentions and sponsor reads is withdrawn **for keywords**. Its historical annotations remain a legacy batch until individually reprocessed; changing these instructions does not regenerate every stored item.
 
 ## Review batch and interface
 

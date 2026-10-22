@@ -1,0 +1,22 @@
+{
+  "type": "actual_recap_database_rollback_checks",
+  "project": "zlfdqzabsfndifxiqguo",
+  "checks": {
+    "approve_reject": true,
+    "cas_stale_hash": true,
+    "fixtures_committed": false,
+    "post_keywords": true,
+    "rls_acl": true,
+    "source_workspace_preserved": true,
+    "unicode_identity": true,
+    "untimed": true
+  },
+  "fixturesCommitted": false,
+  "securityAdvisors": [],
+  "migrations": [
+    "20261022220119_admin_keyword_review",
+    "20261022221123_keyword_review_normalization",
+    "20261022221400_keyword_review_kind_correction"
+  ],
+  "kindCorrectionVerified": true
+}

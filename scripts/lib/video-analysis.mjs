@@ -19,7 +19,7 @@ export function mergeTopicRanges(ranges) {
 
 /** Evidence text stays private. Persist only the concise annotation and timing ranges. */
 export function validateVideoAnnotation(input,annotation) {
-  if(!object(annotation)||annotation.id!==input.id||annotation.captionHash!==input.captionHash||annotation.status!==input.status||!Array.isArray(annotation.highlights)||!Array.isArray(annotation.keywords)||annotation.highlights.length>6||annotation.keywords.length>10)throw fail('invalid_video_annotation_identity');
+  if(!object(annotation)||annotation.id!==input.id||annotation.captionHash!==input.captionHash||annotation.status!==input.status||!Array.isArray(annotation.highlights)||!Array.isArray(annotation.keywords)||annotation.highlights.length>6||annotation.keywords.length>500)throw fail('invalid_video_annotation_identity');
   const text=normalized(input.content||'');
   const starts=new Set([...(input.blocks||[]).map(x=>x.startSeconds),...(input.chapters||[]).map(x=>x.startSeconds)]);
   const boundaries=new Set([...starts,...(input.blocks||[]).map(x=>x.endSeconds),input.durationSeconds]);
@@ -47,13 +47,14 @@ export function validateVideoAnnotation(input,annotation) {
 export function validateStoredVideoAnalysis(update) {
   if(update.videoSummary===undefined&&update.videoKeywords===undefined)return;
   const s=update.videoSummary;
-  if(!object(s)||s.ruleVersion!==VIDEO_SUMMARY_RULE||!['ready','unavailable'].includes(s.status)||!['captions','publisher-chapters','none'].includes(s.timingBasis)||!/^[a-f0-9]{64}$/.test(s.captionHash)||Object.keys(s).some(k=>!['ruleVersion','status','timingBasis','captionHash'].includes(k)))throw fail('invalid_archive_video_summary');
-  if(!Array.isArray(update.videoKeywords)||update.videoKeywords.length>10)throw fail('invalid_archive_video_keywords');
+  if(s!==undefined&&(!object(s)||s.ruleVersion!==VIDEO_SUMMARY_RULE||!['ready','unavailable'].includes(s.status)||!['captions','publisher-chapters','none'].includes(s.timingBasis)||!/^[a-f0-9]{64}$/.test(s.captionHash)||Object.keys(s).some(k=>!['ruleVersion','status','timingBasis','captionHash'].includes(k))))throw fail('invalid_archive_video_summary');
+  if(s===undefined&&(!['transcript','feed_text'].includes(update.contentKind)||typeof update.content!=='string'||!update.content.trim()))throw fail('keyword_source_content_required');
+  if(!Array.isArray(update.videoKeywords)||update.videoKeywords.length>500)throw fail('invalid_archive_video_keywords');
   for(const keyword of update.videoKeywords) {
     if(!object(keyword)||typeof keyword.label!=='string'||!keyword.label.trim()||keyword.label.length>100||!Array.isArray(keyword.ranges)||keyword.ranges.length>200||Object.keys(keyword).some(k=>!['label','ranges','seconds'].includes(k)))throw fail('invalid_archive_video_keywords');
     for(const r of keyword.ranges)if(!object(r)||!seconds(r.startSeconds)||!seconds(r.endSeconds)||r.endSeconds<=r.startSeconds||Object.keys(r).some(k=>!['startSeconds','endSeconds'].includes(k)))throw fail('invalid_archive_video_keywords');
     const merged=mergeTopicRanges(keyword.ranges),sum=merged.reduce((n,r)=>n+r.endSeconds-r.startSeconds,0);
     if(keyword.ranges.length?(keyword.seconds!==sum):keyword.seconds!==undefined)throw fail('invalid_archive_topic_duration');
   }
-  if(s.status==='unavailable'&&((update.videoHighlights||[]).length||update.videoKeywords.length))throw fail('invalid_unavailable_video_analysis');
+  if(s?.status==='unavailable'&&((update.videoHighlights||[]).length||update.videoKeywords.length))throw fail('invalid_unavailable_video_analysis');
 }

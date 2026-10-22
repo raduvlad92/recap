@@ -23,7 +23,7 @@ export function buildVideoAnalysisPlan(snapshot,inputs,annotations) {
   const patches=[];
   for(const row of rows) {
     const input=byInput.get(row.id),annotation=byAnnotation.get(row.id);
-    if(!input||!annotation||input.captionHash!==captionHash(row.record.content||'')||input.status!==(row.record.contentKind==='transcript'?'ready':'unavailable'))throw fail('stale_caption_analysis');
+    if(!input||!annotation||input.captionHash!==captionHash(row.record.content||'')||input.captionHash!==captionHash(input.content||'')||input.status!==(row.record.contentKind==='transcript'?'ready':'unavailable'))throw fail('stale_caption_analysis');
     const record={...row.record,...validateVideoAnnotation(input,annotation)};
     validateStoredVideoAnalysis(record);
     if(!isDeepStrictEqual(withoutAnnotations(row.record),withoutAnnotations(record)))throw fail('source_data_change_forbidden');
@@ -65,7 +65,9 @@ export function buildVideoAnalysisBatches(plan,maxBytes=450*1024) {
 }
 
 export async function main(args=process.argv.slice(2)) {
-  const directory=resolve(args[0]||'.local/lmg-summaries');
+  // Historical summary replay only. New keyword work must pass the two inventories.
+  if(!args.includes('--legacy-replay'))throw fail('use_review_keywords_for_entities_v2_or_explicit_legacy_replay');
+  const directory=resolve(args.find(arg=>arg!=='--legacy-replay')||'.local/lmg-summaries');
   const manifest=JSON.parse(await readFile(resolve(directory,'manifest.json'),'utf8'));
   const inputs=[],annotations=[];
   for(const entry of manifest){inputs.push(JSON.parse(await readFile(resolve(directory,'input',entry.id+'.json'),'utf8')));annotations.push(JSON.parse(await readFile(resolve(directory,'output',entry.id+'.json'),'utf8')));}
