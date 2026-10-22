@@ -10,7 +10,7 @@ The founder explicitly requested autonomous implementation on 21 October (D20). 
 
 ## Authorized Compact/Regular card density — D30
 
-Reduce thumbnail height by at least half, narrow it, expand recap width, halve title-top/keyword-bottom padding and tighten lines. Add a saved browser-local Compact/Regular dropdown next to Filter; Compact is default. Preserve full text, source identity, all video links/transcript/keyword and library actions; Regular retains the prior layout. Implementation, both-mode reloads, responsive/edge checks and independent review pass; 655 tests/typecheck/build/catalogue pass. [Scope and evidence](docs/design/COMPACT-CARDS.md). Next: push, CI, exact deployment and hosted checks, then founder review. No data/schema/provider changes.
+Reduce thumbnail height by at least half, narrow it, expand recap width, halve title-top/keyword-bottom padding and tighten lines. Add a saved browser-local Compact/Regular dropdown next to Filter; Compact is default. Preserve full text, source identity, all video links/transcript/keyword and library actions; Regular retains the prior layout. Implementation, both-mode reloads, responsive/edge checks and independent review pass; 655 tests/typecheck/build/catalogue pass. [Scope and evidence](docs/design/COMPACT-CARDS.md). Complete: functional `33ae7d3`, passing CI `39866295572`, exact Netlify deploy `6ada905fbde976d8fbdfcf7a`, signed-in 1496/390px checks and live Regular reload persistence; Compact restored. Next: founder review. No data/schema/provider changes.
 
 ## Authorized trailing video timestamps — D29
 

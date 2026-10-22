@@ -32,7 +32,7 @@ Original requested product behavior: topics rather than a simple post list; snip
 
 ## D30 — optional compact cards, 23 October 2026
 
-Founder requested a smaller left image (at least half-height reduction), narrower image/more recap width, half padding above the title/below keywords, tighter line spacing and a Compact/Regular dropdown beside Filter. This authorizes the scoped density control/layout and review publication. Compact defaults on; the reader can select Regular, with the choice saved in the browser. Preserve full recap text and existing controls. [Implementation and evidence](design/COMPACT-CARDS.md). No database reannotation or collection is implied.
+Founder requested a smaller left image (at least half-height reduction), narrower image/more recap width, half padding above the title/below keywords, tighter line spacing and a Compact/Regular dropdown beside Filter. This authorizes the scoped density control/layout and review publication. Compact defaults on; the reader can select Regular, with the choice saved in the browser. Preserve full recap text and existing controls. Implemented and verified locally and in the hosted feed in functional `33ae7d3`. [Implementation and evidence](design/COMPACT-CARDS.md). No database reannotation or collection is implied.
 
 ## D29 — recap text before minute references, 23 October 2026
 

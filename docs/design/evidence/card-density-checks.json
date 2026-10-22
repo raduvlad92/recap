@@ -291,7 +291,7 @@
       "singleRow": true
     }
   },
-  "review": "PASS \u2014 initial P3 unnecessary mobile row fixed; fresh source review and320px runtime confirm",
+  "review": "PASS — initial P3 unnecessary mobile row fixed; fresh source review and320px runtime confirm",
   "localCheck": {
     "command": "npm run check",
     "tests": 655,
@@ -302,5 +302,172 @@
     "finalCssBuild": "pass"
   },
   "nativePreview": "Two snapshots timed out after15000ms; Chrome fallback",
-  "release": "Pending"
+  "release": {
+    "functionalCommit": "33ae7d3fa43fffc88a46b60a82f8afd85b0e8055",
+    "pushed": true,
+    "ci": {
+      "id": 39866295572,
+      "conclusion": "success",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/39866295572"
+    },
+    "deploy": {
+      "id": "6ada905fbde976d8fbdfcf7a",
+      "state": "ready",
+      "commit_ref": "33ae7d3fa43fffc88a46b60a82f8afd85b0e8055",
+      "published_at": "2026-10-22T22:38:47.123Z",
+      "error_message": null
+    },
+    "hosted": {
+      "compact": {
+        "asset": "/assets/index-B2lKemmM.js",
+        "bodyWidth": 706.3203125,
+        "card": {
+          "bottom": 602.71875,
+          "height": 379.71875,
+          "width": 874,
+          "x": 296,
+          "y": 223
+        },
+        "densityBesideFilter": true,
+        "image": {
+          "bottom": 317.1875,
+          "height": 93.1875,
+          "width": 165.6796875,
+          "x": 297,
+          "y": 224
+        },
+        "keywords": 9,
+        "lineHeight": "18.85px",
+        "links": [
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=127s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=184s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=315s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=506s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=728s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=834s"
+        ],
+        "mode": "compact",
+        "overflow": false,
+        "padding": {
+          "bottom": "10px",
+          "top": "10px"
+        },
+        "toolbar": {
+          "bottom": 165,
+          "height": 51,
+          "width": 874,
+          "x": 296,
+          "y": 114
+        },
+        "transcript": true,
+        "viewport": {
+          "height": 663,
+          "width": 1496
+        }
+      },
+      "regular": {
+        "asset": "/assets/index-B2lKemmM.js",
+        "bodyWidth": 577.265625,
+        "card": {
+          "bottom": 716.6875,
+          "height": 493.6875,
+          "width": 874,
+          "x": 296,
+          "y": 223
+        },
+        "densityBesideFilter": true,
+        "image": {
+          "bottom": 715.6875,
+          "height": 491.6875,
+          "width": 294.734375,
+          "x": 297,
+          "y": 224
+        },
+        "keywords": 9,
+        "lineHeight": "21.45px",
+        "links": [
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=127s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=184s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=315s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=506s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=728s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=834s"
+        ],
+        "mode": "regular",
+        "overflow": false,
+        "padding": {
+          "bottom": "20px",
+          "top": "20px"
+        },
+        "toolbar": {
+          "bottom": 165,
+          "height": 51,
+          "width": 874,
+          "x": 296,
+          "y": 114
+        },
+        "transcript": true,
+        "viewport": {
+          "height": 663,
+          "width": 1496
+        }
+      },
+      "phone": {
+        "asset": "/assets/index-B2lKemmM.js",
+        "bodyWidth": 354,
+        "card": {
+          "bottom": 978.40625,
+          "height": 684.90625,
+          "width": 356,
+          "x": 17,
+          "y": 293.5
+        },
+        "densityBesideFilter": true,
+        "image": {
+          "bottom": 394.5,
+          "height": 90,
+          "width": 88,
+          "x": 32,
+          "y": 304.5
+        },
+        "keywords": 9,
+        "lineHeight": "18.85px",
+        "links": [
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=127s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=184s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=315s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=506s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=728s",
+          "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=834s"
+        ],
+        "mode": "compact",
+        "overflow": false,
+        "padding": {
+          "bottom": "9px",
+          "top": "10px"
+        },
+        "toolbar": {
+          "bottom": 239,
+          "height": 99,
+          "width": 356,
+          "x": 17,
+          "y": 140
+        },
+        "transcript": true,
+        "viewport": {
+          "height": 844,
+          "width": 390
+        }
+      },
+      "regularAfterReload": "pass",
+      "finalMode": "compact",
+      "browserErrors": 0,
+      "viewportRestored": true,
+      "screenshots": [
+        "density-live-card.png",
+        "density-live-phone.png"
+      ],
+      "privacy": "Only public reference card and toolbar captured; private follow list and account identity excluded"
+    }
+  }
 }
