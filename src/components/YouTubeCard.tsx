@@ -44,7 +44,7 @@ export function YouTubeCard({ update, channelName, channelIcon, date, actions, t
       {transcript && <button className="transcript-button" onClick={onTranscript}><FileText size={15} aria-hidden="true" />Full transcript<ArrowUpRight size={14} aria-hidden="true" /></button>}
       <div className={`update-card-bottom ${keywords.length ? 'video-keyword-footer' : ''}`}>
         {!keywords.length && <div className="topic-pills">{topics}</div>}
-        <span title={update.videoSummary?.status === 'ready' ? 'Concise summaries based on the available captions' : undefined} className={`provenance ${update.isSample ? 'provenance-sample' : 'provenance-live'}`}>{provenance}</span>
+        {(update.isSample || update.contentKind !== 'transcript') && <span className={`provenance ${update.isSample ? 'provenance-sample' : 'provenance-live'}`}>{provenance}</span>}
         {keywords.length > 0 && <VideoKeywordStrip keywords={keywords} timingBasis={update.videoSummary?.timingBasis} onKeyword={onKeyword} />}
       </div>
     </div>

@@ -30,6 +30,10 @@ Updated: 22 October 2026. Individual answers below are accepted directions. They
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
+## D26 — simpler keyword footer, 22 October 2026
+
+Founder: remove “Caption excerpts”, remove the “~17 min” keyword estimates, show no horizontal scrollbar, and animate infinite scrolling automatically. This supersedes D25's fixed-label and visible-duration interface. Preserve duration ranking and existing topic-filter behavior; only overflowing lists animate, with hover/focus and an explicit pause control. Respect reduced motion with an entirely visible wrapping list. Sample/metadata-only notices and transcript access remain. This authorizes the scoped UI revision and review deployment, without new source collection or data rewrites. [Current rule](design/VIDEO-SUMMARY-RULE.md). Local code/browser evidence, push/CI, exact deployment and hosted checks are recorded separately.
+
 ## D25 — concise takeaways and duration-ranked keywords, 22 October 2026
 
 Founder rejected literal/verbose bullet excerpts and asked to read the full Apple Watch Series 12 reference, derive a reusable concise finding/comparison rule, apply it to every existing LMG video, and generate keywords weighted by discussion minutes. Keep “Caption excerpts” fixed while overflowing keywords animate in one infinite line beneath it. This explicitly authorizes the scoped model-authored review batch using existing captions, private annotation persistence and UI publication. It does not authorize new source collection, supplier subscriptions, external model API spending, recurring generation or the full SPEC/PLAN candidate. [Rule](design/VIDEO-SUMMARY-RULE.md), [delivery](design/LMG-TAKEAWAYS.md).

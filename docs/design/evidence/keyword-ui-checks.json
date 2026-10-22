@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-22T21:45:52.685Z",
+  "kind": "local synthetic component fixtures; no private reader data",
+  "testsPassed": 477,
+  "typecheckPassed": true,
+  "buildPassed": true,
+  "catalogueUnchanged": true,
+  "viewports": [
+    1496,
+    390,
+    320
+  ],
+  "captionLabelRemoved": true,
+  "inlineMinutesRemoved": true,
+  "keywordOverflowX": "hidden",
+  "horizontalPageOverflow": false,
+  "automaticMovement": true,
+  "infiniteAnimation": true,
+  "equalWidthCopies": true,
+  "fittingListStatic": true,
+  "pauseResumePassed": true,
+  "duplicatePointerFilterPassed": true,
+  "keyboardFocusedLastKeywordVisible": true,
+  "keyboardFooterHeight": 25,
+  "keyboardExitRestartsLoop": true,
+  "reducedMotion": {
+    "method": "forced CSS media rule in isolated local fixture",
+    "allKeywordsWrapped": true,
+    "animation": "none",
+    "horizontalScrollbar": false
+  },
+  "sourceCollectionStarted": false,
+  "databaseWritten": false,
+  "privateReaderDataIncluded": false,
+  "release": null
+}

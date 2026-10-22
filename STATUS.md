@@ -2,7 +2,11 @@
 
 Updated: **22 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
-## Current increment: concise LMG takeaways and timed keywords (D25)
+## Current increment: simpler video keyword footer (D26)
+
+The founder requested removal of “Caption excerpts”, inline minute estimates and the keyword scrollbar, with automatic infinite scrolling. Implemented on the existing video cards: overflowing keywords loop seamlessly; fitting lists stay still, hover/focus and pause/resume work, and focused keywords are revealed without changing the footer height. Reduced-motion preferences use a static wrapping list with all keywords visible. Topic filtering, sample/metadata notices and transcript access are preserved. **477 tests**, typecheck/build/catalogue and synthetic Chrome **1496/390/320px** checks pass. No data or collection changes. Local checks and release evidence are tracked in [the keyword UI evidence](docs/design/evidence/keyword-ui-checks.json). Publication and hosted verification are pending at this checkpoint. Hosting/build totals are unmeasured; no supplier jobs or supplier spend.
+
+## Historical D25 checkpoint: concise LMG takeaways and timed keywords
 
 The founder rejected literal caption snippets and requested concise, synthesized findings based on the full Apple Watch reference, applied across existing LMG videos, with duration-ranked keywords scrolling behind a fixed “Caption excerpts” label. The [writing rule](docs/design/VIDEO-SUMMARY-RULE.md) replaces literal selection for this review batch. All **144 LMG video records** were reviewed: **132 editorial summaries**, three promotional-only clips intentionally empty, nine without captions. The full captions of all 135 captioned records were read, with claim review; 132 use caption timing and three use actual publisher chapters. This is actual one-off model-authored caption analysis, not a daily cross-source recap or automatic future generation. Other creators remain unchanged. [Scope and evidence](docs/design/LMG-TAKEAWAYS.md).
 
