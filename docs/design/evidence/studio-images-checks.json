@@ -27,17 +27,59 @@
     "reviewFindingsFixed": [
       "fixed standalone avatar flex sizing",
       "cleared completed attempts on same-account reload"
-    ]
+    ],
+    "disposableFixtureRemoved": true
   },
   "tests": {
     "sourceImageTests": 13,
     "metadataTests": 112,
-    "cleanReleaseSuite": null,
+    "cleanReleaseSuite": 602,
     "typecheck": true,
     "build": true,
-    "catalogueUnchanged": true
+    "catalogueUnchanged": true,
+    "cleanReleaseFiles": 18
   },
-  "release": null,
+  "release": {
+    "functionalCommit": "85b432ce282296c511cce8880318f74e30123ca6",
+    "githubCi": {
+      "runId": 39862839185,
+      "conclusion": "success",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/39862839185"
+    },
+    "netlify": {
+      "deployId": "6ada89d288a3a89ec1c637ff",
+      "state": "ready",
+      "publishedAt": "2026-10-22T22:10:52.551Z",
+      "url": "https://recap-v0-radu.netlify.app/"
+    },
+    "hostedChecks": {
+      "verifiedAt": "2026-10-22T22:13:19.777582+00:00",
+      "signedInNavigation": true,
+      "asset": "index-COL_3z57.js",
+      "viewportWidth": 1496,
+      "studioImagesLoaded": 4,
+      "studioImageSize": [
+        40,
+        40
+      ],
+      "expandedChannelImagesRendered": 11,
+      "expandedChannelImageSize": [
+        24,
+        24
+      ],
+      "offscreenImagesLazyLoaded": true,
+      "workspaceSynced": true,
+      "pageOverflow": false,
+      "browserErrors": 0,
+      "navigationRestored": true,
+      "publicMetadataEndpoint": {
+        "channel": "Fireship",
+        "httpStatus": 200,
+        "realProfileImageReturned": true,
+        "profileImageHost": "yt3.googleusercontent.com"
+      }
+    }
+  },
   "supplierJobsStarted": false,
   "privateReaderDataIncluded": false
 }
