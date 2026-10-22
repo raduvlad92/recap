@@ -24,7 +24,7 @@
 .reference-list,.insight-list{color:#77866b}
 .source-text-extract{white-space:pre-line;font-size:13px;line-height:1.9;color:#747e6c;overflow-wrap:anywhere}
 .modal-heading h2:focus{outline:none}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}*:not(.video-keyword-track){animation:none!important}}
 
 /* Collections share the reference's understated source rail instead of adding a dashboard. */
 .source-collections{padding-bottom:23px;margin-bottom:22px;border-bottom:1px solid var(--line)}
@@ -137,7 +137,7 @@
 .video-keyword-viewport{flex:1;min-width:0;overflow:hidden}
 .is-overflowing .video-keyword-viewport{mask-image:linear-gradient(to right,transparent,#000 10px,#000 calc(100% - 8px),transparent)}
 .video-keyword-track{display:flex;width:max-content;transform:translateX(0)}
-.video-keyword-group{display:flex;align-items:center;gap:13px;padding-right:13px;flex:none;width:max-content}
+.video-keyword-group{display:flex;flex-wrap:nowrap;align-items:center;gap:13px;padding-right:13px;flex:none;width:max-content}
 .video-keyword{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;padding:5px 0;color:#536c62;font-size:10px;line-height:1.5}
 button.video-keyword:hover{text-decoration:underline;text-underline-offset:3px}
 .video-keyword:focus-visible{outline-offset:-3px;border-radius:3px}
@@ -146,7 +146,6 @@ button.video-keyword:hover{text-decoration:underline;text-underline-offset:3px}
 .keyword-motion-control{display:grid;place-items:center;flex:none;width:24px;height:26px;color:#687163;border-radius:6px}
 .keyword-motion-control:hover{background:#edf1ea}
 @keyframes video-keyword-loop{to{transform:translateX(calc(-1 * var(--keyword-loop-width)))}}
-@media(prefers-reduced-motion:reduce){.is-overflowing .video-keyword-track{animation:none;will-change:auto}.video-keyword-viewport{mask-image:none}.video-keyword-track{width:100%}.video-keyword-group{flex-wrap:wrap;width:100%;padding-right:0;gap:0 13px}.video-keyword{white-space:normal;overflow-wrap:anywhere;max-width:100%;text-align:left}.video-keyword-copy,.keyword-motion-control{display:none}}
 .video-keyword-copy .video-keyword{cursor:pointer}
 .video-keyword-copy .video-keyword:hover{text-decoration:underline;text-underline-offset:3px}
 .video-keyword-viewport:focus-within{mask-image:none}

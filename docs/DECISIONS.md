@@ -30,6 +30,10 @@ Updated: 23 October 2026. Individual answers below are accepted directions. They
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
+## D31 — keywords always on one row, 23 October 2026
+
+Founder rejected a two-row keyword screenshot and explicitly repeated one row with infinite scrolling when there are too many keywords. This supersedes the earlier reduced-motion wrapping fallback: keep one row, automatic infinite overflow motion and the pause/resume control, plus hover/focus pause and keyboard reveal. Exempt only the keyword track from the global animation reset. No content annotations, collection or broader scope changes follow. [Current rule/evidence](design/VIDEO-SUMMARY-RULE.md#d31--one-row-correction-23-october-2026).
+
 ## D30 — optional compact cards, 23 October 2026
 
 Founder requested a smaller left image (at least half-height reduction), narrower image/more recap width, half padding above the title/below keywords, tighter line spacing and a Compact/Regular dropdown beside Filter. This authorizes the scoped density control/layout and review publication. Compact defaults on; the reader can select Regular, with the choice saved in the browser. Preserve full recap text and existing controls. Implemented and verified locally and in the hosted feed in functional `33ae7d3`. [Implementation and evidence](design/COMPACT-CARDS.md). No database reannotation or collection is implied.

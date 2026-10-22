@@ -1,0 +1,109 @@
+{
+  "checkedOn": "2026-10-23",
+  "cause": "Reduced-motion keyword wrapping fallback plus universal animation reset",
+  "scope": "Isolated component fixture using the26public labels from the supplied screenshot; no reader data or source collection",
+  "reducedMotionSimulation": "All actual source prefers-reduced-motion:reduce CSS queries forced to @media all in fixture; unrelated animation probe computed none. System preference unchanged.",
+  "reducedDesktop": {
+    "animation": "video-keyword-loop",
+    "copyCount": 1,
+    "fitting": {
+      "animation": "none",
+      "overflowing": false,
+      "rows": 1
+    },
+    "groupWidth": 1444.625,
+    "height": 26,
+    "iterations": "infinite",
+    "labels": 26,
+    "loopDistance": "1444.625px",
+    "motionProbe": "none",
+    "overflowing": true,
+    "pageOverflow": false,
+    "pauseVisible": true,
+    "playState": "running",
+    "rows": 1,
+    "transform": "matrix(1, 0, 0, 1, -8.60219, 0)",
+    "viewport": {
+      "height": 719,
+      "width": 1496
+    },
+    "whiteSpace": "nowrap",
+    "wrap": "nowrap"
+  },
+  "reducedPhone": {
+    "animation": "video-keyword-loop",
+    "copyCount": 1,
+    "fitting": {
+      "animation": "none",
+      "overflowing": false,
+      "rows": 1
+    },
+    "groupWidth": 1444.625,
+    "height": 26,
+    "iterations": "infinite",
+    "labels": 26,
+    "loopDistance": "1444.625px",
+    "motionProbe": "none",
+    "overflowing": true,
+    "pageOverflow": false,
+    "pauseVisible": true,
+    "playState": "running",
+    "rows": 1,
+    "transform": "matrix(1, 0, 0, 1, -7.70098, 0)",
+    "viewport": {
+      "height": 844,
+      "width": 320
+    },
+    "whiteSpace": "nowrap",
+    "wrap": "nowrap"
+  },
+  "normalDesktop": {
+    "animation": "video-keyword-loop",
+    "copyCount": 1,
+    "fitting": {
+      "animation": "none",
+      "overflowing": false,
+      "rows": 1
+    },
+    "groupWidth": 1444.625,
+    "height": 26,
+    "iterations": "infinite",
+    "labels": 26,
+    "loopDistance": "1444.625px",
+    "motionProbe": "video-keyword-loop",
+    "overflowing": true,
+    "pageOverflow": false,
+    "pauseVisible": true,
+    "playState": "running",
+    "rows": 1,
+    "transform": "matrix(1, 0, 0, 1, -0.465024, 0)",
+    "viewport": {
+      "height": 719,
+      "width": 1496
+    },
+    "whiteSpace": "nowrap",
+    "wrap": "nowrap"
+  },
+  "pauseResume": {
+    "paused": "paused",
+    "resumed": "running",
+    "transformChanged": true
+  },
+  "keyboard": {
+    "animation": "none",
+    "focused": "Beetle",
+    "height": 26,
+    "visible": true,
+    "selectedKeyword": "Beetle"
+  },
+  "review": "PASS after universal animation-reset exemption; initial P2 fixed",
+  "localCheck": {
+    "command": "npm run check",
+    "tests": 655,
+    "testFiles": 20,
+    "catalogue": "pass",
+    "typecheck": "pass",
+    "productionBuild": "pass"
+  },
+  "release": "Pending"
+}
