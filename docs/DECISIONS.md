@@ -30,6 +30,10 @@ Updated: 23 October 2026. Individual answers below are accepted directions. They
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
+## 23 October 2026 — X GIF Actor investigation
+
+Founder supplied a URL-only app card and the original Fry GIF, asking whether any Apify Actor could pull the correct content. This authorizes investigation of that exact example. Existing Xquik actual-run readback confirms structured GIF media; direct thumbnail/MP4 reads and decoded-frame inspection match the screenshot. The loss occurs in app normalization. Recommendation: retain Xquik and correct media preservation/rendering; no new product or supplier selection decision was requested or inferred. [Exact evidence](tech/X-MEDIA-PROOF.md). No new runs/builds, spending authorization, app/archive change or automatic schedule follows from the investigation.
+
 ## D31 — keywords always on one row, 23 October 2026
 
 Founder rejected a two-row keyword screenshot and explicitly repeated one row with infinite scrolling when there are too many keywords. This supersedes the earlier reduced-motion wrapping fallback: keep one row, automatic infinite overflow motion and the pause/resume control, plus hover/focus pause and keyboard reveal. Exempt only the keyword track from the global animation reset. No content annotations, collection or broader scope changes follow. Delivered and verified as `e851b53`. [Current rule/evidence](design/VIDEO-SUMMARY-RULE.md#d31--one-row-correction-23-october-2026).

@@ -1,0 +1,56 @@
+{
+  "checkedAt": "2026-10-22T23:30:01.384Z",
+  "kind": "readback_of_existing_provider_run_and_direct_asset_validation",
+  "actor": "xquik/x-tweet-scraper",
+  "actorId": "wAusCMrm284Voaw86",
+  "buildNumber": "1.12.394",
+  "buildId": "0zYfRnonkqidzEkEF",
+  "providerRunId": "8Jz51XGuPOxvJCGC0",
+  "datasetId": "naY9gqQeVa5EvSwi7",
+  "originalUrl": "https://x.com/MKBHD/status/2110901083585269926",
+  "matchedOriginalId": true,
+  "matchedOriginalAuthor": true,
+  "demoRow": false,
+  "displayTextRange": [
+    0,
+    0
+  ],
+  "media": [
+    {
+      "type": "animated_gif",
+      "thumbnailField": "media[0].mediaUrl",
+      "playableField": "media[0].videoVariants[0].url",
+      "contentType": "video/mp4",
+      "width": 332,
+      "height": 250,
+      "durationSeconds": 1.84,
+      "frames": 46,
+      "videoBytes": 20811,
+      "thumbnailBytes": 11108,
+      "videoSha256": "c48d54f3032a8ccf67a55459f7adcfba89689b0e08b8b384b7e5040b905c5e57",
+      "thumbnailSha256": "a635ef04eaa269f1c905a6fe35b7654bb64f209fa2f2e11cd0fc67de776474d2",
+      "thumbnailHttpStatus": 200,
+      "videoHttpStatus": 200,
+      "thumbnailVisuallyMatchesFounderScreenshot": true,
+      "decodedVideoFrameVisuallyMatchesFounderScreenshot": true
+    }
+  ],
+  "applicationFinding": {
+    "mediaFieldNotReadByNormalizer": true,
+    "videoVariantsNotPersisted": true,
+    "mediaOnlyPostTreatedAsFeedText": true,
+    "normalizedArchiveHasImage": false
+  },
+  "newProviderRuns": 0,
+  "newProviderBuilds": 0,
+  "newSupplierRunSpendUsd": 0,
+  "infrastructureCostUsd": null,
+  "applicationChanged": false,
+  "archiveChanged": false,
+  "limitations": [
+    "Existing 21 October run read back on 23 October local time; no fresh scraper execution.",
+    "One exact GIF post is verified; this does not establish every X format or complete history.",
+    "Media bytes, raw response and private account context remain ignored under .local.",
+    "No automatic visual interpretation or textual GIF description was generated."
+  ]
+}

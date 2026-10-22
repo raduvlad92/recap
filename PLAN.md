@@ -8,6 +8,10 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 The founder explicitly requested autonomous implementation on 21 October (D20). [docs/v0/PLAN.md](docs/v0/PLAN.md) tracks that first increment, selected Supabase/Clerk targets, screenshot-based UI and GitHub/Netlify deployment. V0-01–V0-07 are complete for the first increment: [live app](https://recap-v0-radu.netlify.app), [verification](docs/v0/VERIFICATION.md), [morning checklist](docs/v0/MORNING.md). V0-N01–V0-N06 track the continuation. V0 work is authorized now; the full M0–M5 table below is not a claim of completed production behavior. Its remaining goals, including real AI generation, multilingual quality, scheduling, retention and delivery, still require evidence.
 
+## X GIF retrieval investigation — 23 October 2026
+
+Complete: exact existing Xquik output, playable MP4/thumbnail HTTP reads and visual match prove the supplier already retrieved the reported GIF. Importer media-field mismatch and URL-only text classification identified. [Evidence and implementation recommendation](docs/tech/X-MEDIA-PROOF.md). No new provider execution, app/archive mutation or deployment. Next recommended engineering increment: preserve/render X media and safely enrich already-collected rows; no supplier switch is needed for this case. This investigation does not mark that correction implemented.
+
 ## Authorized always-single-row keywords — D31
 
 Honor one keyword row in all motion preferences and both card densities. Overflow loops infinitely; fitting lists remain still. Preserve pause/resume, hover/focus stop, keyboard reveal and filtering. Wrapping fallback/global motion-reset conflict are fixed; independent review, 1496/320px normal/forced-reduced-motion fixture checks and 655-test/build/catalogue gate pass. [Current rule/evidence](docs/design/VIDEO-SUMMARY-RULE.md#d31--one-row-correction-23-october-2026). Complete: functional `e851b53`, passing CI `39870140358`, exact Netlify deploy `6ada985ae7535ae2938c66bc`, actual signed-in 1496/320px reference with 26 labels on one moving row and no overflow/errors. Next: founder review. No data/source/provider changes.
