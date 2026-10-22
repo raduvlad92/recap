@@ -1,5 +1,6 @@
 export type Platform = 'YouTube' | 'X' | 'Instagram' | 'LinkedIn' | 'Podcast' | 'Substack' | 'Blog';
 export interface Creator { id: string; name: string; kind: 'person' | 'studio'; handle: string; bio: string; color: string; initials: string; sourceIds: string[]; presenterIds?: string[]; avatarUrl?: string }
+/** `sample` is a legacy storage marker; fictional sources are removed before entering the reader. */
 export interface Source { id: string; name: string; url: string; platform: Platform; creatorIds: string[]; status: 'sample' | 'pending' | 'ready' | 'failed'; feedUrl?: string; description?: string; avatarUrl?: string }
 export interface Reference { title: string; url: string }
 export interface VideoKeyword { label: string; seconds?: number; ranges: Array<{ startSeconds: number; endSeconds: number }> }

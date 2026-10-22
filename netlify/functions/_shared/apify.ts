@@ -1,10 +1,12 @@
 import { createHash } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
 import type { CollectionResult, Source, SourceUpdate } from '../../../src/lib/types';
+import { parseTimedTranscript } from '../../../src/lib/video';
 import { plainText, safeLink } from './feed';
 import { CollectionError, type Env, publicHttpsUrl, readTextLimited } from './security';
 
 export const YOUTUBE_ACTOR = 'streamers~youtube-scraper';
+export const YOUTUBE_ACTOR_ID = 'h7sDV53CddomktSi5';
 export interface ApifyConfig { token: string; secret: string; build: string; maxItems: number; maxCharge: number; allowedUsers: string[] }
 export function apifyConfig(env: Env): ApifyConfig | null {
   const token = env('APIFY_API_TOKEN'), secret = env('COLLECTION_JOB_SECRET'), build = env('APIFY_YOUTUBE_BUILD');
@@ -55,6 +57,30 @@ async function apifyRequest(path: string, config: ApifyConfig, fetcher: Fetcher,
   try { return JSON.parse(text); } catch { throw new CollectionError(502, 'provider_response_invalid', 'The collection provider returned an unreadable response.'); }
 }
 
+const stableJson = (value: unknown): string => Array.isArray(value) ? '[' + value.map(stableJson).join(',') + ']'
+  : value && typeof value === 'object' ? '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + stableJson((value as Record<string, unknown>)[key])).join(',') + '}' : JSON.stringify(value) ?? 'null';
+
+/** Free provider metadata only; call BEFORE claiming a paid launch reservation. */
+export async function verifyHourlyApifyConfiguration(userId: string, env: Env, fetcher: Fetcher = fetch): Promise<void> {
+  const config = requireConfig(env, userId), buildId = env('APIFY_YOUTUBE_BUILD_ID'), pricingHash = env('APIFY_YOUTUBE_PRICING_SHA256');
+  if (env('HOURLY_COLLECTION_PROVIDER_VERIFIED') !== 'true' || config.maxItems !== 1 || config.maxCharge > 0.005 || !buildId || !/^[a-f0-9]{64}$/.test(pricingHash || '')) {
+    throw new CollectionError(503, 'provider_review_required', 'The bounded collector needs a reviewed build and price before it can run.');
+  }
+  const [actorResponse, buildResponse] = await Promise.all([
+    apifyRequest('acts/' + YOUTUBE_ACTOR, config, fetcher), apifyRequest('actor-builds/' + providerId(buildId), config, fetcher),
+  ]);
+  const actor = object(object(actorResponse).data), build = object(object(buildResponse).data);
+  const prices = Array.isArray(actor.pricingInfos) ? actor.pricingInfos : [];
+  const currentPricing = prices.filter(value => {
+    const started = object(value).startedAt;
+    return typeof started === 'string' && Date.parse(started) <= Date.now();
+  }).sort((a, b) => String(object(a).startedAt).localeCompare(String(object(b).startedAt))).at(-1);
+  if (actor.id !== YOUTUBE_ACTOR_ID || build.id !== buildId || build.actId !== YOUTUBE_ACTOR_ID || build.status !== 'SUCCEEDED' || build.buildNumber !== config.build ||
+    !currentPricing || createHash('sha256').update(stableJson(currentPricing)).digest('hex') !== pricingHash) {
+    throw new CollectionError(503, 'provider_review_changed', 'The collector build or price changed. Paid pulls are paused for review.');
+  }
+}
+
 function object(value: unknown): Record<string, unknown> {
   return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
@@ -83,7 +109,7 @@ export function captionsText(value: unknown): string {
     // Only inline subtitle text is consumed. No provider-supplied URL is fetched.
     if (typeof subtitle.srt !== 'string') continue;
     const text = subtitle.srt.replace(/^\s*\d+\s*$/gm, '').replace(/^.*-->.*$/gm, '').replace(/^WEBVTT.*$/gm, '');
-    const result = plainText(text);
+    const result = plainText(text, 200_000);
     if (result) return result;
   }
   return '';
@@ -98,27 +124,47 @@ export function normalizeYouTubeItems(items: unknown, source: Source, maxItems =
     const url = safeLink(row.url, 'https://www.youtube.com');
     if (!url || !['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be'].includes(new URL(url).hostname) || updates.has(url)) continue;
     const transcript = captionsText(row.subtitles), description = plainText(row.text, 700);
+    const rawCaption = Array.isArray(row.subtitles) ? row.subtitles.map(object).find(entry => typeof entry.srt === 'string' && plainText(entry.srt))?.srt : undefined;
+    const transcriptSegments = typeof rawCaption === 'string' ? parseTimedTranscript(rawCaption).slice(0, 10_000) : [];
     const date = typeof row.date === 'string' ? Date.parse(row.date) : NaN;
     const refs = Array.isArray(row.descriptionLinks) ? row.descriptionLinks : [];
     updates.set(url, {
       id: 'live-' + createHash('sha256').update(source.id + '\n' + url).digest('hex').slice(0, 24), sourceId: source.id, contributorIds: [],
       title: plainText(row.title, 240) || 'Untitled video', summary: transcript ? transcript.slice(0, 700) : description,
-      ...(transcript ? { content: transcript, contentKind: 'transcript' as const } : { contentKind: 'metadata_only' as const }),
+      ...(transcript ? { content: transcript, contentKind: 'transcript' as const, ...(transcriptSegments.length ? { transcriptSegments } : {}) } : { contentKind: 'metadata_only' as const }),
       url, publishedAt: Number.isFinite(date) ? new Date(date).toISOString() : '', format: 'video', topics: [], brands: [], sponsors: [],
       references: refs.slice(0, 10).flatMap((value) => {
         const ref = object(value), link = safeLink(ref.url, url);
         return link ? [{ title: plainText(ref.text, 160) || new URL(link).hostname, url: link }] : [];
       }),
       insights: [], ...(typeof row.duration === 'string' ? { duration: plainText(row.duration, 30) } : {}),
+      ...(typeof row.isShort === 'boolean' ? { isShort: row.isShort } : new URL(url).pathname.startsWith('/shorts/') ? { isShort: true } : {}),
       ...(safeLink(row.thumbnailUrl, url) ? { image: safeLink(row.thumbnailUrl, url) } : {}), isSample: false,
-      coverage: transcript ? 'Caption transcript collected; visual content and transcript completeness not verified; text capped at 24,000 characters' : 'Metadata only: video description; captions unavailable; video content not analyzed',
+      coverage: transcript ? 'Existing captions collected; visual content and transcript completeness not verified' + (transcript.length >= 200_000 ? '; source text clipped at 200,000 characters' : '') : 'Metadata only: video description; captions unavailable; video content not analyzed',
     });
     if (updates.size >= Math.min(maxItems, 5)) break;
   }
   return [...updates.values()];
 }
 
-export async function pollApify(jobToken: string, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<{ status: string; message?: string; result?: CollectionResult; telemetry?: {ledgerId: string; providerRunId: string; cost: number | null} }> {
+export interface ApifyPollResult { status: string; message?: string; result?: CollectionResult; telemetry?: {ledgerId: string; providerRunId: string; cost: number | null} }
+export interface StoredApifyJob { providerRunId: string; actorId: string; source: Source; maxItems: number; ledgerId: string }
+
+/** Server-only recovery: input must come from the private provider-job table, never a browser body. */
+export async function pollStoredApify(job: StoredApifyJob, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<ApifyPollResult> {
+  const config = requireConfig(env, userId);
+  if (!job || job.actorId !== YOUTUBE_ACTOR_ID || !/^[0-9a-f-]{36}$/i.test(job.ledgerId) || job.maxItems !== 1 || job.source?.platform !== 'YouTube') {
+    throw new CollectionError(403, 'invalid_job', 'The stored collection job could not be verified.');
+  }
+  const input = youtubeInput(job.source, 1);
+  const target = new URL((input.startUrls as Array<{url: string}>)[0].url);
+  if (!(target.pathname === '/watch' || target.hostname === 'youtu.be' || target.pathname.startsWith('/shorts/'))) {
+    throw new CollectionError(403, 'invalid_job', 'Stored jobs must identify one video.');
+  }
+  return readApifyRun(providerId(job.providerRunId), providerId(job.actorId), job.source, 1, job.ledgerId, config, fetcher, env('APIFY_YOUTUBE_BUILD_ID'));
+}
+
+export async function pollApify(jobToken: string, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<ApifyPollResult> {
   const config = requireConfig(env, userId);
   if (!jobToken || jobToken.length > 8000) throw new CollectionError(400, 'invalid_job', 'This collection job is missing or invalid.');
   let claims;
@@ -129,14 +175,20 @@ export async function pollApify(jobToken: string, userId: string, env: Env, fetc
   const runId = providerId(claims.runId), actorId = providerId(claims.actorId);
   const source = object(claims.source) as unknown as Source;
   if (source.platform !== 'YouTube' || typeof source.id !== 'string' || !source.url) throw new CollectionError(403, 'invalid_job', 'This job has invalid source details.');
+  const maxItems = Math.min(config.maxItems, Number(claims.maxItems) || 1, 5);
+  const ledgerId = typeof claims.ledgerId === 'string' && /^[0-9a-f-]{36}$/i.test(claims.ledgerId) ? claims.ledgerId : undefined;
+  return readApifyRun(runId, actorId, source, maxItems, ledgerId, config, fetcher);
+}
+
+async function readApifyRun(runId: string, actorId: string, source: Source, maxItems: number, ledgerId: string | undefined, config: ApifyConfig, fetcher: Fetcher, expectedBuildId?: string): Promise<ApifyPollResult> {
   const response = object(await apifyRequest('actor-runs/' + runId, config, fetcher));
   const run = object(response.data);
   if (run.id !== runId || run.actId !== actorId) throw new CollectionError(403, 'invalid_job', 'The provider job does not match this request.');
-  const telemetry = typeof claims.ledgerId === 'string' && /^[0-9a-f-]{36}$/i.test(claims.ledgerId) ? { ledgerId: claims.ledgerId, providerRunId: runId, cost: typeof run.usageTotalUsd === 'number' && Number.isFinite(run.usageTotalUsd) && run.usageTotalUsd >= 0 ? run.usageTotalUsd : null } : undefined;
+  if (expectedBuildId && run.buildId !== expectedBuildId) throw new CollectionError(403, 'provider_build_mismatch', 'The provider returned an unreviewed build.');
+  const telemetry = ledgerId ? { ledgerId, providerRunId: runId, cost: typeof run.usageTotalUsd === 'number' && Number.isFinite(run.usageTotalUsd) && run.usageTotalUsd >= 0 ? run.usageTotalUsd : null } : undefined;
   if (['READY', 'RUNNING', 'TIMING-OUT', 'ABORTING'].includes(String(run.status))) return { status: 'running', message: 'Collection is still running.',telemetry };
   if (run.status !== 'SUCCEEDED') return { status: 'failed', message: 'The provider job stopped without a complete result. No automatic retry was started.',telemetry };
   const datasetId = providerId(run.defaultDatasetId);
-  const maxItems = Math.min(config.maxItems, Number(claims.maxItems) || 1, 5);
   const items = await apifyRequest('datasets/' + datasetId + '/items?clean=true&format=json&limit=' + maxItems, config, fetcher);
   const updates = normalizeYouTubeItems(items, source, maxItems);
   return { status: 'completed', telemetry, result: { source: { ...source, status: 'ready' }, updates, notice: 'Collected a bounded recent sample, not a complete channel history. Text is extracted source material, not an AI recap. Descriptions are not video-content coverage.' } };

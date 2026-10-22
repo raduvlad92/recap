@@ -1,10 +1,10 @@
 # Your morning checklist
 
-Updated: 21 October 2026, D22. **[Open recap](https://recap-v0-radu.netlify.app).** Your Recap account and access to the selected DeleteCookies Apify organization are verified. No signup, provider login, API token, new account or payment is needed from you. This replaces the earlier setup and creator-selection requests in this checklist.
+Updated: 23 October 2026, D32. **[Open recap](https://recap-v0-radu.netlify.app).** Your Recap account and access to the selected DeleteCookies Apify organization are verified. No signup, provider login, API token, new account or payment is needed from you. This replaces the earlier setup and creator-selection requests in this checklist.
 
-Your editable **tech** collection now includes **39 official sources: 21 YouTube, 10 X and eight Instagram**, grouped under the researched people and studios. GNSteve is included on official ownership evidence. Your previous preferences, saves and nine sample follows were kept; there are 48 total follows. The tech collection does not mix in fictional sample updates.
+Your editable **tech** collection now includes **39 official sources: 21 YouTube, 10 X and eight Instagram**, grouped under the researched people and studios. GNSteve is included on official ownership evidence. The nine fictional starter follows have now been removed; there are 39 real follows. All 278 existing real archive rows, 36 keyword reviews, preferences and saves were preserved exactly. The website is being updated with real-only defaults and hourly collection/status/cost views.
 
-Your collection is live. All 278 records are saved, and the website has been checked in your signed-in account, admin and guest views. [Exact evidence is saved](../tech/VERIFICATION.md). This is collected source history; complete month coverage remains unverified.
+Your collected history is live. The existing 278 records are saved, and the website has been checked in your signed-in account, admin and guest views. [Exact evidence is saved](../tech/VERIFICATION.md). This is collected source history; complete month coverage remains unverified.
 
 ## Try it in five minutes
 

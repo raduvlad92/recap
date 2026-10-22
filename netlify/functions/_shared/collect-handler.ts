@@ -65,6 +65,9 @@ export function createCollectHandler(overrides: Partial<Dependencies> = {}) {
         return json({ status: 'completed', result });
       }
       if (source.platform === 'YouTube') {
+        if (deps.env('HOURLY_COLLECTION_ENABLED') === 'true') {
+          throw new CollectionError(503, 'managed_collection_only', 'YouTube updates are checked hourly with spending limits. This manual shortcut is disabled to keep those limits effective.');
+        }
         const result=await deps.startApify(source,userId,deps.env,undefined,ledgerId);
         providerStarted=true;
         await deps.finishJob(ledgerId,userId,{status:'running',providerRunId:result.providerRunId},deps.env);
@@ -84,7 +87,8 @@ export function collectionHealth(env: Env = runtimeEnv) {
   const authConfigured = !!env('CLERK_ISSUER_URL') && !!env('APP_URL');
   const apifyEnabled = authConfigured && !!apifyConfig(env);
   return {
-    authConfigured, feedEnabled: authConfigured, apifyEnabled, automaticScheduling: false,
+    authConfigured, feedEnabled: authConfigured, apifyEnabled,
+    automaticScheduling: authConfigured && env('HOURLY_COLLECTION_ENABLED') === 'true' && (env('HOURLY_COLLECTION_WORKER_SECRET')?.length ?? 0) >= 32,
     platforms: Object.fromEntries(platforms.map((platform) => [platform, {
       configured: ['Blog', 'Podcast', 'Substack'].includes(platform) ? authConfigured : platform === 'YouTube' && apifyEnabled,
       mode: ['Blog', 'Podcast', 'Substack'].includes(platform) ? 'feed' : platform === 'YouTube' ? 'apify' : 'unavailable',

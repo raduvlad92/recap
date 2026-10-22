@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { AdminChannelIdentity, AdminFollow, AdminUser, CollectionJobRecord } from '../../../src/lib/admin-types';
-import { sampleCreators, sampleSources } from '../../../src/lib/fixtures';
+import { isFictionalSource, LEGACY_SAMPLE_SOURCE_IDS, removeFictionalWorkspaceContent } from '../../../src/lib/fixtures';
 import { normalizeSourceUrl } from '../../../src/lib/domain';
 import { authenticate, CollectionError, publicHttpsUrl, type Env, runtimeEnv } from './security';
 
@@ -37,20 +37,20 @@ const text = (value: unknown, max = 200) => typeof value === 'string' ? value.sl
 export const safeLink = (value: unknown) => { try { return publicHttpsUrl(text(value,2048)).href; } catch { return ''; } };
 export interface WorkspaceRow { user_id: string; state: Record<string, unknown>; updated_at: string }
 export function userSummary(user: ClerkUser, workspace: WorkspaceRow | undefined, channels: AdminChannelIdentity[], jobs: CollectionJobRecord[]): AdminUser {
-  const state = workspace?.state || {};
+  const state = removeFictionalWorkspaceContent(workspace?.state || {});
   const canonical=(url:string)=>{try{return normalizeSourceUrl(url).url;}catch{return url.replace(/\/$/,'');}};
   const catalogueByUrl = new Map(channels.map(c => [canonical(c.url),c]));
   const custom = safeArray(state.customSources).filter((s): s is Record<string,unknown> => !!s && typeof s === 'object');
-  const allSources = [...sampleSources, ...custom];
-  const creators = [...sampleCreators, ...safeArray(state.customCreators).filter((c): c is Record<string,unknown> => !!c && typeof c === 'object')];
-  const follows: AdminFollow[] = safeArray(state.followedSourceIds).filter((id): id is string => typeof id === 'string').map(id => {
+  const allSources = custom.filter(source => !isFictionalSource(source));
+  const creators = safeArray(state.customCreators).filter((c): c is Record<string,unknown> => !!c && typeof c === 'object');
+  const follows: AdminFollow[] = safeArray(state.followedSourceIds).filter((id): id is string => typeof id === 'string' && !(LEGACY_SAMPLE_SOURCE_IDS as readonly string[]).includes(id)).map(id => {
     const source = allSources.find(s => s.id === id);
     const url = safeLink(source?.url);
     const channel = catalogueByUrl.get(canonical(url));
     const creatorIds = safeArray(source?.creatorIds).filter((v): v is string => typeof v === 'string');
     const creatorNames = creatorIds.map(cid => text(creators.find(c => c.id === cid)?.name)).filter(Boolean);
     const catalogueCreatorName = text(channel?.catalogue_creators?.name).trim();
-    return { id, name: channel?.name || (!url && source?.name === source?.url ? 'Private or unsupported source' : text(source?.name) || 'Unresolved saved source'), url, platform: channel?.platform || text(source?.platform) || 'Unknown', creatorNames: channel ? (catalogueCreatorName ? [catalogueCreatorName] : []) : creatorNames, ...(channel ? {catalogueCreatorId:channel.creator_id} : {}), sample: sampleSources.some(s => s.id === id), status: text(source?.status) || 'unknown' };
+    return { id, name: channel?.name || (!url && source?.name === source?.url ? 'Private or unsupported source' : text(source?.name) || 'Unresolved saved source'), url, platform: channel?.platform || text(source?.platform) || 'Unknown', creatorNames: channel ? (catalogueCreatorName ? [catalogueCreatorName] : []) : creatorNames, ...(channel ? {catalogueCreatorId:channel.creator_id} : {}), sample: false, status: text(source?.status) || 'unknown' };
   });
   const primary = user.email_addresses.find(e => e.id === user.primary_email_address_id);
   const ownJobs = jobs.filter(j => j.user_id === user.id);

@@ -3,6 +3,7 @@ import { clerkRequest, database, requireAdmin, userSummary, type ClerkUser, type
 import { collectionHealth } from './collect-handler';
 import type { AdminChannelIdentity, CollectionJobRecord } from '../../../src/lib/admin-types';
 import { listKeywordReviews, reviewKeyword } from './keyword-admin';
+import { activityQuery, readCollectionActivity } from './collection-activity';
 interface Dependencies { env: Env; authorize: typeof requireAdmin; db: typeof database; clerk: typeof clerkRequest }
 const success = (value: unknown) => { const response=json(value);response.headers.set('x-robots-tag','noindex, nofollow');return response; };
 const unwrap = <T>(result: { data: T; error: {message: string; code?: string} | null }): T => {
@@ -44,10 +45,17 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
     throw new CollectionError(400,'invalid_action','Choose an editable record.');
    }
    if(section==='keywords') return success(await listKeywordReviews(db,url,page,adminId));
+   if(section==='costs') {
+    const filters=activityQuery(url,true);
+    const report=await readCollectionActivity(db,filters,deps.env);
+    const audit=await db.from('admin_audit_events').insert({admin_id:adminId,action:'collection_costs.viewed',target_id:filters.user||null,details:{from:filters.from,to:filters.to,page:filters.page}});
+    if(audit.error)throw new CollectionError(503,'audit_unavailable','Collection activity was withheld because access logging is unavailable.');
+    return success({costs:report});
+   }
    if(section==='overview') {
     const [metrics,count] = await Promise.all([db.rpc('admin_operating_metrics'),deps.clerk('/users/count',deps.env)]);
     const health=collectionHealth(deps.env);
-    return success({overview:{...unwrap(metrics),signedUp:(count as {total_count:number}).total_count,apifyEnabled:health.apifyEnabled,automaticScheduling:false,telemetrySince:'2026-10-21',workspaceCountExact:true},development:deps.env('CLERK_ISSUER_URL')?.includes('.clerk.accounts.dev')===true});
+    return success({overview:{...unwrap(metrics),signedUp:(count as {total_count:number}).total_count,apifyEnabled:health.apifyEnabled,automaticScheduling:health.automaticScheduling,telemetrySince:'2026-10-21',workspaceCountExact:true},development:deps.env('CLERK_ISSUER_URL')?.includes('.clerk.accounts.dev')===true});
    }
    if(section==='users'||section==='user') {
     const requestedId=url.searchParams.get('id')||'';

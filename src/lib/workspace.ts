@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useRecapAuth } from './auth';
-import { createDefaultWorkspace, sampleCreators, sampleSources, sampleUpdates } from './fixtures';
+import { createDefaultWorkspace, isFictionalUpdate, removeFictionalWorkspaceContent } from './fixtures';
 import { applyFollowToggle, followReasons as reasonsFor, mergeCollection, mergeWorkspaceUpdates, normalizeSourceUrl, resolveFollowedSources, removeSourceCollection, saveSourceCollection, sanitizeSettings, sanitizeArchivedUpdate, sanitizeWorkspace, scopesFor, sourceCounts as countSources, sourceIdForUrl, unique, withSourceShortsPreference } from './domain';
 import type { CollectionResult, ReaderSettings, Source, SourceUpdate, WorkspaceState } from './types';
 import { fetchSourceMetadata, withSourceMetadata } from './source-images';
 
 export type SaveStatus = 'loading' | 'local' | 'saving' | 'saved' | 'error' | 'conflict';
 interface Cache { state: WorkspaceState; updatedAt: string | null; dirty: boolean }
+interface LoadedCache extends Cache { storedState: WorkspaceState }
 interface View { owner: string; state: WorkspaceState; loaded: boolean }
 interface Archive { owner: string; updates: SourceUpdate[]; error: string | null; loading?: boolean }
 const EMPTY_UPDATES: SourceUpdate[] = [];
@@ -15,19 +16,68 @@ const CACHE_PREFIX = 'therecap.workspace.v1.';
 const cacheKey = (owner: string) => `${CACHE_PREFIX}${encodeURIComponent(owner)}`;
 const blankWorkspace = (): WorkspaceState => ({ ...createDefaultWorkspace(), followedSourceIds: [], followScopes: [], savedUpdateIds: [], readLaterIds: [], customSources: [], importedUpdates: [] });
 
-function readCache(owner: string): Cache | null {
+export function readWorkspaceCache(owner: string): LoadedCache | null {
   try {
     const raw = localStorage.getItem(cacheKey(owner));
     if (!raw) return null;
     const value = JSON.parse(raw) as Partial<Cache>;
-    const state = sanitizeWorkspace(value.state);
-    return state ? { state, updatedAt: typeof value.updatedAt === 'string' ? value.updatedAt : null, dirty: value.dirty === true } : null;
+    const storedState = removeFictionalWorkspaceContent(value.state);
+    const state = sanitizeWorkspace(storedState);
+    if (!state || !storedState) return null;
+    const cache = { state: storedState, updatedAt: typeof value.updatedAt === 'string' ? value.updatedAt : null, dirty: value.dirty === true };
+    // Migrate even an offline cache without marking a clean backup as a conflicting draft.
+    if (storedState !== value.state) writeCache(owner, cache);
+    return { ...cache, state, storedState };
   } catch { return null; }
 }
 function writeCache(owner: string, cache: Cache): boolean {
   try { localStorage.setItem(cacheKey(owner), JSON.stringify(cache)); return true; } catch { return false; }
 }
 const messageFor = (error: unknown) => error instanceof Error ? error.message : 'The workspace could not be saved. Please try again.';
+
+/** Preserve unseen stored fields for edits; explicit reset/delete replaces the document. */
+export function workspaceForPersistence(stored: WorkspaceState, previous: WorkspaceState, next: WorkspaceState, mode: 'edit' | 'replace' = 'edit'): WorkspaceState {
+  if (mode === 'replace') return removeFictionalWorkspaceContent(next);
+  const object = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
+  const merge = (raw: unknown, before: unknown, after: unknown): unknown => {
+    if (before === after) return raw;
+    if (Array.isArray(raw) && Array.isArray(before) && Array.isArray(after)) {
+      if (before.length === after.length && before.every((item, index) => item === after[index])) return raw;
+      if ([...before, ...after].every(item => object(item) && typeof item.id === 'string')) {
+        const oldItems = new Map(before.map(item => [item.id, item]));
+        const storedItems = new Map(raw.filter(object).map(item => [item.id, item]));
+        const nextIds = new Set(after.map(item => item.id));
+        const edited = after.map(item => oldItems.has(item.id) && storedItems.has(item.id) ? merge(storedItems.get(item.id), oldItems.get(item.id), item) : item);
+        // A display/validation limit is not a reader's instruction to delete unseen records.
+        return [...edited, ...raw.filter(item => !object(item) || !oldItems.has(item.id) && !nextIds.has(item.id))];
+      }
+      if ([...before, ...after].every(item => typeof item === 'string')) {
+        const visible = new Set(before), selected = new Set(after);
+        return [...after, ...raw.filter(item => !visible.has(item) && !selected.has(item))];
+      }
+    }
+    if (object(raw) && object(before) && object(after)) {
+      const result = { ...raw };
+      for (const key of Object.keys(before)) if (!(key in after)) delete result[key];
+      for (const key of Object.keys(after)) if (!(key in before) || before[key] !== after[key]) result[key] = merge(raw[key], before[key], after[key]);
+      return result;
+    }
+    return after;
+  };
+  return removeFictionalWorkspaceContent(merge(stored, previous, next) as WorkspaceState);
+}
+
+/** Select a cleaned snapshot without upgrading a stale local draft's cloud revision. */
+export function prepareWorkspaceLoad(record: { state: unknown; updated_at: string } | null, cache: LoadedCache | null) {
+  const storedRemote = record ? removeFictionalWorkspaceContent(record.state) as WorkspaceState : null;
+  const remote = record ? sanitizeWorkspace(storedRemote) : null;
+  if (record && !remote) throw new Error('Your saved workspace has an unsupported format. It has not been overwritten.');
+  const updatedAt = record?.updated_at ?? null;
+  const conflict = !!cache?.dirty && cache.updatedAt !== updatedAt;
+  const state = cache?.dirty ? cache.state : remote ?? createDefaultWorkspace();
+  const storedState = cache?.dirty ? cache.storedState : storedRemote ?? state;
+  return { state, storedState, conflict, updatedAt, dirty: !conflict && (!!cache?.dirty || !record || storedRemote !== record.state) };
+}
 
 export async function readArchiveRecords(readPage: (offset: number, signal: AbortSignal) => Promise<unknown[]>, knownSourceIds: string[], signal: AbortSignal): Promise<{ updates: SourceUpdate[]; rejected: number }> {
   const updates: SourceUpdate[] = [];
@@ -38,8 +88,9 @@ export async function readArchiveRecords(readPage: (offset: number, signal: Abor
     const records = await readPage(offset, signal);
     if (signal.aborted) throw new DOMException('Archive read cancelled.', 'AbortError');
     for (const record of records) {
-      const update = sanitizeArchivedUpdate(record);
-      if (!update || update.isSample || update.id.startsWith('sample-') || !knownSources.has(update.sourceId)) { rejected++; continue; }
+      const cleaned = removeFictionalWorkspaceContent({ version: 1, importedUpdates: [record] });
+      const update = sanitizeArchivedUpdate(cleaned.importedUpdates[0]);
+      if (!update || isFictionalUpdate(update) || !knownSources.has(update.sourceId)) { rejected++; continue; }
       updates.push(update);
     }
     if (records.length < 1000) return { updates, rejected };
@@ -53,6 +104,7 @@ export function useWorkspace() {
   const ownerRef = useRef(owner); ownerRef.current = owner;
   const [view, setView] = useState<View>(() => ({ owner: '', state: createDefaultWorkspace(), loaded: false }));
   const viewRef = useRef(view);
+  const persistedState = useRef(view.state);
   const [archive, setArchive] = useState<Archive>({ owner: '', updates: [], error: null });
   const archiveRef = useRef(archive); archiveRef.current = archive;
   const archivedUpdates = archive.owner === owner ? archive.updates : EMPTY_UPDATES;
@@ -78,9 +130,9 @@ export function useWorkspace() {
   const [sourceImageErrors, setSourceImageErrors] = useState<Record<string, boolean>>({});
   const isLoaded = auth.isLoaded && view.owner === owner && view.loaded;
   const state = view.owner === owner ? view.state : createDefaultWorkspace();
-  const sources = useMemo(() => [...sampleSources.filter(source => !state.customSources.some(custom => custom.id === source.id)), ...state.customSources], [state.customSources]);
-  const creators = useMemo(() => [...sampleCreators, ...(state.customCreators ?? [])], [state.customCreators]);
-  const updates = useMemo(() => [...sampleUpdates, ...mergeWorkspaceUpdates(state.importedUpdates, archivedUpdates)].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)), [state.importedUpdates, archivedUpdates]);
+  const sources = state.customSources;
+  const creators = useMemo(() => state.customCreators ?? [], [state.customCreators]);
+  const updates = useMemo(() => mergeWorkspaceUpdates(state.importedUpdates, archivedUpdates), [state.importedUpdates, archivedUpdates]);
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
   const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
   const client = useMemo(() => {
@@ -91,7 +143,7 @@ export function useWorkspace() {
     });
   }, [supabaseUrl, supabaseKey, owner]);
 
-  const install = useCallback((next: View) => { viewRef.current = next; setView(next); }, []);
+  const install = useCallback((next: View, storedState = next.state) => { viewRef.current = next; persistedState.current = storedState; setView(next); }, []);
 
   useEffect(() => {
     if (!auth.isLoaded) return;
@@ -102,21 +154,21 @@ export function useWorkspace() {
     setSourceImageErrors({});
     archiveRetryAbort.current?.abort(); archiveRequest.current++;
     const abort = new AbortController();
-    const cache = discardCacheOnReload.current ? null : readCache(owner);
+    const cache = discardCacheOnReload.current ? null : readWorkspaceCache(owner);
     discardCacheOnReload.current = false;
     dirty.current = false; revision.current = 0; remoteTimestamp.current = cache?.updatedAt ?? null; remoteReady.current = false; saving.current = false; deleting.current = false;
-    install({ owner, state: cache?.state ?? createDefaultWorkspace(), loaded: false });
+    install({ owner, state: cache?.state ?? createDefaultWorkspace(), loaded: false }, cache?.storedState);
     setSaveStatus('loading'); setError(null); setArchive({ owner, updates: [], error: null });
     const finish = () => { if (generation.current === current) loadResolvers.current.splice(0).forEach(resolve => resolve()); };
     if (owner === 'guest') {
       const next = cache?.state ?? createDefaultWorkspace();
-      install({ owner, state: next, loaded: true });
+      install({ owner, state: next, loaded: true }, cache?.storedState);
       setSaveStatus('local');
-      if (!writeCache(owner, { state: next, updatedAt: null, dirty: false })) setError('Browser storage is unavailable. Sample changes will last only while this page stays open.');
+      if (!writeCache(owner, { state: persistedState.current, updatedAt: null, dirty: false })) setError('Browser storage is unavailable. Changes will last only while this page stays open.');
       finish(); return () => abort.abort();
     }
     if (!client) {
-      install({ owner, state: cache?.state ?? createDefaultWorkspace(), loaded: true });
+      install({ owner, state: cache?.state ?? createDefaultWorkspace(), loaded: true }, cache?.storedState);
       setSaveStatus('error'); setError('Cloud saving is not configured. Changes can be kept in this browser, but are not saved to your account.');
       finish(); return () => abort.abort();
     }
@@ -125,13 +177,11 @@ export function useWorkspace() {
         const { data, error: loadError } = await client.from('reader_workspaces').select('state,updated_at').eq('user_id', owner).abortSignal(abort.signal).maybeSingle();
         if (loadError) throw new Error(`Could not load your cloud workspace: ${loadError.message}`);
         if (generation.current !== current || ownerRef.current !== owner) return;
-        const remote = data ? sanitizeWorkspace(data.state) : null;
-        if (data && !remote) throw new Error('Your saved workspace has an unsupported format. It has not been overwritten.');
-        remoteTimestamp.current = data?.updated_at ?? null;
+        const loaded = prepareWorkspaceLoad(data, cache);
+        remoteTimestamp.current = loaded.updatedAt;
         remoteReady.current = true;
-        const conflict = cache?.dirty && cache.updatedAt !== remoteTimestamp.current;
-        const next = conflict || (cache?.dirty && cache.updatedAt === remoteTimestamp.current) ? cache!.state : remote ?? createDefaultWorkspace();
-        dirty.current = conflict ? false : !!cache?.dirty || !data;
+        const { state: next, storedState: storedNext, conflict } = loaded;
+        dirty.current = loaded.dirty;
         if (Array.isArray(next.sourceCollections)) {
           try {
             const { updates, rejected } = await readArchiveRecords(async (offset, signal) => {
@@ -147,7 +197,7 @@ export function useWorkspace() {
           }
         }
         if (generation.current !== current || ownerRef.current !== owner || abort.signal.aborted) return;
-        install({ owner, state: next, loaded: true });
+        install({ owner, state: next, loaded: true }, storedNext);
         if (conflict) {
           // Keep the local draft's original base revision. Editing a conflicted
           // draft must not turn the unseen cloud revision into permission to overwrite it.
@@ -156,12 +206,12 @@ export function useWorkspace() {
           setSaveStatus('conflict'); setError('Your cloud workspace changed elsewhere. This browser’s changes are kept locally. Export them before loading the cloud version.');
         } else {
           setSaveStatus(dirty.current ? 'saving' : 'saved');
-          writeCache(owner, { state: next, updatedAt: remoteTimestamp.current, dirty: dirty.current });
+          writeCache(owner, { state: storedNext, updatedAt: remoteTimestamp.current, dirty: dirty.current });
           if (dirty.current) setSaveRequest(value => value + 1);
         }
       } catch (loadError) {
         if (generation.current !== current || ownerRef.current !== owner || abort.signal.aborted) return;
-        install({ owner, state: cache?.state ?? createDefaultWorkspace(), loaded: true });
+        install({ owner, state: cache?.state ?? createDefaultWorkspace(), loaded: true }, cache?.storedState);
         setSaveStatus('error'); setError(messageFor(loadError));
       } finally { finish(); }
     })();
@@ -174,7 +224,7 @@ export function useWorkspace() {
     const current = generation.current;
     const timer = setTimeout(() => {
       if (current !== generation.current || ownerRef.current !== owner || saving.current || deleting.current || !dirty.current) return;
-      const snapshot = viewRef.current.state;
+      const snapshot = persistedState.current;
       const snapshotRevision = revision.current;
       const expected = remoteTimestamp.current;
       saving.current = true; setSaveStatus('saving');
@@ -195,7 +245,7 @@ export function useWorkspace() {
           }
           remoteTimestamp.current = result.data.updated_at;
           dirty.current = revision.current !== snapshotRevision;
-          const cached = writeCache(owner, { state: viewRef.current.state, updatedAt: remoteTimestamp.current, dirty: dirty.current });
+          const cached = writeCache(owner, { state: persistedState.current, updatedAt: remoteTimestamp.current, dirty: dirty.current });
           setError(cached ? null : 'Saved to your account. Browser backup is unavailable on this device.');
           setSaveStatus(dirty.current ? 'saving' : 'saved');
         } catch (saveError) {
@@ -213,16 +263,17 @@ export function useWorkspace() {
     return () => clearTimeout(timer);
   }, [view, isLoaded, owner, client, saveRequest]);
 
-  const mutate = useCallback((change: (previous: WorkspaceState) => WorkspaceState): boolean => {
+  const mutate = useCallback((change: (previous: WorkspaceState) => WorkspaceState, mode: 'edit' | 'replace' = 'edit'): boolean => {
     if (ownerRef.current !== owner || !authRef.current.isLoaded || !viewRef.current.loaded || viewRef.current.owner !== ownerRef.current || deleting.current) return false;
     try {
       const next = change(viewRef.current.state);
+      const storedNext = workspaceForPersistence(persistedState.current, viewRef.current.state, next, mode);
       // Bound the early JSON workspace rather than losing old content silently.
-      if (new Blob([JSON.stringify(next)]).size > 2_000_000) throw new Error('This early workspace has reached its storage limit. Export before collecting more content.');
+      if (new Blob([JSON.stringify(storedNext)]).size > 2_000_000) throw new Error('This early workspace has reached its storage limit. Export before collecting more content.');
       revision.current++; dirty.current = ownerRef.current !== 'guest';
       const nextView = { owner: ownerRef.current, state: next, loaded: true };
-      install(nextView);
-      const cached = writeCache(nextView.owner, { state: next, updatedAt: remoteTimestamp.current, dirty: dirty.current });
+      install(nextView, storedNext);
+      const cached = writeCache(nextView.owner, { state: storedNext, updatedAt: remoteTimestamp.current, dirty: dirty.current });
       if (nextView.owner === 'guest') {
         setSaveStatus(cached ? 'local' : 'error'); setError(cached ? null : 'Browser storage is full or unavailable. These changes are only held in this open page.');
       } else if (remoteReady.current) { setError(null); setSaveStatus('saving'); }
@@ -261,8 +312,8 @@ export function useWorkspace() {
     setSourceImageErrors(previous => ({ ...previous, [source.id]: false }));
     setSourceImageTick(value => value + 1);
   }, [owner]);
-  const toggleSource = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'source', id }, [...sampleCreators, ...(previous.customCreators ?? [])], [...sampleSources, ...previous.customSources])); }, [mutate]);
-  const toggleCreator = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'creator', id }, [...sampleCreators, ...(previous.customCreators ?? [])], [...sampleSources, ...previous.customSources])); }, [mutate]);
+  const toggleSource = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'source', id }, previous.customCreators ?? [], previous.customSources)); }, [mutate]);
+  const toggleCreator = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'creator', id }, previous.customCreators ?? [], previous.customSources)); }, [mutate]);
   const toggleSaved = useCallback((id: string) => { mutate(previous => ({ ...previous, savedUpdateIds: previous.savedUpdateIds.includes(id) ? previous.savedUpdateIds.filter(saved => saved !== id) : [...previous.savedUpdateIds, id] })); }, [mutate]);
   const toggleReadLater = useCallback((id: string) => { mutate(previous => ({ ...previous, readLaterIds: previous.readLaterIds.includes(id) ? previous.readLaterIds.filter(saved => saved !== id) : [...previous.readLaterIds, id] })); }, [mutate]);
   const updateSettings = useCallback((settings: Partial<ReaderSettings>) => mutate(previous => ({ ...previous, settings: sanitizeSettings({ ...previous.settings, ...settings }) })), [mutate]);
@@ -274,18 +325,18 @@ export function useWorkspace() {
   }), [mutate]);
   const saveCollection = useCallback((name: string, sourceIds: string[], id?: string) => mutate(previous => {
     const existing = previous.sourceCollections?.find(collection => collection.id === id);
-    return saveSourceCollection(previous, { id: existing?.id ?? `collection-${crypto.randomUUID()}`, name, sourceIds, createdAt: existing?.createdAt ?? new Date().toISOString() }, [...sampleSources, ...previous.customSources]);
+    return saveSourceCollection(previous, { id: existing?.id ?? `collection-${crypto.randomUUID()}`, name, sourceIds, createdAt: existing?.createdAt ?? new Date().toISOString() }, previous.customSources);
   }), [mutate]);
   const deleteSourceCollection = useCallback((id: string) => mutate(previous => removeSourceCollection(previous, id)), [mutate]);
   const addSource = useCallback((input: string): { source?: Source; error?: string } => {
     try {
       if (!viewRef.current.loaded || viewRef.current.owner !== ownerRef.current) throw new Error('Wait for your workspace to finish loading.');
       const normalized = normalizeSourceUrl(input);
-      const currentSources = [...sampleSources, ...viewRef.current.state.customSources];
+      const currentSources = viewRef.current.state.customSources;
       const existing = currentSources.find(source => source.url === normalized.url);
       if (existing) {
         const ok = mutate(previous => {
-          const next = previous.followedSourceIds.includes(existing.id) ? previous : applyFollowToggle(previous, { kind: 'source', id: existing.id }, [...sampleCreators, ...(previous.customCreators ?? [])], currentSources);
+          const next = previous.followedSourceIds.includes(existing.id) ? previous : applyFollowToggle(previous, { kind: 'source', id: existing.id }, previous.customCreators ?? [], currentSources);
           return { ...next, sourceCollections: next.sourceCollections?.map(collection => collection.id === next.activeCollectionId ? { ...collection, sourceIds: unique([...collection.sourceIds, existing.id]) } : collection) };
         });
         return ok ? { source: existing } : { error: 'This source could not be added to your current selection.' };
@@ -295,7 +346,7 @@ export function useWorkspace() {
       const source: Source = { ...normalized, id, creatorIds: [], status: 'pending', description: 'Added by you. Content and supported formats have not been checked yet.' };
       const ok = mutate(previous => {
         const customSources = [...previous.customSources, source];
-        const next = applyFollowToggle({ ...previous, customSources }, { kind: 'source', id }, [...sampleCreators, ...(previous.customCreators ?? [])], [...sampleSources, ...customSources]);
+        const next = applyFollowToggle({ ...previous, customSources }, { kind: 'source', id }, previous.customCreators ?? [], customSources);
         return { ...next, sourceCollections: next.sourceCollections?.map(collection => collection.id === next.activeCollectionId ? { ...collection, sourceIds: unique([...collection.sourceIds, id]) } : collection) };
       });
       return ok ? { source } : { error: 'The source was not added. Check the workspace message and your source allowance.' };
@@ -311,7 +362,7 @@ export function useWorkspace() {
     if (ownerRef.current !== owner || !viewRef.current.loaded || viewRef.current.owner !== owner) return false;
     if (owner === 'guest') {
       const state = next ?? blankWorkspace();
-      const ok = mutate(() => state);
+      const ok = mutate(() => state, 'replace');
       if (!next && ok) { try { localStorage.removeItem(cacheKey(owner)); } catch { /* Empty in-memory state remains. */ } }
       return ok;
     }
@@ -343,7 +394,7 @@ export function useWorkspace() {
   const deleteWorkspace = useCallback(() => clearStoredWorkspace(null), [clearStoredWorkspace]);
   const exportWorkspace = useCallback(() => {
     if (!viewRef.current.loaded || viewRef.current.owner !== ownerRef.current) return JSON.stringify({ notice: 'Wait for your current workspace to finish loading before exporting.' });
-    return JSON.stringify({ ...viewRef.current.state, archivedUpdates: archiveRef.current.owner === ownerRef.current ? archiveRef.current.updates : [], ...(archiveRef.current.owner === ownerRef.current && archiveRef.current.error ? { archiveNotice: archiveRef.current.error } : {}), exportedAt: new Date().toISOString(), notice: 'Contains your private workspace and clearly labelled fictional sample identities. Collected source content is not proof of full coverage or AI analysis.' }, null, 2);
+    return JSON.stringify({ ...persistedState.current, archivedUpdates: archiveRef.current.owner === ownerRef.current ? archiveRef.current.updates : [], ...(archiveRef.current.owner === ownerRef.current && archiveRef.current.error ? { archiveNotice: archiveRef.current.error } : {}), exportedAt: new Date().toISOString(), notice: 'Contains your private workspace and collected source material. Collection does not establish complete coverage or AI analysis.' }, null, 2);
   }, []);
   const reloadWorkspace = useCallback((): Promise<void> => {
     discardCacheOnReload.current = true;

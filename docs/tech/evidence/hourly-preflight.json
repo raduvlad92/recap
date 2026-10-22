@@ -1,0 +1,67 @@
+{
+  "checkedAt": "2026-10-22T23:56:10.378Z",
+  "ownerCleanup": {
+    "checkedAt": "2026-10-22T23:36:11.271Z",
+    "type": "actual_owner_database_cleanup",
+    "project": "zlfdqzabsfndifxiqguo",
+    "beforeFollows": 48,
+    "afterFollows": 39,
+    "removedFictionalFollows": 9,
+    "realSources": 39,
+    "archiveRows": 278,
+    "archiveExact": true,
+    "keywordReviews": 36,
+    "keywordReviewsExact": true,
+    "settingsExact": true,
+    "savedIdsExact": true,
+    "allOtherWorkspaceFieldsPreserved": true
+  },
+  "migrations": [
+    {
+      "version": "20261022235056",
+      "name": "hourly_reader_collection",
+      "file": "supabase/migrations/20261022235056_hourly_reader_collection.sql"
+    },
+    {
+      "version": "20261022235532",
+      "file": "supabase/migrations/20261022235532_hourly_clear_lock_order.sql"
+    }
+  ],
+  "databaseTests": {
+    "actualProjectRollback": true,
+    "actualProjectAfterApply": true,
+    "invariantsPassed": true,
+    "concurrentClear": {
+      "localPostgres17": true,
+      "fixedFlowCompleted": true,
+      "historicalFlowDeadlock": "40P01",
+      "staleRevision": "PT409"
+    }
+  },
+  "historicalBudget": {
+    "completeProviderInventoryRuns": 53,
+    "newProviderRuns": 0,
+    "status": {
+      "currency": "USD",
+      "accountId": "source-proof",
+      "ceilingUsd": 45,
+      "overCeiling": false,
+      "availableUsd": 43.696751676657,
+      "committedUsd": 1.303248323343,
+      "heldEnvelopes": 0,
+      "unknownCostJobs": 0
+    }
+  },
+  "securityAdvisors": {
+    "errors": 0,
+    "warnings": 0,
+    "info": 8,
+    "note": "RLS enabled with no reader policy on intentionally server-only tables"
+  },
+  "release": {
+    "status": "pending"
+  },
+  "newCollection": {
+    "status": "not_started"
+  }
+}

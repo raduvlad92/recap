@@ -9,13 +9,13 @@ const update = (id: string, overrides: Partial<SourceUpdate> = {}): SourceUpdate
 const workspace = (): WorkspaceState => ({ ...createDefaultWorkspace(), customSources: [source], importedUpdates: [] });
 
 describe('per-source Shorts visibility', () => {
-  it('shows Shorts by default in legacy workspaces and allows preferences for sample sources', () => {
+  it('shows Shorts by default in legacy workspaces and changes only the chosen real source', () => {
     const restored = sanitizeWorkspace(JSON.parse(JSON.stringify(workspace())))!;
     expect(restored.sourcePreferences).toBeUndefined();
     expect(sourceShowsShorts(restored, source.id)).toBe(true);
-    const edited = withSourceShortsPreference(restored, 'northstar-main', false);
-    expect(sourceShowsShorts(edited, 'northstar-main')).toBe(false);
-    expect(sourceShowsShorts(edited, source.id)).toBe(true);
+    const edited = withSourceShortsPreference(restored, source.id, false);
+    expect(sourceShowsShorts(edited, source.id)).toBe(false);
+    expect(sourceShowsShorts(restored, source.id)).toBe(true);
     expect(edited.customSources).toBe(restored.customSources);
   });
 
@@ -38,7 +38,7 @@ describe('per-source Shorts visibility', () => {
   it('persists a false preference through JSON export/load and drops malformed or unrelated preferences', () => {
     const state = withSourceShortsPreference(workspace(), source.id, false);
     const restored = sanitizeWorkspace(JSON.parse(JSON.stringify({ ...state, sourcePreferences: { ...state.sourcePreferences, 'northstar-main': { showShorts: false }, missing: { showShorts: false }, 'northstar-lab': { showShorts: 'false' } } })))!;
-    expect(restored.sourcePreferences).toEqual({ channel: { showShorts: false }, 'northstar-main': { showShorts: false } });
+    expect(restored.sourcePreferences).toEqual({ channel: { showShorts: false } });
     expect(sourceShowsShorts(restored, 'northstar-lab')).toBe(true);
     expect(() => withSourceShortsPreference(state, 'missing', false)).toThrow('no longer exists');
   });

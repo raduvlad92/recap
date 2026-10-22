@@ -4,6 +4,10 @@ Version: **1.1 — APPROVAL CANDIDATE**. Updated: 23 October 2026. Matches [SPEC
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
 
+## Authorized hourly collection and real-only workspace — D32
+
+Remove fictional website/default/account data selectively; preserve real archives, annotations, follows and settings. Enable native freshness-first hourly collection only for the verified owner, with cheap exact-new-video fallback and US$0.10/day + US$1 new-automation allowance inside the existing shared US$45 ceiling. Add durable check/pull/status/cost attribution by source/day/user and readable owner/admin views. [Delivery and evidence](docs/tech/HOURLY.md). Owner cleanup and historical budget reconciliation are verified; implementation/reviews pass incrementally and actual-project SQL tests rolled back cleanly. Next: finish review, apply production migration, enable the policy/config, verify a real run, push/CI/deploy and hosted owner/guest checks. No new supplier plan, generated transcription, paid AI, outreach or paid launch.
+
 ## Authorized working v0
 
 The founder explicitly requested autonomous implementation on 21 October (D20). [docs/v0/PLAN.md](docs/v0/PLAN.md) tracks that first increment, selected Supabase/Clerk targets, screenshot-based UI and GitHub/Netlify deployment. V0-01–V0-07 are complete for the first increment: [live app](https://recap-v0-radu.netlify.app), [verification](docs/v0/VERIFICATION.md), [morning checklist](docs/v0/MORNING.md). V0-N01–V0-N06 track the continuation. V0 work is authorized now; the full M0–M5 table below is not a claim of completed production behavior. Its remaining goals, including real AI generation, multilingual quality, scheduling, retention and delivery, still require evidence.

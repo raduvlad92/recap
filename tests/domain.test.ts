@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { applyFollowToggle, dateKey, filterUpdates, followReasons, groupTopics, isPublicWebUrl, mergeCollection, normalizeSourceUrl, resolveFollowedSources, sanitizeSettings, sanitizeWorkspace, sourceCounts, sourceIdForUrl } from '../src/lib/domain';
-import { createDefaultWorkspace, createSampleUpdates, sampleCreators, sampleSources } from '../src/lib/fixtures';
+import { createDefaultWorkspace } from '../src/lib/fixtures';
+import { createSampleUpdates, sampleCreators, sampleSources } from './helpers/sample-fixtures';
 import type { Source, SourceUpdate, WorkspaceState } from '../src/lib/types';
 
 const empty = (): WorkspaceState => ({ ...createDefaultWorkspace(), followedSourceIds: [], followScopes: [] });
@@ -40,7 +41,7 @@ describe('studios, people and overlapping follows', () => {
     expect(counts.followed).toBe(1); expect(counts.updates).toBe(1); expect(counts.updated).toBe(1);
   });
   it('migrates legacy source selections without inventing creator follows', () => {
-    const state = createDefaultWorkspace(); delete state.followScopes;
+    const state = { ...createDefaultWorkspace(), followedSourceIds: sampleSources.map(source => source.id) }; delete state.followScopes;
     const next = applyFollowToggle(state, { kind: 'creator', id: 'northstar' }, sampleCreators, sampleSources);
     expect(next.followedSourceIds).toHaveLength(9);
     expect(next.followScopes?.filter(scope => scope.kind === 'creator')).toHaveLength(1);

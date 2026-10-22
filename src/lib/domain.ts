@@ -1,5 +1,5 @@
 import type { CollectionResult, Creator, FollowScope, Platform, ReaderSettings, Source, SourceCollection, SourceUpdate, WorkspaceState } from './types';
-import { createDefaultWorkspace, sampleCreators, sampleSources } from './fixtures';
+import { createDefaultWorkspace, isFictionalSource, isFictionalUpdate, removeFictionalWorkspaceContent } from './fixtures';
 
 export const LIMITS = { sources: 50, xSources: 15, dailyUpdates: 200, monthlyUpdates: 3000, generatedAudioMinutes: 300 } as const;
 export const LANGUAGES = ['en', 'de', 'es', 'fr', 'it', 'pt-BR'] as const;
@@ -164,7 +164,7 @@ export function sourceShowsShorts(state: WorkspaceState, sourceId: string): bool
 }
 
 export function withSourceShortsPreference(state: WorkspaceState, sourceId: string, showShorts: boolean): WorkspaceState {
-  if (![...sampleSources, ...state.customSources].some(source => source.id === sourceId)) throw new Error('This source no longer exists.');
+  if (!state.customSources.some(source => source.id === sourceId)) throw new Error('This source no longer exists.');
   return { ...state, sourcePreferences: { ...state.sourcePreferences, [sourceId]: { showShorts } } };
 }
 
@@ -216,7 +216,7 @@ export function sanitizeSettings(value: unknown): ReaderSettings {
 }
 
 function sanitizeSource(value: unknown): Source | null {
-  if (!object(value) || typeof value.id !== 'string' || typeof value.url !== 'string' || !isPublicWebUrl(value.url) || !PLATFORMS.includes(value.platform as Platform)) return null;
+  if (!object(value) || isFictionalSource(value) || typeof value.id !== 'string' || typeof value.url !== 'string' || !isPublicWebUrl(value.url) || !PLATFORMS.includes(value.platform as Platform)) return null;
   return { id: value.id.slice(0, 200), name: typeof value.name === 'string' ? value.name.slice(0, 200) : value.url, url: value.url.slice(0, 2000), platform: value.platform as Platform, creatorIds: stringList(value.creatorIds, 30), status: ['pending', 'ready', 'failed', 'sample'].includes(value.status as string) ? value.status as Source['status'] : 'pending', ...(typeof value.description === 'string' ? { description: value.description.slice(0, 2000) } : {}), ...(typeof value.feedUrl === 'string' && isPublicWebUrl(value.feedUrl) ? { feedUrl: value.feedUrl.slice(0, 2000) } : {}), ...(typeof value.avatarUrl === 'string' && isPublicWebUrl(value.avatarUrl) ? { avatarUrl: value.avatarUrl.slice(0, 2000) } : {}) };
 }
 
@@ -226,7 +226,7 @@ function sanitizeCreator(value: unknown, sourceIds: Set<string>): Creator | null
 }
 
 export function sanitizeSourceUpdate(value: unknown): SourceUpdate | null {
-  if (!object(value) || typeof value.id !== 'string' || typeof value.sourceId !== 'string' || typeof value.url !== 'string' || !isPublicWebUrl(value.url) || typeof value.publishedAt !== 'string' || (value.publishedAt !== '' && !dateKey(value.publishedAt))) return null;
+  if (!object(value) || isFictionalUpdate(value) || typeof value.id !== 'string' || typeof value.sourceId !== 'string' || typeof value.url !== 'string' || !isPublicWebUrl(value.url) || typeof value.publishedAt !== 'string' || (value.publishedAt !== '' && !dateKey(value.publishedAt))) return null;
   const nonnegativeSeconds = (seconds: unknown): seconds is number => typeof seconds === 'number' && Number.isFinite(seconds) && seconds >= 0 && seconds <= Number.MAX_SAFE_INTEGER;
   const transcriptSegments = Array.isArray(value.transcriptSegments) ? value.transcriptSegments.filter(object).filter(segment => nonnegativeSeconds(segment.startSeconds) && typeof segment.text === 'string' && !!segment.text.trim()).slice(0, 10000).map(segment => ({ startSeconds: segment.startSeconds as number, text: (segment.text as string).slice(0, 10000), ...(nonnegativeSeconds(segment.durationSeconds) ? { durationSeconds: segment.durationSeconds } : {}) })) : undefined;
   const videoHighlights = Array.isArray(value.videoHighlights) ? value.videoHighlights.filter(object).filter(highlight => typeof highlight.text === 'string' && !!highlight.text.trim()).slice(0, 30).map(highlight => ({ text: (highlight.text as string).slice(0, 2000), ...(nonnegativeSeconds(highlight.startSeconds) ? { startSeconds: highlight.startSeconds } : {}) })) : undefined;
@@ -250,17 +250,16 @@ export function sanitizeArchivedUpdate(value: unknown): SourceUpdate | null {
 }
 
 export function sanitizeWorkspace(value: unknown): WorkspaceState | null {
+  value = removeFictionalWorkspaceContent(value);
   if (!object(value) || value.version !== 1 || !object(value.settings) || !Array.isArray(value.followedSourceIds) || !Array.isArray(value.customSources) || !Array.isArray(value.importedUpdates)) return null;
   const followScopes: FollowScope[] | undefined = Array.isArray(value.followScopes) ? value.followScopes.filter(object).filter(scope => ['source', 'creator'].includes(scope.kind as string) && typeof scope.id === 'string').slice(0, 200).map(scope => ({ kind: scope.kind as FollowScope['kind'], id: (scope.id as string).slice(0, 200), ...(scope.kind === 'creator' && Array.isArray(scope.sourceIds) ? { sourceIds: stringList(scope.sourceIds, 50) } : {}) })) : undefined;
-  const reservedSourceIds = new Set(sampleSources.map(source => source.id));
-  const customSources = [...new Map(value.customSources.map(sanitizeSource).filter((source): source is Source => !!source && !reservedSourceIds.has(source.id)).slice(0, 200).map(source => [source.id, source])).values()];
+  const customSources = [...new Map(value.customSources.map(sanitizeSource).filter((source): source is Source => !!source).slice(0, 200).map(source => [source.id, source])).values()];
   const customIds = new Set(customSources.map(source => source.id));
-  const importedUpdates = [...new Map(value.importedUpdates.map(sanitizeSourceUpdate).filter((update): update is SourceUpdate => !!update && !update.isSample && !update.id.startsWith('sample-') && customIds.has(update.sourceId)).slice(0, 3000).map(update => [update.id, update])).values()];
-  const knownSourceIds = new Set([...reservedSourceIds, ...customIds]);
+  const importedUpdates = [...new Map(value.importedUpdates.map(sanitizeSourceUpdate).filter((update): update is SourceUpdate => !!update && customIds.has(update.sourceId)).slice(0, 3000).map(update => [update.id, update])).values()];
+  const knownSourceIds = customIds;
   const sourcePreferences = object(value.sourcePreferences) ? Object.fromEntries(Object.entries(value.sourcePreferences).filter(([id, preference]) => knownSourceIds.has(id) && object(preference) && typeof preference.showShorts === 'boolean').map(([id, preference]) => [id, { showShorts: (preference as Record<string, unknown>).showShorts as boolean }])) : undefined;
-  const reservedCreatorIds = new Set(sampleCreators.map(creator => creator.id));
-  const customCreators = Array.isArray(value.customCreators) ? [...new Map(value.customCreators.map(creator => sanitizeCreator(creator, knownSourceIds)).filter((creator): creator is Creator => !!creator && !reservedCreatorIds.has(creator.id)).slice(0, 200).map(creator => [creator.id, creator])).values()] : undefined;
-  const people = new Set([...sampleCreators, ...(customCreators ?? [])].filter(creator => creator.kind === 'person').map(creator => creator.id));
+  const customCreators = Array.isArray(value.customCreators) ? [...new Map(value.customCreators.map(creator => sanitizeCreator(creator, knownSourceIds)).filter((creator): creator is Creator => !!creator).slice(0, 200).map(creator => [creator.id, creator])).values()] : undefined;
+  const people = new Set((customCreators ?? []).filter(creator => creator.kind === 'person').map(creator => creator.id));
   customCreators?.forEach(creator => { if (creator.presenterIds) creator.presenterIds = creator.presenterIds.filter(id => people.has(id)); });
   const sourceCollections: SourceCollection[] | undefined = Array.isArray(value.sourceCollections) ? [...new Map(value.sourceCollections.filter(object).filter(collection => typeof collection.id === 'string' && !!collection.id.trim() && typeof collection.name === 'string' && !!collection.name.trim() && typeof collection.createdAt === 'string' && !!dateKey(collection.createdAt)).slice(0, 30).map(collection => { const item: SourceCollection = { id: (collection.id as string).slice(0, 200), name: (collection.name as string).trim().slice(0, 80), createdAt: new Date(collection.createdAt as string).toISOString(), sourceIds: stringList(collection.sourceIds, 200).filter(id => knownSourceIds.has(id)) }; return [item.id, item] as const; })).values()] : undefined;
   const activeCollectionId = typeof value.activeCollectionId === 'string' && sourceCollections?.some(collection => collection.id === value.activeCollectionId) ? value.activeCollectionId : undefined;

@@ -44,11 +44,11 @@ export function YouTubeCard({ update, channelName, channelIcon, date, actions, t
       {points.length > 0 ? <ul className="video-highlights">{points.map((point, index) => {
         const url = point.startSeconds === undefined ? null : getVideoTimestampUrl(update.url, point.startSeconds);
         return <li key={index}>{url ? <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`${point.text} Watch at ${formatTimestamp(point.startSeconds!)}.`}><span className="video-point-text">{point.text}</span>{' '}<span className="video-point-time">{formatTimestamp(point.startSeconds!)}</span></a> : <span>{point.text}</span>}</li>;
-      })}</ul> : <p className="video-unavailable">{update.isSample ? 'Illustrative video. No transcript is connected.' : transcript ? 'No editorial takeaways in these captions.' : 'A transcript is not available for this video.'}</p>}
+      })}</ul> : <p className="video-unavailable">{transcript ? 'No editorial takeaways in these captions.' : 'A transcript is not available for this video.'}</p>}
       {transcript && <button className="transcript-button" onClick={onTranscript}><FileText size={15} aria-hidden="true" />Full transcript<ArrowUpRight size={14} aria-hidden="true" /></button>}
       <div className={`update-card-bottom ${keywords.length ? 'video-keyword-footer' : ''}`}>
         {!keywords.length && <div className="topic-pills">{topics}</div>}
-        {(update.isSample || update.contentKind !== 'transcript') && <span className={`provenance ${update.isSample ? 'provenance-sample' : 'provenance-live'}`}>{provenance}</span>}
+        {update.contentKind !== 'transcript' && <span className="provenance provenance-live">{provenance}</span>}
         {keywords.length > 0 && <VideoKeywordStrip keywords={keywords} timingBasis={update.videoSummary?.timingBasis} onKeyword={onKeyword} />}
       </div>
     </div>

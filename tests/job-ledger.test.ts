@@ -175,3 +175,16 @@ describe('owned collection outcomes and truthful accounting', () => {
     await expect(finishJob(id, 'user_one', { status: 'failed', errorCode: 'provider_error' }, env)).rejects.toMatchObject({ status: 503, code: 'job_ledger_unavailable' });
   });
 });
+
+describe('provider usage high-water accounting', () => {
+  it('retains a larger known fee when a later poll reports a lower amount', async () => {
+    const calls = mockDatabase([{ data: current({ status: 'succeeded', observed_cost_usd: 0.012, cost_status: 'provider_reported', finished_at: '2026-10-21T01:01:00Z' }) }, { data: { id } }]);
+    await finishJob(id, 'user_one', { status: 'succeeded', observedCostUsd: 0.004, costStatus: 'provider_reported' }, env);
+    expect(calls[1].value).toMatchObject({ observed_cost_usd: 0.012, cost_status: 'provider_reported' });
+  });
+  it('retains a known fee when a later response omits its usage', async () => {
+    const calls = mockDatabase([{ data: current({ observed_cost_usd: 0.012, cost_status: 'provider_reported' }) }, { data: { id } }]);
+    await finishJob(id, 'user_one', { status: 'running', observedCostUsd: null }, env);
+    expect(calls[1].value).toMatchObject({ observed_cost_usd: 0.012 });
+  });
+});

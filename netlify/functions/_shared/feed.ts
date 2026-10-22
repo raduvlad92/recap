@@ -8,12 +8,46 @@ import { CollectionError, isPublicAddress, publicHttpsUrl } from './security';
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const CONTENT_LIMIT = 24_000;
-export interface Download { text: string; url: string; contentType: string }
+export interface Download { text: string; url: string; contentType: string; status?: number; etag?: string; lastModified?: string; bytes?: number }
 export type DownloadFeed = (url: string) => Promise<Download>;
+export interface FeedValidators { etag?: string; lastModified?: string }
+
+/** Validators originate in response headers, but are still checked before reuse. */
+export function conditionalFeedHeaders(validators: FeedValidators = {}): Record<string, string> {
+  const headers: Record<string, string> = {};
+  if (typeof validators.etag === 'string' && validators.etag.length <= 512 && !/[\r\n\u0000]/.test(validators.etag)) headers['if-none-match'] = validators.etag;
+  if (typeof validators.lastModified === 'string' && validators.lastModified.length <= 128 && Number.isFinite(Date.parse(validators.lastModified)) && !/[\r\n\u0000]/.test(validators.lastModified)) headers['if-modified-since'] = validators.lastModified;
+  return headers;
+}
+
+/** Only the publisher's exact caption endpoint may carry its short-lived
+ * signature. This never relaxes the ordinary public-source URL rules. */
+export function youtubeCaptionUrl(value: string): URL {
+  let url: URL;
+  try { url = new URL(value); } catch { throw new CollectionError(400, 'unsafe_caption_url', 'Invalid public caption address.'); }
+  if (!['www.youtube.com', 'youtube.com'].includes(url.hostname) || url.pathname !== '/api/timedtext' ||
+      url.searchParams.getAll('v').length !== 1 || !/^[A-Za-z0-9_-]{11}$/.test(url.searchParams.get('v') || '')) {
+    throw new CollectionError(400, 'unsafe_caption_url', 'Only the public YouTube caption endpoint is supported.');
+  }
+  const checked = new URL(url.href);
+  checked.searchParams.delete('signature');
+  publicHttpsUrl(checked.href);
+  if (url.href.length > 4096) throw new CollectionError(400, 'unsafe_caption_url', 'The caption address is too long.');
+  url.hash = '';
+  return url;
+}
+
+export async function downloadYouTubeCaptions(url: string): Promise<Download> {
+  return downloadPinned(url, 0, {}, youtubeCaptionUrl);
+}
 
 /** DNS is checked AND pinned to the HTTPS socket; fetch-after-lookup would permit rebinding. */
-export async function downloadPublic(urlString: string, redirects = 0): Promise<Download> {
-  const url = publicHttpsUrl(urlString);
+export async function downloadPublic(urlString: string, redirects = 0, validators: FeedValidators = {}): Promise<Download> {
+  return downloadPinned(urlString, redirects, validators, publicHttpsUrl);
+}
+
+async function downloadPinned(urlString: string, redirects: number, validators: FeedValidators, validate: (value: string) => URL): Promise<Download> {
+  const url = validate(urlString);
   let dnsTimer: ReturnType<typeof setTimeout> | undefined;
   const addresses = await Promise.race([
     lookup(url.hostname, { all: true, verbatim: true }),
@@ -29,17 +63,25 @@ export async function downloadPublic(urlString: string, redirects = 0): Promise<
   return new Promise((resolve, reject) => {
     const req = httpsRequest(url, {
       lookup: pinnedLookup, family: addresses[0].family,
-      headers: { accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml, text/html;q=0.5', 'accept-encoding': 'identity', 'user-agent': 'therecap-source-check/0.1' },
+      headers: { accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml, text/html;q=0.5', 'accept-encoding': 'identity', 'user-agent': 'therecap-source-check/0.1', ...conditionalFeedHeaders(validators) },
     }, (response) => {
       const status = response.statusCode ?? 502;
       if (status >= 300 && status < 400 && response.headers.location) {
         response.resume();
         if (redirects >= 3) { reject(new CollectionError(400, 'redirect_limit', 'This source redirects too many times.')); return; }
         let next: URL;
-        try { next = publicHttpsUrl(new URL(response.headers.location, url).href); } catch (error) { reject(error); return; }
+        try { next = validate(new URL(response.headers.location, url).href); } catch (error) { reject(error); return; }
         // The next request repeats hostname validation, DNS validation and socket pinning.
-        void downloadPublic(next.href, redirects + 1).then(resolve, reject);
+        // Conditional headers apply to the exact representation, never another origin.
+        void downloadPinned(next.href, redirects + 1, next.origin === url.origin ? validators : {}, validate).then(resolve, reject);
         return;
+      }
+      const metadata = {
+        status, etag: typeof response.headers.etag === 'string' ? response.headers.etag.slice(0, 512) : undefined,
+        lastModified: typeof response.headers['last-modified'] === 'string' ? response.headers['last-modified'].slice(0, 128) : undefined,
+      };
+      if (status === 304) {
+        response.resume(); resolve({ text: '', url: url.href, contentType: String(response.headers['content-type'] ?? ''), bytes: 0, ...metadata }); return;
       }
       if (status !== 200) { response.resume(); reject(new CollectionError(422, 'source_unavailable', 'The public feed returned an unavailable or restricted response.')); return; }
       if (response.headers['content-encoding'] && response.headers['content-encoding'] !== 'identity') {
@@ -53,7 +95,7 @@ export async function downloadPublic(urlString: string, redirects = 0): Promise<
         chunks.push(chunk);
       });
       response.on('error', reject);
-      response.on('end', () => resolve({ text: Buffer.concat(chunks).toString('utf8'), url: url.href, contentType: String(response.headers['content-type'] ?? '') }));
+      response.on('end', () => resolve({ text: Buffer.concat(chunks).toString('utf8'), url: url.href, contentType: String(response.headers['content-type'] ?? ''), bytes, ...metadata }));
     });
     const timer = setTimeout(() => req.destroy(new CollectionError(504, 'source_timeout', 'This source took too long to respond.')), 8000);
     req.on('close', () => clearTimeout(timer));

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { applyFollowToggle, creatorMatchesUpdate, mergeCollection, mergeWorkspaceUpdates, removeSourceCollection, resolveFollowedSources, sanitizeArchivedUpdate, sanitizeWorkspace, saveSourceCollection, updatesForCollection } from '../src/lib/domain';
-import { createDefaultWorkspace, createSampleUpdates, sampleCreators, sampleSources } from '../src/lib/fixtures';
+import { createDefaultWorkspace } from '../src/lib/fixtures';
+import { createSampleUpdates, sampleCreators, sampleSources } from './helpers/sample-fixtures';
 import type { Creator, Source, SourceCollection, SourceUpdate, WorkspaceState } from '../src/lib/types';
 
 const sources: Source[] = [
@@ -15,13 +16,13 @@ const workspace = (): WorkspaceState => ({ ...createDefaultWorkspace(), customCr
 
 describe('persistent reader collections and real creator hierarchy', () => {
   it('loads older v1 workspaces without changing follows, settings or saved history', () => {
-    const old = { ...createDefaultWorkspace(), savedUpdateIds: ['sample-01'], readLaterIds: ['sample-02'] };
+    const old = { ...createDefaultWorkspace(), savedUpdateIds: ['saved-real-update'], readLaterIds: ['later-real-update'] };
     const loaded = sanitizeWorkspace(JSON.parse(JSON.stringify(old)));
     expect(loaded).toEqual(old);
     expect(loaded?.activeCollectionId).toBeUndefined();
   });
   it('round trips seeded collection and hierarchy IDs while preserving existing reader data', () => {
-    const state = { ...workspace(), savedUpdateIds: ['new'], readLaterIds: ['sample-01'] };
+    const state = { ...workspace(), savedUpdateIds: ['new'], readLaterIds: ['later-real-update'] };
     const loaded = sanitizeWorkspace(JSON.parse(JSON.stringify(state)));
     expect(loaded).toEqual(state);
     expect(loaded?.customCreators?.find(creator => creator.id === studio.id)?.presenterIds).toEqual([person.id]);

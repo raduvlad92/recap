@@ -1,7 +1,7 @@
 import type { CollectionResult, Platform, Source } from './types';
 
 export interface CollectionHealth {
-  authConfigured: boolean; feedEnabled: boolean; apifyEnabled: boolean; automaticScheduling: false;
+  authConfigured: boolean; feedEnabled: boolean; apifyEnabled: boolean; automaticScheduling: boolean;
   platforms: Record<Platform, { configured: boolean; mode: 'feed' | 'apify' | 'unavailable' }>;
 }
 export interface CollectionOptions { signal?: AbortSignal; onProgress?: (message: string) => void }

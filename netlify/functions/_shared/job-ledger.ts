@@ -91,7 +91,9 @@ export async function finishJob(id: string, userId: string, patch: JobPatch, env
   if ((current.provider_run_id && patch.providerRunId !== undefined && patch.providerRunId !== current.provider_run_id) ||
       (current.actor_id && patch.actorId !== undefined && patch.actorId !== current.actor_id)) throw new CollectionError(409, 'job_identity_changed', 'The provider reference does not match this collection activity.');
 
-  const cost = patch.observedCostUsd === undefined ? current.observed_cost_usd : patch.observedCostUsd;
+  // Provider usage can lag or temporarily regress; never lower an already
+  // observed charge while polling the same run.
+  const cost = patch.observedCostUsd === undefined ? current.observed_cost_usd : patch.observedCostUsd === null ? current.observed_cost_usd : Math.max(current.observed_cost_usd ?? 0, patch.observedCostUsd);
   const costStatus = patch.costStatus ?? current.cost_status;
   if ((costStatus === 'unknown' && cost !== null) ||
       (costStatus === 'provider_reported' && (current.provider === 'feed' || cost === null || !(patch.providerRunId ?? current.provider_run_id))) ||
@@ -102,7 +104,7 @@ export async function finishJob(id: string, userId: string, patch: JobPatch, env
   if (patch.providerRunId !== undefined) changes.provider_run_id = patch.providerRunId;
   if (patch.actorId !== undefined) changes.actor_id = patch.actorId;
   if (patch.resultCount !== undefined) changes.result_count = patch.resultCount;
-  if (patch.observedCostUsd !== undefined) changes.observed_cost_usd = patch.observedCostUsd;
+  if (patch.observedCostUsd !== undefined) changes.observed_cost_usd = cost;
   if (patch.costStatus !== undefined) changes.cost_status = patch.costStatus;
   if (patch.errorCode !== undefined) changes.error_code = patch.errorCode;
   if (terminal.has(patch.status) && !current.finished_at) changes.finished_at = new Date().toISOString();
