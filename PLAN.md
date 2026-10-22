@@ -1,6 +1,6 @@
 # Tracked implementation and validation plan
 
-Version: **1.1 — APPROVAL CANDIDATE**. Updated: 22 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
+Version: **1.1 — APPROVAL CANDIDATE**. Updated: 23 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
 
@@ -8,7 +8,11 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 The founder explicitly requested autonomous implementation on 21 October (D20). [docs/v0/PLAN.md](docs/v0/PLAN.md) tracks that first increment, selected Supabase/Clerk targets, screenshot-based UI and GitHub/Netlify deployment. V0-01–V0-07 are complete for the first increment: [live app](https://recap-v0-radu.netlify.app), [verification](docs/v0/VERIFICATION.md), [morning checklist](docs/v0/MORNING.md). V0-N01–V0-N06 track the continuation. V0 work is authorized now; the full M0–M5 table below is not a claim of completed production behavior. Its remaining goals, including real AI generation, multilingual quality, scheduling, retention and delivery, still require evidence.
 
-## Current authorized keyword-footer refinement — D26
+## Current authorized studio/channel images — D27
+
+Show real images in studio rows, expanded channels and newly added standalone channels. Capture and save public YouTube channel identity metadata when a channel is added, and fill missing existing channel images without collecting updates. Preserve source/account identities, operator names, coverage and reader state; offer an image-only retry. UI, persistence and bounded metadata tests pass; actual Fireship capture/reload and zero content-collection requests are verified locally. Review fixes are confirmed. Isolated release checks, push/CI, exact deployment and hosted verification remain. [Design and evidence](docs/design/STUDIO-IMAGES.md). No scraper jobs, supplier subscription or recurring execution. Next: finish lookup/release verification.
+
+## Historical authorized keyword-footer refinement — D26
 
 Remove “Caption excerpts”, inline minute estimates and the horizontal scrollbar. Preserve duration ranking and topic filtering. Deliver seamless automatic overflow scrolling, static fitting lists, keyboard-visible focus and a scrollbar-free wrapping reduced-motion layout. **Complete:** 477 tests, typecheck/build/catalogue and desktop/390px/320px synthetic checks; functional `dd3eab8`, passing CI `39859911702`, exact Netlify deploy `6ada845b5b3c61119bc1afea` and actual signed-in 1496/390px checks. Detailed evidence is tracked separately in [STATUS](STATUS.md) and [sanitized evidence](docs/design/evidence/keyword-ui-checks.json). No source jobs, database annotation changes or new supplier spending. Next: founder review.
 

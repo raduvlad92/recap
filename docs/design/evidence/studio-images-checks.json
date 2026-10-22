@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-22T22:08:25.776952+00:00",
+  "local": {
+    "kind": "synthetic isolated guest fixture with public identities; no private reader state",
+    "studioImagesLoaded": 4,
+    "expandedChannelImageLoaded": true,
+    "studioImageSize": [
+      40,
+      40
+    ],
+    "expandedChannelImageSize": [
+      24,
+      24
+    ],
+    "newChannelImageSize": [
+      30,
+      30
+    ],
+    "actualNewChannel": "Fireship",
+    "capturedAutomaticallyOnAdd": true,
+    "persistedAfterReload": true,
+    "metadataRequestsOnAdd": 1,
+    "metadataRequestsAfterReload": 0,
+    "collectionRequests": 0,
+    "pageOverflow": false,
+    "fallbackAndImageOnlyRetryShownOnLookupFailure": true,
+    "reviewFindingsFixed": [
+      "fixed standalone avatar flex sizing",
+      "cleared completed attempts on same-account reload"
+    ]
+  },
+  "tests": {
+    "sourceImageTests": 13,
+    "metadataTests": 112,
+    "cleanReleaseSuite": null,
+    "typecheck": true,
+    "build": true,
+    "catalogueUnchanged": true
+  },
+  "release": null,
+  "supplierJobsStarted": false,
+  "privateReaderDataIncluded": false
+}

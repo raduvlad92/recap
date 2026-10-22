@@ -1,0 +1,17 @@
+# Studio and channel images — D27
+
+23 October 2026. The founder requested images for every studio/channel in the left navigation, including future additions, with profile-image capture when adding a YouTube channel.
+
+## Behavior
+
+Studio rows use an explicit creator image when available, otherwise an image from an associated YouTube channel, preferring a matching channel name. The existing four studio rows can use their already-saved main-channel images. Expanded channels and standalone added channels show their own saved image. Circular sizing follows the existing navigation: 40px studios, 24px expanded channels and 30px standalone channels. Missing/broken images retain initials.
+
+Newly added YouTube channels and existing channels missing an image request public channel identity metadata automatically. Requests run serially and once per missing channel per workspace session, with an image-only retry in Manage sources after failure. The lookup does not collect videos, captions or posts and does not start Apify, Bright Data, AI generation or a schedule. Image capture does not mark a source collected or change its coverage.
+
+The server accepts only public HTTPS YouTube channel URLs, bounds requests and redirects, validates profile-image CDN URLs and caches only public identity fields. Caller credentials and saved follows are not sent to YouTube. The client saves the image through the existing local/account workspace flow. It accepts a reply only for the same current channel URL/ID and workspace generation, preserves operator names and existing images, and cancels pending work when changing accounts or reloading the workspace. No schema or permissions change is needed.
+
+## Verification record
+
+The isolated local fixture uses public channel identities and invented follows/counts; it contains no private saved reader state or collected updates. Its four studio images and expanded channel image loaded successfully. [Desktop fixture](evidence/studio-images-desktop-fixture.png). Parser/security tests and source-image persistence tests are separate from actual channel metadata lookup, browser add/reload proof, GitHub CI, Netlify deployment and hosted verification. Exact completed checks are recorded in [sanitized evidence](evidence/studio-images-checks.json) and STATUS.
+
+Actual local Fireship add → profile image capture → reload passed, with one metadata request on add and none after reload; zero `/api/collect` requests. Source-image tests (13) and metadata/security tests (112) pass. The local endpoint also returned real Linus Tech Tips metadata. Review found and confirmed fixes for avatar flex stretching and an attempted-lookup key retained after a same-account cloud reload. A fixed public signed-out cookie-choice value resolves the observed YouTube consent redirect; reader/session cookies are never forwarded. Clean release-suite/CI/deployment/hosted verification remains pending. No supplier jobs or supplier charges; hosting/build/database totals are unmeasured. Next: complete the actual add-channel image lookup, publish the checked change and verify the signed-in navigation.

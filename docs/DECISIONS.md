@@ -1,6 +1,6 @@
 # Decisions and interview
 
-Updated: 22 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Updated: 23 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
 ## Accepted founder decisions
 
@@ -29,6 +29,10 @@ Updated: 22 October 2026. Individual answers below are accepted directions. They
 | D23 | Make the middle column much more compact: remove repeated collection headings/subtitle/channel and update counts, move source-material explanation/coverage access into Preferences, and keep sort, expanded history range and Filter in one row. Exact dates remain in Filter; remove date-toolbar controls. | 21 October: “let's make it MUCH more compact and remove the fluff”, explicit removal/control list and screenshot; follow-up removes the update count/date controls and adds 2-week/1-week/3-day/24-hour ranges. |
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
+
+## D27 — studio/channel images and future YouTube image capture, 23 October 2026
+
+Founder requested images beside each studio/channel in the left column, including future additions, specifically capturing an image when a YouTube channel is added. This authorizes the scoped UI and public channel-identity metadata lookup/persistence, including filling missing existing channel images. Studio rows can use their associated main-channel image when no explicit studio image is available. Source-content collection, provider jobs, recurring schedules and broader SPEC/PLAN approval do not follow from image capture. Preserve reader data and source identity, with fallback initials and image-only retry on lookup failure. [Implementation and evidence](design/STUDIO-IMAGES.md).
 
 ## D26 — simpler keyword footer, 22 October 2026
 

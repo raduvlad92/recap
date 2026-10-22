@@ -1,5 +1,5 @@
 export type Platform = 'YouTube' | 'X' | 'Instagram' | 'LinkedIn' | 'Podcast' | 'Substack' | 'Blog';
-export interface Creator { id: string; name: string; kind: 'person' | 'studio'; handle: string; bio: string; color: string; initials: string; sourceIds: string[]; presenterIds?: string[] }
+export interface Creator { id: string; name: string; kind: 'person' | 'studio'; handle: string; bio: string; color: string; initials: string; sourceIds: string[]; presenterIds?: string[]; avatarUrl?: string }
 export interface Source { id: string; name: string; url: string; platform: Platform; creatorIds: string[]; status: 'sample' | 'pending' | 'ready' | 'failed'; feedUrl?: string; description?: string; avatarUrl?: string }
 export interface Reference { title: string; url: string }
 export interface VideoKeyword { label: string; seconds?: number; ranges: Array<{ startSeconds: number; endSeconds: number }> }
@@ -11,4 +11,5 @@ export interface SourceCollection { id: string; name: string; sourceIds: string[
 export interface SourcePreferences { showShorts: boolean }
 export interface WorkspaceState { version: 1; followedSourceIds: string[]; followScopes?: FollowScope[]; savedUpdateIds: string[]; readLaterIds: string[]; settings: ReaderSettings; customSources: Source[]; importedUpdates: SourceUpdate[]; customCreators?: Creator[]; sourceCollections?: SourceCollection[]; activeCollectionId?: string; sourcePreferences?: Record<string, SourcePreferences> }
 export interface CollectionResult { source: Source; updates: SourceUpdate[]; notice?: string }
+export interface SourceMetadata { name: string; avatarUrl?: string }
 export interface CollectionJob { id: string; status: 'RUNNING' | 'SUCCEEDED' | 'FAILED' | 'ABORTED' | 'TIMED-OUT'; datasetId?: string; source: Source; message?: string }

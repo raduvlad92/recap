@@ -125,6 +125,11 @@
 @media(max-width:1250px) and (min-width:781px){.youtube-channel{left:11px;top:13px;right:42px;gap:6px;align-items:flex-start}.youtube-channel .creator-avatar{width:26px;height:26px}.youtube-channel strong{font-size:10px}.youtube-channel time{font-size:9px}.youtube-card .youtube-platform{top:12px;right:8px;padding:4px}.youtube-platform svg{width:16px}.youtube-card .update-title-button h2{font-size:20px}.video-highlights{font-size:12px}}
 @media(max-width:560px){.youtube-card .youtube-cover{height:190px;min-height:0;width:100%}.youtube-card .update-title-button h2{font-size:23px}.youtube-card .update-card-body{padding-top:20px}.video-highlights{font-size:13px;gap:10px}.youtube-channel strong{font-size:13px}.youtube-channel time{font-size:11px}.youtube-channel .creator-avatar{width:35px;height:35px}.transcript-button{font-size:12px;min-height:36px}.full-transcript{font-size:13px}.shorts-preference{font-size:12px;min-height:32px}}
 
+.studio-channels .creator-avatar{width:24px;height:24px;font-size:9px}
+.channel-nav>span.creator-avatar{width:30px;height:30px;font-size:10px;flex:none}
+.source-image-retry{font-size:10px;color:#687163;margin-top:6px}
+.source-image-retry button{text-decoration:underline;text-underline-offset:3px;color:#397868;padding:3px}
+
 /* Duration-ranked keywords loop seamlessly across the card footer. */
 .youtube-card .video-keyword-footer{display:flex;flex-direction:row;align-items:center;gap:0;min-width:0;width:100%;position:relative}
 .video-keyword-footer>.provenance{flex:none;position:relative;z-index:2;background:var(--paper);padding-right:11px;white-space:nowrap;font-size:9px}

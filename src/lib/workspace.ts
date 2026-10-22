@@ -4,6 +4,7 @@ import { useRecapAuth } from './auth';
 import { createDefaultWorkspace, sampleCreators, sampleSources, sampleUpdates } from './fixtures';
 import { applyFollowToggle, followReasons as reasonsFor, mergeCollection, mergeWorkspaceUpdates, normalizeSourceUrl, resolveFollowedSources, removeSourceCollection, saveSourceCollection, sanitizeSettings, sanitizeArchivedUpdate, sanitizeWorkspace, scopesFor, sourceCounts as countSources, sourceIdForUrl, unique, withSourceShortsPreference } from './domain';
 import type { CollectionResult, ReaderSettings, Source, SourceUpdate, WorkspaceState } from './types';
+import { fetchSourceMetadata, withSourceMetadata } from './source-images';
 
 export type SaveStatus = 'loading' | 'local' | 'saving' | 'saved' | 'error' | 'conflict';
 interface Cache { state: WorkspaceState; updatedAt: string | null; dirty: boolean }
@@ -71,6 +72,10 @@ export function useWorkspace() {
   const deleting = useRef(false);
   const discardCacheOnReload = useRef(false);
   const loadResolvers = useRef<Array<() => void>>([]);
+  const sourceImageRequests = useRef(new Map<string, AbortController>());
+  const attemptedSourceImages = useRef(new Set<string>());
+  const [sourceImageTick, setSourceImageTick] = useState(0);
+  const [sourceImageErrors, setSourceImageErrors] = useState<Record<string, boolean>>({});
   const isLoaded = auth.isLoaded && view.owner === owner && view.loaded;
   const state = view.owner === owner ? view.state : createDefaultWorkspace();
   const sources = useMemo(() => [...sampleSources.filter(source => !state.customSources.some(custom => custom.id === source.id)), ...state.customSources], [state.customSources]);
@@ -91,6 +96,10 @@ export function useWorkspace() {
   useEffect(() => {
     if (!auth.isLoaded) return;
     const current = ++generation.current;
+    sourceImageRequests.current.forEach((controller, key) => { controller.abort(); attemptedSourceImages.current.delete(key); });
+    sourceImageRequests.current.clear();
+    attemptedSourceImages.current.clear();
+    setSourceImageErrors({});
     archiveRetryAbort.current?.abort(); archiveRequest.current++;
     const abort = new AbortController();
     const cache = discardCacheOnReload.current ? null : readCache(owner);
@@ -223,6 +232,35 @@ export function useWorkspace() {
     } catch (mutationError) { setError(messageFor(mutationError)); return false; }
   }, [install, owner]);
 
+  // Identity metadata is fetched once per missing channel, serially, without collecting updates.
+  useEffect(() => {
+    if (!isLoaded || sourceImageRequests.current.size) return;
+    const keyFor = (source: Source) => JSON.stringify([owner, source.id, source.url]);
+    const source = state.customSources.find(item => item.platform === 'YouTube' && !item.avatarUrl && !attemptedSourceImages.current.has(keyFor(item)));
+    if (!source) return;
+    const key = keyFor(source), controller = new AbortController(), current = generation.current;
+    attemptedSourceImages.current.add(key); sourceImageRequests.current.set(key, controller);
+    void fetchSourceMetadata(source, controller.signal).then(metadata => {
+      if (controller.signal.aborted || generation.current !== current || ownerRef.current !== owner) return;
+      if (withSourceMetadata(viewRef.current.state, source, metadata) !== viewRef.current.state) mutate(previous => withSourceMetadata(previous, source, metadata));
+      setSourceImageErrors(previous => ({ ...previous, [source.id]: false }));
+    }).catch(() => {
+      if (!controller.signal.aborted && generation.current === current && ownerRef.current === owner) setSourceImageErrors(previous => ({ ...previous, [source.id]: true }));
+    }).finally(() => {
+      if (sourceImageRequests.current.get(key) === controller) sourceImageRequests.current.delete(key);
+      if (!controller.signal.aborted && generation.current === current && ownerRef.current === owner) setSourceImageTick(value => value + 1);
+    });
+  }, [isLoaded, owner, state.customSources, sourceImageTick, mutate]);
+  useEffect(() => {
+    setSourceImageErrors({});
+    attemptedSourceImages.current.clear();
+    return () => { sourceImageRequests.current.forEach((controller, key) => { controller.abort(); attemptedSourceImages.current.delete(key); }); sourceImageRequests.current.clear(); };
+  }, [owner]);
+  const retrySourceImage = useCallback((source: Source) => {
+    attemptedSourceImages.current.delete(JSON.stringify([owner, source.id, source.url]));
+    setSourceImageErrors(previous => ({ ...previous, [source.id]: false }));
+    setSourceImageTick(value => value + 1);
+  }, [owner]);
   const toggleSource = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'source', id }, [...sampleCreators, ...(previous.customCreators ?? [])], [...sampleSources, ...previous.customSources])); }, [mutate]);
   const toggleCreator = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'creator', id }, [...sampleCreators, ...(previous.customCreators ?? [])], [...sampleSources, ...previous.customSources])); }, [mutate]);
   const toggleSaved = useCallback((id: string) => { mutate(previous => ({ ...previous, savedUpdateIds: previous.savedUpdateIds.includes(id) ? previous.savedUpdateIds.filter(saved => saved !== id) : [...previous.savedUpdateIds, id] })); }, [mutate]);
@@ -351,7 +389,7 @@ export function useWorkspace() {
   const followed = unique(resolveFollowedSources(scopesFor(state), creators, sources));
   const exposedState = followed.join('|') === state.followedSourceIds.join('|') ? state : { ...state, followedSourceIds: followed };
   return { state: exposedState, sources, updates, creators, isLoaded, saveStatus: isLoaded ? saveStatus : 'loading' as SaveStatus, error: [error, archiveError].filter(Boolean).join(' ') || null, archiveError, archiveLoading: archive.owner === owner && archive.loading === true,
-    sourceCounts: countSources(exposedState, sources, updates), toggleSource, toggleCreator,
+    sourceCounts: countSources(exposedState, sources, updates), toggleSource, toggleCreator, sourceImageErrors, retrySourceImage,
     isCreatorFollowed: (id: string) => scopesFor(state).some(scope => scope.kind === 'creator' && scope.id === id),
     followReasons: (id: string) => reasonsFor(state, id, creators),
     selectSourceCollection, saveCollection, deleteSourceCollection, toggleSaved, toggleReadLater, updateSettings, setSourceShowShorts, addSource, importCollection, setSourceStatus, resetWorkspace, deleteWorkspace, exportWorkspace, retrySave, retryArchive, reloadWorkspace };
