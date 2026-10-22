@@ -10,7 +10,7 @@ The founder explicitly requested autonomous implementation on 21 October (D20). 
 
 ## Authorized always-single-row keywords — D31
 
-Honor one keyword row in all motion preferences and both card densities. Overflow loops infinitely; fitting lists remain still. Preserve pause/resume, hover/focus stop, keyboard reveal and filtering. Wrapping fallback/global motion-reset conflict are fixed; independent review, 1496/320px normal/forced-reduced-motion fixture checks and 655-test/build/catalogue gate pass. [Current rule/evidence](docs/design/VIDEO-SUMMARY-RULE.md#d31--one-row-correction-23-october-2026). Next: push, CI, exact deploy and hosted verification, then founder review. No data/source/provider changes.
+Honor one keyword row in all motion preferences and both card densities. Overflow loops infinitely; fitting lists remain still. Preserve pause/resume, hover/focus stop, keyboard reveal and filtering. Wrapping fallback/global motion-reset conflict are fixed; independent review, 1496/320px normal/forced-reduced-motion fixture checks and 655-test/build/catalogue gate pass. [Current rule/evidence](docs/design/VIDEO-SUMMARY-RULE.md#d31--one-row-correction-23-october-2026). Complete: functional `e851b53`, passing CI `39870140358`, exact Netlify deploy `6ada985ae7535ae2938c66bc`, actual signed-in 1496/320px reference with 26 labels on one moving row and no overflow/errors. Next: founder review. No data/source/provider changes.
 
 ## Authorized Compact/Regular card density — D30
 

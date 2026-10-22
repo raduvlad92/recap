@@ -105,5 +105,94 @@
     "typecheck": "pass",
     "productionBuild": "pass"
   },
-  "release": "Pending"
+  "release": {
+    "functionalCommit": "e851b5378d83e65e4a6053d4f5db72cbddb2333b",
+    "pushed": true,
+    "ci": {
+      "id": 39870140358,
+      "conclusion": "success",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/39870140358"
+    },
+    "deploy": {
+      "id": "6ada985ae7535ae2938c66bc",
+      "state": "ready",
+      "commit_ref": "e851b5378d83e65e4a6053d4f5db72cbddb2333b",
+      "published_at": "2026-10-22T23:12:51.894Z",
+      "error_message": null
+    },
+    "hosted": {
+      "desktop": {
+        "animation": "video-keyword-loop",
+        "cardClip": {
+          "height": 294.34375,
+          "width": 874,
+          "x": 296,
+          "y": 223
+        },
+        "css": [
+          "/assets/index-DgJUex56.css"
+        ],
+        "footerClip": {
+          "height": 51,
+          "width": 874,
+          "x": 296,
+          "y": 466.34375
+        },
+        "height": 26,
+        "iterations": "infinite",
+        "keywords": 26,
+        "overflowing": true,
+        "pageOverflow": false,
+        "pauseVisible": true,
+        "playState": "running",
+        "rows": 1,
+        "title": "The RTX 5090 is Reportedly Dead",
+        "transform": "matrix(1, 0, 0, 1, -1009.59, 0)",
+        "viewport": {
+          "height": 663,
+          "width": 1496
+        },
+        "wrap": "nowrap"
+      },
+      "phone": {
+        "animation": "video-keyword-loop",
+        "cardClip": {
+          "height": 637.21875,
+          "width": 292,
+          "x": 14,
+          "y": 293.5
+        },
+        "css": [
+          "/assets/index-DgJUex56.css"
+        ],
+        "footerClip": {
+          "height": 50,
+          "width": 292,
+          "x": 14,
+          "y": 880.71875
+        },
+        "height": 26,
+        "iterations": "infinite",
+        "keywords": 26,
+        "overflowing": true,
+        "pageOverflow": false,
+        "pauseVisible": true,
+        "playState": "running",
+        "rows": 1,
+        "title": "The RTX 5090 is Reportedly Dead",
+        "transform": "matrix(1, 0, 0, 1, -1015.19, 0)",
+        "viewport": {
+          "height": 844,
+          "width": 320
+        },
+        "wrap": "nowrap"
+      },
+      "secondDesktopTransform": "matrix(1, 0, 0, 1, -483.323, 0)",
+      "movementObserved": true,
+      "browserErrors": 0,
+      "viewportRestored": true,
+      "screenshot": "keyword-one-row-live.png",
+      "privacy": "Public reference keyword footer only; private follows/account identity excluded"
+    }
+  }
 }

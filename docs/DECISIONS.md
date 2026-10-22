@@ -32,7 +32,7 @@ Original requested product behavior: topics rather than a simple post list; snip
 
 ## D31 — keywords always on one row, 23 October 2026
 
-Founder rejected a two-row keyword screenshot and explicitly repeated one row with infinite scrolling when there are too many keywords. This supersedes the earlier reduced-motion wrapping fallback: keep one row, automatic infinite overflow motion and the pause/resume control, plus hover/focus pause and keyboard reveal. Exempt only the keyword track from the global animation reset. No content annotations, collection or broader scope changes follow. [Current rule/evidence](design/VIDEO-SUMMARY-RULE.md#d31--one-row-correction-23-october-2026).
+Founder rejected a two-row keyword screenshot and explicitly repeated one row with infinite scrolling when there are too many keywords. This supersedes the earlier reduced-motion wrapping fallback: keep one row, automatic infinite overflow motion and the pause/resume control, plus hover/focus pause and keyboard reveal. Exempt only the keyword track from the global animation reset. No content annotations, collection or broader scope changes follow. Delivered and verified as `e851b53`. [Current rule/evidence](design/VIDEO-SUMMARY-RULE.md#d31--one-row-correction-23-october-2026).
 
 ## D30 — optional compact cards, 23 October 2026
 
