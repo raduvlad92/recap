@@ -2,6 +2,10 @@
 
 Updated: **23 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
+## Current timestamp hierarchy — D29
+
+The founder requested smaller minute references at the end of each video takeaway so the recap text leads. Implemented with trailing 10–11px muted timestamps, text-first accessible link names and preserved video seek URLs. Independent review and synthetic Chrome 1496/320px checks pass without overflow. The isolated timestamp release passed 602 tests / 18 files, catalogue validation, typecheck and production build. [Design and evidence](docs/design/TIMESTAMP-HIERARCHY.md). Push/CI/deployment/hosted verification are pending. No database or collection changes; supplier spend unchanged, hosting/build costs unmeasured. Next: release verification.
+
 ## Current keyword correction and private review (D28)
 
 Implemented [entity-first keyword rules](docs/design/KEYWORD-EXTRACTION-RULE.md), two-inventory evidence/coverage reconciliation, explicit capacity checks and a private admin review screen with label/type correction. Brief/casual/outro/sponsor names qualify; keywords cannot be claim summaries. Confidence below 50/100, unknown scores and disagreements wait for the existing owner; scores are uncalibrated review judgments. No automatic model service or recurring collection is activated.

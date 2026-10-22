@@ -30,6 +30,10 @@ Updated: 23 October 2026. Individual answers below are accepted directions. They
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
+## D29 — recap text before minute references, 23 October 2026
+
+Founder requested the minute reference at the end of each takeaway with a smaller font, prioritizing the update/recap. This authorizes the scoped presentation adjustment and review publication. Keep actual seek links and recap wording; no data reannotation or source collection is implied. [Implementation and evidence](design/TIMESTAMP-HIERARCHY.md).
+
 ## D28 — entity-first keywords and private review, 23 October 2026
 
 Founder request received 22 October: keyword labels must identify brands/categories rather than condense claims. Include **all** explicitly mentioned brands/products, including named games and casual/final-second examples. Nvidia, RTX 5090, GPU and DLSS 5 remain distinct; Tape to Tape qualifies in the closing exchange. The hypothetical Tape to Tape or Factorio example yields both games; an absent game must not be invented. “Console performance stagnation” belongs in summaries. Review/update rules and add a double check, with candidates below 50 going to the existing administrator.

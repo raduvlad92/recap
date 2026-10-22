@@ -1,0 +1,128 @@
+{
+  "checkedOn": "2026-10-23",
+  "scope": "Synthetic isolated YouTubeCard using supplied public takeaway text; no reader data or source collection",
+  "desktop": {
+    "overflow": false,
+    "points": [
+      {
+        "bodyFont": "13px",
+        "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=127s",
+        "nowrap": "nowrap",
+        "time": "2:07",
+        "timeColor": "rgb(104, 123, 111)",
+        "timeFont": "10px",
+        "timeWeight": "400",
+        "trailing": true
+      },
+      {
+        "bodyFont": "13px",
+        "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=184s",
+        "nowrap": "nowrap",
+        "time": "3:04",
+        "timeColor": "rgb(104, 123, 111)",
+        "timeFont": "10px",
+        "timeWeight": "400",
+        "trailing": true
+      },
+      {
+        "bodyFont": "13px",
+        "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=315s",
+        "nowrap": "nowrap",
+        "time": "5:15",
+        "timeColor": "rgb(104, 123, 111)",
+        "timeFont": "10px",
+        "timeWeight": "400",
+        "trailing": true
+      },
+      {
+        "bodyFont": "13px",
+        "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=506s",
+        "nowrap": "nowrap",
+        "time": "8:26",
+        "timeColor": "rgb(104, 123, 111)",
+        "timeFont": "10px",
+        "timeWeight": "400",
+        "trailing": true
+      },
+      {
+        "bodyFont": "13px",
+        "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=728s",
+        "nowrap": "nowrap",
+        "time": "12:08",
+        "timeColor": "rgb(104, 123, 111)",
+        "timeFont": "10px",
+        "timeWeight": "400",
+        "trailing": true
+      },
+      {
+        "bodyFont": "13px",
+        "href": "https://www.youtube.com/watch?v=ckEUIfrg_tU&t=834s",
+        "nowrap": "nowrap",
+        "time": "13:54",
+        "timeColor": "rgb(104, 123, 111)",
+        "timeFont": "10px",
+        "timeWeight": "400",
+        "trailing": true
+      }
+    ],
+    "viewport": {
+      "height": 663,
+      "width": 1496
+    }
+  },
+  "phone": {
+    "height": 844,
+    "overflow": false,
+    "points": [
+      {
+        "bodyFont": "13px",
+        "font": "10px",
+        "trailing": true,
+        "withinCard": true
+      },
+      {
+        "bodyFont": "13px",
+        "font": "10px",
+        "trailing": true,
+        "withinCard": true
+      },
+      {
+        "bodyFont": "13px",
+        "font": "10px",
+        "trailing": true,
+        "withinCard": true
+      },
+      {
+        "bodyFont": "13px",
+        "font": "10px",
+        "trailing": true,
+        "withinCard": true
+      },
+      {
+        "bodyFont": "13px",
+        "font": "10px",
+        "trailing": true,
+        "withinCard": true
+      },
+      {
+        "bodyFont": "13px",
+        "font": "10px",
+        "trailing": true,
+        "withinCard": true
+      }
+    ],
+    "width": 320
+  },
+  "review": "PASS \u2014 independent read-only source review",
+  "nativePreview": "Two snapshot attempts timed out after 15000ms; Chrome fallback used",
+  "release": "Pending",
+  "localReleaseCheck": {
+    "command": "npm run check",
+    "scope": "Isolated HEAD archive plus only the two timestamp source edits; concurrent keyword changes excluded",
+    "tests": 602,
+    "testFiles": 18,
+    "catalogue": "pass",
+    "typecheck": "pass",
+    "productionBuild": "pass"
+  }
+}
