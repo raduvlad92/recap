@@ -26,14 +26,18 @@ export function YouTubeCard({ update, channelName, channelIcon, date, actions, t
   const keywords = useMemo(() => getVideoKeywords(update), [update]);
   return <article className={`update-card youtube-card ${compact ? 'update-card-compact' : ''}`}>
     <div className="update-cover youtube-cover">
-      <button className="youtube-thumbnail" aria-label={`Read the details: ${update.title}`} onClick={onOpen}><Artwork update={update} /></button>
-      <span className="youtube-cover-shade" />
-      <button className="youtube-channel" aria-label={`View channel: ${channelName}`} onClick={onChannel}>
-        {channelIcon}<span><strong>{channelName}</strong><time dateTime={update.publishedAt}>{date}</time></span>
-      </button>
-      <span className="platform-pill youtube-platform" aria-label="YouTube" title="YouTube"><svg viewBox="0 0 24 18" width="21" height="16" aria-hidden="true"><path fill="#f03" d="M23.5 3a3 3 0 0 0-2.1-2.1C19.5.4 12 .4 12 .4S4.5.4 2.6.9A3 3 0 0 0 .5 3C0 4.9 0 9 0 9s0 4.1.5 6a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-6 .5-6s0-4.1-.5-6Z"/><path fill="#fff" d="m9.5 12.8 6.3-3.8-6.3-3.8Z"/></svg></span>
-      {update.duration && <span className="duration-pill"><Play size={11} aria-hidden="true" />{update.duration}</span>}
-      <div className="youtube-card-actions">{actions}</div>
+      <div className="youtube-media">
+        <button className="youtube-thumbnail" aria-label={`Read the details: ${update.title}`} onClick={onOpen}><Artwork update={update} /></button>
+        <span className="youtube-cover-shade" />
+        <span className="platform-pill youtube-platform" aria-label="YouTube" title="YouTube"><svg viewBox="0 0 24 18" width="21" height="16" aria-hidden="true"><path fill="#f03" d="M23.5 3a3 3 0 0 0-2.1-2.1C19.5.4 12 .4 12 .4S4.5.4 2.6.9A3 3 0 0 0 .5 3C0 4.9 0 9 0 9s0 4.1.5 6a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-6 .5-6s0-4.1-.5-6Z"/><path fill="#fff" d="m9.5 12.8 6.3-3.8-6.3-3.8Z"/></svg></span>
+        {update.duration && <span className="duration-pill"><Play size={11} aria-hidden="true" />{update.duration}</span>}
+      </div>
+      <div className="youtube-channel-row">
+        <button className="youtube-channel" aria-label={`View channel: ${channelName}`} onClick={onChannel}>
+          {channelIcon}<span><strong>{channelName}</strong><time dateTime={update.publishedAt}>{date}</time></span>
+        </button>
+        <div className="youtube-card-actions">{actions}</div>
+      </div>
     </div>
     <div className="update-card-body">
       <button className="update-title-button" onClick={onOpen}><h2>{update.title}</h2></button>

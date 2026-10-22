@@ -1,0 +1,306 @@
+{
+  "checkedOn": "2026-10-23",
+  "scope": "Isolated guest fixture on port5175 with supplied public takeaway text; no private reader data or collection",
+  "defaultMode": "compact",
+  "persistence": {
+    "scope": "This browser; independent of workspace/account",
+    "regularReload": "pass",
+    "compactReload": "pass"
+  },
+  "desktop": {
+    "compact": {
+      "mode": "compact",
+      "viewport": {
+        "height": 719,
+        "width": 1496
+      },
+      "image": {
+        "width": 165.6796875,
+        "height": 93.1875
+      },
+      "bodyWidth": 706.3203125,
+      "cardHeight": 378.71875,
+      "padding": {
+        "bottom": "10px",
+        "top": "10px"
+      },
+      "lineHeight": "18.85px",
+      "bulletGap": "5px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    },
+    "regular": {
+      "mode": "regular",
+      "viewport": {
+        "height": 719,
+        "width": 1496
+      },
+      "image": {
+        "width": 294.734375,
+        "height": 491.6875
+      },
+      "bodyWidth": 577.265625,
+      "cardHeight": 493.6875,
+      "padding": {
+        "bottom": "20px",
+        "top": "20px"
+      },
+      "lineHeight": "21.45px",
+      "bulletGap": "9px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    }
+  },
+  "wide": {
+    "compact": {
+      "mode": "compact",
+      "viewport": {
+        "height": 1000,
+        "width": 1920
+      },
+      "image": {
+        "width": 200,
+        "height": 112.5
+      },
+      "bodyWidth": 982,
+      "cardHeight": 376.8984375,
+      "padding": {
+        "bottom": "12px",
+        "top": "10px"
+      },
+      "lineHeight": "21.75px",
+      "bulletGap": "5px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    },
+    "regular": {
+      "mode": "regular",
+      "viewport": {
+        "height": 1000,
+        "width": 1920
+      },
+      "image": {
+        "width": 399.515625,
+        "height": 518.09375
+      },
+      "bodyWidth": 782.484375,
+      "cardHeight": 520.09375,
+      "padding": {
+        "bottom": "24px",
+        "top": "20px"
+      },
+      "lineHeight": "24.75px",
+      "bulletGap": "9px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    }
+  },
+  "phone": {
+    "compact": {
+      "mode": "compact",
+      "viewport": {
+        "height": 844,
+        "width": 320
+      },
+      "image": {
+        "width": 88,
+        "height": 90
+      },
+      "bodyWidth": 290,
+      "cardHeight": 779.125,
+      "padding": {
+        "bottom": "9px",
+        "top": "10px"
+      },
+      "lineHeight": "18.85px",
+      "bulletGap": "5px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    },
+    "regular": {
+      "mode": "regular",
+      "viewport": {
+        "height": 844,
+        "width": 320
+      },
+      "image": {
+        "width": 290,
+        "height": 190
+      },
+      "bodyWidth": 290,
+      "cardHeight": 1025.8203125,
+      "padding": {
+        "bottom": "18px",
+        "top": "20px"
+      },
+      "lineHeight": "21.45px",
+      "bulletGap": "10px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    }
+  },
+  "responsive": [
+    {
+      "mode": "compact",
+      "viewport": {
+        "height": 844,
+        "width": 1051
+      },
+      "image": {
+        "width": 128,
+        "height": 72
+      },
+      "bodyWidth": 406,
+      "cardHeight": 469.7734375,
+      "padding": {
+        "bottom": "10px",
+        "top": "10px"
+      },
+      "lineHeight": "17.4px",
+      "bulletGap": "5px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    },
+    {
+      "mode": "compact",
+      "viewport": {
+        "height": 844,
+        "width": 560
+      },
+      "image": {
+        "width": 88,
+        "height": 90
+      },
+      "bodyWidth": 524,
+      "cardHeight": 525.40625,
+      "padding": {
+        "bottom": "9px",
+        "top": "10px"
+      },
+      "lineHeight": "18.85px",
+      "bulletGap": "5px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    },
+    {
+      "mode": "compact",
+      "viewport": {
+        "height": 844,
+        "width": 390
+      },
+      "image": {
+        "width": 88,
+        "height": 90
+      },
+      "bodyWidth": 354,
+      "cardHeight": 684.90625,
+      "padding": {
+        "bottom": "9px",
+        "top": "10px"
+      },
+      "lineHeight": "18.85px",
+      "bulletGap": "5px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    },
+    {
+      "mode": "compact",
+      "viewport": {
+        "height": 844,
+        "width": 320
+      },
+      "image": {
+        "width": 88,
+        "height": 90
+      },
+      "bodyWidth": 290,
+      "cardHeight": 779.125,
+      "padding": {
+        "bottom": "9px",
+        "top": "10px"
+      },
+      "lineHeight": "18.85px",
+      "bulletGap": "5px",
+      "timedLinks": 6,
+      "keywordCount": 6,
+      "overflow": false,
+      "controlsWithinCard": true,
+      "densityBesideFilter": true
+    }
+  ],
+  "interactions": {
+    "filterOpenApply": "pass",
+    "transcriptOpenClose": "pass",
+    "saveAndSavedFeed": "pass",
+    "sixExactSeekLinks": "pass",
+    "keywordLoopOnPhone": "pass"
+  },
+  "stress": {
+    "phone": {
+      "articleDisplay": "block",
+      "articleFullText": true,
+      "articleHeight": 182.671875,
+      "articleLineHeight": "20.3px",
+      "articleNotClipped": true,
+      "channelActionsSeparate": true,
+      "overflow": false,
+      "width": 320
+    },
+    "tablet": {
+      "channelActionsSeparate": true,
+      "overflow": false,
+      "width": 1051
+    }
+  },
+  "toolbarReviewFix": {
+    "today": {
+      "densityHidden": true,
+      "overflow": false,
+      "singleRow": true
+    },
+    "noHistory": {
+      "historyAbsent": true,
+      "overflow": false,
+      "singleRow": true
+    }
+  },
+  "review": "PASS \u2014 initial P3 unnecessary mobile row fixed; fresh source review and320px runtime confirm",
+  "localCheck": {
+    "command": "npm run check",
+    "tests": 655,
+    "testFiles": 20,
+    "catalogue": "pass",
+    "typecheck": "pass",
+    "productionBuild": "pass",
+    "finalCssBuild": "pass"
+  },
+  "nativePreview": "Two snapshots timed out after15000ms; Chrome fallback",
+  "release": "Pending"
+}

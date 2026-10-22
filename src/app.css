@@ -63,10 +63,10 @@
 .feed-toolbar{justify-content:flex-start;gap:8px;margin-top:20px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
 .compact-collection>.feed-toolbar{margin-top:0}
 .compact-collection>.sample-workspace-note,.compact-collection>.sync-banner{margin-top:0;margin-bottom:16px}
-.feed-toolbar .sort-control,.history-control{display:flex;align-items:center;gap:6px;flex:none;min-height:36px;padding:0 10px;border:1px solid var(--line);border-radius:20px;background:var(--paper);color:#536c62}
-.feed-toolbar .sort-control select,.history-control select{appearance:none;min-width:0;max-width:none;padding:8px 0;border:0;background:none;color:inherit;font:inherit;font-size:11px;cursor:pointer;outline:none}
-.feed-toolbar .sort-control>svg,.history-control>svg{flex:none;pointer-events:none}
-.feed-toolbar .sort-control:focus-within,.history-control:focus-within{outline:2px solid var(--teal);outline-offset:3px}
+.feed-toolbar .sort-control,.history-control,.density-control{display:flex;align-items:center;gap:6px;flex:none;min-height:36px;padding:0 10px;border:1px solid var(--line);border-radius:20px;background:var(--paper);color:#536c62}
+.feed-toolbar .sort-control select,.history-control select,.density-control select{appearance:none;min-width:0;max-width:none;padding:8px 0;border:0;background:none;color:inherit;font:inherit;font-size:11px;cursor:pointer;outline:none}
+.feed-toolbar .sort-control>svg,.history-control>svg,.density-control>svg{flex:none;pointer-events:none}
+.feed-toolbar .sort-control:focus-within,.history-control:focus-within,.density-control:focus-within{outline:2px solid var(--teal);outline-offset:3px}
 
 .feed-toolbar .filter-button{margin-left:auto;flex:none;min-height:36px;padding:6px;gap:5px;font-size:11px;color:#687163}
 
@@ -152,3 +152,52 @@ button.video-keyword:hover{text-decoration:underline;text-underline-offset:3px}
 .video-keyword-viewport:focus-within{mask-image:none}
 .video-keyword-viewport:focus-within .video-keyword-track{animation:none;transform:none}
 .video-keyword-viewport:focus-within .video-keyword-copy{display:none}
+
+/* Card density is a reading preference; regular cards retain their original layout. */
+.feed-view-controls{display:flex;align-items:center;gap:8px;margin-left:auto;min-width:0}
+.feed-toolbar .feed-view-controls .filter-button{margin-left:0}
+.youtube-media{position:absolute;inset:0}
+.youtube-channel-row{display:contents}
+.feed-density-compact{gap:12px}
+.feed-density-compact .update-card{min-height:0}
+.feed-density-compact .update-cover{width:clamp(128px,19%,200px);height:112px;min-height:0;align-self:flex-start}
+.feed-density-compact .update-card-body{padding:12px 16px 10px}
+.feed-density-compact .update-title-button h2{line-height:1.2}
+.feed-density-compact .update-card-top{margin-bottom:10px}
+.feed-density-compact .update-summary{display:block;max-width:none;margin-top:9px;line-height:1.45}
+.feed-density-compact .update-card-bottom{padding-top:10px;gap:8px}
+.feed-density-compact .youtube-card .youtube-cover{height:auto;display:flex;flex-direction:column;background:transparent}
+.feed-density-compact .youtube-media{position:relative;inset:auto;width:100%;aspect-ratio:16/9}
+.feed-density-compact .youtube-cover-shade{display:none}
+.feed-density-compact .youtube-channel-row{display:flex;flex-direction:column;gap:10px;padding:10px}
+.feed-density-compact .youtube-channel{position:static;gap:7px;color:var(--ink)}
+.feed-density-compact .youtube-channel .creator-avatar{width:26px;height:26px}
+.feed-density-compact .youtube-channel strong{font-size:11px;text-shadow:none}
+.feed-density-compact .youtube-channel time{font-size:10px;color:#687163}
+.feed-density-compact .youtube-card .youtube-platform{top:7px;right:7px;padding:4px}
+.feed-density-compact .youtube-platform svg{width:17px;height:13px}
+.feed-density-compact .duration-pill{bottom:7px;left:7px;font-size:9px;padding:3px 5px}
+.feed-density-compact .youtube-card-actions{position:static;align-self:flex-start;padding:0;background:#f1f4ed}
+.feed-density-compact .youtube-card .update-card-body{padding-top:10px}
+.feed-density-compact .video-highlights{margin-top:10px;gap:5px;line-height:1.45}
+.feed-density-compact .transcript-button{margin-top:8px}
+.feed-density-compact .youtube-card .update-card-bottom{padding-top:8px}
+@media(min-width:1700px){.feed-density-compact .update-card-body{padding-bottom:12px}}
+@media(max-width:560px){
+  .feed-view-controls{grid-column:-2/-1;gap:6px}
+  .feed-toolbar:not(:has(>.history-control)){grid-template-columns:minmax(0,1fr) auto}
+  .feed-toolbar:not(:has(>.history-control)) .feed-view-controls{grid-column:auto}
+  .density-control{min-height:40px;padding:0 8px;gap:4px}
+  .density-control select{font-size:12px}
+  .feed-density-compact .update-cover{width:100%;height:92px}
+  .feed-density-compact .update-card-body{padding:10px 14px 9px}
+  .feed-density-compact .youtube-card .youtube-cover{display:grid;grid-template-columns:88px minmax(0,1fr);align-items:start;gap:10px;width:100%;padding:10px 14px 0}
+  .feed-density-compact .youtube-media{height:90px;aspect-ratio:auto}
+  .feed-density-compact .youtube-channel-row{min-width:0;min-height:90px;justify-content:space-between;gap:6px;padding:0}
+  .feed-density-compact .youtube-channel strong{font-size:12px}
+  .feed-density-compact .youtube-channel .creator-avatar{width:28px;height:28px}
+}
+@media(max-width:480px){
+  .feed-toolbar:has(>.history-control):has(.density-control){grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}
+  .feed-toolbar:has(>.history-control):has(.density-control) .feed-view-controls{grid-column:1/-1;justify-content:flex-end}
+}

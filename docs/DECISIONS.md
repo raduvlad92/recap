@@ -30,6 +30,10 @@ Updated: 23 October 2026. Individual answers below are accepted directions. They
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
+## D30 — optional compact cards, 23 October 2026
+
+Founder requested a smaller left image (at least half-height reduction), narrower image/more recap width, half padding above the title/below keywords, tighter line spacing and a Compact/Regular dropdown beside Filter. This authorizes the scoped density control/layout and review publication. Compact defaults on; the reader can select Regular, with the choice saved in the browser. Preserve full recap text and existing controls. [Implementation and evidence](design/COMPACT-CARDS.md). No database reannotation or collection is implied.
+
 ## D29 — recap text before minute references, 23 October 2026
 
 Founder requested the minute reference at the end of each takeaway with a smaller font, prioritizing the update/recap. This authorizes the scoped presentation adjustment and review publication. Keep actual seek links and recap wording; no data reannotation or source collection is implied. Implemented and verified locally and on the actual hosted reference card in functional `a500274`. [Implementation and evidence](design/TIMESTAMP-HIERARCHY.md).
