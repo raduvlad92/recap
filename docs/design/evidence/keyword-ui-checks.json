@@ -32,5 +32,39 @@
   "sourceCollectionStarted": false,
   "databaseWritten": false,
   "privateReaderDataIncluded": false,
-  "release": null
+  "release": {
+    "functionalCommit": "dd3eab8e6111eef6069ca9a7a25a3ff7adad570c",
+    "githubCi": {
+      "runId": 39859911702,
+      "conclusion": "success",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/39859911702"
+    },
+    "netlify": {
+      "deployId": "6ada845b5b3c61119bc1afea",
+      "state": "ready",
+      "publishedAt": "2026-10-22T21:47:32.110Z",
+      "url": "https://recap-v0-radu.netlify.app/"
+    },
+    "hostedChecks": {
+      "verifiedAt": "2026-10-22T21:50:16.897Z",
+      "matchingAsset": "index-CfCYN5RF.js",
+      "signedInReference": true,
+      "viewports": [
+        1496,
+        390
+      ],
+      "captionLabelRemoved": true,
+      "inlineMinutesRemoved": true,
+      "keywordCount": 9,
+      "infiniteAnimation": true,
+      "automaticMovement": true,
+      "horizontalScrollbar": false,
+      "pageOverflow": false,
+      "pauseResumePassed": true,
+      "workspaceSyncedAtDesktop": true,
+      "browserErrors": 0,
+      "viewportRestored": true,
+      "searchRestored": true
+    }
+  }
 }

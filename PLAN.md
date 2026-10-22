@@ -10,7 +10,7 @@ The founder explicitly requested autonomous implementation on 21 October (D20). 
 
 ## Current authorized keyword-footer refinement — D26
 
-Remove “Caption excerpts”, inline minute estimates and the horizontal scrollbar. Preserve duration ranking and topic filtering. Deliver seamless automatic overflow scrolling, static fitting lists, keyboard-visible focus and a scrollbar-free wrapping reduced-motion layout. Implementation and desktop/390px/320px synthetic browser checks are complete; final local checks, push/CI, exact Netlify deployment and actual hosted verification are tracked separately in [STATUS](STATUS.md) and [sanitized evidence](docs/design/evidence/keyword-ui-checks.json). No source jobs, database annotation changes or new supplier spending. Next: finish release verification, then founder review.
+Remove “Caption excerpts”, inline minute estimates and the horizontal scrollbar. Preserve duration ranking and topic filtering. Deliver seamless automatic overflow scrolling, static fitting lists, keyboard-visible focus and a scrollbar-free wrapping reduced-motion layout. **Complete:** 477 tests, typecheck/build/catalogue and desktop/390px/320px synthetic checks; functional `dd3eab8`, passing CI `39859911702`, exact Netlify deploy `6ada845b5b3c61119bc1afea` and actual signed-in 1496/390px checks. Detailed evidence is tracked separately in [STATUS](STATUS.md) and [sanitized evidence](docs/design/evidence/keyword-ui-checks.json). No source jobs, database annotation changes or new supplier spending. Next: founder review.
 
 ## Historical authorized concise-summary increment — D25
 
