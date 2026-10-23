@@ -76,9 +76,14 @@ export function isPublicAddress(address: string): boolean {
       (a === 198 && (b === 18 || b === 19 || (b === 51 && c === 100))) ||
       (a === 203 && b === 0 && c === 113));
   }
-  // Conservatively accept ordinary global unicast IPv6 only. Exclude transition,
-  // documentation and special-purpose 2001:: space rather than risk mapped IPs.
-  return isIP(address) === 6 && /^[23][0-9a-f]{3}:/i.test(address) && !/^(2001:|2002:|3fff:)/i.test(address);
+  // Ordinary global unicast only. The special-purpose 2001::/23 block is
+  // narrower than 2001::/16: rejecting the entire /16 also rejects Google's
+  // public 2001:4860:: addresses and breaks every mixed A/AAAA YouTube lookup.
+  // See https://www.iana.org/assignments/iana-ipv6-special-registry
+  if (isIP(address) !== 6 || !/^[23][0-9a-f]{3}:/i.test(address) || /^(2002:|3fff:)/i.test(address)) return false;
+  const [first, second] = address.toLowerCase().split(':');
+  const prefix = Number.parseInt(second || '0', 16);
+  return first !== '2001' || (prefix >= 0x200 && prefix !== 0xdb8);
 }
 
 export function publicHttpsUrl(value: unknown): URL {

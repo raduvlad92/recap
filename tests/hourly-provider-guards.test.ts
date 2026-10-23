@@ -92,3 +92,14 @@ describe('publisher-signed caption URL exception', () => {
     for (const unsafe of ['https://evil.example/api/timedtext?v=abcdefghijk&signature=x', 'https://www.youtube.com/watch?v=abcdefghijk&signature=x', 'https://www.youtube.com/api/timedtext?v=short&signature=x', 'https://www.youtube.com/api/timedtext?v=abcdefghijk&token=secret', 'http://www.youtube.com/api/timedtext?v=abcdefghijk&signature=x', 'https://user:secret@www.youtube.com/api/timedtext?v=abcdefghijk&signature=x', 'https://www.youtube.com/api/timedtext?v=abcdefghijk&v=lmnopqrstuv&signature=x']) expect(() => youtubeCaptionUrl(unsafe)).toThrow();
   });
 });
+
+describe('public publisher IPv6 DNS classification', () => {
+  it('accepts ordinary public Google IPv6 alongside public IPv4 records', async () => {
+    const { isPublicAddress } = await import('../netlify/functions/_shared/security');
+    for (const ip of ['2001:4860:4827:400::', '2001:4860:4860::8888', '2001:0200::1', '2001:500::1', '142.251.156.4']) expect(isPublicAddress(ip)).toBe(true);
+  });
+  it('keeps special-purpose, documentation, transition and private IPv6 blocked', async () => {
+    const { isPublicAddress } = await import('../netlify/functions/_shared/security');
+    for (const ip of ['2001::1', '2001:0::1', '2001:1ff:ffff::1', '2001:2::1', '2001:10::1', '2001:20::1', '2001:db8::1', '2001:0DB8::1', '2002:c000:0204::1', '3fff::1', '::ffff:127.0.0.1', 'fc00::1', 'fe80::1', '::1']) expect(isPublicAddress(ip)).toBe(false);
+  });
+});

@@ -56,13 +56,14 @@ async function downloadPinned(urlString: string, redirects: number, validators: 
   if (!addresses.length || addresses.some(({ address }) => !isPublicAddress(address))) {
     throw new CollectionError(400, 'unsafe_address', 'This source does not resolve to a public website.');
   }
+  const selected = addresses.find(({ family }) => family === 4) || addresses[0];
   const pinnedLookup: LookupFunction = (_hostname, options, callback) => {
-    if (options?.all) callback(null, addresses);
-    else callback(null, addresses[0].address, addresses[0].family);
+    if (options?.all) callback(null, [selected]);
+    else callback(null, selected.address, selected.family);
   };
   return new Promise((resolve, reject) => {
     const req = httpsRequest(url, {
-      lookup: pinnedLookup, family: addresses[0].family,
+      lookup: pinnedLookup, family: selected.family,
       headers: { accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml, text/html;q=0.5', 'accept-encoding': 'identity', 'user-agent': 'therecap-source-check/0.1', ...conditionalFeedHeaders(validators) },
     }, (response) => {
       const status = response.statusCode ?? 502;

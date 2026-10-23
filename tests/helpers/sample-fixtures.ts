@@ -53,4 +53,3 @@ export function createSampleUpdates(anchor = new Date()): SourceUpdate[] {
 }
 
 export const sampleUpdates = createSampleUpdates();
-
