@@ -34,6 +34,14 @@ Founder explicitly said not to depend on YouTube, X or Instagram granting the re
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
+## D34 — consistent source panels and original reply context, 24 October 2026
+
+Founder requested a left preview/image, avatar, posted date, channel/creator name and source icon for **both Regular and Compact**, with video recap/keywords, actual X text and an explicitly highlighted reply plus original post on the right. This authorizes scoped card/parser/archive-context correction and review publication on the existing stack. Saved provider evidence may restore relationships on existing records using guarded, context-only changes. A leading mention alone never establishes reply identity. Show captured originals; report missing captured content without claiming deletion. Quotes and replies remain separate relationships.
+
+This does not authorize new supplier jobs, missing-parent collection, subscriptions, cloud Actor builds, budget/schedule expansion, paid generation or the wider specification. Existing hourly work continues independently. [Design, evidence and delivery checkpoint](design/SOURCE-CARDS.md).
+
+D34 delivery: `87fb1cb` passed 1,020 tests/typecheck/build/catalogue and CI 40038022972, deployed as exact Netlify `6adbe94b570879468afb25d4`, and passed signed-in native desktop both-density/video/reply/media checks. Exactly 36 existing context repairs preserve all 485 rows and the complete workspace; no collection. Long originals expand in the feed and remain complete in details. Phone proofs are synthetic local checks; no final hosted phone/console claim. [Evidence](design/SOURCE-CARDS.md).
+
 ## 24 October 2026 — latest content investigation, no scope change
 
 Follow-up founder request: “ok so what are your suggestions to fix al this?” Assistant recommends the [sequenced repair scope](tech/CONTENT-ANALYSIS-AUDIT.md#proposed-repair-scope--founder-requested-suggestions-24-october), including the explicit trade-off that unclassified formats wait outside a No Shorts feed. These are proposals awaiting direction, not newly accepted product decisions or authority for paid AI runs.

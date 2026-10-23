@@ -1,0 +1,68 @@
+{
+  "checkedAt": "2026-10-23T23:16:09.935869+00:00",
+  "functionalCommit": "87fb1cb01c1d1c92a46a5011b74861d6d76bf6ac",
+  "initialFunctionalCommit": "4b195b55f87749f32936e8845ab59e4bd5227db4",
+  "ci": {
+    "id": 40038022972,
+    "url": "https://github.com/raduvlad92/recap/actions/runs/40038022972",
+    "conclusion": "success"
+  },
+  "deploy": {
+    "siteId": "522a0657-c191-4355-8d72-2ed19c580b81",
+    "id": "6adbe94b570879468afb25d4",
+    "commitRef": "87fb1cb01c1d1c92a46a5011b74861d6d76bf6ac",
+    "state": "ready",
+    "publishedAt": "2026-10-23T23:10:30.870Z",
+    "url": "https://recap-v0-radu.netlify.app/"
+  },
+  "local": {
+    "tests": 1020,
+    "testFiles": 32,
+    "catalogueCheck": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "syntheticResponsiveWidths": [
+      1496,
+      1051,
+      560,
+      390,
+      320
+    ],
+    "densities": [
+      "compact",
+      "regular"
+    ],
+    "longOriginalExpansion": "passed; full original retained",
+    "cleanFixtureConsoleErrors": 0
+  },
+  "archive": {
+    "existingRows": 485,
+    "contextOnlyPatches": 36,
+    "replies": 30,
+    "availableReplyOriginals": 5,
+    "quotes": 6,
+    "availableQuoteOriginals": 6,
+    "otherRowsNotUpdated": 449,
+    "allOtherFieldsAndWorkspacePreserved": true,
+    "repeatedPlanPatches": 0
+  },
+  "hosted": {
+    "actualSignedIn": "passed",
+    "nativeDesktopCompactRegular": "passed",
+    "referenceVideo": "Tech House; five takeaways, six keywords and exact seek links retained",
+    "availableOriginalAndReply": "passed",
+    "longOriginalExpandCollapse": "passed",
+    "missingOriginalNotice": "passed on reference MKBHD reply",
+    "gifPauseResume": "passed",
+    "largerMediaDetail": "passed",
+    "finalView": "Captured-original example in Compact",
+    "phoneVerification": "Synthetic local checks only; actual hosted phone viewport not repeated",
+    "console": "Final hosted console not re-read after browser extension stopped responding"
+  },
+  "browserRecovery": "T3 snapshot and Chrome extension inspection stalled; recovered through native Chrome controls. Actual hosted public-card crops exclude private reader/browser surfaces.",
+  "supplierRunsStarted": 0,
+  "supplierRunSpendUsd": 0,
+  "cloudActorBuildsStarted": 0,
+  "runtimePolicyOrBudgetChanges": 0,
+  "infrastructureCost": "unmeasured"
+}
