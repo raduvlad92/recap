@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-22T23:56:10.378Z",
+  "checkedAt": "2026-10-23T00:27:17.393Z",
   "ownerCleanup": {
     "checkedAt": "2026-10-22T23:36:11.271Z",
     "type": "actual_owner_database_cleanup",
@@ -25,6 +25,10 @@
     {
       "version": "20261022235532",
       "file": "supabase/migrations/20261022235532_hourly_clear_lock_order.sql"
+    },
+    {
+      "version": "20261023000813",
+      "file": "supabase/migrations/20261023000813_hourly_check_hour_alignment.sql"
     }
   ],
   "databaseTests": {
@@ -59,9 +63,111 @@
     "note": "RLS enabled with no reader policy on intentionally server-only tables"
   },
   "release": {
-    "status": "pending"
+    "status": "published",
+    "functionalCommit": "81d4afd06bbd391e49108711dc9e978f5b5da956",
+    "ci": {
+      "runId": 39877249022,
+      "status": "success",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/39877249022"
+    },
+    "netlify": {
+      "deployId": "6adaa7ddb8b0184d80d2f26b",
+      "publishedAt": "2026-10-23T00:19:09.910Z",
+      "url": "https://recap-v0-radu.netlify.app"
+    },
+    "local": {
+      "tests": 814,
+      "files": 26,
+      "catalogue": true,
+      "typecheck": true,
+      "build": true,
+      "diffCheck": true
+    },
+    "independentTransportReview": {
+      "tests": 72,
+      "blockers": 0
+    },
+    "independentIpv6Review": {
+      "classificationChecks": 196628,
+      "blockers": 0
+    }
   },
   "newCollection": {
-    "status": "not_started"
+    "status": "enabled_but_freshness_access_blocked",
+    "activatedAt": "2026-10-23T00:02:01.735Z",
+    "ownerOnly": true,
+    "policy": {
+      "enabled": true,
+      "provider_enabled": true,
+      "daily_limit_usd": 0.1,
+      "lifetime_limit_usd": 1
+    },
+    "cron": "0 * * * *",
+    "timerFiredInvocationObserved": false,
+    "manualHostedInvocations": 3,
+    "checks": 81,
+    "statuses": {
+      "failed": 63,
+      "unsupported": 18
+    },
+    "latestYouTubeChecks": {
+      "startedAt": "2026-10-23T00:19:14.170Z",
+      "total": 21,
+      "httpStatuses": {
+        "404": 20,
+        "500": 1
+      }
+    },
+    "unsupported": {
+      "X": 10,
+      "Instagram": 8
+    },
+    "newProviderRuns": 0,
+    "newItems": 0,
+    "recordedNewSupplierFeesUsd": 0,
+    "unfinalizedNewJobs": 0,
+    "archiveRows": 278,
+    "archiveExactAfterChecks": true,
+    "keywordReviews": 36,
+    "keywordReviewsExact": true,
+    "realFollows": 39,
+    "settingsExact": true,
+    "savedIdsExact": true,
+    "nextAction": "Hourly retry; resolve reliable inexpensive freshness access before claiming successful ongoing pulls",
+    "infrastructureCost": "unmeasured"
+  },
+  "evidenceType": "actual_cleanup_activation_deployment_and_failed_hosted_freshness_checks",
+  "ui": {
+    "actualOwnerPreferences": true,
+    "actualAdminCosts": true,
+    "currentDayChecks": 81,
+    "currentDaySupplierFeesUsd": 0,
+    "nativeDateFilterApplied": true,
+    "desktopWidth": 1496,
+    "phoneWidth": 320,
+    "pageOverflow": false,
+    "phoneTableWidths": [
+      292,
+      292
+    ],
+    "phoneTableScrollWidths": [
+      720,
+      900
+    ],
+    "phonePreferencesModalWidth": 284,
+    "phonePreferencesOverflow": false,
+    "guest": {
+      "isolatedIncognito": true,
+      "followedSources": 0,
+      "cards": 0,
+      "fictionalDefaults": false
+    },
+    "anonymousOwnCostsHttp": 401,
+    "anonymousAdminCostsHttp": 401,
+    "browserErrors": 0,
+    "screenshots": [
+      "docs/tech/evidence/hourly-cost-summary-live.png",
+      "docs/tech/evidence/hourly-guest-empty-live.png"
+    ]
   }
 }

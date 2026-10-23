@@ -1,6 +1,6 @@
 # Hourly collection integration contract — 23 October 2026
 
-Backend worker owns the new hourly module, scheduled dispatcher/background function, migrations and backend tests. This document describes the pending local migration; no production activation or supplier execution is implied.
+This document describes the implemented hourly module, dispatcher/background worker, schema and reporting contract. Production migration/configuration, live outcomes and release evidence are tracked separately in [tech/HOURLY.md](tech/HOURLY.md); enabled scheduling does not prove successful source access.
 
 ## Policy and reporting tables
 
@@ -46,7 +46,7 @@ Final native-caption integration uses `youtubeCaptionUrl` and `downloadYouTubeCa
 
 `reader_collection_source_state.pending_captions` is a private JSON array of `{ record: SourceUpdate, attempts: number, nextAttemptAt: string }`. Discovery archives honest metadata, while unfinished caption retrieval remains independently retryable before HTTP 304/body-hash exits. Failed native retrieval, provider review and reader/global budget stops retain the task; free native attempts back off from one hour to at most 24 hours. A source's existing paid item claim prevents every repeat POST, including ambiguous starts. Successful caption archive commit removes the queue task. Source-identity changes, archive deletion, workspace deletion and unfollow clear queues/fence pending content.
 
-`reader_collection_provider_jobs.observed_cost_usd` retains the observed high-water separately from nullable terminal `actual_cost_usd`. Before settlement the worker reads the owned authoritative collection_jobs fee and takes the greatest prior/current observation. A database trigger prevents private observed/final amounts decreasing. A terminal missing fee keeps final cost null and the worst-case hold. Reader commitments use greatest(maximum, observation) while final cost is unknown, and greatest(final, observation) when known. The workspace-delete trigger takes the policy lock before source-state locks, matching reservation order.
+`reader_collection_provider_jobs.observed_cost_usd` retains the observed high-water separately from nullable terminal `actual_cost_usd`. Before settlement the worker reads the owned authoritative collection_jobs fee and takes the greatest prior/current observation. A database trigger prevents observed amounts and non-null final observations decreasing; a final value becoming null conservatively restores the hold. A terminal missing fee keeps final cost null and the worst-case hold. Reader commitments use greatest(maximum, observation) while final cost is unknown, and greatest(final, observation) when known. The complete clear transaction takes the policy lock before archive/source-state locks, matching reservation order.
 
 Final backend tests: **43**; shared checkout suite: **775/775**, plus typecheck. Rebuilt all migrations in a fresh local PostgreSQL 17 database and passed the expanded rollback SQL, including queue-clear and cost high-water checks. Parent review/production operations are separate; no production activation, supplier job, commit or push was performed by this backend worker.
 

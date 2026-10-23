@@ -42,6 +42,8 @@ Implement native freshness checks first, content retrieval only for unseen origi
 
 X/Instagram have no verified inexpensive freshness adapter in this increment; record unsupported coverage explicitly rather than imply unchanged or charge for recurring blind discovery. YouTube/native-feed checks can operate independently. Fictional-data removal uses exact legacy IDs/markers and revision-checked selective cleanup; retain all real source history, annotations, preferences and user-created collections. [Implementation and evidence](tech/HOURLY.md). Activation, actual execution, push/CI/deployment and hosted UI proof are recorded separately.
 
+Owner policy/runtime activated at 00:02 UTC on 23 October. Actual hosted verification found YouTube feed 404/500 responses from the hosting network; no paid discovery was launched and all earlier check logs remain. Keep bounded hourly retries enabled, with the existing spending ceilings, but report collection as currently blocked until an actual successful source check/import is observed. An enabled schedule and passing local tests do not establish working platform access.
+
 ## D31 — keywords always on one row, 23 October 2026
 
 Founder rejected a two-row keyword screenshot and explicitly repeated one row with infinite scrolling when there are too many keywords. This supersedes the earlier reduced-motion wrapping fallback: keep one row, automatic infinite overflow motion and the pause/resume control, plus hover/focus pause and keyboard reveal. Exempt only the keyword track from the global animation reset. No content annotations, collection or broader scope changes follow. Delivered and verified as `e851b53`. [Current rule/evidence](design/VIDEO-SUMMARY-RULE.md#d31--one-row-correction-23-october-2026).
