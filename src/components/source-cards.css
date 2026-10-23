@@ -1,0 +1,109 @@
+/* Every source keeps its identity and preview together in both reading densities. */
+.update-card.source-layout-card{--source-width:clamp(156px,23%,224px);display:grid;grid-template-columns:var(--source-width) minmax(0,1fr);min-height:0;align-items:stretch}
+.source-layout-card>.card-source-panel{min-width:0;border-right:1px solid #e9ece5;background:#fafbf8;align-self:stretch}
+.card-source-preview{position:relative;min-width:0;overflow:hidden}
+.card-thumbnail{position:relative;display:block;width:100%;aspect-ratio:16/9;padding:0;overflow:hidden;background:#eef1eb}
+.card-thumbnail>.artwork{position:absolute;inset:0}
+.card-thumbnail .artwork>img{object-fit:contain}
+.card-thumbnail>img{display:block;width:100%;height:100%;object-fit:contain}
+.card-thumbnail .duration-pill{bottom:8px;left:8px;font-size:9px;padding:3px 5px}
+.card-thumbnail:focus-visible{outline:3px solid var(--teal);outline-offset:-3px}
+.card-source-meta{display:flex;flex-direction:column;gap:9px;min-width:0;padding:12px}
+.card-source-channel{display:flex;align-items:center;gap:8px;min-width:0;text-align:left;padding:0}
+.card-source-channel>.creator-avatar{flex:none;width:29px;height:29px;font-size:10px}
+.card-source-channel>strong{min-width:0;font-size:12px;font-weight:500;line-height:1.45;overflow-wrap:anywhere}
+.card-source-channel:hover>strong{text-decoration:underline;text-underline-offset:3px}
+.card-source-contributor{text-align:left;color:#536c62;font-size:10px;line-height:1.5;padding:0;overflow-wrap:anywhere}
+.card-source-contributor:hover{text-decoration:underline;text-underline-offset:3px}
+.card-source-date{display:flex;align-items:center;gap:8px;min-width:0;color:#6a7467;font-size:10px;line-height:1.5}
+.card-platform-icon{display:inline-flex;align-items:center;justify-content:center;flex:none;width:24px;height:22px;color:#344438}
+.card-source-date time{overflow-wrap:anywhere}
+.card-source-actions{display:flex;min-width:0}
+.card-source-actions .update-actions{margin:0;gap:4px;flex-wrap:wrap}
+.card-source-actions .icon-button{width:32px;height:32px;color:#6d806e}
+.card-text-preview{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;aspect-ratio:16/9;width:100%;color:#788575;background:#f0f3ec;font-size:10px}
+.card-source-preview>.post-media{border:0;border-radius:0;background:transparent}
+.card-source-preview .post-media-stage{height:clamp(130px,18vw,240px);min-height:0}
+.card-source-preview .post-media-toolbar{gap:2px;padding:3px 6px;min-height:34px;flex-wrap:wrap}
+.card-source-preview .post-media-count{font-size:9px}
+.card-source-preview .post-media-navigation{gap:0;margin-left:auto}
+.card-source-preview .post-media-navigation button{width:30px;height:30px}
+.card-source-preview .post-gif-toggle{left:6px;bottom:6px;gap:3px;padding:5px 7px;min-height:30px;font-size:10px}
+.card-source-preview .post-gif-toggle svg{width:12px}
+.card-source-preview .post-media-unavailable{padding:12px 7px;font-size:10px;gap:6px}
+.card-source-preview .post-media-unavailable a{font-size:10px;min-height:30px}
+.card-preview-expand{display:flex;align-items:center;justify-content:center;gap:5px;padding:4px 8px;width:100%;min-height:30px;font-size:10px;color:#476e5a}
+.card-preview-expand:hover{background:#edf2e8;text-decoration:underline;text-underline-offset:3px}
+.source-layout-card>.update-card-body{width:auto;min-width:0;padding:18px 20px 15px}
+.source-layout-card .update-title-button{min-width:0}
+.source-layout-card .update-title-button h2{font-size:24px;line-height:1.25;overflow-wrap:anywhere}
+.source-layout-card .update-summary{max-width:78ch;display:block;line-height:1.6;overflow-wrap:anywhere}
+.source-layout-card .social-post-links{margin-top:auto;padding-top:10px}
+.source-layout-card .social-post-text{font-size:15px;line-height:1.65}
+.source-layout-card .update-card-bottom{padding-top:12px;gap:8px}
+.source-layout-card .video-highlights{margin-top:12px;line-height:1.55;gap:7px}
+.source-layout-card .transcript-button{align-self:flex-start}
+.post-relationship{display:flex;align-items:center;gap:6px;color:#397868;font-size:11px;font-weight:500;margin-bottom:10px;overflow-wrap:anywhere}
+.post-relationship svg{flex:none}
+.post-reference{border-left:2px solid #a9c5b5;background:#f5f7f2;padding:12px 14px;margin:0 0 14px;border-radius:0 9px 9px 0;min-width:0}
+.post-reference-label{font-size:10px;color:#6b7866;margin-bottom:6px}
+.post-reference-author{display:flex;align-items:baseline;gap:5px 9px;flex-wrap:wrap;overflow-wrap:anywhere;font-size:11px;color:#6a7567}
+.post-reference-author strong{font-weight:500;color:#344438}
+.post-reference-author time{font-size:10px}
+.post-reference-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.65;margin-top:7px;max-width:78ch;color:#475344}
+.post-reference>.post-media{margin-top:10px;max-width:400px}
+.post-reference-preview{margin-top:10px;max-width:400px;font-size:11px;color:#6a7567;line-height:1.6}
+.post-reference-preview img{display:block;max-width:100%;max-height:200px;object-fit:contain;margin-bottom:7px}
+.post-reference .post-media-stage{height:200px}
+.post-reference-missing{color:#6a7567;font-size:12px;line-height:1.6}
+.post-reference-link{display:inline-flex;align-items:center;gap:4px;color:#397868;font-size:10px;min-height:30px;margin-top:4px}
+.post-reference-link:hover{text-decoration:underline;text-underline-offset:3px}
+.post-quote-label{margin-top:14px}
+.feed-density-compact .source-layout-card,.source-layout-card.update-card-compact{--source-width:clamp(116px,18%,170px)}
+.feed-density-compact .source-layout-card>.update-card-body,.source-layout-card.update-card-compact>.update-card-body{padding:11px 16px 10px}
+.feed-density-compact .card-source-meta,.update-card-compact .card-source-meta{padding:10px;gap:7px}
+.feed-density-compact .card-source-channel>strong,.update-card-compact .card-source-channel>strong{font-size:11px}
+.feed-density-compact .card-source-channel>.creator-avatar,.update-card-compact .card-source-channel>.creator-avatar{width:25px;height:25px}
+.feed-density-compact .source-layout-card .update-title-button h2,.source-layout-card.update-card-compact .update-title-button h2{font-size:22px}
+.feed-density-compact .source-layout-card .video-highlights,.source-layout-card.update-card-compact .video-highlights{margin-top:9px;line-height:1.45;gap:5px}
+.feed-density-compact .card-source-preview .post-media-stage,.update-card-compact .card-source-preview .post-media-stage{height:clamp(116px,15vw,190px)}
+.feed-density-compact .source-layout-card .social-post-text,.source-layout-card.update-card-compact .social-post-text{font-size:14px;line-height:1.55}
+.feed-density-compact .source-layout-card .post-reference{padding:9px 12px;margin-bottom:11px}
+@media(max-width:780px){
+  .update-card.source-layout-card{--source-width:148px}
+  .feed-density-compact .source-layout-card,.source-layout-card.update-card-compact{--source-width:120px}
+}
+@media(max-width:560px){
+  .update-card.source-layout-card{--source-width:94px;border-radius:18px}
+  .feed-density-compact .source-layout-card,.source-layout-card.update-card-compact{--source-width:84px}
+  .source-layout-card>.update-card-body,.feed-density-compact .source-layout-card>.update-card-body,.source-layout-card.update-card-compact>.update-card-body{padding:12px 11px}
+  .card-source-meta,.feed-density-compact .card-source-meta,.update-card-compact .card-source-meta{padding:10px 8px;gap:8px}
+  .card-source-channel{flex-direction:column;align-items:flex-start;gap:6px}
+  .card-source-channel>strong,.feed-density-compact .card-source-channel>strong,.update-card-compact .card-source-channel>strong{font-size:10px;line-height:1.5}
+  .card-source-date{flex-wrap:wrap;gap:2px 4px;font-size:9px}
+  .card-platform-icon{width:19px}
+  .card-platform-icon svg{max-width:16px}
+  .source-layout-card .update-title-button h2,.feed-density-compact .source-layout-card .update-title-button h2,.source-layout-card.update-card-compact .update-title-button h2{font-size:19px;line-height:1.3}
+  .source-layout-card .social-post-text,.feed-density-compact .source-layout-card .social-post-text,.source-layout-card.update-card-compact .social-post-text{font-size:13px;line-height:1.6}
+  .source-layout-card .video-highlights{font-size:12px;padding-left:12px}
+  .source-layout-card .update-summary{font-size:12px}
+  .card-source-preview .post-media-stage,.feed-density-compact .card-source-preview .post-media-stage,.update-card-compact .card-source-preview .post-media-stage{height:115px}
+  .card-source-preview .post-media-toolbar{justify-content:center;padding:3px;gap:2px}
+  .card-source-preview .post-media-navigation{margin:0}
+  .card-source-preview .post-media-count{font-size:8px}
+  .card-source-preview .post-gif-toggle{left:4px;right:4px;bottom:5px;padding:4px 2px;font-size:9px}
+  .card-source-preview .post-gif-toggle svg{width:10px}
+  .card-source-preview .post-media-unavailable>a{font-size:9px}
+  .card-preview-expand{font-size:9px;padding:4px}
+  .card-text-preview{font-size:9px;gap:6px}
+  .card-text-preview>svg{width:19px}
+  .card-source-actions .update-actions{gap:0}
+  .card-source-actions .icon-button{width:32px;height:34px}
+  .source-layout-card .social-post-links{gap:0 8px;align-items:flex-start;flex-direction:column}
+  .source-layout-card .social-post-links>button,.source-layout-card .social-post-links>a{font-size:10px}
+  .post-reference,.feed-density-compact .source-layout-card .post-reference{padding:9px 10px;margin-bottom:11px}
+  .post-reference-author{font-size:10px;gap:4px 7px}
+  .post-reference-text{font-size:12px;line-height:1.6}
+  .post-reference-missing{font-size:11px}
+  .post-relationship{font-size:10px}
+}

@@ -11,6 +11,23 @@ const previous=()=>({version:1,followedSourceIds:['existing-blog'],followScopes:
 const update=(patch:Record<string,unknown>={})=>({id:'tech-real-update-001',sourceId:first.id,contributorIds:[],title:'Real creator update',summary:'Publisher extract.',url:'https://www.youtube.com/watch?v=abcdef12345',publishedAt:'2026-10-01T12:00:00.000Z',format:'video',topics:[],brands:[],sponsors:[],references:[{title:'Original update',url:'https://www.youtube.com/watch?v=abcdef12345'}],insights:[],isSample:false,coverage:'Existing source subtitles, no AI analysis.',content:'Actual spoken words.',contentKind:'transcript',...patch});
 const output=(updates=[update()])=>({manifest:{executionEnabled:true,dateFrom:'2026-09-21T12:00:00.000Z',dateTo:now,complete:false},coverage:[...new Set(updates.map(record=>record.sourceId))].map(sourceId=>{const records=updates.filter(record=>record.sourceId===sourceId);return {sourceId,status:'collected_unverified_completeness',providerStatus:'SUCCEEDED',providerRunId:'test-provider-run',acceptedItems:records.length,returnedItems:records.length,transcriptItems:records.filter(record=>record.contentKind==='transcript').length,postTextItems:records.filter(record=>record.contentKind==='feed_text').length,metadataOnlyItems:records.filter(record=>record.contentKind==='metadata_only').length,complete:false,capped:false};}),updates});
 
+describe('X context archive import validation',()=>{
+ const x=included.find((source:{platform:string})=>source.platform==='X');
+ const xUpdate=(patch:Record<string,unknown>={})=>update({sourceId:x.id,url:x.url.replace(/\/$/,'')+'/status/1940000000000000003',format:'post',contentKind:'feed_text',content:'Child authored text.',postContext:{reply:{status:'available',postId:'1940000000000000001',url:'https://x.com/original/status/1940000000000000001',authorHandle:'original',text:'Parent authored text.',provenance:'provider'}},...patch});
+ it('keeps explicit parent context and own media in the accepted complete archive record',()=>{
+  const record=xUpdate({media:[{type:'image',url:'https://pbs.twimg.com/media/child.jpg?name=orig'}]});
+  expect(buildArchiveRows('user_synthetic',manifest,output([record]))[0].record).toEqual(record);
+ });
+ it.each([
+  {reply:{status:'available',postId:'1940000000000000001',url:'https://evil.test/parent',text:'Wrong original'}},
+  {reply:{status:'available',postId:'1940000000000000001',url:'https://x.com/original/status/1940000000000000002',text:'Wrong original'}},
+  {reply:{status:'available',postId:'1940000000000000001',text:'Parent',privateCredential:'never store'}},
+ ])('rejects unsafe nested context before any archive import %#',postContext=>expect(()=>buildArchiveRows('user_synthetic',manifest,output([xUpdate({postContext})]))).toThrow('invalid_archive_post_context'));
+ it('rejects context attached to another platform',()=>{
+  expect(()=>buildArchiveRows('user_synthetic',manifest,output([update({postContext:(xUpdate() as Record<string,unknown>).postContext})]))).toThrow('invalid_archive_post_context');
+ });
+});
+
 describe('owner workspace preparation',()=>{
  it('preserves settings, saves, imported material, unrelated sources and other collections without mutating the input',()=>{
   const old=previous(),snapshot=structuredClone(old),next=prepareWorkspace(old,manifest,{now});

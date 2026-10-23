@@ -38,11 +38,14 @@ describe('social post originals', () => {
     expect(html).not.toContain('artwork');
     expect(html).not.toContain('Post text and media are unavailable');
   });
-  it('does not give text-only posts an illustration or an empty media column', () => {
-    const html = renderToStaticMarkup(createElement(SocialPostCard, { update: post, heading: 'Synthetic X post', byline: 'Channel · Oct 23', actions: 'Save / read later', topics: 'Topic', onOpen: () => undefined }));
+  it('keeps a source panel for text-only posts without inventing a source image', () => {
+    const html = renderToStaticMarkup(createElement(SocialPostCard, { update: post, heading: 'Synthetic X post', channelName: 'Synthetic channel', channelIcon: 'SC', date: 'Oct 23', platform: 'X', onChannel: () => undefined, actions: 'Save / read later', topics: 'Topic', onOpen: () => undefined }));
     expect(html).toContain('Full original text.');
     expect(html).not.toContain('post-media-stage');
     expect(html).not.toContain('update-cover');
+    expect(html).toContain('Text post');
+    expect(html).toContain('aria-label="X"');
+    expect(html).toMatch(/datetime="2026-10-23T10:00:00Z"/i);
     expect(html).not.toContain('Repeated summary');
     expect(html).toContain('Save / read later');
     expect(html).toContain(`href="${originalUrl}"`);
@@ -68,6 +71,47 @@ describe('social post originals', () => {
       expect(html).toContain('A video attachment is unavailable.');
       expect(html).toContain(`href="${originalUrl}"`);
       expect(html).not.toContain('<video');
+    }
+  });
+  it('shows the exact parent and a reply label in both feed and detail, without repeating either text', () => {
+    const update: SourceUpdate = { ...post, postContext: { reply: { status: 'available', authorName: 'Parent author', authorHandle: 'parent', publishedAt: '2026-10-22T12:00:00Z', url: 'https://x.com/parent/status/123', text: 'Exact original parent text. <em>Not HTML</em>' } } };
+    for (const detail of [false, true]) {
+      const html = markup(update, detail);
+      expect(html).toContain('Reply to @parent');
+      expect(html).toContain('Original post');
+      expect(html.match(/Exact original parent text\./g)).toHaveLength(1);
+      expect(html.match(/Full original text\./g)).toHaveLength(1);
+      expect(html).toContain('&lt;em&gt;Not HTML&lt;/em&gt;');
+      expect(html.indexOf('Exact original parent text')).toBeLessThan(html.indexOf('Full original text.'));
+      expect(html).toContain('href="https://x.com/parent/status/123"');
+    }
+  });
+  it('distinguishes an unavailable original from a confirmed deletion, and quotes from replies', () => {
+    const missing = markup({ ...post, postContext: { reply: { status: 'unavailable', postId: '123', url: 'https://x.com/i/status/123' } } });
+    expect(missing).toContain('The original post wasn’t included in this collection.');
+    expect(missing).not.toContain('deleted');
+    const quote = markup({ ...post, postContext: { quote: { status: 'available', text: 'Quoted original' } } });
+    expect(quote).toContain('Quoted post');
+    expect(quote).not.toContain('Reply');
+    expect(markup({ ...post, content: '@someone Just mentioning a person.' })).not.toContain('Original post');
+  });
+  it('labels preview-only original context and never presents it as playable media', () => {
+    const html = markup({ ...post, postContext: { reply: { status: 'available', postId: '123', url: 'https://x.com/i/status/123', image: 'https://pbs.twimg.com/media/preview.jpg' } } });
+    expect(html).toContain('Original post preview only');
+    expect(html).toContain('Original text and playable media weren’t included.');
+    expect(html).not.toContain('<video');
+  });
+  it('puts post media in the source panel and the exact post on the right in either density', () => {
+    for (const compact of [false, true]) {
+      const html = renderToStaticMarkup(createElement(SocialPostCard, { update: { ...post, media: [photo] }, heading: 'Synthetic post', channelName: 'Channel', channelIcon: 'C', date: 'Oct 23', platform: 'X', onChannel: () => undefined, actions: 'Save', topics: null, onOpen: () => undefined, compact }));
+      const panel = html.slice(0, html.indexOf('class="update-card-body"'));
+      const body = html.slice(html.indexOf('class="update-card-body"'));
+      expect(panel).toContain('The complete photo');
+      expect(panel).toContain('View channel: Channel');
+      expect(body).not.toContain('<img');
+      expect(body).toContain('Full original text.');
+      expect(html.match(/Full original text\./g)).toHaveLength(1);
+      expect(html).toContain('View larger');
     }
   });
 });

@@ -1,6 +1,8 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import { XMLBuilder, XMLParser, XMLValidator } from 'fast-xml-parser';
 import type { Source, SourceUpdate, WorkspaceState } from '../../../src/lib/types';
+import { sanitizePostContext } from '../../../src/lib/post-context';
 import { database } from './admin-data';
 import { apifyConfig, startApify, pollStoredApify, verifyHourlyApifyConfiguration, YOUTUBE_ACTOR, YOUTUBE_ACTOR_ID } from './apify';
 import { settleBudget } from './budget-ledger';
@@ -73,7 +75,7 @@ function archiveIdentity(update: SourceUpdate): SourceUpdate {
  return { ...update, id: 'hourly-' + digest(update.sourceId + '\n' + hourlyItemKey(update.url)).slice(0, 32), isSample: false };
 }
 function goodUpdate(update: SourceUpdate, source: Source): boolean {
- try { return update.sourceId === source.id && update.isSample === false && Number.isFinite(Date.parse(update.publishedAt)) && !!hourlyItemKey(update.url); } catch { return false; }
+ try { return update.sourceId === source.id && update.isSample === false && Number.isFinite(Date.parse(update.publishedAt)) && !!hourlyItemKey(update.url) && (update.postContext === undefined || source.platform === 'X' && update.format === 'post' && isDeepStrictEqual(update.postContext, sanitizePostContext(update.postContext, update.url))); } catch { return false; }
 }
 
 export function createHourlyStore(env: Env = runtimeEnv): HourlyStore {

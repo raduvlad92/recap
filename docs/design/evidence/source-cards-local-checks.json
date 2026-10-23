@@ -1,0 +1,514 @@
+{
+  "provenance": "Synthetic local browser checks; no live collection proof",
+  "checks": [
+    {
+      "density": "compact",
+      "cards": [
+        {
+          "bodyWidth": 904,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 904,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 904,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 904,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 904,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 904,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 904,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        }
+      ],
+      "keywords": 25,
+      "overflow": false,
+      "width": 1496
+    },
+    {
+      "density": "regular",
+      "cards": [
+        {
+          "bodyWidth": 850,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 850,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 850,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 850,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 850,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 850,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 850,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        }
+      ],
+      "keywords": 25,
+      "overflow": false,
+      "width": 1496
+    },
+    {
+      "density": "compact",
+      "cards": [
+        {
+          "bodyWidth": 855,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 855,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 855,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 855,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 855,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 855,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        },
+        {
+          "bodyWidth": 855,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 170
+        }
+      ],
+      "keywords": 25,
+      "overflow": false,
+      "width": 1051
+    },
+    {
+      "density": "regular",
+      "cards": [
+        {
+          "bodyWidth": 801,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 801,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 801,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 801,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 801,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 801,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        },
+        {
+          "bodyWidth": 801,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 224
+        }
+      ],
+      "keywords": 25,
+      "overflow": false,
+      "width": 1051
+    },
+    {
+      "density": "compact",
+      "cards": [
+        {
+          "bodyWidth": 450,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 450,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 450,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 450,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 450,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 450,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 450,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        }
+      ],
+      "keywords": 26,
+      "overflow": false,
+      "width": 560
+    },
+    {
+      "density": "regular",
+      "cards": [
+        {
+          "bodyWidth": 440,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 440,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 440,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 440,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 440,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 440,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 440,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        }
+      ],
+      "keywords": 26,
+      "overflow": false,
+      "width": 560
+    },
+    {
+      "density": "compact",
+      "cards": [
+        {
+          "bodyWidth": 280,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 280,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 280,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 280,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 280,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 280,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 280,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        }
+      ],
+      "keywords": 26,
+      "overflow": false,
+      "width": 390
+    },
+    {
+      "density": "regular",
+      "cards": [
+        {
+          "bodyWidth": 270,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 270,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 270,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 270,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 270,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 270,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 270,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        }
+      ],
+      "keywords": 26,
+      "overflow": false,
+      "width": 390
+    },
+    {
+      "density": "compact",
+      "cards": [
+        {
+          "bodyWidth": 210,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 210,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 210,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 210,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 210,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 210,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        },
+        {
+          "bodyWidth": 210,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 84
+        }
+      ],
+      "keywords": 26,
+      "overflow": false,
+      "width": 320
+    },
+    {
+      "density": "regular",
+      "cards": [
+        {
+          "bodyWidth": 200,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 200,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 200,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 200,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 200,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 200,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        },
+        {
+          "bodyWidth": 200,
+          "overflow": false,
+          "sideBySide": true,
+          "sourceWidth": 94
+        }
+      ],
+      "keywords": 26,
+      "overflow": false,
+      "width": 320
+    }
+  ],
+  "controls": {
+    "transcriptOpened": true,
+    "exactSeekLinks": 3,
+    "keywordActivated": true,
+    "carouselAdvancedToSecondImage": true,
+    "largerDetailMediaOpened": true
+  },
+  "cleanNavigationConsoleErrors": 0,
+  "developmentNote": "One React createRoot HMR warning occurred during fixture editing; root reuse was corrected and a clean tab had zero errors."
+}

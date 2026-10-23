@@ -1,0 +1,27 @@
+{
+  "mode": "applied",
+  "checkedAt": "2026-10-23T22:59:32.180Z",
+  "targetProject": "zlfdqzabsfndifxiqguo",
+  "existingRowsChecked": 485,
+  "afterRows": 485,
+  "patchedRows": 36,
+  "existingIdsPreserved": true,
+  "allOtherColumnsUnchanged": true,
+  "unrelatedRecordsUnchanged": true,
+  "workspaceStateAndRevisionUnchanged": true,
+  "repeatedPlanPatches": 0,
+  "supplierRunsStarted": 0,
+  "supplierRunSpend": 0,
+  "replies": 30,
+  "availableReplyOriginals": 5,
+  "quotes": 6,
+  "availableQuoteOriginals": 6,
+  "unrelatedRowsNotUpdated": 449,
+  "changedFields": [
+    "postContext"
+  ],
+  "rollbackReadbackPassed": true,
+  "staleWorkspaceRejected": true,
+  "staleParentRejected": true,
+  "provenance": "Actual existing-project database repair using saved historical provider datasets; no fresh collection"
+}

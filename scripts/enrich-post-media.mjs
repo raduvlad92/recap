@@ -1,11 +1,12 @@
 import { createHash } from 'node:crypto';
 import { publicUrl, sourceKey } from '../actors/tech-collector/src/collector.mjs';
 import { extractPostMedia, visiblePostText, mediaOnlyTitle, mediaPreviewUrl } from '../actors/tech-collector/src/post-media.mjs';
+import { extractPostContext, resolveArchivedPostContext, sanitizePostContext, xPostIdentity } from '../actors/tech-collector/src/post-context.mjs';
 
 // Deliberately no CLI, filesystem, provider client or database client. Private
 // snapshots, plans and SQL belong in the caller's ignored .local directory.
 const TARGET = 'zlfdqzabsfndifxiqguo';
-const ALLOWED = new Set(['media', 'image', 'title', 'summary', 'content', 'contentKind', 'coverage']);
+const ALLOWED = new Set(['media', 'image', 'title', 'summary', 'content', 'contentKind', 'coverage', 'postContext']);
 const SOCIAL = new Set(['X', 'Instagram']);
 const MAX_RECORD_BYTES = 1_000_000;
 const EMPTY_SUMMARY = 'No usable content text returned; open the original update.';
@@ -116,7 +117,7 @@ function safeMediaUrl(value, platform, playable = false) {
   } catch { return false; }
 }
 
-function assertMedia(media, platform) {
+export function validateStoredPostMedia(media, platform) {
   if (!Array.isArray(media) || media.length > 30) throw fail('invalid_enriched_social_media');
   const urls = new Set();
   for (const item of media) {
@@ -133,12 +134,14 @@ function assertMedia(media, platform) {
     }
   }
 }
+const assertMedia = validateStoredPostMedia;
 
 function assertRecord(record, platform) {
   assertJson(record);
   if (Buffer.byteLength(JSON.stringify(record), 'utf8') > MAX_RECORD_BYTES) throw fail('enriched_archive_record_too_large');
   for (const key of ['title', 'summary', 'content', 'coverage', 'image']) if (record[key] !== undefined && typeof record[key] !== 'string') throw fail('invalid_enriched_social_record');
   if (record.media !== undefined) assertMedia(record.media, platform);
+  if (record.postContext !== undefined && (platform !== 'X' || stable(record.postContext) !== stable(sanitizePostContext(record.postContext, record.url)))) throw fail('invalid_enriched_post_context');
   if (record.contentKind !== undefined && !['feed_text', 'metadata_only'].includes(record.contentKind)) throw fail('invalid_enriched_social_content_kind');
 }
 
@@ -223,8 +226,34 @@ function attachmentOnlyText(raw, platform, before, after) {
   return after;
 }
 
+function preparePostContext(beforeRecord, providerContext, archiveRows, sources) {
+  const previous = sanitizePostContext(beforeRecord.postContext, beforeRecord.url);
+  if (beforeRecord.postContext !== undefined && stable(previous) !== stable(beforeRecord.postContext)) throw fail('invalid_existing_post_context');
+  if (providerContext !== null && stable(providerContext) !== stable(sanitizePostContext(providerContext, beforeRecord.url))) throw fail('invalid_post_context_provider_evidence');
+  if (!providerContext && !previous) return { context: undefined, dependencies: [] };
+  const combined = { ...previous };
+  for (const kind of ['reply', 'quote']) {
+    const before = previous?.[kind], incoming = providerContext?.[kind];
+    if (!incoming) continue;
+    if (before?.postId && incoming.postId && before.postId !== incoming.postId || before?.authorHandle && incoming.authorHandle && before.authorHandle !== incoming.authorHandle) throw fail('conflicting_existing_post_context');
+    if (before?.text && incoming.text && before.text !== incoming.text) throw fail('conflicting_existing_post_context_text');
+    combined[kind] = { ...incoming, ...before, ...(incoming.postId && !before?.postId ? { postId: incoming.postId, url: incoming.url } : {}), status: before?.status === 'available' || incoming.status === 'available' ? 'available' : 'unavailable' };
+  }
+  const context = resolveArchivedPostContext({ ...beforeRecord, postContext: combined }, archiveRows.map(row => row.record), sources);
+  const dependencies = new Map();
+  for (const kind of ['reply', 'quote']) {
+    const resolved = context?.[kind];
+    if (!resolved?.postId || stable(resolved) === stable(combined[kind])) continue;
+    const parents = archiveRows.filter(parent => parent.id !== beforeRecord.id && xPostIdentity(parent.record?.url)?.postId === resolved.postId);
+    if (parents.length !== 1) throw fail('ambiguous_post_context_dependency');
+    const parent = parents[0];
+    dependencies.set(parent.id, { id: parent.id, sourceId: parent.source_id, beforeHash: hash(parent.record), beforeRecord: clone(parent.record) });
+  }
+  return { context, dependencies: [...dependencies.values()].sort((a, b) => order(a.id, b.id)) };
+}
+
 /** Build a private review plan solely from already-read snapshots and raw data. */
-export function buildPostMediaPlan({ archiveRows, workspace, sources, datasets, now = new Date().toISOString() }) {
+export function buildPostMediaPlan({ archiveRows, workspace, sources, datasets, now = new Date().toISOString(), contextOnly = false }) {
   if (!Array.isArray(archiveRows) || !archiveRows.length || archiveRows.some(row => !object(row) || !validOwner(row.user_id))) throw fail('private_archive_owner_required');
   const owners = new Set(archiveRows.map(row => row.user_id));
   if (owners.size !== 1) throw fail('ambiguous_archive_owner');
@@ -274,7 +303,7 @@ export function buildPostMediaPlan({ archiveRows, workspace, sources, datasets, 
       stats.rawSocialRows++;
     }
   }
-  const archivePatches = [], seen = new Set(), seenUrls = new Set(), matched = new Set();
+  const archivePatches = [], contextDependencies = new Map(), seen = new Set(), seenUrls = new Set(), matched = new Set();
   for (const row of archiveRows) {
     if (!validId(row.id) || !validId(row.source_id) || seen.has(row.id) || !object(row.record) || row.record.id !== row.id || row.record.sourceId !== row.source_id) throw fail('invalid_or_duplicate_existing_archive_row');
     seen.add(row.id);
@@ -291,7 +320,15 @@ export function buildPostMediaPlan({ archiveRows, workspace, sources, datasets, 
     if (!saved) continue;
     if (Date.parse(row.record.publishedAt) !== Date.parse(saved.identity.publishedAt)) throw fail('saved_social_publication_time_mismatch');
     matched.add(key); stats.matchedRows++;
-    const { record, preservedText } = enrichRecord(row.record, saved.raw, source);
+    const { record, preservedText } = contextOnly ? { record: clone(row.record), preservedText: false } : enrichRecord(row.record, saved.raw, source);
+    let contextEvidence, parentDependencies = [];
+    if (source.platform === 'X') {
+      const providerContext = extractPostContext(saved.raw, 'X') || null;
+      const prepared = preparePostContext(row.record, providerContext, archiveRows, workspace.state.customSources);
+      if (prepared.context) record.postContext = prepared.context;
+      parentDependencies = prepared.dependencies;
+      contextEvidence = { providerContext, dependencyIds: parentDependencies.map(parent => parent.id) };
+    }
     assertRecord(record, source.platform);
     if (preservedText) stats.preservedDifferentTextRows++;
     if (record.media?.length) stats.mediaRows++;
@@ -299,14 +336,27 @@ export function buildPostMediaPlan({ archiveRows, workspace, sources, datasets, 
     if (record.media?.length > 1) stats.carouselRows++;
     if (!record.media?.length && mediaPreviewUrl(saved.raw, source.platform)) stats.previewOnlyRows++;
     const fields = changedFields(row.record, record);
-    if (fields.length) archivePatches.push({ id: row.id, sourceId: row.source_id, platform: source.platform, sourceUrl: source.url, originalUrl: saved.identity.key, rawId: saved.identity.rawId, providerRunId: saved.providerRunId, beforeHash: hash(row.record), afterHash: hash(record), beforeRecord: clone(row.record), record, changedFields: fields });
+    if (fields.length) {
+      for (const parent of parentDependencies) contextDependencies.set(parent.id, parent);
+      archivePatches.push({ id: row.id, sourceId: row.source_id, platform: source.platform, sourceUrl: source.url, originalUrl: saved.identity.key, rawId: saved.identity.rawId, providerRunId: saved.providerRunId, beforeHash: hash(row.record), afterHash: hash(record), beforeRecord: clone(row.record), record, changedFields: fields, ...(contextEvidence ? { contextEvidence } : {}) });
+    }
   }
   archivePatches.sort((a, b) => order(a.id, b.id));
   stats.archiveRowsToPatch = archivePatches.length;
   stats.unchangedRows = archiveRows.length - archivePatches.length;
   stats.unmatchedRows = stats.socialRows - stats.matchedRows;
   stats.unmatchedRawRows = rawByUrl.size - matched.size;
-  return { version: 1, targetProject: TARGET, preparedAt: now, userId, stats, archivePatches, workspace: { before: clone(workspace), beforeHash: hash(workspace.state), afterHash: hash(workspace.state), state: clone(workspace.state) } };
+  return { version: 1, targetProject: TARGET, preparedAt: now, userId, stats, archivePatches, contextDependencies: [...contextDependencies.values()].sort((a, b) => order(a.id, b.id)), workspace: { before: clone(workspace), beforeHash: hash(workspace.state), afterHash: hash(workspace.state), state: clone(workspace.state) } };
+}
+
+/** Context-only, offline review plan; intentionally never executes its guarded SQL. */
+export function buildPostContextPlan(input) {
+  return { ...buildPostMediaPlan({ ...input, contextOnly: true }), scope: 'post-context' };
+}
+
+export function buildPostContextSql(plan) {
+  if (plan?.scope !== 'post-context') throw fail('post_context_scope_required');
+  return buildPostMediaSql(plan);
 }
 
 const sqlString = value => "'" + value.replaceAll("'", "''") + "'";
@@ -318,9 +368,19 @@ export function buildPostMediaSql(plan) {
   if (hash(plan.workspace.before.state) !== plan.workspace.beforeHash || hash(plan.workspace.state) !== plan.workspace.afterHash || stable(plan.workspace.before.state) !== stable(plan.workspace.state)) throw fail('post_media_workspace_must_remain_identical');
   if (plan.archivePatches.some(patch => !object(patch))) throw fail('invalid_post_media_archive_patch');
   const ids = new Set(), urls = new Set();
-  const patches = [...plan.archivePatches].sort((a, b) => order(a.id, b.id));
+  const dependencies = plan.contextDependencies ?? [];
+  if (!Array.isArray(dependencies)) throw fail('invalid_post_context_dependencies');
+  const dependencyIds = new Set();
+  for (const dependency of dependencies) {
+    const source = plan.workspace.before.state.customSources?.filter(source => source.id === dependency?.sourceId);
+    if (!object(dependency) || !validId(dependency.id) || !validId(dependency.sourceId) || dependencyIds.has(dependency.id) || !object(dependency.beforeRecord) || dependency.beforeRecord.id !== dependency.id || dependency.beforeRecord.sourceId !== dependency.sourceId || hash(dependency.beforeRecord) !== dependency.beforeHash || source?.length !== 1 || source[0].platform !== 'X') throw fail('invalid_post_context_dependency');
+    original(dependency.beforeRecord.url, source[0]);
+    dependencyIds.add(dependency.id);
+  }
+  const patches = [...plan.archivePatches].sort((a, b) => order(a.id, b.id)), usedDependencies = new Set();
   for (const patch of patches) {
     if (!object(patch) || !validId(patch.id) || !validId(patch.sourceId) || !validId(patch.providerRunId) || !SOCIAL.has(patch.platform) || ids.has(patch.id) || !object(patch.beforeRecord) || !object(patch.record) || patch.beforeRecord.id !== patch.id || patch.record.id !== patch.id || patch.beforeRecord.sourceId !== patch.sourceId || patch.record.sourceId !== patch.sourceId || patch.beforeRecord.format !== 'post' || patch.beforeRecord.isSample !== false || !timestamp(patch.beforeRecord.publishedAt) || hash(patch.beforeRecord) !== patch.beforeHash || hash(patch.record) !== patch.afterHash || !sameOutside(patch.beforeRecord, patch.record) || stable(changedFields(patch.beforeRecord, patch.record)) !== stable(patch.changedFields) || !patch.changedFields.length) throw fail('invalid_post_media_archive_patch');
+    if (plan.scope === 'post-context' && patch.changedFields.some(field => field !== 'postContext')) throw fail('post_context_plan_must_preserve_other_fields');
     const source = { platform: patch.platform, url: patch.sourceUrl }, identity = original(patch.beforeRecord.url, source);
     const workspaceSource = plan.workspace.before.state.customSources?.filter(source => source.id === patch.sourceId);
     if (identity.key !== patch.originalUrl || urls.has(identity.key) || workspaceSource?.length !== 1 || workspaceSource[0].platform !== patch.platform || profileKey(workspaceSource[0]) !== profileKey(source) || typeof patch.rawId !== 'string' || !(patch.platform === 'X' ? patch.rawId === identity.postId : /^[1-9]\d{0,39}$/.test(patch.rawId))) throw fail('invalid_post_media_archive_identity');
@@ -328,9 +388,18 @@ export function buildPostMediaSql(plan) {
     if (patch.beforeRecord.media !== undefined) assertMedia(patch.beforeRecord.media, patch.platform);
     if ((patch.record.media?.length || 0) < (patch.beforeRecord.media?.length || 0)) throw fail('partial_social_media_refresh_would_drop_attachments');
     assertRecord(patch.record, patch.platform);
+    if (patch.changedFields.includes('postContext') || patch.contextEvidence !== undefined) {
+      const evidence = patch.contextEvidence;
+      if (patch.platform !== 'X' || !object(evidence) || !Object.hasOwn(evidence, 'providerContext') || !Array.isArray(evidence.dependencyIds) || new Set(evidence.dependencyIds).size !== evidence.dependencyIds.length || evidence.dependencyIds.some(id => !dependencyIds.has(id))) throw fail('post_context_parent_dependency_required');
+      const expectedParents = evidence.dependencyIds.map(id => dependencies.find(dependency => dependency.id === id));
+      const expected = preparePostContext(patch.beforeRecord, evidence.providerContext, expectedParents.map(parent => ({ id: parent.id, source_id: parent.sourceId, record: parent.beforeRecord })), plan.workspace.before.state.customSources);
+      if (stable(expected.context) !== stable(patch.record.postContext) || stable(expected.dependencies.map(parent => parent.id)) !== stable(evidence.dependencyIds)) throw fail('post_context_evidence_mismatch');
+      for (const id of evidence.dependencyIds) usedDependencies.add(id);
+    }
     if (patch.record.image !== patch.beforeRecord.image && !safeMediaUrl(patch.record.image, patch.platform)) throw fail('invalid_enriched_social_preview');
   }
-  const payload = { userId: plan.userId, workspace: { before: plan.workspace.before }, archivePatches: patches.map(({ id, sourceId, beforeRecord, record }) => {
+  if (usedDependencies.size !== dependencies.length) throw fail('unused_post_context_dependency');
+  const payload = { userId: plan.userId, workspace: { before: plan.workspace.before }, contextDependencies: dependencies, archivePatches: patches.map(({ id, sourceId, beforeRecord, record }) => {
     const fields = changedFields(beforeRecord, record);
     return { id, sourceId, beforeRecord, patch: Object.fromEntries(fields.filter(key => Object.hasOwn(record, key)).map(key => [key, record[key]])), removedFields: fields.filter(key => !Object.hasOwn(record, key)) };
   }) };
@@ -343,6 +412,11 @@ export function buildPostMediaSql(plan) {
 begin
   perform 1 from public.reader_workspaces where ${workspaceCondition} for update;
   if not found then raise exception 'stale_post_media_workspace_plan'; end if;
+  -- Parent corrections/deletions invalidate copied original context as well.
+  for item in select value from jsonb_array_elements(payload->'contextDependencies') order by (value->>'id') collate "C" loop
+    perform 1 from public.reader_source_updates where ${archiveCondition} for update;
+    if not found then raise exception 'stale_post_context_parent_plan'; end if;
+  end loop;
   -- Check and lock ALL expected rows before the first mutation.
   for item in select value from jsonb_array_elements(payload->'archivePatches') order by (value->>'id') collate "C" loop
     perform 1 from public.reader_source_updates where ${archiveCondition} for update;

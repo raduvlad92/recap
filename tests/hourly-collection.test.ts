@@ -93,6 +93,14 @@ describe('hourly native freshness and exact original identity', () => {
 });
 
 describe('hourly provider authorization, ambiguity and recovery', () => {
+ it('rejects forged X context attached to a recovered YouTube record before storage', async () => {
+  const t = setup({ pending: [pending()], status: 304 });
+  const result = await t.deps.pollApify();
+  Object.assign(result.result.updates[0], { postContext: { reply: { status: 'available', postId: '123', url: 'https://evil.test/parent', text: 'Wrong original' } } });
+  t.deps.pollApify.mockResolvedValue(result);
+  await t.run();
+  expect(t.updates()).toHaveLength(0);
+ });
  it('reserves durable global/user budget before the exact single-video paid POST', async () => { const t = setup({ policy: { ...policy, provider_enabled: true } }); await t.run(); expect(t.deps.preflight.mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(t.store.reserve).mock.invocationCallOrder[0]); expect(vi.mocked(t.store.reserve).mock.invocationCallOrder[0]).toBeLessThan(t.deps.startApify.mock.invocationCallOrder[0]); expect(t.deps.startApify).toHaveBeenCalledWith(expect.objectContaining({ url: update.url }), policy.user_id, expect.any(Function), undefined, expect.any(String)); expect(t.deps.pollApify).toHaveBeenCalled(); expect(t.updates()[0].content).toBe('Real source captions'); expect(JSON.stringify(t.patch())).not.toContain('never-public-token'); });
  it('changed provider preflight starts no job and makes no reservation', async () => { const t = setup({ policy: { ...policy, provider_enabled: true } }); t.deps.preflight.mockRejectedValue(new CollectionError(503, 'provider_review_changed', 'private detail')); await t.run(); expect(t.deps.startJob).not.toHaveBeenCalled(); expect(t.store.reserve).not.toHaveBeenCalled(); expect(t.patch()).toMatchObject({ details: { captionStatus: 'provider_review_changed' } }); });
  it('daily/global cap failure prevents paid POST while still archiving real RSS metadata', async () => { const t = setup({ policy: { ...policy, provider_enabled: true } }); vi.mocked(t.store.reserve).mockRejectedValue(new CollectionError(402, 'collection_budget_exhausted', 'budget')); await t.run(); expect(t.deps.startApify).not.toHaveBeenCalled(); expect(t.updates()[0].contentKind).toBe('metadata_only'); expect(t.deps.finishJob).toHaveBeenCalledWith(expect.any(String), policy.user_id, { status: 'blocked', errorCode: 'collection_budget_exhausted' }, expect.any(Function)); });

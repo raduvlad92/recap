@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { extractPostMedia, hasUnplayablePostMedia, mediaOnlyTitle, mediaPreviewUrl, visiblePostText } from './post-media.mjs';
+import { extractPostContext, resolveArchivedPostContext, xProviderPostIdentity } from './post-context.mjs';
 
 // Retain the original review unchanged: historical provider runs need their actual pins.
 const ORIGINAL_REVIEWED = JSON.parse(readFileSync(new URL('../providers/reviewed-metadata.json', import.meta.url), 'utf8'));
@@ -161,6 +162,7 @@ function sameSource(source, raw) {
 export function normalizeItem(source, raw, input) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {reason:'provider_error'};
   if (raw.demo===true) return {reason:'provider_demo_data'};
+  if (source.platform === 'X' && !raw.error && !xProviderPostIdentity(raw)) return {reason:'invalid_original_url'};
   if (raw.error) {
     if(source.platform==='YouTube' && Object.hasOwn(EMPTY_FORMAT_DIAGNOSTICS,raw.error))return {reason:'empty_format',diagnosticCode:raw.error,emptyFormat:EMPTY_FORMAT_DIAGNOSTICS[raw.error]};
     if(source.platform==='YouTube' && raw.error==='DATE_FILTER_TOO_STRICT')return {reason:'no_items_reported',diagnosticCode:raw.error};
@@ -201,6 +203,7 @@ export function normalizeItem(source, raw, input) {
   const originalPostText=visiblePostText(raw,source.platform);
   const postText = text(originalPostText);
   const media = extractPostMedia(raw,source.platform);
+  const postContext = extractPostContext(raw,source.platform);
   const image = source.platform==='YouTube' ? publicUrl(raw.thumbnailUrl || raw.displayUrl || raw.extendedEntities?.media?.[0]?.media_url_https) : mediaPreviewUrl(raw,source.platform);
   const description = source.platform==='YouTube' ? text(raw.text) : '';
   const content = subtitles || postText || description;
@@ -215,7 +218,7 @@ export function normalizeItem(source, raw, input) {
   const summary = content.slice(0,700) || (media.length ? title+'. Open the original update for context.' : 'No usable content text returned; open the original update.');
   const sourceAvatarUrl=source.platform==='YouTube' && typeof raw.channelAvatarUrl==='string' && raw.channelAvatarUrl.length<=2000?publicUrl(raw.channelAvatarUrl):'';
   const isShort=source.platform==='YouTube'?(raw.type==='shorts' || /^\/shorts\//.test(u.pathname)?true:['video','stream'].includes(raw.type)?false:undefined):undefined;
-  return {update:{id:'tech-'+digest(url).slice(0,24),sourceId:source.id,contributorIds:[],title,summary,url,publishedAt,format:source.platform==='YouTube'?'video':'post',topics:[],brands:[],sponsors:[],references,insights:[],...(media.length?{media}:{}),...(image?{image}:{}),...(typeof raw.duration==='string'?{duration:text(raw.duration,30)}:{}),...(typeof isShort==='boolean'?{isShort}:{}),...(subtitleData.transcriptSegments?{transcriptSegments:subtitleData.transcriptSegments}:{}),isSample:false,coverage,...(content?{content}:{}),contentKind},format:source.platform==='YouTube'?(raw.type || 'unknown'):'post',contentClipped,...(sourceAvatarUrl?{sourceAvatarUrl}:{})};
+  return {update:{id:'tech-'+digest(url).slice(0,24),sourceId:source.id,contributorIds:[],title,summary,url,publishedAt,format:source.platform==='YouTube'?'video':'post',topics:[],brands:[],sponsors:[],references,insights:[],...(postContext?{postContext}:{}),...(media.length?{media}:{}),...(image?{image}:{}),...(typeof raw.duration==='string'?{duration:text(raw.duration,30)}:{}),...(typeof isShort==='boolean'?{isShort}:{}),...(subtitleData.transcriptSegments?{transcriptSegments:subtitleData.transcriptSegments}:{}),isSample:false,coverage,...(content?{content}:{}),contentKind},format:source.platform==='YouTube'?(raw.type || 'unknown'):'post',contentClipped,...(sourceAvatarUrl?{sourceAvatarUrl}:{})};
 }
 export function sourceCoverage(source, entry, rawItems, input, datasetTruncated = false) {
   const rejected = {}, updates = [], seen = new Set(), dates = [], formats = {}, diagnosticCodes={}, emptyFormats=new Set();let clippedItems=0,resultRows=0,sourceAvatarUrl='';
@@ -239,6 +242,10 @@ export function sourceCoverage(source, entry, rawItems, input, datasetTruncated 
   const earliestReached = dates.length ? dates.sort()[0] : null;
   const status=demoOnly?'provider_demo_only':failed?'failed_or_partial':capped?'capped':updates.length?'collected_unverified_completeness':reportedEmpty?'no_items_reported':'no_results_unverified';
   const mediaCounts=source.platform==='YouTube'?{}:{mediaItems:updates.filter(u=>u.media?.length).length,mediaOnlyItems:updates.filter(u=>u.media?.length && !u.content).length,mediaPreviewOnlyItems:updates.filter(u=>u.image && !u.media?.length).length};
+  for (const update of updates) {
+    const context = resolveArchivedPostContext(update, updates, [source]);
+    if (context) update.postContext = context;
+  }
   return {updates,coverage:{sourceId:source.id,sourceUrl:source.url,platform:source.platform,...(sourceAvatarUrl?{sourceAvatarUrl}:{}),status,providerStatus:entry.status,returnedItems:rawItems.length,acceptedItems:updates.length,earliestReached,dateFrom:input.dateFrom,dateTo:input.dateTo,dateCutoffReached:earliestReached ? earliestReached<=input.dateFrom : null,complete:false,capped,datasetTruncated,formatLimits:entry.formatLimits,formatsSeen:formats,rejected,diagnosticCodes,emptyFormats:[...emptyFormats],transcriptItems:updates.filter(u=>u.contentKind==='transcript').length,postTextItems:updates.filter(u=>u.contentKind==='feed_text').length,metadataOnlyItems:updates.filter(u=>u.contentKind==='metadata_only').length,...mediaCounts,clippedItems,providerRunId:entry.providerRunId,actor:entry.actor,buildId:entry.buildId,observedCostUsd:entry.observedCostUsd,costObservedAt:entry.costObservedAt ?? null,costStatus:entry.costStatus,notes:['Provider success alone does not prove complete 30-day history.','No AI analysis, generated transcription, comments or audience analysis.',...(rejected.provider_demo_data?[`${rejected.provider_demo_data} supplier demo rows were excluded; they are not real source content.`]:[]),...(reportedEmpty?['The supplier reported empty formats or no items; this is not proof of exhaustive history.']:[]),...(source.platform==='Instagram' && rejected.no_items_reported?['The Instagram supplier reported empty or private data; quiet and inaccessible accounts cannot be distinguished from this response.']:[]),...(rejected.provider_request_error?[`${rejected.provider_request_error} no-item records also contained request errors; failure evidence is retained.`]:[]),...(clippedItems?[`${clippedItems} items contain source text clipped at 200,000 characters; entire transcripts or post bodies are not established.`]:[])]}};
 }
 export async function runCollector(raw, deps) {
