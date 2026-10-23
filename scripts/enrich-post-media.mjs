@@ -211,7 +211,7 @@ function attachmentOnlyText(raw, platform, before, after) {
     // Prove removal against the archived body, not a different provider fullText.
     // Index-only entities for another body cannot establish attachment identity.
     const proofEntities = values => Array.isArray(values) ? values.map(value => {
-      if (!object(value) || typeof value.url === 'string') return value;
+      if (!object(value) || typeof value.url === 'string' && /^https:\/\/t\.co\/[A-Za-z0-9]+$/.test(value.url)) return value;
       const { indices, ...withoutIndices } = value;
       return withoutIndices;
     }) : values;

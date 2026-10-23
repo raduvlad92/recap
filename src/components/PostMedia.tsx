@@ -100,6 +100,7 @@ function VideoAsset({ media, originalUrl, label }: { media: SourceMedia; origina
   const urls = playbackUrls(media);
   const [sourceIndex, setSourceIndex] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [failureReason, setFailureReason] = useState('');
   const [playing, setPlaying] = useState(false);
   const [gifChoice, setGifChoice] = useState<boolean | null>(null);
   const gif = media.type === 'gif';
@@ -122,10 +123,12 @@ function VideoAsset({ media, originalUrl, label }: { media: SourceMedia; origina
     return () => { player?.pause(); };
   }, [sourceIndex, failed]);
   function mediaError() {
+    const error = video.current?.error;
+    setFailureReason(error ? `${error.code}:${error.message}` : 'unknown');
     if (sourceIndex + 1 < urls.length) setSourceIndex(sourceIndex + 1);
     else setFailed(true);
   }
-  return <div className="post-media-asset" ref={ref}>
+  return <div className="post-media-asset" ref={ref} data-media-failure={failed ? failureReason : undefined}>
     {failed || !urls.length ? <Unavailable type={media.type} originalUrl={originalUrl} previewUrl={media.previewUrl} /> : <>
       <video key={urls[sourceIndex]} ref={video} className="post-media-visual" src={urls[sourceIndex]} poster={media.previewUrl} controls={!gif} playsInline muted={gif} loop={gif} preload="metadata" aria-label={media.alt || label} onError={mediaError} onPlay={() => { setPlaying(true); if (!visible) video.current?.pause(); }} onPause={() => setPlaying(false)}>
         Your browser cannot play this {gif ? 'GIF' : 'video'}. <a href={originalUrl} target="_blank" rel="noopener noreferrer">Open the original post</a>.

@@ -53,8 +53,8 @@ describe('offline existing-post enrichment', () => {
   });
 
   it('requires attachment proof in the archived body when provider full text omits a link', () => {
-    for (const indices of [undefined, [7, 31]]) {
-      const data = input(), raw = { ...rawPost(), text: 'Report https://t.co/External123', fullText: 'Report', displayTextRange: [0, 6], media: [{ type: 'photo', mediaUrl: 'https://pbs.twimg.com/media/example.jpg', ...(indices ? { indices } : {}) }] };
+    for (const indices of [undefined, [7, 31]]) for (const url of [undefined, '', null, 'not-a-token']) {
+      const data = input(), raw = { ...rawPost(), text: 'Report https://t.co/External123', fullText: 'Report', displayTextRange: [0, 6], media: [{ type: 'photo', mediaUrl: 'https://pbs.twimg.com/media/example.jpg', ...(url !== undefined ? { url } : {}), ...(indices ? { indices } : {}) }] };
       replaceRaw(data, raw);
       const plan = buildPostMediaPlan(data), next = plan.archivePatches[0].record;
       expect(next.content).toBe(raw.text);
