@@ -6,7 +6,7 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 ## Authorized original-post media correction — D33
 
-Preserve and render actual photos, mixed carousels, GIFs and video; show full source text once and retain original links, library controls, density and YouTube behavior. Safely enrich existing IDs from verified raw results; refresh only exact expired Instagram posts under the existing aggregate budget. [Scope](docs/design/POST-MEDIA.md). Implementation/local media checks,914 tests/typecheck/build/catalogue and actual rollback/stale/apply/readback are complete. All485 records retained with44 media patches; workspace/revision unchanged, repeat zero patches. CI/deployment and actual signed-in playback remain in progress.
+Complete: original text once, photo/mixed carousels, GIF/video playback, larger details, pause behind dialogs and honest failures. 44 existing media enrichments retain 485 records and the unchanged owner workspace/revision; repeat zero patches. 915 tests/typecheck/build/catalogue, actual rollback/stale/apply/readback, pushed `7772012`, CI 40022459266, exact Netlify `6adbc906570879468af37e7c` and real signed-in GIF/carousel/Instagram video checks pass. Local synthetic 320px checks remain distinct from hosted desktop. [Scope and limits](docs/design/POST-MEDIA.md). Next: founder review. Signed Instagram links can expire; historical renewal/permanent hosting remain future work, and no controller build/run or new recurring policy was added.
 
 ## Authorized hourly collection and real-only workspace — D32
 

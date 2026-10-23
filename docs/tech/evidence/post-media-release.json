@@ -27,7 +27,7 @@
     "unmatchedRawRows": 0
   },
   "kind": "actual_existing_archive_enrichment",
-  "localAutomatedTests": 914,
+  "localAutomatedTests": 915,
   "typecheck": "passed",
   "build": "passed",
   "catalogue": "unchanged560creators600channels",
@@ -45,11 +45,110 @@
     "heldUsd": 0.08,
     "newPostsImported": 0
   },
-  "hostedVerification": "pending",
-  "applicationDeployment": "pending",
+  "hostedVerification": {
+    "status": "passed",
+    "actualSignedInOwner": true,
+    "width": 1200,
+    "gif": {
+      "url": "https://x.com/MKBHD/status/2110901083585269926",
+      "readyState": 4,
+      "playing": true,
+      "muted": true,
+      "loop": true,
+      "width": 332,
+      "height": 250,
+      "pauseResume": "passed"
+    },
+    "carousel": {
+      "url": "https://x.com/MKBHD/status/2109993038407696722",
+      "attachments": 2,
+      "nextPrevious": "passed",
+      "secondImageLoaded": true,
+      "secondImageDimensions": [
+        1306,
+        1306
+      ],
+      "objectFit": "contain"
+    },
+    "instagramVideo": {
+      "url": "https://www.instagram.com/p/DeSl0f5iXYr/",
+      "readyState": 4,
+      "dimensions": [
+        720,
+        1280
+      ],
+      "startsPaused": true,
+      "nativePlayback": "passed",
+      "feedPausedWhenDetailsOpen": true
+    },
+    "noHorizontalOverflow": true,
+    "finalAsset": "index-DYe-HN0J.js",
+    "privateScreenshotsSaved": false,
+    "actualHostedPhoneWidthVerified": false,
+    "localSyntheticPhoneWidth": 320
+  },
+  "applicationDeployment": {
+    "commit": "777201238fbd429eecf7b1cc7ae8e2bd5f03c019",
+    "pushed": true,
+    "ciRunId": 40022459266,
+    "ciConclusion": "success",
+    "netlifyDeployId": "6adbc906570879468af37e7c",
+    "netlifyState": "ready",
+    "publishedAt": "2026-10-23T20:52:47.751Z",
+    "actualAssetVerified": true
+  },
   "privateRawArtifactsCommitted": false,
   "newSubscriptions": 0,
   "newSchedules": 0,
   "hourlyPolicyChanged": false,
-  "infrastructureCostsUsd": null
+  "infrastructureCostsUsd": null,
+  "review": {
+    "partialCarouselLoss": "resolved in planner and SQL count invariant",
+    "authoredLinkDeletion": "positive attachment proof against archived text; empty or malformed URL indices ignored",
+    "unicode": "all76savedXrowsproducewellformedtext"
+  },
+  "deliveryFix": {
+    "url": "https://video.twimg.com/tweet_video/HUttWIrWIAANTqw.mp4",
+    "withAppReferrerHttpStatus": 403,
+    "withoutReferrerHttpStatus": 206,
+    "withoutReferrerBytes": 20811,
+    "documentReferrerPolicy": "no-referrer",
+    "hostedConfirmation": "passed; GIF ready4 and playing"
+  },
+  "applySqlSha256": "422ceae2c8eeabf010ac5697ce837861c6f29009ac9c0325808780f27a09bf21",
+  "finalReadback": {
+    "checkedAt": "2026-10-23T20:54:21.715Z",
+    "existingRecordsChecked": 485,
+    "afterRows": 485,
+    "existingIdsPreserved": true,
+    "patchedRows": 44,
+    "unrelatedRecordsUnchanged": 441,
+    "workspaceStateAndRevisionUnchanged": true,
+    "originalIdentityColumnsUnchanged": true,
+    "repeatedPlanPatches": 0,
+    "stats": {
+      "archiveRows": 485,
+      "socialRows": 94,
+      "rawSocialRows": 94,
+      "duplicateRawRows": 0,
+      "matchedRows": 94,
+      "mediaRows": 44,
+      "imageRows": 17,
+      "videoRows": 26,
+      "gifRows": 2,
+      "carouselRows": 5,
+      "previewOnlyRows": 0,
+      "preservedDifferentTextRows": 0,
+      "archiveRowsToPatch": 44,
+      "unchangedRows": 441,
+      "unmatchedRows": 0,
+      "unmatchedRawRows": 0
+    }
+  },
+  "limitations": [
+    "Instagram signed media references can expire; automatic historical renewal and permanent file hosting are not implemented.",
+    "Repository Actor source includes the fix; the private cloud controller was not rebuilt or run for this release.",
+    "Swipe pointer handling is implemented; actual phone touch gestures were not exercised.",
+    "Hosted desktop verification is real;320px checks use local synthetic components."
+  ]
 }
