@@ -5,7 +5,7 @@ import { database } from './admin-data';
 import { apifyConfig, startApify, pollStoredApify, verifyHourlyApifyConfiguration, YOUTUBE_ACTOR, YOUTUBE_ACTOR_ID } from './apify';
 import { settleBudget } from './budget-ledger';
 import { startJob, finishJob } from './job-ledger';
-import { downloadPublic, downloadYouTubeCaptions, youtubeCaptionUrl, normalizeFeed, plainText, safeLink, type Download } from './feed';
+import { downloadPublic, downloadHourlySource, downloadYouTubeCaptions, youtubeCaptionUrl, normalizeFeed, plainText, safeLink, type Download } from './feed';
 import { validateSource } from './collect-handler';
 import { CollectionError, runtimeEnv, publicHttpsUrl, type Env } from './security';
 
@@ -142,7 +142,9 @@ function parsedXml(text: string): Record<string, unknown> {
 }
 export function parseHourlyYouTubeFeed(text: string, source: Source, channelId: string): { updates: SourceUpdate[]; invalidCount: number; gapPossible: boolean } {
  const feed = object(parsedXml(text).feed);
- if (String(feed['yt:channelId'] || '') !== channelId) throw new CollectionError(422, 'youtube_channel_mismatch', 'The RSS feed belongs to a different channel.');
+ // YouTube's Atom header can omit UC; individual entries still use the full ID.
+ const headerChannelId = String(feed['yt:channelId'] || '');
+ if (headerChannelId !== channelId && headerChannelId !== channelId.slice(2)) throw new CollectionError(422, 'youtube_channel_mismatch', 'The RSS feed belongs to a different channel.');
  const updates: SourceUpdate[] = []; let invalidCount = 0;
  const entries = list(feed.entry);
  for (const entry of entries.slice(0, 100)) {
@@ -240,7 +242,7 @@ function providerReference(job: StoredProviderJob): ProviderReference {
 export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
  const env = overrides.env || runtimeEnv;
  if (env('HOURLY_COLLECTION_ENABLED') !== 'true') return async () => ({ enabled: false, checked: 0, failed: 0, skipped: 0, statuses: {} });
- const deps: Dependencies = { env, store: overrides.store || createHourlyStore(env), download: downloadPublic, captions: nativeHourlyCaptions, startApify, pollApify: pollStoredApify, preflight: verifyHourlyApifyConfiguration, startJob, finishJob, settleBudget, now: Date.now, pause: ms => new Promise(resolve => setTimeout(resolve, ms)), ...overrides };
+ const deps: Dependencies = { env, store: overrides.store || createHourlyStore(env), download: downloadHourlySource, captions: nativeHourlyCaptions, startApify, pollApify: pollStoredApify, preflight: verifyHourlyApifyConfiguration, startJob, finishJob, settleBudget, now: Date.now, pause: ms => new Promise(resolve => setTimeout(resolve, ms)), ...overrides };
  const verified = new Set<string>();
  async function processSource(policy: HourlyPolicy, sourceId: string, workerDeadline: number): Promise<string> {
   const claimed = await deps.store.claim(policy.user_id, sourceId); if (!claimed) return 'skipped';
@@ -412,9 +414,10 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    await save(); return patch.status;
   } catch (error) {
    const code = error instanceof CollectionError ? error.code : 'hourly_check_failed';
+   const httpStatus = error instanceof CollectionError ? error.upstreamStatus ?? patch.http_status : patch.http_status;
    // Do not advance validators/cursors on a failed import. A retry must see the
    // same representation again rather than permanently skipping it via 304.
-   patch = { status: 'failed', error_code: code, new_count: Number(patch.new_count || 0) };
+   patch = { status: 'failed', error_code: code, new_count: Number(patch.new_count || 0), ...(httpStatus !== undefined ? { http_status: httpStatus } : {}) };
    await save(); return 'failed';
   }
  }

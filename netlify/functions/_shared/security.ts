@@ -4,7 +4,7 @@ import { isIP } from 'node:net';
 export type Env = (name: string) => string | undefined;
 
 export class CollectionError extends Error {
-  constructor(public status: number, public code: string, message: string) { super(message); }
+  constructor(public status: number, public code: string, message: string, public upstreamStatus?: number) { super(message); }
 }
 
 export const runtimeEnv: Env = (name) => {

@@ -4,7 +4,7 @@ import type { LookupFunction } from 'node:net';
 import { createHash } from 'node:crypto';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import type { CollectionResult, Reference, Source, SourceUpdate } from '../../../src/lib/types';
-import { CollectionError, isPublicAddress, publicHttpsUrl } from './security';
+import { CollectionError, isPublicAddress, publicHttpsUrl, readTextLimited } from './security';
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const CONTENT_LIMIT = 24_000;
@@ -46,6 +46,56 @@ export async function downloadPublic(urlString: string, redirects = 0, validator
   return downloadPinned(urlString, redirects, validators, publicHttpsUrl);
 }
 
+/** A fixed first-party endpoint, not an arbitrary reader-supplied fetch target. */
+export function youtubeFeedUrl(value: string): URL {
+  const url = publicHttpsUrl(value);
+  if (url.hostname !== 'www.youtube.com' || url.pathname !== '/feeds/videos.xml' ||
+      url.searchParams.size !== 1 || url.searchParams.getAll('channel_id').length !== 1 ||
+      !/^UC[A-Za-z0-9_-]{22}$/.test(url.searchParams.get('channel_id') || '')) {
+    throw new CollectionError(400, 'unsafe_youtube_feed', 'Only the exact public YouTube channel feed is supported.');
+  }
+  return url;
+}
+
+/** Some hosting networks receive a restricted response on the raw HTTPS
+ * transport. Retry once with the platform transport for this fixed origin.
+ * Unsafe DNS, timeouts, redirects and arbitrary feeds never enter this path. */
+export async function downloadYouTubeFeed(urlString: string, validators: FeedValidators = {}, primary = downloadPublic, fetcher: typeof fetch = fetch): Promise<Download> {
+  const url = youtubeFeedUrl(urlString);
+  try { return await primary(url.href, 0, validators); }
+  catch (error) {
+    if (!(error instanceof CollectionError) || error.code !== 'source_unavailable') throw error;
+  }
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
+  try {
+    const response = await fetcher(url.href, {
+      redirect: 'error', signal: controller.signal,
+      headers: { accept: 'application/atom+xml, application/xml, text/xml', ...conditionalFeedHeaders(validators) },
+    });
+    const metadata = {
+      status: response.status, etag: response.headers.get('etag')?.slice(0, 512),
+      lastModified: response.headers.get('last-modified')?.slice(0, 128),
+    };
+    if (response.status === 304) { await response.body?.cancel(); return { text: '', url: url.href, contentType: response.headers.get('content-type') || '', bytes: 0, ...metadata }; }
+    if (response.status !== 200) {
+      await response.body?.cancel();
+      throw new CollectionError(422, 'source_unavailable', 'The public YouTube feed returned an unavailable or restricted response.', response.status);
+    }
+    const text = await readTextLimited(response, MAX_BYTES);
+    return { text, url: url.href, contentType: response.headers.get('content-type') || '', bytes: Buffer.byteLength(text), ...metadata };
+  } catch (error) {
+    if (controller.signal.aborted) throw new CollectionError(504, 'source_timeout', 'This source took too long to respond.');
+    throw error;
+  } finally { clearTimeout(timer); }
+}
+
+export async function downloadHourlySource(urlString: string, redirects = 0, validators: FeedValidators = {}): Promise<Download> {
+  const url = publicHttpsUrl(urlString);
+  return url.hostname === 'www.youtube.com' && url.pathname === '/feeds/videos.xml'
+    ? downloadYouTubeFeed(url.href, validators) : downloadPublic(url.href, redirects, validators);
+}
+
 async function downloadPinned(urlString: string, redirects: number, validators: FeedValidators, validate: (value: string) => URL): Promise<Download> {
   const url = validate(urlString);
   let dnsTimer: ReturnType<typeof setTimeout> | undefined;
@@ -84,7 +134,7 @@ async function downloadPinned(urlString: string, redirects: number, validators: 
       if (status === 304) {
         response.resume(); resolve({ text: '', url: url.href, contentType: String(response.headers['content-type'] ?? ''), bytes: 0, ...metadata }); return;
       }
-      if (status !== 200) { response.resume(); reject(new CollectionError(422, 'source_unavailable', 'The public feed returned an unavailable or restricted response.')); return; }
+      if (status !== 200) { response.resume(); reject(new CollectionError(422, 'source_unavailable', 'The public feed returned an unavailable or restricted response.', status)); return; }
       if (response.headers['content-encoding'] && response.headers['content-encoding'] !== 'identity') {
         response.destroy(); reject(new CollectionError(422, 'encoding_not_supported', 'This source requires an unsupported response encoding.')); return;
       }

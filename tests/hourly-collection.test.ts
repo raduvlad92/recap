@@ -12,6 +12,23 @@ const update: SourceUpdate = { id: 'old-tech-id', sourceId: source.id, title: 'R
 const policy: HourlyPolicy = { user_id: 'hourly-test-reader', enabled: true, provider_enabled: false, daily_limit_usd: 0.1, lifetime_limit_usd: 1 };
 const claim: HourlyClaim = { source, checkId: '11111111-1111-4111-8111-111111111111', leaseToken: '22222222-2222-4222-8222-222222222222', state: { user_id: policy.user_id, source_id: source.id, fingerprint: 'source-fingerprint', collection_id: 'tech', channel_id: channelId, feed_url: feedUrl, etag: '"old"', last_modified: 'Thu, 22 Oct 2026 12:00:00 GMT', content_hash: null, initialized_at: '2026-10-22T12:00:00Z', workspace_revision: '2026-10-22T13:00:00Z', cursor: {} } };
 const xml = (ids = [videoId]) => `<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"><yt:channelId>${channelId}</yt:channelId>${ids.map(id => `<entry><yt:videoId>${id}</yt:videoId><yt:channelId>${channelId}</yt:channelId><title>Real &amp; useful</title><published>2026-10-22T12:00:00Z</published><media:group xmlns:media="http://search.yahoo.com/mrss/"><media:description>Publisher description</media:description></media:group></entry>`).join('')}</feed>`;
+const realSchemaChannelId = 'UCXuqSBlHAE6Xw-yeJA0Tunw';
+const youtubeAtom = (headerChannelId = realSchemaChannelId.slice(2), entryChannelId = realSchemaChannelId) => `<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/">
+ <link rel="self" href="https://www.youtube.com/feeds/videos.xml?channel_id=${realSchemaChannelId}"/>
+ <id>yt:channel:${realSchemaChannelId.slice(2)}</id><yt:channelId>${headerChannelId}</yt:channelId>
+ <title>Public channel</title><link rel="alternate" href="https://www.youtube.com/channel/${realSchemaChannelId}"/>
+ <author><name>Public channel</name><uri>https://www.youtube.com/channel/${realSchemaChannelId}</uri></author>
+ <published>2010-01-01T00:00:00+00:00</published>
+ <entry><id>yt:video:${videoId}</id><yt:videoId>${videoId}</yt:videoId><yt:channelId>${entryChannelId}</yt:channelId>
+  <title>Real &amp; useful</title><link rel="alternate" href="https://www.youtube.com/watch?v=${videoId}"/>
+  <author><name>Public channel</name><uri>https://www.youtube.com/channel/${realSchemaChannelId}</uri></author>
+  <published>2026-10-22T12:00:00+00:00</published><updated>2026-10-22T13:00:00+00:00</updated>
+  <media:group><media:title>Real &amp; useful</media:title><media:content url="https://www.youtube.com/v/${videoId}" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i.ytimg.com/vi/${videoId}/hqdefault.jpg" width="480" height="360"/><media:description>Publisher description</media:description>
+  </media:group>
+ </entry>
+</feed>`;
 const workspace = (sources: Source[] = [source]): WorkspaceState => ({ version: 1, followedSourceIds: sources.map(s => s.id), customSources: sources, savedUpdateIds: [], readLaterIds: [], importedUpdates: [], settings: { interests: [], interfaceLanguage: 'en', recapLanguage: 'en', timezone: 'UTC', deliveryTime: '09:00', emailReminder: false } });
 const envValues: Record<string, string> = { HOURLY_COLLECTION_ENABLED: 'true', APIFY_RUNTIME_ENABLED: 'true', HOURLY_COLLECTION_PROVIDER_VERIFIED: 'true', APIFY_API_TOKEN: 'synthetic-private-token', COLLECTION_JOB_SECRET: 'synthetic-secret-of-more-than-32-characters', APIFY_YOUTUBE_BUILD: '0.0.319', APIFY_MAX_ITEMS: '1', APIFY_MAX_TOTAL_CHARGE_USD: '0.005', COLLECTION_ALLOWED_USER_IDS: policy.user_id };
 function setup(options: { policy?: HourlyPolicy; source?: Source; seen?: string[]; pending?: StoredProviderJob[]; body?: string; status?: number; state?: Partial<HourlyClaim['state']> } = {}) {
@@ -38,10 +55,40 @@ describe('hourly native freshness and exact original identity', () => {
  it('persists honest metadata when native captions are missing and provider is off', async () => { const t = setup(); await t.run(); expect(t.updates()[0]).toMatchObject({ contentKind: 'metadata_only', summary: 'Publisher description' }); expect(t.patch()).toMatchObject({ status: 'partial', details: { captionStatus: 'native_unavailable_provider_disabled' } }); expect(t.deps.startJob).not.toHaveBeenCalled(); });
  it.each(['X','Instagram','LinkedIn'] as const)('logs unsupported %s without contacting the platform or provider', async platform => { const t = setup({ source: { ...source, platform, url: platform === 'X' ? 'https://x.com/publictest' : platform === 'Instagram' ? 'https://instagram.com/publictest' : 'https://linkedin.com/in/publictest' } }); await t.run(); expect(t.patch()).toMatchObject({ status: 'unsupported', error_code: 'freshness_check_unavailable', provider: 'none' }); expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.startApify).not.toHaveBeenCalled(); });
  it('rejects feed channel mismatches rather than collecting another creator', () => expect(() => parseHourlyYouTubeFeed(xml().replaceAll(channelId, 'UCxxxxxxxxxxxxxxxxxxxxxx'), source, channelId)).toThrow('different channel'));
+ it.each([realSchemaChannelId, realSchemaChannelId.slice(2)])('accepts the real YouTube Atom header form %s with an exact full entry channel ID', headerChannelId => {
+  const result = parseHourlyYouTubeFeed(youtubeAtom(headerChannelId), source, realSchemaChannelId);
+  expect(result).toMatchObject({ invalidCount: 0, gapPossible: false });
+  expect(result.updates).toHaveLength(1);
+  expect(result.updates[0]).toMatchObject({ sourceId: source.id, url: update.url, title: 'Real & useful', summary: 'Publisher description', publishedAt: update.publishedAt, contentKind: 'metadata_only', isSample: false });
+ });
+ it.each(['UCxxxxxxxxxxxxxxxxxxxxxx', 'xxxxxxxxxxxxxxxxxxxxxx', 'UC' + realSchemaChannelId, ''])('rejects a wrong or missing real-schema header %s even when the entry matches', headerChannelId => {
+  expect(() => parseHourlyYouTubeFeed(youtubeAtom(headerChannelId), source, realSchemaChannelId)).toThrow('different channel');
+ });
+ it.each(['UCxxxxxxxxxxxxxxxxxxxxxx', realSchemaChannelId.slice(2)])('excludes a real-schema entry without the exact full channel ID: %s', entryChannelId => {
+  const result = parseHourlyYouTubeFeed(youtubeAtom(undefined, entryChannelId), source, realSchemaChannelId);
+  expect(result).toEqual({ updates: [], invalidCount: 1, gapPossible: false });
+ });
  it('leaves missing publication dates unknown and excludes them from the dated archive', () => { const result = parseHourlyYouTubeFeed(xml().replace('2026-10-22T12:00:00Z', 'not-a-date'), source, channelId); expect(result.updates).toHaveLength(0); expect(result.invalidCount).toBe(1); });
  it('resolves a saved channel ID without downloading a public channel page', async () => { const download = vi.fn(); expect(await resolveHourlyYouTubeChannel(source, claim.state, download)).toBe(channelId); expect(download).not.toHaveBeenCalled(); });
  it('does not infer the owner channel from generic recommended-video channelIds', async () => { const download = vi.fn(async () => ({ text: `{"channelId":"${channelId}"}`, url: 'https://youtube.com/@test', contentType: 'text/html' })); await expect(resolveHourlyYouTubeChannel({ ...source, url: 'https://youtube.com/@test' }, { ...claim.state, channel_id: null }, download)).rejects.toMatchObject({ code: 'youtube_channel_unresolved' }); });
- it('does not advance validators after a parse failure', async () => { const t = setup({ body: 'not XML' }); await t.run(); expect(t.patch()).toMatchObject({ status: 'failed' }); expect(t.patch()).not.toHaveProperty('etag'); expect(t.patch()).not.toHaveProperty('content_hash'); });
+ it('does not advance validators after a parse failure and preserves the successful HTTP response status', async () => { const t = setup({ body: 'not XML' }); await t.run(); expect(t.patch()).toMatchObject({ status: 'failed', error_code: 'invalid_feed', http_status: 200 }); expect(t.patch()).not.toHaveProperty('etag'); expect(t.patch()).not.toHaveProperty('content_hash'); });
+ it('preserves an upstream HTTP 503 on a failed download', async () => {
+  const t = setup();
+  t.deps.download.mockRejectedValue(new CollectionError(422, 'source_unavailable', 'Unavailable', 503));
+  await t.run();
+  expect(t.patch()).toMatchObject({ status: 'failed', error_code: 'source_unavailable', http_status: 503 });
+  expect(t.patch()).not.toHaveProperty('etag');
+  expect(t.patch()).not.toHaveProperty('content_hash');
+  expect(t.deps.captions).not.toHaveBeenCalled();
+  expect(t.deps.startApify).not.toHaveBeenCalled();
+ });
+ it('omits HTTP status when a download fails without receiving an upstream response', async () => {
+  const t = setup();
+  t.deps.download.mockRejectedValue(new CollectionError(504, 'source_timeout', 'Timed out'));
+  await t.run();
+  expect(t.patch()).toMatchObject({ status: 'failed', error_code: 'source_timeout' });
+  expect(t.patch()).not.toHaveProperty('http_status');
+ });
  it('collects more than five native feed items without inventing a summary', async () => { const body = `<rss><channel><title>Feed</title>${Array.from({ length: 9 }, (_, i) => `<item><title>Entry ${i}</title><link>https://publisher.org/${i}</link><pubDate>Thu, 22 Oct 2026 12:00:00 GMT</pubDate><description>Publisher excerpt</description></item>`).join('')}</channel></rss>`; const t = setup({ source: { ...source, platform: 'Blog', url: 'https://publisher.org/feed' }, body }); await t.run(); expect(t.updates()).toHaveLength(9); expect(t.updates().every(u => u.contentKind === 'metadata_only' && u.insights.length === 0)).toBe(true); });
 });
 
