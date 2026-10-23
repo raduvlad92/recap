@@ -2,6 +2,8 @@
 
 Authorized 23 October 2026. The founder asked to remove all fictional website/account samples, enable cheap hourly new-content collection for their account, check whether a source has new content first, and show costs per pull/source/day/user. This increment uses the existing recap Supabase, Clerk, Netlify and DeleteCookies Apify resources. No new supplier plan, generated transcription, paid AI, outreach or paid launch is included.
 
+**Later live readback, 23 October 21:54 UTC:** the initial 00:19 upstream-block checkpoint below is historical. Subsequent hourly runs have added **207 items** (92 transcripts,115 metadata-only), bringing the archive to485. All 21 latest YouTube feed checks returned 200. Hourly-only observed fees are US$0.076; commitments including four unfinalized jobs are US$0.096. X/Instagram automatic discovery and complete caption retrieval remain unfinished. [Current reliability assessment and recommended next increment](COLLECTION-RELIABILITY-OPTIONS.md), [sanitized readback](evidence/collection-reliability-readback.json). No settings or jobs were changed by that read.
+
 ## Actual account cleanup and historical cost reconciliation
 
 The actual owner workspace was selectively updated with its saved revision. **48 follows became 39**, removing the nine exact retired fictional sources. All **278 real private archive rows**, **36 keyword reviews**, preferences and saved items were read back unchanged. No reset, delete/recreate, catalogue reseed or annotation overwrite was used. Other readers' cloud workspaces were not edited; the website migrates retired sample references on their next load. Historical fixture bodies now exist only in test helpers and dated documentation, outside the production app.

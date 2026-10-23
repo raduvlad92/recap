@@ -1,0 +1,65 @@
+{
+  "at": "2026-10-23T21:54:42.854Z",
+  "latestHour": {
+    "checks": 39,
+    "statuses": {
+      "unchanged": 2,
+      "unsupported": 18,
+      "partial": 19
+    },
+    "platforms": {
+      "YouTube": 21,
+      "Instagram": 8,
+      "X": 10
+    },
+    "http": {
+      "200": 21,
+      "none": 18
+    },
+    "errors": {
+      "none": 21,
+      "freshness_check_unavailable": 18
+    },
+    "captionStatuses": {
+      "none": 31,
+      "collection_budget_exhausted": 7,
+      "provider_already_attempted": 1
+    },
+    "newItems": 0,
+    "retrieved": 0
+  },
+  "newHourlyArchive": {
+    "rows": 207,
+    "contentKinds": {
+      "transcript": 92,
+      "metadata_only": 115
+    },
+    "withTranscript": 92
+  },
+  "jobs": {
+    "count": 98,
+    "costs": {
+      "0": 75,
+      "0.004": 19,
+      "none": 4
+    },
+    "states": {
+      "completed": 94,
+      "ambiguous": 3,
+      "running": 1
+    },
+    "commitment": {
+      "daily": 0.096,
+      "lifetime": 0.096
+    }
+  },
+  "type": "read_only_actual_owner_hourly_ledger_and_archive_summary",
+  "previousUniversalBlockStatementSuperseded": true,
+  "providerInvoiceReconciledThisRead": false,
+  "hourlyFeesExcludeSeparateD33MediaRefresh": true,
+  "infrastructure": "unmeasured",
+  "totalChecks": 900,
+  "archiveRows": 485,
+  "knownHourlySupplierFeesUsd": 0.076,
+  "unfinalizedHourlyJobs": 4
+}
