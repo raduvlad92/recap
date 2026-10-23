@@ -171,3 +171,8 @@ D25 is complete: all 144 LMG records reviewed, exact annotation/account readback
 The bounded D22 jobs are finished; no recurring collection or reminder schedule is running. Further product engineering remains tracked in the [tech plan](docs/tech/PLAN.md), [admin continuation work](docs/admin/PLAN.md#continuation-work) and [v0 plan](docs/v0/PLAN.md#continuation-work). Broader SPEC/PLAN v1.1 remains a candidate, and customer outreach, paid trials and charging are not authorized.
 
 **Costs:** observed run/build usage is approximately **US$1.30 in existing free credits**, with final invoices still unknown; no new subscription, upgrade or cash purchase is reported. A budget reservation is not an incurred charge. Generated transcription remains **0/150 experiment minutes**, D25 adds one-off LMG caption summaries; daily cross-source recaps remain unfinished, and formal seven-day source proof remains **0/7**. Existing hosting/build/database usage is not a measured per-reader operating-cost estimate.
+
+
+## Collection planning at 50 readers — 24 October 2026
+
+Founder clarified that reliability recommendations must assume at least 50 users with at least 78 sources each: 3,900 follows at the minimum baseline. [Scale comparison and model](docs/tech/COLLECTION-50-USERS.md) recommend shared collection per unique public source, platform-specific discovery and selective managed retrieval. No-overlap baseline: 93,600 check opportunities/day; an illustrative doubled current platform mix requires 50,400 YouTube API units/day before extras, above the standard 10,000. Sharing, posting rates and full-content costs remain unmeasured. This is planning, not a 50-reader rollout or a new budget/provider approval.

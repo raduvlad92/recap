@@ -132,3 +132,8 @@ At each substantive checkpoint:
 5. Commit and push verified work to the private GitHub repository. Check CI, Netlify deployment and live behavior separately; one does not substitute for another. Keep credentials and raw QA identities in ignored local files.
 
 Resume by reading STATUS.md, SPEC.md, PLAN.md and docs/DECISIONS.md, then taking the next authorized task. No recurring automation is currently running.
+
+
+## Planning baseline: at least 50 readers × 78 sources — 24 October 2026
+
+Replace one-reader sizing assumptions with at least 3,900 follows; model unknown source overlap and platform mix. [Architecture/cost options](docs/tech/COLLECTION-50-USERS.md) recommend a shared source/item inventory, durable queues, sufficient discovery quota, provider fallback, reusable source analysis and private reader views. Plan worst-case no reuse, measure empty-check/full-content costs, and aggregate cost reporting in the database. No application or supplier change is authorized merely by this planning scenario.
