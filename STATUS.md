@@ -2,6 +2,10 @@
 
 Updated: **24 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
+## Latest content audit — 24 October 2026
+
+Actual readback at 23 October 22:01–22:02 UTC confirms **207 hourly-added videos: 92 transcripts, 115 metadata-only; zero generated summary annotations or keywords, and all 207 missing Shorts classification**. All 21 YouTube preferences are correctly saved with Shorts off. Hourly watch URLs without classification pass the current visibility filter. The actual hosted feed shows extractive caption bullets without keywords; Today groups source descriptions (including sponsor text), not a generated briefing. Older D25 editorial summaries/keywords remain a one-off batch. The latest 21 YouTube feed checks returned 200; caption logs instead show budget stops, oversized responses and unresolved provider launches, with 115 pending caption items. [Investigation, evidence and recommended repair order](docs/tech/CONTENT-ANALYSIS-AUDIT.md). No app/data/configuration correction, new supplier/model job, budget increase or review deployment was performed. Next: repair classification and connect caption retrieval to bounded analysis/backfill; actual daily synthesis remains separate unfinished work.
+
 ## Current original-post media correction — D33
 
 **Complete:** social originals show text once with uncropped photo/video/GIF carousels, controls and larger details. Exactly **44 existing posts** gained media (five carousels); actual readback preserves all **485 records**, the other 441 records, original identities and full workspace/revision. Repeating enrichment yields zero patches. One 18-post Instagram refresh restored expired video URLs: **US$0.0486** observed, **US$0.08** cap held. No new follows, subscriptions or hourly policy changes. [Scope/evidence](docs/design/POST-MEDIA.md).

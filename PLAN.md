@@ -4,6 +4,10 @@ Version: **1.1 — APPROVAL CANDIDATE**. Updated: 24 October 2026. Matches [SPEC
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
 
+## Latest content review — 24 October 2026
+
+Read-only investigation complete: all 207 hourly arrivals lack analysis/keywords/Shorts classification, despite 21 saved No Shorts preferences; 115 also lack captions. Renderer replay and actual signed-in feed/Today checks distinguish caption excerpts, one-off reviewed summaries and unfinished daily synthesis. [Findings and evidence](docs/tech/CONTENT-ANALYSIS-AUDIT.md). Recommended next increment: repair classification/archive enrichment; add bounded, retryable caption-to-summary/keyword analysis and existing-caption backfill; expose separate processing states and reconcile the caption backlog. Daily cross-source briefing generation remains separate. No correction was implemented or new model/provider spending authorized by this review.
+
 ## Authorized original-post media correction — D33
 
 Complete: original text once, photo/mixed carousels, GIF/video playback, larger details, pause behind dialogs and honest failures. 44 existing media enrichments retain 485 records and the unchanged owner workspace/revision; repeat zero patches. 915 tests/typecheck/build/catalogue, actual rollback/stale/apply/readback, pushed `7772012`, CI 40022459266, exact Netlify `6adbc906570879468af37e7c` and real signed-in GIF/carousel/Instagram video checks pass. Local synthetic 320px checks remain distinct from hosted desktop. [Scope and limits](docs/design/POST-MEDIA.md). Next: founder review. Signed Instagram links can expire; historical renewal/permanent hosting remain future work, and no controller build/run or new recurring policy was added.

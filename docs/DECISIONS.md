@@ -1,6 +1,6 @@
 # Decisions and interview
 
-Updated: 23 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Updated: 24 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
 ## Accepted founder decisions
 
@@ -29,6 +29,10 @@ Updated: 23 October 2026. Individual answers below are accepted directions. They
 | D23 | Make the middle column much more compact: remove repeated collection headings/subtitle/channel and update counts, move source-material explanation/coverage access into Preferences, and keep sort, expanded history range and Filter in one row. Exact dates remain in Filter; remove date-toolbar controls. | 21 October: “let's make it MUCH more compact and remove the fluff”, explicit removal/control list and screenshot; follow-up removes the update count/date controls and adds 2-week/1-week/3-day/24-hour ranges. |
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
+
+## 24 October 2026 — latest content investigation, no scope change
+
+Founder requested explanations for missing recaps/keywords, Shorts despite the saved exclusion, and recap-like bullets without keywords. Actual owner archive/log and hosted UI review confirms missing automatic analysis, 115 pending transcripts and absent Shorts classification on all 207 hourly arrivals. The 21 YouTube preferences are correctly off; deterministic caption excerpts explain the apparent recap/keyword mismatch. [Exact findings and recommendations](tech/CONTENT-ANALYSIS-AUDIT.md). No new implementation, supplier/model execution, budget increase or wider specification approval is inferred. Existing collection continues independently; this session changed documentation only.
 
 ## D33 — original posts with actual media,23October2026
 

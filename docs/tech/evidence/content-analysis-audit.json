@@ -1,0 +1,188 @@
+{
+  "type": "actual_read_only_archive_and_log_aggregates_plus_hosted_ui_and_renderer_replay",
+  "archiveReadAt": "2026-10-23T22:01:13.997Z",
+  "logsReadAt": "2026-10-23T22:02:13.516Z",
+  "projectVerified": true,
+  "verifiedOwnerMatched": true,
+  "archive": {
+    "total": 485,
+    "transcript": 267,
+    "metadataOnly": 126,
+    "summaryReady": 135,
+    "storedHighlights": 132,
+    "keywords": 132,
+    "shortTrue": 38,
+    "shortFalse": 146,
+    "shortMissing": 301
+  },
+  "videos": {
+    "total": 391,
+    "transcript": 267,
+    "metadataOnly": 124,
+    "summaryReady": 135,
+    "storedHighlights": 132,
+    "keywords": 132,
+    "shortTrue": 38,
+    "shortFalse": 146,
+    "shortMissing": 207
+  },
+  "hourlyAddedVideos": {
+    "total": 207,
+    "transcript": 92,
+    "metadataOnly": 115,
+    "summaryReady": 0,
+    "storedHighlights": 0,
+    "keywords": 0,
+    "shortTrue": 0,
+    "shortFalse": 0,
+    "shortMissing": 207
+  },
+  "renderer": {
+    "hourly": {
+      "items": 207,
+      "renderedHighlightCards": 92,
+      "storedSummaryMarkers": 0,
+      "storedHighlightCards": 0,
+      "renderedKeywordCards": 0
+    },
+    "older": {
+      "items": 184,
+      "renderedHighlightCards": 172,
+      "storedSummaryMarkers": 144,
+      "storedHighlightCards": 132,
+      "renderedKeywordCards": 132
+    }
+  },
+  "shortsPreferences": {
+    "youtubeSources": 21,
+    "shortsHidden": 21
+  },
+  "captionQueue": {
+    "pendingItems": 115,
+    "latestHour": "2026-10-23T22",
+    "checks": 39,
+    "youtubeChecks": 21,
+    "httpStatuses": {
+      "200": 21,
+      "none": 18
+    },
+    "captionStatuses": {
+      "none": 36,
+      "response_too_large": 1,
+      "provider_launch_ambiguous": 1,
+      "collection_budget_exhausted": 1
+    },
+    "sourceErrors": {
+      "none": 21,
+      "freshness_check_unavailable": 18
+    },
+    "checksRead": 939,
+    "completeRead": true,
+    "allReadCaptionStatuses": {
+      "none": 823,
+      "response_too_large": 12,
+      "provider_launch_ambiguous": 16,
+      "collection_budget_exhausted": 73,
+      "provider_already_attempted": 6,
+      "provider_result_retrieved": 8,
+      "provider_pending": 1
+    }
+  },
+  "providerJobs": {
+    "total": 98,
+    "states": {
+      "completed": 94,
+      "ambiguous": 3,
+      "running": 1
+    },
+    "knownFees": 0.07600000000000004,
+    "unreportedFinalCharges": 4,
+    "invoiceReconciledByReview": false
+  },
+  "examples": [
+    {
+      "title": "Are Foldable Phones Using Glass?",
+      "url": "https://www.youtube.com/watch?v=72pyU1ZRun0",
+      "contentKind": "metadata_only",
+      "shortClassification": null,
+      "duration": null,
+      "storedSummaryStatus": null,
+      "storedHighlights": 0,
+      "displayedHighlights": 0,
+      "storedKeywords": 0,
+      "displayedKeywords": 0
+    },
+    {
+      "title": "Nintendo might be cooked too",
+      "url": "https://www.youtube.com/watch?v=mheVCMCpJ3M",
+      "contentKind": "transcript",
+      "shortClassification": null,
+      "duration": "00:08:04",
+      "storedSummaryStatus": null,
+      "storedHighlights": 0,
+      "displayedHighlights": 6,
+      "storedKeywords": 0,
+      "displayedKeywords": 0
+    },
+    {
+      "title": "Muse has been leaking private chats...",
+      "url": "https://www.youtube.com/watch?v=wFKwB-0piRY",
+      "contentKind": "transcript",
+      "shortClassification": null,
+      "duration": "00:00:36",
+      "storedSummaryStatus": null,
+      "storedHighlights": 0,
+      "displayedHighlights": 1,
+      "storedKeywords": 0,
+      "displayedKeywords": 0
+    },
+    {
+      "title": "New Tech, New Software - Apple Watch Series 12",
+      "url": "https://www.youtube.com/watch?v=ckEUIfrg_tU",
+      "contentKind": "transcript",
+      "shortClassification": false,
+      "duration": "00:17:50",
+      "storedSummaryStatus": "ready",
+      "storedHighlights": 6,
+      "displayedHighlights": 6,
+      "storedKeywords": 9,
+      "displayedKeywords": 9
+    }
+  ],
+  "hostedUi": {
+    "signedIn": true,
+    "feedObserved": {
+      "latestMetadataOnlyCard": "Are Foldable Phones Using Glass?",
+      "captionExcerptCard": "Nintendo might be cooked too",
+      "captionExcerptBullets": 6,
+      "captionExcerptKeywords": 0,
+      "olderWrittenSummaryCard": "New Tech, New Software - Apple Watch Series 12",
+      "olderWrittenSummaryBullets": 6,
+      "olderWrittenSummaryKeywords": 9
+    },
+    "todayView": {
+      "topic": "Other updates",
+      "sourceCount": 7,
+      "sourceDescriptionsContainSponsorAndMerchandiseCopy": true,
+      "oneSourceDescriptionIncludesShortsHashtag": true,
+      "synthesizedDailyBriefing": false
+    },
+    "originalViewAndSearchRestored": true,
+    "privateScreenshotsSaved": false
+  },
+  "reviewActions": {
+    "applicationChanges": false,
+    "databaseWrites": false,
+    "configurationChanges": false,
+    "supplierJobsStarted": 0,
+    "modelJobsStarted": 0,
+    "newSupplierRunFees": 0,
+    "infrastructureCost": "unmeasured",
+    "backgroundHourlyAutomation": "continues independently"
+  },
+  "limitations": [
+    "Short duration and a Shorts hashtag alone are not verified platform classification.",
+    "Existing provider job amounts are database observations, not a complete invoice.",
+    "No correction was implemented or deployed."
+  ]
+}

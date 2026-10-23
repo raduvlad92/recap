@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 24 October 2026 — recap, keywords and Shorts investigation
+
+Type: actual read-only owner archive/log inspection, signed-in hosted UI inspection and local renderer-helper replay against existing records. [Report](tech/CONTENT-ANALYSIS-AUDIT.md), [sanitized counts/examples](tech/evidence/content-analysis-audit.json). Snapshot at 23 October 22:01–22:02 UTC: 485 archive rows; 207 hourly arrivals, 92 transcripts/115 metadata-only, zero stored summary/highlight/keyword analysis and zero Shorts flags on that batch. All 21 YouTube preferences are off. Live cards/Today confirm source excerpts/descriptions rather than automatic new-content synthesis. Replayed helpers give 92 bullet-bearing cards and zero keyword cards for the new batch. Latest 21 YouTube checks returned 200; 115 caption items remain queued, with budget/response-size/ambiguous-launch diagnostics. Two independent read-only code reviews corroborated the pipeline/filter gaps.
+
+No app/data/settings/schedule changes, supplier/model jobs, new supplier charges or deployment were initiated by the review; infrastructure reads are unmeasured. Existing hourly automation continues independently. No private screenshots or raw records were committed. Browser restored to its original view/search. Recommended next work is classification repair, bounded content analysis/backfill, explicit processing states and separate daily briefing generation; none is claimed implemented here.
+
 ## 15 October 2026 — discovery checkpoint
 
 Type: documentation and public-source research. No application demo or live scraper proof exists yet.
