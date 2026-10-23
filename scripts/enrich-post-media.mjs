@@ -208,8 +208,15 @@ function attachmentOnlyText(raw, platform, before, after) {
   {
     // Every removed token needs positive root-owned attachment entity proof,
     // independent of the provider's display range or presence of another asset.
-    const textLength = Math.max(before.length, typeof raw.fullText === 'string' ? raw.fullText.length : 0, typeof raw.full_text === 'string' ? raw.full_text.length : 0, typeof raw.extended_tweet?.full_text === 'string' ? raw.extended_tweet.full_text.length : 0);
-    const unbounded = { ...raw, displayTextRange: [0, textLength], display_text_range: [0, textLength], ...(raw.extended_tweet ? { extended_tweet: { ...raw.extended_tweet, display_text_range: [0, textLength] } } : {}) };
+    // Prove removal against the archived body, not a different provider fullText.
+    // Index-only entities for another body cannot establish attachment identity.
+    const proofEntities = values => Array.isArray(values) ? values.map(value => {
+      if (!object(value) || typeof value.url === 'string') return value;
+      const { indices, ...withoutIndices } = value;
+      return withoutIndices;
+    }) : values;
+    const proofObject = value => object(value) ? { ...value, media: proofEntities(value.media), urls: proofEntities(value.urls) } : value;
+    const unbounded = { ...raw, text: before, fullText: before, full_text: before, displayTextRange: [0, before.length], display_text_range: [0, before.length], media: proofEntities(raw.media), entities: proofObject(raw.entities), extendedEntities: proofObject(raw.extendedEntities), extended_entities: proofObject(raw.extended_entities), ...(raw.extended_tweet ? { extended_tweet: { ...raw.extended_tweet, full_text: before, display_text_range: [0, before.length], entities: proofObject(raw.extended_tweet.entities), extended_entities: proofObject(raw.extended_tweet.extended_entities) } } : {}) };
     const withoutRange = visiblePostText(unbounded, platform);
     if (removed.some(token => withoutRange.includes(token))) return before;
   }

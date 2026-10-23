@@ -52,6 +52,17 @@ describe('offline existing-post enrichment', () => {
     expect(buildPostMediaPlan(data).archivePatches[0].record.content).toBe(raw.text);
   });
 
+  it('requires attachment proof in the archived body when provider full text omits a link', () => {
+    for (const indices of [undefined, [7, 31]]) {
+      const data = input(), raw = { ...rawPost(), text: 'Report https://t.co/External123', fullText: 'Report', displayTextRange: [0, 6], media: [{ type: 'photo', mediaUrl: 'https://pbs.twimg.com/media/example.jpg', ...(indices ? { indices } : {}) }] };
+      replaceRaw(data, raw);
+      const plan = buildPostMediaPlan(data), next = plan.archivePatches[0].record;
+      expect(next.content).toBe(raw.text);
+      expect(next.summary).toBe(raw.text);
+      expect(buildPostMediaSql(plan)).toContain('record=item');
+    }
+  });
+
   it('preserves each editorial text field independently', () => {
     const data = input();
     data.archiveRows[0].record.title = 'Editorial headline'; data.archiveRows[0].record.summary = 'Editorial synopsis';
