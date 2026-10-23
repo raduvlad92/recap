@@ -101,6 +101,18 @@ describe('social post originals', () => {
     expect(html).toContain('Original text and playable media weren’t included.');
     expect(html).not.toContain('<video');
   });
+  it('keeps long originals expandable in the feed and complete in details while preserving the reply', () => {
+    const text = 'A complete paragraph of the original post. '.repeat(20) + 'END OF ORIGINAL';
+    const update: SourceUpdate = { ...post, postContext: { reply: { status: 'available', postId: '123', text } } };
+    const feed = markup(update), detail = markup(update, true);
+    expect(feed).toContain('Show full original');
+    expect(feed).toContain('aria-expanded="false"');
+    expect(feed).toContain('END OF ORIGINAL');
+    expect(feed).toContain('Full original text.');
+    expect(detail).toContain('END OF ORIGINAL');
+    expect(detail).not.toContain('post-reference-excerpt');
+    expect(detail).not.toContain('Show full original');
+  });
   it('puts post media in the source panel and the exact post on the right in either density', () => {
     for (const compact of [false, true]) {
       const html = renderToStaticMarkup(createElement(SocialPostCard, { update: { ...post, media: [photo] }, heading: 'Synthetic post', channelName: 'Channel', channelIcon: 'C', date: 'Oct 23', platform: 'X', onChannel: () => undefined, actions: 'Save', topics: null, onOpen: () => undefined, compact }));

@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { ArrowUpRight, Expand, Reply, Quote } from 'lucide-react';
 import type { Platform, SourcePostReference, SourceUpdate } from '../lib/types';
 import { PostMedia, UnavailablePostMedia } from './PostMedia';
@@ -20,14 +20,18 @@ function PostReferencePreview({ image, hasText }: { image: string; hasText: bool
   return <div className="post-reference-preview">{failedImage === image ? <p>Original preview unavailable.</p> : <><img src={image} alt="Original post preview only" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedImage(image)} /><p>{hasText ? 'Preview only. Playable media weren’t included.' : 'Preview only. Original text and playable media weren’t included.'}</p></>}</div>;
 }
 
-function PostReference({ reference, kind, playbackEnabled }: { reference: SourcePostReference; kind: 'reply' | 'quote'; playbackEnabled: boolean }) {
+function PostReference({ reference, kind, playbackEnabled, detail }: { reference: SourcePostReference; kind: 'reply' | 'quote'; playbackEnabled: boolean; detail: boolean }) {
+  const [expanded, setExpanded] = useState(false);
+  const textId = useId();
   const available = reference.status === 'available';
+  const expandable = !detail && !!reference.text && reference.text.length > 280;
   let date = '';
   if (reference.publishedAt) try { date = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(reference.publishedAt)); } catch { /* Omit an unavailable date. */ }
   return <div className={`post-reference ${available ? '' : 'post-reference-unavailable'}`}>
     <div className="post-reference-label">{kind === 'reply' ? 'Original post' : 'Quoted post'}</div>
     {(reference.authorName || reference.authorHandle || date) && <div className="post-reference-author">{reference.authorName && <strong>{reference.authorName}</strong>}{reference.authorHandle && <span>@{reference.authorHandle.replace(/^@/, '')}</span>}{date && <time dateTime={reference.publishedAt}>{date}</time>}</div>}
-    {available && reference.text && <p className="post-reference-text">{reference.text}</p>}
+    {available && reference.text && <p id={textId} className={`post-reference-text ${expandable && !expanded ? 'post-reference-excerpt' : ''}`}>{reference.text}</p>}
+    {available && expandable && <button className="post-reference-toggle" aria-expanded={expanded} aria-controls={textId} onClick={() => setExpanded(current => !current)}>{expanded ? 'Show less' : 'Show full original'}</button>}
     {available && !!reference.media?.length && <PostMedia media={reference.media} originalUrl={reference.url || 'https://x.com'} playbackEnabled={playbackEnabled} />}
     {available && reference.image && !reference.media?.length && <PostReferencePreview image={reference.image} hasText={!!reference.text} />}
     {!available && <p className="post-reference-missing">The original post wasn’t included in this collection.</p>}
@@ -39,10 +43,10 @@ export function SocialPostContent({ update, detail = false, playbackEnabled = tr
   const text = socialPostText(update);
   const unavailableVideo = /playable media URL unavailable/i.test(update.coverage || '');
   return <div className={`social-post-content ${detail ? 'social-post-detail' : ''}`}>
-    {update.postContext?.reply && <><div className="post-relationship"><Reply size={15} aria-hidden="true" /><span>Reply{update.postContext.reply.authorHandle ? ` to @${update.postContext.reply.authorHandle.replace(/^@/, '')}` : ''}</span></div><PostReference reference={update.postContext.reply} kind="reply" playbackEnabled={playbackEnabled} /></>}
+    {update.postContext?.reply && <><div className="post-relationship"><Reply size={15} aria-hidden="true" /><span>Reply{update.postContext.reply.authorHandle ? ` to @${update.postContext.reply.authorHandle.replace(/^@/, '')}` : ''}</span></div><PostReference reference={update.postContext.reply} kind="reply" playbackEnabled={playbackEnabled} detail={detail} /></>}
     {text && <p className="social-post-text">{text}</p>}
     {!text && !!update.media?.length && !includeMedia && <p className="social-post-unavailable">This post contains media without accompanying text.</p>}
-    {update.postContext?.quote && <><div className="post-relationship post-quote-label"><Quote size={14} aria-hidden="true" /><span>Quotes a post</span></div><PostReference reference={update.postContext.quote} kind="quote" playbackEnabled={playbackEnabled} /></>}
+    {update.postContext?.quote && <><div className="post-relationship post-quote-label"><Quote size={14} aria-hidden="true" /><span>Quotes a post</span></div><PostReference reference={update.postContext.quote} kind="quote" playbackEnabled={playbackEnabled} detail={detail} /></>}
     {includeMedia && !!update.media?.length && <PostMedia media={update.media} originalUrl={update.url} size={detail ? 'detail' : 'feed'} playbackEnabled={playbackEnabled} />}
     {includeMedia && !update.media?.length && unavailableVideo && <UnavailablePostMedia previewUrl={update.image} originalUrl={update.url} />}
     {!!update.media?.length && unavailableVideo && <p className="social-media-missing-notice">A video attachment is unavailable. <a href={update.url} target="_blank" rel="noopener noreferrer">Open original post<ArrowUpRight size={13} aria-hidden="true" /></a></p>}

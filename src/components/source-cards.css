@@ -51,6 +51,9 @@
 .post-reference-author strong{font-weight:500;color:#344438}
 .post-reference-author time{font-size:10px}
 .post-reference-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.65;margin-top:7px;max-width:78ch;color:#475344}
+.post-reference-excerpt{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.post-reference-toggle{display:block;text-align:left;min-height:30px;color:#397868;font-size:11px;padding:4px 0}
+.post-reference-toggle:hover{text-decoration:underline;text-underline-offset:3px}
 .post-reference>.post-media{margin-top:10px;max-width:400px}
 .post-reference-preview{margin-top:10px;max-width:400px;font-size:11px;color:#6a7567;line-height:1.6}
 .post-reference-preview img{display:block;max-width:100%;max-height:200px;object-fit:contain;margin-bottom:7px}
