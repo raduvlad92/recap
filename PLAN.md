@@ -6,6 +6,8 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 ## Latest content review — 24 October 2026
 
+Proposed delivery sequence, requested as advice: classification/status plus repeatable per-item analysis/backfill first, cited daily briefing second. Preserve the current full-content keyword rules and independent uncertainty review; keep unknown-format videos inspectable outside a No Shorts feed until checked. Separate bounded AI evaluation from supplier allowances and verify a real publication through the full hosted flow before completion. [Detailed proposal and trade-offs](docs/tech/CONTENT-ANALYSIS-AUDIT.md#proposed-repair-scope--founder-requested-suggestions-24-october). Advice is not implementation approval or an increased budget.
+
 Read-only investigation complete: all 207 hourly arrivals lack analysis/keywords/Shorts classification, despite 21 saved No Shorts preferences; 115 also lack captions. Renderer replay and actual signed-in feed/Today checks distinguish caption excerpts, one-off reviewed summaries and unfinished daily synthesis. [Findings and evidence](docs/tech/CONTENT-ANALYSIS-AUDIT.md). Recommended next increment: repair classification/archive enrichment; add bounded, retryable caption-to-summary/keyword analysis and existing-caption backfill; expose separate processing states and reconcile the caption backlog. Daily cross-source briefing generation remains separate. No correction was implemented or new model/provider spending authorized by this review.
 
 ## Authorized original-post media correction — D33

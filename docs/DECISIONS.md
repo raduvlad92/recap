@@ -32,6 +32,8 @@ Original requested product behavior: topics rather than a simple post list; snip
 
 ## 24 October 2026 — latest content investigation, no scope change
 
+Follow-up founder request: “ok so what are your suggestions to fix al this?” Assistant recommends the [sequenced repair scope](tech/CONTENT-ANALYSIS-AUDIT.md#proposed-repair-scope--founder-requested-suggestions-24-october), including the explicit trade-off that unclassified formats wait outside a No Shorts feed. These are proposals awaiting direction, not newly accepted product decisions or authority for paid AI runs.
+
 Founder requested explanations for missing recaps/keywords, Shorts despite the saved exclusion, and recap-like bullets without keywords. Actual owner archive/log and hosted UI review confirms missing automatic analysis, 115 pending transcripts and absent Shorts classification on all 207 hourly arrivals. The 21 YouTube preferences are correctly off; deterministic caption excerpts explain the apparent recap/keyword mismatch. [Exact findings and recommendations](tech/CONTENT-ANALYSIS-AUDIT.md). No new implementation, supplier/model execution, budget increase or wider specification approval is inferred. Existing collection continues independently; this session changed documentation only.
 
 ## D33 — original posts with actual media,23October2026
