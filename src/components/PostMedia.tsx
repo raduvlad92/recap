@@ -6,6 +6,7 @@ interface Props {
   media: SourceMedia[];
   originalUrl: string;
   size?: 'feed' | 'detail';
+  playbackEnabled?: boolean;
 }
 
 function OriginalLink({ url, children = 'Open original post' }: { url: string; children?: ReactNode }) {
@@ -26,7 +27,7 @@ export function UnavailablePostMedia({ previewUrl, originalUrl }: { previewUrl?:
   return <div className="post-media post-media-missing"><div className="post-media-stage"><Unavailable type="video" previewUrl={previewUrl} originalUrl={originalUrl} /></div></div>;
 }
 
-function usePlaybackVisibility() {
+function usePlaybackVisibility(enabled = true) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
@@ -50,7 +51,7 @@ function usePlaybackVisibility() {
       document.removeEventListener('visibilitychange', visibilityChanged);
     };
   }, []);
-  return { ref, visible: visible && pageVisible, reducedMotion };
+  return { ref, visible: enabled && visible && pageVisible, reducedMotion };
 }
 
 /** Keep supplier order, trying alternative encodings if a browser cannot play one. */
@@ -64,8 +65,8 @@ function ImageAsset({ media, originalUrl, label }: { media: SourceMedia; origina
 }
 
 /** Native animated GIFs use a canvas still while paused, including before motion consent. */
-function RasterGif({ media, originalUrl, label }: { media: SourceMedia; originalUrl: string; label: string }) {
-  const { ref, visible, reducedMotion } = usePlaybackVisibility();
+function RasterGif({ media, originalUrl, label, playbackEnabled }: { media: SourceMedia; originalUrl: string; label: string; playbackEnabled?: boolean }) {
+  const { ref, visible, reducedMotion } = usePlaybackVisibility(playbackEnabled);
   const [choice, setChoice] = useState<boolean | null>(null);
   const [failed, setFailed] = useState(false);
   const [hasFrame, setHasFrame] = useState(false);
@@ -94,8 +95,8 @@ function RasterGif({ media, originalUrl, label }: { media: SourceMedia; original
   </div>;
 }
 
-function VideoAsset({ media, originalUrl, label }: { media: SourceMedia; originalUrl: string; label: string }) {
-  const { ref, visible, reducedMotion } = usePlaybackVisibility();
+function VideoAsset({ media, originalUrl, label, playbackEnabled }: { media: SourceMedia; originalUrl: string; label: string; playbackEnabled?: boolean }) {
+  const { ref, visible, reducedMotion } = usePlaybackVisibility(playbackEnabled);
   const video = useRef<HTMLVideoElement>(null);
   const urls = playbackUrls(media);
   const [sourceIndex, setSourceIndex] = useState(0);
@@ -138,7 +139,7 @@ function VideoAsset({ media, originalUrl, label }: { media: SourceMedia; origina
   </div>;
 }
 
-function MediaCarousel({ media, originalUrl, size = 'feed' }: Props) {
+function MediaCarousel({ media, originalUrl, size = 'feed', playbackEnabled = true }: Props) {
   const [index, setIndex] = useState(0);
   const viewportId = useId();
   const pointer = useRef<{ x: number; y: number; id: number } | null>(null);
@@ -166,7 +167,7 @@ function MediaCarousel({ media, originalUrl, size = 'feed' }: Props) {
   }
   return <div className={`post-media post-media-${size}`} role="region" aria-roledescription={multiple ? 'carousel' : undefined} aria-label="Post media" tabIndex={multiple ? 0 : undefined} onKeyDown={keyDown} onPointerDown={pointerDown} onPointerUp={pointerUp} onPointerCancel={() => { pointer.current = null; }}>
     <div className="post-media-stage" id={viewportId} role="group" aria-roledescription={multiple ? 'slide' : undefined} aria-label={label} key={`${index}:${active.url}`}>
-      {active.type === 'image' ? <ImageAsset media={active} originalUrl={originalUrl} label={label} /> : active.type === 'gif' && /\.gif(?:$|[?#])/i.test(active.url) ? <RasterGif media={active} originalUrl={originalUrl} label={label} /> : <VideoAsset media={active} originalUrl={originalUrl} label={label} />}
+      {active.type === 'image' ? <ImageAsset media={active} originalUrl={originalUrl} label={label} /> : active.type === 'gif' && /\.gif(?:$|[?#])/i.test(active.url) ? <RasterGif media={active} originalUrl={originalUrl} label={label} playbackEnabled={playbackEnabled} /> : <VideoAsset media={active} originalUrl={originalUrl} label={label} playbackEnabled={playbackEnabled} />}
     </div>
     <div className="post-media-toolbar">
       <span className="post-media-count" aria-live="polite" aria-atomic="true">{label}</span>
