@@ -4,6 +4,10 @@ Version: **1.1 — APPROVAL CANDIDATE**. Updated: 24 October 2026. Matches [SPEC
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
 
+## Active collection planning direction — third-party Actors, 24 October 2026
+
+Use the [provider-based collection plan](docs/tech/PROVIDER-COLLECTION-PLAN.md) for at least 50 readers × 78 sources. It supersedes official-API-first dependencies in earlier recommendations. Our controller gates every specialized provider job by deduplication, input/output validation, cost reservation and expected stage; schedules trigger due discovery, validated new data triggers missing-content work, and classified failures trigger reconciliation before bounded retry/backup. Keep private reader data separate from shared public-source work; measure paid quiet checks and usable-content costs. This is planning, not new execution or spending authorization.
+
 ## Latest content review — 24 October 2026
 
 Proposed delivery sequence, requested as advice: classification/status plus repeatable per-item analysis/backfill first, cited daily briefing second. Preserve the current full-content keyword rules and independent uncertainty review; keep unknown-format videos inspectable outside a No Shorts feed until checked. Separate bounded AI evaluation from supplier allowances and verify a real publication through the full hosted flow before completion. [Detailed proposal and trade-offs](docs/tech/CONTENT-ANALYSIS-AUDIT.md#proposed-repair-scope--founder-requested-suggestions-24-october). Advice is not implementation approval or an increased budget.

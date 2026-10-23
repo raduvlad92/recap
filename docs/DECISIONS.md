@@ -2,6 +2,10 @@
 
 Updated: 24 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
+## 24 October 2026 — provider-based parsing is the planning baseline
+
+Founder explicitly said not to depend on YouTube, X or Instagram granting the required parsing capacity, and to plan around Apify, Bright Data, RapidAPI and comparable third parties. They expect multiple specialized Actors behaving like microservices, triggered only when needed on schedules or from data/errors. Record third-party collection and our event/schedule/error controller as the accepted planning direction for the 50-reader/78-source baseline; no exact Actor list, supplier purchase, budget or live rollout is approved by this instruction. Official APIs/native feeds may be optional optimizations, not architectural prerequisites. [Detailed roles, triggers, spending controls and rollout proposal](tech/PROVIDER-COLLECTION-PLAN.md).
+
 ## Accepted founder decisions
 
 | ID | Decision | Evidence |

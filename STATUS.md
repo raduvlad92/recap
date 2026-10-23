@@ -2,6 +2,10 @@
 
 Updated: **24 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
+## Provider-based collection planning — 24 October 2026
+
+Founder directed the 50-reader/at-least-78-source plan to rely on third-party parsing (Apify, Bright Data, particular RapidAPI publishers and alternatives), with specialized scheduled/new-data/error-triggered Actors/jobs. Direct platform API capacity and official quota approval are not required by the revised architecture. [Provider-based plan](docs/tech/PROVIDER-COLLECTION-PLAN.md) defines a shared source registry, our controller/queue, incremental discovery, missing-content/caption retrieval, internal classification/analysis, targeted media repair and reconciled failover. Native/official access is only an optional optimization. No new supplier job, subscription, rollout or runtime/budget change was made for this planning update.
+
 ## Latest content audit — 24 October 2026
 
 Founder subsequently requested suggestions. [Proposed repair scope](docs/tech/CONTENT-ANALYSIS-AUDIT.md#proposed-repair-scope--founder-requested-suggestions-24-october) recommends classification/pending states, automatic independent takeaway/keyword processing, existing-caption backfill and capped caption recovery, then genuine daily assembly with hosted acceptance. Unknown format would wait visibly outside a No Shorts feed. This policy and execution remain recommendations; no new implementation/model spending is authorized by the advice request.

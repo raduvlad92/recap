@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 24 October 2026 — provider-based Actor pipeline planning
+
+Type: architecture/planning update using current primary provider documentation; not executed supplier workflows. [Plan](tech/PROVIDER-COLLECTION-PLAN.md), [interactive trigger diagram](tech/evidence/provider-collection-plan.html). Six displayed roles cover discovery, missing originals, existing captions, internal classification/analysis, exact-item media repair and run/cost recovery; reader delivery remains private. Four scenarios show quiet-source stop, new-video progression, ambiguous-timeout reconciliation and expired-media repair. 728px light/360px dark previews pass with no overflow or console errors. Independent planning review corroborates batching, callback deduplication, ambiguous-launch holds and per-API billing differences. No DB/source collection, new provider job, subscription, quota request, budget increase or configuration change. This supersedes reliance on direct platform API capacity; supplier capabilities/costs still require bounded future validation.
+
 ## 24 October 2026 — recap, keywords and Shorts investigation
 
 Follow-up advice saved as a [repair proposal](tech/CONTENT-ANALYSIS-AUDIT.md#proposed-repair-scope--founder-requested-suggestions-24-october). It covers classification/status, repeatable independent video/keyword analysis, existing-content repair, caption recovery, daily assembly and hosted cost/acceptance checks. This adds no new live collection or implementation evidence; earlier snapshot counts remain dated audit results.

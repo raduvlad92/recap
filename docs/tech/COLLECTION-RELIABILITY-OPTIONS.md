@@ -1,5 +1,7 @@
 # Reliable new-content collection — options, 23 October 2026
 
+> **Current planning direction, 24 October:** third-party parsing with specialized scheduled/event/error-triggered jobs supersedes the official-API-first recommendation below. See [the provider-based collection plan](PROVIDER-COLLECTION-PLAN.md). Earlier calculations and live readbacks remain dated evidence; direct platform quota is not a dependency of the revised plan.
+
 The founder asked for two or three ways to make new-content pulling reliable, their trade-offs and a recommendation. This is research and a proposed next increment, not approval of a new supplier, subscription, budget or adapter. Existing hourly policies and caps remain unchanged. [Comparison](evidence/collection-reliability-options.html), [sanitized live readback](evidence/collection-reliability-readback.json).
 
 ## Corrected live state

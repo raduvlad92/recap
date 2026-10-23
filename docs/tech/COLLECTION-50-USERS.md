@@ -1,5 +1,7 @@
 # Collection design for 50 readers — 24 October 2026
 
+> **Current planning direction, 24 October:** third-party parsing with specialized scheduled/event/error-triggered jobs supersedes the official-API-first recommendation below. See [the provider-based collection plan](PROVIDER-COLLECTION-PLAN.md). Earlier calculations and live readbacks remain dated evidence; direct platform quota is not a dependency of the revised plan.
+
 Founder steering: “don't recommend for the current setup. assume we have 50 users, each with at least twice as many sources than I currently have”. This changes the planning baseline to **50 readers × at least 78 followed platform accounts = at least 3,900 follows**. It supersedes the one-reader sizing recommendation in [the earlier comparison](COLLECTION-RELIABILITY-OPTIONS.md). It does not authorize enrolling/enabling 50 real readers, new supplier subscriptions, quota applications or spending changes.
 
 The exact future platform mix, cross-reader overlap and publication rates are unknown. Use the minimum 78 accounts/reader for arithmetic; larger accounts increase load. “Source” below means an exact public platform account/feed, not a person spanning several platforms. A creator's YouTube, X and Instagram channels remain distinct sources. [Interactive model](evidence/collection-50-users.html).
