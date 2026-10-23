@@ -121,6 +121,40 @@ describe('real-content normalization and coverage',()=>{
   expect(result.update).toMatchObject({sourceId:source.id,url:row.url,publishedAt:'2026-10-19T16:40:36.000Z',content:row.text,contentKind:'feed_text',isSample:false,contributorIds:[],topics:[],brands:[],sponsors:[]});expect(JSON.stringify(result.update)).not.toContain('excluded@example.com');expect(result.update).not.toHaveProperty('viewCount');
   expect(normalizeItem(source,{...row,author:{username:'elsewhere'}},input).reason).toBe('unattributed');expect(normalizeItem(source,{...row,createdAt:'Mon Sep 01 16:40:36 +0000 2026'},input).reason).toBe('outside_window');
  });
+ it('normalizes GIF-only Xquik output with playable media and honest text coverage while preserving original identity and date',()=>{
+  const input=validateInput(raw({sources:[{id:'source-x-media',name:'Example',platform:'X',url:'https://x.com/Example'}]}),now),source=input.sources[0];
+  const token='https://t.co/attachment',row={id:'1234567890',url:'https://x.com/Example/status/1234567890',author:{username:'Example'},createdAt:'2026-10-19T12:00:00Z',text:token,title:token,displayTextRange:[0,0],media:[{type:'animated_gif',mediaUrl:'https://pbs.twimg.com/tweet_video_thumb/gif.jpg',url:token,indices:[0,token.length],videoVariants:[{url:'https://video.twimg.com/tweet_video/gif.mp4',contentType:'video/mp4',bitrate:0}]}]};
+  const update=normalizeItem(source,row,input).update;
+  expect(update).toMatchObject({title:'GIF from Example',contentKind:'metadata_only',url:row.url,publishedAt:'2026-10-19T12:00:00.000Z',format:'post',image:'https://pbs.twimg.com/tweet_video_thumb/gif.jpg',media:[{type:'gif',url:'https://video.twimg.com/tweet_video/gif.mp4',previewUrl:'https://pbs.twimg.com/tweet_video_thumb/gif.jpg'}]});
+  expect(update).not.toHaveProperty('content');expect(update.summary).not.toContain('t.co');expect(update.coverage).toContain('Media-only post');expect(update.coverage).toContain('audio have not been analyzed');
+  expect(update.id).toBe(normalizeItem(source,{...row,media:undefined},input).update.id);expect(update.topics).toEqual([]);expect(update.references).toEqual([{title:'Original update',url:row.url}]);
+  const request=childRequest(source,input,300),entry={...request,status:'SUCCEEDED',providerRunId:'synthetic-run',observedCostUsd:null,costStatus:'unreported'};
+  expect(sourceCoverage(source,entry,[row],input).coverage).toMatchObject({postTextItems:0,metadataOnlyItems:1,mediaItems:1,mediaOnlyItems:1,mediaPreviewOnlyItems:0,complete:false});
+ });
+ it('keeps only authored X visible text in content, title and summary, preserving genuine external links and full text',()=>{
+  const input=validateInput(raw({sources:[{id:'source-x-visible',name:'Example',platform:'X',url:'https://x.com/Example'}]}),now),source=input.sources[0];
+  const authored='😀 Read https://t.co/article',body='@Hidden '+authored+' https://t.co/photo';
+  const row={url:'https://x.com/Example/status/1234567891',author:{username:'Example'},createdAt:'2026-10-19T12:00:00Z',text:body,title:'https://t.co/photo',isReply:true,displayTextRange:[8,8+authored.length],media:[{type:'photo',mediaUrl:'https://pbs.twimg.com/media/photo.jpg',url:'https://t.co/photo',indices:[body.indexOf('https://t.co/photo'),body.length]}],entities:{userMentions:[{screenName:'Hidden',indices:[0,7]}],urls:[{url:'https://t.co/article',expandedUrl:'https://example.com/story'}]}};
+  expect(normalizeItem(source,row,input).update).toMatchObject({title:authored,summary:authored,content:authored,contentKind:'feed_text',image:'https://pbs.twimg.com/media/photo.jpg?name=orig',media:[{type:'image',url:'https://pbs.twimg.com/media/photo.jpg?name=orig'}]});
+  const full='Full authored source text. '.repeat(1000);
+  expect(normalizeItem(source,{...row,text:'Truncated…',displayTextRange:undefined,full_text:full,media:[]},input).update.content).toBe(full.trim());
+ });
+ it('preserves a video-only still preview without making a thumbnail playable or claiming a transcript',()=>{
+  const input=validateInput(raw({sources:[{id:'source-ig-preview',name:'Example',platform:'Instagram',url:'https://instagram.com/example/'}]}),now),source=input.sources[0];
+  const row={url:'https://instagram.com/reel/Preview/',ownerUsername:'example',timestamp:'2026-10-19T12:00:00Z',type:'Video',caption:'',displayUrl:'https://scontent.cdninstagram.com/preview.jpg',videoUrl:'https://scontent.cdninstagram.com/playlist.m3u8'};
+  const update=normalizeItem(source,row,input).update;
+  expect(update).toMatchObject({contentKind:'metadata_only',image:row.displayUrl,title:'Update from Example'});expect(update).not.toHaveProperty('media');expect(update).not.toHaveProperty('content');expect(update.coverage).toContain('playable media URL unavailable');
+  const ytInput=validateInput(raw(),now),ytUpdate=normalizeItem(ytInput.sources[0],item({thumbnailUrl:'https://i.ytimg.com/vi/abcdef12345/hqdefault.jpg'}),ytInput).update;
+  expect(ytUpdate.coverage).toBe('Video metadata and description only; spoken content not collected.');expect(ytUpdate).not.toHaveProperty('media');
+ });
+ it('keeps an Instagram carousel caption separate from its ordered media and ignores nested quoted content',()=>{
+  const input=validateInput(raw({sources:[{id:'source-ig-media',name:'Example',platform:'Instagram',url:'https://instagram.com/example/'}]}),now),source=input.sources[0];
+  const row={url:'https://instagram.com/p/Carousel/',ownerUsername:'example',timestamp:'2026-10-19T12:00:00Z',caption:'Actual public caption.',type:'Sidecar',displayUrl:'https://scontent.cdninstagram.com/one.jpg',childPosts:[{type:'Image',displayUrl:'https://scontent.cdninstagram.com/one.jpg'},{type:'Video',displayUrl:'https://scontent.cdninstagram.com/two.jpg',videoUrl:'https://scontent.cdninstagram.com/two.mp4?signature=public'}],quoted_post:{caption:'Foreign text.',displayUrl:'https://scontent.cdninstagram.com/foreign.jpg'}};
+  const update=normalizeItem(source,row,input).update;
+  expect(update).toMatchObject({contentKind:'feed_text',content:row.caption,title:row.caption,summary:row.caption});expect(update.media.map((value:{type:string})=>value.type)).toEqual(['image','video']);expect(update.media[1].url).toContain('?signature=public');expect(JSON.stringify(update)).not.toContain('Foreign');expect(JSON.stringify(update)).not.toContain('foreign.jpg');
+  const mixed=normalizeItem(source,{...row,childPosts:[{...row.childPosts[1],videoUrl:'https://scontent.cdninstagram.com/master.m3u8'},row.childPosts[0]]},input).update;
+  expect(mixed.media).toHaveLength(1);expect(mixed.media[0].type).toBe('image');expect(mixed.coverage).toContain('playable media URL unavailable');expect(mixed.content).toBe(row.caption);
+ });
  it('requires the Instagram owner identity and treats its caption as text, not a Reel transcript',()=>{
   const source={id:'instagram-source',name:'Example',platform:'Instagram',url:'https://www.instagram.com/example/'};
   const input=validateInput(raw({sources:[source]}),now),post={url:'https://www.instagram.com/reel/Abc123/',ownerUsername:'example',caption:'Public caption.',timestamp:'2026-10-01T12:00:00Z'};

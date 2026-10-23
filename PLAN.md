@@ -4,6 +4,10 @@ Version: **1.1 — APPROVAL CANDIDATE**. Updated: 23 October 2026. Matches [SPEC
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
 
+## Authorized original-post media correction — D33
+
+Preserve and render actual photos, mixed carousels, GIFs and video; show full source text once and retain original links, library controls, density and YouTube behavior. Safely enrich existing IDs from verified raw results; refresh only exact expired Instagram posts under the existing aggregate budget. [Scope](docs/design/POST-MEDIA.md). Implementation/local media checks,914 tests/typecheck/build/catalogue and actual rollback/stale/apply/readback are complete. All485 records retained with44 media patches; workspace/revision unchanged, repeat zero patches. CI/deployment and actual signed-in playback remain in progress.
+
 ## Authorized hourly collection and real-only workspace — D32
 
 Selective fictional cleanup, real-data preservation, owner-only hourly policy, production migrations/runtime, spending controls, logs and costs by source/day/reader are implemented and deployed as `81d4afd`. US$0.10/day + US$1 cumulative + US$0.005/exact-new-video fallback remain enforced inside the shared US$45 ceiling. 814 local tests, CI/build, SQL/RLS/concurrency checks and actual owner/admin/guest UI pass. **Operational access remains open:** latest hosted YouTube feed checks returned 20 HTTP 404 and one HTTP 500; no paid job or new item was accepted. Eighteen X/Instagram sources explicitly lack inexpensive freshness adapters. Next: inspect the next UTC-hour retry; resolve a reliable free or comparably cheap freshness path before claiming successful ongoing pulls. Do not pay for blind discovery after a failed freshness check. [Evidence](docs/tech/HOURLY.md). No new subscription, generated transcription, paid AI, outreach or paid launch.

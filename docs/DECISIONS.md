@@ -30,6 +30,10 @@ Updated: 23 October 2026. Individual answers below are accepted directions. They
 
 Original requested product behavior: topics rather than a simple post list; snippets and original references; profile-based relevance; daily updated-source counts; historical timeline; preserve credit to creators. Sponsors, brands, sentiment, reach and comment sentiment are part of the vision, with D05 deferring the richer access requirement.
 
+## D33 — original posts with actual media,23October2026
+
+Founder explicitly instructed: “ok then fix it, I want to see the post properly, the media, carousell, video, etc.” This authorizes scoped importer/storage/card/details correction and review publication, including guarded restoration of media on existing posts. Keep Xquik for its verified exact GIF; no provider switch is needed for that example. Exact18-post Instagram refresh within the existing global ceiling addresses expired video references (US$0.08 cap, US$0.0486 observed). No broader catalogue collection, new subscription, permanent file-hosting promise, AI media analysis or schedule/budget expansion follows. [Scope and verification](design/POST-MEDIA.md).
+
 ## 23 October 2026 — X GIF Actor investigation
 
 Founder supplied a URL-only app card and the original Fry GIF, asking whether any Apify Actor could pull the correct content. This authorizes investigation of that exact example. Existing Xquik actual-run readback confirms structured GIF media; direct thumbnail/MP4 reads and decoded-frame inspection match the screenshot. The loss occurs in app normalization. Recommendation: retain Xquik and correct media preservation/rendering; no new product or supplier selection decision was requested or inferred. [Exact evidence](tech/X-MEDIA-PROOF.md). No new runs/builds, spending authorization, app/archive change or automatic schedule follows from the investigation.

@@ -2,6 +2,10 @@
 
 Updated: **23 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
+## Current original-post media correction — D33
+
+Implemented: original social post text, photo/video/GIF carousels and expanded media viewing, plus guarded existing-post enrichment. [Scope and evidence](docs/design/POST-MEDIA.md). Exact94post matching produces44 media patches against485existing archive rows. One capped18-post Instagram refresh recovered expired video links; observed US$0.0486, with US$0.08 held. Actual-project rollback/stale checks and committed apply/readback passed: all 485 IDs,441 unrelated records and full workspace/revision preserved; repeat plan zero patches.914 tests/typecheck/build/catalogue pass. Release and hosted playback checks pending. No new follows or schedule/budget changes.
+
 ## Current X GIF investigation — 23 October 2026
 
 The founder asked whether an Apify Actor could retrieve the original GIF behind a URL-only MKBHD card. **Confirmed using the existing Xquik run** `8Jz51XGuPOxvJCGC0`: exact original row includes `animated_gif`, thumbnail and MP4 variants. Both media assets returned HTTP 200; thumbnail and decoded video frame visually match the supplied Fry screenshot. The importer drops Xquik's `media` array and treats the attachment token as source text. [Proof and recommendation](docs/tech/X-MEDIA-PROOF.md), [sanitized evidence](docs/tech/evidence/x-gif-proof.json). Investigation complete; recommended follow-up is media preservation/rendering and guarded enrichment of existing IDs. No application/archive change or new deployment; no new provider run/build, supplier subscription, schedule or supplier-run spend. Read/storage/network infrastructure cost unmeasured. This is current readback of the existing 21 October run, not a fresh collection or broad-coverage pass.

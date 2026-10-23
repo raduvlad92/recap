@@ -1,0 +1,51 @@
+/* Social originals use the reader's existing Onest, paper, ink and teal tokens. */
+.update-card.social-post-card{display:block;min-height:0}
+.social-post-card>.update-card-body{width:100%;min-width:0}
+.social-post-card .update-card-top{align-items:flex-start}
+.social-post-card .card-creator{max-width:100%}
+.social-post-text{font-size:15px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink);max-width:78ch}
+.social-post-unavailable{font-size:13px;line-height:1.7;color:#667163}
+.social-media-missing-notice{font-size:12px;line-height:1.7;color:#596754;margin-top:10px;overflow-wrap:anywhere}
+.social-media-missing-notice a{text-decoration:underline;text-underline-offset:3px}
+.social-media-missing-notice svg{margin-left:3px}
+.social-post-content{min-width:0}
+.social-post-content>.post-media{margin-top:16px}
+.social-post-content>.post-media:first-child{margin-top:0}
+.post-media{min-width:0;max-width:100%;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--paper)}
+.post-media:focus-visible{outline:3px solid var(--teal);outline-offset:4px}
+.post-media-stage{position:relative;display:flex;align-items:center;justify-content:center;height:clamp(240px,32vw,400px);min-width:0;background:#f1f3ef;touch-action:pan-y pinch-zoom}
+.post-media-visual{display:block;width:100%;height:100%;min-width:0;object-fit:contain}
+video.post-media-visual{touch-action:auto;background:#151915}
+.post-media-asset{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-width:0}
+.post-media-hidden{display:none}
+.post-gif-loading{position:absolute;visibility:hidden;pointer-events:none}
+.post-gif-toggle{position:absolute;bottom:12px;left:12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:8px 12px;background:#fff;color:#20231f;border:1px solid #d5dcd2;border-radius:20px;font-size:12px;box-shadow:0 1px 3px #20231f12}
+.post-media-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:3px 8px 3px 13px;touch-action:pan-y pinch-zoom}
+.post-media-count{font-size:11px;color:#596754}
+.post-media-navigation{display:flex;gap:4px}
+.post-media-navigation button{display:grid;place-items:center;width:40px;height:38px;border-radius:10px;color:#445e50}
+.post-media-navigation button:hover{background:var(--teal-soft)}
+.post-media-unavailable{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;height:100%;padding:18px;color:#596754;text-align:center;font-size:13px}
+.post-media-unavailable p{flex:none}
+.post-media-unavailable a{display:inline-flex;align-items:center;gap:5px;min-height:38px;text-decoration:underline;text-underline-offset:3px;flex:none}
+.post-media-preview{display:block;max-width:100%;min-height:0;max-height:calc(100% - 95px);object-fit:contain;flex:0 1 auto}
+.social-post-links{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px}
+.social-post-links>a,.social-post-links>button{display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:3px 0;font-size:12px;color:#476e5a}
+.social-post-links>a:hover,.social-post-links>button:hover{text-decoration:underline;text-underline-offset:3px}
+.social-post-card .update-card-bottom{flex-wrap:wrap;margin-top:0}
+.social-post-detail .post-media-stage{height:min(65dvh,700px);min-height:240px}
+.social-post-detail .social-post-text{font-size:16px;line-height:1.8}
+.social-post-detail-provenance{display:block;margin-top:14px;color:#596754}
+.feed-density-compact .social-post-card .social-post-text{font-size:14px;line-height:1.55}
+.feed-density-compact .social-post-card .post-media-stage{height:clamp(230px,29vw,360px)}
+.feed-density-compact .social-post-card .social-post-links{margin-top:5px}
+@media(max-width:560px){
+  .social-post-card .social-post-text,.social-post-detail .social-post-text{font-size:14px;line-height:1.65}
+  .social-post-card .post-media-stage,.feed-density-compact .social-post-card .post-media-stage{height:280px}
+  .social-post-detail .post-media-stage{height:60dvh;min-height:240px}
+  .social-post-content>.post-media{margin-top:12px}
+  .post-media{border-radius:11px}
+  .social-post-links>a,.social-post-links>button{font-size:11px}
+  .post-media-toolbar{gap:5px;padding-left:10px}
+}
+@media(max-width:380px){.social-post-card .post-media-stage,.feed-density-compact .social-post-card .post-media-stage{height:240px}}

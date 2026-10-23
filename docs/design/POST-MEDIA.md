@@ -1,0 +1,31 @@
+# Original social posts and media — D33
+
+Authorized **23 October 2026**: the founder asked to fix the feed so posts show their actual media, carousels, videos and GIFs. This builds on the [exact X GIF diagnosis](../tech/X-MEDIA-PROOF.md). The scoped release covers structured X/Instagram attachment extraction, validated storage, social post cards/details and same-ID enrichment of already-collected posts. It does not enable new platform adapters, broaden follows or change hourly budgets.
+
+## Reader behavior
+
+Use the existing Onest/paper/ink/teal workspace. Full source text appears once above original attached media. Media-only posts show the attachment without a fabricated headline or shortened attachment token. Ordered mixed carousels have previous/next controls, attachment position and keyboard navigation; touch swipes on image space preserve native video seeking. Images use contain so full frames remain visible. Social media remains readable in Compact mode. YouTube summaries, transcript access, timestamp/keyword behavior and existing density controls stay separate.
+
+Regular videos expose native playback controls and start paused. GIF MP4s loop silently when visible, with pause/resume, a reduced-motion pause default and offscreen/page-hidden pause. Changing slides unmounts the previous player. Alternative valid encodings are tried before an unavailable notice. Failed images and unavailable videos retain an original-post link; a poster is never represented as a playable video. The same component provides larger media in details. Save/read-later, source identity, dates, filters and original links remain.
+
+## Data and safety
+
+`SourceUpdate.media` retains ordered image/video/GIF records, safe complete URLs, previews, provider alt descriptions, dimensions and playable variants. Source/workspace/archive sanitizers preserve these records without truncating signed CDN URLs. Only HTTPS URLs on known X/Instagram media CDNs are accepted; private addresses, credential URLs, unsafe types and HLS/poster URLs masquerading as playable files are rejected. React renders source text as text. No arbitrary embedded HTML or third-party social scripts are introduced.
+
+The standalone Actor helper handles Xquik and legacy X attachment fields and Instagram image/video/Sidecar records. It keeps root-post attribution and does not silently borrow quoted/reposted media. Authored external links remain. Attachment-only text correction is based on evidenced tokens, and Unicode handling is checked against actual provider shapes. Media retrieval is not automatic visual understanding, OCR, transcription or AI synthesis.
+
+## Existing archive enrichment
+
+The baseline snapshot contains **485 real archive records** (the collection has grown since the earlier 278-record checkpoint). The exact saved X responses and an exact-post Instagram refresh cover **94 social posts** across seven sources. The private plan matches all 94 by original identity, source/author and publication time; **44 records receive media**, including 17 image-bearing, 26 video-bearing, two GIF-bearing and five carousel records. These type counts can overlap. The other **441 archive records** and the full owner workspace remain unchanged.
+
+The offline planner writes nothing and starts no jobs. Generated SQL locks and compares the unchanged workspace, then all expected archive rows before any mutation. It only patches allowed fields on existing IDs, never inserts/recreates deleted history. Full before/after snapshots and SQL stay ignored under `.local/post-media`. Actual-project rollback and stale-workspace checks passed. The transaction was applied and exact readback verified all 485 records, the 44 planned patches,441 unrelated records, original identity columns and identical workspace state/revision. A repeat plan produces zero patches.
+
+Some old Instagram playable URLs had expired. The founder's correction was fulfilled with one **18-exact-post** refresh using the previously reviewed Actor/build, a durable **US$0.08** reservation inside the existing global ceiling, a pinned build, 180-second timeout and supplier cap. Run `4JOXIAcHAnpHRbayy` returned 18 rows; observed supplier cost **US$0.0486**, provisional. The full US$0.08 reservation remains held while billing finality is unknown. No subscription or schedule was added; no new posts were inserted by this refresh. Fresh Instagram video returned HTTP 200/video/mp4.
+
+Media URLs remain upstream references and can later expire or be removed. The UI shows unavailable states honestly. This increment does not provide permanent file hosting or automatic historical media renewal. Cloud Actor source changes and deployed cloud build identity are recorded separately; a repository change is not proof a new Actor build ran.
+
+## Verification and release
+
+Local synthetic component checks cover desktop and 320px, both densities, uncropped image fit, carousel order/button/keyboard navigation, native video play, silent GIF pause/resume, offscreen pause, forced-local reduced-motion default, encoding fallback, missing-media recovery and dialog Escape/focus return. Fixtures are clearly synthetic and never enter the real owner workspace. [Desktop fixture](evidence/post-media-desktop-fixture.png), [phone fixture](evidence/post-media-phone-fixture.png).
+
+Full automated tests, typecheck/build/catalogue, independent review, actual enrichment/readback, GitHub/CI, exact Netlify deployment and signed-in playback are separate gates. Final evidence is saved in `docs/tech/evidence/post-media-release.json` and STATUS/DEMO-LOG when obtained. No claim of full platform coverage, complete history or semantic media analysis follows from this release.
