@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 24 October 2026 — alternative model provider preflight
+
+Type: read-only configuration inventory and adapter inspection. Founder requested another existing provider. Recap production has no model credential; the Netlify team has no shared variables, and no alternate provider variables were found in the inspected local project environment files or shell configuration. Only variable names/presence were reported; no secret values or private payloads were added to the repository. Provider identity remains unresolved. No application/runtime/budget change, model request, supplier run or billing-plan change was made. Next: obtain the existing provider name and verify its supported adapter/access before activation.
+
 ## 24 October 2026 — provider-based Actor pipeline planning
 
 Type: architecture/planning update using current primary provider documentation; not executed supplier workflows. [Plan](tech/PROVIDER-COLLECTION-PLAN.md), [interactive trigger diagram](tech/evidence/provider-collection-plan.html). Six displayed roles cover discovery, missing originals, existing captions, internal classification/analysis, exact-item media repair and run/cost recovery; reader delivery remains private. Four scenarios show quiet-source stop, new-video progression, ambiguous-timeout reconciliation and expired-media repair. 728px light/360px dark previews pass with no overflow or console errors. Independent planning review corroborates batching, callback deduplication, ambiguous-launch holds and per-API billing differences. No DB/source collection, new provider job, subscription, quota request, budget increase or configuration change. This supersedes reliance on direct platform API capacity; supplier capabilities/costs still require bounded future validation.
