@@ -1,6 +1,6 @@
 {
   "at": "2026-10-24T00:56:05.523Z",
-  "phase": "classification-and-citation-applied",
+  "phase": "repairs-deployed-analysis-paused",
   "beforeRows": 485,
   "afterRows": 485,
   "repairedClassificationRows": 288,
@@ -48,14 +48,80 @@
     "infrastructure": "unmeasured"
   },
   "analysisPreparation": {
-    "videoRecords": 161,
-    "jobs": 322,
-    "blockedMissingCredentials": 264,
+    "videoRecords": 164,
+    "jobs": 328,
+    "blockedMissingCredentials": 270,
     "existingSummaryJobsSkipped": 58,
     "modelCalls": 0,
     "enabledPolicies": 0,
     "enabledBudgets": 0,
-    "privateTablesProtected": true
+    "privateTablesProtected": true,
+    "completeOriginalAndWorkspaceReadbackPreserved": true,
+    "at": "2026-10-24T00:59:41.585Z"
   },
-  "classificationRepeatPatches": 0
+  "classificationRepeatPatches": 0,
+  "release": {
+    "functionalCommit": "db38e2f2a29791c0f416ad734f323a1857b0c11e",
+    "ci": "https://github.com/raduvlad92/recap/actions/runs/40047667662",
+    "ciPassed": 1243,
+    "ciSkippedLocalPostgres": 34,
+    "deploy": "6adc0324370553326602c027",
+    "publishedAt": "2026-10-24T01:00:59.787Z",
+    "restoredHourlyDeploy": "6adc0821d3892b6107a5b8c3",
+    "restoredHourlyPublishedAt": "2026-10-24T01:22:07.464Z"
+  },
+  "hosted": {
+    "signedIn": true,
+    "desktop": true,
+    "phoneWidths": [
+      320
+    ],
+    "densities": [
+      "compact",
+      "regular"
+    ],
+    "pageHorizontalOverflow": false,
+    "unclassifiedAllHistory": 65,
+    "unclassifiedExpandCollapse": true,
+    "fullStoredTranscriptOpens": true,
+    "reviewedReference": {
+      "takeaways": 4,
+      "keywords": 26,
+      "cards": true,
+      "details": true,
+      "realSeekAndOriginalLinks": true
+    },
+    "browserErrors": 0,
+    "guestStatusHttp": 401,
+    "repairedLongTranscriptCharacters": 231540
+  },
+  "captionRecovery": {
+    "at": "2026-10-24T01:20:04.090Z",
+    "records": 485,
+    "oneSavedResultRecovered": true,
+    "twoCaptionTailsRestored": true,
+    "fullCapturedEnglishCharacterCounts": [
+      80920,
+      207330,
+      231540
+    ],
+    "other482RecordsUnchanged": true,
+    "completeWorkspacePreserved": true,
+    "alreadySettledLedgersUnchanged": true,
+    "ambiguousHoldsPreserved": 3,
+    "ambiguousReservedUsd": 0.015,
+    "knownHistoricalRunFeesUsd": 0.012,
+    "newlyRecognizedHistoricalFeeUsd": 0.004,
+    "newSupplierRuns": 0,
+    "newSupplierSpendUsd": 0,
+    "pendingCaptions": 103,
+    "transcriptVideos": 279,
+    "actualProjectPerRecordRollbackAndApply": true,
+    "actualIdenticalReplaysPassed": true
+  },
+  "runtime": {
+    "hourlyCollectionRestored": true,
+    "analysisEnabled": false,
+    "modelKeyConfigured": false
+  }
 }

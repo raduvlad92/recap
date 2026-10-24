@@ -8,9 +8,9 @@ Your collected history is live. The original 278 records and later 207 additions
 
 ## D35 automatic video processing — owner action
 
-The code for independent video takeaways and checked keywords is implemented. Shorts classification and truthful pending/paused states are being released. Existing captions can be backfilled without starting another collection run.
+The code for independent video takeaways and checked keywords is implemented. Shorts classification and truthful pending/paused states are live and verified on desktop and phones. The prepared backfill covers 164 eligible videos without another collection run. The archive now has 279 transcript-bearing videos and 103 pending caption tasks; one saved result and two caption tails were recovered with no new supplier run.
 
-To enable the real AI evaluation, configure an existing OpenAI API key as OPENAI_API_KEY in this project's **production Functions** environment: [Netlify environment settings](https://app.netlify.com/projects/recap-v0-radu/configuration/env). Do not paste the key into chat. The existing Netlify plan has no AI Gateway; no plan upgrade or subscription is needed for the direct adapter.
+To enable the real AI evaluation, configure an existing OpenAI API key as OPENAI_API_KEY in this project's **production server environment**: [Netlify environment settings](https://app.netlify.com/projects/recap-v0-radu/configuration/env). Do not paste the key into chat. The existing Netlify plan has no AI Gateway; no plan upgrade or subscription is needed for the direct adapter.
 
 The assistant must then verify model access, pricing, conservative bounds and grounded output before activating recurring work. The production gate and model budget remain disabled. The separate proposed model ceilings are US$0.10/day, US$1 cumulative and US$0.01/call; these inactive values are not an assertion of approved spending or successful model execution. Existing supplier caps are unchanged. [Implementation and exact evidence](../tech/CONTENT-REPAIR.md).
 
