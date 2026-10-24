@@ -16,7 +16,7 @@ interface ModelProfile {
 /** Public endpoint metadata reviewed 2026-10-24; these are price/capability bindings, not live inference proof.
  * https://openrouter.ai/api/v1/models/{author}/{slug}/endpoints
  * Native DeepSeek/MiniMax endpoints do not advertise structured_outputs. Pin qualified alternatives.
- * DeepInfra's 51% discounted rates are ceilings: a discount ending must stop, never select a pricier route.
+ * Relace explicitly replaces DeepInfra after the initial authenticated pilot received 429s; no automatic fallback.
  * Together's published uptime/schema-error comparison is the provisional MiniMax reliability choice.
  * https://openrouter.ai/minimax/minimax-m3.1-flash/providers
  * This is public provider telemetry, not our own inference proof. Failure stays a failure, without failover.
@@ -24,7 +24,7 @@ interface ModelProfile {
  */
 const profiles: Readonly<Record<AnalysisModelId, ModelProfile>> = {
   'deepseek/deepseek-v4.1-flash-1017': {
-    provider: 'deepinfra/fp8', providerName: 'DeepInfra', input: .098, output: .294, cachedInput: .00294, reasoning: 'none',
+    provider: 'relace', providerName: 'Relace', input: .07, output: .5, cachedInput: .008, reasoning: 'none',
   },
   'minimax/minimax-m3.1-flash': {
     provider: 'together', providerName: 'Together', input: .15, output: .6, cachedInput: .015, reasoning: 'low',
@@ -38,7 +38,7 @@ const profiles: Readonly<Record<AnalysisModelId, ModelProfile>> = {
     provider: 'openai', providerName: 'OpenAI', input: 2, output: 10, cachedInput: .1, cacheWrite: 2.5, reasoning: 'low',
   },
 };
-const PROFILE_VERSION = 'openrouter-2026-10-24-v1';
+const PROFILE_VERSION = 'openrouter-2026-10-24-v2';
 
 const defaults: Readonly<Record<string, string>> = {
   CONTENT_ANALYSIS_MAX_SOURCE_CHARS: '1000000',

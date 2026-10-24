@@ -8,7 +8,7 @@ const env = (values: Record<string, string | undefined> = {}): Env => name => Ob
 const keyEnv = env({ OPENROUTER_API_KEY: 'synthetic-server-key' });
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json' } });
 const modelCases = [
-  [ANALYSIS_MODEL_IDS[0], 'deepinfra/fp8', 'DeepInfra', .098, .294, .00294, undefined, 'none'],
+  [ANALYSIS_MODEL_IDS[0], 'relace', 'Relace', .07, .5, .008, undefined, 'none'],
   [ANALYSIS_MODEL_IDS[1], 'together', 'Together', .15, .6, .015, undefined, 'low'],
   [ANALYSIS_MODEL_IDS[2], 'openai', 'OpenAI', .1, .5, .01, .125, 'none'],
   [ANALYSIS_MODEL_IDS[3], 'openai', 'OpenAI', 2, 10, .1, 2.5, 'low'],
@@ -33,7 +33,7 @@ describe('server-owned analysis model profiles, no provider calls', () => {
     expect(limits).toMatchObject({ model, inputUsdPerMillion: input, outputUsdPerMillion: output, cachedInputUsdPerMillion: cachedInput, cacheWriteApplies: cacheWrite !== undefined });
     expect(limits.cacheWriteUsdPerMillion).toBe(cacheWrite);
     expect(analysisExecutionIdentity(runtime, limits)).toMatchObject({ route: 'openrouter', provider, model, reasoningEffort: reasoning,
-      pricing: { version: `openrouter-2026-10-24-v1:${model}:${provider}`, inputUsdPerMillion: input, outputUsdPerMillion: output,
+      pricing: { version: `openrouter-2026-10-24-v2:${model}:${provider}`, inputUsdPerMillion: input, outputUsdPerMillion: output,
         cachedInputUsdPerMillion: cachedInput, cacheWriteApplies: cacheWrite !== undefined, cacheWriteUsdPerMillion: cacheWrite ?? null } });
     const usage = { inputTokens: 1000, outputTokens: 100, cachedInputTokens: 200, ...(cacheWrite === undefined ? {} : { cacheWriteTokens: 100 }) };
     const expected = ((cacheWrite === undefined ? 800 : 700) * input + 200 * cachedInput + 100 * (cacheWrite ?? 0) + 100 * output) / 1e6;
@@ -55,9 +55,9 @@ describe('server-owned analysis model profiles, no provider calls', () => {
       CONTENT_ANALYSIS_CACHED_INPUT_USD_PER_MILLION: '0', CONTENT_ANALYSIS_CACHE_WRITE_APPLIES: 'true', CONTENT_ANALYSIS_CACHE_WRITE_USD_PER_MILLION: '999',
       CONTENT_ANALYSIS_PRICING_VERIFIED: 'false', CONTENT_ANALYSIS_PRICING_VERSION: 'stale' }));
     const runtime = analysisRuntimeEnv(read, DEFAULT_ANALYSIS_MODEL, 3), limits = analysisLimits(runtime);
-    expect(analysisExecutionIdentity(runtime, limits)).toMatchObject({ route: 'openrouter', provider: 'deepinfra/fp8', model: DEFAULT_ANALYSIS_MODEL, reasoningEffort: 'none' });
+    expect(analysisExecutionIdentity(runtime, limits)).toMatchObject({ route: 'openrouter', provider: 'relace', model: DEFAULT_ANALYSIS_MODEL, reasoningEffort: 'none' });
     expect(runtime('CONTENT_ANALYSIS_CACHE_WRITE_USD_PER_MILLION')).toBeUndefined();
-    expect(limits).toMatchObject({ inputUsdPerMillion: .098, outputUsdPerMillion: .294, cachedInputUsdPerMillion: .00294, cacheWriteApplies: false });
+    expect(limits).toMatchObject({ inputUsdPerMillion: .07, outputUsdPerMillion: .5, cachedInputUsdPerMillion: .008, cacheWriteApplies: false });
     expect(read.mock.calls.flat().some(name => name.includes('KEY'))).toBe(false);
   });
   it('passes through existing caps and does not turn an invalid configured cap into a permissive default', () => {
@@ -75,7 +75,7 @@ describe('server-owned analysis model profiles, no provider calls', () => {
     expect(epoch(DEFAULT_ANALYSIS_MODEL, 2)).not.toBe(epoch(DEFAULT_ANALYSIS_MODEL, 1));
     expect(new Set(ANALYSIS_MODEL_IDS.map(model => epoch(model, 1))).size).toBe(4);
     expect(epoch(DEFAULT_ANALYSIS_MODEL, 1, 'credential-rotation')).not.toBe(epoch(DEFAULT_ANALYSIS_MODEL, 1));
-    expect(epoch(DEFAULT_ANALYSIS_MODEL, 1)).toContain(`openrouter-2026-10-24-v1:${DEFAULT_ANALYSIS_MODEL}:1:`);
+    expect(epoch(DEFAULT_ANALYSIS_MODEL, 1)).toContain(`openrouter-2026-10-24-v2:${DEFAULT_ANALYSIS_MODEL}:1:`);
     const bounded = epoch(ANALYSIS_MODEL_IDS[3], Number.MAX_SAFE_INTEGER, 'x'.repeat(1000000));
     expect(bounded!.length).toBeLessThanOrEqual(200);
     expect(bounded).not.toContain('x'.repeat(100));

@@ -4,7 +4,7 @@ Updated: **24 October 2026**. Phase: **functioning v0, admin, creator catalogue 
 
 ## OpenRouter and admin model selection — D36
 
-Founder supplied the production OpenRouter key and approved exactly four model IDs, with **deepseek/deepseek-v4.1-flash-1017** as default. The four-model admin selector, private saved setting, safe connection check, reviewed runtime profiles and immutable pre-call execution/pricing identity are implemented; release review is underway. No model calls have run. Production analysis remains off during verification. [Setup and evidence](docs/tech/OPENROUTER.md). Key setup is complete; no additional credential is requested.
+Founder supplied the production OpenRouter key and approved exactly four model IDs, with **deepseek/deepseek-v4.1-flash-1017** as default. The four-model selector is live as `cfb0743`, CI 40128477199 passed and exact Netlify `6add1092daeba12ade3faeb6` published at 20:10:32 UTC. Actual admin save/reload works for all four models, DeepSeek is restored, the server key authenticates, and desktop/320px checks pass with no overflow/errors. The subsequent one-cent pilot made three DeepSeek requests; authenticated provider logs show DeepInfra 429 responses, no usable annotations and US$0.009178191 still held as unknown. Global/reader spending gates are off while provider-receipt reconciliation and retry handling are implemented; no unknown hold is released from status codes alone. [Setup and evidence](docs/tech/OPENROUTER.md). Key setup is complete; no additional credential is requested.
 
 ## Current authorized content repair — D35
 

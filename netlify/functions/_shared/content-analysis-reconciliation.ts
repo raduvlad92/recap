@@ -40,7 +40,7 @@ export function createAnalysisReconciliationHandler(overrides:Partial<Dependenci
     if(response.status!==200){await response.body?.cancel();return json({status:response.status===404?'not_found':'unavailable',noChargeConfirmed:false},response.status===404?200:502);}
     if(response.redirected||response.url&&response.url!==target.href){await response.body?.cancel();return json({error:'receipt_redirect_rejected'},502);}
     const envelope=object(JSON.parse(await readTextLimited(response,65536))),data=object(envelope?.data);
-    const expectedProvider=typeof identity.provider==='string'?({deepinfra:'DeepInfra',together:'Together',openai:'OpenAI'} as Record<string,string>)[identity.provider.split('/')[0]]:undefined;
+    const expectedProvider=typeof identity.provider==='string'?({deepinfra:'DeepInfra',relace:'Relace',together:'Together',openai:'OpenAI'} as Record<string,string>)[identity.provider.split('/')[0]]:undefined;
     const metadataTime=typeof data?.created_at==='string'?Date.parse(data.created_at):NaN;
     if(!data||envelope?.error!=null||data.id!==body.providerGenerationId||data.model!==call.model||!expectedProvider||data.provider_name!==expectedProvider||!Number.isFinite(metadataTime)||Math.abs(metadataTime-callTime)>30000)return json({error:'receipt_identity_mismatch'},409);
     const totalCost=amount(data.total_cost),isByok=typeof data.is_byok==='boolean'?data.is_byok:null,promptTokens=count(data.native_tokens_prompt),completionTokens=count(data.native_tokens_completion),reasoningTokens=data.native_tokens_reasoning===undefined?null:count(data.native_tokens_reasoning);

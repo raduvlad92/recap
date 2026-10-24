@@ -5,22 +5,21 @@
   "allowedModels": [
     {
       "model": "deepseek/deepseek-v4.1-flash-1017",
-      "providerSlug": "deepinfra/fp8",
-      "providerName": "DeepInfra",
+      "providerSlug": "relace",
+      "providerName": "Relace",
       "supportedParameters": [
         "reasoning",
         "include_reasoning",
-        "max_tokens",
         "temperature",
         "top_p",
+        "top_k",
+        "min_p",
         "stop",
+        "max_tokens",
+        "logit_bias",
         "frequency_penalty",
         "presence_penalty",
         "repetition_penalty",
-        "top_k",
-        "seed",
-        "min_p",
-        "logit_bias",
         "response_format",
         "structured_outputs",
         "tools",
@@ -28,10 +27,10 @@
         "reasoning_effort"
       ],
       "pricingPerToken": {
-        "prompt": "0.000000098",
-        "completion": "0.000000294",
-        "input_cache_read": "0.00000000294",
-        "discount": 0.51
+        "prompt": "0.00000007",
+        "completion": "0.0000005",
+        "input_cache_read": "0.000000008",
+        "discount": 0
       },
       "contextLength": 1048576,
       "source": "https://openrouter.ai/api/v1/models/deepseek/deepseek-v4.1-flash-1017/endpoints"
@@ -146,5 +145,7 @@
   "productionKeyConfigured": true,
   "serverAuthenticationVerified": false,
   "generationCalls": 0,
-  "realOutputQualityVerified": false
+  "realOutputQualityVerified": false,
+  "defaultEndpointChangedAt": "2026-10-24T20:44:31.249322+00:00",
+  "defaultEndpointChangeReason": "Explicit operator replacement of the rate-limited DeepInfra endpoint; same approved model, no automatic fallback"
 }
