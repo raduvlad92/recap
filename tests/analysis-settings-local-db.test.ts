@@ -113,7 +113,9 @@ describe.skipIf(!available)('actual disposable PostgreSQL analysis model setting
  it('backfills both enabled/disabled policies to DeepSeek, preserves all other fields, active jobs, unknown holds, gates and schedules', () => {
   expect(policiesWithoutModel()).toBe(beforeMigrationPolicies);
   expect(JSON.parse(service('select jsonb_agg(distinct model) from public.reader_content_analysis_policies;'))).toEqual([models[0]]);
-  expect(snapshot(['content_analysis_budget', 'reader_content_analysis_jobs', 'reader_content_analysis_calls', 'collection_plans', 'admin_audit_events'])).toBe(beforeMigrationState);
+  // Later migrations may add columns. Every original value and row must still
+  // survive; new recovery metadata is checked by its own migration suite.
+  expect(JSON.parse(snapshot(['content_analysis_budget', 'reader_content_analysis_jobs', 'reader_content_analysis_calls', 'collection_plans', 'admin_audit_events']))).toMatchObject(JSON.parse(beforeMigrationState));
   expect(settings()).toMatchObject({ selected_model: models[0], revision: 1, updated_by: null });
  });
  it('passes rollback-only defaults, constraints, ACLs, invoker, all-model CAS, validation, audit and policy-preservation SQL', () => {

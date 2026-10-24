@@ -6,18 +6,20 @@ import { database } from './admin-data';
 import { authenticate, CollectionError, errorResponse, json, publicHttpsUrl, runtimeEnv, type Env } from './security';
 import { analyzeKeywords, analyzeSummary, type AnalysisOutput } from './content-analysis-engine';
 import { analysisRuntimeEnv } from './content-analysis-runtime';
-import { AnalysisError, analysisFailure, analysisLimits, analysisExecutionIdentity, conservativeCallUsd, createGatewayGenerator, type AnalysisExecutionIdentity, type AnalysisGenerator, type AnalysisLimits, type GenerationResult, type GenerationRequest } from './content-analysis-model';
+import { AnalysisError, AnalysisProviderHttpError, analysisFailure, analysisLimits, analysisExecutionIdentity, conservativeCallUsd, createGatewayGenerator, type AnalysisRejectionReceipt, type AnalysisExecutionIdentity, type AnalysisGenerator, type AnalysisLimits, type GenerationResult, type GenerationRequest } from './content-analysis-model';
 
 export interface AnalysisPolicy { user_id:string; enabled:boolean; model:string }
 export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null }
 export interface AnalysisClaim { job:AnalysisJob; record:SourceUpdate; leaseToken:string }
-export interface AnalysisCall {id:string;model?:string;execution_identity?:AnalysisExecutionIdentity|null;result?:(GenerationResult & {requestHash?:string})|null; maximum_usd?:number}
+export interface AnalysisCall {id:string;model?:string;execution_identity?:AnalysisExecutionIdentity|null;request_hash?:string|null;result?:(GenerationResult & {requestHash?:string})|null; maximum_usd?:number}
+export interface AnalysisReservation {claimed:boolean;call?:AnalysisCall;reason?:string;retryAt?:string}
 export interface AnalysisStore {
  runtime?():Promise<{selected_model:string;revision:number}>;
  policies():Promise<AnalysisPolicy[]>;
  sync(userId:string,configEpoch?:string):Promise<unknown>;
  claim(userId:string):Promise<AnalysisClaim|null>;
- reserve(claim:AnalysisClaim,request:GenerationRequest,maximumUsd:number,model:string,identity:AnalysisExecutionIdentity):Promise<{claimed:boolean;call:AnalysisCall}>;
+ reserve(claim:AnalysisClaim,request:GenerationRequest,maximumUsd:number,model:string,identity:AnalysisExecutionIdentity,requestHash:string):Promise<AnalysisReservation>;
+ recordRejection(call:AnalysisCall,claim:AnalysisClaim,requestHash:string,identity:AnalysisExecutionIdentity,receipt:AnalysisRejectionReceipt):Promise<{retryEligible:false;retryAt:string}>;
  saveCall(call:AnalysisCall,claim:AnalysisClaim,result:GenerationResult):Promise<void>;
  prepare(claim:AnalysisClaim,result:AnalysisOutput):Promise<void>;
  publish(claim:AnalysisClaim):Promise<boolean>;
@@ -27,7 +29,7 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
  const db=database(env);
  async function rpc<T>(name:string,args:Record<string,unknown>):Promise<T> {
   const result=await db.rpc(name,args);
-  if(result.error) throw new AnalysisError(result.error.code==='PT429'?'analysis_daily_budget_exhausted':result.error.code==='PT402'?'analysis_budget_exhausted':result.error.code==='PT403'?'analysis_runtime_disabled':result.error.code==='PT409'?'analysis_source_changed':name==='reserve_content_analysis_call_v2'&&result.error.code==='PT400'?'analysis_configuration_required':'analysis_storage_unavailable');
+  if(result.error) throw new AnalysisError(result.error.code==='PT429'?'analysis_daily_budget_exhausted':result.error.code==='PT402'?'analysis_budget_exhausted':result.error.code==='PT403'?'analysis_runtime_disabled':result.error.code==='PT409'?'analysis_source_changed':name==='reserve_content_analysis_call_v3'&&result.error.code==='PT400'?'analysis_configuration_required':'analysis_storage_unavailable');
   return result.data as T;
  }
  return {
@@ -35,7 +37,8 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
   async policies(){const result=await db.from('reader_content_analysis_policies').select('user_id,enabled,model').eq('enabled',true).order('last_served_at').order('user_id');if(result.error) return analysisFailure('analysis_storage_unavailable');return result.data as AnalysisPolicy[];},
   sync:(userId,configEpoch)=>rpc('sync_content_analysis_jobs',{p_user_id:userId,p_limit:200,p_config_epoch:configEpoch??env('CONTENT_ANALYSIS_CONFIG_EPOCH')??''}),
   claim:userId=>rpc('claim_content_analysis_job',{p_user_id:userId,p_lease_seconds:900}),
-  reserve:(claim,request,maximumUsd,model,identity)=>rpc('reserve_content_analysis_call_v2',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_key:request.key,p_maximum_usd:maximumUsd,p_model:model,p_execution_identity:identity}),
+  reserve:(claim,request,maximumUsd,model,identity,requestHash)=>rpc('reserve_content_analysis_call_v3',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_key:request.key,p_maximum_usd:maximumUsd,p_model:model,p_execution_identity:identity,p_request_hash:requestHash}),
+  recordRejection:(call,claim,requestHash,identity,receipt)=>rpc('record_content_analysis_known_rejection',{p_call_id:call.id,p_lease_token:claim.leaseToken,p_request_hash:requestHash,p_execution_identity:identity,p_http_status:receipt.httpStatus,p_retry_after_seconds:receipt.retryAfterSeconds,p_provider_request_id:receipt.providerRequestId,p_received_at:receipt.receivedAt,p_pre_generation:receipt.preGeneration}),
   async saveCall(call,claim,result){await rpc('record_content_analysis_call_result',{p_call_id:call.id,p_lease_token:claim.leaseToken,p_result:result,p_usage:result.usage||{},p_provider_id:result.providerId||null,p_actual_usd:result.actualUsd??null,p_observed_usd:result.observedUsd});},
   async prepare(claim,result){await rpc('prepare_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_result:result});},
   publish:claim=>rpc('publish_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken}),
@@ -74,6 +77,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
    // Latest-first DB claims with bounded backfill; next invocation scans the archive again for recovered captions.
    for(let count=0;count<tasksPerOwner && now()<ownerDeadline-50_000;count++) {
     const claim=await store.claim(policy.user_id);if(!claim) break;
+    let stopProviderTurn=false;
     try {
      if(claim.job.user_id!==policy.user_id) return analysisFailure('analysis_owner_mismatch');
      if(claim.job.state==='prepared' && claim.job.result) {
@@ -89,19 +93,41 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       const maximumUsd=conservativeCallUsd(request,limits);
       if(maximumUsd>limits.maxCallUsd) return analysisFailure('analysis_call_limit');
       const requestHash=analysisRequestHash(request,executionIdentity,verification);
-      const reservation=await store.reserve(claim,request,maximumUsd,limits.model,executionIdentity);
+      const reservation=await store.reserve(claim,request,maximumUsd,limits.model,executionIdentity,requestHash);
       if(!reservation.claimed) {
-       if(reservation.call.result) {
-        if(reservation.call.model!==limits.model||stableJson(reservation.call.execution_identity)!==stableJson(executionIdentity)||reservation.call.result.requestHash!==requestHash)return analysisFailure('analysis_cached_input_changed');
+       if(reservation.reason==='analysis_provider_cooldown'||reservation.reason==='analysis_provider_rate_limited'){
+        stopProviderTurn=true;return analysisFailure(reservation.reason);
+       }
+       if(reservation.reason==='analysis_provider_retry_exhausted')return analysisFailure(reservation.reason);
+       if(reservation.call?.result) {
+        if(reservation.call.model!==limits.model||stableJson(reservation.call.execution_identity)!==stableJson(executionIdentity)
+         ||stableJson(reservation.call.result.executionIdentity)!==stableJson(executionIdentity)||reservation.call.result.requestHash!==requestHash
+         ||reservation.call.request_hash!=null&&reservation.call.request_hash!==requestHash)return analysisFailure('analysis_cached_input_changed');
         return reservation.call.result;
        }
        // A provider may have charged an interrupted request. Never resubmit an ambiguous call key.
        return analysisFailure('analysis_unknown_charge_hold');
       }
-      if(reservation.call.model!==limits.model||stableJson(reservation.call.execution_identity)!==stableJson(executionIdentity))return analysisFailure('analysis_configuration_required');
-      const result=await generate(request);
+      const call=reservation.call;
+      if(!call||call.model!==limits.model||stableJson(call.execution_identity)!==stableJson(executionIdentity)||call.request_hash!==requestHash)return analysisFailure('analysis_configuration_required');
+      let result:GenerationResult;
+      try{result=await generate(request);}
+      catch(error){
+       // One rate-limited route is shared by every reader in this run. Stop
+       // even if receipt persistence/failure scheduling loses its source lease.
+       if(error instanceof AnalysisProviderHttpError&&error.httpStatus===429){
+        stopProviderTurn=true;
+        if(error.rejection&&executionIdentity.route==='openrouter'){
+         // Status-only evidence pauses the shared provider. It cannot release
+         // money or schedule generation: a verified provider cost receipt is
+         // required separately, including for complete pre-generation 429s.
+         await store.recordRejection(call,claim,requestHash,executionIdentity,error.rejection);
+        }
+       }
+       throw error;
+      }
       if(result.observedUsd!==null && (!Number.isFinite(result.observedUsd)||result.observedUsd<0)) return analysisFailure('analysis_invalid_cost');
-      await store.saveCall(reservation.call,claim,{...result,requestHash,executionIdentity} as GenerationResult);
+      await store.saveCall(call,claim,{...result,requestHash,executionIdentity} as GenerationResult);
       return result;
      };
      const result=claim.job.task==='summary'?await analyzeSummary(claim.record,limits,metered):await analyzeKeywords(claim.record,limits,metered);
@@ -112,8 +138,11 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
      const yielded=code==='analysis_worker_yield',blocked=['analysis_daily_budget_exhausted','analysis_budget_exhausted','analysis_input_limit','analysis_call_limit','analysis_unknown_charge_hold','analysis_cached_input_changed','analysis_model_policy_mismatch','analysis_credentials_required','analysis_configuration_required','analysis_pricing_not_verified','analysis_provider_not_verified','analysis_gateway_not_verified','analysis_runtime_disabled'].includes(code);
      if(yielded)stats.yielded++;else if(blocked)stats.blocked++;else stats.failed++;
      // Network errors keep their durable call hold. They must never be retried as a new model charge.
-     const retryable=['analysis_storage_unavailable'].includes(code);
+     // The rate-limited state comes only from the reservation RPC after an
+     // explicit verified-zero authorization. fail() rechecks that receipt.
+     const retryable=code==='analysis_storage_unavailable'||code==='analysis_provider_cooldown'||code==='analysis_provider_rate_limited';
      try {await store.fail(claim,code,retryable,yielded);} catch { /* Source/deletion fence can invalidate the lease; never recreate it. */ }
+     if(stopProviderTurn)return stats;
      if(yielded) break;
     }
    }

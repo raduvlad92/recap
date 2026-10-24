@@ -141,7 +141,11 @@ function readPoints(body:Record<string,unknown>,chunk:TextChunk,cues:Cue[]):Poin
   const point=obj(raw),{quote,offset}=groundedQuote(chunk,point.evidenceQuote,15);
   if(typeof point.text!=='string'||!point.text.trim()||point.text.length>500||point.text.trim().split(/\s+/).length>38) return analysisFailure('analysis_invalid_takeaways');
   const cue=cueForQuote(quote,cues);
-  if(point.startSeconds!=null && (!finite(point.startSeconds)||point.startSeconds!==cue?.startSeconds)) return analysisFailure('analysis_unsupported_takeaway_time');
+  // A serialized decimal can differ from the saved binary float by a rounding
+  // bit (453.84 vs 453.84000000000003). This is not a millisecond allowance:
+  // require an already grounded cue and publish its exact saved value below.
+  if(point.startSeconds!=null && (!finite(point.startSeconds)||!cue||
+   Math.abs(point.startSeconds-cue.startSeconds)>Number.EPSILON*Math.max(1,cue.startSeconds))) return analysisFailure('analysis_unsupported_takeaway_time');
   // Partial cue coverage does not make exact untimed source evidence unusable.
   // If a caller supplies a time, it must still match this quotation's cue.
   return {text:point.text.trim(),evidenceQuote:quote,start:offset,end:offset+quote.length,...(cue?{startSeconds:cue.startSeconds}:{})};

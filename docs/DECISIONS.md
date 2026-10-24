@@ -20,6 +20,8 @@ Founder selected OpenRouter, confirmed the existing key was added to production,
 
 Use the existing production Functions secret directly on Netlify; off-host tools receive a mask and must not copy/extract it. The assistant owns adapter/configuration, actual access and bounded source-grounded quality/cost checks, guarded migrations, verification and release. Separate supplier controls, source preservation and private admin authorization remain. No model outside the four is an automatic fallback.
 
+The assistant limited the first pilot to US$0.01, then the cumulative test to US$0.02 including unresolved charges. Three DeepInfra failures retain US$0.009178191; all three authenticated generation-metadata lookups returned 404 and confer no refund/retry authority. Relace explicitly replaces that endpoint for the same approved model, without automatic fallback. Nine stored Relace responses report US$0.009187716. Output validation failures keep automatic backfill paused. Retry authorization requires a separately authenticated matching zero-cost/non-BYOK/zero-token receipt and explicit authorization; a status code alone never releases money. These pilot bounds do not activate the wider proposed model allowances.
+
 ## Accepted founder decisions
 
 | ID | Decision | Evidence |

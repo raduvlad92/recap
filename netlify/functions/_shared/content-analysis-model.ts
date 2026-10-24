@@ -11,6 +11,14 @@ export interface GenerationResult {
 }
 export type AnalysisGenerator=(request:GenerationRequest)=>Promise<GenerationResult>;
 export class AnalysisError extends Error {constructor(public code:string){super(code);}}
+/** Transport status is operational evidence, never proof of a zero charge.
+ * No SDK error, message, raw body, headers or cause crosses this boundary. */
+export interface AnalysisRejectionReceipt {
+ httpStatus:429;preGeneration:boolean;retryAfterSeconds:number|null;providerRequestId:string|null;receivedAt:string;
+}
+export class AnalysisProviderHttpError extends AnalysisError {
+ constructor(public httpStatus:number,public rejection:AnalysisRejectionReceipt|null=null,code?:'analysis_provider_timeout'){super(code??`analysis_provider_http_${httpStatus}`);}
+}
 export const analysisFailure=(code:string):never=>{throw new AnalysisError(code);};
 export interface AnalysisLimits {
  model:string;chunkChars:number;overlapChars:number;maxChunks:number;maxSourceChars:number;maxOutputTokens:number;
@@ -96,6 +104,34 @@ export function analysisExecutionIdentity(env:Env,limits:AnalysisLimits):Analysi
    cacheWriteUsdPerMillion:limits.cacheWriteApplies?limits.cacheWriteUsdPerMillion??null:null}};
 }
 const object=(value:unknown):Record<string,unknown>|undefined=>value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:undefined;
+const safeRequestId=(value:unknown):string|null=>typeof value==='string'&&value.length<=200&&/^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(value)?value:null;
+function retryAfterSeconds(value:string|null,receivedAt:number):number|null {
+ if(value===null)return null;
+ // Persist at most one hour of provider metadata; the ledger independently
+ // enforces its own minimum/exponential delay. Invalid metadata is absent.
+ const seconds=/^\d+(?:\.\d+)?$/.test(value)?Number(value):/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT$/.test(value)?(Date.parse(value)-receivedAt)/1000:NaN;
+ return Number.isFinite(seconds)?Math.min(3600,Math.max(0,Math.ceil(seconds))):null;
+}
+function openRouterRejection(headers:Headers,receivedAt:number,preGeneration:boolean):AnalysisRejectionReceipt {
+ return {httpStatus:429,preGeneration,retryAfterSeconds:retryAfterSeconds(headers.get('retry-after'),receivedAt),
+  providerRequestId:safeRequestId(headers.get('x-request-id')),receivedAt:new Date(receivedAt).toISOString()};
+}
+function safeProviderFailure(error:unknown,route:string):AnalysisError {
+ if(error instanceof AnalysisError)return error;
+ if(error instanceof OpenAI.APIConnectionTimeoutError)return new AnalysisError('analysis_provider_timeout');
+ if(error instanceof OpenAI.APIError&&typeof error.status==='number'&&Number.isInteger(error.status)&&error.status>=100&&error.status<=599){
+  const httpStatus=error.status,body=object(error.error),receivedAt=Date.now();
+  // SDK APIError.status is the HTTP status, while body.code on a 200 can
+  // describe a failure after processing began. A complete body is useful
+  // telemetry, but EVEN a complete 429 can have a charge: keep its full hold.
+  // https://openrouter.ai/docs/api_reference/errors-and-debugging
+  // https://openrouter.ai/blog/insights/reliability-failover/
+  const rejection:AnalysisRejectionReceipt|null=route==='openrouter'&&httpStatus===429&&error.headers instanceof Headers
+   ?openRouterRejection(error.headers,receivedAt,body?.code===429&&typeof body.message==='string'&&!!body.message.trim()):null;
+  return new AnalysisProviderHttpError(httpStatus,rejection);
+ }
+ return new AnalysisError(error instanceof OpenAI.APIConnectionError?'analysis_provider_network_error':'analysis_generation_failed');
+}
 const charge=(value:unknown):number|null=>typeof value==='number'&&Number.isFinite(value)&&value>=0?value:null;
 const tokens=(value:unknown):value is number=>typeof value==='number'&&Number.isSafeInteger(value)&&value>=0;
 function openRouterUsage(value:unknown):AnalysisUsage|undefined {
@@ -138,8 +174,38 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
    messages:[{role:'system',content:request.system},{role:'user',content:request.prompt}],
    response_format:{type:'json_schema',json_schema:{name:'content_analysis',strict:true,schema:request.schema}},
   };
-  // SDK 7.43 applies this deadline to body parsing too; maxRetries:0 covers header and body failures.
-  const result:unknown=await client.chat.completions.create(payload,{maxRetries:0,timeout:45000});
+  // SDK 7.43 bounds success-body parsing, but its HTTP-error body read can stall
+  // past timeout. One independent aborting deadline covers create + either body.
+  // Status-only 429 evidence still pauses the worker and retains the full hold.
+  const controller=new AbortController();
+  let httpStatus:number|undefined,rejection:AnalysisRejectionReceipt|null=null,expired=false;
+  // A per-request clone preserves the configured transport without mutating the
+  // shared client. Observe headers before the SDK consumes a possible error body.
+  const requestClient=client instanceof OpenAI?client.withOptions({}):client;
+  if(requestClient instanceof OpenAI){
+   const fetchWithTimeout=requestClient.fetchWithTimeout.bind(requestClient);
+   requestClient.fetchWithTimeout=async(...args)=>{
+    const response=await fetchWithTimeout(...args);
+    if(!expired){
+     httpStatus=response.status;
+     if(response.status===429)rejection=openRouterRejection(response.headers,Date.now(),false);
+    }
+    return response;
+   };
+  }
+  let timer:ReturnType<typeof setTimeout>|undefined;
+  const deadline=new Promise<never>((_resolve,reject)=>{
+   timer=setTimeout(()=>{
+    expired=true;
+    reject(httpStatus===undefined?new AnalysisError('analysis_provider_timeout'):new AnalysisProviderHttpError(httpStatus,rejection,'analysis_provider_timeout'));
+    controller.abort();
+   },45000);
+  });
+  let result:unknown;
+  // Promise.race observes late success/rejection even if a transport ignores abort.
+  try{result=await Promise.race([Promise.resolve().then(()=>requestClient.chat.completions.create(payload,{maxRetries:0,timeout:45000,signal:controller.signal})),deadline]);}
+  catch(error){throw safeProviderFailure(error,'openrouter');}
+  finally{clearTimeout(timer);}
   const raw=object(result);
   if(!raw||raw.error!=null)return analysisFailure('analysis_incomplete_generation');
   if(raw.model!==responseModel||(raw.provider!=null&&raw.provider!==providerName)||typeof raw.id!=='string'||!raw.id.trim())return analysisFailure('analysis_provider_not_verified');
@@ -180,7 +246,7 @@ export function createOpenAIAnalysisGenerator(env:Env=runtimeEnv,factory:OpenAIC
    ...(effort?{reasoning_effort:effort as 'none'|'low'}:{}),
    messages:[{role:'system',content:request.system},{role:'user',content:request.prompt}],
    response_format:{type:'json_schema',json_schema:{name:'content_analysis',strict:true,schema:request.schema}},store:false,
-  },{maxRetries:0,timeout:45000});
+  },{maxRetries:0,timeout:45000}).catch(error=>{throw safeProviderFailure(error,route);});
   const choice=result.choices[0];
   if(!choice||choice.finish_reason!=='stop'||choice.message.refusal||!choice.message.content)return analysisFailure('analysis_incomplete_generation');
   let value:unknown;try{value=JSON.parse(choice.message.content);}catch{return analysisFailure('analysis_invalid_json');}

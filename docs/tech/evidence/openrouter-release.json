@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-24",
+  "scope": "D36 OpenRouter model selection and bounded analysis pilot",
+  "allowedModels": [
+    "deepseek/deepseek-v4.1-flash-1017",
+    "minimax/minimax-m3.1-flash",
+    "openai/gpt-6-luna-pro",
+    "openai/gpt-6.1-sol-pro"
+  ],
+  "defaultModel": "deepseek/deepseek-v4.1-flash-1017",
+  "hostedAdmin": {
+    "allModelSavesAndReloads": "passed",
+    "defaultRestored": true,
+    "serverKeyAuthentication": "passed",
+    "anonymousApiDenial": "passed",
+    "desktopAnd320px": "passed",
+    "browserErrors": 0
+  },
+  "pilot": {
+    "calls": 12,
+    "cachedResponses": 9,
+    "unknownCalls": 3,
+    "reportedSettledUsd": 0.009187716,
+    "unknownCommitmentUsd": 0.009178191,
+    "totalCommitmentUsd": 0.018365907,
+    "cumulativeCapUsd": 0.02,
+    "historicalGenerationLookups": "all three 404; no refund or retry authorization",
+    "offlineReplayJobs": 7,
+    "safelyCompletedJobs": 0,
+    "publishedAnnotations": 0,
+    "status": "paused for actual output quality",
+    "extraCallsDuringRecovery": 0
+  },
+  "quality": {
+    "keywordCandidatesInspected": 208,
+    "invalidKeywordMentions": 3,
+    "emptyKeywordQuotes": 1,
+    "nonliteralKeywordQuotes": 1,
+    "summaryFindingsInspected": 24,
+    "nonliteralSummaryQuotes": 2,
+    "timestampMismatches": 6,
+    "binaryFloatMismatchFix": 1,
+    "requestHashesUnchanged": true,
+    "unsupportedEvidenceStillRejected": true
+  },
+  "recoveryMigration": {
+    "version": "20261024202950",
+    "actualRollback": "passed",
+    "applied": true,
+    "exactOriginalFieldsPreservedTables": 9,
+    "archiveRows": 489,
+    "financialRows": 12,
+    "fullWorkspacesPreserved": true,
+    "unknownHoldsPreserved": true,
+    "legacyRequestHashesRemainNull": true,
+    "securityAdvisors": {
+      "WARN": 0,
+      "ERROR": 0,
+      "INFO": 16
+    }
+  },
+  "localVerification": {
+    "testsPassed": 1691,
+    "files": 54,
+    "typecheck": "passed",
+    "build": "passed",
+    "catalogue": "passed",
+    "whitespace": "passed"
+  },
+  "releaseFollowup": "push, CI and final hosted paused-runtime readback pending",
+  "customerLaunch": false,
+  "newSubscription": false,
+  "dailyBriefingImplemented": false,
+  "review": {
+    "R3": "passed; 224 focused checks and four PostgreSQL races",
+    "R4": "passed; 204 checks including real loopback abort and original stalled-body reproducer"
+  }
+}

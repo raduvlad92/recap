@@ -35,7 +35,7 @@ describe('OpenRouter analysis adapter, synthetic responses only',()=>{
    provider:{only:['deepinfra/fp8'],order:['deepinfra/fp8'],allow_fallbacks:false,require_parameters:true,data_collection:'deny',max_price:{prompt:.1,completion:.4,request:0}},
    messages:[{role:'system',content:'policy'},{role:'user',content:'untrusted source'}],
    response_format:{type:'json_schema',json_schema:{name:'content_analysis',strict:true,schema:request.schema}},
-  },{maxRetries:0,timeout:45000});
+  },{maxRetries:0,timeout:45000,signal:expect.any(AbortSignal)});
   expect(result).toMatchObject({value:{readComplete:true},providerId:'gen-fixture',actualUsd:.0007,observedUsd:.0007,
    usage:{inputTokens:1000,outputTokens:100,totalTokens:1100,cachedInputTokens:500,cacheWriteTokens:100,reasoningOutputTokens:40},
    routing:{route:'openrouter',model:'deepseek/deepseek-v4.1-flash-1017',provider:'DeepInfra',providerSlug:'deepinfra/fp8',isByok:false,upstreamInferenceUsd:0}});
@@ -162,7 +162,7 @@ describe('OpenRouter analysis adapter, synthetic responses only',()=>{
   try{
    const fetcher=vi.fn<typeof fetch>().mockResolvedValue(new Response(new ReadableStream({start(controller){controller.enqueue(new TextEncoder().encode('{"id":'));}}),{headers:{'content-type':'application/json'}}));
    const pending=createOpenRouterAnalysisGenerator(env(),options=>new OpenAI({...options,fetch:fetcher}))(request);
-   const rejected=expect(pending).rejects.toThrow('timed out');
+   const rejected=expect(pending).rejects.toThrow('analysis_provider_timeout');
    await vi.advanceTimersByTimeAsync(0);expect(fetcher).toHaveBeenCalledTimes(1);
    await vi.advanceTimersByTimeAsync(45000);await rejected;expect(fetcher).toHaveBeenCalledTimes(1);
   }finally{vi.useRealTimers();}
