@@ -67,12 +67,39 @@
     "catalogue": "passed",
     "whitespace": "passed"
   },
-  "releaseFollowup": "push, CI and final hosted paused-runtime readback pending",
+  "releaseFollowup": "Improve grounded output quality, then verify actual publication under another bounded evaluation before enabling recurring backfill.",
   "customerLaunch": false,
   "newSubscription": false,
   "dailyBriefingImplemented": false,
   "review": {
     "R3": "passed; 224 focused checks and four PostgreSQL races",
     "R4": "passed; 204 checks including real loopback abort and original stalled-body reproducer"
+  },
+  "release": {
+    "functionalCommit": "7d1ec650d5f3aac7dcba68f268208b395780d072",
+    "push": "passed",
+    "ci": {
+      "runId": 40133605104,
+      "status": "success",
+      "passed": 1531,
+      "skippedDisposablePostgres": 160
+    },
+    "netlify": {
+      "id": "6add20d6e3c423f4f56508e0",
+      "state": "ready",
+      "publishedAt": "2026-10-24T21:19:53.167Z",
+      "exactCommit": true
+    },
+    "hostedReadback": {
+      "defaultDeepSeek": true,
+      "onlyFourModels": true,
+      "runtimeEnabled": false,
+      "globalSpendingEnabled": false,
+      "capUsd": 0.02,
+      "serverConnection": "verified",
+      "browserErrors": 0,
+      "finalDesktop": "passed",
+      "phone": "initial selector actual320px proof retained; final viewport control did not apply"
+    }
   }
 }
