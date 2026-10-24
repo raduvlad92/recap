@@ -6,6 +6,14 @@ Your editable **tech** collection includes **39 official sources: 21 YouTube, 10
 
 Your collected history is live. The original 278 records and later 207 additions are saved, and the website has been checked in your signed-in account, admin and guest views. [Original bounded-collection evidence](../tech/VERIFICATION.md), [current hourly readback](../tech/evidence/collection-reliability-readback.json). This is collected source history; complete month coverage remains unverified.
 
+## D35 automatic video processing — owner action
+
+The code for independent video takeaways and checked keywords is implemented. Shorts classification and truthful pending/paused states are being released. Existing captions can be backfilled without starting another collection run.
+
+To enable the real AI evaluation, configure an existing OpenAI API key as OPENAI_API_KEY in this project's **production Functions** environment: [Netlify environment settings](https://app.netlify.com/projects/recap-v0-radu/configuration/env). Do not paste the key into chat. The existing Netlify plan has no AI Gateway; no plan upgrade or subscription is needed for the direct adapter.
+
+The assistant must then verify model access, pricing, conservative bounds and grounded output before activating recurring work. The production gate and model budget remain disabled. The separate proposed model ceilings are US$0.10/day, US$1 cumulative and US$0.01/call; these inactive values are not an assertion of approved spending or successful model execution. Existing supplier caps are unchanged. [Implementation and exact evidence](../tech/CONTENT-REPAIR.md).
+
 ## Try it in five minutes
 
 1. Open the site and sign in to your existing Recap account. Choose **tech** in Collections if it is not already selected.
@@ -29,6 +37,6 @@ These remaining tasks belong to the assistant:
 - Finish stable historical recap snapshots, corrections/unavailable-original handling, input expiry and full cross-service account deletion. Workspace export/reset/delete does not erase a Clerk account or upstream provider records.
 - Complete production authentication/domain and broader access checks before a separately approved customer trial. No customer outreach or charging has started.
 
-Your useful feedback is simply which part feels closest to your idea and what first feels wrong. There is no new access or setup homework.
+Your useful feedback is simply which part feels closest to your idea and what first feels wrong. Inspecting the collected history requires no setup; the separate D35 AI action is listed above.
 
 **Costs:** historical D22 observed run/build usage was US$1.303248323343 from existing credits. The previous US$45 envelope hold was reconciled/closed against 53 runs; US$45 remains a global ceiling. At 23 October, 21:54 UTC, hourly-only supplier fees are US$0.076 observed and US$0.096 committed including four unfinished-charge holds. D33's separate 18-post media refresh observed US$0.0486 under US$0.08 held cap. Provider invoices remain provisional. Hourly checking is enabled; AI synthesis, generated transcription and reminders are inactive. No new subscription or upgrade was added. Hosting/build/database costs remain unmeasured.

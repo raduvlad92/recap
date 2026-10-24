@@ -1,0 +1,155 @@
+import { timingSafeEqual } from 'node:crypto';
+import type { SourceUpdate } from '../../../src/lib/types';
+import type { ContentProcessing } from '../../../src/lib/processing-types';
+import { contentHash, getContentProcessing } from '../../../src/lib/content-processing';
+import { database } from './admin-data';
+import { authenticate, CollectionError, errorResponse, json, publicHttpsUrl, runtimeEnv, type Env } from './security';
+import { analyzeKeywords, analyzeSummary, type AnalysisOutput } from './content-analysis-engine';
+import { AnalysisError, analysisFailure, analysisLimits, conservativeCallUsd, createGatewayGenerator, type AnalysisGenerator, type AnalysisLimits, type GenerationResult, type GenerationRequest } from './content-analysis-model';
+
+export interface AnalysisPolicy { user_id:string; enabled:boolean; model:string }
+export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null }
+export interface AnalysisClaim { job:AnalysisJob; record:SourceUpdate; leaseToken:string }
+export interface AnalysisCall {id:string;result?:(GenerationResult & {requestHash?:string})|null; maximum_usd?:number}
+export interface AnalysisStore {
+ policies():Promise<AnalysisPolicy[]>;
+ sync(userId:string):Promise<unknown>;
+ claim(userId:string):Promise<AnalysisClaim|null>;
+ reserve(claim:AnalysisClaim,request:GenerationRequest,maximumUsd:number,model:string):Promise<{claimed:boolean;call:AnalysisCall}>;
+ saveCall(call:AnalysisCall,claim:AnalysisClaim,result:GenerationResult):Promise<void>;
+ prepare(claim:AnalysisClaim,result:AnalysisOutput):Promise<void>;
+ publish(claim:AnalysisClaim):Promise<boolean>;
+ fail(claim:AnalysisClaim,code:string,retryable:boolean,yielded?:boolean):Promise<void>;
+}
+export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
+ const db=database(env);
+ async function rpc<T>(name:string,args:Record<string,unknown>):Promise<T> {
+  const result=await db.rpc(name,args);
+  if(result.error) throw new AnalysisError(result.error.code==='PT429'?'analysis_daily_budget_exhausted':result.error.code==='PT402'?'analysis_budget_exhausted':result.error.code==='PT403'?'analysis_runtime_disabled':result.error.code==='PT409'?'analysis_source_changed':'analysis_storage_unavailable');
+  return result.data as T;
+ }
+ return {
+  async policies(){const result=await db.from('reader_content_analysis_policies').select('user_id,enabled,model').eq('enabled',true).order('last_served_at').order('user_id');if(result.error) return analysisFailure('analysis_storage_unavailable');return result.data as AnalysisPolicy[];},
+  sync:userId=>rpc('sync_content_analysis_jobs',{p_user_id:userId,p_limit:200,p_config_epoch:env('CONTENT_ANALYSIS_CONFIG_EPOCH')||''}),
+  claim:userId=>rpc('claim_content_analysis_job',{p_user_id:userId,p_lease_seconds:900}),
+  reserve:(claim,request,maximumUsd,model)=>rpc('reserve_content_analysis_call',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_key:request.key,p_maximum_usd:maximumUsd,p_model:model}),
+  async saveCall(call,claim,result){await rpc('record_content_analysis_call_result',{p_call_id:call.id,p_lease_token:claim.leaseToken,p_result:result,p_usage:result.usage||{},p_provider_id:result.providerId||null,p_actual_usd:result.actualUsd??null,p_observed_usd:result.observedUsd});},
+  async prepare(claim,result){await rpc('prepare_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_result:result});},
+  publish:claim=>rpc('publish_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken}),
+  async fail(claim,code,retryable,yielded=false){await rpc('fail_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_error_code:code,p_retryable:retryable,p_yield:yielded});},
+ };
+}
+export interface AnalysisWorkerDependencies {env:Env;store:AnalysisStore;generate:AnalysisGenerator;limits:AnalysisLimits;now:()=>number}
+export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependencies>={}) {
+ const env=dependencies.env||runtimeEnv,now=dependencies.now||Date.now;
+ return async()=>{
+  const stats={enabled:env('CONTENT_ANALYSIS_ENABLED')==='true',synchronized:0,completed:0,failed:0,blocked:0,yielded:0};
+  if(!stats.enabled) return stats;
+  // Construct runtime resources only after the global feature gate. No import/build or anonymous call spends.
+  const store=dependencies.store||createAnalysisStore(env);
+  let limits:AnalysisLimits|undefined,generator:AnalysisGenerator|undefined,setupCode:string|undefined;
+  try {limits=dependencies.limits||analysisLimits(env);generator=dependencies.generate||createGatewayGenerator(env);}
+  catch(error){setupCode=error instanceof AnalysisError?error.code:'analysis_configuration_required';}
+  const started=now(),deadline=started+11*60_000;
+  const policies=await store.policies(),tasksPerOwner=Math.max(2,Math.floor(50/Math.max(1,policies.length)));
+  for(const policy of policies) {
+   if(!policy.enabled) continue;
+   if(now()>=deadline-50_000)break;
+   await store.sync(policy.user_id); stats.synchronized++;
+   const ownerDeadline=Math.min(deadline,now()+Math.max(60_000,Math.floor(600_000/Math.max(1,Math.min(policies.length,10)))));
+   // Latest-first DB claims with bounded backfill; next invocation scans the archive again for recovered captions.
+   for(let count=0;count<tasksPerOwner && now()<ownerDeadline-50_000;count++) {
+    const claim=await store.claim(policy.user_id);if(!claim) break;
+    try {
+     if(claim.job.user_id!==policy.user_id) return analysisFailure('analysis_owner_mismatch');
+     if(claim.job.state==='prepared' && claim.job.result) {
+      if(await store.publish(claim)) stats.completed++;continue;
+     }
+     if(setupCode || !limits || !generator) return analysisFailure(setupCode||'analysis_configuration_required');
+     const generate=generator;
+     if(policy.model!==limits.model)return analysisFailure('analysis_model_policy_mismatch');
+     const metered:AnalysisGenerator=async request=>{
+      if(now()>ownerDeadline-50_000) return analysisFailure('analysis_worker_yield');
+      const maximumUsd=conservativeCallUsd(request,limits);
+      if(maximumUsd>limits.maxCallUsd) return analysisFailure('analysis_call_limit');
+      const requestHash=contentHash(JSON.stringify({system:request.system,prompt:request.prompt,schema:request.schema,maxOutputTokens:request.maxOutputTokens}));
+      const reservation=await store.reserve(claim,request,maximumUsd,limits.model);
+      if(!reservation.claimed) {
+       if(reservation.call.result) {
+        if(reservation.call.result.requestHash!==requestHash)return analysisFailure('analysis_cached_input_changed');
+        return reservation.call.result;
+       }
+       // A provider may have charged an interrupted request. Never resubmit an ambiguous call key.
+       return analysisFailure('analysis_unknown_charge_hold');
+      }
+      const result=await generate(request);
+      if(result.observedUsd!==null && (!Number.isFinite(result.observedUsd)||result.observedUsd<0)) return analysisFailure('analysis_invalid_cost');
+      await store.saveCall(reservation.call,claim,{...result,requestHash} as GenerationResult);
+      return result;
+     };
+     const result=claim.job.task==='summary'?await analyzeSummary(claim.record,limits,metered):await analyzeKeywords(claim.record,limits,metered);
+     await store.prepare(claim,result);
+     if(await store.publish(claim)) stats.completed++;
+    } catch(error) {
+     const code=error instanceof AnalysisError?error.code:'analysis_generation_failed';
+     const yielded=code==='analysis_worker_yield',blocked=['analysis_daily_budget_exhausted','analysis_budget_exhausted','analysis_input_limit','analysis_call_limit','analysis_unknown_charge_hold','analysis_cached_input_changed','analysis_model_policy_mismatch','analysis_credentials_required','analysis_configuration_required','analysis_pricing_not_verified','analysis_provider_not_verified','analysis_gateway_not_verified','analysis_runtime_disabled'].includes(code);
+     if(yielded)stats.yielded++;else if(blocked)stats.blocked++;else stats.failed++;
+     // Network errors keep their durable call hold. They must never be retried as a new model charge.
+     const retryable=['analysis_storage_unavailable'].includes(code);
+     try {await store.fail(claim,code,retryable,yielded);} catch { /* Source/deletion fence can invalidate the lease; never recreate it. */ }
+     if(yielded) break;
+    }
+   }
+  }
+  return stats;
+ };
+}
+export function analysisWorkerAuthorized(request:Request,env:Env=runtimeEnv):boolean {
+ const secret=env('CONTENT_ANALYSIS_WORKER_SECRET')||'',provided=request.headers.get('x-content-analysis-secret')||'';
+ return request.method==='POST' && secret.length>=32 && secret.length<=256 && Buffer.byteLength(secret)===Buffer.byteLength(provided) && timingSafeEqual(Buffer.from(secret),Buffer.from(provided));
+}
+export async function dispatchContentAnalysis(env:Env=runtimeEnv,fetcher:typeof fetch=fetch):Promise<{dispatched:boolean}> {
+ if(env('CONTENT_ANALYSIS_ENABLED')!=='true'||env('CONTEXT')!=='production') return {dispatched:false};
+ const secret=env('CONTENT_ANALYSIS_WORKER_SECRET')||'';
+ if(secret.length<32||secret.length>256) return analysisFailure('analysis_worker_not_configured');
+ const app=publicHttpsUrl(env('APP_URL'));
+ const response=await fetcher(new URL('/.netlify/functions/content-analysis-worker',app).href,{method:'POST',headers:{'x-content-analysis-secret':secret,'content-type':'application/json'},body:'{}',redirect:'error',signal:AbortSignal.timeout(10_000)});
+ await response.body?.cancel();
+ if(response.status!==202) return analysisFailure('analysis_dispatch_failed');
+ return {dispatched:true};
+}
+/** Read-only owner endpoint: no model calls, synchronization, queue mutation or private evidence. */
+export function createAnalysisStatusHandler(deps:{env?:Env;verify?:typeof authenticate;db?:ReturnType<typeof database>}={}) {
+ const env=deps.env||runtimeEnv;
+ return async(request:Request)=>{
+  try {
+   if(request.method!=='GET') throw new CollectionError(405,'method_not_allowed','Use GET to read processing status.');
+   const userId=await (deps.verify||authenticate)(request,env),url=new URL(request.url);
+   const offset=Number(url.searchParams.get('offset')||0);
+   if(!Number.isSafeInteger(offset)||offset<0||offset>100000)throw new CollectionError(400,'invalid_page','Use a valid status page.');
+   const db=deps.db||database(env);
+   if(url.searchParams.has('since')) {
+    const timestamp=(value:string|null):value is string=>!!value && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value));
+    const since=url.searchParams.get('since'),windowEnd=url.searchParams.get('until')||new Date().toISOString();
+    const afterAt=url.searchParams.get('afterUpdatedAt'),afterId=url.searchParams.get('afterId');
+    if(!timestamp(since)||!timestamp(windowEnd)||Date.parse(windowEnd)<Date.parse(since)
+     ||((afterAt||afterId)&&(!timestamp(afterAt)||!afterId||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(afterId)||Date.parse(afterAt)<Date.parse(since)||Date.parse(afterAt)>Date.parse(windowEnd)))) {
+     throw new CollectionError(400,'invalid_window','Use a valid processing change window.');
+    }
+    let query=db.from('reader_content_analysis_jobs').select('update_id,state,updated_at,id').eq('user_id',userId)
+     .gt('updated_at',since).lte('updated_at',windowEnd).order('updated_at',{ascending:true}).order('id',{ascending:true});
+    // Cursor traversal does not skip untouched rows if earlier jobs move beyond
+    // until during pagination. Offset mode is retained for simple clients.
+    if(afterAt&&afterId)query=query.or('updated_at.gt.'+afterAt+',and(updated_at.eq.'+afterAt+',id.gt.'+afterId+')');
+    const result=await query.range(afterAt?0:offset,(afterAt?0:offset)+99);
+    if(result.error)throw new CollectionError(503,'analysis_status_unavailable','Processing changes could not be read.');
+    const last=result.data.at(-1),more=result.data.length===100;
+    return json({updateIds:[...new Set(result.data.map(row=>row.update_id))],lastChangedAt:last?.updated_at||since,windowEnd,
+     nextOffset:more?offset+100:null,nextCursor:more&&last?{updatedAt:last.updated_at,id:last.id}:null});
+   }
+   const result=await db.from('reader_source_updates').select('id,record').eq('user_id',userId).order('published_at',{ascending:false}).order('id').range(offset,offset+99);
+   if(result.error) throw new CollectionError(503,'analysis_status_unavailable','Processing status could not be read.');
+   return json({items:result.data.map(row=>({updateId:row.id,processing:getContentProcessing(row.record as SourceUpdate) as ContentProcessing})),offset,nextOffset:result.data.length===100?offset+100:null});
+  } catch(error){return errorResponse(error);}
+ };
+}

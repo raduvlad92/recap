@@ -2,6 +2,7 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { XMLBuilder, XMLParser, XMLValidator } from 'fast-xml-parser';
 import type { Source, SourceUpdate, WorkspaceState } from '../../../src/lib/types';
+import { classifyWatchPageVideoFormat, mergeVideoFormatFields, watchPagePlayer, youtubeVideoId } from '../../../src/lib/video-format';
 import { sanitizePostContext } from '../../../src/lib/post-context';
 import { database } from './admin-data';
 import { apifyConfig, startApify, pollStoredApify, verifyHourlyApifyConfiguration, YOUTUBE_ACTOR, YOUTUBE_ACTOR_ID } from './apify';
@@ -9,10 +10,10 @@ import { settleBudget } from './budget-ledger';
 import { startJob, finishJob } from './job-ledger';
 import { downloadPublic, downloadHourlySource, downloadYouTubeCaptions, youtubeCaptionUrl, normalizeFeed, plainText, safeLink, type Download } from './feed';
 import { validateSource } from './collect-handler';
-import { CollectionError, runtimeEnv, publicHttpsUrl, type Env } from './security';
+import { CollectionError, runtimeEnv, publicHttpsUrl, readTextLimited, type Env } from './security';
 
 export interface HourlyPolicy { user_id: string; enabled: boolean; provider_enabled: boolean; daily_limit_usd: number; lifetime_limit_usd: number }
-export interface CaptionTask { record: SourceUpdate; attempts: number; nextAttemptAt: string }
+export interface CaptionTask { record: SourceUpdate; attempts: number; nextAttemptAt: string; status?: 'pending' | 'retry' | 'blocked' | 'provider_pending' | 'unavailable'; reason?: string; checkedAt?: string }
 export interface HourlyState {
  user_id: string; source_id: string; fingerprint: string; collection_id: string;
  channel_id: string | null; feed_url: string | null; etag: string | null; last_modified: string | null; content_hash: string | null;
@@ -156,7 +157,7 @@ export function parseHourlyYouTubeFeed(text: string, source: Source, channelId: 
   const description = plainText(group['media:description'], 700);
   const thumbnail = object(group['media:thumbnail'])['@_url'];
   updates.push(archiveIdentity({ id: '', sourceId: source.id, contributorIds: [], title: plainText(entry.title, 240) || 'Untitled video', summary: description,
-   url: 'https://www.youtube.com/watch?v=' + videoId, publishedAt: new Date(date).toISOString(), format: 'video', topics: [], brands: [], sponsors: [], references: [], insights: [], isSample: false, contentKind: 'metadata_only',
+   url: 'https://www.youtube.com/watch?v=' + videoId, publishedAt: new Date(date).toISOString(), format: 'video', topics: [], brands: [], sponsors: [], references: [], insights: [], isSample: false, contentKind: 'metadata_only', videoFormat: { kind: 'unknown', basis: 'legacy' },
    ...(typeof thumbnail === 'string' && safeLink(thumbnail, source.url) ? { image: safeLink(thumbnail, source.url) } : {}),
    coverage: 'Public YouTube RSS metadata; spoken content and full channel history are not established.' }));
  }
@@ -188,36 +189,47 @@ function discoverFeed(response: ConditionalDownload): string {
  throw new CollectionError(422, 'feed_not_found', 'A public RSS or Atom feed could not be found.');
 }
 
-export interface CaptionResult { content: string; transcriptSegments?: SourceUpdate['transcriptSegments']; coverage: string }
-/** Best-effort public existing captions only: no session cookies, API key,
- * speech generation or paid discovery. Failure remains an honest coverage gap. */
-export async function nativeHourlyCaptions(videoId: string, download: HourlyDownload = downloadPublic, captionDownload: HourlyDownload = download === downloadPublic ? downloadYouTubeCaptions : download): Promise<CaptionResult | null> {
+export interface CaptionResult { content?: string; transcriptSegments?: SourceUpdate['transcriptSegments']; coverage: string; videoFormat?: SourceUpdate['videoFormat']; captionStatus?: 'retrieved' | 'unavailable' | 'retry'; reason?: string }
+export const HOURLY_WATCH_PAGE_MAX_BYTES = 8 * 1024 * 1024;
+/** Fixed first-party watch endpoint only; larger than RSS but still bounded.
+ * No cookies, arbitrary URLs, redirect following or provider discovery. */
+export async function downloadHourlyWatchPage(value: string, _redirects = 0, _validators: { etag?: string; lastModified?: string } = {}, fetcher: typeof fetch = fetch): Promise<ConditionalDownload> {
+ const url = publicHttpsUrl(value);
+ if (url.hostname !== 'www.youtube.com' || url.pathname !== '/watch' || url.searchParams.size !== 1 || !youtubeVideoId(url.href)) throw new CollectionError(400, 'unsafe_watch_page', 'Only an exact public YouTube watch page is supported.');
+ const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 8_000);
+ try {
+  const response = await fetcher(url.href, { redirect: 'error', signal: controller.signal, headers: { accept: 'text/html' } });
+  if (response.status !== 200 || response.url && youtubeVideoId(response.url) !== youtubeVideoId(url.href)) {
+   await response.body?.cancel(); throw new CollectionError(422, 'source_unavailable', 'The public video page is unavailable.', response.status);
+  }
+  const text = await readTextLimited(response, HOURLY_WATCH_PAGE_MAX_BYTES);
+  return { text, url: url.href, status: 200, contentType: response.headers.get('content-type') || '', bytes: Buffer.byteLength(text) };
+ } catch (error) {
+  if (controller.signal.aborted) throw new CollectionError(504, 'source_timeout', 'The public video page took too long to respond.');
+  throw error;
+ } finally { clearTimeout(timer); }
+}
+/** Classification survives missing/broken captions. Failure is a retrieval gap,
+ * never evidence that the original has no captions or is a regular video. */
+export async function nativeHourlyCaptions(videoId: string, download: HourlyDownload = downloadHourlyWatchPage, captionDownload: HourlyDownload = download === downloadHourlyWatchPage || download === downloadPublic ? downloadYouTubeCaptions : download): Promise<CaptionResult | null> {
  if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) throw new CollectionError(400, 'invalid_video_id', 'Invalid YouTube video ID.');
  const page = await download('https://www.youtube.com/watch?v=' + videoId);
- const marker = /(?:var\s+)?ytInitialPlayerResponse\s*=\s*/.exec(page.text);
- if (!marker) return null;
- const start = marker.index + marker[0].length;
- let depth = 0, quoted = false, escaped = false, end = start;
- for (; end < Math.min(page.text.length, start + 1_500_000); end++) {
-  const c = page.text[end];
-  if (quoted) { if (escaped) escaped = false; else if (c === '\\') escaped = true; else if (c === '"') quoted = false; }
-  else if (c === '"') quoted = true;
-  else if (c === '{') depth++;
-  else if (c === '}' && --depth === 0) { end++; break; }
- }
- let player: Record<string, unknown>;
- try { player = object(JSON.parse(page.text.slice(start, end))); } catch { return null; }
- if (object(player.videoDetails).videoId !== videoId || object(player.playabilityStatus).status !== 'OK') return null;
+ const videoFormat = { ...classifyWatchPageVideoFormat(page.text, videoId, page.url), checkedAt: new Date().toISOString() };
+ const missing = (reason: string, captionStatus: 'unavailable' | 'retry' = 'retry'): CaptionResult => ({ videoFormat, captionStatus, reason, coverage: 'Video format checked from public page metadata; usable captions were not retrieved; spoken content is not established.' });
+ const player = watchPagePlayer(page.text);
+ if (youtubeVideoId(page.url) !== videoId || !player || object(player.videoDetails).videoId !== videoId) return missing('watch_page_identity_unconfirmed');
+ if (object(player.playabilityStatus).status !== 'OK') return missing('watch_page_playability_unavailable');
  const tracks = list(object(object(player.captions).playerCaptionsTracklistRenderer).captionTracks);
  const track = tracks.find(t => t.kind !== 'asr') || tracks[0];
- if (!track || typeof track.baseUrl !== 'string') return null;
+ if (!track || typeof track.baseUrl !== 'string') return missing('caption_tracks_not_supplied', 'unavailable');
  let captionUrl: URL;
- try { captionUrl = youtubeCaptionUrl(track.baseUrl); } catch { return null; }
- if (!['youtube.com','www.youtube.com'].includes(captionUrl.hostname) || captionUrl.pathname !== '/api/timedtext' || captionUrl.searchParams.get('v') !== videoId) return null;
+ try { captionUrl = youtubeCaptionUrl(track.baseUrl); } catch { return missing('unsafe_caption_url'); }
+ if (!['youtube.com','www.youtube.com'].includes(captionUrl.hostname) || captionUrl.pathname !== '/api/timedtext' || captionUrl.searchParams.get('v') !== videoId) return missing('caption_video_mismatch');
  captionUrl.searchParams.set('fmt', 'json3');
- const captions = await captionDownload(captionUrl.href);
+ let captions: ConditionalDownload;
+ try { captions = await captionDownload(captionUrl.href); } catch (error) { return missing(error instanceof CollectionError ? error.code : 'caption_download_failed'); }
  let data: Record<string, unknown>;
- try { data = object(JSON.parse(captions.text)); } catch { return null; }
+ try { data = object(JSON.parse(captions.text)); } catch { return missing('caption_response_invalid'); }
  const segments: NonNullable<SourceUpdate['transcriptSegments']> = [];
  let characters = 0;
  for (const event of list(data.events)) {
@@ -227,8 +239,8 @@ export async function nativeHourlyCaptions(videoId: string, download: HourlyDown
   if (characters + text.length > 200_000 || segments.length >= 10_000) break;
   characters += text.length; segments.push({ text, startSeconds: startMs / 1000, ...(Number.isFinite(durationMs) && durationMs >= 0 ? { durationSeconds: durationMs / 1000 } : {}) });
  }
- if (!segments.length) return null;
- return { content: segments.map(s => s.text).join('\n'), transcriptSegments: segments,
+ if (!segments.length) return missing('caption_text_not_supplied');
+ return { content: segments.map(s => s.text).join('\n'), transcriptSegments: segments, videoFormat, captionStatus: 'retrieved',
   coverage: 'Existing public YouTube captions retrieved without a scraping supplier; visual content and completeness are not verified; bounded to 200,000 characters.' };
 }
 
@@ -272,7 +284,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
   }
   async function reconcileJob(job: StoredProviderJob): Promise<boolean> {
     const ref = references.find(r => r.jobId === job.job_id) || providerReference(job); if (!references.includes(ref)) references.push(ref);
-    if (!job.provider_run_id) { partial = true; details.captionStatus = 'provider_launch_ambiguous'; return false; }
+    if (!job.provider_run_id) { partial = true; details.captionStatus = 'provider_launch_ambiguous'; const task = captionQueue.get(job.item_key); if (task) { task.status = 'blocked'; task.reason = 'provider_launch_ambiguous'; } return false; }
     const videoId = job.item_key.replace(/^youtube:/, '');
     try {
      const result = await deps.pollApify({ providerRunId: job.provider_run_id, actorId: YOUTUBE_ACTOR_ID, source: { ...source, url: 'https://www.youtube.com/watch?v=' + videoId }, maxItems: 1, ledgerId: job.job_id }, policy.user_id, deps.env);
@@ -291,32 +303,45 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      // Nonterminal usage is a fee observation, never a final budget settlement.
      await deps.settleBudget(job.reservation_id, { providerRunId: job.provider_run_id, terminal, actualUsd: terminal ? cost : null }, deps.env);
      if (terminal) {
+      const queued = captionQueue.get(job.item_key);
+      if (queued) { queued.status = 'retry'; queued.reason = result.status === 'failed' ? 'provider_failed' : 'provider_returned_no_captions'; }
       completedJobs.push({ id: job.id, patch: { state: result.status === 'completed' ? 'completed' : 'failed', actual_cost_usd: cost, finished_at: new Date(deps.now()).toISOString() } });
       ref.observedCostUsd = cost; ref.costStatus = cost === null ? 'unknown' : 'provider_reported';
       if (!job.discard_result && job.source_fingerprint === claim.state.fingerprint) for (const update of result.result?.updates || []) {
-       if (goodUpdate(update, source) && hourlyItemKey(update.url) === job.item_key && update.contentKind === 'transcript' && update.content) updates.set(job.item_key, archiveIdentity(update));
+       if (goodUpdate(update, source) && hourlyItemKey(update.url) === job.item_key) {
+        const base = updates.get(job.item_key) || captionQueue.get(job.item_key)?.record || update;
+        const merged = { ...base, ...mergeVideoFormatFields(base, update), ...(update.contentKind === 'transcript' && update.content ? { content: update.content, contentKind: 'transcript' as const, transcriptSegments: update.transcriptSegments, coverage: update.coverage } : {}) };
+        updates.set(job.item_key, archiveIdentity(merged));
+        const task = captionQueue.get(job.item_key);
+        if (task) { task.record = merged; task.status = update.contentKind === 'transcript' && update.content ? 'pending' : 'unavailable'; task.reason = update.contentKind === 'transcript' && update.content ? undefined : 'provider_returned_no_captions'; }
+       }
       }
       else { partial = true; details.captionStatus = 'workspace_changed_before_provider_result'; }
-     } else partial = true;
+     } else { partial = true; const task = captionQueue.get(job.item_key); if (task) { task.status = 'provider_pending'; task.reason = 'provider_pending'; } }
      return terminal;
-    } catch (error) { partial = true; details.captionStatus = error instanceof CollectionError ? error.code : 'provider_poll_failed'; return false; }
+    } catch (error) { partial = true; const reason = error instanceof CollectionError ? error.code : 'provider_poll_failed'; details.captionStatus = reason; const queued = captionQueue.get(job.item_key); if (queued) { queued.status = 'blocked'; queued.reason = reason; } return false; }
   }
   async function processCaptionQueue() {
    const maxCaptionItems = Math.min(20, Math.max(1, Number(deps.env('HOURLY_COLLECTION_MAX_NEW_VIDEOS') || 20) || 20));
-   const candidates = [...captionQueue.values()].filter(task => Date.parse(task.nextAttemptAt) <= deps.now());
+   const candidates = [...captionQueue.values()].filter(task => task.status !== 'provider_pending' && Date.parse(task.nextAttemptAt) <= deps.now());
    if (candidates.length > maxCaptionItems) { partial = true; details.deferredCount = candidates.length - maxCaptionItems; }
    let attemptedCaptions = 0;
    for (const task of candidates.slice(0, maxCaptionItems)) {
-    const update = task.record;
+    let update = task.record;
     if (deps.now() > sourceDeadline - 30_000) { partial = true; details.captionStatus = 'source_time_limit'; details.deferredCount = candidates.length - attemptedCaptions; break; }
     attemptedCaptions++;
     const itemKey = hourlyItemKey(update.url), videoId = itemKey.slice(8);
     if (updates.get(itemKey)?.contentKind === 'transcript') { captionQueue.delete(itemKey); continue; }
     // Back off free caption retries, retaining the item through RSS 304/hash
     // responses, budget stops and temporary provider/configuration failures.
-    task.attempts++; task.nextAttemptAt = new Date(deps.now() + Math.min(24, 2 ** Math.min(task.attempts - 1, 5)) * 3600_000).toISOString();
+    task.attempts++; task.checkedAt = new Date(deps.now()).toISOString(); task.status = 'retry'; task.reason = 'captions_not_retrieved'; task.nextAttemptAt = new Date(deps.now() + Math.min(24, 2 ** Math.min(task.attempts - 1, 5)) * 3600_000).toISOString();
     let captions: CaptionResult | null = null;
-    try { captions = await deps.captions(videoId); } catch { details.captionStatus = 'native_caption_unavailable'; }
+    try { captions = await deps.captions(videoId); } catch (error) { task.reason = error instanceof CollectionError ? error.code : 'native_caption_failed'; details.captionStatus = task.reason; }
+    if (captions?.videoFormat) {
+     update = { ...update, ...mergeVideoFormatFields(update, { ...update, isShort: undefined, videoFormat: captions.videoFormat }) };
+     task.record = update; updates.set(itemKey, update);
+    }
+    if (captions?.captionStatus && captions.captionStatus !== 'retrieved') { task.status = captions.captionStatus; task.reason = captions.reason || 'captions_not_retrieved'; }
     if (captions?.content) {
      updates.set(itemKey, { ...update, content: captions.content, contentKind: 'transcript', transcriptSegments: captions.transcriptSegments, summary: captions.content.slice(0, 700), coverage: captions.coverage });
      captionQueue.delete(itemKey); details.captionStatus = 'native_captions_retrieved'; continue;
@@ -324,17 +349,18 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     partial = true;
     const config = apifyConfig(deps.env);
     if (!policy.provider_enabled || deps.env('HOURLY_COLLECTION_PROVIDER_VERIFIED') !== 'true' || !config || config.maxItems !== 1 || config.maxCharge > 0.005 || !config.allowedUsers.includes(policy.user_id)) {
-     details.captionStatus = 'native_unavailable_provider_disabled'; continue;
+     task.status = captions?.captionStatus === 'unavailable' ? 'unavailable' : 'blocked'; task.reason ||= 'native_unavailable_provider_disabled'; details.captionStatus = 'native_unavailable_provider_disabled'; continue;
     }
-    if (await deps.store.providerClaimed(claim, itemKey)) { details.captionStatus = 'provider_already_attempted'; continue; }
+    if (await deps.store.providerClaimed(claim, itemKey)) { task.status = 'blocked'; task.reason = 'provider_already_attempted'; details.captionStatus = task.reason; continue; }
     try {
      if (!verified.has(policy.user_id)) { await deps.preflight(policy.user_id, deps.env); verified.add(policy.user_id); }
-    } catch (error) { details.captionStatus = error instanceof CollectionError ? error.code : 'provider_preflight_failed'; continue; }
+    } catch (error) { task.status = 'blocked'; task.reason = error instanceof CollectionError ? error.code : 'provider_preflight_failed'; details.captionStatus = task.reason; continue; }
     let jobId: string | undefined, reservation: { claimed: boolean; id: string; reservationId?: string } | undefined;
     try {
      jobId = await deps.startJob({ ...source, url: update.url, provider: 'apify', actorId: YOUTUBE_ACTOR_ID }, policy.user_id, deps.env);
      reservation = await deps.store.reserve(claim, itemKey, jobId, config.maxCharge);
      if (!reservation.claimed || !reservation.reservationId) {
+      task.status = 'blocked'; task.reason = 'provider_already_claimed';
       await deps.finishJob(jobId, policy.user_id, { status: 'blocked', errorCode: 'provider_already_claimed' }, deps.env); continue;
      }
      const ref: ProviderReference = { jobId, providerRunId: null, actorId: YOUTUBE_ACTOR_ID, itemKey, reservedUsd: config.maxCharge, observedCostUsd: null, costStatus: 'unknown' };
@@ -346,7 +372,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      await deps.store.providerPatch(reservation.id, { state: 'running', provider_run_id: started.providerRunId, job_token: started.jobToken });
      await deps.settleBudget(reservation.reservationId, { providerRunId: started.providerRunId, actualUsd: null, terminal: false }, deps.env);
      await deps.finishJob(jobId, policy.user_id, { status: 'running', providerRunId: started.providerRunId }, deps.env);
-     details.captionStatus = 'provider_pending';
+     task.status = 'provider_pending'; task.reason = 'provider_pending'; details.captionStatus = 'provider_pending';
      // Try GET-only recovery immediately, sharing a 110-second allowance across
      // this source. A slow run remains durable for a later hour; no new POST.
      const stored: StoredProviderJob = { id: reservation.id, user_id: policy.user_id, source_id: source.id, item_key: itemKey, check_id: claim.checkId, job_id: jobId,
@@ -358,7 +384,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
       await deps.pause(5_000);
      }
     } catch (error) {
-     const code = error instanceof CollectionError ? error.code : 'provider_start_ambiguous'; details.captionStatus = code;
+     const code = error instanceof CollectionError ? error.code : 'provider_start_ambiguous'; task.status = 'blocked'; task.reason = code; details.captionStatus = code;
      if (reservation?.claimed) {
       try { await deps.store.providerPatch(reservation.id, { state: 'ambiguous' }); } catch { /* Pre-POST claim and global hold remain durable. */ }
      } else if (jobId) {

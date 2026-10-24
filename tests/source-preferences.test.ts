@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isShortUpdate, mergeCollection, mergeWorkspaceUpdates, sanitizeArchivedUpdate, sanitizeSourceUpdate, sanitizeWorkspace, sourceShowsShorts, updatesForSourcePreferences, withSourceShortsPreference } from '../src/lib/domain';
+import { isShortUpdate, mergeCollection, mergeWorkspaceUpdates, sanitizeArchivedUpdate, sanitizeSourceUpdate, sanitizeWorkspace, sourceShowsShorts, updatesForSourcePreferences, unclassifiedUpdatesForSourcePreferences, withSourceShortsPreference } from '../src/lib/domain';
 import { createDefaultWorkspace } from '../src/lib/fixtures';
 import { readArchiveRecords } from '../src/lib/workspace';
 import type { Source, SourceUpdate, WorkspaceState } from '../src/lib/types';
@@ -19,12 +19,37 @@ describe('per-source Shorts visibility', () => {
     expect(edited.customSources).toBe(restored.customSources);
   });
 
-  it('hides only explicit Shorts for the disabled source, preserving unknown short videos', () => {
+  it('excludes known Shorts and unknown formats while allowing explicit inspection of unknown originals', () => {
     const state = withSourceShortsPreference(workspace(), source.id, false);
-    const entries = [update('flagged', { isShort: true }), update('linked', { url: 'https://www.youtube.com/shorts/linked' }), update('short-duration', { duration: '00:30' }), update('unknown'), update('explicit-long', { isShort: false }), update('other-channel', { sourceId: 'another-channel', isShort: true })];
-    expect(updatesForSourcePreferences(entries, state).map(item => item.id)).toEqual(['short-duration', 'unknown', 'explicit-long', 'other-channel']);
-    expect(entries).toHaveLength(6);
+    const entries = [update('flagged', { isShort: true }), update('linked', { url: 'https://www.youtube.com/shorts/linked' }), update('short-duration', { duration: '00:30' }), update('unknown'), update('legacy-false', { isShort: false }), update('checked-regular', { isShort: false, videoFormat: { kind: 'regular', basis: 'provider' } }), update('other-channel', { sourceId: 'another-channel', isShort: true })];
+    expect(updatesForSourcePreferences(entries, state).map(item => item.id)).toEqual(['checked-regular', 'other-channel']);
+    expect(unclassifiedUpdatesForSourcePreferences(entries, state).map(item => item.id)).toEqual(['short-duration', 'unknown', 'legacy-false']);
+    expect(updatesForSourcePreferences(entries, state, { includeUnclassified: true }).map(item => item.id)).toEqual(['short-duration', 'unknown', 'legacy-false', 'checked-regular', 'other-channel']);
+    expect(entries).toHaveLength(7);
     expect(updatesForSourcePreferences(entries, withSourceShortsPreference(state, source.id, true))).toEqual(entries);
+  });
+
+  it('preserves saved originals and raw false flags through load/export without inventing checked classifications', () => {
+    const originals = [
+      update('legacy-false', { isShort: false }),
+      update('legacy-regular', { isShort: false, videoFormat: { kind: 'regular', basis: 'legacy' } }),
+      update('provider-regular', { isShort: false, videoFormat: { kind: 'regular', basis: 'provider' } }),
+      update('watch-page-regular', { isShort: false, videoFormat: { kind: 'regular', basis: 'watch_page' } }),
+    ];
+    const savedUpdateIds = originals.map(item => item.id);
+    const state = withSourceShortsPreference({ ...workspace(), importedUpdates: originals, savedUpdateIds, readLaterIds: ['legacy-false'] }, source.id, false);
+    const restored = sanitizeWorkspace(JSON.parse(JSON.stringify(state)))!;
+    const exported = JSON.parse(JSON.stringify(restored));
+    for (const roundTripped of [restored, exported]) {
+      expect(roundTripped.importedUpdates).toEqual(originals);
+      expect(roundTripped.importedUpdates.map((item: SourceUpdate) => item.isShort)).toEqual([false, false, false, false]);
+      expect(roundTripped.savedUpdateIds).toEqual(savedUpdateIds);
+      expect(roundTripped.readLaterIds).toEqual(['legacy-false']);
+      expect(roundTripped.importedUpdates[0].videoFormat).toBeUndefined();
+      expect(updatesForSourcePreferences(roundTripped.importedUpdates, roundTripped).map(item => item.id)).toEqual(['provider-regular', 'watch-page-regular']);
+      expect(unclassifiedUpdatesForSourcePreferences(roundTripped.importedUpdates, roundTripped).map(item => item.id)).toEqual(['legacy-false', 'legacy-regular']);
+      expect(updatesForSourcePreferences(roundTripped.importedUpdates, roundTripped, { includeUnclassified: true })).toEqual(originals);
+    }
   });
 
   it.each(['https://youtube.com/shorts/abc', 'https://www.youtube.com/shorts/abc/', 'https://m.youtube.com/shorts/abc?t=3'])('recognizes the explicit Shorts URL %s', url => {
@@ -71,6 +96,18 @@ describe('per-source Shorts visibility', () => {
     const exported = JSON.parse(JSON.stringify({ ...state, archivedUpdates: archived.updates }));
     expect(exported.archivedUpdates[0]).toMatchObject({ isShort: true, content: fullTranscript });
     expect(updatesForSourcePreferences(complete, withSourceShortsPreference(state, source.id, true))).toEqual(complete);
+  });
+
+  it('never turns a stored positive flag false when a checked regular marker conflicts with it', () => {
+    const conflict = update('conflicting-sql-row', { isShort: true, videoFormat: { kind: 'regular', basis: 'watch_page' } });
+    const state = withSourceShortsPreference(workspace(), source.id, false);
+    expect(updatesForSourcePreferences([conflict], state)).toEqual([]);
+    const merged = mergeCollection(state, { source, updates: [conflict] });
+    expect(merged.importedUpdates[0]).toMatchObject({ isShort: true, videoFormat: { kind: 'unknown', basis: 'watch_page' } });
+    const restored = sanitizeWorkspace(JSON.parse(JSON.stringify(merged)))!;
+    const refreshed = mergeCollection(restored, { source, updates: [update(conflict.id, { isShort: false, videoFormat: { kind: 'regular', basis: 'provider' } })] });
+    expect(refreshed.importedUpdates[0]).toMatchObject({ isShort: true, videoFormat: { kind: 'unknown' } });
+    expect(updatesForSourcePreferences(refreshed.importedUpdates, refreshed)).toEqual([]);
   });
 });
 

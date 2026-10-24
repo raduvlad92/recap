@@ -1,6 +1,9 @@
 import type { CollectionResult, Creator, FollowScope, Platform, ReaderSettings, Source, SourceCollection, SourceUpdate, WorkspaceState } from './types';
+import { sanitizeContentProcessing } from './processing-validation';
 import { sanitizePostMedia } from './post-media';
 import { sanitizePostContext } from './post-context';
+import { mergeVideoFormatFields, sanitizeVideoFormat, videoFormatKind } from './video-format';
+export { videoFormatKind } from './video-format';
 import { createDefaultWorkspace, isFictionalSource, isFictionalUpdate, removeFictionalWorkspaceContent } from './fixtures';
 
 export const LIMITS = { sources: 50, xSources: 15, dailyUpdates: 200, monthlyUpdates: 3000, generatedAudioMinutes: 300 } as const;
@@ -170,17 +173,17 @@ export function withSourceShortsPreference(state: WorkspaceState, sourceId: stri
   return { ...state, sourcePreferences: { ...state.sourcePreferences, [sourceId]: { showShorts } } };
 }
 
-/** Provider flags and canonical Shorts links are evidence; duration alone is not. */
+/** Presentation only: all originals remain retained and exportable. */
 export function isShortUpdate(update: SourceUpdate): boolean {
-  if (update.isShort === true) return true;
-  try {
-    const url = new URL(update.url);
-    return ['youtube.com', 'www.youtube.com', 'm.youtube.com'].includes(url.hostname.toLowerCase()) && /^\/shorts\/[^/]+\/?$/.test(url.pathname);
-  } catch { return false; }
+  return videoFormatKind(update) === 'short';
 }
 
-export function updatesForSourcePreferences(updates: SourceUpdate[], state: WorkspaceState): SourceUpdate[] {
-  return updates.filter(update => sourceShowsShorts(state, update.sourceId) || !isShortUpdate(update));
+export function updatesForSourcePreferences(updates: SourceUpdate[], state: WorkspaceState, options: { includeUnclassified?: boolean } = {}): SourceUpdate[] {
+  return updates.filter(update => sourceShowsShorts(state, update.sourceId) || update.format !== 'video' || videoFormatKind(update) === 'regular' || options.includeUnclassified === true && videoFormatKind(update) === 'unknown');
+}
+
+export function unclassifiedUpdatesForSourcePreferences(updates: SourceUpdate[], state: WorkspaceState): SourceUpdate[] {
+  return updates.filter(update => update.format === 'video' && !sourceShowsShorts(state, update.sourceId) && videoFormatKind(update) === 'unknown');
 }
 
 export interface UpdateFilter { query?: string; sourceIds?: string[]; creatorId?: string; day?: string; timezone?: string; platform?: Platform | 'all'; savedIds?: string[]; }
@@ -229,12 +232,16 @@ function sanitizeCreator(value: unknown, sourceIds: Set<string>): Creator | null
 
 export function sanitizeSourceUpdate(value: unknown): SourceUpdate | null {
   if (!object(value) || isFictionalUpdate(value) || typeof value.id !== 'string' || typeof value.sourceId !== 'string' || typeof value.url !== 'string' || !isPublicWebUrl(value.url) || typeof value.publishedAt !== 'string' || (value.publishedAt !== '' && !dateKey(value.publishedAt))) return null;
+  // Preserve complete supported text: truncating it changes the source hash and silently invalidates annotations.
+  if (typeof value.content === 'string' && value.content.length > 1_000_000) return null;
   const media = sanitizePostMedia(value.media);
+  const processing = sanitizeContentProcessing(value.processing);
   const postContext = value.format === 'post' ? sanitizePostContext(value.postContext, value.url) : undefined;
   const nonnegativeSeconds = (seconds: unknown): seconds is number => typeof seconds === 'number' && Number.isFinite(seconds) && seconds >= 0 && seconds <= Number.MAX_SAFE_INTEGER;
   const transcriptSegments = Array.isArray(value.transcriptSegments) ? value.transcriptSegments.filter(object).filter(segment => nonnegativeSeconds(segment.startSeconds) && typeof segment.text === 'string' && !!segment.text.trim()).slice(0, 10000).map(segment => ({ startSeconds: segment.startSeconds as number, text: (segment.text as string).slice(0, 10000), ...(nonnegativeSeconds(segment.durationSeconds) ? { durationSeconds: segment.durationSeconds } : {}) })) : undefined;
   const videoHighlights = Array.isArray(value.videoHighlights) ? value.videoHighlights.filter(object).filter(highlight => typeof highlight.text === 'string' && !!highlight.text.trim()).slice(0, 30).map(highlight => ({ text: (highlight.text as string).slice(0, 2000), ...(nonnegativeSeconds(highlight.startSeconds) ? { startSeconds: highlight.startSeconds } : {}) })) : undefined;
-  const videoSummary = object(value.videoSummary) && value.videoSummary.ruleVersion === 'takeaways-v1' && ['ready', 'unavailable'].includes(value.videoSummary.status as string) && typeof value.videoSummary.captionHash === 'string' && /^[a-f0-9]{64}$/.test(value.videoSummary.captionHash) && ['captions', 'publisher-chapters', 'none'].includes(value.videoSummary.timingBasis as string) ? { ruleVersion: 'takeaways-v1' as const, status: value.videoSummary.status as 'ready' | 'unavailable', captionHash: value.videoSummary.captionHash, timingBasis: value.videoSummary.timingBasis as 'captions' | 'publisher-chapters' | 'none' } : undefined;
+  const invalidHighlights = Array.isArray(value.videoHighlights) && (value.videoHighlights.length > 30 || value.videoHighlights.some(point => !object(point) || typeof point.text !== 'string' || !point.text.trim() || point.text.length > 2000 || ('startSeconds' in point && !nonnegativeSeconds(point.startSeconds))));
+  const videoSummary = !invalidHighlights && object(value.videoSummary) && value.videoSummary.ruleVersion === 'takeaways-v1' && ['ready', 'unavailable'].includes(value.videoSummary.status as string) && typeof value.videoSummary.captionHash === 'string' && /^[a-f0-9]{64}$/.test(value.videoSummary.captionHash) && ['captions', 'publisher-chapters', 'none'].includes(value.videoSummary.timingBasis as string) ? { ruleVersion: 'takeaways-v1' as const, status: value.videoSummary.status as 'ready' | 'unavailable', captionHash: value.videoSummary.captionHash, timingBasis: value.videoSummary.timingBasis as 'captions' | 'publisher-chapters' | 'none' } : undefined;
   if (Array.isArray(value.videoKeywords) && value.videoKeywords.length > 500) return null;
   if ((Array.isArray(value.topics) && value.topics.length > 1000) || (Array.isArray(value.brands) && value.brands.length > 1000)) return null;
   const videoKeywords = Array.isArray(value.videoKeywords) ? value.videoKeywords.filter(object).filter(keyword => typeof keyword.label === 'string' && keyword.label.trim()).map(keyword => {
@@ -243,7 +250,7 @@ export function sanitizeSourceUpdate(value: unknown): SourceUpdate | null {
     for (const range of ranges) { const last = merged.at(-1); if (last && range.startSeconds <= last.endSeconds) last.endSeconds = Math.max(last.endSeconds, range.endSeconds); else merged.push({ ...range }); }
     return { label: (keyword.label as string).trim().slice(0, 100), ranges: merged, ...(merged.length ? { seconds: merged.reduce((total, range) => total + range.endSeconds - range.startSeconds, 0) } : {}) };
   }) : undefined;
-  return { id: value.id.slice(0, 250), sourceId: value.sourceId.slice(0, 200), title: typeof value.title === 'string' ? value.title.slice(0, 1000) : 'Untitled update', summary: typeof value.summary === 'string' ? value.summary.slice(0, 10000) : '', url: value.url.slice(0, 2000), publishedAt: value.publishedAt ? new Date(value.publishedAt).toISOString() : '', format: ['video', 'article', 'podcast', 'post'].includes(value.format as string) ? value.format as SourceUpdate['format'] : 'article', contributorIds: stringList(value.contributorIds, 30), topics: stringList(value.topics, 1000), brands: stringList(value.brands, 1000), sponsors: stringList(value.sponsors, 30), insights: stringList(value.insights, 30), references: Array.isArray(value.references) ? value.references.filter(object).filter(reference => typeof reference.url === 'string' && isPublicWebUrl(reference.url)).slice(0, 30).map(reference => ({ title: typeof reference.title === 'string' ? reference.title.slice(0, 500) : 'Reference', url: reference.url as string })) : [], isSample: value.isSample === true, ...(postContext ? { postContext } : {}), ...(media.length ? { media } : {}), ...(typeof value.coverage === 'string' ? { coverage: value.coverage.slice(0, 2000) } : {}), ...(typeof value.content === 'string' ? { content: value.content.slice(0, 100000) } : {}), ...(['feed_text', 'transcript', 'metadata_only'].includes(value.contentKind as string) ? { contentKind: value.contentKind as SourceUpdate['contentKind'] } : {}), ...(typeof value.duration === 'string' ? { duration: value.duration.slice(0, 100) } : {}), ...(typeof value.image === 'string' && isPublicWebUrl(value.image) ? { image: value.image.slice(0, 2000) } : {}), ...(typeof value.isShort === 'boolean' ? { isShort: value.isShort } : {}), ...(transcriptSegments ? { transcriptSegments } : {}), ...(videoHighlights ? { videoHighlights } : {}), ...(videoSummary ? { videoSummary } : {}), ...(videoKeywords ? { videoKeywords } : {}) };
+  return { id: value.id.slice(0, 250), sourceId: value.sourceId.slice(0, 200), title: typeof value.title === 'string' ? value.title.slice(0, 1000) : 'Untitled update', summary: typeof value.summary === 'string' ? value.summary.slice(0, 10000) : '', url: value.url.slice(0, 2000), publishedAt: value.publishedAt ? new Date(value.publishedAt).toISOString() : '', format: ['video', 'article', 'podcast', 'post'].includes(value.format as string) ? value.format as SourceUpdate['format'] : 'article', contributorIds: stringList(value.contributorIds, 30), topics: stringList(value.topics, 1000), brands: stringList(value.brands, 1000), sponsors: stringList(value.sponsors, 30), insights: stringList(value.insights, 30), references: Array.isArray(value.references) ? value.references.filter(object).filter(reference => typeof reference.url === 'string' && isPublicWebUrl(reference.url)).slice(0, 30).map(reference => ({ title: typeof reference.title === 'string' ? reference.title.slice(0, 500) : 'Reference', url: reference.url as string })) : [], isSample: value.isSample === true, ...(postContext ? { postContext } : {}), ...(media.length ? { media } : {}), ...(typeof value.coverage === 'string' ? { coverage: value.coverage.slice(0, 2000) } : {}), ...(typeof value.content === 'string' ? { content: value.content } : {}), ...(['feed_text', 'transcript', 'metadata_only'].includes(value.contentKind as string) ? { contentKind: value.contentKind as SourceUpdate['contentKind'] } : {}), ...(typeof value.duration === 'string' ? { duration: value.duration.slice(0, 100) } : {}), ...(typeof value.image === 'string' && isPublicWebUrl(value.image) ? { image: value.image.slice(0, 2000) } : {}), ...(typeof value.isShort === 'boolean' ? { isShort: value.isShort } : {}), ...(sanitizeVideoFormat(value.videoFormat) ? { videoFormat: sanitizeVideoFormat(value.videoFormat) } : {}), ...(transcriptSegments ? { transcriptSegments } : {}), ...(videoHighlights ? { videoHighlights } : {}), ...(videoSummary ? { videoSummary } : {}), ...(videoKeywords ? { videoKeywords } : {}), ...(value.keywordRuleVersion === 'entities-v2' ? { keywordRuleVersion: 'entities-v2' as const } : {}), ...(processing ? { processing } : {}), ...(value.keywordContentHash !== undefined ? { keywordContentHash: typeof value.keywordContentHash === 'string' && /^[a-f0-9]{64}$/.test(value.keywordContentHash) ? value.keywordContentHash : null } : {}) };
 }
 
 /** Private archive content is already stored separately; do not shorten transcripts to fit workspace JSON. */
@@ -286,7 +293,7 @@ export function mergeCollection(state: WorkspaceState, result: CollectionResult)
     const previousId = existingByUrl.get(key);
     const previous = updates.get(update.id) ?? (previousId ? updates.get(previousId) : undefined);
     if (previousId && previousId !== update.id) updates.delete(previousId);
-    updates.set(update.id, { ...update, ...(update.isShort === undefined && typeof previous?.isShort === 'boolean' ? { isShort: previous.isShort } : {}) }); existingByUrl.set(key, update.id);
+    updates.set(update.id, { ...update, ...(update.format === 'video' ? mergeVideoFormatFields(previous ?? update, update) : {}) }); existingByUrl.set(key, update.id);
   }
   const importedUpdates = [...updates.values()].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   if (importedUpdates.length > 3000) throw new Error('This early version can store 3,000 collected updates. Export or reset the workspace before collecting more; nothing was silently removed.');

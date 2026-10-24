@@ -6,6 +6,12 @@ Updated: 24 October 2026. Individual answers below are accepted directions. They
 
 Founder explicitly said not to depend on YouTube, X or Instagram granting the required parsing capacity, and to plan around Apify, Bright Data, RapidAPI and comparable third parties. They expect multiple specialized Actors behaving like microservices, triggered only when needed on schedules or from data/errors. Record third-party collection and our event/schedule/error controller as the accepted planning direction for the 50-reader/78-source baseline; no exact Actor list, supplier purchase, budget or live rollout is approved by this instruction. Official APIs/native feeds may be optional optimizations, not architectural prerequisites. [Detailed roles, triggers, spending controls and rollout proposal](tech/PROVIDER-COLLECTION-PLAN.md).
 
+## D35 — implement content repair points 1–4, 24 October 2026
+
+Founder: “ok plan and implement 1-4 like you said”. This refers to the immediately preceding answer: dependable No Shorts classification, automatic per-video takeaways and independent keywords, repair existing usable content/pending captions, and clear processing states. It adopts the explicit unknown-format waiting/inspection trade-off and authorizes the scoped engineering, guarded archive repair and review publication. The answer's point 5 (genuine daily cross-source briefing) is not included. Existing D25/D28 content-quality rules, private admin review and preservation requirements remain. No broader SPEC approval, new subscription, supplier/hosting billing change, catalogue rollout or uncapped automation follows. [Scope and live preflight](tech/CONTENT-REPAIR.md).
+
+Implementation outcome: independent analysis jobs and keyword provenance, honest states, conservative unknown-format inspection and duplicate-add preference preservation are implemented and reviewed. Guarded real repairs classify all 207 previously missing formats and preserve all 485 archive rows/workspace. Production AI remains disabled pending the existing key/access/quality checks. Proposed separate model caps (US$0.10/day, US$1 cumulative, US$0.01/call) are inactive draft ceilings, not spending authorization. No broader daily briefing, supplier subscription or billing upgrade is added. [Exact verification](tech/CONTENT-REPAIR.md).
+
 ## Accepted founder decisions
 
 | ID | Decision | Evidence |

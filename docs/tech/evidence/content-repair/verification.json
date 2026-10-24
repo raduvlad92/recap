@@ -1,0 +1,61 @@
+{
+  "at": "2026-10-24T00:56:05.523Z",
+  "phase": "classification-and-citation-applied",
+  "beforeRows": 485,
+  "afterRows": 485,
+  "repairedClassificationRows": 288,
+  "newlyClassified": {
+    "short": 42,
+    "regular": 165
+  },
+  "legacyRegularProvenanceUpgrades": 81,
+  "realCueCorrections": 1,
+  "videoFormats": {
+    "regular": 246,
+    "short": 80,
+    "unknown": 65
+  },
+  "validatedRecapStates": {
+    "pending": 141,
+    "unavailable": 115,
+    "ready": 132,
+    "empty": 3
+  },
+  "preservation": {
+    "everyOriginalRow": true,
+    "allOriginalTextMediaContextAndAnnotationsOutsideOneCue": true,
+    "completeWorkspace": true,
+    "savedPreferences": true,
+    "providerJobs": true
+  },
+  "tests": {
+    "local": 1277,
+    "files": 45,
+    "typecheck": true,
+    "build": true,
+    "catalogue": true,
+    "actualProjectRollback": true,
+    "staleGuardRejected": true,
+    "classificationPostgresClientComparisons": 121104,
+    "finalReaderReview": "focused pass",
+    "finalAnalysisSecurityReview": "focused pass"
+  },
+  "spending": {
+    "newSupplierRuns": 0,
+    "newModelCalls": 0,
+    "newSupplierRunFees": 0,
+    "modelRuntimeEnabled": false,
+    "infrastructure": "unmeasured"
+  },
+  "analysisPreparation": {
+    "videoRecords": 161,
+    "jobs": 322,
+    "blockedMissingCredentials": 264,
+    "existingSummaryJobsSkipped": 58,
+    "modelCalls": 0,
+    "enabledPolicies": 0,
+    "enabledBudgets": 0,
+    "privateTablesProtected": true
+  },
+  "classificationRepeatPatches": 0
+}

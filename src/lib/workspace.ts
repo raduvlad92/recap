@@ -5,6 +5,7 @@ import { createDefaultWorkspace, isFictionalUpdate, removeFictionalWorkspaceCont
 import { applyFollowToggle, followReasons as reasonsFor, mergeCollection, mergeWorkspaceUpdates, normalizeSourceUrl, resolveFollowedSources, removeSourceCollection, saveSourceCollection, sanitizeSettings, sanitizeArchivedUpdate, sanitizeWorkspace, scopesFor, sourceCounts as countSources, sourceIdForUrl, unique, withSourceShortsPreference } from './domain';
 import type { CollectionResult, ReaderSettings, Source, SourceUpdate, WorkspaceState } from './types';
 import { fetchSourceMetadata, withSourceMetadata } from './source-images';
+import { mergeProcessingRefresh, processingChangePage, processingPollSince } from './processing-refresh';
 
 export type SaveStatus = 'loading' | 'local' | 'saving' | 'saved' | 'error' | 'conflict';
 interface Cache { state: WorkspaceState; updatedAt: string | null; dirty: boolean }
@@ -114,6 +115,7 @@ export function useWorkspace() {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('loading');
   const [error, setError] = useState<string | null>(null);
   const [loadRequest, setLoadRequest] = useState(0);
+  const [archiveRefreshEpoch, setArchiveRefreshEpoch] = useState(0);
   const [saveRequest, setSaveRequest] = useState(0);
   const generation = useRef(0);
   const dirty = useRef(false);
@@ -328,7 +330,7 @@ export function useWorkspace() {
     return saveSourceCollection(previous, { id: existing?.id ?? `collection-${crypto.randomUUID()}`, name, sourceIds, createdAt: existing?.createdAt ?? new Date().toISOString() }, previous.customSources);
   }), [mutate]);
   const deleteSourceCollection = useCallback((id: string) => mutate(previous => removeSourceCollection(previous, id)), [mutate]);
-  const addSource = useCallback((input: string): { source?: Source; error?: string } => {
+  const addSource = useCallback((input: string): { source?: Source; added?: boolean; error?: string } => {
     try {
       if (!viewRef.current.loaded || viewRef.current.owner !== ownerRef.current) throw new Error('Wait for your workspace to finish loading.');
       const normalized = normalizeSourceUrl(input);
@@ -339,7 +341,7 @@ export function useWorkspace() {
           const next = previous.followedSourceIds.includes(existing.id) ? previous : applyFollowToggle(previous, { kind: 'source', id: existing.id }, previous.customCreators ?? [], currentSources);
           return { ...next, sourceCollections: next.sourceCollections?.map(collection => collection.id === next.activeCollectionId ? { ...collection, sourceIds: unique([...collection.sourceIds, existing.id]) } : collection) };
         });
-        return ok ? { source: existing } : { error: 'This source could not be added to your current selection.' };
+        return ok ? { source: existing, added: false } : { error: 'This source could not be added to your current selection.' };
       }
       let id = sourceIdForUrl(normalized.url);
       for (let suffix = 1; currentSources.some(source => source.id === id); suffix++) id = `${sourceIdForUrl(normalized.url)}-${suffix}`;
@@ -349,7 +351,7 @@ export function useWorkspace() {
         const next = applyFollowToggle({ ...previous, customSources }, { kind: 'source', id }, previous.customCreators ?? [], customSources);
         return { ...next, sourceCollections: next.sourceCollections?.map(collection => collection.id === next.activeCollectionId ? { ...collection, sourceIds: unique([...collection.sourceIds, id]) } : collection) };
       });
-      return ok ? { source } : { error: 'The source was not added. Check the workspace message and your source allowance.' };
+      return ok ? { source, added: true } : { error: 'The source was not added. Check the workspace message and your source allowance.' };
     } catch (addError) { const message = messageFor(addError); setError(message); return { error: message }; }
   }, [mutate]);
   const importCollection = useCallback((result: CollectionResult) => mutate(previous => {
@@ -386,6 +388,7 @@ export function useWorkspace() {
       install({ owner, state, loaded: true });
       if (next) writeCache(owner, { state, updatedAt, dirty: false });
       else { try { localStorage.removeItem(cacheKey(owner)); } catch { /* Cloud deletion succeeded. */ } }
+      setArchiveRefreshEpoch(value => value + 1);
       setSaveStatus('saved'); setError(null); return true;
     } catch (clearError) { if (generation.current === current) { setSaveStatus('error'); setError(messageFor(clearError)); } return false; }
     finally { if (generation.current === current) { saving.current = false; deleting.current = false; } }
@@ -424,6 +427,58 @@ export function useWorkspace() {
     } finally { if (archiveRetryAbort.current === abort) archiveRetryAbort.current = null; }
   }, [client, owner]);
   useEffect(() => () => { archiveRetryAbort.current?.abort(); }, []);
+
+  // Poll a small private job projection while visible, then read only changed
+  // archive IDs through the reader's own RLS. Background analysis never edits a
+  // local workspace draft, and account/reset changes invalidate in-flight work.
+  useEffect(() => {
+    if (!isLoaded || !client || owner === 'guest') return;
+    const current = generation.current;
+    const abort = new AbortController();
+    let busy = false;
+    let since = '1970-01-01T00:00:00.000Z';
+    let completedPolls = 0;
+    const stillCurrent = () => !abort.signal.aborted && generation.current === current && ownerRef.current === owner && !deleting.current;
+    const refresh = async () => {
+      if (busy || archiveRetryAbort.current || document.visibilityState === 'hidden' || !stillCurrent()) return;
+      busy = true;
+      const readRequest = ++archiveRequest.current;
+      const readIsCurrent = () => stillCurrent() && archiveRequest.current === readRequest;
+      try {
+        const token = await authRef.current.getToken();
+        if (!token || !readIsCurrent()) return;
+        let until: string | undefined;
+        let cursor: { updatedAt: string; id: string } | null = null;
+        for (let pageNumber = 0; pageNumber < 100 && readIsCurrent(); pageNumber++) {
+          const query = new URLSearchParams({ since });
+          if (until) query.set('until', until);
+          if (cursor) { query.set('afterUpdatedAt', cursor.updatedAt); query.set('afterId', cursor.id); }
+          const response = await fetch('/api/content-analysis-status?' + query, { headers: { authorization: 'Bearer ' + token }, signal: AbortSignal.any([abort.signal, AbortSignal.timeout(15_000)]) });
+          if (!response.ok) throw new Error('Processing changes are temporarily unavailable.');
+          const page = processingChangePage(await response.json());
+          if (!readIsCurrent()) return;
+          if (until && until !== page.windowEnd) throw new Error('Processing status window changed.');
+          until = page.windowEnd;
+          if (page.updateIds.length) {
+            const result = await client.from('reader_source_updates').select('record').eq('user_id', owner).in('id', page.updateIds).abortSignal(AbortSignal.any([abort.signal, AbortSignal.timeout(15_000)]));
+            if (result.error) throw new Error('Processed updates could not be refreshed.');
+            if (!readIsCurrent()) return;
+            setArchive(previous => previous.owner !== owner || !readIsCurrent() ? previous : { ...previous,
+              updates: mergeProcessingRefresh(previous.updates, result.data.map(row => row.record), page.updateIds, viewRef.current.state.customSources.map(source => source.id)) });
+          }
+          cursor = page.nextCursor;
+          if (!cursor) { since = processingPollSince(until, ++completedPolls); break; }
+          if (pageNumber === 99) throw new Error('Processing status pagination limit reached.');
+        }
+      } catch { /* Keep existing content and retry; no workspace write or model call. */ }
+      finally { busy = false; }
+    };
+    void refresh();
+    const timer = window.setInterval(() => { void refresh(); }, 60_000);
+    const onVisible = () => { if (document.visibilityState !== 'hidden') void refresh(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => { abort.abort(); window.clearInterval(timer); document.removeEventListener('visibilitychange', onVisible); };
+  }, [client, isLoaded, owner, loadRequest, archiveRefreshEpoch]);
 
   // A changed tab is deliberately surfaced rather than merged without a user's knowledge.
   useEffect(() => {

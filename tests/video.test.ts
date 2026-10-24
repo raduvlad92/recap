@@ -36,87 +36,35 @@ describe('actual subtitle cues and full stored transcripts', () => {
   });
 });
 
-describe('extractive video highlights', () => {
-  it('selects up to six points spanning the whole transcript, including its final section', () => {
-    const subjects = ['processor throughput', 'camera focus', 'battery charging', 'display contrast', 'keyboard repair', 'network stability'];
-    const transcriptSegments = subjects.flatMap((subject, section) => Array.from({ length: 12 }, (_, index) => ({ startSeconds: section * 600 + index * 20, text: `The ${subject} test ${index} found a measurable improvement under controlled conditions.` })));
-    const points = getVideoHighlights(update({ transcriptSegments }));
-    expect(points).toHaveLength(6);
-    subjects.forEach(subject => expect(points.some(point => point.text.includes(subject))).toBe(true));
-    expect(points.at(-1)?.startSeconds).toBeGreaterThanOrEqual(3000);
-    expect(points.map(point => point.startSeconds)).toEqual(points.map(point => point.startSeconds).sort((a, b) => a! - b!));
-    points.forEach(point => expect(transcriptSegments.some(segment => segment.text === point.text && segment.startSeconds === point.startSeconds)).toBe(true));
+describe('saved video takeaways', () => {
+  it('never turns plain or timed captions into synthesized-looking fallback bullets', () => {
+    const content = 'The hardware test found lower power consumption under the same workload. '.repeat(150);
+    const transcriptSegments = [{ startSeconds: 0, text: 'The opening test found lower power use.' }, { startSeconds: 600, text: 'The ending remains available in the transcript.' }];
+    expect(getVideoHighlights(update({ contentKind: 'transcript', content, transcriptSegments }))).toEqual([]);
+    expect(getVideoHighlights(update({ transcriptSegments }))).toEqual([]);
+    expect(getVideoTranscript(update({ contentKind: 'transcript', content }))).toBe(content.trim());
   });
-  it('gives an approximately 800-character Short two points spanning its beginning and ending', () => {
-    const sentences = [
-      'The navigation redesign puts destination searches directly above the map and keeps route changes visible.',
-      'Drivers can compare alternate routes before departure without leaving the destination overview screen.',
-      'The interface retains saved locations so frequent trips do not require entering the same address again.',
-      'Road closures now appear beside the selected route with the affected junction named in the warning.',
-      'Offline downloads include street names and turn instructions for areas without a cellular connection.',
-      'Downloaded regions can be updated individually when the driver next connects to a wireless network.',
-      'Battery consumption fell during the controlled offline test because the cellular modem stayed idle.',
-      'The final test found that downloaded directions remained usable after the phone lost mobile reception.',
-    ];
-    const transcriptSegments = sentences.map((text, index) => ({ text, startSeconds: index * 6 }));
-    const content = sentences.join(' ');
-    expect(content.length).toBeGreaterThan(700); expect(content.length).toBeLessThan(1400);
-    const points = getVideoHighlights(update({ contentKind: 'transcript', content, transcriptSegments, duration: '0:48', isShort: true }));
-    expect(points).toHaveLength(2);
-    expect(points[0].startSeconds).toBeLessThan(24);
-    expect(points[1].startSeconds).toBeGreaterThanOrEqual(24);
-    points.forEach(point => expect(transcriptSegments).toContainEqual({ text: point.text, startSeconds: point.startSeconds }));
+  it('does not summarize a title, description, insights or short saved summary', () => {
+    expect(getVideoHighlights(update({ insights: ['A source-provided claim.'] }))).toEqual([]);
+    expect(getVideoHighlights(update({ contentKind: 'metadata_only', content: 'Detailed publisher description.' }))).toEqual([]);
+    expect(getVideoHighlights(update({ contentKind: 'feed_text', content: 'A publisher description is not the spoken video.' }))).toEqual([]);
   });
-  it('uses one salient point for brief captions and retains six for substantial content', () => {
-    const brief = 'The hardware test found lower power consumption under the same controlled workload. The result does not establish better battery life under every condition.';
-    expect(getVideoHighlights(update({ contentKind: 'transcript', content: brief }))).toHaveLength(1);
-    const subjects = ['processor throughput silicon architecture', 'camera focus optical stabilisation', 'battery charging electrical efficiency', 'display contrast colour accuracy', 'keyboard repair replacement switches', 'network stability ethernet latency'];
-    const transcriptSegments = subjects.flatMap((subject, section) => Array.from({ length: 10 }, (_, index) => ({ startSeconds: section * 600 + index * 20, text: `The ${subject} test ${index} found a measurable improvement under controlled conditions.` })));
-    const points = getVideoHighlights(update({ transcriptSegments, duration: '1:00:00' }));
-    expect(points).toHaveLength(6);
-    expect(points[0].startSeconds).toBeLessThan(600);
-    expect(points.at(-1)?.startSeconds).toBeGreaterThanOrEqual(3000);
-    expect(points.every(point => transcriptSegments.some(segment => segment.text === point.text && segment.startSeconds === point.startSeconds))).toBe(true);
+  it('keeps saved takeaways and actual zero/late timestamps without estimating untimed ones', () => {
+    const videoHighlights = [{ text: 'The controlled test found lower power consumption.', startSeconds: 0 }, { text: 'Battery life under other workloads remains unverified.' }, { text: 'The final repair result confirms parts remain available.', startSeconds: 7384 }];
+    expect(getVideoHighlights(update({ videoHighlights, duration: '4:00:00' }))).toEqual(videoHighlights);
   });
-  it('does not summarize a title, description or short saved summary as full video content', () => {
-    expect(getVideoHighlights(update())).toEqual([]);
-    expect(getVideoHighlights(update({ contentKind: 'metadata_only', content: 'The product launch description contains many detailed claims.' }))).toEqual([]);
-    expect(getVideoHighlights(update({ contentKind: 'feed_text', content: 'A long publisher description with enough words for extraction.' }))).toEqual([]);
+  it('does not replace a reviewed empty result or unavailable annotation with source excerpts', () => {
+    const content = 'Promotional source text with enough words to resemble a useful statement. '.repeat(100);
+    for (const status of ['ready', 'unavailable'] as const) {
+      expect(getVideoHighlights(update({ contentKind: 'transcript', content, videoHighlights: [], videoSummary: { ruleVersion: 'takeaways-v1', status, captionHash: 'saved-hash', timingBasis: 'none' } }))).toEqual([]);
+    }
   });
-  it('keeps the complete negative sentence and never invents times for plain transcripts', () => {
-    const content = 'The replacement battery is not compatible with the earlier model despite using the same connector.';
-    const points = getVideoHighlights(update({ contentKind: 'transcript', content, duration: '130 min' }));
-    expect(points.some(point => point.text === 'The replacement battery is not compatible with the earlier model despite using the same connector.')).toBe(true);
-    expect(points.every(point => point.startSeconds === undefined)).toBe(true);
+  it('deduplicates saved points and drops invalid timing without changing their claims', () => {
+    const text = 'The replacement battery is not compatible with the earlier model.';
+    expect(getVideoHighlights(update({ videoHighlights: [{ text, startSeconds: -1 }, { text }, { text: 'A separate repair result remains unverified.', startSeconds: Infinity }] }))).toEqual([{ text }, { text: 'A separate repair result remains unverified.' }]);
   });
-  it('maps a sentence spanning multiple subtitle cues to the actual starting cue', () => {
-    const points = getVideoHighlights(update({ transcriptSegments: [{ startSeconds: 120, text: 'The replacement battery is not compatible' }, { startSeconds: 124, text: 'with the earlier model despite using the same connector.' }] }));
-    expect(points).toEqual([{ text: 'The replacement battery is not compatible with the earlier model despite using the same connector.', startSeconds: 120 }]);
-  });
-  it('retains the rest of the transcript when timed metadata only covers its introduction', () => {
-    const content = 'The introduction explains the controlled processor performance tests. The final repair result confirms replacement parts are available from several independent suppliers.';
-    const points = getVideoHighlights(update({ contentKind: 'transcript', content, transcriptSegments: [{ startSeconds: 0, text: 'The introduction explains the controlled processor performance tests.' }] }));
-    expect(points.some(point => point.text.includes('final repair result'))).toBe(true);
-    expect(points.every(point => point.startSeconds === undefined)).toBe(true);
-  });
-  it('does not repeat duplicate rolling captions or highlight greetings / sponsor calls', () => {
-    const useful = 'The battery test found a substantial improvement in standby performance under controlled conditions.';
-    const content = `Welcome back to our channel and thanks for joining the show. This video is brought to you by our sponsor and a special discount offer. ${useful} ${useful} ${useful} Do not forget to like and subscribe to our channel.`;
-    const points = getVideoHighlights(update({ contentKind: 'transcript', content }));
-    expect(points).toHaveLength(1);
-    expect(points[0].text).toBe(useful);
-  });
-  it('extracts from punctuation-free captions with explicit excerpt ellipses', () => {
-    const sections = ['processor throughput silicon architecture cache bandwidth', 'camera focus optical stabilisation photographic dynamic range', 'battery charging temperature electrical efficiency storage', 'display contrast brightness colour accuracy backlight uniformity', 'keyboard repair switches keycaps replacement layout', 'network stability ethernet wireless latency connection throughput'];
-    const content = sections.map((section, i) => Array.from({ length: 12 }, () => `experiment section ${i} measured ${section}`).join(' ')).join(' ');
-    const points = getVideoHighlights(update({ contentKind: 'transcript', content }));
-    expect(points.length).toBeGreaterThan(0); expect(points.length).toBeLessThanOrEqual(6);
-    expect(points.some(point => point.text.includes('…'))).toBe(true);
-    expect(points.every(point => point.text.length <= 360)).toBe(true);
-    expect(points.at(-1)?.text).toContain('network stability');
-  });
-  it('uses supplied publisher chapter points without title synthesis, and spreads long lists', () => {
-    const videoHighlights = Array.from({ length: 12 }, (_, index) => ({ text: `Publisher chapter ${index}`, startSeconds: index * 300 }));
+  it('retains the existing six-point limit and the ending of a longer saved annotation', () => {
+    const videoHighlights = Array.from({ length: 12 }, (_, index) => ({ text: `Saved finding ${index}`, startSeconds: index * 300 }));
     const points = getVideoHighlights(update({ videoHighlights }));
     expect(points).toHaveLength(6); expect(points[0]).toEqual(videoHighlights[0]); expect(points.at(-1)).toEqual(videoHighlights.at(-1));
   });

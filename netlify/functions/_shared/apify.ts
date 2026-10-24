@@ -1,3 +1,4 @@
+import { classifyProviderVideoFormat, videoFormatFields } from '../../../src/lib/video-format';
 import { createHash } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
 import type { CollectionResult, Source, SourceUpdate } from '../../../src/lib/types';
@@ -138,7 +139,7 @@ export function normalizeYouTubeItems(items: unknown, source: Source, maxItems =
         return link ? [{ title: plainText(ref.text, 160) || new URL(link).hostname, url: link }] : [];
       }),
       insights: [], ...(typeof row.duration === 'string' ? { duration: plainText(row.duration, 30) } : {}),
-      ...(typeof row.isShort === 'boolean' ? { isShort: row.isShort } : new URL(url).pathname.startsWith('/shorts/') ? { isShort: true } : {}),
+      ...(typeof row.isShort === 'boolean' ? { isShort: row.isShort } : typeof row.isShorts === 'boolean' ? { isShort: row.isShorts } : {}), ...videoFormatFields(classifyProviderVideoFormat(row, url)),
       ...(safeLink(row.thumbnailUrl, url) ? { image: safeLink(row.thumbnailUrl, url) } : {}), isSample: false,
       coverage: transcript ? 'Existing captions collected; visual content and transcript completeness not verified' + (transcript.length >= 200_000 ? '; source text clipped at 200,000 characters' : '') : 'Metadata only: video description; captions unavailable; video content not analyzed',
     });

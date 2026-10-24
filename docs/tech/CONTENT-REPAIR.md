@@ -1,0 +1,49 @@
+# D35 — automatic per-video processing and honest states
+
+Authorized **24 October 2026**: founder, “ok plan and implement 1-4 like you said”. The reference is the preceding five-point answer: (1) dependable Shorts exclusion, (2) automatic per-video recaps and independently checked keywords, (3) repair eligible stored content and pending captions, (4) clear processing states. **Daily cross-source briefing generation, item 5, is outside this increment.** This supersedes the advice-only status for those four repairs and authorizes scoped implementation, guarded data repair and review deployment. Existing supplier spending limits remain; no supplier subscription, billing-plan change, catalogue-wide collection or paid launch is authorized.
+
+## Delivery plan
+
+| Step | Work | Completion evidence | State |
+| --- | --- | --- | --- |
+| CR01 | Tri-state Shorts evidence across all imports, persistence and archive enrichment; preserve preferences on duplicate-add | Known Shorts excluded; unknown videos inspectable outside No Shorts feed; normal videos restored after classification; reload/library/history preserved | Implemented; final integration below |
+| CR02 | Durable independent recap/keyword tasks when usable content arrives, with source-hash/rule-version identity, retry/deletion fences and private review | Actual source-grounded output, blind second keyword inventory, prior decisions preserved, concurrent content changes/duplicates cannot overwrite or double-charge | Implemented; final integration below |
+| CR03 | Guarded repair using stored supplier evidence/captions; recover pending transcripts within existing supplier controls | Exact before/after original/media/workspace preservation; idempotent repeat; actual run/result/cost reconciliation; no guessed full-content coverage | Implemented; final integration below |
+| CR04 | Clear captions, format, recap and keyword states in current D34 cards | Signed-in desktop/phone inspection; raw transcripts distinguishable from generated takeaways; review/failure/budget states and unknown-format inspection usable | Implemented; final integration below |
+| CR05 | Meaningful tests, database checks, release and hosted proof | Local checks, real DB protection, push, CI, exact deploy and actual signed-in flow recorded separately | Pending |
+
+Keep source excerpts available as source material. Do not present deterministic sentence selection as a completed synthesized recap. Unknown format can temporarily withhold regular videos; a pending count and inspection control must explain the delay. Preserve archive identities, original text, media/context, captions, saved/read-later IDs, follows, preferences and prior admin decisions. Annotation-only writes must accommodate ongoing collection and reject stale/deleted originals.
+
+Keywords continue to use [entities-v2](../design/KEYWORD-EXTRACTION-RULE.md): full saved usable text, separate blind inventories, exact grounded evidence, casual/outro/sponsor mentions included, uncertainty in private admin review. Takeaways continue to use [takeaways-v1](../design/VIDEO-SUMMARY-RULE.md). Processing every saved character does not establish that a supplier retrieved the entire original; retain partial/unverified coverage notices. Genuine promotional-only content may produce no takeaways.
+
+## Access and operating controls
+
+The current Netlify account reports **AI Gateway unavailable on its existing plan**. No project/team model credentials were configured at preflight. Do not upgrade the plan. An asynchronous owner action asks for an existing OpenAI key to be configured directly in production Functions, or the name of another existing provider; no key is requested in chat. Adapter/queue/UI work continues independently. New paid model calls require verified existing access and durable bounded reservations; no output is invented when credentials are missing.
+
+Model selection is configurable and constrained to a reviewed server configuration. Current official documentation identifies `gpt-5.6-luna` as a cost-sensitive structured-output candidate at US$0.20 input / US$1.20 output per million short-context tokens. Selection and observed quality remain separate; verify actual access and grounded sample quality before activating recurring work. Never silently choose a costlier fallback. [Official model specification](https://developers.openai.com/api/docs/models/gpt-5.6-luna), [structured outputs](https://developers.openai.com/api/docs/guides/structured-outputs), [Netlify availability](https://docs.netlify.com/build/ai-gateway/overview/).
+
+Supplier controls remain US$0.10/day, US$1 cumulative and US$0.005 exact-video fallback within the existing shared US$45 ceiling. AI uses a **separate ledger and hard limits**, configured only after access and conservative token-cost bounds are verified. Retain unknown-charge holds after ambiguous provider/model calls; never repeat a launch merely to remove a pending badge. Initial AI evaluation and ongoing operation are recorded separately from supplier fees. No daily recap/reminder schedule is added.
+
+## Starting evidence
+
+Fresh readback at **24 October 00:13 UTC**: 485 archive records / 391 videos, 276 transcript-bearing and 115 metadata-only video records; 207 videos lack Shorts flags. All 21 YouTube preferences remain off. The caption queue has 106 entries; 109 hourly provider-job records include three ambiguous and three running jobs. These are actual dated observations while existing automation continues, not fixed expected totals for a later write. Security advisor preflight reported no issues. The earlier [audit](CONTENT-ANALYSIS-AUDIT.md) remains dated evidence, not the current backlog count.
+
+Implementation, data changes, run fees, release identifiers and hosted evidence will be appended as obtained. No completion is claimed by this planning entry.
+
+## Implemented and verified — 24 October
+
+The reader now displays saved synthesized takeaways only; deterministic caption sentences no longer masquerade as a finished recap. Captions, source coverage, format, recap and keywords have independent states. Full stored transcripts and originals remain accessible. Known Shorts are excluded when the channel preference is off. Unknown videos are kept in a separate collapsed section with an explicit count and inspection control; saved/read-later items remain accessible. Re-adding an existing channel preserves its saved Shorts preference.
+
+The private analysis pipeline has independent, durable summary and keyword jobs; source hashes/rule versions, deletion/follow fences, leases, retries, cached requests, separate blind full-saved-text keyword inventories, private uncertain-candidate review and durable financial holds. Summary and admin decisions cannot give unrelated old keywords a new content hash or reuse stale timing. Existing accepted decisions remain preserved. The production model gate is explicitly **false**: no model key is configured and no model requests have run.
+
+Review fixes cover actual PostgreSQL deadlock reproduction, daily-budget reset, disabled-runtime recovery, third expired leases, owner fairness, final admin status, untimed evidence, canonical keyword spelling, punctuation-aware keyword timing, malformed JSON, long transcripts and both reader refresh races. Polling overlaps recent changes and periodically reconciles all job changes because database update timestamps precede transaction commit. The focused final security and reader reviews found no remaining blocker in their respective scopes; model quality/actual costs remain unverified.
+
+**Actual project repair at 00:56 UTC:** both migrations applied; all 207 missing classifications repaired from inspected exact-video watch evidence (**42 Shorts / 165 regular**), plus 81 legacy regular records upgraded to checked provenance. Sixty-five legacy records could not receive fresh proof because the original returned a Google redirect/challenge; they remain unclassified and inspectable. No challenge was bypassed. One reviewed Apple Watch seek citation was corrected from 728 to the actual supporting caption cue at 729 seconds.
+
+Complete before/after comparison preserves all **485** original rows, original text/media/context and annotations outside that one cue, and the complete owner workspace, preferences and provider jobs. All 391 videos now resolve as **246 regular / 80 Shorts / 65 unknown**. Validated reviewed recaps remain **132 ready / three genuinely empty**. Repeat classification planning produced **zero patches**.
+
+**Verification:** 1,277 tests across 45 files, typecheck/build/catalogue, 121,104 actual local PostgreSQL/client classification comparisons, fresh security/reader reviews, actual-project schema and complete paused-flow rollbacks, stale-target rejection, applied migration readback and security advisor (“No issues found”). Synthetic Chrome checks cover Compact/Regular at 320px and Compact at 1280px, transcript access and unclassified expansion with no horizontal page overflow. [Sanitized actual readback](evidence/content-repair/verification.json), [synthetic visual evidence](evidence/content-repair/README.md).
+
+The full private exact-record SQL exceeded the management API request limit (HTTP 413). A reviewed compact transport computes PostgreSQL 17 JSONB SHA256 for every complete before/after record; it retains the same complete workspace/identity/timestamp checks, locks all affected rows before writing, and verifies every complete after hash in one transaction. Local full-versus-compact replay, actual-project rollback and stale rejection passed. Private exports, original captures and SQL stay outside Git. New supplier runs and paid model calls: **zero**; infrastructure totals remain unmeasured.
+
+Release IDs, hosted proof and paused-backfill readback follow below when obtained.

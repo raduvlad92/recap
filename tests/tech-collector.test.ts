@@ -58,7 +58,9 @@ describe('real-content normalization and coverage',()=>{
   const input=validateInput(raw(),now),source=input.sources[0];
   expect(normalizeItem(source,item({type:'shorts'}),input).update).toMatchObject({isShort:true,url:'https://www.youtube.com/watch?v=abcdef12345'});
   expect(normalizeItem(source,item({type:'video',url:'https://www.youtube.com/shorts/abcdef12345'}),input).update.isShort).toBe(true);
-  for(const type of ['video','stream'])expect(normalizeItem(source,item({type,duration:'00:30'}),input).update.isShort).toBe(false);
+  for(const type of ['video','stream'])expect(normalizeItem(source,item({type,duration:'00:30'}),input).update.videoFormat.kind).toBe('unknown');
+  expect(normalizeItem(source,item({type:'stream',isLiveContent:true}),input).update.isShort).toBe(false);
+  expect(normalizeItem(source,item({type:'video',isShort:true}),input).update.isShort).toBe(true);
   const unknown=normalizeItem(source,item({type:undefined,duration:'00:15'}),input).update;
   expect(unknown).not.toHaveProperty('isShort');expect(unknown.duration).toBe('00:15');
  });

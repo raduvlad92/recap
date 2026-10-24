@@ -119,6 +119,39 @@ describe('hourly provider authorization, ambiguity and recovery', () => {
  it('keeps terminal unknown costs null for later reconciliation', async () => { const t = setup({ pending: [pending({ observed_cost_usd: 0.004 })], status: 304 }); t.deps.pollApify.mockResolvedValue({ status: 'completed', result: { source, updates: [], notice: '' }, telemetry: { ledgerId: claim.checkId, providerRunId: 'providerRun123', cost: null as unknown as number } }); await t.run(); expect(t.patch()).toMatchObject({ cost_status: 'unknown', observed_cost_usd: null }); expect(t.store.providerPatch).toHaveBeenCalledWith('private-job', expect.objectContaining({ actual_cost_usd: null })); });
 });
 
+describe('durable caption-independent classification recovery', () => {
+ it('saves watch-page classification and a per-item reason even without captions through RSS 304', async () => {
+  const t = setup({ status: 304, seen: ['youtube:' + videoId], state: { pending_captions: [{ record: update, attempts: 0, nextAttemptAt: new Date(0).toISOString() }] } });
+  t.deps.captions.mockResolvedValue({ videoFormat: { kind: 'regular', basis: 'watch_page' }, coverage: 'Page metadata only', captionStatus: 'unavailable', reason: 'caption_tracks_not_supplied' });
+  await t.run();
+  expect(t.updates()[0]).toMatchObject({ contentKind: 'metadata_only', isShort: false, videoFormat: { kind: 'regular', basis: 'watch_page' } });
+  expect(t.patch().pending_captions).toMatchObject([{ record: { videoFormat: { kind: 'regular' } }, status: 'unavailable', reason: 'caption_tracks_not_supplied', attempts: 1 }]);
+  expect(t.deps.startApify).not.toHaveBeenCalled();
+ });
+ it('persists transport failure separately from unavailability and retains the retry/backoff', async () => {
+  const t = setup(); t.deps.captions.mockRejectedValue(new CollectionError(413, 'response_too_large', 'Private upstream detail'));
+  await t.run();
+  expect(t.patch().pending_captions).toMatchObject([{ status: 'blocked', reason: 'response_too_large', attempts: 1 }]);
+  expect(JSON.stringify(t.patch())).not.toContain('Private upstream detail');
+ });
+ it('merges provider format evidence from a metadata-only result without claiming recovered captions', async () => {
+  const t = setup({ pending: [pending()], status: 304, state: { pending_captions: [{ record: { ...update, isShort: true }, attempts: 1, nextAttemptAt: '2099-01-01T00:00:00Z' }] } });
+  t.deps.pollApify.mockResolvedValue({ status: 'completed', result: { source, updates: [{ ...update, isShort: false, videoFormat: { kind: 'regular', basis: 'provider' } }], notice: '' }, telemetry: { ledgerId: claim.checkId, providerRunId: 'providerRun123', cost: 0.004 } } as never);
+  await t.run();
+  expect(t.updates()[0]).toMatchObject({ contentKind: 'metadata_only', isShort: true, videoFormat: { kind: 'short' } });
+  expect(t.patch().pending_captions).toMatchObject([{ status: 'unavailable', reason: 'provider_returned_no_captions' }]);
+  expect(t.deps.startApify).not.toHaveBeenCalled();
+ });
+ it('keeps pending run identity and hold without starting another job or free caption fetch', async () => {
+  const t = setup({ pending: [pending()], status: 304, policy: { ...policy, provider_enabled: true }, state: { pending_captions: [{ record: update, attempts: 1, nextAttemptAt: new Date(0).toISOString() }] } });
+  t.deps.pollApify.mockResolvedValue({ status: 'running', telemetry: { ledgerId: claim.checkId, providerRunId: 'providerRun123', cost: 0.001 } } as never);
+  await t.run();
+  expect(t.patch().pending_captions).toMatchObject([{ status: 'provider_pending', reason: 'provider_pending' }]);
+  expect(t.deps.captions).not.toHaveBeenCalled(); expect(t.deps.startApify).not.toHaveBeenCalled();
+  expect(t.deps.settleBudget).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ terminal: false, actualUsd: null }), expect.any(Function));
+ });
+});
+
 describe('native existing captions and authenticated background dispatch', () => {
  it('extracts only exact-video existing caption cues and preserves their real times', async () => {
   const player = { videoDetails: { videoId }, playabilityStatus: { status: 'OK' }, captions: { playerCaptionsTracklistRenderer: { captionTracks: [{ baseUrl: `https://www.youtube.com/api/timedtext?v=${videoId}&lang=en` }] } } };
@@ -126,7 +159,7 @@ describe('native existing captions and authenticated background dispatch', () =>
   expect(await nativeHourlyCaptions(videoId, download)).toMatchObject({ content: 'Real captions', transcriptSegments: [{ text: 'Real captions', startSeconds: 1.5, durationSeconds: 2 }] });
  });
  it('uses the dedicated exact-video downloader for provider-issued signed caption URLs', async () => { const player = { videoDetails: { videoId }, playabilityStatus: { status: 'OK' }, captions: { playerCaptionsTracklistRenderer: { captionTracks: [{ baseUrl: `https://www.youtube.com/api/timedtext?v=${videoId}&signature=public-source-signature` }] } } }; const watch = vi.fn(async () => ({ text: `ytInitialPlayerResponse = ${JSON.stringify(player)};`, url: update.url, contentType: 'text/html' })); const captions = vi.fn(async () => ({ text: JSON.stringify({ events: [{ tStartMs: 0, segs: [{ utf8: 'Signed native captions' }] }] }), url: 'https://www.youtube.com/api/timedtext', contentType: 'application/json' })); expect(await nativeHourlyCaptions(videoId, watch, captions)).toMatchObject({ content: 'Signed native captions' }); expect(watch).toHaveBeenCalledTimes(1); expect(captions).toHaveBeenCalledWith(expect.stringContaining('signature=public-source-signature')); });
- it('refuses a caption URL outside YouTube before a second request', async () => { const player = { videoDetails: { videoId }, playabilityStatus: { status: 'OK' }, captions: { playerCaptionsTracklistRenderer: { captionTracks: [{ baseUrl: `https://evil.example/api/timedtext?v=${videoId}` }] } } }; const download = vi.fn(async () => ({ text: `ytInitialPlayerResponse = ${JSON.stringify(player)};`, url: update.url, contentType: 'text/html' })); expect(await nativeHourlyCaptions(videoId, download)).toBeNull(); expect(download).toHaveBeenCalledTimes(1); });
+ it('refuses a caption URL outside YouTube before a second request', async () => { const player = { videoDetails: { videoId }, playabilityStatus: { status: 'OK' }, captions: { playerCaptionsTracklistRenderer: { captionTracks: [{ baseUrl: `https://evil.example/api/timedtext?v=${videoId}` }] } } }; const download = vi.fn(async () => ({ text: `ytInitialPlayerResponse = ${JSON.stringify(player)};`, url: update.url, contentType: 'text/html' })); expect(await nativeHourlyCaptions(videoId, download)).toMatchObject({ captionStatus: 'retry', reason: 'unsafe_caption_url', videoFormat: { kind: 'unknown' } }); expect(download).toHaveBeenCalledTimes(1); });
  it('disabled schedule dispatch does not contact a worker', async () => { const fetcher = vi.fn(); expect(await dispatchHourly(() => undefined, fetcher)).toEqual({ dispatched: false }); expect(fetcher).not.toHaveBeenCalled(); });
  it('requires the server secret and POST; no browser identity can authorize work', () => { const env = (key: string) => key === 'HOURLY_COLLECTION_WORKER_SECRET' ? 's'.repeat(40) : undefined; expect(hourlyWorkerAuthorized(new Request('https://app.org', { method: 'POST', headers: { 'x-hourly-collection-secret': 's'.repeat(40) } }), env)).toBe(true); expect(hourlyWorkerAuthorized(new Request('https://app.org', { method: 'POST', headers: { 'x-hourly-collection-secret': 'é'.repeat(40) } }), env)).toBe(false); expect(hourlyWorkerAuthorized(new Request('https://app.org'), env)).toBe(false); });
  it('dispatches only to the fixed app-owned background path and expects 202', async () => { const fetcher = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(null, { status: 202 })); const env = (key: string) => ({ HOURLY_COLLECTION_ENABLED: 'true', APP_URL: 'https://recap.example.org/', HOURLY_COLLECTION_WORKER_SECRET: 's'.repeat(40) })[key]; expect(await dispatchHourly(env, fetcher)).toEqual({ dispatched: true }); expect(fetcher.mock.calls[0]?.[0]).toBe('https://recap.example.org/.netlify/functions/hourly-collection-worker'); });

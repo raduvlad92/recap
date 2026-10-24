@@ -2,16 +2,20 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEven
 import { ArrowUpRight, Bookmark, BriefcaseBusiness, Building2, Camera, Check, CheckCircle2, ChevronDown, ChevronRight, Clock3, Download, Globe2, Headphones, HelpCircle, Layers3, LayoutGrid, Link2, ListFilter, Mail, Menu, Play, Plus, RefreshCw, Rss, Search, Settings2, SlidersHorizontal, Sparkles, Trash2, Users, X } from 'lucide-react';
 import { useWorkspace } from './lib/workspace';
 import { useRecapAuth } from './lib/auth';
-import { creatorMatchesUpdate, updateIdentity, updatesForCollection, updatesForSourcePreferences, sourceShowsShorts } from './lib/domain';
+import { creatorMatchesUpdate, updateIdentity, updatesForCollection, updatesForSourcePreferences, unclassifiedUpdatesForSourcePreferences, sourceShowsShorts } from './lib/domain';
 import { collectSource, detectCollectionPlatform } from './lib/collection';
-import type { Creator, Platform, ReaderSettings, Source, SourceUpdate } from './lib/types';
+import type { Creator, Platform, ReaderSettings, Source, SourceUpdate, WorkspaceState } from './lib/types';
 import { AuthButton } from './components/AuthButton';
 import { creatorImageUrl } from './lib/source-images';
 import { resolvePostContext } from './lib/post-context';
 import { Modal } from './components/Modal';
 import { CollectionStatus } from './components/CollectionStatus';
 import { CardSourcePanel, CardImagePreview } from './components/CardSourcePanel';
-import { YouTubeCard, VideoTranscript } from './components/YouTubeCard';
+import { YouTubeCard, VideoTranscript, VideoTakeaways } from './components/YouTubeCard';
+import { ContentProcessingStatus, UnclassifiedVideoUpdates } from './components/ContentProcessingStatus';
+import { VideoKeywordStrip } from './components/VideoKeywordStrip';
+import { getVideoKeywords, getVideoTranscript } from './lib/video';
+import { getContentProcessing } from './lib/content-processing';
 import { SocialPostCard, SocialPostContent, socialPostProvenance } from './components/SocialPostCard';
 import { languages, translator } from './components/ui';
 import './app.css';
@@ -30,6 +34,14 @@ type Topic = { name: string; items: SourceUpdate[] };
 type Dialog = null | { kind: 'sources' | 'settings' | 'filters' | 'coverage' | 'reset' | 'delete' | 'mobile' | 'collections' | 'sourceCoverage' } | { kind: 'update' | 'transcript'; update: SourceUpdate } | { kind: 'topic'; topic: Topic };
 const platforms: Platform[] = ['YouTube', 'X', 'Instagram', 'LinkedIn', 'Podcast', 'Substack', 'Blog'];
 const unique = <T,>(items: T[]) => [...new Set(items)];
+
+/** Saved items remain inspectable independently of follow and feed preferences. */
+export function readerUpdateSections(updates: SourceUpdate[], state: WorkspaceState, library: boolean) {
+  if (library) return { available: updates, unclassified: [] as SourceUpdate[] };
+  const followed = new Set(state.followedSourceIds);
+  const eligible = updates.filter(update => followed.has(update.sourceId));
+  return { available: updatesForSourcePreferences(eligible, state), unclassified: unclassifiedUpdatesForSourcePreferences(eligible, state) };
+}
 
 function dayKey(value: string, timezone: string) {
   try {
@@ -101,15 +113,14 @@ export default function App() {
   const compactCollection = !!activeCollection && !isLibrary && selection.kind === 'all' && view !== 'today';
   const collectionRange = activeCollection ? collectionRanges[activeCollection.id] ?? '30' : 'all';
   const scopedUpdates = useMemo(() => isLibrary ? updates : updatesForCollection(updates, activeCollection, { days: collectionRange !== 'all' && collectionRange !== '24h' ? Number(collectionRange) : undefined, hours: collectionRange === '24h' ? 24 : undefined, timezone: state.settings.timezone }), [updates, isLibrary, activeCollection, collectionRange, state.settings.timezone]);
-  const displayUpdates = useMemo(() => updatesForSourcePreferences(scopedUpdates, state), [scopedUpdates, state]);
-  const available = useMemo(() => displayUpdates.filter((update) => isLibrary || followed.has(update.sourceId)), [displayUpdates, isLibrary, followed]);
+  const { available, unclassified: unclassifiedAvailable } = useMemo(() => readerUpdateSections(scopedUpdates, state, isLibrary), [scopedUpdates, state, isLibrary]);
   const collectionSourceIds = activeCollection ? new Set(activeCollection.sourceIds) : undefined;
   const scopedSources = sources.filter((source) => !collectionSourceIds || collectionSourceIds.has(source.id));
   const selectionMatches = (update: SourceUpdate) => selection.kind === 'all' || (selection.kind === 'source' ? update.sourceId === selection.id : !!selectedCreator && creatorMatchesUpdate(selectedCreator, update));
-  const allDays = unique(available.filter(selectionMatches).filter((update) => update.publishedAt).map((update) => dayKey(update.publishedAt, state.settings.timezone))).filter(Boolean).sort().reverse();
+  const allDays = unique([...available, ...unclassifiedAvailable].filter(selectionMatches).filter((update) => update.publishedAt).map((update) => dayKey(update.publishedAt, state.settings.timezone))).filter(Boolean).sort().reverse();
   const recapDay = date || allDays[0] || dayKey(new Date().toISOString(), state.settings.timezone);
   const effectiveDate = view === 'today' ? recapDay : date;
-  const visible = available.filter((update) => {
+  const matchesCurrentView = (update: SourceUpdate) => {
     if (view === 'saved' && !state.savedUpdateIds.includes(update.id)) return false;
     if (view === 'later' && !state.readLaterIds.includes(update.id)) return false;
     if (view === 'videos' && update.format !== 'video') return false;
@@ -123,7 +134,10 @@ export default function App() {
       if (!text.includes(query.trim().toLocaleLowerCase())) return false;
     }
     return true;
-  }).sort((a, b) => sort === 'newest' ? b.publishedAt.localeCompare(a.publishedAt) : a.publishedAt.localeCompare(b.publishedAt));
+  };
+  const orderUpdates = (a: SourceUpdate, b: SourceUpdate) => sort === 'newest' ? b.publishedAt.localeCompare(a.publishedAt) : a.publishedAt.localeCompare(b.publishedAt);
+  const visible = available.filter(matchesCurrentView).sort(orderUpdates);
+  const unclassifiedVisible = unclassifiedAvailable.filter(matchesCurrentView).sort(orderUpdates);
   const topicCounts = useMemo(() => {
     const counts = new Map<string, number>();
     visible.forEach((update) => unique(updateTopics(update)).forEach((topic) => counts.set(topic, (counts.get(topic) || 0) + 1)));
@@ -219,7 +233,7 @@ export default function App() {
     event.preventDefault(); setSourceError('');
     const result = workspace.addSource(linkInput.trim());
     if (result.error) { setSourceError(result.error); return; }
-    if (result.source?.platform === 'YouTube') workspace.setSourceShowShorts(result.source.id, newSourceShowShorts);
+    if (result.added === true && result.source?.platform === 'YouTube') workspace.setSourceShowShorts(result.source.id, newSourceShowShorts);
     clearSourceHandoff(); setLinkInput(''); setNewSourceShowShorts(true); setNotice(t('sourceAdded'));
   }
   function saveSettings(event: FormEvent) {
@@ -282,7 +296,7 @@ export default function App() {
     const onOpen = () => setDialog({ kind: 'update', update });
     const topics = update.topics.slice(0, 3).map(topic => <button key={topic} className={topicFilter === topic ? 'active' : ''} onClick={() => setTopicFilter(current => current === topic ? '' : topic)}>{topic}</button>);
     const actions = actionButtons(update);
-    if (source?.platform === 'YouTube') return <YouTubeCard key={update.id} update={update} compact={compact} channelName={channelName} channelIcon={channelIcon} date={time} actions={actions} topics={topics} provenance={update.contentKind === 'transcript' ? 'Caption excerpts' : 'Metadata only'} onChannel={onChannel} onOpen={onOpen} onTranscript={() => setDialog({ kind: 'transcript', update })} onKeyword={topic => setTopicFilter(current => current === topic ? '' : topic)} />;
+    if (source?.platform === 'YouTube') return <YouTubeCard key={update.id} update={update} compact={compact} channelName={channelName} channelIcon={channelIcon} date={time} actions={actions} topics={topics} onChannel={onChannel} onOpen={onOpen} onTranscript={() => setDialog({ kind: 'transcript', update })} onKeyword={topic => setTopicFilter(current => current === topic ? '' : topic)} />;
     if (source && ['X', 'Instagram', 'LinkedIn'].includes(source.platform)) return <SocialPostCard key={update.id} playbackEnabled={dialog === null} update={update} heading={source.platform + ' post by ' + identity.name} compact={compact} channelName={channelName} channelIcon={channelIcon} date={time} platform={source.platform} onChannel={onChannel} secondary={contributorLink} actions={actions} topics={topics} originalLabel={t('original')} detailsLabel={t('details')} onOpen={onOpen} />;
     return <article className={'update-card source-layout-card ' + (compact ? 'update-card-compact' : '')} key={update.id}>
       <CardSourcePanel name={channelName} avatar={channelIcon} date={time} publishedAt={update.publishedAt} platform={source?.platform} actions={actions} onChannel={onChannel} secondary={contributorLink} preview={<CardImagePreview image={update.image} duration={update.duration} label={t('details') + ': ' + update.title} onOpen={onOpen} />} />
@@ -297,10 +311,14 @@ export default function App() {
     const identity = updateIdentity(update, sources, creators); const { source, contributor, publisher } = identity;
     const linkedReferences = update.references.filter((reference) => reference.url !== update.url);
     const social = !!source && ['X', 'Instagram', 'LinkedIn'].includes(source.platform);
-    return <><div className="detail-source"><Avatar creator={contributor} label={identity.name} color={publisher?.color} /><div><button className="detail-source-name" onClick={() => contributor ? chooseSelection({ kind: 'creator', id: contributor.id }) : chooseSelection({ kind: 'source', id: update.sourceId })}><strong>{identity.name}</strong></button>{contributor && source ? <button className="detail-source-channel" onClick={() => chooseSelection({ kind: 'source', id: source.id })}>{source.name === contributor.name ? `${source.platform} channel` : source.name}</button> : !contributor && publisher && publisher.name !== identity.name ? <span className="detail-source-publisher">Published by {publisher.name}</span> : null}<p><PlatformIcon platform={source?.platform} size={14} />{source?.platform}<span>{update.publishedAt ? longDate(dayKey(update.publishedAt, state.settings.timezone), state.settings.interfaceLanguage) : t('unknownDate')}</span></p></div>{actionButtons(update, true)}</div>{social ? <><SocialPostContent key={update.id} update={update} detail /><p className="provenance social-post-detail-provenance">{socialPostProvenance(update)}</p></> : <><h3 className="detail-title">{update.title}</h3><p className="detail-summary">{update.summary}</p></>}
+    const youtube = source?.platform === 'YouTube';
+    const videoKeywords = youtube ? getVideoKeywords(update) : [];
+    const processing = youtube ? getContentProcessing(update) : undefined;
+    return <><div className="detail-source"><Avatar creator={contributor} label={identity.name} color={publisher?.color} /><div><button className="detail-source-name" onClick={() => contributor ? chooseSelection({ kind: 'creator', id: contributor.id }) : chooseSelection({ kind: 'source', id: update.sourceId })}><strong>{identity.name}</strong></button>{contributor && source ? <button className="detail-source-channel" onClick={() => chooseSelection({ kind: 'source', id: source.id })}>{source.name === contributor.name ? `${source.platform} channel` : source.name}</button> : !contributor && publisher && publisher.name !== identity.name ? <span className="detail-source-publisher">Published by {publisher.name}</span> : null}<p><PlatformIcon platform={source?.platform} size={14} />{source?.platform}<span>{update.publishedAt ? longDate(dayKey(update.publishedAt, state.settings.timezone), state.settings.interfaceLanguage) : t('unknownDate')}</span></p></div>{actionButtons(update, true)}</div>{social ? <><SocialPostContent key={update.id} update={update} detail /><p className="provenance social-post-detail-provenance">{socialPostProvenance(update)}</p></> : <><h3 className="detail-title">{update.title}</h3>{!youtube && <p className="detail-summary">{update.summary}</p>}</>}
+      {youtube && <section className="detail-section"><h4>Takeaways</h4><VideoTakeaways update={update} processing={processing} /><ContentProcessingStatus update={update} processing={processing} />{videoKeywords.length > 0 && <VideoKeywordStrip keywords={videoKeywords} timingBasis={update.videoSummary?.timingBasis} onKeyword={topic => { setTopicFilter(current => current === topic ? '' : topic); closeDialog(); }} />}{getVideoTranscript(update) && <button className="transcript-button" onClick={() => setDialog({ kind: 'transcript', update })}>Full transcript<ArrowUpRight size={14} aria-hidden="true" /></button>}</section>}
       {update.coverage && <div className="coverage-note"><CheckCircle2 size={16} /><span>{update.coverage}</span></div>}
       {update.insights.length > 0 && <section className="detail-section"><h4>{t('evidence')}</h4><ul className="insight-list">{update.insights.map((insight, index) => <li key={index}>{insight}</li>)}</ul></section>}
-      {!social && update.content && <section className="detail-section"><h4>{update.contentKind === 'transcript' ? 'Transcript extract' : 'Source text extract'}</h4><p className="source-text-extract">{update.content.slice(0, 1400)}{update.content.length > 1400 ? '…' : ''}</p><p className="small-copy">A short extract for context. Open the original for the complete source; text availability does not establish visual coverage.</p></section>}
+      {!social && !youtube && update.content && <section className="detail-section"><h4>{update.contentKind === 'transcript' ? 'Transcript extract' : 'Source text extract'}</h4><p className="source-text-extract">{update.content.slice(0, 1400)}{update.content.length > 1400 ? '…' : ''}</p><p className="small-copy">A short extract for context. Open the original for the complete source; text availability does not establish visual coverage.</p></section>}
       {(update.brands.length > 0 || update.sponsors.length > 0) && <section className="detail-section brand-details"><div><h4>{t('brands')}</h4><div className="static-pills">{update.brands.map((brand) => <span key={brand}>{brand}</span>)}</div></div>{update.sponsors.length > 0 && <div><h4>{t('sponsors')}</h4><div className="static-pills sponsor-pills">{update.sponsors.map((sponsor) => <span key={sponsor}><Check size={12} />{sponsor}</span>)}</div></div>}<p className="small-copy">{t('mentionNote')}</p></section>}
       {linkedReferences.length > 0 && <section className="detail-section"><h4>{t('references')}</h4><p className="small-copy">{t('referenceNote')}</p><div className="reference-list">{linkedReferences.map((reference) => <div key={reference.url}><Link2 size={16} /><span><External url={reference.url}>{reference.title}</External></span></div>)}</div></section>}
       <div className="original-link-section"><External url={update.url}>{t('original')}</External></div>
@@ -330,7 +348,8 @@ export default function App() {
           </div>
         </div>
         {activeFilters && <div className="active-filter-row">{query && <span>“{query}”</span>}{topicFilter && <button onClick={() => setTopicFilter('')}>{topicFilter}<X size={12} /></button>}{platformFilter && <button onClick={() => setPlatformFilter('')}>{platformFilter}<X size={12} /></button>}{date && <button onClick={() => setDate('')}>{date}<X size={12} /></button>}<button className="clear-filters" onClick={clearFilters}>{t('clear')}</button></div>}
-        {visible.length === 0 ? <div className="empty-state"><span className="empty-icon">{isLibrary ? <Bookmark size={28} /> : <Sparkles size={28} />}</span><h2>{activeCollection && !isLibrary && !activeFilters ? 'No updates in this collection yet' : followed.size === 0 && !isLibrary ? t('noConnection') : t('empty')}</h2><p>{view === 'saved' ? t('noSaved') : view === 'later' ? t('noLater') : activeCollection && !activeFilters ? `${activeCollection.sourceIds.length} channels are selected. Collected updates will appear here with links to the originals. Choose a wider history range to see older updates.` : followed.size === 0 ? t('noConnectionBody') : selectedSource ? t('emptySource') : t('emptyBody')}</p><button className="solid-button" onClick={() => activeFilters ? clearFilters() : setDialog({ kind: 'sources' })}>{activeFilters ? t('clear') : t('addReal')}<Plus size={16} /></button></div> : view === 'today' ? <div className="recap-topics"><div className="recap-source-note"><Layers3 size={15} />{t('grouped')}<span>{t('returned')}</span></div>{topics.map((topic, index) => <article className="recap-topic" key={topic.name}><div className="recap-topic-top"><span className="topic-number">{String(index + 1).padStart(2, '0')}</span><span>{unique(topic.items.map((item) => item.sourceId)).length} {t('sources')}</span><span className="recap-topic-avatars">{unique(topic.items.flatMap((item) => item.contributorIds)).slice(0, 4).map((id) => <Avatar key={id} creator={creatorById(id)} size="small" />)}</span></div><button className="topic-heading-button" onClick={() => setDialog({ kind: 'topic', topic })}><h2>{topic.name}</h2><ArrowUpRight size={22} /></button><div className="topic-insights">{unique(topic.items.flatMap((item) => item.insights.length ? item.insights.slice(0, 1) : [item.summary])).slice(0, 3).map((insight) => <p key={insight}>{insight}</p>)}</div><div className="recap-topic-footer"><div className="static-pills">{unique(topic.items.flatMap((item) => item.brands)).slice(0, 3).map((brand) => <span key={brand}>{brand}</span>)}</div><button onClick={() => setDialog({ kind: 'topic', topic })}>{t('topicDetails')}<ChevronRight size={15} /></button></div></article>)}<p className="recap-method-note">{t('topicInsightNote')}</p></div> : <div className={`update-feed feed-density-${feedDensity}`}>{visible.slice(0, feedLimit).map((update) => updateCard(update))}{visible.length > feedLimit && <div className="feed-pagination"><span>Showing {feedLimit} of {visible.length} updates</span><button className="pill-button" onClick={() => setFeedLimit((current) => current + 40)}>Show more updates<ChevronDown size={15} /></button></div>}</div>}
+        <UnclassifiedVideoUpdates key={JSON.stringify([owner, view, selection, state.activeCollectionId, collectionRange, effectiveDate, platformFilter, topicFilter, query, sort])} updates={unclassifiedVisible} density={feedDensity} renderUpdate={update => updateCard(update)} />
+        {visible.length === 0 ? unclassifiedVisible.length > 0 ? null : <div className="empty-state"><span className="empty-icon">{isLibrary ? <Bookmark size={28} /> : <Sparkles size={28} />}</span><h2>{activeCollection && !isLibrary && !activeFilters ? 'No updates in this collection yet' : followed.size === 0 && !isLibrary ? t('noConnection') : t('empty')}</h2><p>{view === 'saved' ? t('noSaved') : view === 'later' ? t('noLater') : activeCollection && !activeFilters ? `${activeCollection.sourceIds.length} channels are selected. Collected updates will appear here with links to the originals. Choose a wider history range to see older updates.` : followed.size === 0 ? t('noConnectionBody') : selectedSource ? t('emptySource') : t('emptyBody')}</p><button className="solid-button" onClick={() => activeFilters ? clearFilters() : setDialog({ kind: 'sources' })}>{activeFilters ? t('clear') : t('addReal')}<Plus size={16} /></button></div> : view === 'today' ? <div className="recap-topics"><div className="recap-source-note"><Layers3 size={15} />{t('grouped')}<span>{t('returned')}</span></div>{topics.map((topic, index) => <article className="recap-topic" key={topic.name}><div className="recap-topic-top"><span className="topic-number">{String(index + 1).padStart(2, '0')}</span><span>{unique(topic.items.map((item) => item.sourceId)).length} {t('sources')}</span><span className="recap-topic-avatars">{unique(topic.items.flatMap((item) => item.contributorIds)).slice(0, 4).map((id) => <Avatar key={id} creator={creatorById(id)} size="small" />)}</span></div><button className="topic-heading-button" onClick={() => setDialog({ kind: 'topic', topic })}><h2>{topic.name}</h2><ArrowUpRight size={22} /></button><div className="topic-insights">{unique(topic.items.flatMap((item) => item.insights.length ? item.insights.slice(0, 1) : [item.summary])).slice(0, 3).map((insight) => <p key={insight}>{insight}</p>)}</div><div className="recap-topic-footer"><div className="static-pills">{unique(topic.items.flatMap((item) => item.brands)).slice(0, 3).map((brand) => <span key={brand}>{brand}</span>)}</div><button onClick={() => setDialog({ kind: 'topic', topic })}>{t('topicDetails')}<ChevronRight size={15} /></button></div></article>)}<p className="recap-method-note">{t('topicInsightNote')}</p></div> : <div className={`update-feed feed-density-${feedDensity}`}>{visible.slice(0, feedLimit).map((update) => updateCard(update))}{visible.length > feedLimit && <div className="feed-pagination"><span>Showing {feedLimit} of {visible.length} updates</span><button className="pill-button" onClick={() => setFeedLimit((current) => current + 40)}>Show more updates<ChevronDown size={15} /></button></div>}</div>}
         <footer className="reading-footer"><Sparkles size={16} /><span>{t('privacy')}</span><button onClick={() => setDialog({ kind: 'coverage' })}>{t('coverage')}<ArrowUpRight size={13} /></button></footer>
       </main>
       <aside className="right-rail"><div className="rail-section-heading"><span>{t('signal')}</span><button className="icon-button" onClick={() => setDialog({ kind: 'coverage' })} aria-label={t('coverage')}><HelpCircle size={18} /></button></div><div className="signal-card"><div className="signal-card-top"><span className="signal-icon"><LayoutGrid size={20} /></span><span>{t('thisView')}</span></div><strong className="signal-number">{visible.length}</strong><p>{t('newUpdates')}</p><div className="signal-bars" role="group" aria-label={chartDays.map((day, index) => `${day}: ${chartCounts[index]}`).join(', ')}>{chartCounts.length ? chartCounts.map((count, index) => <button key={chartDays[index]} style={{ height: `${Math.max(count / chartMax * 70, 5)}px` }} className={index === chartCounts.length - 1 ? 'current' : ''} title={`${chartDays[index]}: ${count} ${t('updates')}`} aria-label={`${t('selectDate')} ${chartDays[index]}`} onClick={() => setDate(chartDays[index])} />) : <span className="chart-empty">{t('noResults')}</span>}</div></div>
