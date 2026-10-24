@@ -1,0 +1,26 @@
+.ra-analysis { display: grid; gap: 22px; max-width: 1000px; min-width: 0; }
+.ra-analysis-card, .ra-analysis-status { min-width: 0; }
+.ra-analysis-current { display: grid; gap: 8px; margin: 24px 0; }
+.ra-analysis-current dt { font-size: 12px; color: #647657; }
+.ra-analysis-current dd { display: grid; gap: 7px; margin: 0; font-size: 15px; }
+.ra-analysis code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .85em; overflow-wrap: anywhere; white-space: normal; }
+.ra-analysis-form { min-width: 0; }
+.ra-analysis-form label { min-width: 0; max-width: 100%; }
+.recap-admin .ra-analysis-form select { width: 100%; min-width: 0; max-width: 100%; min-height: 46px; padding-right: 25px; text-overflow: ellipsis; }
+.ra-analysis-form .ra-form-actions { align-items: center; flex-wrap: wrap; }
+.recap-admin .ra-analysis-form .ra-button { min-height: 44px; }
+.ra-analysis-save-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #397761; }
+.ra-analysis-form .ra-save-error { min-width: 0; max-width: 100%; }
+.ra-analysis-status h2 { margin-top: 0; }
+.ra-analysis-connection { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; margin-top: 20px; }
+.ra-analysis-connection .ra-button { min-height: 44px; }
+.ra-analysis-connection p { margin: 0; font-size: 12px; color: #647657; }
+@media (max-width: 600px) {
+  .ra-analysis { gap: 16px; }
+  .recap-admin .ra-analysis-form select { font-size: 16px; }
+  .ra-analysis-form .ra-form-actions { align-items: flex-start; gap: 14px; }
+  .ra-analysis-form .ra-save-error .ra-button { white-space: normal; }
+  .ra-analysis-current dd { font-size: 14px; }
+  .ra-analysis-status .ra-inline-facts { gap: 18px; }
+  .ra-analysis .ra-section-top { gap: 12px; flex-wrap: wrap; }
+}

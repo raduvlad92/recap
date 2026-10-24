@@ -6,11 +6,11 @@ Your editable **tech** collection includes **39 official sources: 21 YouTube, 10
 
 Your collected history is live. The original 278 records and later 207 additions are saved, and the website has been checked in your signed-in account, admin and guest views. [Original bounded-collection evidence](../tech/VERIFICATION.md), [current hourly readback](../tech/evidence/collection-reliability-readback.json). This is collected source history; complete month coverage remains unverified.
 
-## D35 automatic video processing — owner action
+## D35/D36 automatic video processing — credential supplied
 
 The code for independent video takeaways and checked keywords is implemented. Shorts classification and truthful pending/paused states are live and verified on desktop and phones. The prepared backfill covers 164 eligible videos without another collection run. The archive now has 279 transcript-bearing videos and 103 pending caption tasks; one saved result and two caption tails were recovered with no new supplier run.
 
-The founder has requested **another existing model provider**. The assistant checked recap production, shared Netlify variables and local project environment files; no alternative credential is currently available there. The remaining information needed is the **provider name only**. Do not paste a key into chat. Once identified, the assistant must verify its server adapter and arrange private configuration in the project's [Netlify environment settings](https://app.netlify.com/projects/recap-v0-radu/configuration/env). The existing Netlify plan has no AI Gateway; do not upgrade it or create a supplier subscription.
+The founder selected **OpenRouter** and configured **OPENROUTER_API_KEY** securely in production. No further key setup is needed. **Administration → AI analysis** will offer only the four approved models, with DeepSeek default. The assistant owns remaining release, connection, selection and real quality/cost verification. [Setup and evidence](../tech/OPENROUTER.md). The existing Netlify plan has no AI Gateway; no upgrade or supplier subscription is needed.
 
 The assistant must then verify model access, pricing, conservative bounds and grounded output before activating recurring work. The production gate and model budget remain disabled. The separate proposed model ceilings are US$0.10/day, US$1 cumulative and US$0.01/call; these inactive values are not an assertion of approved spending or successful model execution. Existing supplier caps are unchanged. [Implementation and exact evidence](../tech/CONTENT-REPAIR.md).
 

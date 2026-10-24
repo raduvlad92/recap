@@ -5,17 +5,19 @@ import { contentHash, getContentProcessing } from '../../../src/lib/content-proc
 import { database } from './admin-data';
 import { authenticate, CollectionError, errorResponse, json, publicHttpsUrl, runtimeEnv, type Env } from './security';
 import { analyzeKeywords, analyzeSummary, type AnalysisOutput } from './content-analysis-engine';
-import { AnalysisError, analysisFailure, analysisLimits, conservativeCallUsd, createGatewayGenerator, type AnalysisGenerator, type AnalysisLimits, type GenerationResult, type GenerationRequest } from './content-analysis-model';
+import { analysisRuntimeEnv } from './content-analysis-runtime';
+import { AnalysisError, analysisFailure, analysisLimits, analysisExecutionIdentity, conservativeCallUsd, createGatewayGenerator, type AnalysisExecutionIdentity, type AnalysisGenerator, type AnalysisLimits, type GenerationResult, type GenerationRequest } from './content-analysis-model';
 
 export interface AnalysisPolicy { user_id:string; enabled:boolean; model:string }
 export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null }
 export interface AnalysisClaim { job:AnalysisJob; record:SourceUpdate; leaseToken:string }
-export interface AnalysisCall {id:string;result?:(GenerationResult & {requestHash?:string})|null; maximum_usd?:number}
+export interface AnalysisCall {id:string;model?:string;execution_identity?:AnalysisExecutionIdentity|null;result?:(GenerationResult & {requestHash?:string})|null; maximum_usd?:number}
 export interface AnalysisStore {
+ runtime?():Promise<{selected_model:string;revision:number}>;
  policies():Promise<AnalysisPolicy[]>;
- sync(userId:string):Promise<unknown>;
+ sync(userId:string,configEpoch?:string):Promise<unknown>;
  claim(userId:string):Promise<AnalysisClaim|null>;
- reserve(claim:AnalysisClaim,request:GenerationRequest,maximumUsd:number,model:string):Promise<{claimed:boolean;call:AnalysisCall}>;
+ reserve(claim:AnalysisClaim,request:GenerationRequest,maximumUsd:number,model:string,identity:AnalysisExecutionIdentity):Promise<{claimed:boolean;call:AnalysisCall}>;
  saveCall(call:AnalysisCall,claim:AnalysisClaim,result:GenerationResult):Promise<void>;
  prepare(claim:AnalysisClaim,result:AnalysisOutput):Promise<void>;
  publish(claim:AnalysisClaim):Promise<boolean>;
@@ -25,14 +27,15 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
  const db=database(env);
  async function rpc<T>(name:string,args:Record<string,unknown>):Promise<T> {
   const result=await db.rpc(name,args);
-  if(result.error) throw new AnalysisError(result.error.code==='PT429'?'analysis_daily_budget_exhausted':result.error.code==='PT402'?'analysis_budget_exhausted':result.error.code==='PT403'?'analysis_runtime_disabled':result.error.code==='PT409'?'analysis_source_changed':'analysis_storage_unavailable');
+  if(result.error) throw new AnalysisError(result.error.code==='PT429'?'analysis_daily_budget_exhausted':result.error.code==='PT402'?'analysis_budget_exhausted':result.error.code==='PT403'?'analysis_runtime_disabled':result.error.code==='PT409'?'analysis_source_changed':name==='reserve_content_analysis_call_v2'&&result.error.code==='PT400'?'analysis_configuration_required':'analysis_storage_unavailable');
   return result.data as T;
  }
  return {
+  async runtime(){const result=await db.from('content_analysis_runtime_settings').select('selected_model,revision').eq('id',true).single();if(result.error||!result.data)return analysisFailure('analysis_storage_unavailable');return result.data;},
   async policies(){const result=await db.from('reader_content_analysis_policies').select('user_id,enabled,model').eq('enabled',true).order('last_served_at').order('user_id');if(result.error) return analysisFailure('analysis_storage_unavailable');return result.data as AnalysisPolicy[];},
-  sync:userId=>rpc('sync_content_analysis_jobs',{p_user_id:userId,p_limit:200,p_config_epoch:env('CONTENT_ANALYSIS_CONFIG_EPOCH')||''}),
+  sync:(userId,configEpoch)=>rpc('sync_content_analysis_jobs',{p_user_id:userId,p_limit:200,p_config_epoch:configEpoch??env('CONTENT_ANALYSIS_CONFIG_EPOCH')??''}),
   claim:userId=>rpc('claim_content_analysis_job',{p_user_id:userId,p_lease_seconds:900}),
-  reserve:(claim,request,maximumUsd,model)=>rpc('reserve_content_analysis_call',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_key:request.key,p_maximum_usd:maximumUsd,p_model:model}),
+  reserve:(claim,request,maximumUsd,model,identity)=>rpc('reserve_content_analysis_call_v2',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_key:request.key,p_maximum_usd:maximumUsd,p_model:model,p_execution_identity:identity}),
   async saveCall(call,claim,result){await rpc('record_content_analysis_call_result',{p_call_id:call.id,p_lease_token:claim.leaseToken,p_result:result,p_usage:result.usage||{},p_provider_id:result.providerId||null,p_actual_usd:result.actualUsd??null,p_observed_usd:result.observedUsd});},
   async prepare(claim,result){await rpc('prepare_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_result:result});},
   publish:claim=>rpc('publish_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken}),
@@ -40,6 +43,14 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
  };
 }
 export interface AnalysisWorkerDependencies {env:Env;store:AnalysisStore;generate:AnalysisGenerator;limits:AnalysisLimits;now:()=>number}
+function stableJson(value:unknown):string {
+ if(Array.isArray(value))return '['+value.map(stableJson).join(',')+']';
+ if(value!==null&&typeof value==='object')return '{'+Object.keys(value).sort().map(key=>JSON.stringify(key)+':'+stableJson((value as Record<string,unknown>)[key])).join(',')+'}';
+ return JSON.stringify(value)??'null';
+}
+export function analysisRequestHash(request:GenerationRequest,identity:AnalysisExecutionIdentity,verification?:{responseModel?:string;providerName?:string}):string {
+ return contentHash(stableJson({executionIdentity:identity,verification:verification??null,system:request.system,prompt:request.prompt,schema:request.schema,maxOutputTokens:request.maxOutputTokens}));
+}
 export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependencies>={}) {
  const env=dependencies.env||runtimeEnv,now=dependencies.now||Date.now;
  return async()=>{
@@ -47,15 +58,18 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
   if(!stats.enabled) return stats;
   // Construct runtime resources only after the global feature gate. No import/build or anonymous call spends.
   const store=dependencies.store||createAnalysisStore(env);
-  let limits:AnalysisLimits|undefined,generator:AnalysisGenerator|undefined,setupCode:string|undefined;
-  try {limits=dependencies.limits||analysisLimits(env);generator=dependencies.generate||createGatewayGenerator(env);}
-  catch(error){setupCode=error instanceof AnalysisError?error.code:'analysis_configuration_required';}
+  let limits:AnalysisLimits|undefined,generator:AnalysisGenerator|undefined,identity:AnalysisExecutionIdentity|undefined,setupCode:string|undefined,effectiveEnv=env;
+  try {
+   if(store.runtime){const selected=await store.runtime();effectiveEnv=analysisRuntimeEnv(env,selected.selected_model,selected.revision);}
+   limits=dependencies.limits||analysisLimits(effectiveEnv);identity=analysisExecutionIdentity(effectiveEnv,limits);generator=dependencies.generate||createGatewayGenerator(effectiveEnv);
+  }
+  catch(error){setupCode=error instanceof AnalysisError?(error.code==='analysis_model_not_allowed'?'analysis_provider_not_verified':error.code):'analysis_configuration_required';}
   const started=now(),deadline=started+11*60_000;
   const policies=await store.policies(),tasksPerOwner=Math.max(2,Math.floor(50/Math.max(1,policies.length)));
   for(const policy of policies) {
    if(!policy.enabled) continue;
    if(now()>=deadline-50_000)break;
-   await store.sync(policy.user_id); stats.synchronized++;
+   await store.sync(policy.user_id,effectiveEnv('CONTENT_ANALYSIS_CONFIG_EPOCH')||''); stats.synchronized++;
    const ownerDeadline=Math.min(deadline,now()+Math.max(60_000,Math.floor(600_000/Math.max(1,Math.min(policies.length,10)))));
    // Latest-first DB claims with bounded backfill; next invocation scans the archive again for recovered captions.
    for(let count=0;count<tasksPerOwner && now()<ownerDeadline-50_000;count++) {
@@ -65,26 +79,29 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
      if(claim.job.state==='prepared' && claim.job.result) {
       if(await store.publish(claim)) stats.completed++;continue;
      }
-     if(setupCode || !limits || !generator) return analysisFailure(setupCode||'analysis_configuration_required');
+     if(setupCode || !limits || !generator || !identity) return analysisFailure(setupCode||'analysis_configuration_required');
      const generate=generator;
+     const executionIdentity=identity;
+     const verification=executionIdentity.route==='openrouter'?{responseModel:effectiveEnv('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:effectiveEnv('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')}:undefined;
      if(policy.model!==limits.model)return analysisFailure('analysis_model_policy_mismatch');
      const metered:AnalysisGenerator=async request=>{
       if(now()>ownerDeadline-50_000) return analysisFailure('analysis_worker_yield');
       const maximumUsd=conservativeCallUsd(request,limits);
       if(maximumUsd>limits.maxCallUsd) return analysisFailure('analysis_call_limit');
-      const requestHash=contentHash(JSON.stringify({system:request.system,prompt:request.prompt,schema:request.schema,maxOutputTokens:request.maxOutputTokens}));
-      const reservation=await store.reserve(claim,request,maximumUsd,limits.model);
+      const requestHash=analysisRequestHash(request,executionIdentity,verification);
+      const reservation=await store.reserve(claim,request,maximumUsd,limits.model,executionIdentity);
       if(!reservation.claimed) {
        if(reservation.call.result) {
-        if(reservation.call.result.requestHash!==requestHash)return analysisFailure('analysis_cached_input_changed');
+        if(reservation.call.model!==limits.model||stableJson(reservation.call.execution_identity)!==stableJson(executionIdentity)||reservation.call.result.requestHash!==requestHash)return analysisFailure('analysis_cached_input_changed');
         return reservation.call.result;
        }
        // A provider may have charged an interrupted request. Never resubmit an ambiguous call key.
        return analysisFailure('analysis_unknown_charge_hold');
       }
+      if(reservation.call.model!==limits.model||stableJson(reservation.call.execution_identity)!==stableJson(executionIdentity))return analysisFailure('analysis_configuration_required');
       const result=await generate(request);
       if(result.observedUsd!==null && (!Number.isFinite(result.observedUsd)||result.observedUsd<0)) return analysisFailure('analysis_invalid_cost');
-      await store.saveCall(reservation.call,claim,{...result,requestHash} as GenerationResult);
+      await store.saveCall(reservation.call,claim,{...result,requestHash,executionIdentity} as GenerationResult);
       return result;
      };
      const result=claim.job.task==='summary'?await analyzeSummary(claim.record,limits,metered):await analyzeKeywords(claim.record,limits,metered);

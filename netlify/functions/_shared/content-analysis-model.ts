@@ -1,9 +1,14 @@
 import OpenAI from 'openai';
 import { runtimeEnv, type Env } from './security';
+import { ANALYSIS_MODEL_IDS } from '../../../src/lib/analysis-settings-types';
 export type AnalysisRole='summary'|'summary-reduce'|'extractor'|'checker';
 export interface GenerationRequest {role:AnalysisRole;key:string;system:string;prompt:string;maxOutputTokens:number;schema:Record<string,unknown>}
-export interface AnalysisUsage {inputTokens:number;outputTokens:number;cachedInputTokens?:number;cacheWriteTokens?:number}
-export interface GenerationResult {value:unknown;providerId?:string;usage?:AnalysisUsage;observedUsd:number|null;actualUsd?:number|null}
+export interface AnalysisUsage {inputTokens:number;outputTokens:number;cachedInputTokens?:number;cacheWriteTokens?:number;totalTokens?:number;reasoningOutputTokens?:number}
+export interface GenerationResult {
+ value:unknown;providerId?:string;usage?:AnalysisUsage;observedUsd:number|null;actualUsd?:number|null;
+ executionIdentity?:AnalysisExecutionIdentity;
+ routing?:{route:'openrouter';model:string;provider:string|null;providerSlug:string;isByok:boolean|null;upstreamInferenceUsd:number|null;upstreamPromptUsd:number|null;upstreamCompletionUsd:number|null};
+}
 export type AnalysisGenerator=(request:GenerationRequest)=>Promise<GenerationResult>;
 export class AnalysisError extends Error {constructor(public code:string){super(code);}}
 export const analysisFailure=(code:string):never=>{throw new AnalysisError(code);};
@@ -54,8 +59,106 @@ export function usageUsd(usage:AnalysisUsage|undefined,limits:AnalysisLimits):nu
  return money(((input-cached!-writes!)*limits.inputUsdPerMillion+cached!*limits.cachedInputUsdPerMillion+writes!*(limits.cacheWriteUsdPerMillion||0)+output*limits.outputUsdPerMillion)/1e6);
 }
 export type OpenAIClientFactory=(options?:{apiKey:string;baseURL:string})=>Pick<OpenAI,'chat'>;
+export interface AnalysisExecutionIdentity {
+ adapterVersion:string;route:'direct'|'netlify'|'openrouter';baseURL:string;provider:string;model:string;reasoningEffort:string|null;
+ pricing:{version:string;inputUsdPerMillion:number;outputUsdPerMillion:number;cachedInputUsdPerMillion:number|null;cacheWriteApplies:boolean;cacheWriteUsdPerMillion:number|null};
+}
+const OPENROUTER_BASE_URL='https://openrouter.ai/api/v1';
+const reasoningEffort=(env:Env):'none'|'low'|undefined=>{
+ const effort=env('CONTENT_ANALYSIS_REASONING_EFFORT');
+ if(effort!==undefined&&effort!=='none'&&effort!=='low')return analysisFailure('analysis_configuration_required');
+ return effort;
+};
+/** Pure, credential-free identity for durable reservations and cache hashes. No defaults for model or prices. */
+export function analysisExecutionIdentity(env:Env,limits:AnalysisLimits):AnalysisExecutionIdentity {
+ const route=env('CONTENT_ANALYSIS_ROUTE')||'direct';
+ if(route!=='direct'&&route!=='netlify'&&route!=='openrouter')return analysisFailure('analysis_provider_not_verified');
+ if(!limits.pricingVersion?.trim()||limits.pricingVersion.length>150)return analysisFailure('analysis_pricing_not_verified');
+ let baseURL:string,provider:string;
+ if(route==='openrouter'){
+  if(!(ANALYSIS_MODEL_IDS as readonly string[]).includes(limits.model))return analysisFailure('analysis_provider_not_verified');
+  const slug=env('CONTENT_ANALYSIS_OPENROUTER_PROVIDER')?.trim();
+  if(!slug||slug.length>150||!/^[a-z0-9]+(?:[-/][a-z0-9]+)*$/.test(slug)||!limits.model.includes('/')||limits.model.startsWith('openrouter/')||limits.model.includes(':'))return analysisFailure('analysis_provider_not_verified');
+  baseURL=OPENROUTER_BASE_URL;provider=slug;
+ }else if(route==='direct'){
+  if((env('OPENAI_BASE_URL')||'https://api.openai.com/v1').replace(/\/$/,'')!=='https://api.openai.com/v1')return analysisFailure('analysis_provider_not_verified');
+  baseURL='https://api.openai.com/v1';provider='openai';
+ }else{
+  const expected=env('CONTENT_ANALYSIS_GATEWAY_BASE_URL');
+  if(!expected||expected!==env('OPENAI_BASE_URL')||!env('NETLIFY_AI_GATEWAY_URL'))return analysisFailure('analysis_gateway_not_verified');
+  let host:URL;try{host=new URL(expected);}catch{return analysisFailure('analysis_gateway_not_verified');}
+  if(host.protocol!=='https:'||host.username||host.password||host.search||host.hash||!host.hostname.endsWith('.netlify.com'))return analysisFailure('analysis_gateway_not_verified');
+  baseURL=expected;provider='netlify';
+ }
+ return {adapterVersion:'content-analysis-model-v2',route,baseURL,provider,model:limits.model,reasoningEffort:reasoningEffort(env)??null,
+  pricing:{version:limits.pricingVersion,inputUsdPerMillion:limits.inputUsdPerMillion,outputUsdPerMillion:limits.outputUsdPerMillion,
+   cachedInputUsdPerMillion:limits.cachedInputUsdPerMillion??null,cacheWriteApplies:limits.cacheWriteApplies===true,
+   cacheWriteUsdPerMillion:limits.cacheWriteApplies?limits.cacheWriteUsdPerMillion??null:null}};
+}
+const object=(value:unknown):Record<string,unknown>|undefined=>value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:undefined;
+const charge=(value:unknown):number|null=>typeof value==='number'&&Number.isFinite(value)&&value>=0?value:null;
+const tokens=(value:unknown):value is number=>typeof value==='number'&&Number.isSafeInteger(value)&&value>=0;
+function openRouterUsage(value:unknown):AnalysisUsage|undefined {
+ const raw=object(value);if(!raw||!tokens(raw.prompt_tokens)||!tokens(raw.completion_tokens))return undefined;
+ const usage:AnalysisUsage={inputTokens:raw.prompt_tokens,outputTokens:raw.completion_tokens};
+ if(raw.total_tokens!==undefined){if(!tokens(raw.total_tokens)||raw.total_tokens!==usage.inputTokens+usage.outputTokens)return undefined;usage.totalTokens=raw.total_tokens;}
+ for(const [field,key,parent,max] of [
+  ['cachedInputTokens','cached_tokens','prompt_tokens_details',usage.inputTokens],
+  ['cacheWriteTokens','cache_write_tokens','prompt_tokens_details',usage.inputTokens],
+  ['reasoningOutputTokens','reasoning_tokens','completion_tokens_details',usage.outputTokens],
+ ] as const){
+  const details=object(raw[parent]);if(raw[parent]!=null&&!details)return undefined;
+  if(details?.[key]!==undefined){const count=details[key];if(!tokens(count)||count>max)return undefined;usage[field]=count;}
+ }
+ if((usage.cachedInputTokens??0)+(usage.cacheWriteTokens??0)>usage.inputTokens)return undefined;
+ return usage;
+}
+/** Response model IDs are not guaranteed to echo request IDs: pin a separately reviewed exact response ID.
+ * Provider names, when returned, are display names rather than endpoint slugs. Missing metadata stays unknown.
+ * https://openrouter.ai/docs/api/api-reference/chat/create-a-chat-completion
+ */
+export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:OpenAIClientFactory=options=>new OpenAI(options)):AnalysisGenerator {
+ const limits=analysisLimits(env),identity=analysisExecutionIdentity(env,limits),key=env('OPENROUTER_API_KEY');
+ if(identity.route!=='openrouter')return analysisFailure('analysis_provider_not_verified');
+ if(!key?.trim())return analysisFailure('analysis_credentials_required');
+ const providerName=env('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')?.trim();
+ const responseModel=env('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL')?.trim();
+ if(!providerName||providerName.length>150||!responseModel||responseModel.length>150||!/^[A-Za-z0-9_./:-]+$/.test(responseModel))return analysisFailure('analysis_provider_not_verified');
+ const client=factory({apiKey:key,baseURL:OPENROUTER_BASE_URL});
+ return async request=>{
+  if(!Number.isSafeInteger(request.maxOutputTokens)||request.maxOutputTokens<1)return analysisFailure('analysis_input_limit');
+  if(conservativeCallUsd(request,limits)>limits.maxCallUsd)return analysisFailure('analysis_call_limit');
+  // OpenRouter max_tokens includes reasoning and visible output. require_parameters refuses unsupported settings.
+  // https://openrouter.ai/docs/guides/routing/provider-selection
+  const payload:OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming & {provider:Record<string,unknown>;reasoning?:{effort:'none'|'low';exclude:true}}={
+   model:limits.model,max_tokens:request.maxOutputTokens,stream:false,service_tier:'default',
+   ...(identity.reasoningEffort?{reasoning:{effort:identity.reasoningEffort as 'none'|'low',exclude:true as const}}:{}),
+   provider:{only:[identity.provider],order:[identity.provider],allow_fallbacks:false,require_parameters:true,data_collection:'deny',
+    max_price:{prompt:limits.inputUsdPerMillion,completion:limits.outputUsdPerMillion,request:0}},
+   messages:[{role:'system',content:request.system},{role:'user',content:request.prompt}],
+   response_format:{type:'json_schema',json_schema:{name:'content_analysis',strict:true,schema:request.schema}},
+  };
+  // SDK 7.43 applies this deadline to body parsing too; maxRetries:0 covers header and body failures.
+  const result:unknown=await client.chat.completions.create(payload,{maxRetries:0,timeout:45000});
+  const raw=object(result);
+  if(!raw||raw.error!=null)return analysisFailure('analysis_incomplete_generation');
+  if(raw.model!==responseModel||(raw.provider!=null&&raw.provider!==providerName)||typeof raw.id!=='string'||!raw.id.trim())return analysisFailure('analysis_provider_not_verified');
+  const choices=raw.choices,choice=Array.isArray(choices)&&choices.length===1?object(choices[0]):undefined,message=object(choice?.message);
+  if(!choice||choice.error!=null||choice.finish_reason!=='stop'||!message||message.role!=='assistant'||message.refusal!=null||message.tool_calls!=null||typeof message.content!=='string'||!message.content.trim())return analysisFailure('analysis_incomplete_generation');
+  let value:unknown;try{value=JSON.parse(message.content);}catch{return analysisFailure('analysis_invalid_json');}
+  const usage=openRouterUsage(raw.usage),accounting=object(raw.usage),details=object(accounting?.cost_details),observedUsd=charge(accounting?.cost);
+  // cost is the account charge, not an estimate. BYOK can bill a second upstream account; retain its hold.
+  // https://openrouter.ai/docs/cookbook/administration/usage-accounting
+  const isByok=typeof accounting?.is_byok==='boolean'?accounting.is_byok:null;
+  const actualUsd=isByok===false?observedUsd:null;
+  return {value,providerId:raw.id,observedUsd,actualUsd,...(usage?{usage}:{}),executionIdentity:identity,
+   routing:{route:'openrouter',model:raw.model as string,provider:raw.provider==null?null:raw.provider as string,providerSlug:identity.provider,isByok,
+    upstreamInferenceUsd:charge(details?.upstream_inference_cost),upstreamPromptUsd:charge(details?.upstream_inference_prompt_cost),upstreamCompletionUsd:charge(details?.upstream_inference_completions_cost)}};
+ };
+}
 /** Direct OpenAI uses the owner's existing server key. Optional gateway requires an exact verified injected URL. */
 export function createOpenAIAnalysisGenerator(env:Env=runtimeEnv,factory:OpenAIClientFactory=options=>new OpenAI(options)):AnalysisGenerator {
+ if(env('CONTENT_ANALYSIS_ROUTE')==='openrouter')return createOpenRouterAnalysisGenerator(env,factory);
  const limits=analysisLimits(env),route=env('CONTENT_ANALYSIS_ROUTE')||'direct',key=env('OPENAI_API_KEY');
  if(!key?.trim())return analysisFailure('analysis_credentials_required');
  let client:Pick<OpenAI,'chat'>;

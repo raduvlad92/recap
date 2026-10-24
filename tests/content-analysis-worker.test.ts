@@ -1,16 +1,16 @@
 import {describe,it,expect,vi} from 'vitest';
 import type {SourceUpdate} from '../src/lib/types';
-import {createAnalysisWorker,analysisWorkerAuthorized,dispatchContentAnalysis,createAnalysisStatusHandler,type AnalysisClaim,type AnalysisStore} from '../netlify/functions/_shared/content-analysis';
-import {type AnalysisGenerator,type AnalysisLimits,AnalysisError} from '../netlify/functions/_shared/content-analysis-model';
-const limits:AnalysisLimits={model:'fixture-model',chunkChars:1000,overlapChars:256,maxChunks:100,maxSourceChars:100000,maxOutputTokens:4000,inputUsdPerMillion:.2,outputUsdPerMillion:1.2,cachedInputUsdPerMillion:.02,cacheWriteApplies:false,maxCallUsd:1};
+import {createAnalysisWorker,analysisRequestHash,analysisWorkerAuthorized,dispatchContentAnalysis,createAnalysisStatusHandler,type AnalysisCall,type AnalysisClaim,type AnalysisStore} from '../netlify/functions/_shared/content-analysis';
+import {analysisExecutionIdentity,type AnalysisGenerator,type AnalysisLimits,AnalysisError} from '../netlify/functions/_shared/content-analysis-model';
+const limits:AnalysisLimits={model:'fixture/model',pricingVersion:'fixture-prices-v1',chunkChars:1000,overlapChars:256,maxChunks:100,maxSourceChars:100000,maxOutputTokens:4000,inputUsdPerMillion:.2,outputUsdPerMillion:1.2,cachedInputUsdPerMillion:.02,cacheWriteApplies:false,maxCallUsd:1};
 const record:SourceUpdate={id:'v',sourceId:'s',contributorIds:[],title:'Video',summary:'description',url:'https://example.com/v',publishedAt:'2026-10-24T00:00:00Z',format:'video',topics:[],brands:[],sponsors:[],references:[],insights:[],isSample:false,contentKind:'transcript',content:'The GPU benchmark improved from 30 to 45 frames per second.',videoFormat:{kind:'regular',basis:'provider'}};
 const claim=(task:'summary'|'keywords'):AnalysisClaim=>({job:{id:task,user_id:'owner',update_id:'v',source_id:'s',content_hash:'hash',task,state:'running',result:null},record,leaseToken:'lease'});
-const env=(patch:Record<string,string|undefined>={})=>(key:string)=>({CONTENT_ANALYSIS_ENABLED:'true',CONTENT_ANALYSIS_MODEL:'fixture-model',CONTENT_ANALYSIS_WORKER_SECRET:'a'.repeat(32),CONTEXT:'production',APP_URL:'https://example.net',...patch})[key];
+const env=(patch:Record<string,string|undefined>={})=>(key:string)=>({CONTENT_ANALYSIS_ENABLED:'true',CONTENT_ANALYSIS_MODEL:'fixture/model',CONTENT_ANALYSIS_WORKER_SECRET:'a'.repeat(32),CONTEXT:'production',APP_URL:'https://example.net',...patch})[key];
 function storeFor(queue:AnalysisClaim[]) {
- const calls=new Map<string,{id:string;result:never}>();
- return {policies:vi.fn(async()=>[{user_id:'owner',enabled:true,model:'fixture-model'}]),sync:vi.fn(async()=>({synchronized:2})),claim:vi.fn(async(_userId:string)=>queue.shift()||null),
-  reserve:vi.fn(async(claim:AnalysisClaim,request:{key:string})=>{const key=claim.job.id+':'+request.key,call=calls.get(key);if(call)return {claimed:false,call};const row={id:key,result:null as never};calls.set(key,row);return {claimed:true,call:row};}),
-  saveCall:vi.fn(async(call:{id:string},_claim:unknown,result:unknown)=>{calls.set(call.id,{id:call.id,result:result as never});}),prepare:vi.fn(async()=>{}),publish:vi.fn(async()=>true),fail:vi.fn(async(_claim:AnalysisClaim,_code:string,_retryable:boolean,_yielded?:boolean)=>{})} satisfies AnalysisStore;
+ const calls=new Map<string,AnalysisCall>();
+ return {policies:vi.fn(async()=>[{user_id:'owner',enabled:true,model:'fixture/model'}]),sync:vi.fn(async(_userId:string,_epoch?:string)=>({synchronized:2})),claim:vi.fn(async(_userId:string)=>queue.shift()||null),
+  reserve:vi.fn<AnalysisStore['reserve']>(async(claim,request,_maximumUsd,model,identity)=>{const key=claim.job.id+':'+request.key,call=calls.get(key);if(call)return {claimed:false,call};const row={id:key,model,execution_identity:identity,result:null};calls.set(key,row);return {claimed:true,call:row};}),
+  saveCall:vi.fn(async(call:AnalysisCall,_claim:unknown,result:unknown)=>{calls.set(call.id,{...calls.get(call.id),id:call.id,result:result as AnalysisCall['result']});}),prepare:vi.fn(async()=>{}),publish:vi.fn(async()=>true),fail:vi.fn(async(_claim:AnalysisClaim,_code:string,_retryable:boolean,_yielded?:boolean)=>{})} satisfies AnalysisStore;
 }
 const generator:AnalysisGenerator=async request=>{const p=JSON.parse(request.prompt);return {value:{readComplete:true,endQuote:p.requiredEndQuote,...(request.role==='summary'?{highlights:[{text:'The GPU test improved from 30 to 45 frames per second.',evidenceQuote:record.content,startSeconds:null}]}:{candidates:[{label:'GPU',kind:'category',confidence:100,reason:'Explicit category.',mention:'GPU',evidenceQuote:'GPU'}]})},observedUsd:.0001,actualUsd:.0001};};
 describe('private durable automatic video analysis worker',()=>{
@@ -29,6 +29,51 @@ describe('private durable automatic video analysis worker',()=>{
   const result=await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
   expect(generate).toHaveBeenCalledTimes(1);expect(result.blocked).toBe(1);expect(store.fail.mock.calls[1][1]).toBe('analysis_unknown_charge_hold');
  });
+ it.each([
+  {name:'route/provider',model:'deepseek/deepseek-v4.1-flash-1017',patch:{CONTENT_ANALYSIS_ROUTE:'openrouter',CONTENT_ANALYSIS_OPENROUTER_PROVIDER:'deepinfra/fp8'}},
+  {name:'reasoning',patch:{CONTENT_ANALYSIS_REASONING_EFFORT:'low'}},
+  {name:'model',model:'another-fixture-model'},
+  {name:'pricing',pricingVersion:'fixture-prices-v2'},
+ ])('blocks cached output after changing $name without changing stable call keys',async scenario=>{
+  const queue=[claim('summary')],store=storeFor(queue),generate=vi.fn(generator);
+  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
+  queue.push(claim('summary'));
+  const nextLimits={...limits,...(scenario.model?{model:scenario.model}:{}),...(scenario.pricingVersion?{pricingVersion:scenario.pricingVersion}:{})};
+  store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model:nextLimits.model}]);
+  const result=await createAnalysisWorker({env:env(scenario.patch),store,limits:nextLimits,generate,now:()=>0})();
+  expect(result.blocked).toBe(1);expect(generate).toHaveBeenCalledTimes(1);
+  expect(store.fail.mock.calls.at(-1)?.[1]).toBe('analysis_cached_input_changed');
+  expect(store.reserve.mock.calls.map(call=>call[1].key)).toEqual(['summary:0','summary:0']);
+ });
+ it('keeps an unknown-charge hold when the configured provider changes',async()=>{
+  const queue=[claim('summary')],store=storeFor(queue),generate=vi.fn(async()=>{throw new Error('ambiguous timeout');});
+  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  queue.push(claim('summary'));
+  const nextLimits={...limits,model:'deepseek/deepseek-v4.1-flash-1017'};
+  store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model:nextLimits.model}]);
+  const result=await createAnalysisWorker({env:env({CONTENT_ANALYSIS_ROUTE:'openrouter',CONTENT_ANALYSIS_OPENROUTER_PROVIDER:'deepinfra/fp8'}),store,limits:nextLimits,generate,now:()=>0})();
+  expect(result.blocked).toBe(1);expect(generate).toHaveBeenCalledTimes(1);
+  expect(store.fail.mock.calls.at(-1)?.[1]).toBe('analysis_unknown_charge_hold');
+ });
+ it('does not trust cached legacy calls without their independent execution identity',async()=>{
+  const queue=[claim('summary')],store=storeFor(queue),generate=vi.fn(generator);
+  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  const reserve=store.reserve.getMockImplementation()!;
+  store.reserve.mockImplementation(async(...args)=>{const result=await reserve(...args);return {...result,call:{...result.call,execution_identity:null}};});
+  queue.push(claim('summary'));
+  const result=await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  expect(result.blocked).toBe(1);expect(generate).toHaveBeenCalledTimes(1);
+  expect(store.fail.mock.calls.at(-1)?.[1]).toBe('analysis_cached_input_changed');
+ });
+ it('fingerprints identity and schemas independently of JSON object key order',()=>{
+  const identity=analysisExecutionIdentity(env(),limits),request={role:'summary' as const,key:'summary:0',system:'policy',prompt:'source',maxOutputTokens:1000,schema:{type:'object',properties:{a:{type:'string'},b:{type:'number'}}}};
+  // PostgreSQL JSONB may reorder every nested object; rebuild recursively.
+  const reverse=(value:unknown):unknown=>value&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.entries(value).reverse().map(([k,v])=>[k,reverse(v)])):value;
+  expect(analysisRequestHash(request,identity)).toBe(analysisRequestHash({...request,schema:reverse(request.schema) as Record<string,unknown>},reverse(identity) as typeof identity));
+  const pin={responseModel:'provider/model-v1',providerName:'Provider'};
+  expect(analysisRequestHash(request,identity,pin)).not.toBe(analysisRequestHash(request,identity,{...pin,responseModel:'provider/model-v2'}));
+  expect(analysisRequestHash(request,identity,pin)).not.toBe(analysisRequestHash(request,identity,{...pin,providerName:'Another provider'}));
+ });
  it('does not let a failed keyword task block a valid summary',async()=>{
   const store=storeFor([claim('keywords'),claim('summary')]);
   const result=await createAnalysisWorker({env:env(),store,limits,generate:async request=>{if(request.role==='extractor')throw new AnalysisError('analysis_unsupported_quote');return generator(request);},now:()=>0})();
@@ -42,7 +87,21 @@ describe('private durable automatic video analysis worker',()=>{
  it('persists credential/config blocked status after queue synchronization without model execution',async()=>{
   const store=storeFor([claim('summary')]);
   const result=await createAnalysisWorker({env:env(),store,limits,now:()=>0})();
-  expect(result.blocked).toBe(1);expect(store.sync).toHaveBeenCalledWith('owner');expect(store.reserve).not.toHaveBeenCalled();expect(store.fail.mock.calls[0][1]).toBe('analysis_pricing_not_verified');
+  expect(result.blocked).toBe(1);expect(store.sync).toHaveBeenCalledWith('owner','');expect(store.reserve).not.toHaveBeenCalled();expect(store.fail.mock.calls[0][1]).toBe('analysis_pricing_not_verified');
+ });
+ it('uses the saved admin model instead of stale environment model/provider settings',async()=>{
+  const model='minimax/minimax-m3.1-flash',store=Object.assign(storeFor([claim('summary')]),{runtime:vi.fn(async()=>({selected_model:model,revision:7}))}),generate=vi.fn(generator);
+  store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model}]);
+  const result=await createAnalysisWorker({env:env({CONTENT_ANALYSIS_MODEL:'google/gemini-2.5-flash-lite',CONTENT_ANALYSIS_OPENROUTER_PROVIDER:'google-ai-studio'}),store,generate,now:()=>0})();
+  expect(result.completed).toBe(1);expect(generate).toHaveBeenCalledTimes(1);
+  expect(store.reserve.mock.calls[0][3]).toBe(model);
+  expect(store.reserve.mock.calls[0][4]).toMatchObject({route:'openrouter',model});
+  expect(store.sync.mock.calls[0][1]).toContain('7');
+ });
+ it('blocks an invalid saved model without falling back or reserving a charge',async()=>{
+  const store=Object.assign(storeFor([claim('summary')]),{runtime:vi.fn(async()=>({selected_model:'google/gemini-2.5-flash-lite',revision:8}))}),generate=vi.fn(generator);
+  const result=await createAnalysisWorker({env:env(),store,generate,now:()=>0})();
+  expect(result.blocked).toBe(1);expect(generate).not.toHaveBeenCalled();expect(store.reserve).not.toHaveBeenCalled();
  });
  it('resumes a prepared result through publication without generation',async()=>{
   const pending=claim('summary');pending.job.state='prepared';pending.job.result={state:'empty',patch:{},pending:[],evidence:{}};
@@ -53,7 +112,7 @@ describe('private durable automatic video analysis worker',()=>{
   let current=0;
   const a=claim('keywords'),b={...claim('summary'),job:{...claim('summary').job,id:'b-summary',user_id:'bbb'}};
   const store=storeFor([]);
-  store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model:'fixture-model'},{user_id:'bbb',enabled:true,model:'fixture-model'}]);
+  store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model:'fixture/model'},{user_id:'bbb',enabled:true,model:'fixture/model'}]);
   store.claim.mockImplementation(async userId=>userId==='owner'?(a.job.state==='running'?(a.job.state='claimed',a):null):(b.job.state==='running'?(b.job.state='claimed',b):null));
   const result=await createAnalysisWorker({env:env(),store,limits,now:()=>current,generate:async request=>{const result=await generator(request);if(request.role==='extractor')current+=260000;return result;}})();
   expect(result.yielded).toBe(1);expect(result.completed).toBe(1);expect(store.claim).toHaveBeenCalledWith('bbb');

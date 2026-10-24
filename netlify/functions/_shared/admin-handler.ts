@@ -4,7 +4,9 @@ import { collectionHealth } from './collect-handler';
 import type { AdminChannelIdentity, CollectionJobRecord } from '../../../src/lib/admin-types';
 import { listKeywordReviews, reviewKeyword } from './keyword-admin';
 import { activityQuery, readCollectionActivity } from './collection-activity';
-interface Dependencies { env: Env; authorize: typeof requireAdmin; db: typeof database; clerk: typeof clerkRequest }
+import { readAnalysisSettings, saveAnalysisModel } from './analysis-settings-admin';
+import { checkOpenRouterConnection } from './content-analysis-runtime';
+interface Dependencies { env: Env; authorize: typeof requireAdmin; db: typeof database; clerk: typeof clerkRequest; checkConnection: typeof checkOpenRouterConnection }
 const success = (value: unknown) => { const response=json(value);response.headers.set('x-robots-tag','noindex, nofollow');return response; };
 const unwrap = <T>(result: { data: T; error: {message: string; code?: string} | null }): T => {
  if(result.error) {
@@ -18,13 +20,25 @@ const queryOf = (url: URL) => (url.searchParams.get('q')||'').trim().slice(0,120
 const exactText = (value: unknown,max:number) => typeof value==='string'&&value.length<=max ? value.trim() : null;
 
 export function createAdminHandler(overrides: Partial<Dependencies>={}) {
- const deps:Dependencies={env:runtimeEnv,authorize:requireAdmin,db:database,clerk:clerkRequest,...overrides};
+ const deps:Dependencies={env:runtimeEnv,authorize:requireAdmin,db:database,clerk:clerkRequest,checkConnection:checkOpenRouterConnection,...overrides};
  return async(request:Request):Promise<Response>=>{
   try {
-   if(!['GET','PATCH'].includes(request.method)) return json({error:{code:'method_not_allowed',message:'Use GET or PATCH.'}},405);
+   if(!['GET','PATCH','POST'].includes(request.method)) return json({error:{code:'method_not_allowed',message:'Use GET, PATCH or POST.'}},405);
    const adminId=await deps.authorize(request,deps.env);
    const db=deps.db(deps.env),url=new URL(request.url),section=url.searchParams.get('section')||'overview',page=pageOf(url),q=queryOf(url);
    if(section==='access' && request.method==='GET')return success({authorized:true});
+   if(request.method==='POST') {
+    if(!request.headers.get('content-type')?.includes('application/json')) throw new CollectionError(415,'json_required','Send JSON.');
+    let body:unknown;try {body=JSON.parse(await readTextLimited(new Response(request.body),16000));}catch{throw new CollectionError(400,'invalid_input','The analysis selection could not be read.');}
+    if(!body||Array.isArray(body)||typeof body!=='object') throw new CollectionError(400,'invalid_input','Send an analysis selection.');
+    if((body as Record<string,unknown>).action==='check_analysis_connection') {
+     if(Object.keys(body).length!==1) throw new CollectionError(400,'invalid_input','Send only the connection-check action.');
+     const connection=await deps.checkConnection(deps.env);
+     return success({connection:{configured:connection.configured,authenticated:connection.authenticated,status:connection.status,...(typeof connection.hasCredits==='boolean'?{hasCredits:connection.hasCredits}:{})}});
+    }
+    if((body as Record<string,unknown>).action!=='save_analysis_model') throw new CollectionError(400,'invalid_action','Choose an editable analysis setting.');
+    return success(await saveAnalysisModel(db,body as Record<string,unknown>,adminId));
+   }
    if(request.method==='PATCH') {
     if(!request.headers.get('content-type')?.includes('application/json')) throw new CollectionError(415,'json_required','Send JSON.');
     let body:Record<string,unknown>;try {body=JSON.parse(await readTextLimited(new Response(request.body),16000));}catch{throw new CollectionError(400,'invalid_input','The saved details could not be read.');}
@@ -44,6 +58,7 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
     }
     throw new CollectionError(400,'invalid_action','Choose an editable record.');
    }
+   if(section==='analysis') return success(await readAnalysisSettings(db,deps.env));
    if(section==='keywords') return success(await listKeywordReviews(db,url,page,adminId));
    if(section==='costs') {
     const filters=activityQuery(url,true);

@@ -1,0 +1,150 @@
+{
+  "checkedAt": "2026-10-24T19:59:02.842161+00:00",
+  "type": "public model/endpoint metadata; no authenticated generation",
+  "defaultModel": "deepseek/deepseek-v4.1-flash-1017",
+  "allowedModels": [
+    {
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "providerSlug": "deepinfra/fp8",
+      "providerName": "DeepInfra",
+      "supportedParameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "repetition_penalty",
+        "top_k",
+        "seed",
+        "min_p",
+        "logit_bias",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "reasoning_effort"
+      ],
+      "pricingPerToken": {
+        "prompt": "0.000000098",
+        "completion": "0.000000294",
+        "input_cache_read": "0.00000000294",
+        "discount": 0.51
+      },
+      "contextLength": 1048576,
+      "source": "https://openrouter.ai/api/v1/models/deepseek/deepseek-v4.1-flash-1017/endpoints"
+    },
+    {
+      "model": "minimax/minimax-m3.1-flash",
+      "providerSlug": "together",
+      "providerName": "Together",
+      "supportedParameters": [
+        "reasoning",
+        "include_reasoning",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "stop",
+        "frequency_penalty",
+        "presence_penalty",
+        "top_k",
+        "repetition_penalty",
+        "logit_bias",
+        "min_p",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "logprobs",
+        "top_logprobs",
+        "reasoning_effort"
+      ],
+      "pricingPerToken": {
+        "prompt": "0.00000015",
+        "completion": "0.0000006",
+        "input_cache_read": "0.000000015",
+        "discount": 0
+      },
+      "contextLength": 1000000,
+      "source": "https://openrouter.ai/api/v1/models/minimax/minimax-m3.1-flash/endpoints"
+    },
+    {
+      "model": "openai/gpt-6-luna-pro",
+      "providerSlug": "openai",
+      "providerName": "OpenAI",
+      "supportedParameters": [
+        "reasoning",
+        "include_reasoning",
+        "seed",
+        "max_tokens",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "verbosity",
+        "reasoning_effort"
+      ],
+      "pricingPerToken": {
+        "prompt": "0.0000001",
+        "completion": "0.0000005",
+        "web_search": "0.01",
+        "input_cache_read": "0.00000001",
+        "input_cache_write": "0.000000125",
+        "discount": 0,
+        "overrides": [
+          {
+            "min_prompt_tokens": 272000,
+            "prompt": "0.0000002",
+            "completion": "0.00000075",
+            "input_cache_read": "0.00000002",
+            "input_cache_write": "0.00000025"
+          }
+        ]
+      },
+      "contextLength": 1050000,
+      "source": "https://openrouter.ai/api/v1/models/openai/gpt-6-luna-pro/endpoints"
+    },
+    {
+      "model": "openai/gpt-6.1-sol-pro",
+      "providerSlug": "openai",
+      "providerName": "OpenAI",
+      "supportedParameters": [
+        "reasoning",
+        "include_reasoning",
+        "seed",
+        "max_tokens",
+        "response_format",
+        "structured_outputs",
+        "tools",
+        "tool_choice",
+        "verbosity",
+        "reasoning_effort"
+      ],
+      "pricingPerToken": {
+        "prompt": "0.000002",
+        "completion": "0.00001",
+        "web_search": "0.01",
+        "input_cache_read": "0.0000001",
+        "input_cache_write": "0.0000025",
+        "discount": 0,
+        "overrides": [
+          {
+            "min_prompt_tokens": 272000,
+            "prompt": "0.000004",
+            "completion": "0.000015",
+            "input_cache_read": "0.0000002",
+            "input_cache_write": "0.000005"
+          }
+        ]
+      },
+      "contextLength": 1050000,
+      "source": "https://openrouter.ai/api/v1/models/openai/gpt-6.1-sol-pro/endpoints"
+    }
+  ],
+  "productionKeyConfigured": true,
+  "serverAuthenticationVerified": false,
+  "generationCalls": 0,
+  "realOutputQualityVerified": false
+}
