@@ -1,6 +1,10 @@
 # Decisions and interview
 
-Updated: 24 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Updated: 25 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+
+## D37 — five-dollar analysis daily allowance, 25 October 2026
+
+Founder: “update the daily limit to 5$ and tell me what are the next steps to make this work flawlessly”. This explicitly sets the analysis daily allowance to **US$5**, not the separate supplier collection budget. Global and the sole existing reader daily limits are updated. The assistant sets the old US$0.02 lifetime trial caps to a matching finite **US$5 total evaluation ceiling**, avoiding immediate override by the old pilot allowance without authorizing unlimited/recurring total spend. Both generation gates remain disabled; US$0.01/call, four allowed models, DeepSeek default and all unknown-charge holds remain intact. No model/provider execution or reliability implementation follows merely from the advice request. The proposed next steps and exact live verification are in [OPENROUTER](tech/OPENROUTER.md#current-allowance-and-next-steps--25-october-2026).
 
 ## 24 October 2026 — provider-based parsing is the planning baseline
 

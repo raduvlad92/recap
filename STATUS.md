@@ -1,6 +1,10 @@
 # Current status
 
-Updated: **24 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
+Updated: **25 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
+
+## Analysis allowance and next reliability work — D37, 25 October 2026
+
+Founder requested **US$5/day** for analysis and advice on reliable operation. Actual guarded rollback/apply and fresh readback set the global and existing reader daily limits to US$5. The assistant aligned their previous US$0.02 lifetime trial caps to a finite **US$5 cumulative evaluation ceiling** so they do not override the new daily allowance; this is not unlimited or monthly spending authorization. Per-call US$0.01, DeepSeek default, both disabled generation gates, twelve call records and US$0.009178191 unresolved holds are preserved. The live admin panel displays both US$5 caps. No model/supplier request or activation occurred. [Proof and ordered next steps](docs/tech/OPENROUTER.md#current-allowance-and-next-steps--25-october-2026). Recommended next work: deterministic source citations/timing, bounded correction of invalid cached output, complete long-job continuation, a manually checked representative sample, then actual reader publication and a small monitored backfill. These reliability steps are recommendations, not work completed by the budget change.
 
 ## OpenRouter and admin model selection — D36
 

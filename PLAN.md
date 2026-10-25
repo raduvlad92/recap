@@ -1,8 +1,20 @@
 # Tracked implementation and validation plan
 
-Version: **1.1 — APPROVAL CANDIDATE**. Updated: 24 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
+Version: **1.1 — APPROVAL CANDIDATE**. Updated: 25 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
+
+## Current analysis allowance and proposed reliability sequence — D37
+
+**Budget update complete:** global/reader daily allowance US$5; finite cumulative evaluation ceiling US$5; per-call US$0.01. Generation remains disabled. Actual rollback/apply/readback and hosted admin display pass; call ledger, originals, workspace and default model are preserved. No paid call was made. The daily-limit request does not itself authorize implementing or activating the following recommendations.
+
+1. Have models select stable source-passage references; derive literal quotations, mention locations and real timestamps in code. Verify each recap claim against its cited original.
+2. Add a bounded, explicitly versioned correction path for invalid output. Keep failed evidence/charges and stable uncertain-call holds; never silently discard a candidate or bypass a cached request mismatch.
+3. Confirm usable full-content input or show honest missing/partial-caption states; recover captions within existing supplier controls. Prove every source chunk and final word is processed across yields, restarts and budget pauses. Make output capacity explicit; split inventories instead of truncating or losing sponsor/outro mentions.
+4. Evaluate DeepSeek on a proposed twenty manually reviewed videos spanning long/short transcripts, dense entities, sponsor/outro names and partial timing. Require no unsupported published claims, exact evidence, useful complete keyword coverage and correct real-cue links; record completion, cost and latency.
+5. Prove a real source-to-reader flow, including separate summary/keyword failures, admin decisions, reload, source changes/deletion and No Shorts behavior. Then enable one small backlog batch with monitoring before expanding.
+
+[Detailed acceptance gates and current evidence](docs/tech/OPENROUTER.md#current-allowance-and-next-steps--25-october-2026). Zero of seven pilot jobs safely completed; increasing the allowance alone does not repair cached invalid output.
 
 ## Active collection planning direction — third-party Actors, 24 October 2026
 
