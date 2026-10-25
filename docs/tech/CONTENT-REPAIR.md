@@ -64,7 +64,7 @@ Hourly collection was restored and exact functional deploy **6adc0821d3892b6107a
 
 ## Operator handoff for the remaining model stage
 
-The owner supplies only the existing provider credential through Netlify. The assistant owns the remaining setup and quality evaluation; adding a key alone does not enable execution.
+The OpenRouter key is already configured in Netlify. The assistant owns the D38 setup, bounded evaluation and release steps; no further credential action is needed. Follow [the current release plan](ANALYSIS-RELIABILITY.md) and retain the existing financial holds.
 
 - Keep both the production runtime gate and private global/reader policy gates off until access, pricing, sample quality and authorized cost bounds are verified. The current draft limits are dormant; no paid evaluation is claimed.
 - Configure the selected OpenRouter route, exact request/response model identities, provider slug/display name, matching price-model and reviewed pricing version using [the current setup](OPENROUTER.md). Required rate fields are INPUT, OUTPUT and CACHED_INPUT USD_PER_MILLION under the CONTENT_ANALYSIS prefix; explicitly configure CACHE_WRITE_APPLIES, with its rate when applicable. Check current endpoint rates and account billing before activation.

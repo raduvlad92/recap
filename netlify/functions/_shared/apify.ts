@@ -148,8 +148,8 @@ export function normalizeYouTubeItems(items: unknown, source: Source, maxItems =
   return [...updates.values()];
 }
 
-export interface ApifyPollResult { status: string; message?: string; result?: CollectionResult; telemetry?: {ledgerId: string; providerRunId: string; cost: number | null} }
-export interface StoredApifyJob { providerRunId: string; actorId: string; source: Source; maxItems: number; ledgerId: string }
+export interface ApifyPollResult { status: string; message?: string; result?: CollectionResult; contentError?: string; telemetry?: {ledgerId: string; providerRunId: string; cost: number | null} }
+export interface StoredApifyJob { providerRunId: string; actorId: string; source: Source; maxItems: number; ledgerId: string; feeOnly?: boolean }
 
 /** Server-only recovery: input must come from the private provider-job table, never a browser body. */
 export async function pollStoredApify(job: StoredApifyJob, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<ApifyPollResult> {
@@ -162,7 +162,7 @@ export async function pollStoredApify(job: StoredApifyJob, userId: string, env: 
   if (!(target.pathname === '/watch' || target.hostname === 'youtu.be' || target.pathname.startsWith('/shorts/'))) {
     throw new CollectionError(403, 'invalid_job', 'Stored jobs must identify one video.');
   }
-  return readApifyRun(providerId(job.providerRunId), providerId(job.actorId), job.source, 1, job.ledgerId, config, fetcher, env('APIFY_YOUTUBE_BUILD_ID'));
+  return readApifyRun(providerId(job.providerRunId), providerId(job.actorId), job.source, 1, job.ledgerId, config, fetcher, env('APIFY_YOUTUBE_BUILD_ID'), true, job.feeOnly === true);
 }
 
 export async function pollApify(jobToken: string, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<ApifyPollResult> {
@@ -181,16 +181,23 @@ export async function pollApify(jobToken: string, userId: string, env: Env, fetc
   return readApifyRun(runId, actorId, source, maxItems, ledgerId, config, fetcher);
 }
 
-async function readApifyRun(runId: string, actorId: string, source: Source, maxItems: number, ledgerId: string | undefined, config: ApifyConfig, fetcher: Fetcher, expectedBuildId?: string): Promise<ApifyPollResult> {
+async function readApifyRun(runId: string, actorId: string, source: Source, maxItems: number, ledgerId: string | undefined, config: ApifyConfig, fetcher: Fetcher, expectedBuildId?: string, preserveTerminalTelemetry = false, feeOnly = false): Promise<ApifyPollResult> {
   const response = object(await apifyRequest('actor-runs/' + runId, config, fetcher));
   const run = object(response.data);
   if (run.id !== runId || run.actId !== actorId) throw new CollectionError(403, 'invalid_job', 'The provider job does not match this request.');
   if (expectedBuildId && run.buildId !== expectedBuildId) throw new CollectionError(403, 'provider_build_mismatch', 'The provider returned an unreviewed build.');
   const telemetry = ledgerId ? { ledgerId, providerRunId: runId, cost: typeof run.usageTotalUsd === 'number' && Number.isFinite(run.usageTotalUsd) && run.usageTotalUsd >= 0 ? run.usageTotalUsd : null } : undefined;
   if (['READY', 'RUNNING', 'TIMING-OUT', 'ABORTING'].includes(String(run.status))) return { status: 'running', message: 'Collection is still running.',telemetry };
+  if (!['SUCCEEDED','FAILED','TIMED-OUT','ABORTED'].includes(String(run.status))) throw new CollectionError(502, 'provider_response_invalid', 'The provider returned an unknown run status.');
   if (run.status !== 'SUCCEEDED') return { status: 'failed', message: 'The provider job stopped without a complete result. No automatic retry was started.',telemetry };
-  const datasetId = providerId(run.defaultDatasetId);
-  const items = await apifyRequest('datasets/' + datasetId + '/items?clean=true&format=json&limit=' + maxItems, config, fetcher);
-  const updates = normalizeYouTubeItems(items, source, maxItems);
-  return { status: 'completed', telemetry, result: { source: { ...source, status: 'ready' }, updates, notice: 'Collected a bounded recent sample, not a complete channel history. Text is extracted source material, not an AI recap. Descriptions are not video-content coverage.' } };
+  if (feeOnly) return { status: 'completed', telemetry };
+  try {
+    const datasetId = providerId(run.defaultDatasetId);
+    const items = await apifyRequest('datasets/' + datasetId + '/items?clean=true&format=json&limit=' + maxItems, config, fetcher);
+    const updates = normalizeYouTubeItems(items, source, maxItems);
+    return { status: 'completed', telemetry, result: { source: { ...source, status: 'ready' }, updates, notice: 'Collected a bounded recent sample, not a complete channel history. Text is extracted source material, not an AI recap. Descriptions are not video-content coverage.' } };
+  } catch (error) {
+    if (!preserveTerminalTelemetry) throw error;
+    return { status: 'completed', telemetry, contentError: error instanceof CollectionError ? error.code : 'provider_result_unreadable', message: 'The provider finished; its original result remains unread and has not been imported.' };
+  }
 }

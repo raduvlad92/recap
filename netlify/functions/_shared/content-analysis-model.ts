@@ -1,12 +1,14 @@
 import OpenAI from 'openai';
 import { runtimeEnv, type Env } from './security';
 import { ANALYSIS_MODEL_IDS } from '../../../src/lib/analysis-settings-types';
+import { isAnalysisV2CallKey } from './content-analysis-grounded-v2-protocol';
 export type AnalysisRole='summary'|'summary-reduce'|'extractor'|'checker';
-export interface GenerationRequest {role:AnalysisRole;key:string;system:string;prompt:string;maxOutputTokens:number;schema:Record<string,unknown>}
+export interface GenerationRequest {role:AnalysisRole;key:string;system:string;prompt:string;maxOutputTokens:number;schema:Record<string,unknown>;correction?:{baseKey:string;errorCode:string}}
 export interface AnalysisUsage {inputTokens:number;outputTokens:number;cachedInputTokens?:number;cacheWriteTokens?:number;totalTokens?:number;reasoningOutputTokens?:number}
 export interface GenerationResult {
  value:unknown;providerId?:string;usage?:AnalysisUsage;observedUsd:number|null;actualUsd?:number|null;
  executionIdentity?:AnalysisExecutionIdentity;
+ validationError?:'analysis_invalid_json'|'analysis_output_capacity'|'analysis_provider_refusal';
  routing?:{route:'openrouter';model:string;provider:string|null;providerSlug:string;isByok:boolean|null;upstreamInferenceUsd:number|null;upstreamPromptUsd:number|null;upstreamCompletionUsd:number|null};
 }
 export type AnalysisGenerator=(request:GenerationRequest)=>Promise<GenerationResult>;
@@ -37,7 +39,7 @@ export function analysisLimits(env:Env=runtimeEnv):AnalysisLimits {
  const write=env('CONTENT_ANALYSIS_CACHE_WRITE_APPLIES');
  if(write!=='true'&&write!=='false')return analysisFailure('analysis_pricing_not_verified');
  const result:AnalysisLimits={model,pricingVersion,chunkChars:number(env,'CONTENT_ANALYSIS_CHUNK_CHARS',1000,24000),overlapChars:256,
-  maxChunks:number(env,'CONTENT_ANALYSIS_MAX_CHUNKS',1,100),maxSourceChars:number(env,'CONTENT_ANALYSIS_MAX_SOURCE_CHARS',1000,1000000),
+  maxChunks:number(env,'CONTENT_ANALYSIS_MAX_CHUNKS',1,1000),maxSourceChars:number(env,'CONTENT_ANALYSIS_MAX_SOURCE_CHARS',1000,1000000),
   maxOutputTokens:number(env,'CONTENT_ANALYSIS_MAX_OUTPUT_TOKENS',512,16000),
   inputUsdPerMillion:number(env,'CONTENT_ANALYSIS_INPUT_USD_PER_MILLION',0.000001,1000),
   outputUsdPerMillion:number(env,'CONTENT_ANALYSIS_OUTPUT_USD_PER_MILLION',0.000001,1000),
@@ -210,14 +212,34 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
   if(!raw||raw.error!=null)return analysisFailure('analysis_incomplete_generation');
   if(raw.model!==responseModel||(raw.provider!=null&&raw.provider!==providerName)||typeof raw.id!=='string'||!raw.id.trim())return analysisFailure('analysis_provider_not_verified');
   const choices=raw.choices,choice=Array.isArray(choices)&&choices.length===1?object(choices[0]):undefined,message=object(choice?.message);
-  if(!choice||choice.error!=null||choice.finish_reason!=='stop'||!message||message.role!=='assistant'||message.refusal!=null||message.tool_calls!=null||typeof message.content!=='string'||!message.content.trim())return analysisFailure('analysis_incomplete_generation');
-  let value:unknown;try{value=JSON.parse(message.content);}catch{return analysisFailure('analysis_invalid_json');}
+  if(!choice||choice.error!=null||!message||message.role!=='assistant'||message.tool_calls!=null)return analysisFailure('analysis_incomplete_generation');
+  // For the new protocol, preserve known billable output before domain
+  // validation. A refusal remains terminal; a materialized format failure can
+  // take exactly one financially fenced correction. Legacy behavior is stable.
+  const v2=isAnalysisV2CallKey(request.key);
+  let validationError:GenerationResult['validationError'];
+  if(message.refusal!=null){if(!v2)return analysisFailure('analysis_incomplete_generation');validationError='analysis_provider_refusal';}
+  else if(choice.finish_reason!=='stop'){
+   if(!v2||choice.finish_reason!=='length')return analysisFailure('analysis_incomplete_generation');
+   validationError='analysis_output_capacity';
+  }
+  if(typeof message.content!=='string'||!message.content.trim()){
+   if(!v2||!validationError)return analysisFailure('analysis_incomplete_generation');
+  }
+  let value:unknown;
+  try{value=JSON.parse(typeof message.content==='string'?message.content:'');}
+  catch{
+   if(!v2)return analysisFailure('analysis_invalid_json');
+   validationError??='analysis_invalid_json';
+   value={rawOutput:typeof message.content==='string'?message.content:'',finishReason:choice.finish_reason};
+  }
+  if(validationError==='analysis_provider_refusal')value={rawOutput:typeof message.content==='string'?message.content:'',refusal:typeof message.refusal==='string'?message.refusal:null,finishReason:choice.finish_reason};
   const usage=openRouterUsage(raw.usage),accounting=object(raw.usage),details=object(accounting?.cost_details),observedUsd=charge(accounting?.cost);
   // cost is the account charge, not an estimate. BYOK can bill a second upstream account; retain its hold.
   // https://openrouter.ai/docs/cookbook/administration/usage-accounting
   const isByok=typeof accounting?.is_byok==='boolean'?accounting.is_byok:null;
   const actualUsd=isByok===false?observedUsd:null;
-  return {value,providerId:raw.id,observedUsd,actualUsd,...(usage?{usage}:{}),executionIdentity:identity,
+  return {value,providerId:raw.id,observedUsd,actualUsd,...(usage?{usage}:{}),...(validationError?{validationError}:{}),executionIdentity:identity,
    routing:{route:'openrouter',model:raw.model as string,provider:raw.provider==null?null:raw.provider as string,providerSlug:identity.provider,isByok,
     upstreamInferenceUsd:charge(details?.upstream_inference_cost),upstreamPromptUsd:charge(details?.upstream_inference_prompt_cost),upstreamCompletionUsd:charge(details?.upstream_inference_completions_cost)}};
  };

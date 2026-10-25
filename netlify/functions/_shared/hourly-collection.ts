@@ -25,13 +25,15 @@ export interface StoredProviderJob {
  id: string; user_id: string; source_id: string; item_key: string; job_id: string; check_id: string; reservation_id: string;
  actor_id: string; maximum_usd: number; provider_run_id: string | null; job_token: string | null;
  state: 'launch_claimed' | 'running' | 'completed' | 'failed' | 'ambiguous'; actual_cost_usd: number | null; observed_cost_usd?: number | null;
- source_fingerprint: string; discard_result: boolean;
+ source_fingerprint: string; discard_result: boolean; content_pending?: boolean; finished_at?: string | null;
 }
 export type HourlyPatch = Record<string, unknown> & { status: 'unchanged' | 'collected' | 'partial' | 'unsupported' | 'blocked' | 'failed' };
 export type ConditionalDownload = Download & { status?: number; etag?: string; lastModified?: string; bytes?: number };
 export type HourlyDownload = (url: string, redirects?: number, validators?: { etag?: string; lastModified?: string }) => Promise<ConditionalDownload>;
 export interface HourlyStore {
  policies(): Promise<HourlyPolicy[]>;
+ schedule(): Promise<Array<{ user_id: string; source_id: string }>>;
+ serviced(claim: HourlyClaim, jobId: string): Promise<void>;
  workspace(userId: string): Promise<WorkspaceState | null>;
  claim(userId: string, sourceId: string): Promise<HourlyClaim | null>;
  seen(claim: HourlyClaim): Promise<Set<string>>;
@@ -89,6 +91,8 @@ export function createHourlyStore(env: Env = runtimeEnv): HourlyStore {
  }
  return {
   async policies() { const r = await db.from('reader_collection_policies').select('*').eq('enabled', true).order('user_id'); if (r.error) throw unavailable(); return r.data as HourlyPolicy[]; },
+  schedule: () => rpc('schedule_hourly_sources', {}),
+  serviced: (claim, jobId) => rpc('service_hourly_provider', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_provider_job_id: jobId }),
   async workspace(userId) { const r = await db.from('reader_workspaces').select('state').eq('user_id', userId).maybeSingle(); if (r.error) throw unavailable(); return r.data?.state as WorkspaceState || null; },
   claim: (userId, sourceId) => rpc('claim_hourly_source', { p_user_id: userId, p_source_id: sourceId }),
   async seen(claim) {
@@ -99,11 +103,7 @@ export function createHourlyStore(env: Env = runtimeEnv): HourlyStore {
     if (r.data.length < 1000) return keys;
    }
   },
-  async pending(claim) {
-   const r = await db.from('reader_collection_provider_jobs').select('*').eq('user_id', claim.state.user_id).eq('source_id', claim.source.id).or('state.in.(launch_claimed,running,ambiguous),actual_cost_usd.is.null').order('created_at').limit(100);
-   if (r.error) throw unavailable();
-   return r.data as StoredProviderJob[];
-  },
+  pending: claim => rpc('pending_hourly_providers', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken }),
   async providerClaimed(claim, itemKey) { const r = await db.from('reader_collection_provider_jobs').select('id').eq('user_id', claim.state.user_id).eq('source_id', claim.source.id).eq('item_key', itemKey).maybeSingle(); if (r.error) throw unavailable(); return !!r.data; },
   async jobCost(jobId, userId) { const r = await db.from('collection_jobs').select('observed_cost_usd').eq('id', jobId).eq('user_id', userId).single(); if (r.error) throw unavailable(); return r.data.observed_cost_usd === null ? null : Number(r.data.observed_cost_usd); },
   finish: (claim, patch, updates) => rpc('finish_hourly_source', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_patch: patch, p_items: updates.map(record => ({ itemKey: hourlyItemKey(record.url), record })) }),
@@ -263,14 +263,29 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
   const claim: HourlyClaim = claimed;
   let source = claim.source;
   const captionQueue = new Map<string, CaptionTask>();
-  for (const task of claim.state.pending_captions || []) if (goodUpdate(task.record, claim.source)) captionQueue.set(hourlyItemKey(task.record.url), task);
+  // Malformed/unknown durable tasks are retained verbatim, never silently
+  // removed or turned into an unbounded attempt/date calculation.
+  const retainedTasks: CaptionTask[] = [];
+  for (const task of claim.state.pending_captions || []) {
+   if (!task || !task.record || !goodUpdate(task.record, claim.source) || !Number.isSafeInteger(task.attempts) || task.attempts < 0 || !Number.isFinite(Date.parse(task.nextAttemptAt)) || task.status !== undefined && !['pending','retry','blocked','provider_pending','unavailable'].includes(task.status)) { retainedTasks.push(task); continue; }
+   const key = hourlyItemKey(task.record.url);
+   if (!captionQueue.has(key)) captionQueue.set(key, { ...task });
+  }
+  const configuredAttempts = Number(deps.env('HOURLY_COLLECTION_MAX_NEW_VIDEOS') || 20);
+  const captionLimit = Number.isFinite(configuredAttempts) && Number.isInteger(configuredAttempts) && configuredAttempts > 0 ? Math.min(20, configuredAttempts) : 20;
+  const attemptedIdentities = new Set<string>();
+  let remainingCaptionAttempts = captionLimit;
   const updates = new Map<string, SourceUpdate>(); const references: ProviderReference[] = [];
   const sourceStartedAt = deps.now();
-  const sourceDeadline = Math.min(workerDeadline, sourceStartedAt + 8 * 60_000);
-  let patch: HourlyPatch = { status: 'unchanged', new_count: 0 }, partial = false;
+  const sourceDeadline = Math.min(workerDeadline, sourceStartedAt + 90_000);
+  let patch: HourlyPatch = { status: 'unchanged', new_count: 0 }, partial = retainedTasks.length > 0;
   const completedJobs: Array<{ id: string; patch: Partial<StoredProviderJob> & { finished_at?: string } }> = [];
   let details: Record<string, unknown> = { coverage: 'Checks cover only the current public feed; full history and source completeness remain unverified.' };
   async function save() {
+   const deferred = [...captionQueue].filter(([key, task]) => !attemptedIdentities.has(key) && task.status !== 'provider_pending' && Date.parse(task.nextAttemptAt) <= deps.now()).length;
+   if (deferred) { partial = true; details.deferredCount = deferred; }
+   if (retainedTasks.length) details.invalidCaptionTasks = retainedTasks.length;
+   if (partial && ['collected','unchanged'].includes(patch.status)) patch.status = 'partial';
    if (references.length) {
     const known = references.every(ref => ref.observedCostUsd !== null);
     patch = { ...patch, provider: 'apify', cost_status: known ? 'provider_reported' : 'unknown', observed_cost_usd: known ? references.reduce((sum, ref) => sum + ref.observedCostUsd!, 0) : null,
@@ -278,34 +293,50 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     details = { ...details, providerJobs: references, reservedUsd: references.reduce((sum, ref) => sum + ref.reservedUsd, 0) };
    }
    for (const [key, update] of updates) if (update.contentKind === 'transcript' && update.content) captionQueue.delete(key);
-   const outcome = await deps.store.finish(claim, { ...patch, details, pending_captions: [...captionQueue.values()] }, [...updates.values()]);
+   const outcome = await deps.store.finish(claim, { ...patch, details, pending_captions: [...captionQueue.values(), ...retainedTasks] }, [...updates.values()]);
    if (!outcome.importAccepted) { patch.status = 'blocked'; patch.error_code = 'hourly_state_changed'; return; }
    for (const completed of completedJobs) await deps.store.providerPatch(completed.id, completed.patch);
   }
   async function reconcileJob(job: StoredProviderJob): Promise<boolean> {
+    // Touch only work we actually service, including no-run ambiguous holds.
+    // The RPC checks this source's current lease/workspace before advancing.
+    await deps.store.serviced(claim, job.id);
     const ref = references.find(r => r.jobId === job.job_id) || providerReference(job); if (!references.includes(ref)) references.push(ref);
     if (!job.provider_run_id) { partial = true; details.captionStatus = 'provider_launch_ambiguous'; const task = captionQueue.get(job.item_key); if (task) { task.status = 'blocked'; task.reason = 'provider_launch_ambiguous'; } return false; }
     const videoId = job.item_key.replace(/^youtube:/, '');
     try {
-     const result = await deps.pollApify({ providerRunId: job.provider_run_id, actorId: YOUTUBE_ACTOR_ID, source: { ...source, url: 'https://www.youtube.com/watch?v=' + videoId }, maxItems: 1, ledgerId: job.job_id }, policy.user_id, deps.env);
+     const feeOnly = job.discard_result || job.source_fingerprint !== claim.state.fingerprint || job.content_pending === false;
+     const result = await deps.pollApify({ providerRunId: job.provider_run_id, actorId: YOUTUBE_ACTOR_ID, source: { ...source, url: 'https://www.youtube.com/watch?v=' + videoId }, maxItems: 1, ledgerId: job.job_id, feeOnly }, policy.user_id, deps.env);
      const terminal = ['completed','failed'].includes(result.status), reported = result.telemetry?.cost ?? null;
      const observed = [reported, await deps.store.jobCost(job.job_id, policy.user_id), job.observed_cost_usd, job.actual_cost_usd, ref.observedCostUsd].filter((value): value is number => typeof value === 'number' && Number.isFinite(value) && value >= 0);
      const highWater = observed.length ? Math.max(...observed) : null;
      // A terminal missing charge remains unknown; known prior usage is retained
      // as a lower bound, never substituted for the missing final charge.
-     const cost = terminal && reported === null ? null : highWater;
+     const cost = job.actual_cost_usd !== null ? Number(job.actual_cost_usd) : terminal && reported === null ? null : highWater;
+     if (job.actual_cost_usd !== null && highWater !== null && highWater > Number(job.actual_cost_usd)) throw new CollectionError(409, 'provider_final_fee_changed', 'The final provider fee changed and needs review.');
      if (highWater !== null) {
       await deps.store.providerPatch(job.id, { observed_cost_usd: highWater });
       job.observed_cost_usd = highWater; ref.observedCostUsd = highWater; ref.costStatus = 'provider_reported';
      }
      await deps.finishJob(job.job_id, policy.user_id, { status: result.status === 'completed' ? 'succeeded' : result.status === 'failed' ? 'failed' : 'running', providerRunId: job.provider_run_id,
-      ...(terminal ? { resultCount: result.result?.updates.length || 0 } : {}), ...(cost !== null ? { observedCostUsd: cost, costStatus: 'provider_reported' } : {}) }, deps.env);
+      ...(terminal && !feeOnly && !result.contentError ? { resultCount: result.result?.updates.length || 0 } : {}), ...(terminal && !feeOnly ? { errorCode: result.contentError || null } : {}), ...(cost !== null ? { observedCostUsd: cost, costStatus: 'provider_reported' } : {}) }, deps.env);
      // Nonterminal usage is a fee observation, never a final budget settlement.
      await deps.settleBudget(job.reservation_id, { providerRunId: job.provider_run_id, terminal, actualUsd: terminal ? cost : null }, deps.env);
+     if (terminal && result.contentError) {
+      // Financial evidence is independent of content import. Preserve the
+      // original unread dataset and GET-only eligibility after settling a
+      // validated terminal fee. An unknown final fee retains its hold.
+      await deps.store.providerPatch(job.id, { state: 'completed', actual_cost_usd: cost, content_pending: true });
+      ref.observedCostUsd = cost; ref.costStatus = cost === null ? 'unknown' : 'provider_reported';
+      partial = true; details.captionStatus = result.contentError;
+      const queued = captionQueue.get(job.item_key);
+      if (queued) { queued.status = 'blocked'; queued.reason = result.contentError; }
+      return true;
+     }
      if (terminal) {
       const queued = captionQueue.get(job.item_key);
-      if (queued) { queued.status = 'retry'; queued.reason = result.status === 'failed' ? 'provider_failed' : 'provider_returned_no_captions'; }
-      completedJobs.push({ id: job.id, patch: { state: result.status === 'completed' ? 'completed' : 'failed', actual_cost_usd: cost, finished_at: new Date(deps.now()).toISOString() } });
+      if (queued) { queued.status = 'retry'; queued.reason = result.status === 'failed' ? 'provider_failed' : 'provider_returned_no_captions'; partial = true; details.captionStatus = queued.reason; }
+      completedJobs.push({ id: job.id, patch: { state: result.status === 'completed' ? 'completed' : 'failed', actual_cost_usd: cost, content_pending: false, ...(!job.finished_at ? { finished_at: new Date(deps.now()).toISOString() } : {}) } });
       ref.observedCostUsd = cost; ref.costStatus = cost === null ? 'unknown' : 'provider_reported';
       if (!job.discard_result && job.source_fingerprint === claim.state.fingerprint) for (const update of result.result?.updates || []) {
        if (goodUpdate(update, source) && hourlyItemKey(update.url) === job.item_key) {
@@ -322,15 +353,13 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     } catch (error) { partial = true; const reason = error instanceof CollectionError ? error.code : 'provider_poll_failed'; details.captionStatus = reason; const queued = captionQueue.get(job.item_key); if (queued) { queued.status = 'blocked'; queued.reason = reason; } return false; }
   }
   async function processCaptionQueue() {
-   const maxCaptionItems = Math.min(20, Math.max(1, Number(deps.env('HOURLY_COLLECTION_MAX_NEW_VIDEOS') || 20) || 20));
-   const candidates = [...captionQueue.values()].filter(task => task.status !== 'provider_pending' && Date.parse(task.nextAttemptAt) <= deps.now());
-   if (candidates.length > maxCaptionItems) { partial = true; details.deferredCount = candidates.length - maxCaptionItems; }
-   let attemptedCaptions = 0;
-   for (const task of candidates.slice(0, maxCaptionItems)) {
+   const candidates = [...captionQueue.values()].filter(task => task.status !== 'provider_pending' && !attemptedIdentities.has(hourlyItemKey(task.record.url)) && Date.parse(task.nextAttemptAt) <= deps.now());
+   for (const task of candidates) {
+    if (!remainingCaptionAttempts) break;
     let update = task.record;
-    if (deps.now() > sourceDeadline - 30_000) { partial = true; details.captionStatus = 'source_time_limit'; details.deferredCount = candidates.length - attemptedCaptions; break; }
-    attemptedCaptions++;
+    if (deps.now() > sourceDeadline - 30_000) { partial = true; details.captionStatus = 'source_time_limit'; break; }
     const itemKey = hourlyItemKey(update.url), videoId = itemKey.slice(8);
+    remainingCaptionAttempts--; attemptedIdentities.add(itemKey);
     if (updates.get(itemKey)?.contentKind === 'transcript') { captionQueue.delete(itemKey); continue; }
     // Back off free caption retries, retaining the item through RSS 304/hash
     // responses, budget stops and temporary provider/configuration failures.
@@ -373,14 +402,13 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      await deps.settleBudget(reservation.reservationId, { providerRunId: started.providerRunId, actualUsd: null, terminal: false }, deps.env);
      await deps.finishJob(jobId, policy.user_id, { status: 'running', providerRunId: started.providerRunId }, deps.env);
      task.status = 'provider_pending'; task.reason = 'provider_pending'; details.captionStatus = 'provider_pending';
-     // Try GET-only recovery immediately, sharing a 110-second allowance across
-     // this source. A slow run remains durable for a later hour; no new POST.
+     // Try GET-only recovery immediately within this source's bounded slice. A slow run remains durable for a later hour; no new POST.
      const stored: StoredProviderJob = { id: reservation.id, user_id: policy.user_id, source_id: source.id, item_key: itemKey, check_id: claim.checkId, job_id: jobId,
       reservation_id: reservation.reservationId, actor_id: YOUTUBE_ACTOR_ID, maximum_usd: config.maxCharge, provider_run_id: started.providerRunId,
       job_token: started.jobToken, state: 'running', actual_cost_usd: null, source_fingerprint: claim.state.fingerprint, discard_result: false };
      for (let attempt = 0; attempt < 22; attempt++) {
-      if (await reconcileJob(stored)) { details.captionStatus = 'provider_result_retrieved'; break; }
-      if (deps.now() - sourceStartedAt >= 110_000 || deps.now() > sourceDeadline - 30_000) break;
+      if (await reconcileJob(stored)) break;
+      if (deps.now() - sourceStartedAt >= 45_000 || deps.now() > sourceDeadline - 30_000) break;
       await deps.pause(5_000);
      }
     } catch (error) {
@@ -402,7 +430,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    }
    // GET-only recovery; an ambiguous launch never becomes a second POST.
    for (const job of await deps.store.pending(claim)) {
-    if (deps.now() > sourceDeadline - 30_000) { partial = true; details.captionStatus = 'recovery_time_limit'; break; }
+    if (deps.now() >= Math.min(sourceDeadline - 30_000, sourceStartedAt + 45_000)) { partial = true; details.captionStatus = 'recovery_time_limit'; break; }
     await reconcileJob(job);
    }
    if (source.platform === 'YouTube') await processCaptionQueue();
@@ -417,14 +445,14 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    let response = await deps.download(feedUrl, 0, validators);
    patch.http_status = response.status || 200;
    if (response.status === 304) {
-    details.httpNotModified = true; patch.status = updates.size ? 'collected' : partial ? 'partial' : 'unchanged';
+    details.httpNotModified = true; patch.status = partial ? 'partial' : updates.size ? 'collected' : 'unchanged';
     await save(); return patch.status;
    }
    if (source.platform !== 'YouTube' && !/<(?:rss\b|feed\b|rdf:RDF\b)/i.test(response.text)) response = await deps.download(discoverFeed(response));
    const hash = digest(response.text);
    patch = { ...patch, feed_url: response.url, etag: response.etag || null, last_modified: response.lastModified || null, http_status: response.status || 200 };
    if (hash === claim.state.content_hash) {
-    details.httpNotModified = false; patch.status = updates.size ? 'collected' : partial ? 'partial' : 'unchanged';
+    details.httpNotModified = false; patch.status = partial ? 'partial' : updates.size ? 'collected' : 'unchanged';
     await save(); return patch.status;
    }
    const parsed = channelId ? parseHourlyYouTubeFeed(response.text, source, channelId) : parseHourlyFeed(response.text, source, response.url);
@@ -455,23 +483,22 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
   let checked = 0, failed = 0, skipped = 0;
   // A background run is bounded below Netlify's 15-minute maximum. Unprocessed
   // sources are not leased or marked checked; next run reads them afresh.
-  for (const policy of await deps.store.policies()) {
-   if (!policy.enabled) continue;
-   const workspace = await deps.store.workspace(policy.user_id); if (!workspace) continue;
-   const sources = followedHourlySources(workspace);
-   // Bounded workers with independent per-user/source DB leases.
-   let next = 0;
-   await Promise.all(Array.from({ length: Math.min(3, sources.length) }, async () => {
-    while (next < sources.length && deps.now() - started < 12 * 60_000) {
-     const source = sources[next++];
-     try {
-      const status = await processSource(policy, source.id, started + 12 * 60_000);
-      statuses[status] = (statuses[status] || 0) + 1;
-      if (status === 'skipped') skipped++; else { checked++; if (status === 'failed') failed++; }
-     } catch { failed++; /* Existing running check survives and expires honestly. */ }
-    }
-   }));
-  }
+  const policies = new Map((await deps.store.policies()).filter(p => p.enabled).map(p => [p.user_id, p]));
+  // Global durable order spans owners. Reading the schedule changes no service
+  // timestamp; only a successful database lease claim advances that source.
+  const scheduled = await deps.store.schedule();
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(3, scheduled.length) }, async () => {
+   while (next < scheduled.length && deps.now() - started < 12 * 60_000 - 120_000) {
+    const entry = scheduled[next++], policy = policies.get(entry.user_id);
+    if (!policy) continue;
+    try {
+     const status = await processSource(policy, entry.source_id, started + 12 * 60_000);
+     statuses[status] = (statuses[status] || 0) + 1;
+     if (status === 'skipped') skipped++; else { checked++; if (status === 'failed') failed++; }
+    } catch { failed++; /* Existing running check survives and expires honestly. */ }
+   }
+  }));
   return { enabled: true, checked, failed, skipped, statuses };
  };
 }

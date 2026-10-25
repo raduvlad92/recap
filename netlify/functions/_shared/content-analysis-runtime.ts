@@ -43,8 +43,10 @@ const PROFILE_VERSION = 'openrouter-2026-10-24-v2';
 const defaults: Readonly<Record<string, string>> = {
   CONTENT_ANALYSIS_MAX_SOURCE_CHARS: '1000000',
   CONTENT_ANALYSIS_CHUNK_CHARS: '12000',
-  CONTENT_ANALYSIS_MAX_CHUNKS: '90',
-  CONTENT_ANALYSIS_MAX_OUTPUT_TOKENS: '4096',
+  // Smaller exhaustive keyword chunks need more resumable units. Financial
+  // limits still apply to every call and to the complete durable ledger.
+  CONTENT_ANALYSIS_MAX_CHUNKS: '800',
+  CONTENT_ANALYSIS_MAX_OUTPUT_TOKENS: '8192',
   CONTENT_ANALYSIS_MAX_INPUT_TOKENS: '128000',
   CONTENT_ANALYSIS_MAX_CALL_USD: '.01',
 };

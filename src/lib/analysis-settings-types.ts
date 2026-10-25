@@ -21,6 +21,27 @@ export interface AnalysisSettings extends AnalysisModelSelection {
   keyConfigured: boolean;
   runtimeEnabled: boolean;
   budget: { enabled: boolean; dailyLimitUsd: number; lifetimeLimitUsd: number } | null;
+  /** Private, read-only monitoring. Older settings responses may omit this. */
+  operations?: AnalysisOperations;
+}
+export const ANALYSIS_JOB_STATES = ['queued', 'running', 'prepared', 'published', 'failed', 'blocked', 'cancelled', 'skipped'] as const;
+export type AnalysisJobState = typeof ANALYSIS_JOB_STATES[number];
+export type AnalysisHealthAlert = 'stale_leases' | 'unknown_charges' | 'failed_jobs' | 'blocked_jobs' | 'pending_reviews' | 'ledger_incomplete' | 'ledger_changed';
+export interface AnalysisOperations {
+  checkedAt: string;
+  /** Counts are independent reads during this observation, not one atomic snapshot. */
+  jobs: Record<AnalysisJobState, number>;
+  pendingKeywordReviews: number;
+  staleLeases: number;
+  spending: {
+    observedUsd: number | null; observedCalls: number;
+    settledUsd: number | null; settledCalls: number;
+    unknownCommittedUsd: number; unknownCalls: number;
+    committedUsd: number; dailyCommittedUsd: number; day: string;
+  };
+  ledger: { rowsRead: number; rowLimit: number; totalRows: number; complete: boolean };
+  recentErrors: Array<{ code: string; at: string }>;
+  alerts: AnalysisHealthAlert[];
 }
 export interface SaveAnalysisModel {
   action: 'save_analysis_model';

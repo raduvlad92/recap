@@ -42,7 +42,7 @@ describe('server-owned analysis model profiles, no provider calls', () => {
   });
   it('sets common conservative defaults without enabling runtime or a policy', () => {
     const runtime = analysisRuntimeEnv(env(), DEFAULT_ANALYSIS_MODEL, 1);
-    expect(analysisLimits(runtime)).toMatchObject({ chunkChars: 12000, maxChunks: 90, maxSourceChars: 1000000, maxOutputTokens: 4096, maxInputTokens: 128000, maxCallUsd: .01 });
+    expect(analysisLimits(runtime)).toMatchObject({ chunkChars: 12000, maxChunks: 800, maxSourceChars: 1000000, maxOutputTokens: 8192, maxInputTokens: 128000, maxCallUsd: .01 });
     expect(runtime('CONTENT_ANALYSIS_ENABLED')).toBeUndefined();
     expect(runtime('CONTENT_ANALYSIS_DAILY_LIMIT_USD')).toBeUndefined();
     expect(runtime('CONTENT_ANALYSIS_LIFETIME_LIMIT_USD')).toBeUndefined();

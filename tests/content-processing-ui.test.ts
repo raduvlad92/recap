@@ -69,6 +69,10 @@ describe('truthful video-card processing', () => {
     expect(status(captioned({ coverage: 'Partial captions', processing: processing({ recap: 'ready', keywords: 'review' }) }))).toContain('Partial captions');
     expect(status(captioned({ coverage: undefined }))).toContain('Caption coverage unverified');
     expect(status(captioned({ processing: processing({ recap: 'blocked', reason: 'analysis_budget_exhausted' }) }))).toContain('Takeaways paused · budget limit');
+    for(const reason of ['analysis_unknown_charge_hold','analysis_correction_charge_unknown']) {
+      const html=status(captioned({processing:processing({recap:'blocked',reason})}));
+      expect(html).toContain('Takeaways paused · charge confirmation pending');expect(html).not.toContain('budget limit');
+    }
     expect(status(captioned({ processing: processing({ recap: 'failed' }) }))).toContain('Takeaway processing failed');
   });
   it('explains an unconfigured model/provider without implying work completed', () => {

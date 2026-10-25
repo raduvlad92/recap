@@ -10,7 +10,8 @@ type StatusLabel = { label: string; tone?: 'attention' | 'paused' };
 function processingLabels(processing: ContentProcessing, coverage?: string): StatusLabel[] {
   const labels: StatusLabel[] = [];
   const reason = processing.reason || '';
-  const pauseDetail = /budget|spend|cost|allowance|reservation|call_limit|unknown_charge_hold/i.test(reason) ? 'budget limit'
+  const pauseDetail = /unknown_charge_hold|correction_charge_unknown/i.test(reason) ? 'charge confirmation pending'
+    : /budget|spend|cost|allowance|reservation|call_limit/i.test(reason) ? 'budget limit'
     : /(?:model|gateway|ai.provider|ai.credential)/i.test(reason) && /(?:unconfig|not.config|missing|disabled|unavailable|required)/i.test(reason) ? 'model not configured'
       : /(?:provider|credential|api.key)/i.test(reason) && /(?:unconfig|not.config|missing|disabled|unavailable|required)/i.test(reason) ? 'provider not configured'
         : /configuration|runtime_disabled|pricing_/i.test(reason) ? 'configuration required' : '';

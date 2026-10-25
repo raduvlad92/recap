@@ -103,3 +103,44 @@ describe('public publisher IPv6 DNS classification', () => {
     for (const ip of ['2001::1', '2001:0::1', '2001:1ff:ffff::1', '2001:2::1', '2001:10::1', '2001:20::1', '2001:db8::1', '2001:0DB8::1', '2002:c000:0204::1', '3fff::1', '::ffff:127.0.0.1', 'fc00::1', 'fe80::1', '::1']) expect(isPublicAddress(ip)).toBe(false);
   });
 });
+
+describe('terminal fee telemetry survives bounded original-result failures', () => {
+ const job = { providerRunId:'Run123456789',actorId:YOUTUBE_ACTOR_ID,source,maxItems:1,ledgerId:'a9a43a2a-c01a-40eb-ae1e-a1d41b52b901' };
+ it.each([0, .004, null])('preserves validated terminal fee %s independently of oversized content', async fee => {
+  const fetcher=vi.fn(async(url:RequestInfo|URL,init?:RequestInit)=>{
+   expect(init?.method).toBeUndefined();
+   return String(url).includes('actor-runs/')?body({data:{id:job.providerRunId,actId:job.actorId,buildId:values.APIFY_YOUTUBE_BUILD_ID,status:'SUCCEEDED',defaultDatasetId:'Dataset1234567',usageTotalUsd:fee}}):body([{url:source.url,text:'x'.repeat(2*1024*1024)}]);
+  });
+  const result=await pollStoredApify(job,'user_operator',env,fetcher);
+  expect(result).toMatchObject({status:'completed',contentError:'response_too_large',telemetry:{cost:fee}});expect(result.result).toBeUndefined();
+  expect(fetcher.mock.calls[1][0]).toBe('https://api.apify.com/v2/datasets/Dataset1234567/items?clean=true&format=json&limit=1');
+ });
+ it.each(['http','json','transport'])('preserves fee after dataset %s error without success/import claims',async mode=>{
+  const fetcher=vi.fn(async(url:RequestInfo|URL)=>{
+   if(String(url).includes('actor-runs/'))return body({data:{id:job.providerRunId,actId:job.actorId,buildId:values.APIFY_YOUTUBE_BUILD_ID,status:'SUCCEEDED',defaultDatasetId:'Dataset1234567',usageTotalUsd:.004}});
+   if(mode==='transport')throw Error('private upstream details');
+   return mode==='http'?new Response('',{status:503}):new Response('bad json');
+  });
+  const result=await pollStoredApify(job,'user_operator',env,fetcher);
+  expect(result).toMatchObject({status:'completed',telemetry:{cost:.004},contentError:mode==='http'?'provider_error':mode==='json'?'provider_response_invalid':'provider_result_unreadable'});
+  expect(result.result).toBeUndefined();expect(JSON.stringify(result)).not.toContain('private upstream');
+ });
+ it.each(['FAILED','ABORTED','TIMED-OUT'])('retains fee for verified terminal %s without fetching any dataset',async status=>{
+  const fetcher=vi.fn(async()=>body({data:{id:job.providerRunId,actId:job.actorId,buildId:values.APIFY_YOUTUBE_BUILD_ID,status,usageTotalUsd:.004}}));
+  expect(await pollStoredApify(job,'user_operator',env,fetcher)).toMatchObject({status:'failed',telemetry:{cost:.004}});expect(fetcher).toHaveBeenCalledTimes(1);
+ });
+ it('rejects unknown run status before financial settlement, and verifies identity before transporting any fee',async()=>{
+  for(const patch of [{status:'SOMETHING_NEW'},{id:'DifferentRun'},{actId:'DifferentActor'},{buildId:'DifferentBuild'}]){
+   const fetcher=vi.fn(async()=>body({data:{id:job.providerRunId,actId:job.actorId,buildId:values.APIFY_YOUTUBE_BUILD_ID,status:'SUCCEEDED',usageTotalUsd:.004,...patch}}));
+   await expect(pollStoredApify(job,'user_operator',env,fetcher)).rejects.toMatchObject({code:patch.buildId?'provider_build_mismatch':patch.status?'provider_response_invalid':'invalid_job'});expect(fetcher).toHaveBeenCalledTimes(1);
+  }
+ });
+ it('skips dataset content for fee-only reconciliation of an imported or discarded original',async()=>{
+  const fetcher=vi.fn(async()=>body({data:{id:job.providerRunId,actId:job.actorId,buildId:values.APIFY_YOUTUBE_BUILD_ID,status:'SUCCEEDED',usageTotalUsd:.004}}));
+  expect(await pollStoredApify({...job,feeOnly:true},'user_operator',env,fetcher)).toEqual({status:'completed',telemetry:{ledgerId:job.ledgerId,providerRunId:job.providerRunId,cost:.004}});expect(fetcher).toHaveBeenCalledTimes(1);
+ });
+ it('keeps the current 200000-character output cap and explicit clipped coverage',()=>{
+  const [update]=normalizeYouTubeItems([{url:source.url,title:'Synthetic',date:'2026-10-22T12:00:00Z',subtitles:[{srt:'1\n00:00:00,000 --> 00:00:02,000\n'+'x'.repeat(200001)}]}],source,1);
+  expect(update.content).toHaveLength(200000);expect(update.coverage).toContain('clipped');
+ });
+});

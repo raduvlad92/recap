@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-25",
+  "stage": "code verified; guarded live operator review pending; production analysis paused",
+  "authorization": "D38 all five reliability steps",
+  "limits": {
+    "dailyUsd": 5,
+    "evaluationTotalUsd": 5,
+    "perCallUsd": 0.01,
+    "initialSmokeAdditionalUsd": 0.25
+  },
+  "protectedLedger": {
+    "calls": 12,
+    "settledCalls": 9,
+    "unknownCalls": 3,
+    "settledUsd": 0.009187716,
+    "unknownHoldUsd": 0.009178191,
+    "commitmentUsd": 0.018365907
+  },
+  "preflight": {
+    "archiveRows": 490,
+    "analysisJobs": 382,
+    "model": "deepseek/deepseek-v4.1-flash-1017",
+    "deployedCommitBeforeD38": "1fa202fc30d0b541394478483e89a1eb562d28b5",
+    "generationEnabled": false,
+    "serverConnection": "verified via hosted admin",
+    "pinnedProvider": "Relace",
+    "publicEndpointPricing": {
+      "prompt": "0.00000007",
+      "completion": "0.0000005",
+      "input_cache_read": "0.000000008",
+      "discount": 0
+    },
+    "publicStructuredOutputSupport": true,
+    "realModelQuality": "unreviewed"
+  },
+  "localVerification": {
+    "beforeFinalReviewFixes": {
+      "tests": 1894,
+      "files": 61,
+      "typecheck": "passed",
+      "build": "passed",
+      "catalogue": "passed"
+    },
+    "terminalVerifierFix": {
+      "affectedTests": 63,
+      "status": "passed; independent review pending"
+    },
+    "reporterRawValues": {
+      "tests": 107,
+      "status": "passed; independent review pending"
+    },
+    "latestFullCheck": {
+      "tests": 2022,
+      "files": 64,
+      "typecheck": "passed",
+      "build": "passed",
+      "catalogue": "passed",
+      "whitespace": "passed"
+    }
+  },
+  "reviewR3": {
+    "engine": "no-go: malformed verification could become agreement",
+    "database": "no-go: cached prefix could stall permanently",
+    "reporter": "no-go: invalid raw JSON rejected",
+    "financialStateRecovery": "fixed and locally reviewed"
+  },
+  "cohort": {
+    "selectedVideos": 20,
+    "sourceCount": 15,
+    "smokeVideos": 3,
+    "savedCharacters": 534358,
+    "baseCallUpperBound": 412,
+    "originalCompleteness": "unverified; saved-text coverage assessed separately",
+    "humanQuality": "unreviewed",
+    "liveCalls": 0
+  },
+  "captionAudit": {
+    "at": "2026-10-25T18:35:00Z",
+    "pendingTasks": 53,
+    "unsettledSupplierJobs": 8,
+    "unsettledMaximumUsd": 0.04,
+    "manualSupplierCalls": 0,
+    "existingAutomationContinues": true,
+    "fixesInProgress": [
+      "provider reconciliation rotation",
+      "single bounded caption attempt allowance",
+      "durable fair source scheduling",
+      "independent terminal fee and unread-content recovery"
+    ]
+  },
+  "liveMigration": {
+    "applied": false,
+    "rollbackVerified": false
+  },
+  "release": {
+    "pushed": false,
+    "ci": "not yet run for D38",
+    "deployed": false,
+    "hostedD38": "unverified"
+  },
+  "reviewR4": {
+    "semanticAndReporter": "scoped GO; 222 checks including 52 independent adversarial cases",
+    "cache": "repaired-prefix repeated marker writes found; root fix complete, R5 review pending",
+    "caption": "fee-only metadata overwrite found; root fix complete, R5 scoped GO with 200 checks"
+  },
+  "reviewR5": {
+    "cache": "scoped GO; 268 checks; actual worker/PostgreSQL completes 3200 results across19 continuation turns",
+    "caption": "scoped GO; 200 checks including actual job-ledger preservation, five PostgreSQL and three concurrency checks",
+    "operator": "R1 found release-script gaps; fixed private scripts await R2"
+  }
+}

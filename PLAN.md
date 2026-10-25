@@ -4,6 +4,10 @@ Version: **1.1 — APPROVAL CANDIDATE**. Updated: 25 October 2026. Matches [SPEC
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
 
+## Authorized reliability implementation — D38
+
+The founder's subsequent “plan properly and do all of it” now authorizes all five D37 steps, including bounded real evaluation and a small monitored backfill. [Detailed execution plan and release gates](docs/tech/ANALYSIS-RELIABILITY.md). Engine, queue, monitoring and caption recovery code is integrated and passes 2,022 tests, typecheck/build/catalogue and scoped release reviews. Parent owns the guarded operator checks, live migrations, staged model evaluation, hosted publication and source/cost preservation. Keep all existing financial bounds and four-model restrictions.
+
 ## Current analysis allowance and proposed reliability sequence — D37
 
 **Budget update complete:** global/reader daily allowance US$5; finite cumulative evaluation ceiling US$5; per-call US$0.01. Generation remains disabled. Actual rollback/apply/readback and hosted admin display pass; call ledger, originals, workspace and default model are preserved. No paid call was made. The daily-limit request does not itself authorize implementing or activating the following recommendations.

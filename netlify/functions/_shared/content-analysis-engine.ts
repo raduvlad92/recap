@@ -4,6 +4,9 @@ import { contentHash, sourceContentState, usableAnalysisContent } from '../../..
 import { resolveKeywordPasses, canonicalKeywordKey } from '../../../scripts/lib/keyword-analysis.mjs';
 import { analysisFailure, type AnalysisGenerator, type AnalysisLimits, type GenerationRequest, type AnalysisRole } from './content-analysis-model';
 
+// New jobs opt into the private v2 protocol; legacy exports and requests remain immutable.
+export { analyzeSummaryV2, analyzeKeywordsV2, analysisV2CallPlan, planAnalysisV2Chunks } from './content-analysis-grounded-v2';
+
 export interface TextChunk { index:number; start:number; end:number; text:string }
 type Cue = NonNullable<SourceUpdate['transcriptSegments']>[number];
 interface Range { startSeconds:number; endSeconds:number }

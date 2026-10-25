@@ -15,6 +15,22 @@
 .ra-analysis-connection { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; margin-top: 20px; }
 .ra-analysis-connection .ra-button { min-height: 44px; }
 .ra-analysis-connection p { margin: 0; font-size: 12px; color: #647657; }
+.ra-analysis-operations { min-width: 0; }
+.ra-analysis-operations h2 { margin-top: 0; }
+.ra-analysis-operations h3 { font-size: 15px; margin: 24px 0 14px; }
+.ra-analysis-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 18px 22px; margin: 22px 0; }
+.ra-analysis-metrics > div { min-width: 0; }
+.ra-analysis-metrics dt { color: #647657; font-size: 12px; line-height: 1.5; }
+.ra-analysis-metrics dd { margin: 5px 0 0; font-size: 21px; font-weight: 600; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.ra-analysis-money dd { font-size: 18px; }
+.ra-analysis-metrics p { color: #647657; font-size: 11px; line-height: 1.5; margin: 5px 0 0; }
+.ra-analysis-alerts { border-left: 3px solid #ad8334; padding: 1px 16px; margin: 22px 0; background: #fcf9f0; }
+.ra-analysis-alerts h3 { margin-top: 12px; }
+.ra-analysis-alerts ul { margin: 0 0 14px; padding-left: 18px; font-size: 12px; line-height: 1.7; }
+.ra-analysis-alerts li + li { margin-top: 8px; }
+.ra-analysis-errors { display: grid; gap: 12px; padding: 0; list-style: none; margin-bottom: 0; }
+.ra-analysis-errors li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; min-width: 0; }
+.ra-analysis-errors time { color: #647657; font-size: 11px; }
 @media (max-width: 600px) {
   .ra-analysis { gap: 16px; }
   .recap-admin .ra-analysis-form select { font-size: 16px; }
