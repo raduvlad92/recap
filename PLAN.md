@@ -6,7 +6,7 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 ## Authorized reliability implementation — D38
 
-The founder's subsequent “plan properly and do all of it” now authorizes all five D37 steps, including bounded real evaluation and a small monitored backfill. [Detailed execution plan and release gates](docs/tech/ANALYSIS-RELIABILITY.md). Engine, queue, monitoring and caption recovery code is integrated and passes 2,022 tests, typecheck/build/catalogue and scoped release reviews. Parent owns the guarded operator checks, live migrations, staged model evaluation, hosted publication and source/cost preservation. Keep all existing financial bounds and four-model restrictions.
+The founder's subsequent “plan properly and do all of it” now authorizes all five D37 steps, including bounded real evaluation and a small monitored backfill. [Detailed execution plan and release gates](docs/tech/ANALYSIS-RELIABILITY.md). Engine, queue, monitoring and caption recovery code is integrated and passes 2,022 tests, typecheck/build/catalogue and scoped release reviews. Guarded live migrations and exact preservation checks are complete. Parent owns deployment, staged model evaluation, hosted publication and the small backfill under unchanged limits. Keep all existing financial bounds and four-model restrictions.
 
 ## Current analysis allowance and proposed reliability sequence — D37
 

@@ -1,6 +1,6 @@
 {
   "date": "2026-10-25",
-  "stage": "code verified; guarded live operator review pending; production analysis paused",
+  "stage": "guarded migrations applied and preserved; code deployment pending; production spending disabled",
   "authorization": "D38 all five reliability steps",
   "limits": {
     "dailyUsd": 5,
@@ -89,14 +89,33 @@
     ]
   },
   "liveMigration": {
-    "applied": false,
-    "rollbackVerified": false
+    "versions": [
+      "20261025001519",
+      "20261025184542"
+    ],
+    "applied": true,
+    "method": "guarded atomic SQL transaction, then official migration-history repair after verified readback",
+    "rollbackVerified": true,
+    "exactOriginalFieldGroups": 18,
+    "archiveRows": 490,
+    "analysisCalls": 12,
+    "unknownCalls": 3,
+    "spendingEnabled": false,
+    "rolloutScopes": 0,
+    "historyDryRun": "up to date; no pending migrations",
+    "advisors": {
+      "INFO": 17,
+      "WARN": 0,
+      "ERROR": 0
+    },
+    "readbackNote": "Initial CLI returned only final schema result; comparator stopped. One-result readback passed before history registration."
   },
   "release": {
     "pushed": false,
     "ci": "not yet run for D38",
     "deployed": false,
-    "hostedD38": "unverified"
+    "hostedD38": "unverified",
+    "functionalCommit": "a805c13d214eb7a896a14f8599c574ea138f0ea1"
   },
   "reviewR4": {
     "semanticAndReporter": "scoped GO; 222 checks including 52 independent adversarial cases",
@@ -107,5 +126,11 @@
     "cache": "scoped GO; 268 checks; actual worker/PostgreSQL completes 3200 results across19 continuation turns",
     "caption": "scoped GO; 200 checks including actual job-ledger preservation, five PostgreSQL and three concurrency checks",
     "operator": "R1 found release-script gaps; fixed private scripts await R2"
+  },
+  "operatorReview": {
+    "round": "R2",
+    "verdict": "scoped GO",
+    "syntheticPostgresChecks": 45,
+    "negativeComparatorCases": 42
   }
 }
