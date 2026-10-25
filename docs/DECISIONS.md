@@ -2,6 +2,12 @@
 
 Updated: 25 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
+## D38 quality checkpoint — 25 October 2026
+
+The first bounded real content-v2 smoke failed quality. Eleven settled responses cost US$0.005583656; five tasks failed evidence/coverage and one empty publication omitted substantive saved-source findings. That annotation is withheld through guarded rollback/apply/readback with a private assistant audit; all originals, paid evidence, historical jobs, review decisions and unknown holds remain. Local tests, CI, deployment and model usefulness remain distinct.
+
+Continue the already authorized reliability work through an explicit content-v3 revision, preserving immutable paid request identities. Canonicalize embedded JSON for persisted repair replay, supply indexed grounding feedback, retain contiguous literal evidence and source-unit ambiguity, and require independent no-finding acceptance before an empty summary can publish. This is an implementation choice within D38, not approval of broader SPEC or automatic version retries. The original additional US$0.25 smoke allowance applies cumulatively across revisions inside US$5/day and US$5 total, with US$0.01/call. Spending is off, scope paused; twenty-video evaluation/backfill wait for useful real output. [Evidence](tech/evidence/analysis-smoke-v2.json).
+
 ## D38 — implement all five reliability steps, 25 October 2026
 
 Founder: “ok, plan properly and do all of it, whatever you can do in parallel”. This supersedes the D37 advice-only boundary for the five listed steps. It authorizes scoped implementation, review/deployment, bounded actual evaluation (DeepSeek first), missing-caption recovery within existing supplier controls, and a small monitored backfill after quality passes. Preserve US$5/day, US$5 cumulative evaluation, US$0.01/call, the four-model allowlist and all unresolved-charge reservations. No new subscription, unlimited budget, automatic model/provider fallback or daily cross-source briefing is added. [D38 plan](tech/ANALYSIS-RELIABILITY.md).

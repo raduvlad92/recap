@@ -4,14 +4,16 @@ import type { ContentProcessing } from '../../../src/lib/processing-types';
 import { contentHash, getContentProcessing } from '../../../src/lib/content-processing';
 import { database } from './admin-data';
 import { authenticate, CollectionError, errorResponse, json, publicHttpsUrl, runtimeEnv, type Env } from './security';
-import { analyzeKeywords, analyzeSummary, analyzeKeywordsV2, analyzeSummaryV2, type AnalysisOutput } from './content-analysis-engine';
+import { analyzeKeywords, analyzeSummary, analyzeKeywordsV2, analyzeSummaryV2, analyzeKeywordsV3, analyzeSummaryV3, type AnalysisOutput } from './content-analysis-engine';
 import { parseAnalysisV2CallKey } from './content-analysis-grounded-v2-protocol';
+import { parseAnalysisV3CallKey, ANALYSIS_V3_CONTRACT_HASH } from './content-analysis-grounded-v3-protocol';
 import { analysisRuntimeEnv } from './content-analysis-runtime';
 import { AnalysisError, AnalysisProviderHttpError, analysisFailure, analysisLimits, analysisExecutionIdentity, conservativeCallUsd, createGatewayGenerator, type AnalysisRejectionReceipt, type AnalysisExecutionIdentity, type AnalysisGenerator, type AnalysisLimits, type GenerationResult, type GenerationRequest } from './content-analysis-model';
 
 export interface AnalysisPolicy { user_id:string; enabled:boolean; model:string }
-export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null;rule_version?:'content-v1'|'content-v2' }
-export interface AnalysisClaim { job:AnalysisJob; record:SourceUpdate; leaseToken:string }
+export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null;rule_version?:'content-v1'|'content-v2'|'content-v3';generation_contract_hash?:string|null;generation_predecessor_job_id?:string|null }
+export interface AnalysisGenerationContext { protocolVersion:'content-v3';generationContractHash:string;predecessorJobId:string;emptyDisposition:'findings_expected'|'no_findings_reviewed'|'unreviewed';sourceReviewDigest:string|null }
+export interface AnalysisClaim { job:AnalysisJob; record:SourceUpdate; leaseToken:string;generationContext?:AnalysisGenerationContext }
 export interface AnalysisCall {id:string;call_key?:string;model?:string;execution_identity?:AnalysisExecutionIdentity|null;request_hash?:string|null;result?:(GenerationResult & {requestHash?:string})|null; maximum_usd?:number;actual_usd?:number|string|null;observed_usd?:number|string|null;state?:string;validation_error_code?:string|null}
 export interface AnalysisReservation {claimed:boolean;call?:AnalysisCall;reason?:string;retryAt?:string}
 export interface AnalysisCachePage {calls:AnalysisCall[];nextAfterKey:string|null}
@@ -59,8 +61,8 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
 }
 export interface AnalysisWorkerDependencies {env:Env;store:AnalysisStore;generate:AnalysisGenerator;limits:AnalysisLimits;now:()=>number}
 function callKeyForInvalid(call:AnalysisCall):string {
- const key=call.call_key,parsed=typeof key==='string'?parseAnalysisV2CallKey(key):null;
- if(!parsed||parsed.repairAttempt)return analysisFailure('analysis_invalid_correction');
+ const key=call.call_key,parsed=typeof key==='string'?(parseAnalysisV2CallKey(key)||parseAnalysisV3CallKey(key)):null;
+ if(!parsed||parsed.repairAttempt||parsed.baseKey==='summary:v3:verify:0')return analysisFailure('analysis_invalid_correction');
  return key!;
 }
 /** A result's own usage claim cannot authorize another paid correction. */
@@ -79,7 +81,7 @@ export function analysisRequestHash(request:GenerationRequest,identity:AnalysisE
 }
 /** Only retain one bounded key window, including its possible one-shot repairs. */
 function cacheWindow(key:string):string[] {
- const base=parseAnalysisV2CallKey(key)?.baseKey;
+ const base=(parseAnalysisV2CallKey(key)||parseAnalysisV3CallKey(key))?.baseKey;
  if(!base)return analysisFailure('analysis_invalid_protocol_key');
  const match=/^(.*:(?:chunk|group):)(\d+)$/.exec(base);
  const index=match?Number(match[2]):0;
@@ -117,6 +119,14 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
     let stopProviderTurn=false;
     try {
      if(claim.job.user_id!==policy.user_id) return analysisFailure('analysis_owner_mismatch');
+     const protocolV3=claim.job.rule_version==='content-v3';
+     const generationContext=claim.generationContext;
+     if(claim.job.rule_version!==undefined&&!['content-v1','content-v2','content-v3'].includes(claim.job.rule_version))return analysisFailure('analysis_invalid_protocol_key');
+     if(protocolV3&&(!generationContext||generationContext.protocolVersion!=='content-v3'
+      ||generationContext.generationContractHash!==ANALYSIS_V3_CONTRACT_HASH||claim.job.generation_contract_hash!==ANALYSIS_V3_CONTRACT_HASH
+      ||generationContext.predecessorJobId!==claim.job.generation_predecessor_job_id||!generationContext.predecessorJobId
+      ||!['findings_expected','no_findings_reviewed','unreviewed'].includes(generationContext.emptyDisposition)
+      ||generationContext.sourceReviewDigest!==null&&!/^[a-f0-9]{64}$/.test(generationContext.sourceReviewDigest)))return analysisFailure('analysis_generation_contract_changed');
      if(claim.job.state==='prepared' && claim.job.result) {
       if(await store.publish(claim)) stats.completed++;continue;
      }
@@ -125,7 +135,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
      const executionIdentity=identity;
      const verification=executionIdentity.route==='openrouter'?{responseModel:effectiveEnv('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:effectiveEnv('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')}:undefined;
      if(policy.model!==limits.model)return analysisFailure('analysis_model_policy_mismatch');
-     const protocolV2=claim.job.rule_version==='content-v2';
+     const grounded=claim.job.rule_version==='content-v2'||protocolV3;
      // The engine requests a repair immediately after its base. Keep only that
      // result, rather than retaining hundreds of raw half-megabyte responses.
      const materialized=new Map<string,{call:AnalysisCall;requestHash:string;result:GenerationResult}>();
@@ -134,7 +144,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
      };
      let windowKeys:string[]=[],windowCalls=new Map<string,AnalysisCall>();
      const cachedCall=async(key:string):Promise<AnalysisCall|undefined>=>{
-      if(!protocolV2||!store.cachedCalls)return;
+      if(!grounded||!store.cachedCalls)return;
       const keys=cacheWindow(key);
       if(keys[0]!==windowKeys[0]){
        windowKeys=keys;windowCalls=new Map();
@@ -164,8 +174,9 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
      };
      const metered:AnalysisGenerator=async request=>{
       if(now()>ownerDeadline-GENERATION_HEADROOM_MS) return analysisFailure('analysis_worker_yield');
-      const parsed=protocolV2?parseAnalysisV2CallKey(request.key):null;
-      if(protocolV2&&!parsed||!protocolV2&&request.correction)return analysisFailure('analysis_invalid_protocol_key');
+      const parsed=protocolV3?parseAnalysisV3CallKey(request.key):grounded?parseAnalysisV2CallKey(request.key):null;
+      if(grounded&&!parsed||!grounded&&request.correction)return analysisFailure('analysis_invalid_protocol_key');
+      if(protocolV3&&parsed?.repairAttempt&&parsed.baseKey==='summary:v3:verify:0')return analysisFailure('analysis_invalid_protocol_key');
       if(parsed?.repairAttempt){
        const correction=request.correction,base=materialized.get(parsed.baseKey);
        if(!correction||correction.baseKey!==parsed.baseKey||!/^[a-z][a-z0-9_]{0,79}$/.test(correction.errorCode)
@@ -175,7 +186,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       // A materialized response may be usable while its bill is unknown. It
       // can be replayed, but cannot authorize the next separately charged key.
       // SQL repeats this fence under lock; fail truthfully before that PT409.
-      if(protocolV2&&[...materialized].some(([key,base])=>key!==request.key&&base.result.actualUsd==null))
+      if(grounded&&[...materialized].some(([key,base])=>key!==request.key&&base.result.actualUsd==null))
        return analysisFailure('analysis_unknown_charge_hold');
       const maximumUsd=conservativeCallUsd(request,limits);
       if(maximumUsd>limits.maxCallUsd) return analysisFailure('analysis_call_limit');
@@ -200,8 +211,8 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
        if(reservation.call?.result) {
         if(reservation.call.model!==limits.model||stableJson(reservation.call.execution_identity)!==stableJson(executionIdentity)
          ||stableJson(reservation.call.result.executionIdentity)!==stableJson(executionIdentity)||reservation.call.result.requestHash!==requestHash
-         ||(protocolV2?reservation.call.request_hash!==requestHash:reservation.call.request_hash!=null&&reservation.call.request_hash!==requestHash))return analysisFailure('analysis_cached_input_changed');
-        const result=protocolV2?durableGenerationResult(reservation.call,reservation.call.result):reservation.call.result;
+         ||(grounded?reservation.call.request_hash!==requestHash:reservation.call.request_hash!=null&&reservation.call.request_hash!==requestHash))return analysisFailure('analysis_cached_input_changed');
+        const result=grounded?durableGenerationResult(reservation.call,reservation.call.result):reservation.call.result;
         remember(request.key,reservation.call,requestHash,result);
         return result;
        }
@@ -229,17 +240,18 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       if(result.observedUsd!==null && (!Number.isFinite(result.observedUsd)||result.observedUsd<0)) return analysisFailure('analysis_invalid_cost');
       if(result.actualUsd!==undefined&&result.actualUsd!==null&&(!Number.isFinite(result.actualUsd)||result.actualUsd<0))return analysisFailure('analysis_invalid_cost');
       const persisted=await store.saveCall(call,claim,{...result,requestHash,executionIdentity} as GenerationResult);
-      const saved=protocolV2?durableGenerationResult(persisted||call,result):result;
+      const saved=grounded?durableGenerationResult(persisted||call,result):result;
       remember(request.key,persisted||call,requestHash,saved);
       return saved;
      };
-     const analyze=claim.job.task==='summary'?(protocolV2?analyzeSummaryV2:analyzeSummary):(protocolV2?analyzeKeywordsV2:analyzeKeywords);
-     const result=await analyze(claim.record,limits,metered);
+     const result=protocolV3
+      ?await (claim.job.task==='summary'?analyzeSummaryV3:analyzeKeywordsV3)(claim.record,limits,metered,generationContext)
+      :await (claim.job.task==='summary'?(grounded?analyzeSummaryV2:analyzeSummary):(grounded?analyzeKeywordsV2:analyzeKeywords))(claim.record,limits,metered);
      await store.prepare(claim,result);
      if(await store.publish(claim)) stats.completed++;
     } catch(error) {
      const code=error instanceof AnalysisError?error.code:'analysis_generation_failed';
-     const yielded=code==='analysis_worker_yield',blocked=['analysis_daily_budget_exhausted','analysis_budget_exhausted','analysis_input_limit','analysis_call_limit','analysis_unknown_charge_hold','analysis_correction_charge_unknown','analysis_cached_input_changed','analysis_model_policy_mismatch','analysis_credentials_required','analysis_configuration_required','analysis_pricing_not_verified','analysis_provider_not_verified','analysis_gateway_not_verified','analysis_runtime_disabled'].includes(code);
+     const yielded=code==='analysis_worker_yield',blocked=['analysis_daily_budget_exhausted','analysis_budget_exhausted','analysis_input_limit','analysis_call_limit','analysis_unknown_charge_hold','analysis_correction_charge_unknown','analysis_cached_input_changed','analysis_generation_contract_changed','analysis_model_policy_mismatch','analysis_credentials_required','analysis_configuration_required','analysis_pricing_not_verified','analysis_provider_not_verified','analysis_gateway_not_verified','analysis_runtime_disabled'].includes(code);
      if(yielded)stats.yielded++;else if(blocked)stats.blocked++;else stats.failed++;
      // Network errors keep their durable call hold. They must never be retried as a new model charge.
      // The rate-limited state comes only from the reservation RPC after an

@@ -131,3 +131,10 @@ describe('private read-only content analysis operations', () => {
     expect(test.rpc).not.toHaveBeenCalled();
   });
 });
+
+describe('source-free content-v3 error visibility',()=>{
+ it.each(['analysis_unsupported_summary_unit','analysis_summary_omission','analysis_empty_summary_requires_review','analysis_generation_contract_changed'])('retains the fixed %s diagnostic without private context',async code=>{
+  const operations=await readAnalysisOperations(stub({errors:[{error_code:code,updated_at:today,user_id:'synthetic-private-owner',result:'PRIVATE source'}]}).db,now);
+  expect(operations.recentErrors).toEqual([{code,at:today}]);expect(JSON.stringify(operations)).not.toMatch(/synthetic-private-owner|PRIVATE/);
+ });
+});

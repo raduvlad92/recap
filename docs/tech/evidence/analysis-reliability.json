@@ -1,6 +1,6 @@
 {
   "date": "2026-10-25",
-  "stage": "guarded migrations applied and preserved; code deployment pending; production spending disabled",
+  "stage": "v2 deployed; real smoke failed quality; false empty withheld; v3 local implementation pending review and release",
   "authorization": "D38 all five reliability steps",
   "limits": {
     "dailyUsd": 5,
@@ -72,7 +72,8 @@
     "baseCallUpperBound": 412,
     "originalCompleteness": "unverified; saved-text coverage assessed separately",
     "humanQuality": "unreviewed",
-    "liveCalls": 0
+    "liveCalls": 11,
+    "realSmokeQuality": "failed"
   },
   "captionAudit": {
     "at": "2026-10-25T18:35:00Z",
@@ -132,5 +133,38 @@
     "verdict": "scoped GO",
     "syntheticPostgresChecks": 45,
     "negativeComparatorCases": 42
+  },
+  "deployment": {
+    "commit": "4087349885b831d6f465d9494ae196c90aa470c1",
+    "deployId": "6ade5883a6eee469e689e059",
+    "publishedAt": "2026-10-25T19:29:50.055Z",
+    "ciRun": 40225985730,
+    "ciTests": 1778,
+    "ciLocalPostgresSkips": 244
+  },
+  "actualSmokeEvidence": "analysis-smoke-v2.json",
+  "rawDiagnosticCountsEvidence": "analysis-smoke-v2-diagnostics.json",
+  "rawDiagnosticsArePublishedVerdicts": false,
+  "withholdingHosted": {
+    "desktopCompact": true,
+    "desktopRegular": true,
+    "phoneWidth": 320,
+    "phoneScrollWidth": 320,
+    "phoneReload": true,
+    "noFindingMessageVisible": false,
+    "processingFailureVisible": true,
+    "consoleErrors": 0,
+    "screenshots": [
+      "analysis-smoke-withheld-live.png",
+      "analysis-smoke-withheld-phone.png"
+    ]
+  },
+  "currentModelLedger": {
+    "calls": 23,
+    "knownSettledCalls": 20,
+    "settledUsd": 0.014771372,
+    "unknownCalls": 3,
+    "unknownHoldUsd": 0.009178191,
+    "commitmentUsd": 0.023949563
   }
 }

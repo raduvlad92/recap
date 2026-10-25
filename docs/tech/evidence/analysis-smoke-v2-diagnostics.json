@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 1,
+  "mode": "offline",
+  "manualReviewRequired": true,
+  "semanticQuality": "unreviewed",
+  "fullOriginalCoverage": "unverified",
+  "diagnosticScope": "combined_final_job_and_cached_call_result_occurrences",
+  "diagnosticsArePublishedOutputVerdicts": false,
+  "sourceCompleteness": {
+    "total": 3,
+    "transcript": 3,
+    "feedText": 0,
+    "metadataOnly": 0,
+    "otherKind": 0,
+    "emptyContent": 0,
+    "declaredComplete": 0,
+    "declaredPartial": 2,
+    "unverified": 1,
+    "unusable": 0,
+    "processingDisagreements": 0
+  },
+  "sample": {
+    "desiredCount": 3,
+    "actualCount": 3,
+    "countMatches": true,
+    "categoriesAreSuppliedLabels": true,
+    "labeledSources": 3,
+    "unlabeledSources": 0,
+    "categories": {
+      "short": 1,
+      "long": 0,
+      "dense-products": 0,
+      "outros": 1,
+      "sponsors": 2,
+      "partial-timing": 2,
+      "empty": 0
+    },
+    "missingCategories": [
+      "long",
+      "dense-products",
+      "empty"
+    ],
+    "unknownCategoryLabels": 0,
+    "unmatchedCategoryEntries": 0
+  },
+  "jobs": {
+    "total": 6,
+    "summary": 3,
+    "keywords": 3,
+    "otherTask": 0,
+    "withResult": 1,
+    "withoutResult": 5,
+    "sourceUnavailable": 0,
+    "withCoverage": 1,
+    "completeSavedTextCoverage": 1,
+    "incompleteSavedTextCoverage": 0,
+    "coverageUnknown": 5,
+    "invalidIntervals": 0,
+    "protocols": {
+      "content-v1": 0,
+      "content-v2": 6,
+      "content-v3": 0,
+      "other": 0
+    },
+    "protocolDisagreements": 0,
+    "states": {
+      "queued": 0,
+      "running": 0,
+      "prepared": 0,
+      "published": 1,
+      "failed": 5,
+      "blocked": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "other": 0
+    }
+  },
+  "tasks": {
+    "identityScope": "owner_update_task_content_hash",
+    "logicalTasks": 6,
+    "jobAttempts": 6,
+    "repeatedTaskAttempts": 0,
+    "attemptsWithoutContentHash": 0,
+    "predecessorReferences": 0,
+    "linkedSuccessorAttempts": 0,
+    "predecessorAttempts": 0,
+    "missingPredecessorAttempts": 0,
+    "invalidPredecessorLinks": 0,
+    "generationContractHashPresent": 0,
+    "generationContractHashMissing": 6
+  },
+  "summaries": {
+    "acceptanceBasis": "state_only_not_semantic_quality",
+    "independentEmptyAcceptance": "unreviewed",
+    "acceptedNonemptyByState": 0,
+    "emptyResultsByState": 1,
+    "readyResultsWithoutNonemptyHighlights": 0,
+    "emptyResultsWithNonemptyHighlights": 0,
+    "publishedAttempts": 1,
+    "publishedEmptyAttempts": 1,
+    "historicalPublishedEmptyUnreviewed": 1,
+    "v3EmptyResults": 0,
+    "v3EmptyWithDeclaredNoFindings": 0,
+    "v3EmptyWithoutReviewedDisposition": 0,
+    "v3EmptyWithoutV3Evidence": 0,
+    "v3EmptyDispositions": {
+      "findings_expected": 0,
+      "no_findings_reviewed": 0,
+      "unreviewed": 0,
+      "missing": 0,
+      "invalid": 0
+    },
+    "currentSources": {
+      "acceptedNonemptyByState": 0,
+      "readyEmpty": 1,
+      "emptyProcessing": 1,
+      "withheldForOmission": 0
+    }
+  },
+  "chunks": {
+    "jobsWithPlan": 6,
+    "jobsWithoutPlan": 0,
+    "planCoverageComplete": 6,
+    "planCoverageIncomplete": 0,
+    "planCoverageUnknown": 0,
+    "expectedRoleChunks": 13,
+    "cachedRoleChunks": 6,
+    "missingRoleChunks": 7,
+    "acknowledgedRoleChunks": 5,
+    "invalidAcknowledgements": 1,
+    "unknownAcknowledgements": 0,
+    "unexpectedCallKeys": 0,
+    "reductionCalls": 0,
+    "verificationCalls": 0,
+    "repairCalls": 5
+  },
+  "citations": {
+    "total": 0,
+    "literal": 0,
+    "nonliteralOrMalformed": 0,
+    "missingQuotes": 0,
+    "sourceUnavailable": 0,
+    "scopeUnknown": 0,
+    "mentions": 0,
+    "literalMentions": 0,
+    "unsupportedMentions": 0,
+    "mentionScopeUnknown": 0,
+    "offsets": 0,
+    "supportedOffsets": 0,
+    "unsupportedOffsets": 0,
+    "offsetScopeUnknown": 0,
+    "passageReferenceItems": 145,
+    "suppliedPassageReferencesSupported": 119,
+    "unsupportedPassageReferences": 26,
+    "passageReferenceScopeUnknown": 0
+  },
+  "timing": {
+    "timedEvidence": 0,
+    "savedCueSupported": 0,
+    "unsupported": 0,
+    "scopeUnknown": 0,
+    "untimedEvidence": 0,
+    "rangeSets": 0,
+    "savedCueRangeSets": 0,
+    "unsupportedRangeSets": 0,
+    "rangeScopeUnknown": 0,
+    "durationTotals": 0,
+    "unsupportedDurationTotals": 0,
+    "durationScopeUnknown": 0
+  },
+  "calls": {
+    "rows": 11,
+    "uniqueCalls": 11,
+    "repeatedExportRows": 0,
+    "conflictingExportRows": 0,
+    "materializedResults": 11,
+    "withoutMaterializedResult": 0,
+    "markedInvalidResults": 5,
+    "malformedRawResults": 0,
+    "malformedEvidenceArrays": 0,
+    "malformedEvidenceItems": 0,
+    "rawValueTypes": {
+      "object": 11,
+      "array": 0,
+      "null": 0,
+      "boolean": 0,
+      "number": 0,
+      "string": 0
+    },
+    "cachedSuccesses": 11,
+    "orphanCalls": 0,
+    "duplicateKeyGroups": 0,
+    "duplicateKeyExtraCalls": 0,
+    "duplicateMaterializedResults": 0,
+    "duplicateCachedSuccesses": 0,
+    "duplicateRequestGroups": 0,
+    "requestIdentityMismatches": 0,
+    "unknownCacheIdentity": 0,
+    "stateCostDisagreements": 0
+  },
+  "latency": {
+    "callsCreatedToResult": {
+      "available": 11,
+      "unavailable": 0,
+      "invalid": 0,
+      "minMs": 1187,
+      "maxMs": 8144,
+      "meanMs": 4104.727272727273,
+      "p50Ms": 3652,
+      "p95Ms": 8144
+    },
+    "jobsCreatedToPrepared": {
+      "available": 0,
+      "unavailable": 6,
+      "invalid": 0,
+      "minMs": null,
+      "maxMs": null,
+      "meanMs": null,
+      "p50Ms": null,
+      "p95Ms": null
+    },
+    "jobsCreatedToUpdated": {
+      "available": 6,
+      "unavailable": 0,
+      "invalid": 0,
+      "minMs": 2984,
+      "maxMs": 54141,
+      "meanMs": 25348.833333333332,
+      "p50Ms": 17803,
+      "p95Ms": 54141
+    },
+    "jobsCreatedToPublished": {
+      "available": 1,
+      "unavailable": 5,
+      "invalid": 0,
+      "minMs": 2984,
+      "maxMs": 2984,
+      "meanMs": 2984,
+      "p50Ms": 2984,
+      "p95Ms": 2984
+    }
+  },
+  "costs": {
+    "currency": "USD",
+    "knownCalls": 11,
+    "unknownCalls": 0,
+    "observedUsd": 0.005583656,
+    "settledUsd": 0.005583656,
+    "unknownHoldUsd": 0,
+    "commitmentUsd": 0.005583656,
+    "unknownChargesRemainHolds": true
+  },
+  "baseline": {
+    "provided": true,
+    "sourceUpdates": {
+      "before": 3,
+      "after": 3,
+      "added": 0,
+      "removed": 0,
+      "changed": 3,
+      "unchanged": 0
+    },
+    "jobs": {
+      "before": 0,
+      "after": 6,
+      "added": 6,
+      "removed": 0,
+      "changed": 0,
+      "unchanged": 0
+    },
+    "calls": {
+      "before": 0,
+      "after": 11,
+      "added": 11,
+      "removed": 0,
+      "changed": 0,
+      "unchanged": 0
+    }
+  }
+}

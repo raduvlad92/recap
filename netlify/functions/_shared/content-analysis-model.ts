@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 import { runtimeEnv, type Env } from './security';
 import { ANALYSIS_MODEL_IDS } from '../../../src/lib/analysis-settings-types';
 import { isAnalysisV2CallKey } from './content-analysis-grounded-v2-protocol';
+import { isAnalysisV3CallKey } from './content-analysis-grounded-v3-protocol';
 export type AnalysisRole='summary'|'summary-reduce'|'extractor'|'checker';
 export interface GenerationRequest {role:AnalysisRole;key:string;system:string;prompt:string;maxOutputTokens:number;schema:Record<string,unknown>;correction?:{baseKey:string;errorCode:string}}
 export interface AnalysisUsage {inputTokens:number;outputTokens:number;cachedInputTokens?:number;cacheWriteTokens?:number;totalTokens?:number;reasoningOutputTokens?:number}
@@ -216,7 +217,7 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
   // For the new protocol, preserve known billable output before domain
   // validation. A refusal remains terminal; a materialized format failure can
   // take exactly one financially fenced correction. Legacy behavior is stable.
-  const v2=isAnalysisV2CallKey(request.key);
+  const v2=isAnalysisV2CallKey(request.key)||isAnalysisV3CallKey(request.key);
   let validationError:GenerationResult['validationError'];
   if(message.refusal!=null){if(!v2)return analysisFailure('analysis_incomplete_generation');validationError='analysis_provider_refusal';}
   else if(choice.finish_reason!=='stop'){

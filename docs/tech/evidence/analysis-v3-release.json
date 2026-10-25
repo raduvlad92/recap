@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-25",
+  "stage": "code verified and guarded migration applied; publication and real v3 smoke pending",
+  "protocol": "content-v3",
+  "generationContractHash": "8b45295994cadc1798f29d61675f169687c5cf187de289c48eb117b5b62d0946",
+  "local": {
+    "tests": 2271,
+    "files": 69,
+    "typecheck": "passed",
+    "build": "passed",
+    "catalogue": "passed"
+  },
+  "reviews": {
+    "engineR2": {
+      "verdict": "scoped go",
+      "offlineChecks": 531
+    },
+    "databaseOperatorR1": {
+      "verdict": "migration-only go",
+      "suppliedPostgresChecks": 84,
+      "independentPostgresChecks": 13
+    }
+  },
+  "migration": {
+    "version": "20261025195400",
+    "sha256": "4c7efe351435d01852a1165e47e5b85d39b2f01885bef1e0c0671e78d0d4f90d",
+    "actualRollback": "passed",
+    "externalSchemaAbsence": "passed",
+    "actualApply": "passed",
+    "separateReadbackGroups": 20,
+    "preserved": true,
+    "newJobs": 0,
+    "newCalls": 0,
+    "activated": false,
+    "history": "registered after readback; no pending migration",
+    "security": {
+      "info": 17,
+      "warn": 0,
+      "error": 0
+    }
+  },
+  "modelLedger": {
+    "calls": 23,
+    "settledUsd": 0.014771372,
+    "unknownCalls": 3,
+    "unknownHoldUsd": 0.009178191,
+    "commitmentUsd": 0.023949563
+  },
+  "plan": {
+    "videos": 3,
+    "tasks": 6,
+    "baseCallsMax": 16,
+    "repairCallsMax": 13,
+    "baseUsdMax": 0.081791053,
+    "repairUsdMax": 0.13,
+    "freshUsdMax": 0.211791053,
+    "originalAdditionalSmokeUsd": 0.25,
+    "originalSmokeLifetimeCeilingUsd": 0.268365907,
+    "remainingOriginalIncrementUsd": 0.244416344,
+    "planningStubsAreQualityEvidence": false
+  },
+  "limits": {
+    "dailyUsd": 5,
+    "evaluationTotalUsd": 5,
+    "perCallUsd": 0.01
+  },
+  "quality": {
+    "realV3Calls": 0,
+    "semanticQuality": "unreviewed",
+    "humanQuality": "unreviewed",
+    "fullOriginalCapture": "unverified",
+    "v2Smoke": "failed quality; false empty withheld"
+  },
+  "remaining": [
+    "exact code push/CI/off-deployment",
+    "guarded stage and concrete activation review",
+    "same-cohort real smoke",
+    "twenty-video evaluation",
+    "staged backfill"
+  ]
+}

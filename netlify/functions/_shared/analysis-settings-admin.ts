@@ -18,7 +18,8 @@ const SAFE_ERROR_CODES = new Set([
   'analysis_unsupported_quote', 'analysis_unsupported_reduction_quote', 'analysis_unsupported_takeaway_time',
   'analysis_correction_charge_unknown', 'analysis_correction_dropped_proposal', 'analysis_output_capacity', 'analysis_provider_refusal',
   'analysis_incomplete_summary_reduction', 'analysis_incomplete_summary_verification', 'analysis_invalid_summary_verification',
-  'analysis_unsupported_summary_claim', 'analysis_unsupported_summary_number', 'analysis_unsupported_passage', 'analysis_no_progress',
+  'analysis_unsupported_summary_claim', 'analysis_unsupported_summary_number', 'analysis_unsupported_summary_unit', 'analysis_unsupported_passage', 'analysis_no_progress',
+  'analysis_summary_omission', 'analysis_empty_summary_requires_review', 'analysis_generation_contract_changed',
   'empty_keyword_inventory_requires_manual_review', 'invalid_keyword_candidate', 'keyword_capacity_requires_review',
   'analysis_storage_unavailable', 'analysis_status_unavailable', 'analysis_dispatch_failed',
 ]);

@@ -6,6 +6,7 @@ import { analysisFailure, type AnalysisGenerator, type AnalysisLimits, type Gene
 
 // New jobs opt into the private v2 protocol; legacy exports and requests remain immutable.
 export { analyzeSummaryV2, analyzeKeywordsV2, analysisV2CallPlan, planAnalysisV2Chunks } from './content-analysis-grounded-v2';
+export { analyzeSummaryV3, analyzeKeywordsV3, analysisV3CallPlan, planAnalysisV3Chunks, type AnalysisV3Context } from './content-analysis-grounded-v3';
 
 export interface TextChunk { index:number; start:number; end:number; text:string }
 type Cue = NonNullable<SourceUpdate['transcriptSegments']>[number];

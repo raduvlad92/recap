@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-25",
+  "stage": "real v2 smoke failed quality; spending paused; false empty withheld; v3 implementation in progress",
+  "provenance": "actual model receipts and database readbacks; independent assistant source review",
+  "deployment": {
+    "commit": "4087349885b831d6f465d9494ae196c90aa470c1",
+    "netlifyDeploy": "6ade5883a6eee469e689e059",
+    "publishedAt": "2026-10-25T19:29:50.055Z",
+    "ciRun": 40225985730,
+    "ci": {
+      "passed": 1778,
+      "localPostgresSkipped": 244
+    }
+  },
+  "sample": {
+    "videos": 3,
+    "logicalTasks": 6,
+    "summaryTasks": 3,
+    "keywordTasks": 3,
+    "allSavedSourceHashesPreserved": true,
+    "fullOriginalCapture": "unverified"
+  },
+  "quality": {
+    "gate": "failed",
+    "acceptedOutputs": 0,
+    "publishedNonemptySummaries": 0,
+    "publishedEmptySummaries": 1,
+    "withheldEmptySummaries": 1,
+    "failedSummaryTasks": 2,
+    "failedKeywordTasks": 3,
+    "finalSummaryVerifierCalls": 0,
+    "publishedFactualTakeawayClaims": 0,
+    "unsupportedPublishedFactualClaims": 0,
+    "zeroClaimDenominatorIsNotQualityPass": true,
+    "summaryOmission": "confirmed against complete saved source",
+    "humanQuality": "unreviewed",
+    "independentAssistantReview": "completed for all saved smoke responses"
+  },
+  "cost": {
+    "newCalls": 11,
+    "newSettledCalls": 11,
+    "newSettledUsd": 0.005583656,
+    "allCalls": 23,
+    "allSettledUsd": 0.014771372,
+    "historicalUnknownCalls": 3,
+    "historicalUnknownHoldUsd": 0.009178191,
+    "totalCommitmentUsd": 0.023949563,
+    "originalSmokeAdditionalCapUsd": 0.25,
+    "originalSmokeLifetimeCeilingUsd": 0.268365907,
+    "remainingSmokeIncrementUsd": 0.244416344
+  },
+  "limits": {
+    "dailyUsd": 5,
+    "evaluationTotalUsd": 5,
+    "perCallUsd": 0.01,
+    "fourModelAllowlist": true,
+    "defaultModel": "deepseek/deepseek-v4.1-flash-1017"
+  },
+  "controls": {
+    "globalSpendingEnabled": false,
+    "readerSpendingEnabled": false,
+    "scope": "paused",
+    "runtimeEnvironmentRequested": "false; verified next build required",
+    "noUnknownHoldReleased": true,
+    "autoBackfill": "paused"
+  },
+  "preservation": {
+    "oldCallsExact": 12,
+    "oldJobsExactExcludingNewDefaultColumns": 382,
+    "smokeOriginalsExactExcludingAnalysisAnnotations": 3,
+    "workspaceExact": true,
+    "keywordReviewsExact": true,
+    "withhold": {
+      "actualRollback": "passed",
+      "separateReadback": "passed",
+      "actualApply": "passed",
+      "archiveRows": 490,
+      "changedAnnotations": 1,
+      "all23CallsAnd388JobsUnchanged": true,
+      "privateAssistantAudit": true,
+      "humanApproval": false
+    }
+  },
+  "diagnosis": {
+    "repairCache": "JSONB property reordering changes embedded invalidResponse serialization; old hash fence correctly blocks",
+    "summary": "missing cited support, nonconsecutive spans, numeric tokenization and unsafe unit restoration",
+    "keywords": "placeholder mentions, nonconsecutive citations, unknown passage and incomplete repair",
+    "schemaEnumsAlone": "insufficient for actual failures"
+  },
+  "next": "implement explicit content-v3 successor with canonical prompt serialization, indexed repair diagnostics and independent empty-result review; no new charge before tests/review/release"
+}

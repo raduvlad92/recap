@@ -187,3 +187,21 @@ describe('pure analysis execution identity contract',()=>{
   for(const patch of [{model:'minimax/minimax-m3.1-flash'},{pricingVersion:'other-version'},{inputUsdPerMillion:.2},{outputUsdPerMillion:.8},{cachedInputUsdPerMillion:.02},{cacheWriteApplies:true,cacheWriteUsdPerMillion:.15}])expect(analysisExecutionIdentity(env(),{...limits,...patch})).not.toEqual(baseline);
  });
 });
+
+describe('content-v3 materialized response accounting, synthetic provider only',()=>{
+ it.each([
+  {name:'invalid JSON',finish:'stop',content:'{"unfinished":',refusal:undefined,error:'analysis_invalid_json'},
+  {name:'truncated body',finish:'length',content:'{"readComplete":false}',refusal:undefined,error:'analysis_output_capacity'},
+  {name:'provider refusal',finish:'stop',content:'',refusal:'Synthetic refusal.',error:'analysis_provider_refusal'},
+ ])('retains known charges and raw $name for durable validation without an adapter retry',async test=>{
+  const sdk=injected(fixture({choices:[{finish_reason:test.finish,message:{role:'assistant',content:test.content,...(test.refusal?{refusal:test.refusal}:{})}}]}));
+  const result=await createOpenRouterAnalysisGenerator(env(),sdk.factoryArg)({...request,key:'summary:v3:chunk:0'});
+  expect(result.validationError).toBe(test.error);expect(result.actualUsd).toBe(.0007);expect(result.providerId).toBe('gen-fixture');expect(result.executionIdentity?.model).toBe(config.CONTENT_ANALYSIS_MODEL);
+  expect(sdk.create).toHaveBeenCalledTimes(1);expect(sdk.create.mock.calls[0][1]).toMatchObject({maxRetries:0,timeout:45000});
+ });
+ it('keeps unknown BYOK cost unknown for v3 malformed output',async()=>{
+  const sdk=injected(fixture({usage:{...usage,is_byok:true},choices:[{finish_reason:'stop',message:{role:'assistant',content:'invalid'}}]}));
+  const result=await createOpenRouterAnalysisGenerator(env(),sdk.factoryArg)({...request,key:'extractor:v3:chunk:0'});
+  expect(result.validationError).toBe('analysis_invalid_json');expect(result.observedUsd).toBe(.0007);expect(result.actualUsd).toBeNull();expect(sdk.create).toHaveBeenCalledTimes(1);
+ });
+});

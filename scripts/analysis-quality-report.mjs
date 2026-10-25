@@ -22,8 +22,11 @@
  * materializedResults/duplicateMaterializedResults, NEVER validated successes.
  * chunks.cachedRoleChunks likewise counts materialization, not validated coverage.
  * Optional results supplements jobs.result; conflicting copies are rejected.
- * V2 plans set protocolVersion:'content-v2' and may include each chunk's original
+ * V2/V3 plans set protocolVersion:'content-v2'/'content-v3' and may include each chunk's original
  * passages:[{id,start,end,text?}] to check lastPassageId acknowledgments/references.
+ * Jobs may include rule_version, generation_predecessor_job_id and generation_contract_hash.
+ * V3 empty results declare evidence.emptyDisposition. These are reported declarations,
+ * never independently accepted quality; no root-level approval input is consumed.
  * Chunk ranges are UTF-16 [start,end). Supply the ORIGINAL manifest for unfinished
  * jobs. Final evidence.coverage is a fallback; current runtime defaults are never used.
  * Sample categories are selection labels, not verified properties. They are not inferred.
@@ -43,6 +46,9 @@ const SCALE = 1_000_000_000_000n;
 const CATEGORIES = ['short', 'long', 'dense-products', 'outros', 'sponsors', 'partial-timing', 'empty'];
 const STATES = ['queued', 'running', 'prepared', 'published', 'failed', 'blocked', 'cancelled', 'skipped'];
 const ALIASES = {sourceUpdates:'reader_source_updates', jobs:'reader_content_analysis_jobs', calls:'reader_content_analysis_calls'};
+const PROTOCOLS = ['content-v1','content-v2','content-v3'];
+const EMPTY_DISPOSITIONS = ['findings_expected','no_findings_reviewed','unreviewed'];
+const passageProtocol = protocol => protocol === 'content-v2' || protocol === 'content-v3';
 const EVIDENCE_ARRAYS = new Set(['coverage','findings','selected','candidates','highlights','accepted','pending','proposals','ranges','reductions','validationAudit','verdicts']);
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const own = (v, k) => Object.prototype.hasOwnProperty.call(v, k);
@@ -188,7 +194,7 @@ export function validateSnapshot(snapshot) {
   }
   for (const p of snapshot.chunkPlans ?? []) {
     if (!Array.isArray(p.chunks) || !p.chunks.length || p.chunks.some(c => !object(c) || !integer(c.index) || !integer(c.start) || !integer(c.end) || c.end <= c.start) || new Set(p.chunks.map(c => c.index)).size !== p.chunks.length) fail('invalid_chunk_plan');
-    if (p.protocolVersion != null && !['content-v1','content-v2'].includes(p.protocolVersion)) fail('invalid_chunk_protocol');
+    if (p.protocolVersion != null && !PROTOCOLS.includes(p.protocolVersion)) fail('invalid_chunk_protocol');
     for (const c of p.chunks) if (c.passages != null && (!Array.isArray(c.passages) || !c.passages.length || c.passages.some(p => !object(p) || !id(p.id) || !integer(p.start) || !integer(p.end) || p.start < c.start || p.end > c.end || p.end <= p.start || p.text != null && typeof p.text !== 'string') || new Set(c.passages.map(p => p.id)).size !== c.passages.length)) fail('invalid_passage_manifest');
   }
   if (snapshot.sample != null) {
@@ -226,16 +232,16 @@ export function measureCoverage(intervals, length) {
   return {known:true, complete:length > 0 && invalid.length === 0 && covered === length, coveredCharacters:covered, invalidIntervals:invalid.length, gaps};
 }
 
-/** Strict legacy/v2 grammar. Corrections share a coverage group, not a monetary call. */
+/** Strict legacy/v2/v3 grammar. Corrections share coverage, not a monetary call. */
 export function parseCallKey(value) {
   if (typeof value !== 'string') return null;
   const legacy = /^(summary|extractor|checker):(\d+)$/.exec(value);
   if (legacy) return {protocol:'content-v1',kind:'chunk',role:legacy[1],index:Number(legacy[2]),baseKey:value,repairAttempt:0};
   if (value === 'summary-reduce:0') return {protocol:'content-v1',kind:'reduction',baseKey:value,repairAttempt:0};
-  const v2 = /^((?:(?:summary|extractor|checker):v2:chunk:\d+|summary-reduce:v2:level:\d+:group:\d+|summary:v2:verify:0))(:repair:1)?$/.exec(value);
-  if (!v2) return null;
-  const chunk = /^(summary|extractor|checker):v2:chunk:(\d+)$/.exec(v2[1]);
-  return {protocol:'content-v2',kind:chunk ? 'chunk' : v2[1].startsWith('summary-reduce:') ? 'reduction' : 'verification',...(chunk ? {role:chunk[1],index:Number(chunk[2])} : {}),baseKey:v2[1],repairAttempt:v2[2] ? 1 : 0};
+  const versioned = /^((?:(?:summary|extractor|checker):v[23]:chunk:\d+|summary-reduce:v[23]:level:\d+:group:\d+|summary:v[23]:verify:0))(:repair:1)?$/.exec(value);
+  if (!versioned) return null;
+  const chunk = /^(summary|extractor|checker):v[23]:chunk:(\d+)$/.exec(versioned[1]);
+  return {protocol:'content-'+versioned[1].split(':')[1],kind:chunk ? 'chunk' : versioned[1].startsWith('summary-reduce:') ? 'reduction' : 'verification',...(chunk ? {role:chunk[1],index:Number(chunk[2])} : {}),baseKey:versioned[1],repairAttempt:versioned[2] ? 1 : 0};
 }
 
 function alignedCues(text, cues) {
@@ -324,7 +330,7 @@ function inspectEvidence(value, source, citations, timing, interval, protocol = 
     if (Array.isArray(node)) { node.forEach(child => visit(child,context)); return; }
     if (!object(node)) return;
     const evidenceItem = ['findings','selected','highlights','candidates','accepted','pending','proposals'].includes(context);
-    if (protocol === 'content-v2' && evidenceItem && !own(node,'evidenceQuote')) {
+    if (passageProtocol(protocol) && evidenceItem && !own(node,'evidenceQuote')) {
       citations.passageReferenceItems++;
       if (!Array.isArray(passages)) citations.passageReferenceScopeUnknown++;
       else if (!interval || !validPassageManifest(passages,interval,text)) citations.unsupportedPassageReferences++;
@@ -443,13 +449,84 @@ function privateResult(result) {
   if (!object(result)) return null;
   // Evidence is private, but arbitrary unknown fields and transport credentials are excluded.
   const fields = ['state','patch','evidence','pending','value','requestHash'];
-  const allowed = new Set([...fields,'videoSummary','videoHighlights','videoKeywords','keywordRuleVersion','keywordContentHash','ruleVersion','protocolVersion','contentHash','sourceContentState','coverage','findings','selected','extraction','checker','accepted','candidates','highlights','readComplete','endQuote','lastPassageId','passageIds','proposals','reductions','verification','validationAudit','verdicts','id','key','errorCode','repairKey','supported','captionHash','status','timingBasis','role','label','kind','confidence','reason','evidenceQuote','mention','start','end','index','startSeconds','endSeconds','durationSeconds','ranges','seconds','text','topics','brands','sponsors']);
+  const allowed = new Set([...fields,'videoSummary','videoHighlights','videoKeywords','keywordRuleVersion','keywordContentHash','ruleVersion','protocolVersion','emptyDisposition','contentHash','sourceContentState','coverage','findings','selected','extraction','checker','accepted','candidates','highlights','readComplete','endQuote','lastPassageId','passageIds','proposals','reductions','verification','validationAudit','verdicts','id','key','errorCode','repairKey','supported','captionHash','status','timingBasis','role','label','kind','confidence','reason','evidenceQuote','mention','start','end','index','startSeconds','endSeconds','durationSeconds','ranges','seconds','text','topics','brands','sponsors']);
   function clean(v) {
     if (Array.isArray(v)) return v.map(clean);
     if (!object(v)) return v;
     return Object.fromEntries(Object.entries(v).filter(([k]) => allowed.has(k)).map(([k,child]) => [k,clean(child)]));
   }
   return clean(pick(result,fields));
+}
+
+function jobProtocol(job, manifestProtocol, result, calls) {
+  // An explicit v3 job/manifest must never be reinterpreted as legacy from its cache.
+  const declared = [job.rule_version,manifestProtocol,result?.evidence?.protocolVersion].filter(p => p != null);
+  const saved = calls.map(c => parseCallKey(c.call_key)?.protocol);
+  const protocol = declared[0] ?? ['content-v3','content-v2'].find(p => saved.includes(p)) ?? 'content-v1';
+  return {protocol,disagreement:declared.some(p => p !== protocol)};
+}
+
+/** Generations are attempts at the same owner/update/task/content, not extra tasks. */
+function taskAttempts(jobs) {
+  const identity = j => key(j.user_id ?? null,j.update_id,j.task ?? null,j.content_hash ?? null);
+  const groups = new Set(jobs.map(identity)), byId = new Map(jobs.map(j => [j.id,j])), predecessors = new Set();
+  const stats = {identityScope:'owner_update_task_content_hash',logicalTasks:groups.size,jobAttempts:jobs.length,repeatedTaskAttempts:jobs.length-groups.size,attemptsWithoutContentHash:0,predecessorReferences:0,linkedSuccessorAttempts:0,predecessorAttempts:0,missingPredecessorAttempts:0,invalidPredecessorLinks:0,generationContractHashPresent:0,generationContractHashMissing:0};
+  for (const j of jobs) {
+    if (!id(j.content_hash)) stats.attemptsWithoutContentHash++;
+    stats[id(j.generation_contract_hash) ? 'generationContractHashPresent' : 'generationContractHashMissing']++;
+    if (j.generation_predecessor_job_id == null) continue;
+    stats.predecessorReferences++;
+    const predecessor = byId.get(j.generation_predecessor_job_id);
+    if (!id(j.generation_predecessor_job_id) || j.generation_predecessor_job_id === j.id || predecessor && identity(predecessor) !== identity(j)) stats.invalidPredecessorLinks++;
+    else if (!predecessor) stats.missingPredecessorAttempts++;
+    else { stats.linkedSuccessorAttempts++; predecessors.add(predecessor.id); }
+  }
+  stats.predecessorAttempts = predecessors.size;
+  return stats;
+}
+
+/** Publication/result states and supplied dispositions are not quality verdicts. */
+function summaryDiagnostics(sources, jobs, results, protocols) {
+  const stats = {
+    acceptanceBasis:'state_only_not_semantic_quality',independentEmptyAcceptance:'unreviewed',
+    acceptedNonemptyByState:0,emptyResultsByState:0,readyResultsWithoutNonemptyHighlights:0,emptyResultsWithNonemptyHighlights:0,
+    publishedAttempts:0,publishedEmptyAttempts:0,historicalPublishedEmptyUnreviewed:0,
+    v3EmptyResults:0,v3EmptyWithDeclaredNoFindings:0,v3EmptyWithoutReviewedDisposition:0,v3EmptyWithoutV3Evidence:0,
+    v3EmptyDispositions:Object.fromEntries([...EMPTY_DISPOSITIONS,'missing','invalid'].map(d => [d,0])),
+    currentSources:{acceptedNonemptyByState:0,readyEmpty:0,emptyProcessing:0,withheldForOmission:0},
+  };
+  for (const j of jobs) {
+    if (j.task !== 'summary') continue;
+    const result = j.result ?? results.get(j.id), highlights = result?.patch?.videoHighlights;
+    const nonempty = Array.isArray(highlights) && highlights.length > 0;
+    const empty = result?.state === 'empty' || result?.state === 'ready' && Array.isArray(highlights) && !highlights.length;
+    if (result?.state === 'ready') stats[nonempty ? 'acceptedNonemptyByState' : 'readyResultsWithoutNonemptyHighlights']++;
+    if (result?.state === 'empty') { stats.emptyResultsByState++; if (nonempty) stats.emptyResultsWithNonemptyHighlights++; }
+    if (j.state === 'published') {
+      stats.publishedAttempts++;
+      if (empty) {
+        stats.publishedEmptyAttempts++;
+        if (protocols.get(j.id) !== 'content-v3') stats.historicalPublishedEmptyUnreviewed++;
+      }
+    }
+    if (!empty || protocols.get(j.id) !== 'content-v3') continue;
+    stats.v3EmptyResults++;
+    const disposition = result?.evidence?.emptyDisposition;
+    stats.v3EmptyDispositions[disposition == null ? 'missing' : EMPTY_DISPOSITIONS.includes(disposition) ? disposition : 'invalid']++;
+    const v3Evidence = result?.evidence?.protocolVersion === 'content-v3';
+    if (!v3Evidence) stats.v3EmptyWithoutV3Evidence++;
+    stats[v3Evidence && disposition === 'no_findings_reviewed' ? 'v3EmptyWithDeclaredNoFindings' : 'v3EmptyWithoutReviewedDisposition']++;
+  }
+  for (const {record:r} of sources) {
+    const highlights = r.videoHighlights;
+    if (r.videoSummary?.status === 'ready' && Array.isArray(highlights)) {
+      if (!highlights.length) stats.currentSources.readyEmpty++;
+      else if (r.processing?.recap == null || r.processing.recap === 'ready') stats.currentSources.acceptedNonemptyByState++;
+    }
+    if (r.processing?.recap === 'empty') stats.currentSources.emptyProcessing++;
+    if (r.processing?.recap === 'failed' && r.processing.reason === 'analysis_summary_omission') stats.currentSources.withheldForOmission++;
+  }
+  return stats;
 }
 
 /** Pure: no mutation, filesystem, environment, clock, network or application imports. */
@@ -471,9 +548,9 @@ export function evaluateSnapshot(snapshot) {
     const state = declaredCompleteness(r); completeness[state]++;
     if (r.processing?.content === 'ready' && state !== 'declaredComplete') completeness.processingDisagreements++;
   }
-  const jobStats = {total:jobs.length,summary:0,keywords:0,otherTask:0,withResult:0,withoutResult:0,sourceUnavailable:0,withCoverage:0,completeSavedTextCoverage:0,incompleteSavedTextCoverage:0,coverageUnknown:0,invalidIntervals:0,states:Object.fromEntries([...STATES,'other'].map(s => [s,0]))};
+  const jobStats = {total:jobs.length,summary:0,keywords:0,otherTask:0,withResult:0,withoutResult:0,sourceUnavailable:0,withCoverage:0,completeSavedTextCoverage:0,incompleteSavedTextCoverage:0,coverageUnknown:0,invalidIntervals:0,protocols:Object.fromEntries([...PROTOCOLS,'other'].map(p => [p,0])),protocolDisagreements:0,states:Object.fromEntries([...STATES,'other'].map(s => [s,0]))};
   const chunks = {jobsWithPlan:0,jobsWithoutPlan:0,planCoverageComplete:0,planCoverageIncomplete:0,planCoverageUnknown:0,expectedRoleChunks:0,cachedRoleChunks:0,missingRoleChunks:0,acknowledgedRoleChunks:0,invalidAcknowledgements:0,unknownAcknowledgements:0,unexpectedCallKeys:0,reductionCalls:0,verificationCalls:0,repairCalls:0};
-  const callScopes = new Map();
+  const callScopes = new Map(), jobProtocols = new Map();
   for (const job of jobs) {
     jobStats[job.task === 'summary' ? 'summary' : job.task === 'keywords' ? 'keywords' : 'otherTask']++;
     jobStats.states[STATES.includes(job.state) ? job.state : 'other']++;
@@ -488,13 +565,16 @@ export function evaluateSnapshot(snapshot) {
     } else jobStats.coverageUnknown++;
     const plan = plans.get(job.id) ?? (Array.isArray(coverage) ? coverage.map((c,index) => ({start:c?.start,end:c?.end,index})) : undefined);
     const saved = calls.filter(c => c.job_id === job.id);
-    const protocol = protocols.get(job.id) ?? result?.evidence?.protocolVersion ?? (saved.some(c => parseCallKey(c.call_key)?.protocol === 'content-v2') ? 'content-v2' : 'content-v1');
+    const {protocol,disagreement} = jobProtocol(job,protocols.get(job.id),result,saved);
+    jobProtocols.set(job.id,protocol);
+    jobStats.protocols[PROTOCOLS.includes(protocol) ? protocol : 'other']++;
+    if (disagreement) jobStats.protocolDisagreements++;
     const roles = job.task === 'summary' ? ['summary'] : job.task === 'keywords' ? ['extractor','checker'] : [];
     const expected = new Map();
     if (plan && source && measureCoverage(plan,source.record.content?.length ?? 0).invalidIntervals === 0) {
       chunks.jobsWithPlan++;
       chunks[measureCoverage(plan,source.record.content?.length ?? 0).complete ? 'planCoverageComplete' : 'planCoverageIncomplete']++;
-      for (const c of plan) for (const role of roles) expected.set(protocol === 'content-v2' ? role+':v2:chunk:'+c.index : role+':'+c.index,c);
+      if (PROTOCOLS.includes(protocol)) for (const c of plan) for (const role of roles) expected.set(passageProtocol(protocol) ? role+':'+protocol.slice(8)+':chunk:'+c.index : role+':'+c.index,c);
     } else { chunks.jobsWithoutPlan++; chunks[plan ? 'planCoverageIncomplete' : 'planCoverageUnknown']++; }
     chunks.expectedRoleChunks += expected.size;
     for (const [callKey,interval] of expected) {
@@ -502,26 +582,27 @@ export function evaluateSnapshot(snapshot) {
       if (!matches.length) { chunks.missingRoleChunks++; continue; }
       chunks.cachedRoleChunks++;
       const text = source.record.content.slice(interval.start,interval.end);
-      if (protocol === 'content-v2' && !Array.isArray(interval.passages)) chunks.unknownAcknowledgements++;
-      else if (protocol === 'content-v2' && !validPassageManifest(interval.passages,interval,source.record.content)) chunks.invalidAcknowledgements++;
-      else if (matches.some(c => !markedInvalid(c) && object(c.result.value) && !evidenceArrayDiagnostics(c.result.value).malformedArrays && c.result.value.readComplete === true && (protocol === 'content-v2' ? c.result.value.lastPassageId === interval.passages.at(-1)?.id : c.result.value.endQuote === text.slice(-80)))) chunks.acknowledgedRoleChunks++;
+      if (passageProtocol(protocol) && !Array.isArray(interval.passages)) chunks.unknownAcknowledgements++;
+      else if (passageProtocol(protocol) && !validPassageManifest(interval.passages,interval,source.record.content)) chunks.invalidAcknowledgements++;
+      else if (matches.some(c => !markedInvalid(c) && object(c.result.value) && !evidenceArrayDiagnostics(c.result.value).malformedArrays && c.result.value.readComplete === true && (passageProtocol(protocol) ? c.result.value.lastPassageId === interval.passages.at(-1)?.id : c.result.value.endQuote === text.slice(-80)))) chunks.acknowledgedRoleChunks++;
       else chunks.invalidAcknowledgements++;
     }
     for (const c of saved) {
       const parsed = parseCallKey(c.call_key);
       if (parsed?.repairAttempt) chunks.repairCalls++;
+      if (protocol === 'content-v3' && parsed?.protocol !== protocol) { chunks.unexpectedCallKeys++; continue; }
       if (expected.has(parsed?.baseKey)) callScopes.set(c.id,expected.get(parsed.baseKey));
       if (parsed?.kind === 'reduction' && job.task === 'summary') {
         if (parsed.protocol === 'content-v1') callScopes.set(c.id,null);
         chunks.reductionCalls++;
-        if (parsed.protocol === 'content-v2') chunks.unknownAcknowledgements++;
+        if (passageProtocol(parsed.protocol)) chunks.unknownAcknowledgements++;
         else if (materialized(c) && source && (markedInvalid(c) || !object(c.result.value) || evidenceArrayDiagnostics(c.result.value).malformedArrays || c.result.value.readComplete !== true || c.result.value.endQuote !== source.record.content?.slice(-80))) chunks.invalidAcknowledgements++;
       } else if (parsed?.kind === 'verification' && job.task === 'summary') chunks.verificationCalls++;
       else if (!expected.has(parsed?.baseKey)) {
         if (!plan) chunks.unknownAcknowledgements++; else chunks.unexpectedCallKeys++;
       }
     }
-    if (result) inspectEvidence(result,source,citations,timing,null);
+    if (result) inspectEvidence(result,source,citations,timing,null,protocol === 'content-v3' ? protocol : 'content-v1');
   }
   const callStats = {rows:rawCalls.length,uniqueCalls:calls.length,repeatedExportRows:repeatedRows,conflictingExportRows:conflictingRows,materializedResults:0,withoutMaterializedResult:0,markedInvalidResults:0,malformedRawResults:0,malformedEvidenceArrays:0,malformedEvidenceItems:0,rawValueTypes:{object:0,array:0,null:0,boolean:0,number:0,string:0},cachedSuccesses:0,orphanCalls:0,duplicateKeyGroups:0,duplicateKeyExtraCalls:0,duplicateMaterializedResults:0,duplicateCachedSuccesses:0,duplicateRequestGroups:0,requestIdentityMismatches:0,unknownCacheIdentity:0,stateCostDisagreements:0};
   const groups = new Map(), requestGroups = new Map();
@@ -542,7 +623,7 @@ export function evaluateSnapshot(snapshot) {
       if (call.request_hash == null || wrapper.requestHash == null || call.execution_identity == null || wrapper.executionIdentity == null || call.model == null) callStats.unknownCacheIdentity++;
       else if (call.request_hash !== wrapper.requestHash || stable(call.execution_identity) !== stable(wrapper.executionIdentity) || call.execution_identity.model != null && call.execution_identity.model !== call.model) callStats.requestIdentityMismatches++;
       const scope = callScopes.get(call.id);
-      inspectEvidence(wrapper.value,source,citations,timing,scope,parseCallKey(call.call_key)?.protocol,scope?.passages);
+      inspectEvidence(wrapper.value,source,citations,timing,scope,jobProtocols.get(call.job_id) === 'content-v3' ? 'content-v3' : parseCallKey(call.call_key)?.protocol,scope?.passages);
     } else callStats.withoutMaterializedResult++;
     if (call.job_id != null) {
       const k = key(call.job_id,call.call_key), group = groups.get(k) ?? []; group.push(call); groups.set(k,group);
@@ -575,26 +656,29 @@ export function evaluateSnapshot(snapshot) {
   }
   const desiredCount = snapshot.sample?.desiredCount ?? 20;
   const report = {
-    schemaVersion:1,mode:'offline',manualReviewRequired:true,semanticQuality:'unreviewed',
+    schemaVersion:1,mode:'offline',manualReviewRequired:true,semanticQuality:'unreviewed',fullOriginalCoverage:'unverified',
     diagnosticScope:'combined_final_job_and_cached_call_result_occurrences',
     diagnosticsArePublishedOutputVerdicts:false,
     sourceCompleteness:completeness,
     sample:{desiredCount,actualCount:sources.length,countMatches:sources.length === desiredCount,categoriesAreSuppliedLabels:true,labeledSources:labeled.size,unlabeledSources:sources.length-labeled.size,categories:Object.fromEntries(CATEGORIES.map(c => [c,categorySets[c].size])),missingCategories:CATEGORIES.filter(c => !categorySets[c].size),unknownCategoryLabels,unmatchedCategoryEntries},
-    jobs:jobStats,chunks,citations,timing,calls:callStats,
+    jobs:jobStats,tasks:taskAttempts(jobs),summaries:summaryDiagnostics(sources,jobs,results,jobProtocols),chunks,citations,timing,calls:callStats,
     latency:{callsCreatedToResult:latency(calls,'created_at',c => c.result_at),jobsCreatedToPrepared:latency(jobs,'created_at',j => j.prepared_at),jobsCreatedToUpdated:latency(jobs,'created_at',j => j.updated_at),jobsCreatedToPublished:latency(jobs,'created_at',j => j.published_at)},
     costs:{currency:'USD',knownCalls:known,unknownCalls:unknown,observedUsd:usd(observed),settledUsd:usd(settled),unknownHoldUsd:usd(holds),commitmentUsd:usd(commitment),unknownChargesRemainHolds:true},
     baseline:snapshot.baseline ? {provided:true,...Object.fromEntries(Object.keys(ALIASES).map(name => [name,inventoryDiff(snapshot,snapshot.baseline,name)]))} : {provided:false},
   };
   const privateCall = c => ({...pick(c,['id','call_key','state','maximum_usd','observed_usd','actual_usd']),materializedResult:materialized(c),markedInvalid:markedInvalid(c),result:privateResult(c.result)});
-  const privateJob = j => ({...pick(j,['id','update_id','source_id','task','state','content_hash']),result:privateResult(j.result ?? results.get(j.id)),chunks:plans.get(j.id) ?? null,
+  const privateJob = j => ({...pick(j,['id','update_id','source_id','task','state','content_hash','rule_version','generation_predecessor_job_id','generation_contract_hash']),result:privateResult(j.result ?? results.get(j.id)),chunks:plans.get(j.id) ?? null,
     // Preserve every exported original, including conflicting repeated rows.
     calls:rawCalls.filter(c => c.job_id === j.id).map(privateCall)});
   const review = {
-    schemaVersion:1,visibility:'private',manualReviewRequired:true,semanticQuality:'unreviewed',
-    instructions:['Read the supplied source and all outputs, including final words and sponsor passages.','Literal evidence, timing, cost and saved-text coverage checks do not establish semantic quality or complete original capture.','Raw shape diagnostics cover root types and known evidence-array containers only; they do not validate domain output.','Compatibility counters cachedSuccesses and duplicateCachedSuccesses count materialized values, including false/null and invalid originals, never validated successes.','Check useful findings, numbers, negation, uncertainty, attribution, sponsors, entity omissions and ending coverage.'],
+    schemaVersion:1,visibility:'private',manualReviewRequired:true,semanticQuality:'unreviewed',fullOriginalCoverage:'unverified',
+    instructions:['Read the supplied source and all outputs, including final words and sponsor passages.','Literal evidence, timing, cost and saved-text coverage checks do not establish semantic quality or complete original capture.','Summary acceptance counters describe states and supplied v3 empty dispositions only. Historical published empty results have no independent empty acceptance and remain unreviewed.','Raw shape diagnostics cover root types and known evidence-array containers only; they do not validate domain output.','Compatibility counters cachedSuccesses and duplicateCachedSuccesses count materialized values, including false/null and invalid originals, never validated successes.','Check useful findings, numbers, negation, uncertainty, attribution, sponsors, entity omissions and ending coverage.'],
     overall:{verdict:'unreviewed',notes:''},
     items:sources.map((s,index) => ({sampleNumber:index+1,verdicts:Object.fromEntries(['sourceCompleteness','factualAccuracy','takeawayUsefulness','keywordCompleteness','sponsorHandling','outroCoverage','timing','overall'].map(k => [k,'unreviewed'])),notes:'',
-      source:{...pick(s.row,['user_id','id','source_id']),record:pick(s.record,['id','sourceId','title','url','format','duration','isSample','content','contentKind','coverage','transcriptSegments','videoFormat','isShort','videoHighlights','videoKeywords'])},
+      source:{...pick(s.row,['user_id','id','source_id']),record:{...pick(s.record,['id','sourceId','title','url','format','duration','isSample','content','contentKind','coverage','transcriptSegments','videoFormat','isShort','videoHighlights','videoKeywords']),
+        ...(object(s.record.videoSummary) ? {videoSummary:pick(s.record.videoSummary,['ruleVersion','status','captionHash','timingBasis'])} : {}),
+        ...(object(s.record.processing) ? {processing:pick(s.record.processing,['ruleVersion','contentHash','content','recap','keywords','reason','updatedAt'])} : {}),
+      }},
       jobs:jobs.filter(j => findSource(sources,j.update_id,j.user_id) === s).map(privateJob),
     })),
     unmatchedJobs:jobs.filter(j => !findSource(sources,j.update_id,j.user_id)).map(privateJob),
