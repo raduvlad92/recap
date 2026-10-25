@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-25",
+  "stage": "implementation verified; actual migration, staging and comparison pending",
+  "protocol": "content-v3",
+  "generationContractHash": "8b45295994cadc1798f29d61675f169687c5cf187de289c48eb117b5b62d0946",
+  "purpose": "one sealed approved execution-profile comparison",
+  "comparisonModel": "openai/gpt-6-luna-pro",
+  "provider": "OpenAI normal via OpenRouter",
+  "defaultModel": "deepseek/deepseek-v4.1-flash-1017",
+  "defaultRestoredAfterComparison": true,
+  "sameOriginalVideos": 3,
+  "newSuccessorTasks": 6,
+  "oldJobsPreserved": 394,
+  "oldCallsPreserved": 35,
+  "local": {
+    "tests": 2426,
+    "files": 71,
+    "typecheck": "passed",
+    "build": "passed",
+    "catalogue": "passed"
+  },
+  "reviews": {
+    "worker": {
+      "verdict": "scoped go",
+      "checks": 102,
+      "submitted": 46,
+      "independent": 56,
+      "sourceSha256": "b5bdb9b5cc77b06319e347d9e4b67246aa7f888486768fb545b1fde1b05a8c8a"
+    },
+    "database": {
+      "verdict": "scoped go",
+      "suppliedPostgres": 193,
+      "independentPostgres": 20,
+      "independentConcurrencyRaces": 6
+    },
+    "operator": {
+      "syntheticChecksBeforeFreeze": 686,
+      "actualBundleSignoff": "pending"
+    }
+  },
+  "migration": {
+    "version": "20261025220548",
+    "sha256": "142678aaaefab1945ebd41d7daa72ae56b78dd9017e52378516505ed671bcedb",
+    "applied": false,
+    "createsRows": false,
+    "newJobField": "generation_comparison_id",
+    "originalScopeManifest": "retained unchanged"
+  },
+  "limits": {
+    "dailyUsd": 5,
+    "evaluationTotalUsd": 5,
+    "perCallUsd": 0.01,
+    "originalSmokeLifetimeUsd": 0.268365907,
+    "currentCommittedUsd": 0.028604315,
+    "remainingOriginalSmokeUsd": 0.239761592,
+    "comparisonBaseCallsMaximum": 16,
+    "comparisonCorrectionCallsMaximum": 13,
+    "comparisonCallsMaximum": 29,
+    "comparisonBaseUsdMaximum": 0.094562875,
+    "comparisonCorrectionsUsdMaximum": 0.13,
+    "comparisonFreshUsdMaximum": 0.224562875,
+    "newAllowance": false
+  },
+  "safeguards": {
+    "privateSealedAdmission": true,
+    "freshJobsWithOriginalLineage": true,
+    "originalFailuresAndPaidIdentitiesRetained": true,
+    "sameH3Rules": true,
+    "knownSettledSingleCorrectionOnly": true,
+    "unknownHoldsPreserved": 3,
+    "automaticFallback": false,
+    "runtimeAndSpending": "off; actual preflight required again before staging"
+  },
+  "actualComparison": {
+    "jobsStaged": 0,
+    "calls": 0,
+    "settledUsd": 0,
+    "semanticQuality": "unreviewed",
+    "humanQuality": "unreviewed",
+    "fullOriginalCapture": "unverified",
+    "twentyVideoRollout": "pending useful smoke acceptance"
+  }
+}

@@ -11,8 +11,8 @@ import { analysisRuntimeEnv } from './content-analysis-runtime';
 import { AnalysisError, AnalysisProviderHttpError, analysisFailure, analysisLimits, analysisExecutionIdentity, conservativeCallUsd, createGatewayGenerator, type AnalysisRejectionReceipt, type AnalysisExecutionIdentity, type AnalysisGenerator, type AnalysisLimits, type GenerationResult, type GenerationRequest } from './content-analysis-model';
 
 export interface AnalysisPolicy { user_id:string; enabled:boolean; model:string }
-export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null;rule_version?:'content-v1'|'content-v2'|'content-v3';generation_contract_hash?:string|null;generation_predecessor_job_id?:string|null }
-export interface AnalysisGenerationContext { protocolVersion:'content-v3';generationContractHash:string;predecessorJobId:string;emptyDisposition:'findings_expected'|'no_findings_reviewed'|'unreviewed';sourceReviewDigest:string|null }
+export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null;rule_version?:'content-v1'|'content-v2'|'content-v3';generation_contract_hash?:string|null;generation_predecessor_job_id?:string|null;generation_comparison_id?:string|null }
+export interface AnalysisGenerationContext { protocolVersion:'content-v3';generationContractHash:string;predecessorJobId:string;emptyDisposition:'findings_expected'|'no_findings_reviewed'|'unreviewed';sourceReviewDigest:string|null;comparisonId?:string|null }
 export interface AnalysisClaim { job:AnalysisJob; record:SourceUpdate; leaseToken:string;generationContext?:AnalysisGenerationContext }
 export interface AnalysisCall {id:string;call_key?:string;model?:string;execution_identity?:AnalysisExecutionIdentity|null;request_hash?:string|null;result?:(GenerationResult & {requestHash?:string})|null; maximum_usd?:number;actual_usd?:number|string|null;observed_usd?:number|string|null;state?:string;validation_error_code?:string|null}
 export interface AnalysisReservation {claimed:boolean;call?:AnalysisCall;reason?:string;retryAt?:string}
@@ -122,6 +122,12 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
      const protocolV3=claim.job.rule_version==='content-v3';
      const generationContext=claim.generationContext;
      if(claim.job.rule_version!==undefined&&!['content-v1','content-v2','content-v3'].includes(claim.job.rule_version))return analysisFailure('analysis_invalid_protocol_key');
+     // The claim's immutable association must match its trusted DB context.
+     // SQL remains the admission authority; this ID never changes H3 requests.
+     const comparisonId=claim.job.generation_comparison_id;
+     if(comparisonId!=null
+      ?!protocolV3||typeof comparisonId!=='string'||comparisonId.length!==36||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(comparisonId)||generationContext?.comparisonId!==comparisonId
+      :generationContext?.comparisonId!=null)return analysisFailure('analysis_generation_contract_changed');
      if(protocolV3&&(!generationContext||generationContext.protocolVersion!=='content-v3'
       ||generationContext.generationContractHash!==ANALYSIS_V3_CONTRACT_HASH||claim.job.generation_contract_hash!==ANALYSIS_V3_CONTRACT_HASH
       ||generationContext.predecessorJobId!==claim.job.generation_predecessor_job_id||!generationContext.predecessorJobId

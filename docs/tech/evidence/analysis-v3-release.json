@@ -75,7 +75,7 @@
   },
   "quality": {
     "realV3Calls": 12,
-    "semanticQuality": "failed evidence/coverage gate; independent diagnosis in progress",
+    "semanticQuality": "failed evidence/coverage gate; independent actual-response diagnosis complete",
     "humanQuality": "unreviewed",
     "fullOriginalCapture": "unverified",
     "v2Smoke": "failed quality; false empty withheld",
@@ -84,8 +84,8 @@
     "v3SmokeEvidence": "analysis-smoke-v3.json"
   },
   "remaining": [
-    "complete independent diagnosis of all twelve saved responses",
-    "implement an evidence-led next step without resetting paid jobs or allowance",
+    "implement and review one sealed same-H3 Luna Pro comparison for the original three videos",
+    "guarded application and bounded actual comparison within original allowance",
     "useful smoke acceptance",
     "twenty-video evaluation",
     "staged backfill"
@@ -163,7 +163,11 @@
     "lifetimeUsd": 5,
     "perCallUsd": 0.01,
     "runtimeOffConfigurationRequested": true,
-    "runtimeOffDeployment": "pending"
+    "runtimeOffDeployment": "verified",
+    "offCommit": "45a30deed55732e5d7bacd2c99d4ebe0ef8b39fe",
+    "offDeployId": "6ade79dfcebcc4b8fd566e6d",
+    "offPublishedAt": "2026-10-25T21:51:58.302Z",
+    "hostedRuntime": false
   },
   "hostedReader": {
     "checkedAt": "2026-10-25T21:47:00Z",

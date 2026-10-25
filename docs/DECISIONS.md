@@ -10,6 +10,12 @@ Continue the already authorized reliability work through an explicit content-v3 
 
 The bounded v3 smoke subsequently also failed all six tasks; do not infer quality from local checks or force incomplete outputs into ready states. Stop-spending/drain/pause and restore caps before investigating saved evidence; no trial reset, hold release or fresh US$0.25 allowance. [Actual v3 evidence](tech/evidence/analysis-smoke-v3.json).
 
+## D38 controlled execution-profile comparison — 25 October 2026
+
+Independent saved-response reviews reproduce all six v3 failures with exact canonical request hashes and find no deterministic validator/adapter defect. Compare one other already approved execution profile under the unchanged H3 contract before changing evidence acceptance. Use GPT-6 Luna Pro on the same three originals: its conservative maximum is US$0.224562875, within the US$0.239761592 remaining from the original smoke allocation. The full MiniMax candidate is US$0.243475451 and does not fit that remaining bound.
+
+The existing logical-job uniqueness and immutable original manifest require a narrow, separately sealed comparison admission with new successor jobs. Preserve the failed DeepSeek jobs, calls, original scope/manifest and unknown holds; keep the same generation rules, one correction, evidence checks and final verifier. This is an explicit bounded comparison within the four-model authorization, with DeepSeek restored as default afterward. Implementation, guarded application and quality remain separate gates. No comparison is staged or charged yet.
+
 ## D38 — implement all five reliability steps, 25 October 2026
 
 Founder: “ok, plan properly and do all of it, whatever you can do in parallel”. This supersedes the D37 advice-only boundary for the five listed steps. It authorizes scoped implementation, review/deployment, bounded actual evaluation (DeepSeek first), missing-caption recovery within existing supplier controls, and a small monitored backfill after quality passes. Preserve US$5/day, US$5 cumulative evaluation, US$0.01/call, the four-model allowlist and all unresolved-charge reservations. No new subscription, unlimited budget, automatic model/provider fallback or daily cross-source briefing is added. [D38 plan](tech/ANALYSIS-RELIABILITY.md).

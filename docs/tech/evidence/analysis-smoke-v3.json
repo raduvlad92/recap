@@ -58,7 +58,11 @@
     "lifetimeUsd": 5,
     "perCallUsd": 0.01,
     "runtimeOffConfigurationRequested": true,
-    "runtimeOffDeployment": "pending"
+    "runtimeOffDeployment": "verified",
+    "offCommit": "45a30deed55732e5d7bacd2c99d4ebe0ef8b39fe",
+    "offDeployId": "6ade79dfcebcc4b8fd566e6d",
+    "offPublishedAt": "2026-10-25T21:51:58.302Z",
+    "hostedRuntime": false
   },
   "ledger": {
     "calls": 35,
@@ -83,7 +87,7 @@
     "completeSavedTextAnalysis": false,
     "fullOriginalCapture": "unverified",
     "humanQuality": "unreviewed",
-    "independentSavedResponseDiagnosis": "in progress"
+    "independentSavedResponseDiagnosis": "completed: exact replay; genuine literal/adjacency/completeness failures; no deterministic adapter/validator defect"
   },
   "twentyVideoReadiness": {
     "savedTextHashesMatch": 20,
@@ -95,7 +99,7 @@
     "remainingFirstAnalysisCandidates": 16,
     "existingProtectedAnnotationRecords": 1
   },
-  "next": "Diagnose saved outputs and choose a bounded evidence-led correction or controlled comparison before any new paid execution.",
+  "next": "Implement and review one sealed same-H3 Luna Pro comparison for the original three videos inside the remaining original allowance.",
   "hostedReader": {
     "checkedAt": "2026-10-25T21:47:00Z",
     "density": "regular",
