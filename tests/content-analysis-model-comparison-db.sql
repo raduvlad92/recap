@@ -4,6 +4,10 @@ set local role service_role;
 do $$ begin
  if (select count(*) from public.reader_source_updates)<>490 or (select count(*) from public.reader_content_analysis_jobs)<>394
   or (select count(*) from public.reader_content_analysis_calls)<>35 then raise exception 'Original 490/394/35 checkpoint changed'; end if;
+ if (select count(*) from public.reader_workspaces)<>3 then raise exception 'Synthetic unrelated workspaces changed'; end if;
+ if (select count(*) from public.reader_content_analysis_calls where state='settled')<>32
+  or (select sum(greatest(coalesce(actual_usd,maximum_usd),coalesce(observed_usd,0))) from public.reader_content_analysis_calls)<>.028604315 then
+  raise exception 'Original settled count or cumulative commitment changed'; end if;
  if (select count(*) from public.reader_content_analysis_calls where actual_usd is null)<>3
   or (select sum(maximum_usd) from public.reader_content_analysis_calls where actual_usd is null)<>.009178191
   or (select sum(actual_usd) from public.reader_content_analysis_calls)<>.019426124 then raise exception 'Settled costs/three holds changed'; end if;

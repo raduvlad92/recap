@@ -177,3 +177,10 @@ insert into public.reader_content_analysis_jobs(user_id,update_id,source_id,cont
  order by a.id limit 373;
 -- Model selection is deliberately OUTSIDE the stage/budget transaction.
 select public.admin_set_analysis_model('synthetic-reviewer','openai/gpt-6-luna-pro',(select revision from public.content_analysis_runtime_settings where id));
+
+-- Two unrelated synthetic workspaces have no collection/analysis work. The
+-- comparator must preserve them without assuming the target is the only owner.
+insert into public.reader_workspaces(user_id,state)
+ select 'comparison-unrelated-owner-'||n,w.state
+ from public.reader_workspaces w cross join generate_series(1,2) n
+ where w.user_id='generation-v3-owner';

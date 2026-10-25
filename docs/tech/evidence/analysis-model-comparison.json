@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-25",
+  "date": "2026-10-26",
   "stage": "implementation verified; actual migration, staging and comparison pending",
   "protocol": "content-v3",
   "generationContractHash": "8b45295994cadc1798f29d61675f169687c5cf187de289c48eb117b5b62d0946",
@@ -13,7 +13,7 @@
   "oldJobsPreserved": 394,
   "oldCallsPreserved": 35,
   "local": {
-    "tests": 2426,
+    "tests": 2462,
     "files": 71,
     "typecheck": "passed",
     "build": "passed",
@@ -31,20 +31,67 @@
       "verdict": "scoped go",
       "suppliedPostgres": 193,
       "independentPostgres": 20,
-      "independentConcurrencyRaces": 6
+      "independentConcurrencyRaces": 6,
+      "nativeCountCorrection": {
+        "suppliedPostgres": 229,
+        "comparison": 145,
+        "historicalV3": 84,
+        "newCountCases": 36,
+        "independentReview": "in progress"
+      }
     },
     "operator": {
-      "syntheticChecksBeforeFreeze": 686,
-      "actualBundleSignoff": "pending"
+      "verdict": "r2 local PostgreSQL go; actual production rollback passed, apply blocked by fixture-count assumption",
+      "suppliedSyntheticChecks": 809,
+      "independentVerifierChecks": 60,
+      "actualRaces": 18,
+      "serialized": 16,
+      "deadlocks": 2,
+      "schemaReadbackGaps": 3,
+      "actualBundleSignoff": "pending fresh review",
+      "correctionSyntheticChecks": 1370,
+      "routineAclCount": 28,
+      "nonblockingHeaderLocks": 21,
+      "actualR2": {
+        "opposed55P03": 2,
+        "transportRehearsals": 3,
+        "nativeNegatives": 124,
+        "independentComparatorRejections": 14,
+        "productionGo": false
+      },
+      "actualProduction": {
+        "rollbackExecuted": true,
+        "externalSchemaAbsent": true,
+        "transactionProtectedGroupsExact": 20,
+        "officialRollbackVerifier": "stopped: fixed baseline group count",
+        "applyMaterialized": false,
+        "committed": false,
+        "archiveRows": 491,
+        "globalWorkspaces": 3,
+        "targetWorkspaces": 1,
+        "otherWorkspaces": 2
+      },
+      "nativeCountCorrectionSyntheticChecks": 1418
+    },
+    "stagingOperator": {
+      "syntheticChecks": 644,
+      "verdict": "paused without final go; native count contracts being corrected",
+      "actualFrozenRpcStageSequence": "local pass",
+      "actualFrozenRpcActivationSequence": "local pass",
+      "concurrencyReview": "incomplete",
+      "actualStage": false,
+      "actualActivation": false
     }
   },
   "migration": {
     "version": "20261025220548",
-    "sha256": "142678aaaefab1945ebd41d7daa72ae56b78dd9017e52378516505ed671bcedb",
+    "sha256": "b7ed5e7cf8d8c01914d99a140d22d5e11f489f08b57247acd70d9a01b29694a0",
     "applied": false,
     "createsRows": false,
     "newJobField": "generation_comparison_id",
-    "originalScopeManifest": "retained unchanged"
+    "originalScopeManifest": "retained unchanged",
+    "previousReviewedSha256": "142678aaaefab1945ebd41d7daa72ae56b78dd9017e52378516505ed671bcedb",
+    "nativeArchiveCount": "strict sealed integer 3..10000000; exact current global count required"
   },
   "limits": {
     "dailyUsd": 5,
@@ -78,6 +125,25 @@
     "semanticQuality": "unreviewed",
     "humanQuality": "unreviewed",
     "fullOriginalCapture": "unverified",
-    "twentyVideoRollout": "pending useful smoke acceptance"
+    "twentyVideoRollout": "pending useful smoke acceptance",
+    "archiveAtStoppedRollback": 491
+  },
+  "delivery": {
+    "commit": "425027af02c4e93ae64ced6760308aa6bb7c1243",
+    "pushed": true,
+    "ciRun": 40241215063,
+    "ci": "success",
+    "passed": 1989,
+    "localPostgresSkipped": 437,
+    "deployId": "6ade85ee3055fedd96679acd",
+    "publishedAt": "2026-10-25T22:43:31.060Z",
+    "exactCommit": true,
+    "hostedRuntime": false,
+    "hostedGlobalSpending": false,
+    "defaultDeepSeekVerified": true,
+    "latestHostedReadbackAt": "2026-10-25T23:34:10.000Z",
+    "latestDatabaseDrainAt": "2026-10-25T23:35:32.114518Z",
+    "activeAnalysisJobs": 0,
+    "activeHourlyLeases": 0
   }
 }

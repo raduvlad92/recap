@@ -477,6 +477,7 @@ create function public.stage_content_analysis_model_comparison(p_user_id text,p_
 language plpgsql security definer set search_path='' as $$
 declare w public.reader_workspaces; s public.content_analysis_rollout_scopes; c public.content_analysis_model_comparisons;
  a public.reader_source_updates; prior public.reader_content_analysis_jobs; root public.reader_content_analysis_jobs;
+ expected_source_updates integer;
  b public.content_analysis_budget; policy public.reader_content_analysis_policies; settings public.content_analysis_runtime_settings;
  slot jsonb; original jsonb; ids text[]; committed numeric; successors jsonb; digest_key text;
  manifest_keys text[]:=array['protocolVersion','generationContractHash','purpose','originalManifestDigest','executionIdentity',
@@ -498,12 +499,22 @@ begin
   or p_manifest->>'responseModel' is distinct from 'openai/gpt-6-luna-pro' or p_manifest->>'responseProviderName' is distinct from 'OpenAI'
   or jsonb_typeof(p_manifest->'selectionRevision') is distinct from 'number' or p_manifest->>'selectionRevision' !~ '^[1-9][0-9]{0,17}$'
   or p_manifest->'effectiveLimits' is distinct from '{"maxSourceChars":1000000,"chunkChars":12000,"overlapChars":256,"maxChunks":800,"maxOutputTokens":8192,"maxInputTokens":128000,"maxCallUsd":0.01}'::jsonb
-  or p_manifest->'expectedCounts' is distinct from '{"sourceUpdates":490,"jobs":394,"calls":35,"unsettledCalls":3}'::jsonb
+  or jsonb_typeof(p_manifest->'expectedCounts') is distinct from 'object'
+  or ((p_manifest->'expectedCounts')-'sourceUpdates') is distinct from '{"jobs":394,"calls":35,"unsettledCalls":3}'::jsonb
   or p_manifest->'budget' is distinct from '{"originalCommittedUsd":0.018365907,"incrementalAllowanceUsd":0.25,"smokeLifetimeCeilingUsd":0.268365907}'::jsonb
   or p_manifest->'callBound' is distinct from '{"baseCalls":16,"correctionCalls":13,"maximumCalls":29,"baseMaximumUsd":0.094562875,"correctionMaximumUsd":0.13,"maximumFreshUsd":0.224562875}'::jsonb
   or jsonb_typeof(p_manifest->'expectedCommittedUsd') is distinct from 'number'
   or jsonb_typeof(p_manifest->'slots') is distinct from 'array' then
   raise exception 'Invalid sealed model comparison manifest' using errcode='PT400'; end if;
+ -- Archive growth is independent of the sealed three-original/six-slot cohort.
+ -- Bind a freshly measured GLOBAL archive count; keep every financial count
+ -- fixed. Validate before casting so malformed counts fail with PT400.
+ if jsonb_typeof(p_manifest#>'{expectedCounts,sourceUpdates}') is distinct from 'number'
+  or p_manifest#>>'{expectedCounts,sourceUpdates}' !~ '^[1-9][0-9]{0,7}$' then
+  raise exception 'Invalid sealed native archive count' using errcode='PT400'; end if;
+ expected_source_updates:=(p_manifest#>>'{expectedCounts,sourceUpdates}')::integer;
+ if expected_source_updates not between 3 and 10000000 then
+  raise exception 'Invalid sealed native archive count' using errcode='PT400'; end if;
  foreach digest_key in array array['originalManifestDigest','baseEpochHash','expectedBudgetHash','expectedPolicyHash','expectedLedgerHash','reviewDigest'] loop
   if jsonb_typeof(p_manifest->digest_key) is distinct from 'string' or p_manifest->>digest_key !~ '^[a-f0-9]{64}$' then
    raise exception 'Invalid comparison digest' using errcode='PT400'; end if;
@@ -580,7 +591,7 @@ begin
  if public.content_analysis_generation_v3_ledger_hash() is distinct from p_manifest->>'expectedLedgerHash'
   or committed is distinct from (p_manifest->>'expectedCommittedUsd')::numeric or committed<.028604315
   or committed+.224562875>.268365907
-  or (select count(*) from public.reader_source_updates)<>490 or (select count(*) from public.reader_content_analysis_jobs)<>394
+  or (select count(*) from public.reader_source_updates)<>expected_source_updates or (select count(*) from public.reader_content_analysis_jobs)<>394
   or (select count(*) from public.reader_content_analysis_calls)<>35 or (select count(*) from public.reader_content_analysis_calls where actual_usd is null)<>3 then
   raise exception 'Comparison original ledger, counts or shared envelope changed' using errcode='PT409'; end if;
  perform 1 from public.admin_keyword_reviews where user_id=p_user_id order by id for share;

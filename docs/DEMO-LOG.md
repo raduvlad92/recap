@@ -326,3 +326,24 @@ Independent summary and keyword diagnosis confirms all twelve v3 request hashes,
 New nullable immutable job association, private sealed comparison admission, original-manifest/root-audit preservation, one-comparison consumption, financial/category ceilings and privacy tombstones are implemented in new migration `20261025220548` (SHA142678aaaefab1945ebd41d7daa72ae56b78dd9017e52378516505ed671bcedb). The same H3 rules and existing worker/store RPC signatures remain. All 2,426 local checks/71 files, typecheck/build/catalogue pass. Worker independent review passes 102 checks; database review passes 193 supplied PostgreSQL cases plus 20 independent checks/six races. Applied historical migration remains byte-identical. Private operator generator/verifier has 686 synthetic controls; actual frozen bundle review/application remains pending.
 
 No comparison is staged, charged or accepted for quality. The existing published app remains runtime/spending off with DeepSeek default. New verified code is being published with runtime off before guarded migration/readback/staging. The comparison's US$0.224562875 upper bound remains inside the original remaining US$0.239761592, with no cap increase. [Source-free implementation evidence](tech/evidence/analysis-model-comparison.json).
+
+## 26 October 2026 local — comparison code off-deployment and operator correction
+
+Verified pushed `425027af02c4e93ae64ced6760308aa6bb7c1243`, CI40241215063 success (1,989 passed/437 local-PostgreSQL skips) and exact Netlify `6ade85ee3055fedd96679acd`, published 25 October 22:43:31.060 UTC. Hosted admin confirms DeepSeek default, runtime off/spending off and US$5 daily/lifetime. No new model call, model selection or comparison staging.
+
+The independent concrete migration-operator rehearsal is NO-GO: two genuine lock cycles (generation receipt/header and hourly reservation/header) plus incomplete private-helper ACL and two index-key-vector checks. Both complete synthetic migration rehearsals preserved the twenty groups, but those five defects must be corrected before actual application. Root assigned nonblocking NOWAIT acquisition for every existing-table lock, complete 28-function ACL checks and exact 5/6-key unique-index vectors. Fresh real-PG busy-refusal/clean-retry and metadata-negative review will follow. The frozen database migration itself remains unchanged/unapplied; its database logic retains the separate scoped GO. Stage/activation native proof tools are built in parallel, with explicit >29MB transport handling and no actual input fabricated.
+
+
+### 26 October 2026 — corrected comparison procedures under real PostgreSQL review
+
+The private migration procedure now takes every header lock without waiting and checks all 28 routine permissions plus exact index keys. Its 1,370 local controls pass. The frozen staging procedure passes 644 controls with complete native-row transport and rollback provenance; fixture doubles are explicitly excluded from actual-RPC proof. Two independent PostgreSQL reviews are running before application or activation. Fresh hosted runtime/spending/default/cap readback and database quiescence pass at 23:34–23:35 UTC on 25 October. No new comparison job, model call, supplier launch or charge occurred in this preparation step.
+
+
+### 26 October 2026 — production rollback stopped before comparison migration apply
+
+R2 operator review passed two opposed nonblocking-lock cases, three complete transport rehearsals, 124 native permission/index negatives and fourteen independent readback rejections. Parent ran only the actual production rollback and external absence probe. All twenty table groups and protected schema fields remained exact; the mandatory rollback verifier then rejected its fixed one-workspace fixture assumption. Actual global state has three workspaces and 491 archive rows, with the same 394 analysis jobs, 35 calls and three unresolved holds. No apply SQL was materialized, no migration committed, and no history registered. Narrow count-CAS and unrelated-workspace proof corrections are in parallel; the real staging/activation rehearsals passed locally but final staging concurrency review remains pending. No new model execution or charge.
+
+
+### 26 October 2026 — native-count correction verified locally
+
+The unapplied comparison migration now validates a strict measured archive-count integer and checks it against the native global count. Same-three/six slots, jobs/calls/unknown counts, H3 and all monetary bounds remain fixed. 229 disposable PostgreSQL checks pass, including 36 count cases and three-workspace preservation. The full release check passes 2,462 tests/71 files, typecheck, build and catalogue. Focused independent review of the corrected database/procedures is running; no repeat production apply or model execution has occurred.

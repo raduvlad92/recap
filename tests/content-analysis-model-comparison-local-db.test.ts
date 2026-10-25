@@ -128,7 +128,7 @@ describe.skipIf(!available)('ONE sealed same-H3 comparison, disposable PostgreSQ
     expectedPolicyHash:service(`select public.content_analysis_generation_v3_digest(to_jsonb(p)) from public.reader_content_analysis_policies p where user_id=${q(owner)};`),
     expectedLedgerHash:service('select public.content_analysis_generation_v3_ledger_hash();'),
     expectedCommittedUsd:json('select sum(greatest(coalesce(actual_usd,maximum_usd),coalesce(observed_usd,0))) from public.reader_content_analysis_calls;'),
-    expectedCounts:{sourceUpdates:490,jobs:394,calls:35,unsettledCalls:3},
+    expectedCounts:{sourceUpdates:json('select count(*) from public.reader_source_updates;'),jobs:394,calls:35,unsettledCalls:3},
     budget:{originalCommittedUsd:.018365907,incrementalAllowanceUsd:.25,smokeLifetimeCeilingUsd:.268365907},
     callBound:{baseCalls:16,correctionCalls:13,maximumCalls:29,baseMaximumUsd:.094562875,correctionMaximumUsd:.13,maximumFreshUsd:.224562875},
     reviewDigest:'b'.repeat(64),slots},};
@@ -476,5 +476,77 @@ describe.skipIf(!available)('ONE sealed same-H3 comparison, disposable PostgreSQ
    json(`select public.admin_review_keyword(${q(review.id)},${q(review.updated_at)},'synthetic-admin','reject','RTX','product');`);
    expect(()=>prepare(summary)).toThrow(/PT409/);
   }else{expect(prepare(summary)).toMatchObject({prepared:true});expect(json(publishSql(summary))).toBe(true);expect(service(`select status from public.admin_keyword_reviews where id=${q(review.id)};`)).toBe('pending');}
+ });
+ // A new unselected arrival is measured independently of the immutable cohort.
+ const addUnselectedArrival=(id='comparison-native-arrival-1',arrivalOwner=owner)=>service(`
+  insert into public.reader_source_updates(user_id,id,source_id,collection_id,published_at,record)
+  select ${q(arrivalOwner)},${q(id)},a.source_id,a.collection_id,a.published_at,
+   a.record||jsonb_build_object('id',${q(id)},'title','Synthetic unselected hourly arrival')
+  from public.reader_source_updates a where a.user_id=${q(owner)} and a.id='comparison-history-1';`);
+ const nativeCountState=()=>json(`select jsonb_build_object(
+  'sourceUpdates',(select count(*) from public.reader_source_updates),
+  'workspaces',(select count(*) from public.reader_workspaces),
+  'jobs',(select count(*) from public.reader_content_analysis_jobs where generation_comparison_id is null),
+  'calls',(select count(*) from public.reader_content_analysis_calls),
+  'settledCalls',(select count(*) from public.reader_content_analysis_calls where state='settled'),
+  'unsettledCalls',(select count(*) from public.reader_content_analysis_calls where actual_usd is null),
+  'committedUsd',(select sum(greatest(coalesce(actual_usd,maximum_usd),coalesce(observed_usd,0))) from public.reader_content_analysis_calls));`);
+ it.each(['target','unrelated'])('measured native 491/three-workspace checkpoint stages the same three originals/six slots and preserves every old row: %s arrival',arrival=>{
+  addUnselectedArrival('comparison-native-arrival-1',arrival==='target'?owner:'comparison-unrelated-owner-1');
+  const i=input(),before=nativeCountState(),old=oldJobs(),paid=ledger();
+  const archives=service('select jsonb_agg(to_jsonb(a) order by user_id,id) from public.reader_source_updates a;');
+  const workspaces=service('select jsonb_agg(to_jsonb(w) order by user_id) from public.reader_workspaces w;');
+  const scope=service('select jsonb_agg(to_jsonb(s) order by user_id) from public.content_analysis_rollout_scopes s;');
+  expect(before).toEqual({sourceUpdates:491,workspaces:3,jobs:394,calls:35,settledCalls:32,unsettledCalls:3,committedUsd:.028604315});
+  expect(i.manifest.expectedCounts).toEqual({sourceUpdates:491,jobs:394,calls:35,unsettledCalls:3});
+  expect(new Set(i.manifest.slots.map((slot:any)=>slot.updateId))).toEqual(new Set(['generation-video-1','generation-video-2','generation-video-3']));
+  expect(i.manifest.slots).toHaveLength(6);expect(stage(i)).toMatchObject({staged:true,successorJobIds:expect.any(Array)});
+  expect(comparison(i.id).manifest.expectedCounts.sourceUpdates).toBe(491);expect(nativeCountState()).toEqual(before);
+  expect(oldJobs()).toBe(old);expect(ledger()).toBe(paid);
+  expect(service('select jsonb_agg(to_jsonb(a) order by user_id,id) from public.reader_source_updates a;')).toBe(archives);
+  expect(service('select jsonb_agg(to_jsonb(w) order by user_id) from public.reader_workspaces w;')).toBe(workspaces);
+  expect(service('select jsonb_agg(to_jsonb(s) order by user_id) from public.content_analysis_rollout_scopes s;')).toBe(scope);
+  expect(json('select count(*) from public.reader_content_analysis_jobs where generation_comparison_id is not null;')).toBe(6);
+  expect(json(`select count(distinct update_id) from public.reader_content_analysis_jobs where generation_comparison_id=${q(i.id)};`)).toBe(3);
+  expect(comparison(i.id).manifest.budget.smokeLifetimeCeilingUsd).toBe(.268365907);
+  expect(comparison(i.id).manifest.callBound.maximumCalls).toBe(29);expect(claim()).toBeNull();
+ });
+ it('original measured 490 checkpoint remains valid with three workspaces',()=>{
+  const i=input();expect(i.manifest.expectedCounts.sourceUpdates).toBe(490);expect(nativeCountState().workspaces).toBe(3);
+  expect(stage(i).staged).toBe(true);expect(nativeCountState()).toEqual({sourceUpdates:490,workspaces:3,jobs:394,calls:35,settledCalls:32,unsettledCalls:3,committedUsd:.028604315});
+ });
+ it.each(['old_fixed_490','growth_after_manifest'])('native archive count CAS rejects %s with zero job/comparison/audit writes',kind=>{
+  if(kind==='old_fixed_490')addUnselectedArrival();
+  const i=input();if(kind==='old_fixed_490')i.manifest.expectedCounts.sourceUpdates=490;else addUnselectedArrival();
+  const before=service(snapshot(true));expect(()=>stage(i)).toThrow(/PT409/);expect(service(snapshot(true))).toBe(before);
+  expect(json('select count(*) from public.content_analysis_model_comparisons;')).toBe(0);
+  expect(json('select count(*) from public.reader_content_analysis_jobs;')).toBe(394);
+  expect(json("select count(*) from public.admin_audit_events where action='analysis.model_comparison.staged';")).toBe(0);
+  expect(nativeCountState()).toEqual({sourceUpdates:491,workspaces:3,jobs:394,calls:35,settledCalls:32,unsettledCalls:3,committedUsd:.028604315});
+ });
+ it.each([
+  ['zero',0],['one',1],['two',2],['negative',-1],['fraction',490.5],['above_bound',10000001],
+  ['max_safe_integer',9007199254740991],['unsafe_integer',9007199254740992],['huge_number',1e30],
+  ['numeric_string','490'],['null',null],['boolean',true],['object',{}],['array',[490]],['missing',undefined],
+ ] as const)('native archive count rejects malformed %s with PT400 and no writes',(_label,value)=>{
+  const i=input();(i.manifest.expectedCounts as Record<string,unknown>).sourceUpdates=value;
+  const before=service(snapshot(true));expect(()=>stage(i)).toThrow(/PT400/);expect(service(snapshot(true))).toBe(before);
+  expect(comparison(i.id)).toBeNull();
+ });
+ it.each(['490.0','4.905e2'])('native archive count rejects a JSON decimal %s without integer coercion',value=>{
+  const i=input(),query=stageSql(i).replace('"sourceUpdates":490','"sourceUpdates":'+value);
+  expect(query).not.toBe(stageSql(i));const before=service(snapshot(true));expect(()=>json(query)).toThrow(/PT400/);expect(service(snapshot(true))).toBe(before);
+ });
+ it.each([3,10000000])('native archive count integer bound %s is valid syntax but mismatched native count fails PT409',count=>{
+  const i=input();i.manifest.expectedCounts.sourceUpdates=count;expect(()=>stage(i)).toThrow(/PT409/);expect(comparison(i.id)).toBeNull();
+ });
+ it.each(['extra','missing_jobs','missing_calls','missing_unsettled','wrong_jobs','wrong_calls','wrong_unsettled','string_jobs','null_counts','array_counts','string_counts','missing_counts'])('expectedCounts retains exact keys and fixed financial counts: %s',kind=>{
+  const i=input(),manifest=i.manifest as Record<string,unknown>,counts=i.manifest.expectedCounts as Record<string,unknown>;
+  if(kind==='extra')counts.workspaces=3;
+  if(kind.startsWith('missing_')&&kind!=='missing_counts')delete counts[kind==='missing_jobs'?'jobs':kind==='missing_calls'?'calls':'unsettledCalls'];
+  if(kind==='wrong_jobs')counts.jobs=395;if(kind==='wrong_calls')counts.calls=36;if(kind==='wrong_unsettled')counts.unsettledCalls=4;
+  if(kind==='string_jobs')counts.jobs='394';if(kind==='null_counts')manifest.expectedCounts=null;if(kind==='array_counts')manifest.expectedCounts=[];
+  if(kind==='string_counts')manifest.expectedCounts='490/394/35/3';if(kind==='missing_counts')delete manifest.expectedCounts;
+  const before=service(snapshot(true));expect(()=>stage(i)).toThrow(/PT400/);expect(service(snapshot(true))).toBe(before);expect(comparison(i.id)).toBeNull();
  });
 });
