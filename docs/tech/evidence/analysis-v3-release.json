@@ -1,6 +1,6 @@
 {
   "date": "2026-10-25",
-  "stage": "code verified and guarded migration applied; publication and real v3 smoke pending",
+  "stage": "code deployed and guarded smoke completed; all six tasks failed quality; spending off",
   "protocol": "content-v3",
   "generationContractHash": "8b45295994cadc1798f29d61675f169687c5cf187de289c48eb117b5b62d0946",
   "local": {
@@ -19,6 +19,13 @@
       "verdict": "migration-only go",
       "suppliedPostgresChecks": 84,
       "independentPostgresChecks": 13
+    },
+    "nativeStageProofR5": {
+      "verdict": "go",
+      "helperSha256": "b07cfa1c7306a55297a74314cda050299d9f3e6ba40afbb27fa7a708b063d33c",
+      "savedInvalidKeyProofsRejected": 12,
+      "independentKeyControls": 800,
+      "protectedArtifactsUnchanged": 18
     }
   },
   "migration": {
@@ -40,11 +47,11 @@
     }
   },
   "modelLedger": {
-    "calls": 23,
-    "settledUsd": 0.014771372,
+    "calls": 35,
+    "settledUsd": 0.019426124,
     "unknownCalls": 3,
     "unknownHoldUsd": 0.009178191,
-    "commitmentUsd": 0.023949563
+    "commitmentUsd": 0.028604315
   },
   "plan": {
     "videos": 3,
@@ -56,8 +63,10 @@
     "freshUsdMax": 0.211791053,
     "originalAdditionalSmokeUsd": 0.25,
     "originalSmokeLifetimeCeilingUsd": 0.268365907,
-    "remainingOriginalIncrementUsd": 0.244416344,
-    "planningStubsAreQualityEvidence": false
+    "remainingOriginalIncrementUsd": 0.239761592,
+    "planningStubsAreQualityEvidence": false,
+    "remainingAtPlanningUsd": 0.244416344,
+    "freshUpperBoundAppliedTo": "completed v3 smoke; actual new charge 0.004654752"
   },
   "limits": {
     "dailyUsd": 5,
@@ -65,17 +74,108 @@
     "perCallUsd": 0.01
   },
   "quality": {
-    "realV3Calls": 0,
-    "semanticQuality": "unreviewed",
+    "realV3Calls": 12,
+    "semanticQuality": "failed evidence/coverage gate; independent diagnosis in progress",
     "humanQuality": "unreviewed",
     "fullOriginalCapture": "unverified",
-    "v2Smoke": "failed quality; false empty withheld"
+    "v2Smoke": "failed quality; false empty withheld",
+    "usefulAcceptedOutputs": 0,
+    "failedTasks": 6,
+    "v3SmokeEvidence": "analysis-smoke-v3.json"
   },
   "remaining": [
-    "exact code push/CI/off-deployment",
-    "guarded stage and concrete activation review",
-    "same-cohort real smoke",
+    "complete independent diagnosis of all twelve saved responses",
+    "implement an evidence-led next step without resetting paid jobs or allowance",
+    "useful smoke acceptance",
     "twenty-video evaluation",
     "staged backfill"
-  ]
+  ],
+  "delivery": {
+    "commit": "0001f636b339309dd2b088e910e16b9b2b722920",
+    "pushed": true,
+    "ci": {
+      "run": 40231429587,
+      "state": "success",
+      "passed": 1943,
+      "postgresSkipped": 328
+    },
+    "deploy": {
+      "id": "6ade689bf909a17e9c927445",
+      "state": "ready",
+      "publishedAt": "2026-10-25T20:38:27.693Z",
+      "exactCommitVerified": true
+    },
+    "hosted": {
+      "checkedAt": "2026-10-25T21:28:40Z",
+      "runtime": false,
+      "globalSpending": false,
+      "deepseekDefault": true,
+      "allowedModels": 4,
+      "dailyUsd": 5,
+      "lifetimeUsd": 5,
+      "activeJobs": 0,
+      "keyConnectionCheck": "authenticated read-only; no inference"
+    }
+  },
+  "staging": {
+    "at": "2026-10-25T21:33:30Z",
+    "actualRollback": "passed",
+    "actualApply": "passed",
+    "completeExternalVerification": "passed",
+    "allArchiveRowsPreserved": 490,
+    "oldJobsPreserved": 388,
+    "oldCallsPreserved": 23,
+    "unknownHoldsPreserved": 3,
+    "newJobs": 6,
+    "privateAssistantAuditEvents": 1,
+    "scope": "paused",
+    "spendingEnabled": false,
+    "newCalls": 0,
+    "legitimatePriorNonSmokeCaptionRecoveries": 2
+  },
+  "runtimeOnDelivery": {
+    "commit": "0001f636b339309dd2b088e910e16b9b2b722920",
+    "ciRun": 40231429587,
+    "ciAttempt": 2,
+    "ciState": "success",
+    "deployId": "6ade765a7750d2cb047aa3eb",
+    "publishedAt": "2026-10-25T21:37:06.165Z",
+    "hostedRuntimeOnSpendingOffVerified": true
+  },
+  "activation": {
+    "rollbackAndExternalReadback": "passed",
+    "actualApply": "passed",
+    "videos": 3,
+    "tasks": 6,
+    "dailyUsd": 5,
+    "temporaryLifetimeUsd": 0.268365907,
+    "perCallUsd": 0.01,
+    "workerAcknowledgedAt": "2026-10-25T21:38:41.510Z",
+    "acknowledgementIsCompletion": false
+  },
+  "finalState": {
+    "checkedAt": "2026-10-25T21:41:57.416435Z",
+    "globalSpending": false,
+    "ownerSpending": false,
+    "scope": "paused",
+    "activeJobs": 0,
+    "dailyUsd": 5,
+    "lifetimeUsd": 5,
+    "perCallUsd": 0.01,
+    "runtimeOffConfigurationRequested": true,
+    "runtimeOffDeployment": "pending"
+  },
+  "hostedReader": {
+    "checkedAt": "2026-10-25T21:47:00Z",
+    "density": "regular",
+    "reloadPersistence": true,
+    "failedSummaryAndKeywordStatesVisible": true,
+    "captionCoverageUnverifiedVisible": true,
+    "noGeneratedRecapOrKeywords": true,
+    "originalLinkRetained": true,
+    "transcriptDialogTextLength": 6941,
+    "horizontalOverflow": false,
+    "compactAndBlankSearchRestored": true,
+    "screenshot": "analysis-v3-failed-reader.png"
+  }
 }

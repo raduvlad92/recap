@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-25",
+  "protocol": "content-v3",
+  "generationContractHash": "8b45295994cadc1798f29d61675f169687c5cf187de289c48eb117b5b62d0946",
+  "commit": "0001f636b339309dd2b088e910e16b9b2b722920",
+  "deploy": {
+    "id": "6ade765a7750d2cb047aa3eb",
+    "publishedAt": "2026-10-25T21:37:06.165Z",
+    "ciRun": 40231429587,
+    "ciAttempt": 2,
+    "ciPassed": true,
+    "hostedRuntimeOnSpendingOffVerified": true
+  },
+  "staging": {
+    "rollbackAndFullReadback": "passed",
+    "applyAndFullReadback": "passed",
+    "preservedArchiveRows": 490,
+    "preservedPriorJobs": 388,
+    "preservedPriorCalls": 23,
+    "newPausedTasks": 6,
+    "privateAssistantStageAudit": true
+  },
+  "run": {
+    "startedAt": "2026-10-25T21:38:40.954Z",
+    "terminalReadbackAt": "2026-10-25T21:39:55.087264Z",
+    "videos": 3,
+    "tasks": 6,
+    "summaryFailed": 3,
+    "keywordsFailed": 3,
+    "published": 0,
+    "newCalls": 12,
+    "baseCalls": 6,
+    "correctionCalls": 6,
+    "finalSemanticVerifierCalls": 0,
+    "blindCheckerCalls": 0,
+    "newSettledUsd": 0.004654752,
+    "newUnknownCharges": 0,
+    "finalErrors": {
+      "analysis_incomplete_coverage": 5,
+      "analysis_unsupported_passage": 1
+    }
+  },
+  "preservation": {
+    "all490OriginalsUnchangedExceptProcessing": true,
+    "all388PriorJobsExact": true,
+    "all23PriorCallsExact": true,
+    "workspaceExact": true,
+    "reviewDecisionsExact": true,
+    "modelSettingsExact": true
+  },
+  "finalState": {
+    "checkedAt": "2026-10-25T21:41:57.416435Z",
+    "globalSpending": false,
+    "ownerSpending": false,
+    "scope": "paused",
+    "activeJobs": 0,
+    "dailyUsd": 5,
+    "lifetimeUsd": 5,
+    "perCallUsd": 0.01,
+    "runtimeOffConfigurationRequested": true,
+    "runtimeOffDeployment": "pending"
+  },
+  "ledger": {
+    "calls": 35,
+    "settledCalls": 32,
+    "settledUsd": 0.019426124,
+    "unknownCalls": 3,
+    "unknownHoldUsd": 0.009178191,
+    "committedUsd": 0.028604315
+  },
+  "sharedSmokeAllowance": {
+    "originalIncrementUsd": 0.25,
+    "originalLifetimeCeilingUsd": 0.268365907,
+    "spentAcrossV2V3Usd": 0.010238408,
+    "remainingOriginalIncrementUsd": 0.239761592,
+    "renewed": false
+  },
+  "quality": {
+    "verdict": "failed; do not expand",
+    "usefulAcceptedOutputs": 0,
+    "unsupportedPublishedClaims": 0,
+    "zeroClaimsIsQualityPass": false,
+    "completeSavedTextAnalysis": false,
+    "fullOriginalCapture": "unverified",
+    "humanQuality": "unreviewed",
+    "independentSavedResponseDiagnosis": "in progress"
+  },
+  "twentyVideoReadiness": {
+    "savedTextHashesMatch": 20,
+    "runtimeV3PlansMatch": 40,
+    "declaredPartial": 18,
+    "unverified": 2,
+    "fullOriginalProofs": 0,
+    "genuineEmptyTaskReferences": 0,
+    "remainingFirstAnalysisCandidates": 16,
+    "existingProtectedAnnotationRecords": 1
+  },
+  "next": "Diagnose saved outputs and choose a bounded evidence-led correction or controlled comparison before any new paid execution.",
+  "hostedReader": {
+    "checkedAt": "2026-10-25T21:47:00Z",
+    "density": "regular",
+    "reloadPersistence": true,
+    "failedSummaryAndKeywordStatesVisible": true,
+    "captionCoverageUnverifiedVisible": true,
+    "noGeneratedRecapOrKeywords": true,
+    "originalLinkRetained": true,
+    "transcriptDialogTextLength": 6941,
+    "horizontalOverflow": false,
+    "compactAndBlankSearchRestored": true,
+    "screenshot": "analysis-v3-failed-reader.png"
+  }
+}
