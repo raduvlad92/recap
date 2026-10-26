@@ -127,7 +127,7 @@
     "knownSettledSingleCorrectionOnly": true,
     "unknownHoldsPreserved": 3,
     "automaticFallback": false,
-    "runtimeAndSpending": "database gates off; drained; comparison closed; scope paused; runtime-off configured, redeployment pending"
+    "runtimeAndSpending": "off in actual published build and database; drained; comparison closed; scope paused"
   },
   "actualComparison": {
     "jobsStaged": 6,
@@ -156,24 +156,25 @@
     }
   },
   "delivery": {
-    "commit": "cfcb75cb2115ea1d59b31bd8727340c4513ec9d5",
+    "commit": "e12bd00dc37bde4c83c7f6322b62baeb9d097dd4",
     "pushed": true,
-    "ciRun": 40246692049,
+    "ciRun": 40255219884,
     "ci": "success",
-    "passed": 1989,
+    "passed": 1991,
     "localPostgresSkipped": 473,
-    "deployId": "6ade96fe7958a162a6470b64",
-    "publishedAt": "2026-10-25T23:56:15.685Z",
+    "deployId": "6adeafe8f909a17e9ca3af80",
+    "publishedAt": "2026-10-26T01:42:39.421Z",
     "exactCommit": true,
     "hostedRuntime": false,
     "hostedGlobalSpending": false,
     "defaultDeepSeekVerified": true,
-    "latestHostedReadbackAt": "2026-10-25T23:57:47.000Z",
-    "latestDatabaseDrainAt": "2026-10-26T00:11:38.316127Z",
+    "latestHostedReadbackAt": "2026-10-26T01:43:54Z",
+    "latestDatabaseDrainAt": "2026-10-26T01:16:52.346032Z",
     "activeAnalysisJobs": 0,
     "activeHourlyLeases": 0,
     "trialRuntimeOnDeploy": "6adea6478bc6fc4695bed527",
-    "runtimeOffRedeployment": "pending"
+    "runtimeOffRedeployment": "verified",
+    "workerFixCommit": "1d4636ec380a15df0d1e8964847f914fc4e2e438"
   },
   "shutdown": {
     "databaseCheckedAt": "2026-10-26T01:16:52.346032Z",
@@ -187,7 +188,7 @@
     "lifetimeUsd": 5,
     "perCallUsd": 0.01,
     "runtimeOffRequested": true,
-    "runtimeOffDeployment": "pending",
+    "runtimeOffDeployment": "6adeafe8f909a17e9ca3af80",
     "oldJobsExact": 394,
     "oldCallsExact": 35,
     "allWorkspacesExact": 3,
@@ -197,7 +198,9 @@
     "settledUsd": 0.041366384,
     "unknownCalls": 3,
     "unknownCommittedUsd": 0.009178191,
-    "committedUsd": 0.050544575
+    "committedUsd": 0.050544575,
+    "hostedRuntimeEnabled": false,
+    "hostedSafeguardsCheckedAt": "2026-10-26T01:43:54Z"
   },
   "diagnosis": {
     "method": "offline exact stored-call and disposable PostgreSQL replay",
@@ -219,6 +222,14 @@
     "newModelCalls": 0,
     "newModelCostUsd": 0,
     "fullReleaseChecks": "2464 tests passed; typecheck/build/catalogue passed",
-    "actualWorkerStorePostgresFixedControls": 2
+    "actualWorkerStorePostgresFixedControls": 2,
+    "outputEngineReplays": 6,
+    "outputWorkerReplays": 6,
+    "savedSummaryAssistantReviews": 2,
+    "provisionallyUsefulCandidates": 1,
+    "acceptedForPublication": 0,
+    "candidateReviewIsHuman": false,
+    "noSourceOrSqlContractChange": true,
+    "ciInitialAttempt": "one existing heavy-fixture wall timeout; fixed test-only headroom with functional bounds unchanged"
   }
 }
