@@ -42,7 +42,7 @@ describe('server-owned analysis model profiles, no provider calls', () => {
   });
   it('sets common conservative defaults without enabling runtime or a policy', () => {
     const runtime = analysisRuntimeEnv(env(), DEFAULT_ANALYSIS_MODEL, 1);
-    expect(analysisLimits(runtime)).toMatchObject({ chunkChars: 12000, maxChunks: 800, maxSourceChars: 1000000, maxOutputTokens: 8192, maxInputTokens: 128000, maxCallUsd: .01 });
+    expect(analysisLimits(runtime)).toMatchObject({ chunkChars: 12000, maxChunks: 800, maxSourceChars: 1000000, maxOutputTokens: 8192, maxInputTokens: 128000, maxCallUsd: .10 });
     expect(runtime('CONTENT_ANALYSIS_ENABLED')).toBeUndefined();
     expect(runtime('CONTENT_ANALYSIS_DAILY_LIMIT_USD')).toBeUndefined();
     expect(runtime('CONTENT_ANALYSIS_LIFETIME_LIMIT_USD')).toBeUndefined();
@@ -88,8 +88,8 @@ describe('server-owned analysis model profiles, no provider calls', () => {
   it.each([0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1])('rejects invalid revision %j', revision => {
     expect(() => analysisRuntimeEnv(env(), DEFAULT_ANALYSIS_MODEL, revision)).toThrow('analysis_configuration_required');
   });
-  it('pauses Sol at the unchanged default call cap before a provider call', async () => {
-    const runtime = analysisRuntimeEnv(keyEnv, ANALYSIS_MODEL_IDS[3], 1), limits = analysisLimits(runtime);
+  it('honors a lower explicit call cap even after the founder raised the default', async () => {
+    const runtime = analysisRuntimeEnv(env({OPENROUTER_API_KEY:'synthetic-server-key',CONTENT_ANALYSIS_MAX_CALL_USD:'.01'}), ANALYSIS_MODEL_IDS[3], 1), limits = analysisLimits(runtime);
     const create = vi.fn(), factory = vi.fn(() => ({ chat: { completions: { create } } }));
     expect(conservativeCallUsd(request, limits)).toBeGreaterThan(.01);
     await expect(createOpenRouterAnalysisGenerator(runtime, factory as unknown as OpenAIClientFactory)(request)).rejects.toThrow('analysis_call_limit');

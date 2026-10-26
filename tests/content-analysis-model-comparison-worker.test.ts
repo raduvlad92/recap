@@ -3,6 +3,7 @@ import {contentHash} from '../src/lib/content-processing';
 import type {SourceUpdate} from '../src/lib/types';
 import {createAnalysisStore,createAnalysisWorker,type AnalysisCall,type AnalysisClaim} from '../netlify/functions/_shared/content-analysis';
 import {ANALYSIS_V3_CONTRACT_HASH} from '../netlify/functions/_shared/content-analysis-grounded-v3-protocol';
+import {ANALYSIS_V4_GENERATION_CONTRACT_HASH} from '../netlify/functions/_shared/content-analysis-grounded-v4-protocol';
 import {AnalysisError,type AnalysisGenerator,type GenerationRequest,type GenerationResult} from '../netlify/functions/_shared/content-analysis-model';
 import {analysisRuntimeEnv} from '../netlify/functions/_shared/content-analysis-runtime';
 import type {Env} from '../netlify/functions/_shared/security';
@@ -40,7 +41,7 @@ type RpcArgs=Record<string,any>;
 /** Only the existing RPC transport is mocked. Store, worker, profile and H3 engine are real. */
 function fixture(initial:AnalysisClaim[]){
  const queue=[...initial],calls=new Map<string,StoredCall>();
- const state={model:LUNA,revision:23,clock:0,cacheOverride:null as AnalysisCall[]|null,
+ const state={model:LUNA,revision:23,clock:0,cacheOverride:null as AnalysisCall[]|null,cacheReferences:new Map<string,string[]>(),
   durableCost:(result:GenerationResult):number|null=>result.actualUsd??null,afterSave:()=>{},deniedRpc:null as string|null};
  const callKey=(jobId:string,key:string)=>`${jobId}/${key}`;
  const rpc=vi.fn(async(name:string,args:RpcArgs):Promise<{data:unknown;error:{code:string}|null}>=>{
@@ -50,7 +51,7 @@ function fixture(initial:AnalysisClaim[]){
    case 'sync_content_analysis_jobs_v2':data={synchronized:0};break;
    case 'claim_content_analysis_job_v2':data=queue.shift()??null;break;
    case 'read_content_analysis_cached_calls_v2':{
-    const rows=state.cacheOverride??[...calls.values()].filter(row=>row.job_id===args.p_job_id);
+    const rows=state.cacheOverride??[...calls.values()].filter(row=>row.job_id===args.p_job_id||state.cacheReferences.get(args.p_job_id)?.includes(row.id));
     data={calls:rows.filter(row=>args.p_call_keys.includes(row.call_key)&&(!args.p_after_key||row.call_key!>args.p_after_key))
      .sort((a,b)=>a.call_key!.localeCompare(b.call_key!)),nextAfterKey:null};break;
    }
@@ -191,6 +192,87 @@ describe('comparison claim association before H3 work or prepared publication',(
   expect((await f.run(generate)).completed).toBe(1);expect(generate).not.toHaveBeenCalled();
   for(const name of [cacheRpc,reserveRpc,prepareRpc])expect(f.named(name)).toEqual([]);
   expect(f.named(publishRpc)).toEqual([{p_job_id:c.job.id,p_lease_token:c.leaseToken}]);
+ });
+});
+
+describe('v4 admission through the actual worker/store',()=>{
+ function v4Claim(task:'summary'|'keywords'){
+  const c=claim(task,null);c.job.rule_version='content-v4';c.job.generation_contract_hash=ANALYSIS_V4_GENERATION_CONTRACT_HASH;
+  c.job.generation_predecessor_job_id=null;c.job.generation_admission_id='f4000000-0000-4000-8000-000000000001';
+  c.generationContext={protocolVersion:'content-v4',generationContractHash:ANALYSIS_V4_GENERATION_CONTRACT_HASH,predecessorJobId:null,
+   emptyDisposition:'findings_expected',sourceReviewDigest:'a'.repeat(64),admissionId:c.job.generation_admission_id,purpose:'content_v4_evaluation'};
+  return c;
+ }
+ const v4Result:AnalysisGenerator=async request=>{
+  const raw=JSON.parse(request.prompt),p=raw.originalRequest??raw;
+  if(p.task==='verify_summary')return {value:{readComplete:true,verdicts:p.claims.map((point:{id:string})=>({id:point.id,supported:true,sameFinding:true,reason:'Synthetic bound original finding.'}))},actualUsd:.0001,observedUsd:.0001};
+  if(request.role==='summary')return {value:{readComplete:true,lastPassageId:p.requiredLastPassageId,highlights:[{text:'Nvidia improved rendering.',passageIds:[p.passages[0].id]}]},actualUsd:.0001,observedUsd:.0001};
+  const unit=p.lexicalUnits.find((unit:{text:string})=>unit.text==='Nvidia');
+  return {value:{readComplete:true,lastPassageId:p.requiredLastPassageId,candidates:[{label:'Nvidia',kind:'brand',confidence:100,reason:'Explicit synthetic source identity.',firstUnitId:unit.id,lastUnitId:unit.id}]},actualUsd:.0001,observedUsd:.0001};
+ };
+ it.each(['summary','keywords'] as const)('binds %s generation, v4 keys and prepared publication without comparison context',async task=>{
+  const c=v4Claim(task),f=fixture([c]),generate=vi.fn<AnalysisGenerator>(v4Result);
+  expect((await f.run(generate)).completed).toBe(1);
+  expect(generate.mock.calls.every(([request])=>request.key.includes(':v4:'))).toBe(true);
+  expect(f.named(prepareRpc)[0].p_result.evidence).toMatchObject({protocolVersion:'content-v4',generationContractHash:ANALYSIS_V4_GENERATION_CONTRACT_HASH});
+  expect(f.named(publishRpc)[0].p_job_id).toBe(c.job.id);
+  f.queue.push(c);generate.mockClear();expect((await f.run(generate)).completed).toBe(1);expect(generate).not.toHaveBeenCalled();
+ });
+ it.each(['missing_admission','wrong_purpose','wrong_hash'] as const)('rejects %s before any v4 reservation',async issue=>{
+  const c=v4Claim('summary');if(issue==='missing_admission')delete c.job.generation_admission_id;
+  if(issue==='wrong_purpose')c.generationContext!.purpose='summary_finalization';
+  if(issue==='wrong_hash')c.job.generation_contract_hash='f'.repeat(64);
+  const f=fixture([c]),generate=vi.fn<AnalysisGenerator>(v4Result);expect((await f.run(generate)).blocked).toBe(1);
+  expect(generate).not.toHaveBeenCalled();expect(f.named(reserveRpc)).toEqual([]);expect(f.named(publishRpc)).toEqual([]);
+ });
+});
+
+describe('sealed one-summary finalization through the actual worker/store',()=>{
+ const admissionId='f1000000-0000-4000-8000-000000000001',prefixId='f2000000-0000-4000-8000-000000000001';
+ async function finalizer(){
+  const old=claim('summary'),f=fixture([old]);
+  expect((await f.run(async request=>valid(request))).completed).toBe(1);
+  const base=[...f.calls.values()].find(row=>row.call_key==='summary:v3:chunk:0')!;
+  const verifier=[...f.calls.values()].find(row=>row.call_key==='summary:v3:verify:0')!;
+  const sealed={...base,id:prefixId};f.calls.set(prefixId,sealed);
+  const next=claim('summary',null);
+  next.job.id='f3000000-0000-4000-8000-000000000001';
+  next.job.generation_predecessor_job_id=old.job.id;next.job.generation_admission_id=admissionId;
+  next.generationContext={protocolVersion:'content-v3',generationContractHash:ANALYSIS_V3_CONTRACT_HASH,predecessorJobId:old.job.id,
+   emptyDisposition:'findings_expected',sourceReviewDigest:'a'.repeat(64),admissionId,purpose:'summary_finalization',
+   prefixCalls:[{callId:prefixId,callKey:'summary:v3:chunk:0',requestHash:base.request_hash!}],
+   allowedFreshRequest:{key:'summary:v3:verify:0',requestHash:verifier.request_hash!}};
+  f.state.cacheReferences.set(next.job.id,[prefixId]);f.queue.push(next);
+  f.rpc.mockClear();return {f,next,sealed};
+ }
+ it('reuses the original settled prefix and purchases only the missing verifier',async()=>{
+  const {f,next,sealed}=await finalizer(),before=JSON.stringify(sealed),generate=vi.fn<AnalysisGenerator>(async request=>valid(request));
+  expect((await f.run(generate)).completed).toBe(1);
+  expect(generate.mock.calls.map(([request])=>request.key)).toEqual(['summary:v3:verify:0']);
+  expect(f.named(reserveRpc).map(args=>args.p_call_key)).toEqual(['summary:v3:verify:0']);
+  expect(JSON.stringify(f.calls.get(prefixId))).toBe(before);expect(f.named(publishRpc)[0].p_job_id).toBe(next.job.id);
+  f.queue.push(next);generate.mockClear();expect((await f.run(generate)).completed).toBe(1);expect(generate).not.toHaveBeenCalled();
+ });
+ it.each(['missing_prefix','changed_prefix_id','changed_prefix_hash','changed_verifier_hash','wrong_association','wrong_task'])(
+  'blocks %s before a provider attempt',async issue=>{
+   const {f,next}=await finalizer();
+   if(issue==='missing_prefix')f.state.cacheReferences.clear();
+   if(issue==='changed_prefix_id')next.generationContext!.prefixCalls![0].callId='f2000000-0000-4000-8000-000000000002';
+   if(issue==='changed_prefix_hash')next.generationContext!.prefixCalls![0].requestHash='f'.repeat(64);
+   if(issue==='changed_verifier_hash')next.generationContext!.allowedFreshRequest!.requestHash='f'.repeat(64);
+   if(issue==='wrong_association')next.generationContext!.admissionId='f1000000-0000-4000-8000-000000000002';
+   if(issue==='wrong_task')next.job.task='keywords';
+   const generate=vi.fn<AnalysisGenerator>(async request=>valid(request));expect((await f.run(generate)).blocked).toBe(1);
+   expect(generate).not.toHaveBeenCalled();expect(f.named(reserveRpc)).toEqual([]);expect(f.named(publishRpc)).toEqual([]);
+  });
+ it('preserves a negative final verdict without repair or publication',async()=>{
+  const {f}=await finalizer(),generate=vi.fn<AnalysisGenerator>(async request=>({value:{readComplete:true,verdicts:JSON.parse(request.prompt).claims.map((p:{id:string})=>({id:p.id,supported:false,reason:'Synthetic unsupported finding.'}))},actualUsd:.0001,observedUsd:.0001}));
+  expect((await f.run(generate)).failed).toBe(1);expect(generate).toHaveBeenCalledTimes(1);
+  expect(f.named('mark_content_analysis_call_invalid')).toEqual([]);expect(f.named(publishRpc)).toEqual([]);
+ });
+ it('retains an unknown final charge and blocks publication',async()=>{
+  const {f}=await finalizer();f.state.durableCost=()=>null;
+  expect((await f.run(async request=>valid(request))).blocked).toBe(1);expect(f.named(prepareRpc)).toEqual([]);expect(f.named(publishRpc)).toEqual([]);
  });
 });
 

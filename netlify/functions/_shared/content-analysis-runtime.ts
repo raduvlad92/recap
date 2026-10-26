@@ -48,12 +48,13 @@ const defaults: Readonly<Record<string, string>> = {
   CONTENT_ANALYSIS_MAX_CHUNKS: '800',
   CONTENT_ANALYSIS_MAX_OUTPUT_TOKENS: '8192',
   CONTENT_ANALYSIS_MAX_INPUT_TOKENS: '128000',
-  CONTENT_ANALYSIS_MAX_CALL_USD: '.01',
+  CONTENT_ANALYSIS_MAX_CALL_USD: '.10',
 };
 
 /** Apply the saved private selection before limits, identity, and generator construction.
  * Unknown selections/revisions fail closed. Credential, enable, daily, and lifetime settings pass through.
- * In particular, Sol's conservative reservation can exceed $.01 and pause; selecting it never raises a cap.
+ * The founder authorized $.10 per call on 26 October; database policies and
+ * scoped admissions independently enforce their current ceilings.
  */
 export function analysisRuntimeEnv(env: Env, selectedModel: string, revision: number): Env {
   if (!(ANALYSIS_MODEL_IDS as readonly string[]).includes(selectedModel)) return analysisFailure('analysis_model_not_allowed');

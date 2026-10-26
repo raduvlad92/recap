@@ -213,7 +213,7 @@ describe.skipIf(!available)('ONE sealed same-H3 comparison, disposable PostgreSQ
   sql('alter table public.reader_content_analysis_jobs enable trigger preserve_content_analysis_generation_v3_job;');
   if(kind==='root')i.manifest.slots[0].rootJobId='ffffffff-ffff-ffff-ffff-ffffffffffff';
   if(kind==='grandchild')i.manifest.slots[0].predecessorJobId=i.manifest.slots[0].rootJobId;
-  if(kind==='no_call')service(`delete from public.reader_content_analysis_calls where job_id=${q(id)};`);
+  if(kind==='no_call')sql(`delete from public.reader_content_analysis_calls where job_id=${q(id)};`); // Superuser-only corruption fixture; service ledger deletion is denied.
   if(['unknown','unsettled','wrong_identity'].includes(kind)){
    sql('alter table public.reader_content_analysis_calls disable trigger preserve_content_analysis_execution_identity;');
    if(kind==='wrong_identity')service(`update public.reader_content_analysis_calls set execution_identity=null where job_id=${q(id)};`);

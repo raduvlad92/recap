@@ -9,7 +9,8 @@
  * {sourceUpdates:[], jobs:[], calls:[], results?:[{job_id,result}],
  *  chunkPlans?:[{job_id,chunks:[{index,start,end}]}],
  *  baseline?:{sourceUpdates:[],jobs:[],calls:[]},
- *  sample?:{desiredCount:20,categories:[{update_id,user_id?,categories:[]}]} }
+ *  sample?:{desiredCount:20,categories:[{update_id,user_id?,categories:[]}]},
+ *  callReferences?:[{job_id,call_id,call_key?}] }
  * Native table-name aliases reader_source_updates, reader_content_analysis_jobs,
  * reader_content_analysis_calls are accepted instead of their camel-case root names.
  * Sources are DB rows {user_id,id,source_id,record:SourceUpdate} or direct SourceUpdate.
@@ -22,7 +23,7 @@
  * materializedResults/duplicateMaterializedResults, NEVER validated successes.
  * chunks.cachedRoleChunks likewise counts materialization, not validated coverage.
  * Optional results supplements jobs.result; conflicting copies are rejected.
- * V2/V3 plans set protocolVersion:'content-v2'/'content-v3' and may include each chunk's original
+ * V2/V3/V4 plans set protocolVersion and may include each chunk's original
  * passages:[{id,start,end,text?}] to check lastPassageId acknowledgments/references.
  * Jobs may include rule_version, generation_predecessor_job_id and generation_contract_hash.
  * V3 empty results declare evidence.emptyDisposition. These are reported declarations,
@@ -39,6 +40,7 @@ import { readFile, open, realpath, lstat } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { basename, dirname, resolve, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const MAX_BYTES = 100 * 1024 * 1024;
 const MAX_ROWS = 100_000;
@@ -46,9 +48,9 @@ const SCALE = 1_000_000_000_000n;
 const CATEGORIES = ['short', 'long', 'dense-products', 'outros', 'sponsors', 'partial-timing', 'empty'];
 const STATES = ['queued', 'running', 'prepared', 'published', 'failed', 'blocked', 'cancelled', 'skipped'];
 const ALIASES = {sourceUpdates:'reader_source_updates', jobs:'reader_content_analysis_jobs', calls:'reader_content_analysis_calls'};
-const PROTOCOLS = ['content-v1','content-v2','content-v3'];
+const PROTOCOLS = ['content-v1','content-v2','content-v3','content-v4'];
 const EMPTY_DISPOSITIONS = ['findings_expected','no_findings_reviewed','unreviewed'];
-const passageProtocol = protocol => protocol === 'content-v2' || protocol === 'content-v3';
+const passageProtocol = protocol => ['content-v2','content-v3','content-v4'].includes(protocol);
 const EVIDENCE_ARRAYS = new Set(['coverage','findings','selected','candidates','highlights','accepted','pending','proposals','ranges','reductions','validationAudit','verdicts']);
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const own = (v, k) => Object.prototype.hasOwnProperty.call(v, k);
@@ -196,10 +198,15 @@ export function validateSnapshot(snapshot) {
     if (!Array.isArray(p.chunks) || !p.chunks.length || p.chunks.some(c => !object(c) || !integer(c.index) || !integer(c.start) || !integer(c.end) || c.end <= c.start) || new Set(p.chunks.map(c => c.index)).size !== p.chunks.length) fail('invalid_chunk_plan');
     if (p.protocolVersion != null && !PROTOCOLS.includes(p.protocolVersion)) fail('invalid_chunk_protocol');
     for (const c of p.chunks) if (c.passages != null && (!Array.isArray(c.passages) || !c.passages.length || c.passages.some(p => !object(p) || !id(p.id) || !integer(p.start) || !integer(p.end) || p.start < c.start || p.end > c.end || p.end <= p.start || p.text != null && typeof p.text !== 'string') || new Set(c.passages.map(p => p.id)).size !== c.passages.length)) fail('invalid_passage_manifest');
+    for (const c of p.chunks) if (c.lexicalUnits != null && (!Array.isArray(c.lexicalUnits) || c.lexicalUnits.some(u => !object(u) || !id(u.id) || !integer(u.start) || !integer(u.end) || u.start < c.start || u.end > c.end || u.end <= u.start || u.text != null && typeof u.text !== 'string') || new Set(c.lexicalUnits.map(u => u.id)).size !== c.lexicalUnits.length)) fail('invalid_lexical_manifest');
   }
   if (snapshot.sample != null) {
     const sample = snapshot.sample;
     if (!object(sample) || sample.desiredCount != null && (!integer(sample.desiredCount) || sample.desiredCount < 1) || sample.categories != null && (!Array.isArray(sample.categories) || sample.categories.some(r => !object(r) || !id(r.update_id) || r.user_id != null && !id(r.user_id) || !Array.isArray(r.categories) || r.categories.some(c => typeof c !== 'string')))) fail('invalid_sample');
+  }
+  if (snapshot.callReferences != null) {
+    if (!Array.isArray(snapshot.callReferences) || snapshot.callReferences.length > MAX_ROWS || snapshot.callReferences.some(r => !object(r) || !id(r.job_id) || !jobIds.has(r.job_id) || !id(r.call_id) || r.call_key != null && !id(r.call_key))) fail('invalid_call_reference');
+    if (new Set(snapshot.callReferences.map(r => key(r.job_id,r.call_id))).size !== snapshot.callReferences.length) fail('duplicate_call_reference');
   }
   return true;
 }
@@ -232,15 +239,15 @@ export function measureCoverage(intervals, length) {
   return {known:true, complete:length > 0 && invalid.length === 0 && covered === length, coveredCharacters:covered, invalidIntervals:invalid.length, gaps};
 }
 
-/** Strict legacy/v2/v3 grammar. Corrections share coverage, not a monetary call. */
+/** Strict legacy/v2/v3/v4 grammar. Corrections share coverage, not a monetary call. */
 export function parseCallKey(value) {
   if (typeof value !== 'string') return null;
   const legacy = /^(summary|extractor|checker):(\d+)$/.exec(value);
   if (legacy) return {protocol:'content-v1',kind:'chunk',role:legacy[1],index:Number(legacy[2]),baseKey:value,repairAttempt:0};
   if (value === 'summary-reduce:0') return {protocol:'content-v1',kind:'reduction',baseKey:value,repairAttempt:0};
-  const versioned = /^((?:(?:summary|extractor|checker):v[23]:chunk:\d+|summary-reduce:v[23]:level:\d+:group:\d+|summary:v[23]:verify:0))(:repair:1)?$/.exec(value);
+  const versioned = /^((?:(?:summary|extractor|checker):v[234]:chunk:\d+|summary-reduce:v[234]:level:\d+:group:\d+|summary:v[234]:verify:0))(:repair:1)?$/.exec(value);
   if (!versioned) return null;
-  const chunk = /^(summary|extractor|checker):v[23]:chunk:(\d+)$/.exec(versioned[1]);
+  const chunk = /^(summary|extractor|checker):v[234]:chunk:(\d+)$/.exec(versioned[1]);
   return {protocol:'content-'+versioned[1].split(':')[1],kind:chunk ? 'chunk' : versioned[1].startsWith('summary-reduce:') ? 'reduction' : 'verification',...(chunk ? {role:chunk[1],index:Number(chunk[2])} : {}),baseKey:versioned[1],repairAttempt:versioned[2] ? 1 : 0};
 }
 
@@ -321,7 +328,7 @@ function validPassageManifest(passages, interval, text) {
   return !text.slice(cursor,interval.end).trim();
 }
 
-function inspectEvidence(value, source, citations, timing, interval, protocol = 'content-v1', passages) {
+function inspectEvidence(value, source, citations, timing, interval, protocol = 'content-v1', passages, lexicalUnits) {
   const text = source?.record.content, cues = alignedCues(text,source?.record.transcriptSegments ?? []);
   // undefined is an explicitly unknown call chunk; null denotes job/full-source evidence.
   const scopeKnown = interval !== undefined && typeof text === 'string';
@@ -330,7 +337,16 @@ function inspectEvidence(value, source, citations, timing, interval, protocol = 
     if (Array.isArray(node)) { node.forEach(child => visit(child,context)); return; }
     if (!object(node)) return;
     const evidenceItem = ['findings','selected','highlights','candidates','accepted','pending','proposals'].includes(context);
-    if (passageProtocol(protocol) && evidenceItem && !own(node,'evidenceQuote')) {
+    if (protocol === 'content-v4' && evidenceItem && !own(node,'evidenceQuote') && (own(node,'firstUnitId') || own(node,'lastUnitId'))) {
+      citations.lexicalReferenceItems++;
+      if (!interval || !Array.isArray(lexicalUnits)) citations.lexicalReferenceScopeUnknown++;
+      else {
+        const first=lexicalUnits.findIndex(u=>u.id===node.firstUnitId),last=lexicalUnits.findIndex(u=>u.id===node.lastUnitId);
+        const valid=first>=0 && last>=first && lexicalUnits.slice(first,last+1).every((u,i,selected)=>u.start>=interval.start && u.end<=interval.end && (u.text==null || u.text===text?.slice(u.start,u.end)) && (!i || selected[i-1].end<=u.start))
+          && lexicalUnits[last].end-lexicalUnits[first].start<=100;
+        if (valid) citations.suppliedLexicalReferencesSupported++;else citations.unsupportedLexicalReferences++;
+      }
+    } else if (passageProtocol(protocol) && evidenceItem && !own(node,'evidenceQuote')) {
       citations.passageReferenceItems++;
       if (!Array.isArray(passages)) citations.passageReferenceScopeUnknown++;
       else if (!interval || !validPassageManifest(passages,interval,text)) citations.unsupportedPassageReferences++;
@@ -448,22 +464,121 @@ function inventoryDiff(current, baseline, name) {
 function privateResult(result) {
   if (!object(result)) return null;
   // Evidence is private, but arbitrary unknown fields and transport credentials are excluded.
-  const fields = ['state','patch','evidence','pending','value','requestHash'];
-  const allowed = new Set([...fields,'videoSummary','videoHighlights','videoKeywords','keywordRuleVersion','keywordContentHash','ruleVersion','protocolVersion','emptyDisposition','contentHash','sourceContentState','coverage','findings','selected','extraction','checker','accepted','candidates','highlights','readComplete','endQuote','lastPassageId','passageIds','proposals','reductions','verification','validationAudit','verdicts','id','key','errorCode','repairKey','supported','captionHash','status','timingBasis','role','label','kind','confidence','reason','evidenceQuote','mention','start','end','index','startSeconds','endSeconds','durationSeconds','ranges','seconds','text','topics','brands','sponsors']);
+  const fields = ['state','patch','evidence','pending','value','requestHash','validationError'];
+  const allowed = new Set([...fields,'videoSummary','videoHighlights','videoKeywords','keywordRuleVersion','keywordContentHash','ruleVersion','protocolVersion','emptyDisposition','contentHash','sourceContentState','coverage','findings','selected','extraction','checker','accepted','candidates','highlights','readComplete','endQuote','lastPassageId','passageIds','proposals','reductions','verification','validationAudit','verdicts','id','key','errorCode','repairKey','supported','captionHash','status','timingBasis','role','label','kind','confidence','reason','evidenceQuote','mention','start','end','index','startSeconds','endSeconds','durationSeconds','ranges','seconds','text','topics','brands','sponsors','firstUnitId','lastUnitId','proposalId','parentProposalId','lineage','proposalLineage','originalResponseHash','originalProposalHash','originalText','originalPassageIds','corrected','correctionReason','sameFinding','rawOutput','finishReason','refusal']);
   function clean(v) {
     if (Array.isArray(v)) return v.map(clean);
     if (!object(v)) return v;
     return Object.fromEntries(Object.entries(v).filter(([k]) => allowed.has(k)).map(([k,child]) => [k,clean(child)]));
   }
-  return clean(pick(result,fields));
+  const value=clean(pick(result,fields));
+  if (value.validationError != null && !['analysis_invalid_json','analysis_output_capacity','analysis_provider_refusal'].includes(value.validationError)) delete value.validationError;
+  return value;
 }
 
 function jobProtocol(job, manifestProtocol, result, calls) {
-  // An explicit v3 job/manifest must never be reinterpreted as legacy from its cache.
+  // An explicit versioned job/manifest must never become legacy from its cache.
   const declared = [job.rule_version,manifestProtocol,result?.evidence?.protocolVersion].filter(p => p != null);
   const saved = calls.map(c => parseCallKey(c.call_key)?.protocol);
-  const protocol = declared[0] ?? ['content-v3','content-v2'].find(p => saved.includes(p)) ?? 'content-v1';
+  const protocol = declared[0] ?? ['content-v4','content-v3','content-v2'].find(p => saved.includes(p)) ?? 'content-v1';
   return {protocol,disagreement:declared.some(p => p !== protocol)};
+}
+
+/** Admission planning only. A processing override never invalidates an accepted
+ * same-content annotation. This does not approve its semantics or original capture. */
+export function evaluationEligibility(record) {
+  plainJson(record);
+  if (!object(record)) fail('invalid_evaluation_record');
+  const completeness = declaredCompleteness(record);
+  if (completeness === 'unusable') return {contentHash:null,sourceContentAssessment:completeness,summary:{decision:'unusable'},keywords:{decision:'unusable'}};
+  const hash = createHash('sha256').update(record.content).digest('hex');
+  const summary = record.videoSummary, highlights = record.videoHighlights;
+  const currentSummary = object(summary) && summary.captionHash === hash && summary.status === 'ready';
+  const cueStarts = new Set((Array.isArray(record.transcriptSegments) ? record.transcriptSegments : []).filter(object).filter(c => finite(c.startSeconds)).map(c => c.startSeconds));
+  const validSummary = currentSummary && summary.ruleVersion === 'takeaways-v1' && ['none','captions','publisher-chapters'].includes(summary.timingBasis)
+    && Array.isArray(highlights) && highlights.length <= 6 && highlights.every(p => object(p) && typeof p.text === 'string' && !!p.text.trim() && p.text.length <= 500 && p.text.trim().split(/\s+/).length <= 38
+      && (p.startSeconds === undefined || finite(p.startSeconds) && (summary.timingBasis === 'publisher-chapters' || summary.timingBasis === 'captions' && cueStarts.has(p.startSeconds))));
+  // An explicitly unknown independent hash must not inherit a summary's hash.
+  const keywordHash = own(record,'keywordContentHash') ? record.keywordContentHash : summary?.captionHash;
+  const currentKeywords = keywordHash === hash;
+  const keywords = record.videoKeywords;
+  const validKeywords = Array.isArray(keywords) && keywords.length <= 500 && keywords.every(k => object(k) && typeof k.label === 'string' && !!k.label.trim() && k.label.length <= 100
+    && Array.isArray(k.ranges) && k.ranges.length <= 200 && k.ranges.every(r => object(r) && finite(r.startSeconds) && finite(r.endSeconds) && r.endSeconds > r.startSeconds));
+  const acceptedKeywords = currentKeywords && validKeywords && (keywords.length > 0 || record.keywordRuleVersion === 'entities-v2' && record.processing?.keywords === 'empty');
+  const currentKeywordPayload = currentKeywords && (Array.isArray(keywords) || record.keywordRuleVersion != null);
+  return {contentHash:hash,sourceContentAssessment:completeness,
+    summary:{decision:validSummary ? 'protected' : currentSummary ? 'review' : 'eligible'},
+    keywords:{decision:acceptedKeywords ? 'protected' : currentKeywordPayload ? 'review' : 'eligible'}};
+}
+
+/** Counts declarations for review, not verified proposal identity or truth. */
+function lineageDiagnostics(jobs,results,calls,protocols) {
+  const stats={scope:'v4_raw_and_final_occurrences_not_unique_findings',proposalOccurrences:0,lineageEntries:0,correctedEntries:0,uncorrectedEntries:0,missingParentDigestEntries:0,
+    sameFindingVerdicts:{supported:0,rejected:0,missing:0},semanticContinuity:'unreviewed'};
+  const digest=v=>typeof v==='string' && /^[a-f0-9]{64}$/.test(v);
+  function visit(node) {
+    if(Array.isArray(node)){node.forEach(visit);return;}
+    if(!object(node))return;
+    if(own(node,'proposalId'))stats.proposalOccurrences++;
+    if(Array.isArray(node.lineage))for(const entry of node.lineage){
+      if(!object(entry))continue;
+      stats.lineageEntries++;if(entry.corrected===true)stats.correctedEntries++;else stats.uncorrectedEntries++;
+      if(!digest(entry.originalResponseHash)||!digest(entry.originalProposalHash))stats.missingParentDigestEntries++;
+    }
+    if(own(node,'supported') && own(node,'id'))stats.sameFindingVerdicts[node.sameFinding===true?'supported':node.sameFinding===false?'rejected':'missing']++;
+    for(const [field,value] of Object.entries(node))if(field!=='lineage')visit(value);
+  }
+  for(const job of jobs)if(protocols.get(job.id)==='content-v4')visit(job.result??results.get(job.id));
+  for(const call of calls)if(parseCallKey(call.call_key)?.protocol==='content-v4' && materialized(call))visit(call.result.value);
+  return stats;
+}
+
+function evaluationDiagnostics(sources) {
+  const tasks = Object.fromEntries(['summary','keywords'].map(task => [task,Object.fromEntries(['protected','eligible','review','unusable'].map(state => [state,0]))]));
+  let fullyProtectedRecords = 0, maximumNewVideoResults = 0;
+  for (const source of sources) {
+    const assessment = evaluationEligibility(source.record);
+    for (const task of ['summary','keywords']) tasks[task][assessment[task].decision]++;
+    if (['summary','keywords'].every(task => assessment[task].decision === 'protected')) fullyProtectedRecords++;
+    if (['summary','keywords'].some(task => assessment[task].decision === 'eligible')) maximumNewVideoResults++;
+  }
+  return {assessmentCount:sources.length,eligibilityBasis:'current_annotation_content_binding_not_processing_override',
+    semanticAcceptance:'unreviewed',originalCaptureVerified:false,genuineWholeTaskEmptyCoverage:'unverified',
+    fullyProtectedRecords,maximumNewVideoResults,tasks};
+}
+
+/** References expose the same saved rows for diagnostics, never extra financial
+ * rows or execution authority. Incomplete identity/settlement stays untrusted. */
+function referencedCalls(snapshot,jobs,calls) {
+  const byJob = new Map(), jobsById = new Map(jobs.map(j => [j.id,j])), callsById = new Map(calls.map(c => [c.id,c]));
+  const stats = {supplied:0,identityBound:0,knownSettledMaterialized:0,missing:0,invalidIdentity:0,unsettledOrUnmaterialized:0,monetaryRowsCopied:0,executionAuthority:'not_verified'};
+  for (const reference of snapshot.callReferences ?? []) {
+    stats.supplied++;
+    const target = jobsById.get(reference.job_id), call = callsById.get(reference.call_id), parent = call && jobsById.get(call.job_id);
+    if (!call || !parent) { stats.missing++; continue; }
+    const identity = j => key(j.user_id ?? null,j.update_id,j.source_id ?? null,j.task ?? null,j.content_hash ?? null);
+    const currentBinding = target && id(target.user_id) && id(target.source_id) && typeof target.content_hash==='string' && /^[a-f0-9]{64}$/.test(target.content_hash);
+    if (!currentBinding || identity(target) !== identity(parent) || target.source_revision !== parent.source_revision || call.user_id != null && call.user_id !== target.user_id || reference.call_key != null && reference.call_key !== call.call_key || call.job_id === target.id) { stats.invalidIdentity++; continue; }
+    stats.identityBound++;
+    if (call.state !== 'settled' || amount(call.actual_usd) === null || !materialized(call)) { stats.unsettledOrUnmaterialized++; continue; }
+    stats.knownSettledMaterialized++;
+    const list = byJob.get(target.id) ?? []; list.push(call); byJob.set(target.id,list);
+  }
+  return {byJob,stats};
+}
+
+function newMonetaryRows(snapshot,calls) {
+  if (!snapshot.baseline) return {provided:false};
+  const baseline = new Map(rows(snapshot.baseline,'calls').map(c => [c.id,c]));
+  let settled = 0n, holds = 0n, commitment = 0n, count = 0, changedExistingRows = 0;
+  for (const c of calls) {
+    if (baseline.has(c.id)) { if (stable(c) !== stable(baseline.get(c.id))) changedExistingRows++; continue; }
+    count++;
+    const actual = amount(c.actual_usd), observed = amount(c.observed_usd), reserve = amount(c.maximum_usd,true);
+    if (actual === null) { const held=maximum(reserve,observed); holds+=held; commitment+=held; }
+    else { settled+=actual; commitment+=maximum(actual,observed); }
+  }
+  return {provided:true,scope:'new_monetary_row_ids_only',rows:count,changedExistingRows,settledUsd:usd(settled),unknownHoldUsd:usd(holds),commitmentUsd:usd(commitment)};
 }
 
 /** Generations are attempts at the same owner/update/task/content, not extra tasks. */
@@ -493,6 +608,8 @@ function summaryDiagnostics(sources, jobs, results, protocols) {
     publishedAttempts:0,publishedEmptyAttempts:0,historicalPublishedEmptyUnreviewed:0,
     v3EmptyResults:0,v3EmptyWithDeclaredNoFindings:0,v3EmptyWithoutReviewedDisposition:0,v3EmptyWithoutV3Evidence:0,
     v3EmptyDispositions:Object.fromEntries([...EMPTY_DISPOSITIONS,'missing','invalid'].map(d => [d,0])),
+    v4EmptyResults:0,v4EmptyWithDeclaredNoFindings:0,v4EmptyWithoutReviewedDisposition:0,v4EmptyWithoutV4Evidence:0,
+    v4EmptyDispositions:Object.fromEntries([...EMPTY_DISPOSITIONS,'missing','invalid'].map(d => [d,0])),
     currentSources:{acceptedNonemptyByState:0,readyEmpty:0,emptyProcessing:0,withheldForOmission:0},
   };
   for (const j of jobs) {
@@ -506,16 +623,18 @@ function summaryDiagnostics(sources, jobs, results, protocols) {
       stats.publishedAttempts++;
       if (empty) {
         stats.publishedEmptyAttempts++;
-        if (protocols.get(j.id) !== 'content-v3') stats.historicalPublishedEmptyUnreviewed++;
+        if (!['content-v3','content-v4'].includes(protocols.get(j.id))) stats.historicalPublishedEmptyUnreviewed++;
       }
     }
-    if (!empty || protocols.get(j.id) !== 'content-v3') continue;
-    stats.v3EmptyResults++;
+    const protocol=protocols.get(j.id);
+    if (!empty || !['content-v3','content-v4'].includes(protocol)) continue;
+    const prefix=protocol.slice(8);
+    stats[prefix+'EmptyResults']++;
     const disposition = result?.evidence?.emptyDisposition;
-    stats.v3EmptyDispositions[disposition == null ? 'missing' : EMPTY_DISPOSITIONS.includes(disposition) ? disposition : 'invalid']++;
-    const v3Evidence = result?.evidence?.protocolVersion === 'content-v3';
-    if (!v3Evidence) stats.v3EmptyWithoutV3Evidence++;
-    stats[v3Evidence && disposition === 'no_findings_reviewed' ? 'v3EmptyWithDeclaredNoFindings' : 'v3EmptyWithoutReviewedDisposition']++;
+    stats[prefix+'EmptyDispositions'][disposition == null ? 'missing' : EMPTY_DISPOSITIONS.includes(disposition) ? disposition : 'invalid']++;
+    const versionedEvidence = result?.evidence?.protocolVersion === protocol;
+    if (!versionedEvidence) stats[prefix+'EmptyWithout'+prefix.toUpperCase()+'Evidence']++;
+    stats[prefix+(versionedEvidence && disposition === 'no_findings_reviewed' ? 'EmptyWithDeclaredNoFindings' : 'EmptyWithoutReviewedDisposition')]++;
   }
   for (const {record:r} of sources) {
     const highlights = r.videoHighlights;
@@ -538,7 +657,9 @@ export function evaluateSnapshot(snapshot) {
   const plans = new Map((snapshot.chunkPlans ?? []).map(p => [p.job_id,p.chunks]));
   const protocols = new Map((snapshot.chunkPlans ?? []).map(p => [p.job_id,p.protocolVersion]));
   const jobMap = new Map(jobs.map(j => [j.id,j]));
-  const citations = {total:0,literal:0,nonliteralOrMalformed:0,missingQuotes:0,sourceUnavailable:0,scopeUnknown:0,mentions:0,literalMentions:0,unsupportedMentions:0,mentionScopeUnknown:0,offsets:0,supportedOffsets:0,unsupportedOffsets:0,offsetScopeUnknown:0,passageReferenceItems:0,suppliedPassageReferencesSupported:0,unsupportedPassageReferences:0,passageReferenceScopeUnknown:0};
+  const references = referencedCalls(snapshot,jobs,calls);
+  const savedForJob = jobId => [...calls.filter(c => c.job_id === jobId),...(references.byJob.get(jobId) ?? [])];
+  const citations = {total:0,literal:0,nonliteralOrMalformed:0,missingQuotes:0,sourceUnavailable:0,scopeUnknown:0,mentions:0,literalMentions:0,unsupportedMentions:0,mentionScopeUnknown:0,offsets:0,supportedOffsets:0,unsupportedOffsets:0,offsetScopeUnknown:0,passageReferenceItems:0,suppliedPassageReferencesSupported:0,unsupportedPassageReferences:0,passageReferenceScopeUnknown:0,lexicalReferenceItems:0,suppliedLexicalReferencesSupported:0,unsupportedLexicalReferences:0,lexicalReferenceScopeUnknown:0};
   const timing = {timedEvidence:0,savedCueSupported:0,unsupported:0,scopeUnknown:0,untimedEvidence:0,rangeSets:0,savedCueRangeSets:0,unsupportedRangeSets:0,rangeScopeUnknown:0,durationTotals:0,unsupportedDurationTotals:0,durationScopeUnknown:0};
   const completeness = {total:sources.length,transcript:0,feedText:0,metadataOnly:0,otherKind:0,emptyContent:0,declaredComplete:0,declaredPartial:0,unverified:0,unusable:0,processingDisagreements:0};
   for (const source of sources) {
@@ -564,7 +685,7 @@ export function evaluateSnapshot(snapshot) {
       jobStats.withCoverage++; jobStats[measured.complete ? 'completeSavedTextCoverage' : 'incompleteSavedTextCoverage']++; jobStats.invalidIntervals += measured.invalidIntervals;
     } else jobStats.coverageUnknown++;
     const plan = plans.get(job.id) ?? (Array.isArray(coverage) ? coverage.map((c,index) => ({start:c?.start,end:c?.end,index})) : undefined);
-    const saved = calls.filter(c => c.job_id === job.id);
+    const saved = savedForJob(job.id);
     const {protocol,disagreement} = jobProtocol(job,protocols.get(job.id),result,saved);
     jobProtocols.set(job.id,protocol);
     jobStats.protocols[PROTOCOLS.includes(protocol) ? protocol : 'other']++;
@@ -590,7 +711,7 @@ export function evaluateSnapshot(snapshot) {
     for (const c of saved) {
       const parsed = parseCallKey(c.call_key);
       if (parsed?.repairAttempt) chunks.repairCalls++;
-      if (protocol === 'content-v3' && parsed?.protocol !== protocol) { chunks.unexpectedCallKeys++; continue; }
+      if (['content-v3','content-v4'].includes(protocol) && parsed?.protocol !== protocol) { chunks.unexpectedCallKeys++; continue; }
       if (expected.has(parsed?.baseKey)) callScopes.set(c.id,expected.get(parsed.baseKey));
       if (parsed?.kind === 'reduction' && job.task === 'summary') {
         if (parsed.protocol === 'content-v1') callScopes.set(c.id,null);
@@ -602,7 +723,7 @@ export function evaluateSnapshot(snapshot) {
         if (!plan) chunks.unknownAcknowledgements++; else chunks.unexpectedCallKeys++;
       }
     }
-    if (result) inspectEvidence(result,source,citations,timing,null,protocol === 'content-v3' ? protocol : 'content-v1');
+    if (result) inspectEvidence(result,source,citations,timing,null,['content-v3','content-v4'].includes(protocol) ? protocol : 'content-v1');
   }
   const callStats = {rows:rawCalls.length,uniqueCalls:calls.length,repeatedExportRows:repeatedRows,conflictingExportRows:conflictingRows,materializedResults:0,withoutMaterializedResult:0,markedInvalidResults:0,malformedRawResults:0,malformedEvidenceArrays:0,malformedEvidenceItems:0,rawValueTypes:{object:0,array:0,null:0,boolean:0,number:0,string:0},cachedSuccesses:0,orphanCalls:0,duplicateKeyGroups:0,duplicateKeyExtraCalls:0,duplicateMaterializedResults:0,duplicateCachedSuccesses:0,duplicateRequestGroups:0,requestIdentityMismatches:0,unknownCacheIdentity:0,stateCostDisagreements:0};
   const groups = new Map(), requestGroups = new Map();
@@ -623,7 +744,8 @@ export function evaluateSnapshot(snapshot) {
       if (call.request_hash == null || wrapper.requestHash == null || call.execution_identity == null || wrapper.executionIdentity == null || call.model == null) callStats.unknownCacheIdentity++;
       else if (call.request_hash !== wrapper.requestHash || stable(call.execution_identity) !== stable(wrapper.executionIdentity) || call.execution_identity.model != null && call.execution_identity.model !== call.model) callStats.requestIdentityMismatches++;
       const scope = callScopes.get(call.id);
-      inspectEvidence(wrapper.value,source,citations,timing,scope,jobProtocols.get(call.job_id) === 'content-v3' ? 'content-v3' : parseCallKey(call.call_key)?.protocol,scope?.passages);
+      const protocol=jobProtocols.get(call.job_id);
+      inspectEvidence(wrapper.value,source,citations,timing,scope,['content-v3','content-v4'].includes(protocol) ? protocol : parseCallKey(call.call_key)?.protocol,scope?.passages,scope?.lexicalUnits);
     } else callStats.withoutMaterializedResult++;
     if (call.job_id != null) {
       const k = key(call.job_id,call.call_key), group = groups.get(k) ?? []; group.push(call); groups.set(k,group);
@@ -661,20 +783,21 @@ export function evaluateSnapshot(snapshot) {
     diagnosticsArePublishedOutputVerdicts:false,
     sourceCompleteness:completeness,
     sample:{desiredCount,actualCount:sources.length,countMatches:sources.length === desiredCount,categoriesAreSuppliedLabels:true,labeledSources:labeled.size,unlabeledSources:sources.length-labeled.size,categories:Object.fromEntries(CATEGORIES.map(c => [c,categorySets[c].size])),missingCategories:CATEGORIES.filter(c => !categorySets[c].size),unknownCategoryLabels,unmatchedCategoryEntries},
-    jobs:jobStats,tasks:taskAttempts(jobs),summaries:summaryDiagnostics(sources,jobs,results,jobProtocols),chunks,citations,timing,calls:callStats,
+    jobs:jobStats,tasks:taskAttempts(jobs),summaries:summaryDiagnostics(sources,jobs,results,jobProtocols),proposalLineage:lineageDiagnostics(jobs,results,calls,jobProtocols),evaluation:evaluationDiagnostics(sources),cacheReferences:references.stats,chunks,citations,timing,calls:callStats,
     latency:{callsCreatedToResult:latency(calls,'created_at',c => c.result_at),jobsCreatedToPrepared:latency(jobs,'created_at',j => j.prepared_at),jobsCreatedToUpdated:latency(jobs,'created_at',j => j.updated_at),jobsCreatedToPublished:latency(jobs,'created_at',j => j.published_at)},
-    costs:{currency:'USD',knownCalls:known,unknownCalls:unknown,observedUsd:usd(observed),settledUsd:usd(settled),unknownHoldUsd:usd(holds),commitmentUsd:usd(commitment),unknownChargesRemainHolds:true},
+    costs:{currency:'USD',knownCalls:known,unknownCalls:unknown,observedUsd:usd(observed),settledUsd:usd(settled),unknownHoldUsd:usd(holds),commitmentUsd:usd(commitment),unknownChargesRemainHolds:true,...(snapshot.baseline?{newSinceBaseline:newMonetaryRows(snapshot,calls)}:{})},
     baseline:snapshot.baseline ? {provided:true,...Object.fromEntries(Object.keys(ALIASES).map(name => [name,inventoryDiff(snapshot,snapshot.baseline,name)]))} : {provided:false},
   };
   const privateCall = c => ({...pick(c,['id','call_key','state','maximum_usd','observed_usd','actual_usd']),materializedResult:materialized(c),markedInvalid:markedInvalid(c),result:privateResult(c.result)});
   const privateJob = j => ({...pick(j,['id','update_id','source_id','task','state','content_hash','rule_version','generation_predecessor_job_id','generation_contract_hash']),result:privateResult(j.result ?? results.get(j.id)),chunks:plans.get(j.id) ?? null,
     // Preserve every exported original, including conflicting repeated rows.
-    calls:rawCalls.filter(c => c.job_id === j.id).map(privateCall)});
+    calls:rawCalls.filter(c => c.job_id === j.id).map(privateCall),callReferences:(snapshot.callReferences ?? []).filter(r => r.job_id === j.id).map(r => pick(r,['call_id','call_key']))});
   const review = {
     schemaVersion:1,visibility:'private',manualReviewRequired:true,semanticQuality:'unreviewed',fullOriginalCoverage:'unverified',
     instructions:['Read the supplied source and all outputs, including final words and sponsor passages.','Literal evidence, timing, cost and saved-text coverage checks do not establish semantic quality or complete original capture.','Summary acceptance counters describe states and supplied v3 empty dispositions only. Historical published empty results have no independent empty acceptance and remain unreviewed.','Raw shape diagnostics cover root types and known evidence-array containers only; they do not validate domain output.','Compatibility counters cachedSuccesses and duplicateCachedSuccesses count materialized values, including false/null and invalid originals, never validated successes.','Check useful findings, numbers, negation, uncertainty, attribution, sponsors, entity omissions and ending coverage.'],
     overall:{verdict:'unreviewed',notes:''},
     items:sources.map((s,index) => ({sampleNumber:index+1,verdicts:Object.fromEntries(['sourceCompleteness','factualAccuracy','takeawayUsefulness','keywordCompleteness','sponsorHandling','outroCoverage','timing','overall'].map(k => [k,'unreviewed'])),notes:'',
+      eligibility:evaluationEligibility(s.record),reviewer:{type:'unreviewed',humanApproval:false},
       source:{...pick(s.row,['user_id','id','source_id']),record:{...pick(s.record,['id','sourceId','title','url','format','duration','isSample','content','contentKind','coverage','transcriptSegments','videoFormat','isShort','videoHighlights','videoKeywords']),
         ...(object(s.record.videoSummary) ? {videoSummary:pick(s.record.videoSummary,['ruleVersion','status','captionHash','timingBasis'])} : {}),
         ...(object(s.record.processing) ? {processing:pick(s.record.processing,['ruleVersion','contentHash','content','recap','keywords','reason','updatedAt'])} : {}),

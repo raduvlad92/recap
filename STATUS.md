@@ -2,7 +2,11 @@
 
 Updated: **26 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
-## Current session — research and plan handoff points 1–3
+## Current execution — reliability points 1–3
+
+Founder authorized implementation and clarified **US$0.10 per model call, retaining the existing US$5 evaluation total**. [Execution and exact evidence](docs/tech/RELIABILITY-EXECUTION-2026-10-26.md) track the new v4 contract, one-summary finalizer, publication checks and frozen evaluation. All 2,606 local tests/typecheck/build/catalogue pass; independent reviews pass. The additive admission migration passed actual rollback, committed application and separate complete 21-group preservation/ACL readback. No new model call or activation has occurred at this checkpoint. Existing charges/holds remain US$0.050544575. Code push/CI/deployment, useful hosted output and twenty-video quality are still pending and must be recorded separately.
+
+## Prior research and plan handoff points 1–3
 
 Founder requested research and an implementation plan for safe useful-recap recovery, keyword/correction reliability, and publication/reload followed by twenty-video evaluation. [The concrete plan](docs/tech/RELIABILITY-NEXT-IMPLEMENTATION.md) is saved, with [source-free research evidence](docs/tech/evidence/reliability-research-2026-10-26.json). Recommendation: one same-H3 finalization admission with at most one new verifier attempt/US$0.01, then a distinct v4 correction/keyword contract, a small six-task quality proof, useful hosted persistence and the frozen twenty assessments. This is planning, not implementation or activation; backfill is excluded from this request.
 

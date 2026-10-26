@@ -42,7 +42,7 @@ describe('offline content-v3 protocol', () => {
     'summary:v3:chunk:0:repair:2','summary:v3:chunk:0:repair:1:repair:1',
     'summary:v3:chunk:0:extra','extractor:v3:verify:0','checker:v3:verify:0',
     'summary:v3:verify:1','summary-reduce:v3:level:0','summary-reduce:v3:level:0:group:-1',
-    'summary:v4:chunk:0',' summary:v3:chunk:0','summary:v3:chunk:0\n',
+    'summary:v5:chunk:0',' summary:v3:chunk:0','summary:v3:chunk:0\n',
   ])('rejects malformed versioned key %j', value => {
     expect(parseCallKey(value)).toBeNull();
   });

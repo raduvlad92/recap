@@ -126,7 +126,7 @@ begin
  from public.reader_content_analysis_jobs j where j.id=root_id;
  select jsonb_agg(jsonb_build_object('predecessorJobId',j.id,'successorJobId',gen_random_uuid(),'updateId',j.update_id,'sourceId',j.source_id,
   'task',j.task,'contentHash',j.content_hash,'sourceRevision',j.source_revision,'sourceFingerprint',j.source_fingerprint,
-  'predecessorJobHash',public.content_analysis_generation_v3_digest(to_jsonb(j)-'generation_comparison_id'),
+  'predecessorJobHash',public.content_analysis_generation_v3_digest(to_jsonb(j)-array['generation_comparison_id','generation_admission_id']),
   'predecessorLedgerHash',public.content_analysis_generation_v3_ledger_hash(j.id),'emptyDisposition','findings_expected','sourceReviewDigest',repeat('b',64),
   'reason',case when j.state='published' then 'audited_empty_omission' else 'format_or_coverage_failure' end,
   'withholdAuditId',case when j.state='published' then (select id from public.admin_audit_events where action='analysis.summary.withheld' and target_id=j.update_id) else null end,

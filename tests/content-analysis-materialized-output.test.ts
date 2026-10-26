@@ -31,8 +31,13 @@ describe('content-v2 materialized response accounting',()=>{
   await expect(generate(response('{}','length')).run({...request,key:'summary:0'})).rejects.toThrow('analysis_incomplete_generation');
   const raw=response('invalid json');raw.provider='Different provider';await expect(generate(raw).run(request)).rejects.toThrow('analysis_provider_not_verified');
  });
- it('keeps the enlarged output request below the unchanged one-cent bound',async()=>{
+ it('retains the complete output-token allowance with SDK retries disabled',async()=>{
   const {run,create}=generate(response('{}'));await run(request);
   expect(create).toHaveBeenCalledWith(expect.objectContaining({max_tokens:8192}),expect.objectContaining({maxRetries:0,timeout:45000}));
+ });
+ it.each(['summary:v4:chunk:0','summary:v4:verify:0','extractor:v4:chunk:0','checker:v4:chunk:0:repair:1'])('retains entire invalid v4 response and settled billing for %s',async key=>{
+  const raw='{"readComplete":true} extra {"readComplete":false}',{run,create}=generate(response(raw));
+  expect(await run({...request,key})).toMatchObject({validationError:'analysis_invalid_json',value:{rawOutput:raw,finishReason:'stop'},actualUsd:.0001});
+  expect(create).toHaveBeenCalledTimes(1);
  });
 });

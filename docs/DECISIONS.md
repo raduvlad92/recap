@@ -2,6 +2,12 @@
 
 Updated: 26 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
+## 26 October 2026 — execute reliability points 1–3, US$0.10 per call
+
+Founder: “do 1 to 3, the maximum put to $0.1 and later we'll review the actual costs”. On clarification, the founder explicitly selected **US$0.10 per model call, retaining the existing US$5 evaluation total**. This authorizes implementation, reviewed application/deployment and bounded actual recovery, revised-contract quality checks, useful publication/cloud reload and twenty-video assessment within the existing cumulative allowance. It does not authorize backfill, a new subscription or reset historical charges/holds. US$5/day and the original shared pre-expansion smoke ceiling remain; actual new charges and unresolved commitments must be reported separately for later review.
+
+Live read-only CLI access is available without new credentials despite connected-tool permission denial. Fresh 22:31 UTC check confirms analysis spending off, zero running/prepared tasks, DeepSeek and unchanged US$0.050544575 commitment (including three historical holds). The current archive has 494 rows/three workspaces; preserve current state rather than earlier 491-row counts. Work is in progress; applied migration, inference, quality and hosted persistence evidence will be recorded separately.
+
 ## 26 October 2026 — research and plan reliability points 1–3
 
 Founder returned with the saved session recap and asked: “research and plan to implement 1-3”. This authorizes the present research/planning task for safe useful-recap recovery, keyword/correction reliability, and publication/reload followed by twenty-video evaluation. It does not itself resume model spending, apply migrations or activate a backfill. Earlier scoped D38 authorization remains recorded; current analysis pause is unchanged.
