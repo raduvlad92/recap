@@ -28,6 +28,31 @@ function valid(request:GenerationRequest):GenerationResult{
  return {actualUsd:.0001,observedUsd:.0001,value:p.task==='verify_summary'?{readComplete:true,verdicts:p.claims.map((point:{id:string})=>({id:point.id,supported:true,reason:'The exact saved evidence supports this synthetic claim.'}))}:{readComplete:true,lastPassageId:p.requiredLastPassageId,highlights:[{text:'Nvidia improved rendering.',passageIds:[p.passages[0].id]}]}};
 }
 describe('content-v3 worker trust and persisted repair replay',()=>{
+ it.each([false,true])('uses a verifier-only cache window for a %s comparison summary',async comparison=>{
+  const c=claim();
+  if(comparison){
+   c.job.generation_comparison_id='a1000000-0000-4000-8000-000000000001';
+   c.generationContext!.comparisonId=c.job.generation_comparison_id;
+  }
+  const {store}=fixture([c]);
+  // Mirror the applied SQL guard through the real store transport. A final
+  // semantic verdict is terminal and has no authorized correction call key.
+  markerTransport.rpc.mockReset().mockImplementation(async(name,args)=>{
+   if(name!=='read_content_analysis_cached_calls_v2')throw new Error('Unexpected RPC');
+   return args.p_call_keys.includes('summary:v3:verify:0:repair:1')
+    ?{data:null,error:{code:'PT409'}}
+    :{data:{calls:[],nextAfterKey:null},error:null};
+  });
+  store.cachedCalls=createAnalysisStore(env).cachedCalls;
+  const generate=vi.fn<AnalysisGenerator>(async request=>valid(request));
+  expect((await createAnalysisWorker({env,limits,store,generate})()).completed).toBe(1);
+  const windows=markerTransport.rpc.mock.calls.map(([,args])=>args.p_call_keys);
+  expect(windows).toContainEqual(['summary:v3:verify:0']);
+  expect(windows.flat()).not.toContain('summary:v3:verify:0:repair:1');
+  expect(generate.mock.calls.map(([request])=>request.key)).toEqual(['summary:v3:chunk:0','summary:v3:verify:0']);
+  expect(store.prepare).toHaveBeenCalledTimes(1);expect(store.publish).toHaveBeenCalledTimes(1);
+  expect(store.fail).not.toHaveBeenCalled();
+ });
  it.each(['summary:v3:chunk:0','extractor:v3:chunk:0','checker:v3:chunk:0','summary-reduce:v3:level:0:group:0'])('the real store persists the authorized %s invalid marker',async key=>{
   markerTransport.rpc.mockReset().mockResolvedValue({data:{id:'synthetic-call',call_key:key,validation_error_code:'analysis_incomplete_coverage'},error:null});
   const store=createAnalysisStore(env);

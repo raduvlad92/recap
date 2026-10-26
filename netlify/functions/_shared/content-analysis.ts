@@ -88,7 +88,9 @@ function cacheWindow(key:string):string[] {
  if(!Number.isSafeInteger(index))return analysisFailure('analysis_invalid_protocol_key');
  const start=Math.floor(index/CACHE_WINDOW_CHUNKS)*CACHE_WINDOW_CHUNKS;
  return (match?Array.from({length:CACHE_WINDOW_CHUNKS},(_,i)=>match[1]+(start+i)):[base])
-  .flatMap(value=>[value,value+':repair:1']).sort();
+  // The final v3 verdict is terminal. Its forbidden repair key makes SQL
+  // reject the entire cache read, even when the verifier has not run yet.
+  .flatMap(value=>value==='summary:v3:verify:0'?[value]:[value,value+':repair:1']).sort();
 }
 export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependencies>={}) {
  const env=dependencies.env||runtimeEnv,now=dependencies.now||Date.now;

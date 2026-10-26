@@ -1,6 +1,6 @@
 # Decisions and interview
 
-Updated: 25 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Updated: 26 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
 ## D38 quality checkpoint — 25 October 2026
 
@@ -14,7 +14,11 @@ The bounded v3 smoke subsequently also failed all six tasks; do not infer qualit
 
 Independent saved-response reviews reproduce all six v3 failures with exact canonical request hashes and find no deterministic validator/adapter defect. Compare one other already approved execution profile under the unchanged H3 contract before changing evidence acceptance. Use GPT-6 Luna Pro on the same three originals: its conservative maximum is US$0.224562875, within the US$0.239761592 remaining from the original smoke allocation. The full MiniMax candidate is US$0.243475451 and does not fit that remaining bound.
 
-The existing logical-job uniqueness and immutable original manifest require a narrow, separately sealed comparison admission with new successor jobs. Preserve the failed DeepSeek jobs, calls, original scope/manifest and unknown holds; keep the same generation rules, one correction, evidence checks and final verifier. This is an explicit bounded comparison within the four-model authorization, with DeepSeek restored as default afterward. Implementation, guarded application and quality remain separate gates. No comparison is staged or charged yet. The admission captures the current global archive count and checks it again under locks; ordinary unrelated arrivals do not change the selected three-video cohort. Complete snapshots preserve other readers' workspaces as well as the target workspace.
+The existing logical-job uniqueness and immutable original manifest require a narrow, separately sealed comparison admission with new successor jobs. Preserve the failed DeepSeek jobs, calls, original scope/manifest and unknown holds; keep the same generation rules, one correction, evidence checks and final verifier. This is an explicit bounded comparison within the four-model authorization, with DeepSeek restored as default afterward. Implementation, guarded application and quality remain separate gates. At that planning checkpoint no comparison was staged or charged; the actual failed comparison is recorded below. The admission captures the current global archive count and checks it again under locks; ordinary unrelated arrivals do not change the selected three-video cohort. Complete snapshots preserve other readers' workspaces as well as the target workspace.
+
+## D38 Luna comparison outcome — 26 October 2026
+
+The one sealed Luna comparison actually ran and failed all six tasks after eleven known-settled responses costing US$0.021940260. No useful annotation or new unknown charge was produced. Stop spending, drain, close the consumed comparison, pause scope, restore DeepSeek and restore both US$5 total caps before diagnosis; these actions are complete in native readback. The store maps every PT409 to `analysis_source_changed`. Exact offline replay identified a worker request for a forbidden semantic-verifier repair key as the cause of both labels; source checks passed. Correct only that cache window, keep the terminal-verifier prohibition and preserve all request hashes. Independent saved-output diagnosis reproduces the other four failures. Neither missing final verification nor rejected raw output can be turned into a quality pass by offline replay. Keep terminal history, all old paid identities and the original shared smoke ceiling; do not silently retry, loosen evidence rules, release unknown holds or renew the allowance. Twenty-video evaluation and recurring backfill remain pending useful real acceptance. [Current evidence](tech/evidence/analysis-model-comparison.json).
 
 ## D38 — implement all five reliability steps, 25 October 2026
 
