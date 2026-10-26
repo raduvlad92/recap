@@ -2,6 +2,16 @@
 
 Updated: 26 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
+## 26 October 2026 — research and plan reliability points 1–3
+
+Founder returned with the saved session recap and asked: “research and plan to implement 1-3”. This authorizes the present research/planning task for safe useful-recap recovery, keyword/correction reliability, and publication/reload followed by twenty-video evaluation. It does not itself resume model spending, apply migrations or activate a backfill. Earlier scoped D38 authorization remains recorded; current analysis pause is unchanged.
+
+Assistant recommendation, **planned rather than implemented**: a separate single-use same-H3 finalizer for the one provisionally useful recap, at most one new verifier attempt/US$0.01; then a distinct v4 contract allowing accountable same-finding wording repair and source-derived keyword evidence, preserving blind completeness checks and terminal verifier failures. A new frozen three-video/six-task v4 gate explicitly replaces the old unimplemented smoke acceptance proposal for the new contract; it does not turn the failed H3 comparison into a pass or overwrite recovered/legacy accepted output. Useful hosted recap/keyword publication and cloud reload precede twenty assessments, with the existing editorial baseline protected. Backfill is excluded from the current request.
+
+The frozen sample has 18 partial and two unverified original captures, zero verified complete originals and no genuine whole-task empty example. Preserve the twenty IDs, distinguish fresh results from baselines, report saved-text quality separately and retain unresolved original/empty coverage. No founder policy change, human semantic approval or quality pass is inferred. [Concrete plan and release gates](tech/RELIABILITY-NEXT-IMPLEMENTATION.md).
+
+Research inspected current code/private evidence across three parallel tracks and public primary OpenRouter documentation/endpoint metadata. Fresh connected Supabase project/aggregate reads were denied; live safety/budget/source state was not refreshed. No inference, supplier job, database write, credential extraction, migration or activation occurred. The last actual hosted checkpoint remains 01:43–01:44 UTC. Costs and holds in the plan are historical; fresh checks precede any later execution. [Source-free research record](tech/evidence/reliability-research-2026-10-26.json).
+
 ## Session boundary — 26 October 2026
 
 Founder: “after this task prepare the recap and tell me what needs done and we'll do it in another session”. Finish the current release closeout, save a durable recap and defer further implementation/evaluation to the next session. Keep AI analysis/spending off; do not launch another trial, migration, activation or backfill for this closeout. This does not accept the failed quality result, renew the smoke allowance or change the approved four models and existing caps. Existing hourly collection is unchanged. [Recap and resume order](tech/SESSION-HANDOFF-2026-10-26.md).

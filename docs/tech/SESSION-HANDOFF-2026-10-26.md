@@ -1,5 +1,7 @@
 # Session recap and next-session handoff — 26 October 2026
 
+**Later planning session:** the founder requested research and a plan for points 1–3 below. Read [RELIABILITY-NEXT-IMPLEMENTATION.md](RELIABILITY-NEXT-IMPLEMENTATION.md) for the resulting design, implementation sequence and acceptance gates. It starts no inference, migration or activation. This handoff's deployment/cost figures remain historical; the connected fresh-state read was denied. The original session record follows unchanged.
+
 The founder asked to finish this session with a recap and defer the remaining work to another session. **The reliability task is not complete.** No additional model run, migration, rollout or backfill should start during this closeout.
 
 ## Finished

@@ -6,7 +6,9 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 ## Next-session starting point
 
-Founder requested a recap and deferred remaining work to another session. Read [SESSION-HANDOFF-2026-10-26.md](docs/tech/SESSION-HANDOFF-2026-10-26.md) first. The current bug fix is released; analysis stays off. Prepare the smallest useful-summary recovery, then resolve keyword quality, prove hosted publication, evaluate twenty videos and finally release a small monitored backfill. These remain unfinished; do not restart the consumed comparison or repeat applied migrations.
+Founder has now requested **research and an implementation plan for handoff points 1–3**. Read the historical [handoff](docs/tech/SESSION-HANDOFF-2026-10-26.md), then [RELIABILITY-NEXT-IMPLEMENTATION.md](docs/tech/RELIABILITY-NEXT-IMPLEMENTATION.md). Research is complete; implementation/activation remain pending. Plan one same-H3 summary finalizer with at most one new verifier attempt/US$0.01, a distinct v4 wording-correction/source-derived-keyword contract, publication/cloud-reload proof, and twenty frozen assessments after a small six-task quality gate. Preserve the accepted-output baseline, partial-original evidence, old failures and unknown holds. Backfill is outside this session's requested scope; do not restart the consumed comparison or repeat applied migrations.
+
+Connected read-only Supabase access was denied, so the last successful off/drained/budget checkpoint remains 01:43–01:44 UTC. No model/supplier execution or database write occurred. Fresh safety/preservation capture, concrete admission/cost bounds and reviewed release checks precede later execution; historical snapshots do not authorize activation. Offline engineering can proceed without live access. [Research evidence](docs/tech/evidence/reliability-research-2026-10-26.json).
 
 ## Authorized reliability implementation — D38
 

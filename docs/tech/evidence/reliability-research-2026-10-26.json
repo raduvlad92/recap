@@ -1,0 +1,99 @@
+{
+  "kind": "research-and-implementation-plan",
+  "date": "2026-10-26",
+  "applicationBaseline": "198c4b8",
+  "functionalBaseline": "e12bd00dc37bde4c83c7f6322b62baeb9d097dd4",
+  "implementedOrActivated": false,
+  "newInferenceRequests": 0,
+  "newSupplierJobs": 0,
+  "databaseWrites": 0,
+  "newMeteredExecutionUsd": 0,
+  "infrastructureCostMeasured": false,
+  "liveSafetyRefresh": {
+    "status": "unavailable",
+    "reason": "Connected Supabase project reads and aggregate SQL read denied permission",
+    "credentialExtraction": false,
+    "historicalCheckpointUtc": "2026-10-26T01:43:54Z",
+    "currentRuntimeOrBudgetVerified": false
+  },
+  "historicalFinancialCheckpoint": {
+    "calls": 46,
+    "settledUsd": "0.041366384",
+    "unresolvedCalls": 3,
+    "heldUsd": "0.009178191",
+    "committedUsd": "0.050544575",
+    "originalSmokeOverallCeilingUsd": "0.268365907",
+    "remainingSmokeHeadroomUsd": "0.217821332",
+    "dailyCeilingUsd": "5",
+    "cumulativeEvaluationCeilingUsd": "5",
+    "perCallCeilingUsd": "0.01"
+  },
+  "proposedRecovery": {
+    "candidates": 1,
+    "protocol": "content-v3-unchanged-H3",
+    "maximumNewProviderAttempts": 1,
+    "maximumAdditionalCommitmentUsd": "0.01",
+    "prefixReuse": "guarded references to original settled rows",
+    "closedComparisonReopened": false,
+    "terminalJobsReset": false,
+    "admissionImplemented": false
+  },
+  "proposedNewContract": "content-v4",
+  "frozenCohort": {
+    "assessments": 20,
+    "sources": 15,
+    "maximumNewlyGeneratedVideoResults": 19,
+    "protectedHistoricalBaselines": 1,
+    "declaredPartialOriginals": 18,
+    "unverifiedOriginals": 2,
+    "verifiedFullOriginalCaptures": 0,
+    "genuineWholeTaskEmptyCases": 0,
+    "evaluationExecuted": false
+  },
+  "publicMetadata": [
+    {
+      "observedAtUtc": "2026-10-26T09:19:49.423Z",
+      "url": "https://openrouter.ai/api/v1/models/deepseek/deepseek-v4.1-flash-1017/endpoints",
+      "httpStatus": 200,
+      "model": "deepseek/deepseek-v4.1-flash-1017",
+      "exactEndpointTag": "relace",
+      "providerName": "Relace",
+      "structuredOutputsAdvertised": true,
+      "usdPerMillionTokens": { "input": "0.07", "output": "0.50", "cachedInput": "0.008" },
+      "matchesLocalPriceProfile": true,
+      "inferenceTested": false
+    },
+    {
+      "observedAtUtc": "2026-10-26T09:19:49.471Z",
+      "url": "https://openrouter.ai/api/v1/models/openai/gpt-6-luna-pro/endpoints",
+      "httpStatus": 200,
+      "model": "openai/gpt-6-luna-pro",
+      "exactEndpointTag": "openai",
+      "providerName": "OpenAI",
+      "structuredOutputsAdvertised": true,
+      "usdPerMillionTokens": { "input": "0.10", "output": "0.50", "cachedInput": "0.01", "cacheWrite": "0.125" },
+      "higherPriceThresholdPromptTokens": 272000,
+      "localMaximumInputTokens": 128000,
+      "matchesLocalPriceProfile": true,
+      "otherEndpointVariantsSubstituted": false,
+      "inferenceTested": false
+    }
+  ],
+  "reviews": {
+    "parallelResearchTracks": 3,
+    "independentPlanningReview": "GO after corrected code pointers, offline gate ordering and historical-failure coverage",
+    "reviewerType": "assistant",
+    "humanSemanticApproval": false,
+    "freshReplayOrFullTestSuiteRun": false,
+    "usefulHostedPublicationVerified": false
+  },
+  "documentChecks": {
+    "relativeLinksChecked": 318,
+    "missingLinks": 0,
+    "json": "valid",
+    "historicalFinancialArithmetic": "exact decimal checks passed",
+    "whitespace": "git diff --check passed",
+    "applicationTestSuiteRerun": false,
+    "applicationDeploymentRequested": false
+  }
+}

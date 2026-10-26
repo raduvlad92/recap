@@ -2,9 +2,13 @@
 
 Updated: **26 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
-## Session closed — resume in another session
+## Current session — research and plan handoff points 1–3
 
-At the founder's request, close out the current release and defer unfinished reliability work to another session. The [session recap and ordered handoff](docs/tech/SESSION-HANDOFF-2026-10-26.md) is the starting point. Analysis remains off; this closeout starts no additional trial, migration or backfill. The last live verification is the 01:43–01:44 UTC checkpoint below, not a fresh live read in the documentation-only closeout.
+Founder requested research and an implementation plan for safe useful-recap recovery, keyword/correction reliability, and publication/reload followed by twenty-video evaluation. [The concrete plan](docs/tech/RELIABILITY-NEXT-IMPLEMENTATION.md) is saved, with [source-free research evidence](docs/tech/evidence/reliability-research-2026-10-26.json). Recommendation: one same-H3 finalization admission with at most one new verifier attempt/US$0.01, then a distinct v4 correction/keyword contract, a small six-task quality proof, useful hosted persistence and the frozen twenty assessments. This is planning, not implementation or activation; backfill is excluded from this request.
+
+Research inspected existing failed-run evidence and code across three parallel tracks and refreshed public OpenRouter endpoint capabilities/prices. The adapter already requests strict structured output; genuine evidence/coverage failures and the exact-text correction restriction need a new contract. The twenty-video sample has one protected editorial baseline, no verified complete-original capture and no genuine whole-task empty case. Preserve those limitations; do not claim twenty fresh generations.
+
+Fresh read-only Supabase access was denied by the connected tools, so current runtime/budget/source state is not verified in this session. The last successful hosted safety checkpoint remains approximately 01:43–01:44 UTC below. No inference, supplier job, database write, migration or activation was started; no credential was extracted and no additional setup is requested. Existing analysis pause was not changed. Refresh actual off/drained state and finances before later execution. The [session handoff](docs/tech/SESSION-HANDOFF-2026-10-26.md) remains the historical release/cost record.
 
 ## Reliability implementation — D38, current checkpoint 26 October 2026
 
@@ -204,9 +208,13 @@ No customer outreach, paid customer trial, payment or external email sending is 
 
 ## Next action
 
+Next implementation session: follow the offline R1–R3 work in [the reliability plan](docs/tech/RELIABILITY-NEXT-IMPLEMENTATION.md): single-summary finalization, a separately versioned correction/keyword engine and integrated publication checks. Fresh R0 safety/preservation capture is required before live application or activation; connector access does not block offline engineering. Metered proof and twenty-video evaluation retain later release gates. Preserve the closed comparison, failed jobs, accepted outputs, private decisions and unresolved holds. This session is research/planning only; no new trial or backfill follows from this document.
+
+## Historical design-review next action
+
 D25 is complete: all 144 LMG records reviewed, exact annotation/account readback, CI, deployment and actual signed-in owner checks passed. Review the concise LMG takeaways and timed keyword strip in the live app; no setup action is pending. The Apple Watch reference is open in the review tab. D24 remains verified. The founder can review the [live video cards and Shorts settings](https://recap-v0-radu.netlify.app/); [D24 evidence](docs/design/YOUTUBE-CARDS.md) is saved. No setup action is pending. The D23 compact toolbar remains verified. No new source investigation or provider execution is part of this design task. The bounded D22 delivery remains complete, with exact results saved in [the verification report](docs/tech/VERIFICATION.md); its 19 empty/blocked sources and incomplete history remain tracked follow-up work. No provider login, API token, new account or payment is needed from the founder. The founder can review the [live workspace](https://recap-v0-radu.netlify.app), [admin](https://recap-v0-radu.netlify.app/admin/) and [creator directory](https://recap-v0-radu.netlify.app/creators/) using the updated [morning guide](docs/v0/MORNING.md).
 
-The bounded D22 jobs are finished; no recurring collection or reminder schedule is running. Further product engineering remains tracked in the [tech plan](docs/tech/PLAN.md), [admin continuation work](docs/admin/PLAN.md#continuation-work) and [v0 plan](docs/v0/PLAN.md#continuation-work). Broader SPEC/PLAN v1.1 remains a candidate, and customer outreach, paid trials and charging are not authorized.
+The original bounded D22 jobs are finished; later D32 hourly collection is separate and unchanged by this planning session. No reminder delivery is implemented. Further product engineering remains tracked in the [tech plan](docs/tech/PLAN.md), [admin continuation work](docs/admin/PLAN.md#continuation-work) and [v0 plan](docs/v0/PLAN.md#continuation-work). Broader SPEC/PLAN v1.1 remains a candidate, and customer outreach, paid trials and charging are not authorized.
 
 **Costs:** observed run/build usage is approximately **US$1.30 in existing free credits**, with final invoices still unknown; no new subscription, upgrade or cash purchase is reported. A budget reservation is not an incurred charge. Generated transcription remains **0/150 experiment minutes**, D25 adds one-off LMG caption summaries; daily cross-source recaps remain unfinished, and formal seven-day source proof remains **0/7**. Existing hosting/build/database usage is not a measured per-reader operating-cost estimate.
 

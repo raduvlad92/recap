@@ -1,5 +1,7 @@
 # D38 reliable per-video analysis — implementation and release plan
 
+**Current next-work plan, 26 October:** [RELIABILITY-NEXT-IMPLEMENTATION.md](RELIABILITY-NEXT-IMPLEMENTATION.md) records research for handoff points 1–3: one bounded same-H3 finalizer, a proposed v4 correction/keyword contract, useful publication/cloud reload and twenty assessments. None is implemented or activated by this planning session. The earlier smoke/comparison history below remains failed; its closed admissions and historical spending are preserved. Backfill is outside the current request.
+
 Authorized 25 October 2026: founder requested implementation of all five D37 steps, with parallel work. This includes bounded live quality evaluation and a small monitored backfill on the existing stack. It does not add a daily cross-source briefing, a subscription, unlimited spending or a new model outside the four approved IDs.
 
 ## Operating contract
