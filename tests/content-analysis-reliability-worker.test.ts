@@ -78,7 +78,10 @@ describe('content-v2 worker and durable correction integration',()=>{
   // Every correction is marked once, including newly reached work after resume.
   expect(vi.mocked(store.markInvalid!).mock.calls.length).toBe(1600);expect(markers).toBe(799);
   for(const [key,raw]of oldRaw){const row=calls.get(key)!;expect(JSON.stringify({result:row.result,actual:row.actual_usd,identity:row.execution_identity,requestHash:row.request_hash})).toBe(raw);}
- },120000);
+ // The synthetic RPC clock above enforces continuation/progress bounds. The
+ // 800-chunk fixture also replays thousands of large JSON responses on shared
+ // CI CPUs; allow that offline reconstruction enough wall-clock headroom.
+ },180000);
  it('rotates ten genuinely active owners across bounded invocations using persisted real-claim order',async()=>{
   const {store}=setup([]),owners=Array.from({length:10},(_,i)=>'owner-'+i),served=new Map<string,number>(),published=new Set<string>();
   let clock=0;const claimed:string[]=[];
