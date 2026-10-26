@@ -4,6 +4,10 @@ Version: **1.1 — APPROVAL CANDIDATE**. Updated: 26 October 2026. Matches [SPEC
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.
 
+## Next-session starting point
+
+Founder requested a recap and deferred remaining work to another session. Read [SESSION-HANDOFF-2026-10-26.md](docs/tech/SESSION-HANDOFF-2026-10-26.md) first. The current bug fix is released; analysis stays off. Prepare the smallest useful-summary recovery, then resolve keyword quality, prove hosted publication, evaluate twenty videos and finally release a small monitored backfill. These remain unfinished; do not restart the consumed comparison or repeat applied migrations.
+
 ## Authorized reliability implementation — D38
 
 The founder's “plan properly and do all of it” authorizes all five D37 steps, including bounded real evaluation and a monitored small backfill. [Execution plan and gates](docs/tech/ANALYSIS-RELIABILITY.md). Implementation, guarded migrations, code checks, push/CI and deployment are complete for the current candidate; the 2,464-test release passes. Real content-v2 and DeepSeek v3 smoke tests failed quality. The sealed same-H3 Luna comparison is now also executed: all six tasks failed after eleven known-settled responses costing US$0.021940260, with no useful publication or new unknown charges. Do not expand to twenty videos or backfill yet.

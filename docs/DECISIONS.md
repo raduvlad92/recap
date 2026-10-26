@@ -2,6 +2,10 @@
 
 Updated: 26 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
+## Session boundary — 26 October 2026
+
+Founder: “after this task prepare the recap and tell me what needs done and we'll do it in another session”. Finish the current release closeout, save a durable recap and defer further implementation/evaluation to the next session. Keep AI analysis/spending off; do not launch another trial, migration, activation or backfill for this closeout. This does not accept the failed quality result, renew the smoke allowance or change the approved four models and existing caps. Existing hourly collection is unchanged. [Recap and resume order](tech/SESSION-HANDOFF-2026-10-26.md).
+
 ## D38 quality checkpoint — 25 October 2026
 
 The first bounded real content-v2 smoke failed quality. Eleven settled responses cost US$0.005583656; five tasks failed evidence/coverage and one empty publication omitted substantive saved-source findings. That annotation is withheld through guarded rollback/apply/readback with a private assistant audit; all originals, paid evidence, historical jobs, review decisions and unknown holds remain. Local tests, CI, deployment and model usefulness remain distinct.
