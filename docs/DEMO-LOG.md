@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 27 October 2026 — one useful recap recovered and reloaded
+
+Type: actual deployed inference, database publication and signed-in hosted reader check. Commit `854fbcd`, CI 40416757770 passes; local 2,606 tests include actual PostgreSQL cases. Guarded same-H3 finalization reused the paid prefix and made one verifier call, settled US$0.000642415, publishing four supported points. The closed finalizer made one attempt; no new unknown charge. A stale Chrome reader loaded the new points after reload; all four real cue links, coverage warning, separate keyword failure, full transcript and actual 320px layout pass. DeepSeek restored; runtime/spending off; commitment US$0.051186990 including old holds. [Execution details](tech/RELIABILITY-EXECUTION-2026-10-26.md). V4 keyword proof and twenty assessments remain ahead; no backfill.
+
 ## 25 October 2026 — D38 actual smoke and annotation withholding
 
 Type: real production model responses, read-only source/call diagnosis, and guarded annotation-only correction. Exact commit `4087349` deployed as `6ade5883a6eee469e689e059`; [CI](https://github.com/raduvlad92/recap/actions/runs/40225985730) passed 1,778 tests with 244 local-PostgreSQL skips, separate from 2,022 local passes. Actual three-video smoke: six tasks, eleven settled responses, US$0.005583656. Five failures; one unjustified empty publication; zero accepted useful outputs. No final semantic-verifier call.

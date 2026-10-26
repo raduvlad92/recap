@@ -218,6 +218,39 @@ describe('v4 admission through the actual worker/store',()=>{
   expect(f.named(publishRpc)[0].p_job_id).toBe(c.job.id);
   f.queue.push(c);generate.mockClear();expect((await f.run(generate)).completed).toBe(1);expect(generate).not.toHaveBeenCalled();
  });
+ it.each(['summary','keywords'] as const)('commits the settled v4 %s invalidity marker through the RPC store before its only correction',async task=>{
+  const c=v4Claim(task),f=fixture([c]),baseKey=task==='summary'?'summary:v4:chunk:0':'extractor:v4:chunk:0';
+  const generate=vi.fn<AnalysisGenerator>(async request=>{
+   const result=await v4Result(request),value=result.value as Record<string,any>;
+   if(request.key===baseKey)return {...result,value:{...value,readComplete:false}};
+   if(request.correction){
+    const original=JSON.parse(request.prompt),field=task==='summary'?'highlights':'candidates';
+    return {...result,value:{...value,[field]:value[field].map((row:Record<string,unknown>,index:number)=>({...row,
+     proposalId:original.proposalLineage[index].proposalId,correctionReason:'Retained the original finding and its exact source references.'}))}};
+   }
+   return result;
+  });
+  expect((await f.run(generate)).completed).toBe(1);
+  const base=f.calls.get(f.callKey(c.job.id,baseKey))!;
+  expect(base).toMatchObject({state:'settled',actual_usd:.0001,validation_error_code:'analysis_incomplete_coverage'});
+  expect(f.named('mark_content_analysis_call_invalid')).toEqual([{p_job_id:c.job.id,p_lease_token:c.leaseToken,
+   p_call_key:baseKey,p_request_hash:base.request_hash,p_error_code:'analysis_incomplete_coverage'}]);
+  const requests=generate.mock.calls.map(([request])=>request.key);
+  expect(requests).toEqual([baseKey,baseKey+':repair:1',task==='summary'?'summary:v4:verify:0':'checker:v4:chunk:0']);
+  const markerIndex=f.rpc.mock.calls.findIndex(([method])=>method==='mark_content_analysis_call_invalid');
+  const repairIndex=f.rpc.mock.calls.findIndex(([method,args])=>method===reserveRpc&&args.p_call_key===baseKey+':repair:1');
+  expect(markerIndex).toBeGreaterThan(-1);expect(repairIndex).toBeGreaterThan(markerIndex);
+  expect(f.named('fail_content_analysis_job')).toEqual([]);expect(f.named(prepareRpc)).toHaveLength(1);expect(f.named(publishRpc)).toHaveLength(1);
+  const before=JSON.stringify([...f.calls]);f.queue.push(c);generate.mockClear();
+  expect((await f.run(generate)).completed).toBe(1);expect(generate).not.toHaveBeenCalled();
+  expect(JSON.stringify([...f.calls])).toBe(before);expect(f.named('mark_content_analysis_call_invalid')).toHaveLength(1);
+ });
+ it.each(['summary:v3:verify:0','summary:v4:verify:0','summary:v3:chunk:0:repair:1','summary:v4:chunk:0:repair:1'])(
+  'rejects an invalidity RPC for terminal or already-corrected key %s',key=>{
+   const c=v4Claim('summary'),f=fixture([]),store=createAnalysisStore(env());
+   expect(()=>store.markInvalid!(c,{id:'synthetic-call',call_key:key},'b'.repeat(64),'analysis_incomplete_coverage')).toThrow('analysis_invalid_correction');
+   expect(f.rpc).not.toHaveBeenCalled();
+  });
  it.each(['missing_admission','wrong_purpose','wrong_hash'] as const)('rejects %s before any v4 reservation',async issue=>{
   const c=v4Claim('summary');if(issue==='missing_admission')delete c.job.generation_admission_id;
   if(issue==='wrong_purpose')c.generationContext!.purpose='summary_finalization';

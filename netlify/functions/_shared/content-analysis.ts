@@ -69,8 +69,8 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
 }
 export interface AnalysisWorkerDependencies {env:Env;store:AnalysisStore;generate:AnalysisGenerator;limits:AnalysisLimits;now:()=>number}
 function callKeyForInvalid(call:AnalysisCall):string {
- const key=call.call_key,parsed=typeof key==='string'?(parseAnalysisV2CallKey(key)||parseAnalysisV3CallKey(key)):null;
- if(!parsed||parsed.repairAttempt||parsed.baseKey==='summary:v3:verify:0')return analysisFailure('analysis_invalid_correction');
+ const key=call.call_key,parsed=typeof key==='string'?(parseAnalysisV2CallKey(key)||parseAnalysisV3CallKey(key)||parseAnalysisV4CallKey(key)):null;
+ if(!parsed||parsed.repairAttempt||/^summary:v[34]:verify:0$/.test(parsed.baseKey))return analysisFailure('analysis_invalid_correction');
  return key!;
 }
 /** A result's own usage claim cannot authorize another paid correction. */
