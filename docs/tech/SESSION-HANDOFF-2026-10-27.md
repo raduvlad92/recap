@@ -1,6 +1,14 @@
 # Reliability handoff — 27 October 2026
 
-## Latest checkpoint — three-model comparison completed
+## Latest checkpoint — practical fixes released; fresh proof failed
+
+Read [practical fixes and final evidence](PRACTICAL-FIXES-2026-10-27.md) first. The founder approved the recommended fixes/test and asked for easy sensible changes. Timing ownership, compact corrections, reversible empty audit-field omission and clearer selection instructions are implemented, pushed and deployed; no new tables/services. All 2,818 local tests/CI, actual guarded migration, saved-response checks and preservation pass. The new DeepSeek trial nevertheless produces zero final recaps/keyword inventories across six tasks. No quality approval or new publication.
+
+New model cost **US$0.016774190**, no new holds. Whole commitment **US$3.551447750**, including unchanged four holds **US$0.013753066**; original remaining **US$1.448552250**. Runtime/global/owner spending Off, ten admissions closed, DeepSeek default revision18. Functional `b33c782`, exact current off-deploy `6ae082d1684d631f2235f941`. All 255 old calls, 425 old jobs, 496 archives and reader/review history are preserved. All 45 new requests and failures replay exactly. No new signed-in hosted UI check claimed; previous H3 recap/reload evidence remains separate.
+
+Next: jointly review simpler source-reference selection before another bounded proof. The new keyword request-size case has a possible lossless shared-enum encoding, but provider/schema compatibility is unproven. Do not add paid retries automatically, weaken source checks, reopen consumed scopes or release old holds. Twenty-video generation/backfill remain off.
+
+## Previous checkpoint — three-model comparison completed
 
 Read the [final comparison record](MODEL-COMPARISON-2026-10-27.md) before the earlier recovery history below. MiniMax, Luna and Sol have now run recaps and keywords on the same three frozen videos. MiniMax/Luna finish no final output. Sol finishes three recaps and one Mac keyword inventory, each needing review; its two other keyword tasks reveal the host mention/range merge bug. All outputs stay private; no twenty-video expansion or backfill ran.
 

@@ -1,0 +1,261 @@
+{
+  "schemaVersion": "therecap-practical-fixes-final-v1",
+  "recordedAt": "2026-10-27T11:03:11.574Z",
+  "functionalCommit": "b33c78227cd281c40371f6713b6ec325e0d6a259",
+  "generationContractHash": "6388be0aca7cd311339cb258c88486d52ba81adef38911bd6554383ee64bab91",
+  "revision": "grounded-v4-20261027-2",
+  "scope": "Small fixes and one bounded default-DeepSeek follow-up on the same three saved sources, both recaps and keywords.",
+  "model": "deepseek/deepseek-v4.1-flash-1017",
+  "provider": "relace",
+  "sourceOrdinals": [
+    1,
+    2,
+    6
+  ],
+  "inputCoverage": {
+    "planCoversEntireSavedTranscripts": true,
+    "allTasksReceivedFullPlannedInput": false,
+    "completeOriginalVideoCaptureVerified": false
+  },
+  "changes": [
+    "Keep exact mention timing together, preserving variant proofs.",
+    "Keyword correction tuples and proposal-ID-only model lineage; full host audit retained.",
+    "Omit only two null-default keyword lineage fields, reversibly.",
+    "Prioritize main recap meaning and qualifications; useful keyword categories and consistent types."
+  ],
+  "savedResponseCounterfactual": {
+    "actualFreshModelTrial": false,
+    "newSpendingUsd": "0.000000000000",
+    "matchedOldRequests": 38,
+    "casesCompleted": 3,
+    "publicationApproved": false,
+    "largestDraftBytesBefore": 491260,
+    "largestDraftBytesAfter": 455228,
+    "unchangedResultLimitBytes": 480000,
+    "omittedNullDefaultsExactlyReversible": true
+  },
+  "newPromptSizeCounterfactual": {
+    "actualFreshModelTrial": false,
+    "fourPreviousOversizedRepairInputUnits": [
+      25794,
+      24428,
+      26448,
+      27552
+    ],
+    "inputLimit": 27700,
+    "sourceAndUnitPairsAndProposalOrderCountPreserved": true,
+    "fullHostLineagePreserved": true
+  },
+  "tasks": [
+    {
+      "task": "summary",
+      "maximumFreshUsd": "0.275000000000",
+      "maximumCalls": 79,
+      "paidCalls": 29,
+      "reportedSettledUsd": "0.007327890000",
+      "newHeldMaximumUsd": "0.000000000000",
+      "completedOutputs": 0,
+      "results": [
+        {
+          "ordinal": 1,
+          "title": "Vetroo 850W Power Supply - LABS Test Report",
+          "savedSourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+          "state": "failed",
+          "errorCode": "analysis_unsupported_summary_number",
+          "paidCalls": 2,
+          "reportedSettledUsd": "0.000648110000",
+          "completed": false,
+          "published": false,
+          "semanticQualityScore": null
+        },
+        {
+          "ordinal": 2,
+          "title": "Everything Apple Announced last week - M4 Macs",
+          "savedSourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+          "state": "failed",
+          "errorCode": "analysis_unsupported_summary_number",
+          "paidCalls": 13,
+          "reportedSettledUsd": "0.003361300000",
+          "completed": false,
+          "published": false,
+          "semanticQualityScore": null
+        },
+        {
+          "ordinal": 6,
+          "title": "Understanding graphics upscalers like DLSS and FSR",
+          "savedSourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+          "state": "failed",
+          "errorCode": "analysis_correction_dropped_proposal",
+          "paidCalls": 14,
+          "reportedSettledUsd": "0.003318480000",
+          "completed": false,
+          "published": false,
+          "semanticQualityScore": null
+        }
+      ]
+    },
+    {
+      "task": "keywords",
+      "maximumFreshUsd": "0.334000000000",
+      "maximumCalls": 96,
+      "paidCalls": 16,
+      "reportedSettledUsd": "0.009446300000",
+      "newHeldMaximumUsd": "0.000000000000",
+      "completedOutputs": 0,
+      "results": [
+        {
+          "ordinal": 1,
+          "title": "Vetroo 850W Power Supply - LABS Test Report",
+          "savedSourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+          "state": "failed",
+          "errorCode": "analysis_incomplete_coverage",
+          "paidCalls": 2,
+          "reportedSettledUsd": "0.000861290000",
+          "completed": false,
+          "published": false,
+          "semanticQualityScore": null
+        },
+        {
+          "ordinal": 2,
+          "title": "Everything Apple Announced last week - M4 Macs",
+          "savedSourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+          "state": "failed",
+          "errorCode": "analysis_incomplete_coverage",
+          "paidCalls": 5,
+          "reportedSettledUsd": "0.003240480000",
+          "completed": false,
+          "published": false,
+          "semanticQualityScore": null
+        },
+        {
+          "ordinal": 6,
+          "title": "Understanding graphics upscalers like DLSS and FSR",
+          "savedSourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+          "state": "blocked",
+          "errorCode": "analysis_input_limit",
+          "paidCalls": 9,
+          "reportedSettledUsd": "0.005344530000",
+          "completed": false,
+          "published": false,
+          "semanticQualityScore": null
+        }
+      ]
+    }
+  ],
+  "money": {
+    "newTrial": {
+      "rows": 45,
+      "unknownCalls": 0,
+      "settledUsd": "0.016774190000",
+      "heldMaximumUsd": "0.000000000000",
+      "committedUsd": "0.016774190000",
+      "utcDay": "2026-10-27",
+      "dailyCommittedUsd": "0.016774190000"
+    },
+    "cumulative": {
+      "rows": 300,
+      "unknownCalls": 4,
+      "settledUsd": "3.537694684000",
+      "heldMaximumUsd": "0.013753066000",
+      "committedUsd": "3.551447750000",
+      "utcDay": "2026-10-27",
+      "dailyCommittedUsd": "3.491372181000"
+    },
+    "remainingOriginalEvaluationUsd": "1.448552250000",
+    "originalUnresolvedHoldsUnchanged": true,
+    "newUnresolvedCalls": 0,
+    "totalUnknownCalls": 4,
+    "invoiceReconciled": false,
+    "infrastructureAndSupplierCostsIncluded": false
+  },
+  "newTrialDiagnosis": {
+    "noFinalOutputsToScore": true,
+    "recapNumbersArePresentInSourceButMissingFromOwnCitations": true,
+    "recapOrderCounterfactualStillFailsCitationCheck": true,
+    "keywordIncompleteRepairsRemainInvalid": true,
+    "blockedCorrectionInputUnits": 30366,
+    "blockedCorrectionReservedOrPaid": false,
+    "optionalSchemaEnumSharing": {
+      "implemented": false,
+      "measuredInputUnitsAfter": 27220,
+      "providerCompatibilityVerified": false,
+      "successfulModelCorrectionVerified": false
+    },
+    "blanketFalseFactVerdictMade": false
+  },
+  "verification": {
+    "all45ActualRequestsAndIdentitiesReplayed": true,
+    "terminalOutcomesReproduced": true,
+    "replayNetworkCalls": 0,
+    "preservationPassed": true,
+    "oldCallsByteExact": 255,
+    "oldJobsByteExact": 425,
+    "oldAdmissionsByteExact": 8,
+    "oldArchiveRowsByteExact": 496,
+    "workspacesByteExact": 3,
+    "reviewsByteExact": 96,
+    "protectedSourceHashes": 20,
+    "newJobs": 6,
+    "newAdmissions": 2,
+    "newModelSelectionAudits": 2,
+    "operationalDeltas": [],
+    "privateEvidenceSha256": {
+      "nativeBefore": "d56b175b82decd87a646e4564d7d28e2ddcd80a23efbc5c436a8bc85db1feb35",
+      "nativeFinal": "16c564a63a8bd23d54d9b671b57e89cfedcfd9028437647f39bfbbdee703e848",
+      "preservation": "b2a69132bff3871946f3379f4c2f176a38c854b91acf6f5979bebccf569de788",
+      "replay": "7cd531bdd1fbdb77c77d9a7309022da5fe369fe2ff5ca4746c7bd04e8315315f",
+      "recapReview": "a229c96bd9a0d54c1060085642218ba8ab7da902a7b28f650d1d01fa87063689",
+      "keywordReview": "9637fbdf797e7d04f3aa6296bebec66fc81c56d074bbaf8a69c97da2579d83b8"
+    }
+  },
+  "release": {
+    "ci": {
+      "run": 40488026404,
+      "conclusion": "success"
+    },
+    "local": {
+      "tests": 2818,
+      "files": 79,
+      "typecheck": true,
+      "build": true,
+      "catalogue": true
+    },
+    "deployId": "6ae082d1684d631f2235f941",
+    "state": "ready",
+    "publishedAt": "2026-10-27T10:54:42.725Z",
+    "migrationSha256": "49f89a286361095c4eaa25098ad209fa22d7a0c4e49355e00c70e22a5f1bcf97",
+    "actualMigrationRollbackApplySeparateReadbackPassed": true,
+    "migrationDataChanges": 0,
+    "protectedMigrationGroups": 22,
+    "migrationHistoryRegistered": true,
+    "migrationDryRunUpToDate": true
+  },
+  "finalControls": {
+    "selectedModel": "deepseek/deepseek-v4.1-flash-1017",
+    "selectionRevision": 18,
+    "globalEnabled": false,
+    "ownerPoliciesEnabled": 0,
+    "dailyLimitUsd": "5.000000000000",
+    "lifetimeLimitUsd": "5.000000000000",
+    "perCallLimitUsd": "0.100000000000",
+    "runtimeEnabled": false,
+    "closedAdmissions": 10,
+    "activeJobs": 0,
+    "configurationIsSeparateFromHostedReadback": true,
+    "hostedSignedInUiRepeated": false,
+    "comparisonOutputsPublished": 0,
+    "twentyVideoGenerationStarted": false,
+    "backfillStarted": false
+  },
+  "humanApproval": false,
+  "qualityGatePassed": false,
+  "nextAction": "Review the failed proof before expansion; evaluate a simpler source-reference format. No further paid trial or twenty-video run follows automatically.",
+  "reportChecks": {
+    "financialAndOutcomeCrossChecksPassed": true,
+    "currentModelControlsRecheckedOff": true,
+    "newContentPrivateIdentityCredentialEmailScanPassed": true,
+    "relativeMarkdownLinksChecked": 340,
+    "brokenRelativeMarkdownLinks": 0,
+    "whitespaceCheckPassed": true
+  }
+}
