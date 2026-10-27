@@ -56,11 +56,11 @@ describe('private read-only content analysis operations', () => {
   it('preserves unknown holds, separates observed from settled charges and carries holds across UTC days', async () => {
     const test = stub({
       calls: [call(1, { created_at: old, maximum_usd: '0.009178191' }), call(2, { created_at: old, observed_usd: '0.003', actual_usd: '0.002', state: 'settled' }), call(3, { observed_usd: '0.02' }), call(4, { observed_usd: '0.001', actual_usd: '0', state: 'settled' })],
-      counts: { queued: 10, running: 2, prepared: 3, published: 8, failed: 1, blocked: 4, cancelled: 5, skipped: 6 }, reviews: 7, leases: 2,
+      counts: { queued: 10, running: 2, prepared: 3, published: 8, evaluated: 9, failed: 1, blocked: 4, cancelled: 5, skipped: 6 }, reviews: 7, leases: 2,
       errors: [{ error_code: 'analysis_lease_expired', updated_at: today, user_id: 'synthetic-owner', result: 'PRIVATE raw original' }, { error_code: 'private_source_name', updated_at: old }],
     });
     const operations = await readAnalysisOperations(test.db, now);
-    expect(operations.jobs).toEqual({ queued: 10, running: 2, prepared: 3, published: 8, failed: 1, blocked: 4, cancelled: 5, skipped: 6 });
+    expect(operations.jobs).toEqual({ queued: 10, running: 2, prepared: 3, published: 8, evaluated: 9, failed: 1, blocked: 4, cancelled: 5, skipped: 6 });
     expect(operations.pendingKeywordReviews).toBe(7); expect(operations.staleLeases).toBe(2);
     expect(operations.spending).toEqual({ observedUsd: 0.024, observedCalls: 3, settledUsd: 0.002, settledCalls: 2, unknownCommittedUsd: 0.029178191, unknownCalls: 2, committedUsd: 0.033178191, dailyCommittedUsd: 0.030178191, day: '2026-10-25' });
     expect(operations.ledger).toEqual({ rowsRead: 4, totalRows: 4, rowLimit: 5000, complete: true });

@@ -24,7 +24,7 @@ export interface AnalysisSettings extends AnalysisModelSelection {
   /** Private, read-only monitoring. Older settings responses may omit this. */
   operations?: AnalysisOperations;
 }
-export const ANALYSIS_JOB_STATES = ['queued', 'running', 'prepared', 'published', 'failed', 'blocked', 'cancelled', 'skipped'] as const;
+export const ANALYSIS_JOB_STATES = ['queued', 'running', 'prepared', 'published', 'evaluated', 'failed', 'blocked', 'cancelled', 'skipped'] as const;
 export type AnalysisJobState = typeof ANALYSIS_JOB_STATES[number];
 export type AnalysisHealthAlert = 'stale_leases' | 'unknown_charges' | 'failed_jobs' | 'blocked_jobs' | 'pending_reviews' | 'ledger_incomplete' | 'ledger_changed';
 export interface AnalysisOperations {

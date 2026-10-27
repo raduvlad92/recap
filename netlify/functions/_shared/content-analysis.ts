@@ -14,7 +14,8 @@ import { AnalysisError, AnalysisProviderHttpError, analysisFailure, analysisLimi
 
 export interface AnalysisPolicy { user_id:string; enabled:boolean; model:string }
 export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null;rule_version?:'content-v1'|'content-v2'|'content-v3'|'content-v4';generation_contract_hash?:string|null;generation_predecessor_job_id?:string|null;generation_comparison_id?:string|null;generation_admission_id?:string|null }
-export interface AnalysisGenerationContext { protocolVersion:'content-v3'|'content-v4';generationContractHash:string;predecessorJobId:string|null;emptyDisposition:'findings_expected'|'no_findings_reviewed'|'unreviewed';sourceReviewDigest:string|null;comparisonId?:string|null;admissionId?:string|null;purpose?:'summary_finalization'|'content_v4_evaluation';prefixCalls?:{callId:string;callKey:string;requestHash:string}[];allowedFreshRequest?:{key:string;requestHash:string} }
+export const ANALYSIS_COMPARISON_LIMITS = {chunkChars:1250,overlapChars:256,maxChunks:800,maxSourceChars:1_000_000,maxOutputTokens:3072,maxInputTokens:27700,maxCallUsd:.10} as const;
+export interface AnalysisGenerationContext { protocolVersion:'content-v3'|'content-v4';generationContractHash:string;predecessorJobId:string|null;emptyDisposition:'findings_expected'|'no_findings_reviewed'|'unreviewed';sourceReviewDigest:string|null;comparisonId?:string|null;admissionId?:string|null;purpose?:'summary_finalization'|'content_v4_evaluation'|'content_model_comparison';commonLimits?:typeof ANALYSIS_COMPARISON_LIMITS;prefixCalls?:{callId:string;callKey:string;requestHash:string}[];allowedFreshRequest?:{key:string;requestHash:string} }
 export interface AnalysisClaim { job:AnalysisJob; record:SourceUpdate; leaseToken:string;generationContext?:AnalysisGenerationContext }
 export interface AnalysisCall {id:string;call_key?:string;model?:string;execution_identity?:AnalysisExecutionIdentity|null;request_hash?:string|null;result?:(GenerationResult & {requestHash?:string})|null; maximum_usd?:number;actual_usd?:number|string|null;observed_usd?:number|string|null;state?:string;validation_error_code?:string|null}
 export interface AnalysisReservation {claimed:boolean;call?:AnalysisCall;reason?:string;retryAt?:string}
@@ -39,6 +40,7 @@ export interface AnalysisStore {
  markInvalid?(claim:AnalysisClaim,call:AnalysisCall,requestHash:string,errorCode:string):Promise<AnalysisCall|void>;
  prepare(claim:AnalysisClaim,result:AnalysisOutput):Promise<void>;
  publish(claim:AnalysisClaim):Promise<boolean>;
+ completeComparison?(claim:AnalysisClaim):Promise<boolean>;
  fail(claim:AnalysisClaim,code:string,retryable:boolean,yielded?:boolean):Promise<{state:string}|void>;
 }
 export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
@@ -64,6 +66,7 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
   markInvalid:(claim,call,requestHash,errorCode)=>rpc<AnalysisCall>('mark_content_analysis_call_invalid',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_key:callKeyForInvalid(call),p_request_hash:requestHash,p_error_code:errorCode}),
   async prepare(claim,result){await rpc('prepare_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_result:result});},
   publish:claim=>rpc('publish_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken}),
+  completeComparison:claim=>rpc('complete_content_analysis_comparison_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken}),
   fail:(claim,code,retryable,yielded=false)=>rpc<{state:string}>('fail_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_error_code:code,p_retryable:retryable,p_yield:yielded}),
  };
 }
@@ -103,14 +106,14 @@ function cacheWindow(key:string):string[] {
 export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependencies>={}) {
  const env=dependencies.env||runtimeEnv,now=dependencies.now||Date.now;
  return async()=>{
-  const stats={enabled:env('CONTENT_ANALYSIS_ENABLED')==='true',synchronized:0,completed:0,failed:0,blocked:0,yielded:0};
+  const stats={enabled:env('CONTENT_ANALYSIS_ENABLED')==='true',synchronized:0,completed:0,evaluated:0,failed:0,blocked:0,yielded:0};
   if(!stats.enabled) return stats;
   // Construct runtime resources only after the global feature gate. No import/build or anonymous call spends.
   const store=dependencies.store||createAnalysisStore(env);
-  let limits:AnalysisLimits|undefined,generator:AnalysisGenerator|undefined,identity:AnalysisExecutionIdentity|undefined,setupCode:string|undefined,effectiveEnv=env;
+  let runtimeLimits:AnalysisLimits|undefined,generator:AnalysisGenerator|undefined,identity:AnalysisExecutionIdentity|undefined,setupCode:string|undefined,effectiveEnv=env;
   try {
    if(store.runtime){const selected=await store.runtime();effectiveEnv=analysisRuntimeEnv(env,selected.selected_model,selected.revision);}
-   limits=dependencies.limits||analysisLimits(effectiveEnv);identity=analysisExecutionIdentity(effectiveEnv,limits);generator=dependencies.generate||createGatewayGenerator(effectiveEnv);
+   runtimeLimits=dependencies.limits||analysisLimits(effectiveEnv);identity=analysisExecutionIdentity(effectiveEnv,runtimeLimits);generator=dependencies.generate||createGatewayGenerator(effectiveEnv);
   }
   catch(error){setupCode=error instanceof AnalysisError?(error.code==='analysis_model_not_allowed'?'analysis_provider_not_verified':error.code):'analysis_configuration_required';}
   const started=now(),deadline=started+11*60_000;
@@ -139,9 +142,10 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       ?!protocolV3||typeof comparisonId!=='string'||comparisonId.length!==36||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(comparisonId)||generationContext?.comparisonId!==comparisonId
       :generationContext?.comparisonId!=null)return analysisFailure('analysis_generation_contract_changed');
      const admissionId=claim.job.generation_admission_id,finalization=generationContext?.purpose==='summary_finalization';
+     const comparison=generationContext?.purpose==='content_model_comparison';
      if(admissionId!=null
       ?!analysisUuid(admissionId)||generationContext?.admissionId!==admissionId||comparisonId!=null
-       ||!(protocolV3&&finalization&&claim.job.task==='summary'||protocolV4&&generationContext.purpose==='content_v4_evaluation')
+       ||!(protocolV3&&finalization&&claim.job.task==='summary'||protocolV4&&['content_v4_evaluation','content_model_comparison'].includes(generationContext.purpose??''))
       :generationContext?.admissionId!=null||generationContext?.purpose!=null||protocolV4)return analysisFailure('analysis_generation_contract_changed');
      if((protocolV3||protocolV4)&&(!generationContext||generationContext.protocolVersion!==claim.job.rule_version
       ||generationContext.generationContractHash!==(protocolV4?ANALYSIS_V4_GENERATION_CONTRACT_HASH:ANALYSIS_V3_CONTRACT_HASH)
@@ -150,16 +154,28 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       ||protocolV3&&!generationContext.predecessorJobId
       ||!['findings_expected','no_findings_reviewed','unreviewed'].includes(generationContext.emptyDisposition)
       ||generationContext.sourceReviewDigest!==null&&!analysisDigest(generationContext.sourceReviewDigest)))return analysisFailure('analysis_generation_contract_changed');
+     // The database seals common comparison limits. Check them before both
+     // prepared completion and any fresh reservation; older protocols keep
+     // their original runtime limits and request hashes.
+     if(comparison
+      ?stableJson(generationContext!.commonLimits)!==stableJson(ANALYSIS_COMPARISON_LIMITS)||!store.completeComparison
+      :generationContext?.commonLimits!==undefined)return analysisFailure('analysis_generation_contract_changed');
+     const finish=async()=>{
+      if(comparison){if(await store.completeComparison!(claim))stats.evaluated++;}
+      else if(await store.publish(claim))stats.completed++;
+     };
      if(finalization&&(!Array.isArray(generationContext!.prefixCalls)||generationContext!.prefixCalls.length===0
       ||generationContext!.prefixCalls.length>256||new Set(generationContext!.prefixCalls.map(p=>p.callKey)).size!==generationContext!.prefixCalls.length
       ||new Set(generationContext!.prefixCalls.map(p=>p.callId)).size!==generationContext!.prefixCalls.length
       ||generationContext!.prefixCalls.some(p=>!analysisUuid(p.callId)||!parseAnalysisV3CallKey(p.callKey)||p.callKey==='summary:v3:verify:0'||!analysisDigest(p.requestHash))
       ||generationContext!.allowedFreshRequest?.key!=='summary:v3:verify:0'||!analysisDigest(generationContext!.allowedFreshRequest.requestHash)))return analysisFailure('analysis_generation_contract_changed');
      if(claim.job.state==='prepared' && claim.job.result) {
-      if(await store.publish(claim)) stats.completed++;continue;
+      await finish();continue;
      }
-     if(setupCode || !limits || !generator || !identity) return analysisFailure(setupCode||'analysis_configuration_required');
-     const generate=generator;
+     if(setupCode || !runtimeLimits || !generator || !identity) return analysisFailure(setupCode||'analysis_configuration_required');
+     const limits:AnalysisLimits=comparison?{...runtimeLimits,...ANALYSIS_COMPARISON_LIMITS}:runtimeLimits;
+     const comparisonEnv:Env=key=>({CONTENT_ANALYSIS_CHUNK_CHARS:'1250',CONTENT_ANALYSIS_MAX_OUTPUT_TOKENS:'3072',CONTENT_ANALYSIS_MAX_INPUT_TOKENS:'27700',CONTENT_ANALYSIS_MAX_CALL_USD:'0.10',CONTENT_ANALYSIS_MAX_CHUNKS:'800',CONTENT_ANALYSIS_MAX_SOURCE_CHARS:'1000000'} as Record<string,string>)[key]??effectiveEnv(key);
+     const generate=comparison&&!dependencies.generate?createGatewayGenerator(comparisonEnv):generator;
      const executionIdentity=identity;
      const verification=executionIdentity.route==='openrouter'?{responseModel:effectiveEnv('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:effectiveEnv('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')}:undefined;
      if(policy.model!==limits.model)return analysisFailure('analysis_model_policy_mismatch');
@@ -292,7 +308,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       :await (claim.job.task==='summary'?(grounded?analyzeSummaryV2:analyzeSummary):(grounded?analyzeKeywordsV2:analyzeKeywords))(claim.record,limits,metered);
      if(admissionId!=null&&[...materialized.values()].some(value=>value.result.actualUsd==null))return analysisFailure('analysis_unknown_charge_hold');
      await store.prepare(claim,result);
-     if(await store.publish(claim)) stats.completed++;
+     await finish();
     } catch(error) {
      const code=error instanceof AnalysisError?error.code:'analysis_generation_failed';
      const yielded=code==='analysis_worker_yield',blocked=['analysis_daily_budget_exhausted','analysis_budget_exhausted','analysis_input_limit','analysis_call_limit','analysis_unknown_charge_hold','analysis_correction_charge_unknown','analysis_cached_input_changed','analysis_generation_contract_changed','analysis_admission_changed','analysis_admin_changed','analysis_state_conflict','analysis_model_policy_mismatch','analysis_credentials_required','analysis_configuration_required','analysis_pricing_not_verified','analysis_provider_not_verified','analysis_gateway_not_verified','analysis_runtime_disabled'].includes(code);

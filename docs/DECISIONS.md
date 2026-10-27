@@ -2,6 +2,12 @@
 
 Updated: 27 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
+## 27 October 2026 — compare three models before deciding about twenty videos
+
+Founder requested testing all three other available models, tracking their results and deciding together about the twenty videos afterward. In the keyword investigation, this authorizes MiniMax M3.1 Flash, GPT-6 Luna Pro and GPT-6.1 Sol Pro on the same three frozen sources. Existing US$0.10/call and US$5 cumulative limits persist, including historical charges/holds. Earlier automatic progression to twenty-video generation waits for the joint decision.
+
+Unchanged v4 prompts/rules, complete saved transcripts and identical smaller limits permit a controlled comparison within Sol's call cap. Results stay private and cannot replace annotations/reviews. A dedicated comparison purpose/evaluated terminal state preserves consumed histories and distinguishes test results from reader publication. [Scope and evidence](tech/MODEL-COMPARISON-2026-10-27.md). No new inference at the preparation checkpoint.
+
 ## 27 October 2026 — bounded execution outcome and safe closeout
 
 The approved US$0.10/call and existing US$5 evaluation total remain. No additional allowance was requested or created. One useful H3 recap was actually recovered and reloaded. The new v4 quality gate failed; one model-approved recap was withheld after independent assistant review, four terminal failures remain, and sixty uncertain keyword candidates stay private. No acceptance was inferred from model verification, tests, storage publication or cache recovery.

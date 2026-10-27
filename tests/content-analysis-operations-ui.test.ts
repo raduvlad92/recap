@@ -5,7 +5,7 @@ import { AnalysisOperationsStatus, AnalysisSettings } from '../src/admin/Analysi
 import { DEFAULT_ANALYSIS_MODEL, type AnalysisOperations, type AnalysisSettings as Settings } from '../src/lib/analysis-settings-types';
 
 const operations = (extra: Partial<AnalysisOperations> = {}): AnalysisOperations => ({
-  checkedAt: '2026-10-25T12:00:00Z', jobs: { queued: 10, running: 1, prepared: 2, published: 3, failed: 4, blocked: 5, cancelled: 6, skipped: 7 }, pendingKeywordReviews: 8, staleLeases: 1,
+  checkedAt: '2026-10-25T12:00:00Z', jobs: { queued: 10, running: 1, prepared: 2, published: 3, evaluated: 9, failed: 4, blocked: 5, cancelled: 6, skipped: 7 }, pendingKeywordReviews: 8, staleLeases: 1,
   spending: { day: '2026-10-25', observedUsd: null, observedCalls: 0, settledUsd: 0, settledCalls: 1, unknownCommittedUsd: 0.009178191, unknownCalls: 3, committedUsd: 0.009178191, dailyCommittedUsd: 0.009178191 },
   ledger: { rowsRead: 12, rowLimit: 5000, totalRows: 12, complete: true }, recentErrors: [{ code: 'analysis_lease_expired', at: '2026-10-25T11:00:00Z' }], alerts: ['stale_leases', 'unknown_charges', 'pending_reviews'], ...extra,
 });
@@ -14,7 +14,7 @@ const render = (value?: AnalysisOperations) => renderToStaticMarkup(createElemen
 describe('private analysis operations presentation', () => {
   it('shows truthful work states, distinct review units and full unknown-hold precision', () => {
     const html = render(operations());
-    for (const label of ['Queued jobs', 'Running jobs', 'Prepared jobs', 'Published jobs', 'Keywords to review', 'Failed jobs', 'Blocked jobs', 'Expired leases', 'Unreported', '$0.009178191', 'analysis_lease_expired']) expect(html).toContain(label);
+    for (const label of ['Queued jobs', 'Running jobs', 'Prepared jobs', 'Published jobs', 'Model comparison tests', 'Keywords to review', 'Failed jobs', 'Blocked jobs', 'Expired leases', 'Unreported', '$0.009178191', 'analysis_lease_expired']) expect(html).toContain(label);
     expect(html).toContain('pending candidates, not jobs or videos'); expect(html).toContain('Prepared output has not yet been published');
     expect(html).toContain('do not add them'); expect(html).toContain('holds across days'); expect(html).toContain('cumulative evaluation ceiling does not reset');
     expect(html).toContain('Read only'); expect(html).not.toContain('<button');

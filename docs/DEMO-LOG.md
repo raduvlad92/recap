@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 27 October 2026 — three-model keyword comparison prepared
+
+Type: offline source/reference review, current provider metadata, request-capacity checks and evaluation-only implementation. [Comparison record](tech/MODEL-COMPARISON-2026-10-27.md). All three models use complete saved transcripts/common limits within US$0.10/call and the existing US$5 total. Results cannot alter reader annotations/reviews. No new inference, publication, twenty-video run or backfill at this checkpoint. Actual checks, release and paid-result evidence will follow separately.
+
 ## 27 October 2026 — final recovery, readback and paused closeout
 
 Type: actual deployed worker cached recovery, production function migration, signed-in cloud reload and complete native preservation. Functional `df26c34`; CI 40424827245 passes 2,076 tests with 547 actual-local-PG skips; local 2,623 checks pass. Function rollback/application and separate 22-group/ACL readbacks pass. The exact saved keyword result fails before the timing fix and passes after it. The stock worker reuses all seven responses, creates sixty private review candidates, and makes **zero new model calls**; budget restoration and zero active jobs are verified. Reader reload shows awaiting review, no accepted strip, transcript/original retained. No new keyword-state phone proof is claimed because the requested override was not observed; recovered H3 phone proof stands.

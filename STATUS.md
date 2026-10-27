@@ -4,6 +4,8 @@ Updated: **27 October 2026**. Phase: **functioning v0, admin, creator catalogue 
 
 ## Current execution — reliability points 1–3
 
+**New founder-directed comparison:** test MiniMax, Luna and Sol on the same three keyword sources, record each result and return for a joint decision before twenty-video generation. The [comparison record](docs/tech/MODEL-COMPARISON-2026-10-27.md) seals common settings, source review and finite bounds inside the existing US$5 total. Preparation and evaluation-only storage are underway; no new inference at this checkpoint. The preceding closeout below is the last completed live result.
+
 **Partially complete; live quality blocks expansion.** Founder authorized US$0.10 per model call inside the existing US$5 evaluation total. [Actual results](docs/tech/RELIABILITY-EXECUTION-2026-10-26.md), [twenty-source status](docs/tech/FROZEN-TWENTY-STATUS-2026-10-27.md), [ordered handoff](docs/tech/SESSION-HANDOFF-2026-10-27.md).
 
 One useful H3 recap is recovered, independently assistant-reviewed and verified after hosted reload/transcript/actual 320px checks. Reliability changes and an actual-production cue-end arithmetic fix are pushed/deployed: **2,623 local tests**, typecheck/build/catalogue and CI pass. The new v4 trial nevertheless fails quality: four terminal rejections, one independently rejected/withheld recap, and one sixty-candidate private-review result. That keyword task completed through the stock worker from seven cached responses under **zero additional model spending**; no accepted keywords were published. The twenty frozen sources have readiness assessments and unchanged hashes, but **31 remaining expansion tasks were not run**. No backfill.

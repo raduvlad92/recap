@@ -98,7 +98,7 @@ export function AnalysisOperationsStatus({ operations }: { operations?: Analysis
   if (!operations) return <section className="ra-paper ra-analysis-operations" aria-label="Analysis operations"><h2>Analysis operations</h2><p className="ra-note" role="status">Operational status is unavailable. Refresh this page to read it again.</p></section>;
   const { jobs, spending, ledger } = operations;
   const counts = [
-    ['Queued jobs', jobs.queued], ['Running jobs', jobs.running], ['Prepared jobs', jobs.prepared], ['Published jobs', jobs.published],
+    ['Queued jobs', jobs.queued], ['Running jobs', jobs.running], ['Prepared jobs', jobs.prepared], ['Published jobs', jobs.published], ['Model comparison tests', jobs.evaluated],
     ['Keywords to review', operations.pendingKeywordReviews], ['Failed jobs', jobs.failed], ['Blocked jobs', jobs.blocked],
     ['Cancelled jobs', jobs.cancelled], ['Skipped jobs', jobs.skipped], ['Expired leases', operations.staleLeases],
   ] as const;
