@@ -1,0 +1,1249 @@
+{
+  "schemaVersion": "therecap-keyword-learning-results-v1",
+  "status": "best_candidate_bad_strict_gate_not_approved",
+  "experimentExecuted": true,
+  "target": "Every named mention, including brief mentions and ads.",
+  "paidCallsExecuted": 67,
+  "sourceCapturesCompleteOriginalVerified": false,
+  "productionDefaultChanged": false,
+  "privateResultsOnly": true,
+  "selectedVersion": "v3",
+  "reference": {
+    "version": "assistant-audited-reference-v2",
+    "sha256": "81bd45d23ef9fc37150f85253fc915ae7a012c182db8738e808926f43a42f1b8",
+    "exhaustiveGoldStandard": false,
+    "humanGold": false,
+    "uniformRegradeAcrossAllVersions": true,
+    "optionalGenericTermsExcludedFromRequiredIdentityCoverage": true
+  },
+  "frozenSelection": {
+    "version": "v3",
+    "frozenAt": "2026-10-27T17:40:39.786Z",
+    "developmentOrdinals": [
+      1,
+      2,
+      6
+    ],
+    "withheldOrdinals": [
+      10,
+      20
+    ],
+    "referenceSha256": "81bd45d23ef9fc37150f85253fc915ae7a012c182db8738e808926f43a42f1b8",
+    "lessonsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "checkerLessonsSha256": "9592c14a3a0a10d3195472ff8636c347854e636d1d29af9be80d8fae7dbcc913",
+    "promptModuleSha256": "53ca1876160d921370a49f1f1d67e34cade5d4fd4864ce45b41b20349b51ee13",
+    "maximumImprovementRoundsReached": true
+  },
+  "fiveCases": [
+    {
+      "ordinal": 1,
+      "title": "Vetroo 850W Power Supply - LABS Test Report",
+      "sourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+      "savedCharacters": 3322,
+      "role": "development",
+      "baseline": {
+        "mode": "exact_settled_response_replay",
+        "deliveryComplete": false,
+        "errorCode": "analysis_incomplete_coverage",
+        "semanticScore": null,
+        "strictGood": false,
+        "newCalls": 0,
+        "newCostUsd": "0.000000000"
+      },
+      "methods": [
+        {
+          "method": "direct",
+          "deliveryStatus": "complete",
+          "score": 7.5,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000112510"
+        },
+        {
+          "method": "type_sweep",
+          "deliveryStatus": "complete",
+          "score": 7.8,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000105000"
+        },
+        {
+          "method": "patterns",
+          "deliveryStatus": "complete",
+          "score": 4.3,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000000000"
+        }
+      ],
+      "checkedMethodScores": [
+        {
+          "method": "direct",
+          "score": 8.3
+        },
+        {
+          "method": "type_sweep",
+          "score": 9.1
+        },
+        {
+          "method": "patterns",
+          "score": 5.1
+        }
+      ],
+      "final": {
+        "deliveryComplete": true,
+        "score": 9.5,
+        "strictGood": false,
+        "requiredIdentities": 10,
+        "retainedRequiredIdentities": 10,
+        "correctDispositionIdentities": 10,
+        "acceptedRows": 11,
+        "reviewRows": 0,
+        "acceptedRowsExactlyGrounded": 11,
+        "reviewRowsExactlyGrounded": 0,
+        "strictMissingNames": [],
+        "reviewDispositionMismatches": [],
+        "independentParentPrefixDisagreements": [
+          "LTT"
+        ],
+        "components": {
+          "coverage": 1,
+          "correctness": 0.9090909090909091,
+          "identityAndVersion": 0.9,
+          "duplicateHandling": 1
+        },
+        "reviewRate": 0
+      }
+    },
+    {
+      "ordinal": 2,
+      "title": "Everything Apple Announced last week - M4 Macs",
+      "sourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+      "savedCharacters": 6441,
+      "role": "development",
+      "baseline": {
+        "mode": "exact_settled_response_replay",
+        "deliveryComplete": false,
+        "errorCode": "analysis_incomplete_coverage",
+        "semanticScore": null,
+        "strictGood": false,
+        "newCalls": 0,
+        "newCostUsd": "0.000000000"
+      },
+      "methods": [
+        {
+          "method": "direct",
+          "deliveryStatus": "complete",
+          "score": 7.2,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000277460"
+        },
+        {
+          "method": "type_sweep",
+          "deliveryStatus": "complete",
+          "score": 6.6,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000230450"
+        },
+        {
+          "method": "patterns",
+          "deliveryStatus": "complete",
+          "score": 5.4,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000000000"
+        }
+      ],
+      "checkedMethodScores": [
+        {
+          "method": "direct",
+          "score": 7.5
+        },
+        {
+          "method": "type_sweep",
+          "score": 6.9
+        },
+        {
+          "method": "patterns",
+          "score": 5.9
+        }
+      ],
+      "final": {
+        "deliveryComplete": true,
+        "score": 8.9,
+        "strictGood": false,
+        "requiredIdentities": 44,
+        "retainedRequiredIdentities": 41,
+        "correctDispositionIdentities": 38,
+        "acceptedRows": 41,
+        "reviewRows": 5,
+        "acceptedRowsExactlyGrounded": 41,
+        "reviewRowsExactlyGrounded": 5,
+        "strictMissingNames": [
+          "usba",
+          "Clara",
+          "MacBook Air",
+          "Max studio",
+          "Mac address",
+          "bm4"
+        ],
+        "reviewDispositionMismatches": [
+          "usba",
+          "Clara",
+          "Max studio"
+        ],
+        "independentParentPrefixDisagreements": [],
+        "components": {
+          "coverage": 0.8636363636363636,
+          "correctness": 0.9545454545454546,
+          "identityAndVersion": 0.6190476190476191,
+          "duplicateHandling": 1
+        },
+        "reviewRate": 0.10869565217391304
+      }
+    },
+    {
+      "ordinal": 6,
+      "title": "Understanding graphics upscalers like DLSS and FSR",
+      "sourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+      "savedCharacters": 7781,
+      "role": "development",
+      "baseline": {
+        "mode": "exact_settled_response_replay",
+        "deliveryComplete": false,
+        "errorCode": "analysis_input_limit",
+        "semanticScore": null,
+        "strictGood": false,
+        "newCalls": 0,
+        "newCostUsd": "0.000000000"
+      },
+      "methods": [
+        {
+          "method": "direct",
+          "deliveryStatus": "complete",
+          "score": 7.1,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000288620"
+        },
+        {
+          "method": "type_sweep",
+          "deliveryStatus": "complete",
+          "score": 8.3,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000239610"
+        },
+        {
+          "method": "patterns",
+          "deliveryStatus": "complete",
+          "score": 5.6,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000000000"
+        }
+      ],
+      "checkedMethodScores": [
+        {
+          "method": "direct",
+          "score": 7.6
+        },
+        {
+          "method": "type_sweep",
+          "score": 8.5
+        },
+        {
+          "method": "patterns",
+          "score": 6.1
+        }
+      ],
+      "final": {
+        "deliveryComplete": true,
+        "score": 9.5,
+        "strictGood": false,
+        "requiredIdentities": 34,
+        "retainedRequiredIdentities": 34,
+        "correctDispositionIdentities": 33,
+        "acceptedRows": 42,
+        "reviewRows": 3,
+        "acceptedRowsExactlyGrounded": 42,
+        "reviewRowsExactlyGrounded": 3,
+        "strictMissingNames": [
+          "EXSS"
+        ],
+        "reviewDispositionMismatches": [
+          "EXSS"
+        ],
+        "independentParentPrefixDisagreements": [
+          "FidelityFX",
+          "Snapdragon",
+          "PS5"
+        ],
+        "components": {
+          "coverage": 0.9705882352941176,
+          "correctness": 0.9230769230769231,
+          "identityAndVersion": 0.9444444444444444,
+          "duplicateHandling": 1
+        },
+        "reviewRate": 0.06666666666666667
+      }
+    },
+    {
+      "ordinal": 10,
+      "title": "Linus Got Fooled by AI Music",
+      "sourceSha256": "6974d009458bffc74d52320b7ddb751781ac6f2ac8b10e4b745364c2544a49f9",
+      "savedCharacters": 4385,
+      "role": "validation_withheld_until_freeze",
+      "baseline": {
+        "mode": "current_process_private_live_run",
+        "deliveryComplete": false,
+        "errorCode": "analysis_input_limit",
+        "semanticScore": null,
+        "strictGood": false,
+        "newCalls": 3,
+        "newCostUsd": "0.001194140"
+      },
+      "methods": [
+        {
+          "method": "direct",
+          "deliveryStatus": "complete",
+          "score": 8.7,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000133660"
+        },
+        {
+          "method": "type_sweep",
+          "deliveryStatus": "complete",
+          "score": 9,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000107278"
+        },
+        {
+          "method": "patterns",
+          "deliveryStatus": "complete",
+          "score": 4.7,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000000000"
+        }
+      ],
+      "checkedMethodScores": [
+        {
+          "method": "direct",
+          "score": 9.5
+        },
+        {
+          "method": "type_sweep",
+          "score": 9.7
+        },
+        {
+          "method": "patterns",
+          "score": 5.3
+        }
+      ],
+      "final": {
+        "deliveryComplete": true,
+        "score": 9.7,
+        "strictGood": true,
+        "requiredIdentities": 11,
+        "retainedRequiredIdentities": 11,
+        "correctDispositionIdentities": 11,
+        "acceptedRows": 13,
+        "reviewRows": 0,
+        "acceptedRowsExactlyGrounded": 13,
+        "reviewRowsExactlyGrounded": 0,
+        "strictMissingNames": [],
+        "reviewDispositionMismatches": [],
+        "independentParentPrefixDisagreements": [],
+        "components": {
+          "coverage": 1,
+          "correctness": 1,
+          "identityAndVersion": 0.6923076923076923,
+          "duplicateHandling": 1
+        },
+        "reviewRate": 0
+      }
+    },
+    {
+      "ordinal": 20,
+      "title": "Everything to know about SteamOS",
+      "sourceSha256": "f93dfd62aa78fd03101873baad9bf302cae05081ab345685a1bd75edba89f29a",
+      "savedCharacters": 6638,
+      "role": "validation_withheld_until_freeze",
+      "baseline": {
+        "mode": "current_process_private_live_run",
+        "deliveryComplete": true,
+        "errorCode": null,
+        "semanticScore": 4,
+        "strictGood": false,
+        "newCalls": 21,
+        "newCostUsd": "0.010595196"
+      },
+      "methods": [
+        {
+          "method": "direct",
+          "deliveryStatus": "complete",
+          "score": 8.2,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000187500"
+        },
+        {
+          "method": "type_sweep",
+          "deliveryStatus": "complete",
+          "score": 8.2,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000190990"
+        },
+        {
+          "method": "patterns",
+          "deliveryStatus": "complete",
+          "score": 6.2,
+          "scoreStage": "raw_extraction_reference_score",
+          "reportedGenerationCostUsd": "0.000000000"
+        }
+      ],
+      "checkedMethodScores": [
+        {
+          "method": "direct",
+          "score": 9.1
+        },
+        {
+          "method": "type_sweep",
+          "score": 8.9
+        },
+        {
+          "method": "patterns",
+          "score": 6.6
+        }
+      ],
+      "final": {
+        "deliveryComplete": true,
+        "score": 9.3,
+        "strictGood": false,
+        "requiredIdentities": 26,
+        "retainedRequiredIdentities": 26,
+        "correctDispositionIdentities": 25,
+        "acceptedRows": 31,
+        "reviewRows": 3,
+        "acceptedRowsExactlyGrounded": 31,
+        "reviewRowsExactlyGrounded": 2,
+        "strictMissingNames": [
+          "Gabe"
+        ],
+        "reviewDispositionMismatches": [
+          "Gabe"
+        ],
+        "independentParentPrefixDisagreements": [
+          "Steam"
+        ],
+        "components": {
+          "coverage": 0.9615384615384616,
+          "correctness": 0.9032258064516129,
+          "identityAndVersion": 0.8214285714285714,
+          "duplicateHandling": 1
+        },
+        "reviewRate": 0.08823529411764706
+      }
+    }
+  ],
+  "developmentVersions": [
+    {
+      "version": "v1",
+      "developmentCases": [
+        {
+          "ordinal": 1,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.5,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000112510"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 7.8,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000105000"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 4.3,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 8.3
+            },
+            {
+              "method": "type_sweep",
+              "score": 9.1
+            },
+            {
+              "method": "patterns",
+              "score": 5.1
+            }
+          ],
+          "checkedUnionScore": 9.2,
+          "strictGood": false
+        },
+        {
+          "ordinal": 2,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.2,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000277460"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 6.6,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000230450"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 5.4,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 7.5
+            },
+            {
+              "method": "type_sweep",
+              "score": 6.9
+            },
+            {
+              "method": "patterns",
+              "score": 5.8
+            }
+          ],
+          "checkedUnionScore": 8.2,
+          "strictGood": false
+        },
+        {
+          "ordinal": 6,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.1,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000288620"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 8.3,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000239610"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 5.6,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 7.8
+            },
+            {
+              "method": "type_sweep",
+              "score": 8.8
+            },
+            {
+              "method": "patterns",
+              "score": 6.3
+            }
+          ],
+          "checkedUnionScore": 9,
+          "strictGood": false
+        }
+      ],
+      "meanCheckedScore": 8.8,
+      "outcome": "baseline_for_prompt_iteration"
+    },
+    {
+      "version": "v2",
+      "developmentCases": [
+        {
+          "ordinal": 1,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 8.5,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000132020"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 8,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000129510"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 4.3,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 9.4
+            },
+            {
+              "method": "type_sweep",
+              "score": 8.9
+            },
+            {
+              "method": "patterns",
+              "score": 5.1
+            }
+          ],
+          "checkedUnionScore": 8.4,
+          "strictGood": false
+        },
+        {
+          "ordinal": 2,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.1,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000234970"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 7.5,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000247716"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 5.4,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 7.3
+            },
+            {
+              "method": "type_sweep",
+              "score": 7.5
+            },
+            {
+              "method": "patterns",
+              "score": 5.6
+            }
+          ],
+          "checkedUnionScore": 8.1,
+          "strictGood": false
+        },
+        {
+          "ordinal": 6,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 6.8,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000266258"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 7,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000244376"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 5.6,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 7.4
+            },
+            {
+              "method": "type_sweep",
+              "score": 7.4
+            },
+            {
+              "method": "patterns",
+              "score": 6.3
+            }
+          ],
+          "checkedUnionScore": 9,
+          "strictGood": false
+        }
+      ],
+      "meanCheckedScore": 8.5,
+      "outcome": "rejected_regression"
+    },
+    {
+      "version": "v3",
+      "developmentCases": [
+        {
+          "ordinal": 1,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.5,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000112510"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 7.8,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000105000"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 4.3,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 8.3
+            },
+            {
+              "method": "type_sweep",
+              "score": 9.1
+            },
+            {
+              "method": "patterns",
+              "score": 5.1
+            }
+          ],
+          "checkedUnionScore": 9.5,
+          "strictGood": false
+        },
+        {
+          "ordinal": 2,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.2,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000277460"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 6.6,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000230450"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 5.4,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 7.5
+            },
+            {
+              "method": "type_sweep",
+              "score": 6.9
+            },
+            {
+              "method": "patterns",
+              "score": 5.9
+            }
+          ],
+          "checkedUnionScore": 8.9,
+          "strictGood": false
+        },
+        {
+          "ordinal": 6,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.1,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000288620"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 8.3,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000239610"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 5.6,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 7.6
+            },
+            {
+              "method": "type_sweep",
+              "score": 8.5
+            },
+            {
+              "method": "patterns",
+              "score": 6.1
+            }
+          ],
+          "checkedUnionScore": 9.5,
+          "strictGood": false
+        }
+      ],
+      "meanCheckedScore": 9.3,
+      "outcome": "selected_development_candidate_frozen_before_validation"
+    },
+    {
+      "version": "v4",
+      "developmentCases": [
+        {
+          "ordinal": 1,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.5,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000112510"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 7.8,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000105000"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 4.3,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            },
+            {
+              "method": "sections",
+              "deliveryStatus": "complete",
+              "score": 7.9,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000160128"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 8.3
+            },
+            {
+              "method": "type_sweep",
+              "score": 9.1
+            },
+            {
+              "method": "patterns",
+              "score": 5.1
+            },
+            {
+              "method": "sections",
+              "score": 8.8
+            }
+          ],
+          "checkedUnionScore": 9.5,
+          "strictGood": false
+        },
+        {
+          "ordinal": 2,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.2,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000277460"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 6.6,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000230450"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 5.4,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            },
+            {
+              "method": "sections",
+              "deliveryStatus": "complete",
+              "score": 7,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000375390"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 7.5
+            },
+            {
+              "method": "type_sweep",
+              "score": 6.8
+            },
+            {
+              "method": "patterns",
+              "score": 5.9
+            },
+            {
+              "method": "sections",
+              "score": 7.5
+            }
+          ],
+          "checkedUnionScore": 8.8,
+          "strictGood": false
+        },
+        {
+          "ordinal": 6,
+          "methods": [
+            {
+              "method": "direct",
+              "deliveryStatus": "complete",
+              "score": 7.1,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000288620"
+            },
+            {
+              "method": "type_sweep",
+              "deliveryStatus": "complete",
+              "score": 8.3,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000239610"
+            },
+            {
+              "method": "patterns",
+              "deliveryStatus": "complete",
+              "score": 5.6,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000000000"
+            },
+            {
+              "method": "sections",
+              "deliveryStatus": "complete",
+              "score": 7.3,
+              "scoreStage": "raw_extraction_reference_score",
+              "reportedGenerationCostUsd": "0.000397888"
+            }
+          ],
+          "checkedMethodScores": [
+            {
+              "method": "direct",
+              "score": 7.9
+            },
+            {
+              "method": "type_sweep",
+              "score": 8.9
+            },
+            {
+              "method": "patterns",
+              "score": 6.3
+            },
+            {
+              "method": "sections",
+              "score": 7.8
+            }
+          ],
+          "checkedUnionScore": 8.9,
+          "strictGood": false
+        }
+      ],
+      "meanCheckedScore": 9.07,
+      "outcome": "rejected_section_sweep_regression"
+    }
+  ],
+  "aggregate": {
+    "cases": 5,
+    "deliveriesComplete": 5,
+    "strictGoodCases": 1,
+    "strictBadCases": 4,
+    "meanStrictScore": 9.38,
+    "worstStrictScore": 8.9,
+    "requiredIdentities": 125,
+    "retainedRequiredIdentities": 122,
+    "correctDispositionIdentities": 117,
+    "acceptedRows": 138,
+    "reviewRows": 11,
+    "rejectedRows": 293,
+    "acceptedRowsExactlyGrounded": 138,
+    "reviewRowsExactlyGrounded": 10,
+    "retainedLiteralOccurrences": 362,
+    "strictMissingEntries": 8,
+    "strictReviewDispositionMismatches": 5,
+    "strictAbsentLabels": 3,
+    "absentLabelsBreakdown": {
+      "noisySourceLabelOmitted": 1,
+      "ambiguousLabelRejectedInsteadOfReview": 1,
+      "nestedFamilyLabelAbsentWhileQualifiedProductRetained": 1
+    },
+    "unsupportedIndependentParentClaims": 5,
+    "acceptedNameStringsNotFoundInSource": 0,
+    "reviewNameStringsNotFoundInSource": 1
+  },
+  "remainingIssues": {
+    "absentRequiredNames": [
+      {
+        "ordinal": 2,
+        "name": "MacBook Air",
+        "detail": "Bare family label absent while the complete M2 MacBook Air label is retained."
+      },
+      {
+        "ordinal": 2,
+        "name": "Mac address",
+        "detail": "Ambiguous source phrase rejected instead of retained for review."
+      },
+      {
+        "ordinal": 2,
+        "name": "bm4",
+        "detail": "Noisy literal chip-context source spelling omitted."
+      }
+    ],
+    "retainedButUnexpectedReviewNames": [
+      "usba",
+      "Clara",
+      "Max studio",
+      "EXSS",
+      "Gabe"
+    ],
+    "acceptedParentPrefixesRequiringAudit": [
+      "LTT",
+      "FidelityFX",
+      "Snapdragon",
+      "PS5",
+      "Steam"
+    ],
+    "acceptedLiteralNamesNotFoundInSource": 0,
+    "reviewOnlyNonliteralSpelling": {
+      "ordinal": 20,
+      "returned": "SteamOS 3.8",
+      "sourceSpelling": "Steam OS 3.8",
+      "exactSourceVersionAlsoAccepted": true
+    },
+    "extraAcceptedLabelsAreNotBlanketFabricationEvidence": true
+  },
+  "budget": {
+    "maximumPerCallUsd": "0.100000000",
+    "dailyLimitUsd": "5.000000000",
+    "cumulativeLimitUsd": "10.000000000",
+    "experimentMaximumUsd": "1.000000000",
+    "experimentMaximumCalls": 120,
+    "sessionState": "closed",
+    "beforeCommitmentUsd": "3.551447750",
+    "newSettledUsd": "0.066610170",
+    "newUnknownCalls": 0,
+    "finalLedger": {
+      "calls": 367,
+      "committedUsd": 3.61805792,
+      "heldUsd": 0.013753066,
+      "settledUsd": 3.604304854,
+      "unknown": 4
+    },
+    "remainingCumulativeHeadroomUsd": "6.381942080",
+    "byModel": [
+      {
+        "calls": 54,
+        "model": "deepseek/deepseek-v4.1-flash-1017",
+        "settled_usd": 0.01738919,
+        "unknown": 0
+      },
+      {
+        "calls": 13,
+        "model": "openai/gpt-6-luna-pro",
+        "settled_usd": 0.04922098,
+        "unknown": 0
+      }
+    ],
+    "byStage": [
+      {
+        "stage": "v1_development",
+        "newCalls": 9,
+        "settledUsd": "0.012709210"
+      },
+      {
+        "stage": "v4_section_sweep",
+        "newCalls": 15,
+        "settledUsd": "0.010193246"
+      },
+      {
+        "stage": "baseline_live",
+        "newCalls": 24,
+        "settledUsd": "0.011789336"
+      },
+      {
+        "stage": "v2_development",
+        "newCalls": 9,
+        "settledUsd": "0.012558210"
+      },
+      {
+        "stage": "v3_final_validation",
+        "newCalls": 6,
+        "settledUsd": "0.006937673"
+      },
+      {
+        "stage": "v3_checker_revision",
+        "newCalls": 3,
+        "settledUsd": "0.010883975"
+      },
+      {
+        "stage": "v2_prompt_optimizer",
+        "newCalls": 1,
+        "settledUsd": "0.001538520"
+      }
+    ],
+    "maximumNewActualCallUsd": "0.005508920",
+    "maximumNewReservedCallUsd": "0.006460211",
+    "stageCostsCountEachDurableCallOnce": true,
+    "reportedMethodCostsMayBeReplayedAtZeroAdditionalSpend": true
+  },
+  "runtime": {
+    "globalSpendingEnabled": false,
+    "ownerSpendingEnabled": false,
+    "productionRuntimeEnabled": false,
+    "activeAIJobs": 0,
+    "evaluationSessionClosed": true,
+    "analysisDefaultModelChanged": false,
+    "twentyVideoGenerationStarted": false,
+    "backfillStarted": false,
+    "publishedOutputs": 0
+  },
+  "preservation": {
+    "checkedAt": "2026-10-27T17:43:02.049059+00:00",
+    "oldCallRowsPreservedExactly": 300,
+    "newCalls": 67,
+    "allNewCallsPrivateJobNull": true,
+    "allNewCallsSettled": true,
+    "stableOtherNativeGroups": [
+      "admissions",
+      "archive",
+      "attempts",
+      "audit",
+      "budget",
+      "comparisons",
+      "cooldowns",
+      "hourlyPolicies",
+      "jobs",
+      "pauses",
+      "policies",
+      "reviews",
+      "scopes",
+      "settings",
+      "supplierBudget",
+      "supplierReservations",
+      "workspaces"
+    ],
+    "concurrentExistingTelemetryGroups": [
+      "hourlyChecks",
+      "hourlyProviders",
+      "hourlySources",
+      "supplierJobs"
+    ],
+    "sourceArchivesPreserved": 498,
+    "workspacesPreserved": 3,
+    "aiJobsPreserved": 431,
+    "reviewsPreserved": 96,
+    "maxNewActualCallUsd": 0.00550892,
+    "maxNewReservedCallUsd": 0.006460211
+  },
+  "hostedClosedReadback": {
+    "checkedAt": "2026-10-27T17:44:23.265Z",
+    "privateReadAfterCloseStatus": 200,
+    "exactSavedResultSha256": "fcf087fc57b99ea514d77dc2380ea9691243fbe06b5a0c997d01a4240d333483",
+    "exactResultAndCostMatch": true,
+    "closedSessionPreflightStatus": 403,
+    "newProviderCalls": 0
+  },
+  "verification": {
+    "localTestsPassed": 2892,
+    "localTypecheckPassed": true,
+    "localBuildPassed": true,
+    "catalogueCheckPassed": true,
+    "serverCommit": "4688622",
+    "passedServerCI": "40548728462",
+    "independentReviewSha256": "a2e4bc75e0591b215ffadf657fbc6dd0cfa9d7e4ade34da9a43673167f946388",
+    "independentReviewChangedPromptsOrResults": false,
+    "independentReviewUsedPaidCalls": false,
+    "finalClientCommit": "d48ca9bb944387deec33386ee68f4714670177f9",
+    "finalClientPushed": true,
+    "finalClientCI": "40553826540",
+    "finalClientCIPassed": true,
+    "productionDeploy": {
+      "id": "6ae0e42bdef7821e774e9c33",
+      "state": "ready",
+      "commit": "d48ca9bb944387deec33386ee68f4714670177f9",
+      "publishedAt": "2026-10-27T17:50:06.503Z"
+    },
+    "releaseReadbackPrivateEvidence": "release-final.json"
+  },
+  "operationalCorrections": [
+    {
+      "issue": "Build-only CONTEXT unavailable in hosted function",
+      "fix": "Use configured HTTPS APP_URL origin equality, retaining authentication and finite session guards.",
+      "attemptsReachedProvider": false,
+      "newCostUsd": "0.000000000"
+    },
+    {
+      "issue": "Repeated checker verdict for the same name",
+      "fix": "Merge compatible duplicates host-side and retain conflicts; replay saved paid replies without additional model calls.",
+      "newCostUsd": "0.000000000"
+    },
+    {
+      "issue": "Incomplete initial alias/type reference audit",
+      "fix": "Version reference v2 and regrade every method/version uniformly without generating replacement answers.",
+      "newCostUsd": "0.000000000"
+    }
+  ],
+  "nextDecision": "Keep private; review parent/family boundaries and noisy-name acceptance before a newly held-out proof. No automatic twenty-video generation or production promotion."
+}

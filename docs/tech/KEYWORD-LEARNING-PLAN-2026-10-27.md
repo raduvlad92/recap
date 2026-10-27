@@ -1,5 +1,7 @@
 # Five-video named-mention improvement loop
 
+**Execution update:** the founder subsequently approved implementation/testing and raised the cumulative cap to US$10. [The completed experiment, scores and actual costs](KEYWORD-LEARNING-RESULTS-2026-10-27.md) supersede the earlier unrun status and US$5 ceiling below. The original proposal is retained as the design checkpoint.
+
 27 October 2026. **Proposed workflow; no new paid experiment or production change has run.** The founder wants five saved transcripts, a 1–10 quality score, diagnosis of failures, better prompts and repeated comparison. The founder clarified the target: **every named mention, including brief mentions and ads**. Importance, airtime and frequency must not decide inclusion.
 
 Use a small evaluation runner and versioned prompt/result files in the existing project. Keep production analysis, twenty-video generation and backfill paused during development. This is prompt improvement with saved feedback, not training new model weights or letting a live service rewrite its own rules indefinitely.

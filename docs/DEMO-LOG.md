@@ -1,5 +1,13 @@
 # Demo and evidence log
 
+## 27 October 2026 — five-case keyword learning executed and closed
+
+Type: actual private model evaluation, independent assistant source review, exact saved-response replay and durable financial/source preservation; not publication or general model-quality proof. [Results](tech/KEYWORD-LEARNING-RESULTS-2026-10-27.md). Old process: one complete case, four delivery failures (three exact earlier paid-response replays plus two fresh baseline runs). New selected version: all five complete, scores 9.5/8.9/9.5/9.7/9.3, mean 9.38; 122/125 required identities retained and all 138 accepted labels literal. Only one strict pass. Reference v2 is assistant-audited, not exhaustive human gold; original-video capture remains partial/unverified.
+
+Three finite improvement candidates were assessed: extraction rewrite rejected, checker revision retained, fourth section sweep rejected. Duplicate checker decisions now coalesce conservatively with original verdict audit; conflicts stay private review. Source-audit corrections were applied uniformly before final scoring. The selected version was frozen before withheld cases 10/20; later revisions must use reserve cases for new validation. Exact cached inputs/results were reused without rebilling. No output was published and no twenty-video run/backfill began.
+
+Actual new cost **US$0.066610170/67 settled calls**, no new hold. DeepSeek 54/US$0.017389190; Luna 13/US$0.049220980. Cumulative commitment US$3.618057920 includes unchanged old holds US$0.013753066; lifetime cap US$10, daily US$5 and call US$0.10. Maximum new actual call US$0.005508920. The finite US$1 session is closed; global/owner/runtime analysis remains Off. Hosted private-result reread after closure matches exact result and charge; closed-session preflight 403 and unauthorized read 401. Native preservation proves all 300 old call rows, 498 archives, 431 AI jobs, three workspaces and 96 reviews exact; four existing collection-telemetry groups changed independently. Local 2,892 tests/build/catalogue/typecheck pass; Final functional `d48ca9b` is pushed with passing CI40553826540; exact production deploy `6ae0e42bdef7821e774e9c33` matches that commit and is ready/published at 17:50:06 UTC.
+
 ## 27 October 2026 — keyword-learning implementation, budget and guarded migration
 
 Founder authorized implementation/testing and raised the cumulative model evaluation ceiling to US$10. Actual rollback plus separate committed readback verify global and existing-owner lifetime caps of US$10, with daily US$5/per-call US$0.10 and production spending flags Off. Starting 300 calls/four unresolved holds/US$3.551447750 commitment remain unchanged. No fresh model call has run at this checkpoint.
