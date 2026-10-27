@@ -167,6 +167,22 @@ describe('OpenRouter analysis adapter, synthetic responses only',()=>{
    await vi.advanceTimersByTimeAsync(45000);await rejected;expect(fetcher).toHaveBeenCalledTimes(1);
   }finally{vi.useRealTimers();}
  });
+ it('uses a bounded explicit 120 second deadline for both SDK and independent abort, without retry',async()=>{
+  vi.useFakeTimers();
+  try{
+   const create=vi.fn().mockImplementation(()=>new Promise(()=>{})),factory=(()=>({chat:{completions:{create}}})) as unknown as OpenAIClientFactory;
+   const pending=createOpenRouterAnalysisGenerator(env(),factory,{timeoutMs:120000})({...request,key:'keyword-learning:v1:background-slow'});
+   const rejected=expect(pending).rejects.toThrow('analysis_provider_timeout');
+   await vi.advanceTimersByTimeAsync(45000);
+   expect(create).toHaveBeenCalledTimes(1);expect(create.mock.calls[0][1]).toMatchObject({maxRetries:0,timeout:120000});
+   const signal=create.mock.calls[0][1].signal as AbortSignal;expect(signal.aborted).toBe(false);
+   await vi.advanceTimersByTimeAsync(74999);expect(signal.aborted).toBe(false);
+   await vi.advanceTimersByTimeAsync(1);await rejected;expect(signal.aborted).toBe(true);expect(create).toHaveBeenCalledTimes(1);
+  }finally{vi.useRealTimers();}
+ });
+ it.each([0,-1,120001,1.5,NaN,Infinity,'120000',null])('rejects an invalid explicit transport deadline %j before client construction',timeoutMs=>{
+  const sdk=injected();expect(()=>createOpenRouterAnalysisGenerator(env(),sdk.factoryArg,{timeoutMs} as never)).toThrow('analysis_configuration_required');expect(sdk.factory).not.toHaveBeenCalled();
+ });
 });
 describe('pure analysis execution identity contract',()=>{
  it('returns the exact stable non-secret identity shape and never reads keys',()=>{

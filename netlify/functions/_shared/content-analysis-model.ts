@@ -157,7 +157,9 @@ function openRouterUsage(value:unknown):AnalysisUsage|undefined {
  * Provider names, when returned, are display names rather than endpoint slugs. Missing metadata stays unknown.
  * https://openrouter.ai/docs/api/api-reference/chat/create-a-chat-completion
  */
-export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:OpenAIClientFactory=options=>new OpenAI(options)):AnalysisGenerator {
+export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:OpenAIClientFactory=options=>new OpenAI(options),options:{timeoutMs?:number}={}):AnalysisGenerator {
+ const timeoutMs=options.timeoutMs===undefined?45000:options.timeoutMs;
+ if(!Number.isSafeInteger(timeoutMs)||timeoutMs<1||timeoutMs>120000)return analysisFailure('analysis_configuration_required');
  const limits=analysisLimits(env),identity=analysisExecutionIdentity(env,limits),key=env('OPENROUTER_API_KEY');
  if(identity.route!=='openrouter')return analysisFailure('analysis_provider_not_verified');
  if(!key?.trim())return analysisFailure('analysis_credentials_required');
@@ -203,11 +205,11 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
     expired=true;
     reject(httpStatus===undefined?new AnalysisError('analysis_provider_timeout'):new AnalysisProviderHttpError(httpStatus,rejection,'analysis_provider_timeout'));
     controller.abort();
-   },45000);
+   },timeoutMs);
   });
   let result:unknown;
   // Promise.race observes late success/rejection even if a transport ignores abort.
-  try{result=await Promise.race([Promise.resolve().then(()=>requestClient.chat.completions.create(payload,{maxRetries:0,timeout:45000,signal:controller.signal})),deadline]);}
+  try{result=await Promise.race([Promise.resolve().then(()=>requestClient.chat.completions.create(payload,{maxRetries:0,timeout:timeoutMs,signal:controller.signal})),deadline]);}
   catch(error){throw safeProviderFailure(error,'openrouter');}
   finally{clearTimeout(timer);}
   const raw=object(result);

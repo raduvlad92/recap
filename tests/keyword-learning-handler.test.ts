@@ -1,6 +1,7 @@
 import { describe,expect,it,vi } from 'vitest';
 import { createKeywordLearningHandler,parseKeywordLearningInput } from '../netlify/functions/_shared/keyword-learning';
 import { AnalysisError,createOpenRouterAnalysisGenerator,type GenerationResult,type OpenAIClientFactory } from '../netlify/functions/_shared/content-analysis-model';
+import * as modelAdapter from '../netlify/functions/_shared/content-analysis-model';
 import { analysisRuntimeEnv } from '../netlify/functions/_shared/content-analysis-runtime';
 import { createHash } from 'node:crypto';
 
@@ -15,7 +16,7 @@ function fixture(patch:Record<string,unknown>={},generateOnly=false){
  const db={from:tables,rpc},env=(key:string)=>({APP_URL:'https://example.test',CONTENT_ANALYSIS_ENABLED:'false',OPENROUTER_API_KEY:'synthetic-unused-fixture'}[key]);
  const handler=createKeywordLearningHandler({env,db:()=>db as never,authorize,workerAuthorized,generator:()=>generate,...patch},{generateOnly});
  const send=(body:unknown=input,url='https://example.test/.netlify/functions/keyword-learning')=>handler(new Request(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}));
- return {handler,send,generate,authorize,workerAuthorized,rpc,tables};
+ return {handler,send,generate,authorize,workerAuthorized,rpc,tables,env,db};
 }
 describe('private keyword evaluation handler, synthetic adapters only',()=>{
  it('accepts the configured HTTPS app without the build-only CONTEXT variable',async()=>{
@@ -33,14 +34,14 @@ describe('private keyword evaluation handler, synthetic adapters only',()=>{
  });
  it('preflights the exact source/model/request without reserving money or calling a model',async()=>{
   const f=fixture(),r=await f.send({...input,action:'preflight'}),body=await r.json();
-  expect(r.status).toBe(200);expect(body).toMatchObject({preflight:true,providerCall:false,reserved:false});expect(body.maximumUsd).toBeGreaterThan(0);expect(body.maximumUsd).toBeLessThan(.1);expect(body.requestHash).toMatch(/^[a-f0-9]{64}$/);
+  expect(r.status).toBe(200);expect(body).toMatchObject({preflight:true,providerCall:false,reserved:false,maximumUsd:.1});expect(body.requestHash).toMatch(/^[a-f0-9]{64}$/);
   expect(f.rpc).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
  });
  it('reserves exact durable binding before generation and records billable output',async()=>{
   const f=fixture(),r=await f.send(),body=await r.json();
   expect(r.status).toBe(200);expect(body).toMatchObject({providerCall:true,result});
   expect(f.rpc.mock.calls[0][0]).toBe('reserve_keyword_learning_call');expect(f.rpc.mock.calls[1][0]).toBe('record_keyword_learning_call');
-  expect(f.rpc.mock.calls[0][1]).toMatchObject({p_source_hash:sourceHash,p_model:input.model,p_request:{request:input.request}});
+  expect(f.rpc.mock.calls[0][1]).toMatchObject({p_source_hash:sourceHash,p_model:input.model,p_maximum_usd:.1,p_request:{request:input.request}});
   expect(f.generate).toHaveBeenCalledExactlyOnceWith(input.request);expect(r.headers.get('cache-control')).toBe('no-store');
  });
  it('never sends again when reservation returns an existing unsettled request',async()=>{
@@ -58,6 +59,25 @@ describe('private keyword evaluation handler, synthetic adapters only',()=>{
  it('the background entry still rejects unauthorized requests before reading any session',async()=>{
   const f=fixture({workerAuthorized:()=>false,authorize:vi.fn().mockRejectedValue(new Error('denied'))},true);
   expect((await f.send(input,'https://example.test/.netlify/functions/keyword-learning-worker')).status).toBe(502);expect(f.tables).not.toHaveBeenCalled();expect(f.rpc).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
+ });
+ it('limits the longer default transport to an explicitly configured generate-only worker',async()=>{
+  const f=fixture(),generate=vi.fn().mockResolvedValue(result),openrouter=vi.spyOn(modelAdapter,'createOpenRouterAnalysisGenerator').mockReturnValue(generate),gateway=vi.spyOn(modelAdapter,'createGatewayGenerator').mockReturnValue(generate);
+  const deps={env:f.env,db:()=>f.db as never,authorize:f.authorize,workerAuthorized:f.workerAuthorized};
+  try{
+   const worker=createKeywordLearningHandler(deps,{generateOnly:true,generationTimeoutMs:120000});
+   await worker(new Request('https://example.test/.netlify/functions/keyword-learning-worker',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(input)}));
+   expect(openrouter).toHaveBeenCalledExactlyOnceWith(expect.any(Function),undefined,{timeoutMs:120000});expect(gateway).not.toHaveBeenCalled();expect(generate).toHaveBeenCalledExactlyOnceWith(input.request);
+   openrouter.mockClear();generate.mockClear();
+   await createKeywordLearningHandler(deps)(new Request('https://example.test/.netlify/functions/keyword-learning',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(input)}));
+   expect(gateway).toHaveBeenCalledExactlyOnceWith(expect.any(Function));expect(openrouter).not.toHaveBeenCalled();expect(generate).toHaveBeenCalledExactlyOnceWith(input.request);
+  }finally{openrouter.mockRestore();gateway.mockRestore();}
+ });
+ it('preserves injected generators when the background transport has a longer deadline',async()=>{
+  const f=fixture(),handler=createKeywordLearningHandler({env:f.env,db:()=>f.db as never,authorize:f.authorize,workerAuthorized:f.workerAuthorized,generator:()=>f.generate},{generateOnly:true,generationTimeoutMs:120000});
+  await handler(new Request('https://example.test/.netlify/functions/keyword-learning-worker',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(input)}));expect(f.generate).toHaveBeenCalledExactlyOnceWith(input.request);
+ });
+ it.each([{generationTimeoutMs:120000},{generateOnly:true,generationTimeoutMs:120001},{generateOnly:true,generationTimeoutMs:0},{generateOnly:true,generationTimeoutMs:NaN}])('rejects an unsafe worker-only transport option %j before dispatch',options=>{
+  const f=fixture();expect(()=>createKeywordLearningHandler({db:()=>f.db as never},options)).toThrow('analysis_configuration_required');expect(f.rpc).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
  });
  it.each(['settled','unknown'] as const)('a background reinvocation cannot resend the same %s request',async state=>{
   const f=fixture({},true),rpc=f.rpc.getMockImplementation()!;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error Private evaluation preparation is a standalone JS tool.
-import { validateLiteralInventory, findLiteralNameOccurrences, minePatternNames, combineKeywordInventories, resolveKeywordCheckerVerdicts, scoreKeywordInventory, compareKeywordMethods } from '../scripts/lib/keyword-learning.mjs';
+import { validateLiteralInventory, findLiteralNameOccurrences, minePatternNames, combineKeywordInventories, resolveKeywordCheckerVerdicts, applyKeywordBoundaryGuards, scoreKeywordInventory, compareKeywordMethods } from '../scripts/lib/keyword-learning.mjs';
 
 const inventory = (names: string[], uncertainNames: string[] = []) => ({ names, uncertainNames });
 const source = 'AeroBox supports C++ and C#. AeroBox 2 sponsors this. Finally NovaPay.';
@@ -72,6 +72,15 @@ describe('literal keyword inventories and source evidence', () => {
     expect(names.every((name: string) => content.includes(name))).toBe(true);
     expect(minePatternNames('Visit https://novapay.com/offer.').names).toContain('novapay.com');
   });
+  it('supplies lowercase mixed-letter/digit candidates without guessing names or splitting their tokens', () => {
+    const content = 'Try q9, ab17x and ö7. Compare q9x with rev4.2. ordinary words and 42 are not model candidates.';
+    const names = minePatternNames(content).names;
+    for (const name of ['q9', 'ab17x', 'ö7', 'q9x', 'rev4.2']) expect(names).toContain(name);
+    expect(names).not.toContain('ordinary');
+    expect(names).not.toContain('42');
+    expect(minePatternNames('Only q9x is written.').names).not.toContain('q9');
+    expect(names.every((name: string) => findLiteralNameOccurrences(content, name).length)).toBe(true);
+  });
   it('unions singleton and uncertain names without merging model families or guessing aliases', () => {
     const union = combineKeywordInventories(source, [{ method: 'direct', output: inventory(['AeroBox', 'AeroBox 2']) },
       { method: 'types', output: inventory(['AeroBox'], ['NovaPay']) }, { method: 'patterns', output: inventory(['C#', 'Nonexistent']) }]);
@@ -122,6 +131,62 @@ describe('checker verdict normalization with preserved original judgments', () =
     const resolved = run({ readComplete: true, decisions: [verdict('AbsentName')], missingNames: [] }, ['AbsentName']);
     expect(resolved.rows[0]).toMatchObject({ disposition: 'review', hostReviewReason: 'literal_name_not_in_source', verdictCount: 1 });
     expect(resolved.rows[0].originalVerdicts[0].verdict.disposition).toBe('accepted');
+  });
+});
+
+describe('optional source-only keyword boundary guards', () => {
+  const row = (name: string, kind = 'brand', disposition = 'accepted') => ({ name, kind, disposition,
+    reason: 'Original checker judgment.', originalVerdicts: [{ section: 'decisions', index: 0,
+      verdict: { name, kind, disposition, reason: 'Original checker judgment.' } }] });
+  it('rejects a prefix only when every exact occurrence starts a longer accepted name, preserving audit', () => {
+    const rows = [row('Aero'), row('Aero Labs', 'organization')], before = JSON.stringify(rows);
+    const result = applyKeywordBoundaryGuards({ content: 'Aero Labs tests units. Return to Aero Labs.', rows });
+    expect(result.rows[0]).toMatchObject({ name: 'Aero', disposition: 'rejected',
+      hostBoundaryOriginalDisposition: 'accepted', hostBoundaryGuard: {
+        code: 'only_prefix_of_longer_accepted_name', occurrenceCount: 2, longerNames: ['Aero Labs'] } });
+    expect(result.rows[0].originalVerdicts).toEqual(rows[0].originalVerdicts);
+    expect(result.rows[0].originalVerdicts[0].verdict.disposition).toBe('accepted');
+    expect(result.rows[1].disposition).toBe('accepted');
+    expect(result.changes).toMatchObject([{ name: 'Aero', from: 'accepted', to: 'rejected' }]);
+    expect(JSON.stringify(rows)).toBe(before);
+  });
+  it('retains independently named parents and does not use rejected, review or nonexistent longer names', () => {
+    expect(applyKeywordBoundaryGuards({ content: 'Aero runs Aero Labs.', rows: [row('Aero'), row('Aero Labs', 'organization')] }).changes).toEqual([]);
+    for (const disposition of ['review', 'rejected']) {
+      expect(applyKeywordBoundaryGuards({ content: 'Aero Labs runs.', rows: [row('Aero'), row('Aero Labs', 'organization', disposition)] }).changes).toEqual([]);
+    }
+    expect(applyKeywordBoundaryGuards({ content: 'Aero runs.', rows: [row('Aero'), row('Aero Labs', 'organization')] }).changes).toEqual([]);
+    expect(applyKeywordBoundaryGuards({ content: 'Aero Labs runs.', rows: [row('Aero', 'brand', 'review'), row('Aero Labs', 'organization')] }).changes).toEqual([]);
+  });
+  it('preserves named processors, configurations, standards, numeric versions and possessive owners', () => {
+    const content = "q9 FalconBook uses Link 4.2 and 12pin 4x8 cable. Mira's Studio tests them.";
+    const rows = [row('q9', 'chip_model'), row('q9 FalconBook', 'product_variant'), row('FalconBook', 'product'),
+      row('Link', 'standard'), row('Link 4.2', 'standard'), row('12pin 4x8', 'standard'), row('12pin 4x8 cable', 'product'),
+      row('Mira', 'person'), row("Mira's Studio", 'organization')];
+    expect(applyKeywordBoundaryGuards({ content, rows }).changes).toEqual([]);
+  });
+  it('does not exempt arbitrary product-family prefixes or technology fragments', () => {
+    const rows = [row('Box7', 'product_family'), row('Box7 Pro', 'product'), row('Render', 'technology'), row('Render Super Resolution', 'technology')];
+    const result = applyKeywordBoundaryGuards({ content: 'Box7 Pro uses Render Super Resolution.', rows });
+    expect(result.changes.map((change: {name: string}) => change.name)).toEqual(['Box7', 'Render']);
+  });
+  it('drops only a domain-typed malformed wrapper when its source-exact bare host is separately accepted', () => {
+    const rows = [row('novapay.test/sale', 'domain', 'review'), row('novapay.test', 'domain')];
+    const result = applyKeywordBoundaryGuards({ content: 'Visit novapay.test/sale.', rows });
+    expect(result.rows[0]).toMatchObject({ disposition: 'rejected', hostBoundaryOriginalDisposition: 'review',
+      hostBoundaryGuard: { code: 'domain_wrapper_with_retained_host', retainedHost: 'novapay.test' } });
+    expect(result.rows[1].disposition).toBe('accepted');
+    expect(result.changes).toHaveLength(1);
+    expect(applyKeywordBoundaryGuards({ content: 'novapay.test sale', rows: [row('novapay.test sale', 'domain'), row('novapay.test', 'domain')] }).changes).toHaveLength(1);
+  });
+  it('keeps unresolved hosts and other kinds instead of guessing a domain or removing an unsupported normalization', () => {
+    for (const rows of [
+      [row('novapay.test/sale', 'domain')],
+      [row('novapay.test/sale', 'domain'), row('novapay.test', 'domain', 'review')],
+      [row('novapay.test/sale', 'product'), row('novapay.test', 'domain')],
+      [row('NovaPay Service', 'domain'), row('novapay.test', 'domain')],
+    ]) expect(applyKeywordBoundaryGuards({ content: 'Visit novapay.test/sale.', rows }).changes).toEqual([]);
+    expect(() => applyKeywordBoundaryGuards({ content: source, rows: [{ name: 'Aero', disposition: 'maybe' }] })).toThrow('invalid_keyword_boundary_input');
   });
 });
 

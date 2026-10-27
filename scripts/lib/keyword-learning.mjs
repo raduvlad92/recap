@@ -98,6 +98,7 @@ export function minePatternNames(content) {
   const patterns = [
     /(?<![\p{L}\p{N}_@])(?:https?:\/\/)?(?:www\.)?[\p{L}\p{N}](?:[\p{L}\p{N}-]*[\p{L}\p{N}])?(?:\.[\p{L}\p{N}](?:[\p{L}\p{N}-]*[\p{L}\p{N}])?)*\.[\p{L}]{2,24}(?:\/[\p{L}\p{N}_~.\/-]*)?/gu,
     /(?<![\p{L}\p{N}_])@[\p{L}\p{N}_][\p{L}\p{N}_.-]*/gu,
+    /(?<![\p{L}\p{M}\p{N}_+#])\p{Ll}[\p{L}\p{M}]*\p{N}[\p{L}\p{M}\p{N}_.+-]*/gu,
     /(?<![\p{L}\p{M}\p{N}_+#])[\p{Lu}]{2,12}[ \t]+\p{N}+[\p{L}\p{N}.+-]*(?:[ \t]+(?:Pro|Max|Plus|Ti|Super))?/gu,
     /(?<![\p{L}\p{M}\p{N}_+#])[\p{Lu}][\p{L}\p{M}\p{N}_+#.-]*/gu,
     /(?<![\p{L}\p{M}\p{N}_+#])(?:[\p{Lu}][\p{L}\p{M}\p{N}_+#.-]*)(?:[ \t]+(?:[\p{Lu}][\p{L}\p{M}\p{N}_+#.-]*|\p{N}+[\p{L}\p{N}.+-]*)){0,3}/gu,
@@ -172,6 +173,60 @@ export function resolveKeywordCheckerVerdicts({ content, value, names }) {
     rows.push(row);
   }
   return { rows, duplicateVerdicts, conflicts };
+}
+
+/** Optional, source-only boundary checks after AI checking. These neither add
+ * names nor resolve entities. Preserve original verdicts and explain each
+ * changed disposition so counterfactual grades remain reproducible. */
+export function applyKeywordBoundaryGuards({ content, rows }) {
+  if (typeof content !== 'string' || !Array.isArray(rows) || rows.some(row => !isObject(row)
+    || !validName(row.name) || !['accepted', 'review', 'rejected'].includes(row.disposition))) {
+    throw fail('invalid_keyword_boundary_input');
+  }
+  const guarded = rows.map(row => ({ ...row })), changes = [];
+  const reject = (row, code, evidence) => {
+    const change = { name: row.name, from: row.disposition, to: 'rejected', code, ...evidence };
+    row.hostBoundaryOriginalDisposition = row.disposition;
+    row.hostBoundaryGuard = { code, ...evidence };
+    row.disposition = 'rejected'; changes.push(change);
+  };
+  // A separately retained exact host permits dropping only its malformed
+  // domain-typed wrapper. Do this first: the wrapper must not erase that host
+  // in the prefix check below. Other kinds and unresolved hosts remain intact.
+  for (const row of guarded) {
+    if (row.disposition === 'rejected' || row.kind !== 'domain' || !/[\/\s]/u.test(row.name)) continue;
+    const host = /^(?:https?:\/\/)?((?:[\p{L}\p{N}](?:[\p{L}\p{N}-]*[\p{L}\p{N}])?\.)+[\p{L}]{2,24})(?=[\/\s]|$)/u.exec(row.name)?.[1];
+    if (host && guarded.some(other => other.name === host && other.kind === 'domain'
+      && other.disposition === 'accepted' && findLiteralNameOccurrences(content, host).length)) {
+      reject(row, 'domain_wrapper_with_retained_host', { retainedHost: host });
+    }
+  }
+  const accepted = guarded.filter(row => row.disposition === 'accepted')
+    .map(row => ({ row, occurrences: findLiteralNameOccurrences(content, row.name) }));
+  for (const { row, occurrences } of accepted) {
+    // A literal domain remains a named host inside a URL regardless of how
+    // another checker row classified that URL; never delete the bare host.
+    if (!occurrences.length || row.kind === 'domain') continue;
+    const containers = occurrence => accepted.filter(other => other.row.name !== row.name
+      && other.occurrences.some(span => span.start === occurrence.start && span.end > occurrence.end));
+    if (!occurrences.every(occurrence => containers(occurrence).length)) continue;
+    const independentlyNamedConstituent = occurrences.some(occurrence => containers(occurrence).some(other => {
+      const suffix = other.row.name.slice(row.name.length);
+      return /^['’]s(?:\s|$)/u.test(suffix)
+        || row.kind === 'chip_model' && ['product', 'product_variant', 'product_family'].includes(other.row.kind)
+        || /^\s+(?:cables?|connectors?|ports?|chips?|processors?|GPUs?|CPUs?|SSDs?|cards?)$/iu.test(suffix)
+        || ['standard', 'technology'].includes(row.kind)
+          && ['standard', 'technology_version'].includes(other.row.kind)
+          && /^\s+\d+(?:\.\d+)*(?:[a-z])?$/iu.test(suffix);
+    }));
+    if (!independentlyNamedConstituent) {
+      reject(row, 'only_prefix_of_longer_accepted_name', {
+        occurrenceCount: occurrences.length,
+        longerNames: [...new Set(occurrences.flatMap(occurrence => containers(occurrence).map(other => other.row.name)))],
+      });
+    }
+  }
+  return { rows: guarded, changes };
 }
 
 function prepareReference(content, reference) {

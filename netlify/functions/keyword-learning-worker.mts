@@ -5,4 +5,4 @@ import { createKeywordLearningHandler } from './_shared/keyword-learning';
  * establishes completion. A platform retry reuses the same reservation key,
  * so an existing settled or unresolved request never calls the model again. */
 export const config: Config = { background: true };
-export default createKeywordLearningHandler({}, { generateOnly: true });
+export default createKeywordLearningHandler({}, { generateOnly: true, generationTimeoutMs: 120000 });

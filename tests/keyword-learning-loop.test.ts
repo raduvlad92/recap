@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest';
 // @ts-expect-error CLI helper has no runtime dependencies.
-import {keywordLoopControls,summarizeKeywordLoopReports,chooseKeywordLoopChampion,validateKeywordLoopLessons,assertKeywordLoopBudget,waitForKeywordLearningReceipt} from '../scripts/lib/keyword-learning-loop.mjs';
+import {keywordLoopControls,summarizeKeywordLoopReports,chooseKeywordLoopChampion,validateKeywordLoopLessons,assertKeywordLoopBudget,waitForKeywordLearningReceipt,keywordCheckerDeliveryEvidence} from '../scripts/lib/keyword-learning-loop.mjs';
 
 const report=(ordinal:number,score=9,missing=1,unexpected=0)=>({ordinal,checker:{status:'complete',score:{score,good:missing===0&&unexpected===0,missing:Array(missing).fill({}),unsupportedAccepted:Array(unexpected).fill('extra'),unexpected:Array(unexpected).fill({})}}});
 describe('bounded keyword learning selection',()=>{
@@ -57,5 +57,15 @@ describe('read-only polling of background results',()=>{
  it('never redispatches an unobserved or still-reserved request',async()=>{
   await expect(waitForKeywordLearningReceipt(async()=>null,{...clock(),missingTimeoutMs:2000})).rejects.toThrow('keyword_learning_dispatch_not_observed');
   await expect(waitForKeywordLearningReceipt(async()=>({completed:false,call:{state:'reserved'}}),{...clock(),timeoutMs:3000})).rejects.toThrow('keyword_learning_background_result_pending_do_not_redispatch');
+ });
+});
+describe('delivery failures remain usable learning evidence',()=>{
+ it('preserves a known-settled malformed/capacity response without copying its raw body into optimizer evidence',()=>{
+  for(const validationError of ['analysis_invalid_json','analysis_output_capacity']){
+   const checker={status:'failed',score:null,errorCode:validationError,generated:{validationError,actualUsd:0.004,value:{rawOutput:'x'.repeat(28000)}}};
+   const evidence=keywordCheckerDeliveryEvidence(checker);
+   expect(evidence).toEqual({checkerStatus:'failed',checkerErrorCode:validationError,validationError,rawOutputLength:28000});
+   expect(JSON.stringify(evidence)).not.toContain('xxxxx');
+  }
  });
 });

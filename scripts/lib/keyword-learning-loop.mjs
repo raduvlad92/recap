@@ -2,6 +2,12 @@
  * Model calls and their money ledger stay in the existing evaluation runner. */
 const fail = code => { throw Error(code); };
 const safeInteger = (value, min, max) => Number.isSafeInteger(value) && value >= min && value <= max;
+/** Compact operational evidence stays visible even when semantic scoring is N/A. */
+export function keywordCheckerDeliveryEvidence(checker) {
+  return { checkerStatus: checker?.status ?? 'not_run', checkerErrorCode: checker?.errorCode ?? null,
+    validationError: checker?.generated?.validationError ?? checker?.validationError ?? null,
+    rawOutputLength: typeof checker?.generated?.value?.rawOutput === 'string' ? checker.generated.value.rawOutput.length : checker?.rawOutputLength ?? null };
+}
 export function keywordLoopControls(value = {}) {
   const controls = { maxRounds: 12, maxNewCalls: 240, maxNewUsd: 1, noProgressLimit: 4, ...value };
   if (!safeInteger(controls.maxRounds, 1, 100) || !safeInteger(controls.maxNewCalls, 1, 1000)
@@ -65,7 +71,7 @@ export function assertKeywordLoopBudget({ usedCalls, committedUsd, nextMaximumUs
   if (committedUsd + nextMaximumUsd > controls.maxNewUsd + 1e-12) fail('keyword_loop_spend_limit');
 }
 /** Read only after a background dispatch: polling never retries generation. */
-export async function waitForKeywordLearningReceipt(read, { now = Date.now, sleep = ms => new Promise(resolve => setTimeout(resolve, ms)), timeoutMs = 75000, missingTimeoutMs = 15000 } = {}) {
+export async function waitForKeywordLearningReceipt(read, { now = Date.now, sleep = ms => new Promise(resolve => setTimeout(resolve, ms)), timeoutMs = 150000, missingTimeoutMs = 15000 } = {}) {
   const started = now();
   while (now() - started < timeoutMs) {
     const receipt = await read(Math.max(1, Math.min(15000, timeoutMs - (now() - started))));

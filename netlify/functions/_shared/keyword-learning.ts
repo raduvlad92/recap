@@ -3,7 +3,7 @@ import { isIP } from 'node:net';
 import { database, requireAdmin } from './admin-data';
 import { analysisWorkerAuthorized, analysisRequestHash } from './content-analysis';
 import { analysisRuntimeEnv } from './content-analysis-runtime';
-import { analysisExecutionIdentity, analysisLimits, conservativeCallUsd, createGatewayGenerator, AnalysisError, type AnalysisGenerator, type GenerationRequest, type GenerationResult } from './content-analysis-model';
+import { analysisExecutionIdentity, analysisLimits, conservativeCallUsd, createGatewayGenerator, createOpenRouterAnalysisGenerator, AnalysisError, type AnalysisGenerator, type GenerationRequest, type GenerationResult } from './content-analysis-model';
 import { ANALYSIS_MODEL_IDS } from '../../../src/lib/analysis-settings-types';
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
 
@@ -65,8 +65,10 @@ const response=(value:unknown,status=200)=>{const r=json(value,status);r.headers
 /** Deliberately separate from production queue flags. Only a manually released,
  * finite private session authorizes inference, while the shared durable ledger
  * still enforces all aggregate/day/owner/per-call monetary ceilings. */
-export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},options:{generateOnly?:boolean}={}) {
- const deps:Dependencies={env:runtimeEnv,db:()=>database(overrides.env||runtimeEnv),authorize:requireAdmin,workerAuthorized:analysisWorkerAuthorized,generator:createGatewayGenerator,...overrides};
+export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},options:{generateOnly?:boolean;generationTimeoutMs?:number}={}) {
+ if(options.generationTimeoutMs!==undefined&&(!options.generateOnly||!Number.isSafeInteger(options.generationTimeoutMs)||options.generationTimeoutMs<1||options.generationTimeoutMs>120000))throw new AnalysisError('analysis_configuration_required');
+ const generator=(env:Env)=>options.generationTimeoutMs===undefined?createGatewayGenerator(env):createOpenRouterAnalysisGenerator(env,undefined,{timeoutMs:options.generationTimeoutMs});
+ const deps:Dependencies={env:runtimeEnv,db:()=>database(overrides.env||runtimeEnv),authorize:requireAdmin,workerAuthorized:analysisWorkerAuthorized,generator,...overrides};
  return async(request:Request):Promise<Response>=>{
   try {
    if(request.method!=='POST')return response({error:{code:'method_not_allowed'}},405);
@@ -83,8 +85,12 @@ export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},
    const input=parseKeywordLearningInput(body);
    await sourceFor(db,input);
    const env=analysisRuntimeEnv(deps.env,input.model,1),limits=analysisLimits(env),identity=analysisExecutionIdentity(env,limits);
-   const maximumUsd=conservativeCallUsd(input.request,limits);
-   if(maximumUsd>.10||maximumUsd>limits.maxCallUsd)return fail('analysis_call_limit',402);
+   const estimateUsd=conservativeCallUsd(input.request,limits);
+   if(estimateUsd>.10||estimateUsd>limits.maxCallUsd)return fail('analysis_call_limit',402);
+   // These private tests reserve the whole approved per-call allowance. A live
+   // response reported a charge above its token estimate; that estimate must
+   // not make aggregate/session headroom appear available before settlement.
+   const maximumUsd=Math.min(.10,limits.maxCallUsd);
    const generationHash=analysisRequestHash(input.request,identity,{responseModel:env('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:env('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')});
    const requestHash=hash(JSON.stringify({generationHash,sourceOrdinal:input.sourceOrdinal,sourceHash:input.sourceHash,originalKey:input.originalKey??null,key:input.request.key}));
    if(input.action==='preflight')return response({preflight:true,maximumUsd,requestHash,executionIdentity:identity,providerCall:false,reserved:false});
