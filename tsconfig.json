@@ -24,6 +24,7 @@
     "src",
     "netlify",
     "tests",
+    "scripts/keyword-learning.mts",
     "vite.config.ts"
   ]
 }

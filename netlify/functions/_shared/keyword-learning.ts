@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { isIP } from 'node:net';
 import { database, requireAdmin } from './admin-data';
 import { analysisWorkerAuthorized, analysisRequestHash } from './content-analysis';
 import { analysisRuntimeEnv } from './content-analysis-runtime';
@@ -12,6 +13,19 @@ export const KEYWORD_LEARNING_KEY=/^keyword-learning:v1:[A-Za-z0-9._:-]{1,120}$/
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const fail=(code:string,status=400):never=>{throw new CollectionError(status,code,'The private keyword evaluation could not proceed.');};
 const hash=(value:string)=>createHash('sha256').update(value).digest('hex');
+/** CONTEXT is a Netlify build setting, not a reliable function-runtime value.
+ * Bind this endpoint to the configured HTTPS app origin instead. Authentication
+ * and the finite released database session independently remain mandatory. */
+function configuredAppRequest(request:Request,env:Env):boolean {
+ const configured=env('APP_URL');
+ if(!configured)return false;
+ try{
+  const app=new URL(configured),actual=new URL(request.url),host=app.hostname.toLowerCase();
+  return app.protocol==='https:'&&!app.username&&!app.password&&!app.search&&!app.hash
+   &&(!app.port||app.port==='443')&&host.includes('.')&&!isIP(host.replace(/^\[|\]$/g,''))
+   &&!/(?:^|\.)(?:localhost|local|internal)$/.test(host)&&actual.origin===app.origin;
+ }catch{return false;}
+}
 export interface KeywordLearningInput {
  action:'generate'|'preflight';sessionId:string;sourceOrdinal:number;sourceHash:string;model:string;request:GenerationRequest;originalKey?:string;
 }
@@ -57,7 +71,7 @@ export function createKeywordLearningHandler(overrides:Partial<Dependencies>={})
   try {
    if(request.method!=='POST')return response({error:{code:'method_not_allowed'}},405);
    if(!deps.workerAuthorized(request,deps.env))await deps.authorize(request,deps.env);
-   if(deps.env('CONTEXT')!=='production')return fail('keyword_learning_production_required',403);
+   if(!configuredAppRequest(request,deps.env))return fail('keyword_learning_production_required',403);
    if(!request.headers.get('content-type')?.includes('application/json'))return fail('json_required',415);
    let body:unknown;try{body=JSON.parse(await readTextLimited(new Response(request.body),220000));}catch(error){if(error instanceof CollectionError)throw error;return fail('keyword_learning_invalid_input');}
    const db=deps.db();

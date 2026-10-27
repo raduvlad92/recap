@@ -12,12 +12,21 @@ function fixture(patch:Record<string,unknown>={}){
  const generate=vi.fn().mockResolvedValue(result),authorize=vi.fn().mockResolvedValue('fixture-admin'),workerAuthorized=vi.fn().mockReturnValue(true);
  const rpc=vi.fn(async(name:string,args:Record<string,unknown>)=>({data:name==='reserve_keyword_learning_call'?{claimed:true,call:{id:'call-fixture',lease_token:'lease-fixture',state:'reserved',actual_usd:null,maximum_usd:.003},requestHash:args.p_request_hash,result:null,errorCode:null}:name==='record_keyword_learning_call'?{call:{state:args.p_result?'settled':'unknown',actual_usd:args.p_result?.['actualUsd' as keyof typeof args.p_result]??null},result:args.p_result,errorCode:args.p_error_code,completed:true}:{call:{state:'settled'},result},error:null}));
  const tables=vi.fn((table:string)=>{const chain:any={select:()=>chain,eq:()=>chain,single:async()=>({data:table==='keyword_learning_sessions'?{user_id:'fixture-owner',state:'released',expires_at:'2099-01-01T00:00:00Z',models:[input.model],sources:[{ordinal:1,sourceHash,updateId:'fixture-video'}]}:{record:{content:source}},error:null})};return chain;});
- const db={from:tables,rpc},env=(key:string)=>({CONTEXT:'production',CONTENT_ANALYSIS_ENABLED:'false',OPENROUTER_API_KEY:'synthetic-unused-fixture'}[key]);
+ const db={from:tables,rpc},env=(key:string)=>({APP_URL:'https://example.test',CONTENT_ANALYSIS_ENABLED:'false',OPENROUTER_API_KEY:'synthetic-unused-fixture'}[key]);
  const handler=createKeywordLearningHandler({env,db:()=>db as never,authorize,workerAuthorized,generator:()=>generate,...patch});
- const send=(body:unknown=input)=>handler(new Request('https://example.test/.netlify/functions/keyword-learning',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}));
+ const send=(body:unknown=input,url='https://example.test/.netlify/functions/keyword-learning')=>handler(new Request(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}));
  return {handler,send,generate,authorize,workerAuthorized,rpc,tables};
 }
 describe('private keyword evaluation handler, synthetic adapters only',()=>{
+ it('accepts the configured HTTPS app without the build-only CONTEXT variable',async()=>{
+  const f=fixture(),r=await f.send({...input,action:'preflight'});expect(r.status).toBe(200);expect((await r.json()).providerCall).toBe(false);expect(f.rpc).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
+ });
+ it.each(['https://deploy-preview-12--example.test/.netlify/functions/keyword-learning','http://localhost:8888/.netlify/functions/keyword-learning','http://example.test/.netlify/functions/keyword-learning'])('rejects a non-app request origin %s',async url=>{
+  const f=fixture(),r=await f.send({...input,action:'preflight'},url);expect(r.status).toBe(403);expect((await r.json()).error.code).toBe('keyword_learning_production_required');expect(f.tables).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
+ });
+ it.each([undefined,'','malformed','http://example.test','https://user:password@example.test','https://127.0.0.1','https://localhost','https://app.internal','https://example.test:8443','https://example.test?token=x','https://example.test#fragment'])('rejects missing or malformed APP_URL %s',async appUrl=>{
+  const f=fixture({env:(name:string)=>name==='APP_URL'?appUrl:undefined}),r=await f.send({...input,action:'preflight'});expect(r.status).toBe(403);expect(f.tables).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
+ });
  it('requires the worker secret or existing verified admin authorizer before database access',async()=>{
   const f=fixture({workerAuthorized:()=>false,authorize:vi.fn().mockRejectedValue(new Error('denied'))});
   expect((await f.send()).status).toBe(502);expect(f.tables).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();

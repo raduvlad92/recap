@@ -112,7 +112,7 @@ async function runCase(source:Obj){
   const rows=checkedRows(content,generated.value as Obj,names),kept=rows.filter((x:Obj)=>x.disposition!=='rejected');
   const decisions=new Map(rows.map((x:Obj)=>[x.name,x]));
   report.checkedMethodScores=completedMethods.map((m:Obj)=>({method:m.method,scoreStage:'checker_judged_extractor_predictions',score:scoreKeywordInventory({content,rows:rowsFor(m.output).map((r:Obj)=>({...r,...decisions.get(r.name)})),reference:referenceCase})}));
-  report.checker={status:'complete',scoreStage:'checked_final_union',rows,rejected:rows.filter((x:Obj)=>x.disposition==='rejected'),discoveries:generated.value.missingNames,actualUsd:generated.actualUsd,score:scoreKeywordInventory({content,rows:kept,reference:referenceCase}),request,generated};
+  report.checker={status:'complete',scoreStage:'checked_final_union',rows,rejected:rows.filter((x:Obj)=>x.disposition==='rejected'),discoveries:(generated.value as Obj).missingNames,actualUsd:generated.actualUsd,score:scoreKeywordInventory({content,rows:kept,reference:referenceCase}),request,generated};
  }catch(error:any){report.checker={status:'failed',errorCode:error.safeCode??error.code??error.message,score:null};}
  save(path.join(outDir,version,`${source.ordinal}-report.json`),report);
  console.log(JSON.stringify({event:'case_complete',ordinal:source.ordinal,promptVersion:version,methods:report.methods.map((x:Obj)=>({method:x.method,status:x.status,score:x.score?.score??null})),checker:report.checker.status,checkedScore:report.checker.score?.score??null,good:report.checker.score?.good??false}));
