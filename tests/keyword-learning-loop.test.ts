@@ -1,6 +1,10 @@
 import {describe,expect,it} from 'vitest';
 // @ts-expect-error CLI helper has no runtime dependencies.
 import {keywordLoopControls,summarizeKeywordLoopReports,chooseKeywordLoopChampion,validateKeywordLoopLessons,assertKeywordLoopBudget,waitForKeywordLearningReceipt,keywordCheckerDeliveryEvidence,compactKeywordLoopFeedback,assertKeywordLearningRequestCapacity} from '../scripts/lib/keyword-learning-loop.mjs';
+// @ts-expect-error Versioned standalone JS prompt helpers.
+import {keywordCheckerRequest,keywordCheckerValueForNormalization} from '../scripts/lib/keyword-learning-prompts.mjs';
+// @ts-expect-error Existing private evidence normalizer remains unchanged.
+import {resolveKeywordCheckerVerdicts} from '../scripts/lib/keyword-learning.mjs';
 
 const report=(ordinal:number,score=9,missing=1,unexpected=0)=>({ordinal,checker:{status:'complete',score:{score,good:missing===0&&unexpected===0,missing:Array(missing).fill({}),unsupportedAccepted:Array(unexpected).fill('extra'),unexpected:Array(unexpected).fill({})}}});
 describe('bounded keyword learning selection',()=>{
@@ -97,5 +101,36 @@ describe('compact optimizer feedback',()=>{
   expect(JSON.stringify(history)).not.toContain('bulky-history');
   expect(()=>assertKeywordLearningRequestCapacity({prompt:'x'.repeat(100000)})).not.toThrow();
   expect(()=>assertKeywordLearningRequestCapacity({prompt:'x'.repeat(100001)})).toThrow('keyword_learning_request_prompt_capacity');
+ });
+});
+describe('optional explanation-free checker output',()=>{
+ const verdict=(name:string,disposition='accepted',kind='brand')=>({name,disposition,kind});
+ it('retains name/type/disposition and exact candidate coverage in both decision arrays',()=>{
+  const request=keywordCheckerRequest({content:'AeroBox and NovaPay.',names:['AeroBox','NovaPay'],includeReasons:false,maxOutputTokens:2000});
+  expect(request.maxOutputTokens).toBe(2000);
+  expect(request.schema.properties.decisions).toMatchObject({minItems:2,maxItems:2});
+  for(const section of ['decisions','missingNames']){
+   expect(request.schema.properties[section].items.required).toEqual(['name','disposition','kind']);
+   expect(request.schema.properties[section].items.properties).not.toHaveProperty('reason');
+   expect(request.schema.properties[section].items.additionalProperties).toBe(false);
+  }
+  expect(request.prompt).toContain('Do not include reason or any explanation fields.');
+  expect(keywordCheckerRequest({content:'AeroBox',names:['AeroBox']}).schema.properties.decisions.items.required).toContain('reason');
+ });
+ it('keeps the exact raw response unchanged while the existing validator still catches missing coverage and unsupported names',()=>{
+  const content='AeroBox and NovaPay.',names=['AeroBox','NovaPay'];
+  const raw={readComplete:true,decisions:[verdict('AeroBox'),verdict('NovaPay')],missingNames:[verdict('AbsentName')]};
+  const before=JSON.stringify(raw),adapted=keywordCheckerValueForNormalization(raw,{includeReasons:false});
+  const result=resolveKeywordCheckerVerdicts({content,names,value:adapted});
+  expect(result.rows.find((row:{name:string})=>row.name==='AeroBox').reason).toBe('reason_not_requested');
+  expect(result.rows.find((row:{name:string})=>row.name==='AbsentName').disposition).toBe('review');
+  expect(JSON.stringify(raw)).toBe(before);expect(raw.decisions[0]).not.toHaveProperty('reason');
+  expect(()=>resolveKeywordCheckerVerdicts({content,names,value:keywordCheckerValueForNormalization({...raw,decisions:[verdict('AeroBox')]},{includeReasons:false})})).toThrow('checker_candidate_decisions_incomplete');
+ });
+ it('preserves conflicting judgments as review and refuses to disguise an unrequested model explanation',()=>{
+  const raw={readComplete:true,decisions:[verdict('AeroBox')],missingNames:[verdict('AeroBox','rejected','product')]};
+  const result=resolveKeywordCheckerVerdicts({content:'AeroBox',names:['AeroBox'],value:keywordCheckerValueForNormalization(raw,{includeReasons:false})});
+  expect(result.rows[0]).toMatchObject({name:'AeroBox',disposition:'review',kind:null});expect(result.conflicts).toHaveLength(1);
+  expect(()=>keywordCheckerValueForNormalization({readComplete:true,decisions:[{...verdict('AeroBox'),reason:'model explanation'}],missingNames:[]},{includeReasons:false})).toThrow('checker_unrequested_reason');
  });
 });

@@ -92,8 +92,9 @@ export function findLiteralNameOccurrences(content, name, segments = []) {
 
 /** Cheap source-only pattern families. They are candidate mining, not
  * entity recognition: capitalized ordinary words intentionally reach checking. */
-export function minePatternNames(content) {
+export function minePatternNames(content, { precision = 'broad' } = {}) {
   if (typeof content !== 'string') throw fail('invalid_literal_name_source');
+  if (!['broad', 'focused'].includes(precision)) throw fail('invalid_keyword_pattern_precision');
   const names = new Set();
   const patterns = [
     /(?<![\p{L}\p{N}_@])(?:https?:\/\/)?(?:www\.)?[\p{L}\p{N}](?:[\p{L}\p{N}-]*[\p{L}\p{N}])?(?:\.[\p{L}\p{N}](?:[\p{L}\p{N}-]*[\p{L}\p{N}])?)*\.[\p{L}]{2,24}(?:\/[\p{L}\p{N}_~.\/-]*)?/gu,
@@ -108,8 +109,20 @@ export function minePatternNames(content) {
     const name = match[0].replace(/^https?:\/\//u, '').split('/')[0].replace(/[.,:;!?]+$/u, '');
     if (validName(name) && findLiteralNameOccurrences(content, name).length) names.add(name);
   }
-  if (names.size > 500) throw fail('literal_inventory_capacity');
-  return { names: [...names], uncertainNames: [] };
+  // Focused mining is optional: lower checker load while preserving common
+  // name shapes and literal possessive owners. These are still suggestions,
+  // not automatic acceptance of model tokens or capitalized phrases.
+  const selected = precision === 'broad' ? [...names] : [...names].filter(name =>
+    /^(?:[\p{L}\p{N}-]+\.)+[\p{L}]{2,24}$/u.test(name)
+    || /^@[\p{L}\p{N}_][\p{L}\p{N}_.-]*$/u.test(name)
+    || /[\p{L}\p{M}]/u.test(name) && /\p{N}/u.test(name)
+    || /^[\p{Lu}]{2,12}s?$/u.test(name)
+    || /^[\p{Lu}][+#]{1,2}$/u.test(name)
+    || /\p{Ll}\p{Lu}/u.test(name)
+    || /^\p{Lu}[\p{L}\p{M}\p{N}+#-]*(?:\s+\p{Lu}[\p{L}\p{M}\p{N}+#-]*)+$/u.test(name)
+    || findLiteralNameOccurrences(content, name).some(span => /^['’]s\b/u.test(content.slice(span.end))));
+  if (selected.length > 500) throw fail('literal_inventory_capacity');
+  return { names: selected, uncertainNames: [] };
 }
 
 /** Union by exact surface, never majority/intersection or guessed aliases.

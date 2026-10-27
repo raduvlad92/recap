@@ -81,6 +81,20 @@ describe('literal keyword inventories and source evidence', () => {
     expect(minePatternNames('Only q9x is written.').names).not.toContain('q9');
     expect(names.every((name: string) => findLiteralNameOccurrences(content, name).length)).toBe(true);
   });
+  it('optionally focuses patterns while retaining domains, handles, codes, acronyms, names and possessive owners', () => {
+    const content = "Visit novapay.test and @AeroBox. Try q9 with USB and GPUs. AeroBox meets North Harbor, and Mira's tool follows Solara’s design. Finally ordinary filler.";
+    const broad = minePatternNames(content), focused = minePatternNames(content, { precision: 'focused' });
+    for (const name of ['novapay.test', '@AeroBox', 'q9', 'USB', 'GPUs', 'AeroBox', 'North Harbor', 'Mira', 'Solara']) expect(focused.names).toContain(name);
+    for (const name of ['Visit', 'Try', 'Finally']) {
+      expect(broad.names).toContain(name);
+      expect(focused.names).not.toContain(name);
+    }
+    expect(focused.names.length).toBeLessThan(broad.names.length);
+    expect(focused.names.every((name: string) => broad.names.includes(name) && findLiteralNameOccurrences(content, name).length)).toBe(true);
+    expect(focused.uncertainNames).toEqual([]);
+    expect(minePatternNames(content, { precision: 'broad' })).toEqual(broad);
+    expect(() => minePatternNames(content, { precision: 'aggressive' })).toThrow('invalid_keyword_pattern_precision');
+  });
   it('unions singleton and uncertain names without merging model families or guessing aliases', () => {
     const union = combineKeywordInventories(source, [{ method: 'direct', output: inventory(['AeroBox', 'AeroBox 2']) },
       { method: 'types', output: inventory(['AeroBox'], ['NovaPay']) }, { method: 'patterns', output: inventory(['C#', 'Nonexistent']) }]);
