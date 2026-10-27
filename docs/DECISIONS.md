@@ -1,6 +1,14 @@
 # Decisions and interview
 
-Updated: 26 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Updated: 27 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+
+## 27 October 2026 — bounded execution outcome and safe closeout
+
+The approved US$0.10/call and existing US$5 evaluation total remain. No additional allowance was requested or created. One useful H3 recap was actually recovered and reloaded. The new v4 quality gate failed; one model-approved recap was withheld after independent assistant review, four terminal failures remain, and sixty uncertain keyword candidates stay private. No acceptance was inferred from model verification, tests, storage publication or cache recovery.
+
+The actual-production timestamp mismatch is fixed by an additive migration preserving exact old numeric endpoints and admitting the exact source-derived binary64 sum, with no tolerance for nearby invented times. Both actual rollback/application preservation and before/after validator proof pass. The stock worker completed its saved task under a temporary cumulative cap equal to current commitment, allowing zero new positive reservation; it made no new model call. Both normal US$5 totals were restored immediately. Both admissions are closed; runtime/spending Off; DeepSeek/default. Twenty-source readiness is recorded; 31 expansion tasks and backfill remain unrun. [Evidence and remaining work](tech/SESSION-HANDOFF-2026-10-27.md).
+
+New settled model cost US$0.018709185; whole commitment US$0.069253760 including US$0.009178191 old holds. Existing supplier collection continued independently under unchanged controls; its costs are not included in these model amounts. Human semantic approval and complete-original capture proof remain absent.
 
 ## 26 October 2026 — execute reliability points 1–3, US$0.10 per call
 

@@ -1,0 +1,1616 @@
+{
+  "schemaVersion": "frozen20-readiness-report-v1",
+  "kind": "readiness_and_existing_output_assessment_not_twenty_fresh_generations",
+  "builtAt": "2026-10-27T00:33:32.277Z",
+  "capturedAt": "2026-10-27T00:32:49.846394+00:00",
+  "sourceAssessment": {
+    "originalFrozenSources": 20,
+    "completePreGenerationSavedSourceReferences": 20,
+    "matchingCurrentSourceHashes": 20,
+    "verifiedCompleteOriginalCaptures": 0,
+    "humanGoldReferences": 0,
+    "keywordCandidateCountsAreReviewAides": true,
+    "indexOrdinalsCovered": 16,
+    "additionalLongAndBaselineCompleteTheTwenty": true
+  },
+  "taskCounts": {
+    "originalSourceTasks": 40,
+    "protectedHistoricalBaselineTasks": 2,
+    "recoveredHistoricalH3Tasks": 1,
+    "freshV4SmokeTaskJobs": 6,
+    "twentyExpansionTasksNotRun": 31,
+    "unexpectedNewV4ExpansionJobs": 0
+  },
+  "modelQuality": {
+    "twentyGenerationExpansionRun": false,
+    "expansionAuthorized": false,
+    "smokeGate": "fail",
+    "smokeTaskStates": {
+      "published": 2,
+      "failed": 4
+    },
+    "assistantReviewedPassTasks": 1,
+    "assistantReviewedFailTasks": 1,
+    "protectedBaselineIsFreshQualityApproval": false
+  },
+  "ledger": {
+    "rows": 65,
+    "knownSettled": 62,
+    "unknown": 3,
+    "settledUsd": 0.060075569,
+    "heldUsd": 0.009178191,
+    "commitmentUsd": 0.06925376,
+    "rowsPresentAtSessionStart": 46,
+    "reusedHistoricalLedgerRows": 46,
+    "newCallRowsSinceSessionStart": 19,
+    "newKnownSettledResponses": 19,
+    "newUnknownRows": 0,
+    "historicalUnknownHoldIdentitiesPreserved": true,
+    "attemptRows": 0
+  },
+  "cachedRecovery": {
+    "taskOrdinal": 6,
+    "task": "keywords",
+    "currentJobState": "published",
+    "existingSavedResponseRows": 7,
+    "newCallRowsForRecoveredJob": 0,
+    "immutableSavedCallEvidenceMatches": true,
+    "wholeLedgerRowsBeforeRecovery": 65,
+    "wholeLedgerRowsNow": 65,
+    "wholeLedgerCommitmentBeforeRecovery": 0.06925376,
+    "wholeLedgerCommitmentNow": 0.06925376,
+    "publicationIsSemanticApproval": false
+  },
+  "databaseSafetyObservation": {
+    "globalBudgetEnabled": false,
+    "enabledReaderPolicies": 0,
+    "activeCohortJobs": 0,
+    "releasedAdmissions": 0,
+    "allOriginalScopesPaused": true,
+    "runtimeDeploymentNotVerifiedByThisQuery": true
+  },
+  "records": [
+    {
+      "ordinal": 1,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 3322,
+      "timing": {
+        "savedCueCount": 66,
+        "cuesWithRealSavedStart": 66,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-smoke.json",
+        "findings": 6,
+        "keywordAides": 18,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 5,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "failed",
+        "keywords": "failed",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_summary_omission"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "published",
+          "ruleVersion": "content-v4",
+          "resultPresent": true,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 5,
+          "publishedAt": "2026-10-26T23:51:31.95173+00:00"
+        },
+        "keywords": {
+          "state": "failed",
+          "ruleVersion": "content-v4",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": "analysis_unsupported_mention",
+          "taskJobCount": 5,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "fresh_v4_smoke",
+          "annotationUnchangedFromFrozen": false,
+          "qualityStatus": "assistant_reviewed_fail",
+          "exactReviews": [
+            {
+              "file": "v4-smoke-published-summary-review.json",
+              "verdict": "fail",
+              "reviewerType": "assistant",
+              "humanApproval": false,
+              "exactSourceJobResultMatch": true,
+              "reviewedJobMetadataUnchanged": true,
+              "currentHighlightArrayEqualsReviewedPatch": true
+            }
+          ]
+        },
+        "keywords": {
+          "role": "fresh_v4_smoke",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "no_exact_output_quality_review",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 2,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 6441,
+      "timing": {
+        "savedCueCount": 131,
+        "cuesWithRealSavedStart": 131,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-smoke.json",
+        "findings": 8,
+        "keywordAides": 45,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "failed",
+        "keywords": "failed",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_unsupported_summary_claim"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "failed",
+          "ruleVersion": "content-v4",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": "analysis_unsupported_summary_claim",
+          "taskJobCount": 5,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "failed",
+          "ruleVersion": "content-v4",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": "analysis_unsupported_mention",
+          "taskJobCount": 5,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "fresh_v4_smoke",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "no_exact_output_quality_review",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "fresh_v4_smoke",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "no_exact_output_quality_review",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 3,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 6792,
+      "timing": {
+        "savedCueCount": 205,
+        "cuesWithRealSavedStart": 205,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-a.json",
+        "findings": 5,
+        "keywordAides": 27,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 4,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "ready",
+        "keywords": "failed",
+        "ruleVersion": "content-v1",
+        "reason": null
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "published",
+          "ruleVersion": "content-v3",
+          "resultPresent": true,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 5,
+          "publishedAt": "2026-10-26T23:25:39.692992+00:00"
+        },
+        "keywords": {
+          "state": "failed",
+          "ruleVersion": "content-v3",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": "analysis_incomplete_coverage",
+          "taskJobCount": 4,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "recovered_historical_h3",
+          "annotationUnchangedFromFrozen": false,
+          "qualityStatus": "assistant_reviewed_pass",
+          "exactReviews": [
+            {
+              "file": "h3-published-summary-semantic-review.json",
+              "verdict": "pass",
+              "reviewerType": "assistant",
+              "humanApproval": false,
+              "exactSourceJobResultMatch": true,
+              "reviewedJobMetadataUnchanged": true,
+              "currentHighlightArrayEqualsReviewedPatch": true
+            }
+          ]
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 4,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "ready",
+      "savedUtf16Characters": 232555,
+      "timing": {
+        "savedCueCount": 0,
+        "cuesWithRealSavedStart": 0,
+        "available": false,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-baseline.json",
+        "findings": 30,
+        "keywordAides": 446,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 6,
+        "videoKeywordsCount": 10,
+        "topicsCount": 10,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_credentials_required"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "protected_historical_baseline",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "protected_historical_not_freshly_quality_reviewed",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "protected_historical_baseline",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "protected_historical_not_freshly_quality_reviewed",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 5,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "unknown",
+      "savedUtf16Characters": 3375,
+      "timing": {
+        "savedCueCount": 69,
+        "cuesWithRealSavedStart": 69,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-a.json",
+        "findings": 6,
+        "keywordAides": 17,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": null,
+        "keywords": null,
+        "ruleVersion": null,
+        "reason": null
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 6,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 7781,
+      "timing": {
+        "savedCueCount": 156,
+        "cuesWithRealSavedStart": 156,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-smoke.json",
+        "findings": 8,
+        "keywordAides": 60,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "failed",
+        "keywords": "review",
+        "ruleVersion": "content-v1",
+        "reason": null
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "failed",
+          "ruleVersion": "content-v4",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": "analysis_unsupported_passage",
+          "taskJobCount": 2,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "published",
+          "ruleVersion": "content-v4",
+          "resultPresent": true,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 2,
+          "publishedAt": "2026-10-27T00:30:05.454527+00:00"
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "fresh_v4_smoke",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "no_exact_output_quality_review",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "fresh_v4_smoke",
+          "annotationUnchangedFromFrozen": false,
+          "qualityStatus": "published_semantically_unreviewed",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 60,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 7,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 3467,
+      "timing": {
+        "savedCueCount": 70,
+        "cuesWithRealSavedStart": 70,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-a.json",
+        "findings": 6,
+        "keywordAides": 20,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_credentials_required"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 8,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 3707,
+      "timing": {
+        "savedCueCount": 77,
+        "cuesWithRealSavedStart": 77,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-a.json",
+        "findings": 6,
+        "keywordAides": 18,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_credentials_required"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 9,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 80920,
+      "timing": {
+        "savedCueCount": 1640,
+        "cuesWithRealSavedStart": 1640,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-long.json",
+        "findings": 6,
+        "keywordAides": 145,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_credentials_required"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 10,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 4385,
+      "timing": {
+        "savedCueCount": 106,
+        "cuesWithRealSavedStart": 106,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-b.json",
+        "findings": 5,
+        "keywordAides": 15,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_budget_exhausted"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "blocked",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": "analysis_budget_exhausted",
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "blocked",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": "analysis_budget_exhausted",
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 11,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "unknown",
+      "savedUtf16Characters": 5350,
+      "timing": {
+        "savedCueCount": 120,
+        "cuesWithRealSavedStart": 120,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-b.json",
+        "findings": 5,
+        "keywordAides": 15,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": null,
+        "keywords": null,
+        "ruleVersion": null,
+        "reason": null
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 12,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "unknown",
+      "savedUtf16Characters": 7009,
+      "timing": {
+        "savedCueCount": 310,
+        "cuesWithRealSavedStart": 310,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-b.json",
+        "findings": 4,
+        "keywordAides": 12,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": null,
+        "keywords": null,
+        "ruleVersion": null,
+        "reason": null
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "not_run",
+          "ruleVersion": null,
+          "resultPresent": false,
+          "sourceHashMatches": null,
+          "errorCode": null,
+          "taskJobCount": 0,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "not_run",
+          "ruleVersion": null,
+          "resultPresent": false,
+          "sourceHashMatches": null,
+          "errorCode": null,
+          "taskJobCount": 0,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 13,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 7797,
+      "timing": {
+        "savedCueCount": 161,
+        "cuesWithRealSavedStart": 161,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-c.json",
+        "findings": 8,
+        "keywordAides": 75,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_credentials_required"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 14,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "unknown",
+      "savedUtf16Characters": 8498,
+      "timing": {
+        "savedCueCount": 231,
+        "cuesWithRealSavedStart": 231,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-c.json",
+        "findings": 5,
+        "keywordAides": 27,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": null,
+        "keywords": null,
+        "ruleVersion": null,
+        "reason": null
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 15,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "unknown",
+      "savedUtf16Characters": 9579,
+      "timing": {
+        "savedCueCount": 379,
+        "cuesWithRealSavedStart": 379,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-c.json",
+        "findings": 6,
+        "keywordAides": 34,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": null,
+        "keywords": null,
+        "ruleVersion": null,
+        "reason": null
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 16,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 10211,
+      "timing": {
+        "savedCueCount": 207,
+        "cuesWithRealSavedStart": 207,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-d.json",
+        "findings": 8,
+        "keywordAides": 61,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_budget_exhausted"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "blocked",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": "analysis_budget_exhausted",
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "blocked",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": "analysis_budget_exhausted",
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 17,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 15144,
+      "timing": {
+        "savedCueCount": 304,
+        "cuesWithRealSavedStart": 304,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-d.json",
+        "findings": 8,
+        "keywordAides": 44,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_credentials_required"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 18,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "unknown",
+      "savedUtf16Characters": 30125,
+      "timing": {
+        "savedCueCount": 618,
+        "cuesWithRealSavedStart": 618,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-long.json",
+        "findings": 6,
+        "keywordAides": 69,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": null,
+        "keywords": null,
+        "ruleVersion": null,
+        "reason": null
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "not_run",
+          "ruleVersion": null,
+          "resultPresent": false,
+          "sourceHashMatches": null,
+          "errorCode": null,
+          "taskJobCount": 0,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "not_run",
+          "ruleVersion": null,
+          "resultPresent": false,
+          "sourceHashMatches": null,
+          "errorCode": null,
+          "taskJobCount": 0,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 19,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 81262,
+      "timing": {
+        "savedCueCount": 1496,
+        "cuesWithRealSavedStart": 1496,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-long.json",
+        "findings": 9,
+        "keywordAides": 135,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_credentials_required"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    },
+    {
+      "ordinal": 20,
+      "sourceHashMatchesFrozen": true,
+      "captureStatus": "original_completeness_unverified",
+      "savedTextState": "partial",
+      "savedUtf16Characters": 6638,
+      "timing": {
+        "savedCueCount": 137,
+        "cuesWithRealSavedStart": 137,
+        "available": true,
+        "completeTimingNotClaimed": true
+      },
+      "sourceOnlyReference": {
+        "file": "semantic-reference-additional-d.json",
+        "findings": 7,
+        "keywordAides": 33,
+        "humanApproval": false,
+        "completeSavedTextRead": true,
+        "preGeneration": true,
+        "notHumanGold": true
+      },
+      "currentAnnotations": {
+        "summaryTextPresent": true,
+        "insightsCount": 0,
+        "videoHighlightsCount": 0,
+        "videoKeywordsCount": 0,
+        "topicsCount": 0,
+        "brandsCount": 0,
+        "sponsorsCount": 0
+      },
+      "processing": {
+        "recap": "blocked",
+        "keywords": "blocked",
+        "ruleVersion": "content-v1",
+        "reason": "analysis_credentials_required"
+      },
+      "latestJobs": {
+        "summary": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        },
+        "keywords": {
+          "state": "queued",
+          "ruleVersion": "content-v1",
+          "resultPresent": false,
+          "sourceHashMatches": true,
+          "errorCode": null,
+          "taskJobCount": 1,
+          "publishedAt": null
+        }
+      },
+      "taskAssessment": {
+        "summary": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        },
+        "keywords": {
+          "role": "twenty_expansion_not_run",
+          "annotationUnchangedFromFrozen": true,
+          "qualityStatus": "not_run_in_twenty_expansion",
+          "exactReviews": []
+        }
+      },
+      "pendingKeywordReviewCount": 0,
+      "resolvedKeywordReviewCount": 0
+    }
+  ],
+  "artifacts": {
+    "frozenCohort": {
+      "file": "frozen-cohort.json",
+      "sha256": "7d1d3a29ee1a601e49987fa8de428eed99982dfd0e8a81882cf1bd9033fadc8c"
+    },
+    "sourceReferenceIndex": {
+      "file": "semantic-reference-index.json",
+      "sha256": "b4a8c5e76228084d7cb8f8d11b53a71ae62db704df905d0f4a0e963263ece485"
+    },
+    "sourceReferences": [
+      {
+        "file": "semantic-reference-smoke.json",
+        "sha256": "564a94dce546941f52686260e7176113153f1462b6c23d9834d7248b790f87b4"
+      },
+      {
+        "file": "semantic-reference-additional-a.json",
+        "sha256": "8a23d1be5482c4eccd3fd1a7e669f9bef98964d8979e522e5285dabdb1076079"
+      },
+      {
+        "file": "semantic-reference-additional-b.json",
+        "sha256": "d2f5eb18df21af0adad7eceed63eb51295ea3206598b489d3b845b9df53f7fe8"
+      },
+      {
+        "file": "semantic-reference-additional-c.json",
+        "sha256": "74962af7d8c13d8f9b400f00e6fc723a0d80bb31f04e442990720e28837cef78"
+      },
+      {
+        "file": "semantic-reference-additional-d.json",
+        "sha256": "cc110e81f2f7563e24884ea30049ea80d2a18645b854f0d9afd3019bc8ef3268"
+      },
+      {
+        "file": "semantic-reference-long.json",
+        "sha256": "e93358b4315b0a8e53bc749eeeeb3facfd3422787bc2f2903c72ee50db9e66e3"
+      },
+      {
+        "file": "semantic-reference-baseline.json",
+        "sha256": "25c4a7465808cd915bafa6826a151c56e8e8120039174f83c2a58456166dae1f"
+      }
+    ],
+    "qualityReviews": [
+      {
+        "file": "v4-smoke-published-summary-review.json",
+        "sha256": "805ba1d8c71bbdc7dc770be6814739f9b6af77d6f4867b7b551d37162b84ab51"
+      },
+      {
+        "file": "h3-published-summary-semantic-review.json",
+        "sha256": "1db3e9df6d0b1ba80df65272f37b3e51ab9d0550d44c05557f2a9a5cd255cf3b"
+      }
+    ],
+    "nativeCapture": {
+      "file": "frozen20-readiness-current.json",
+      "sha256": "333dc80084cb61b7a3a2841b0e4fee4c4d81bac959ab955ca4845c5691668abc"
+    }
+  },
+  "limitations": [
+    "Twenty source references are assistant assessment aids, not exhaustive human gold or twenty fresh model generations.",
+    "Every original capture remains partial or unverified; real saved cues do not prove complete original capture.",
+    "Only exact source/job/result-bound existing assistant reviews determine the displayed semantic verdicts. Model verifier, storage publication, local replay and hosted reload do not establish semantic approval.",
+    "Current annotation counts and processing states describe stored structure only. Historical outputs, protected baseline and recovered cached work are separate from new generation.",
+    "No expansion is authorized while the six-task v4 smoke gate fails. This report cannot activate analysis, release holds or allocate a new budget.",
+    "No private IDs, account names, creator titles, keyword labels, source body, evidence quotations or job/call IDs are emitted in this report."
+  ]
+}
