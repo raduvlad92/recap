@@ -2,6 +2,10 @@
 
 Updated: 27 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
+## 27 October 2026 — execute keyword improvement; cumulative evaluation cap US$10
+
+Founder: “ok do it, but before doin it increase the limit to 10$ so we can have the bandwidth to properly test this.” This authorizes implementing and executing the five-transcript named-mention evaluation/improvement loop and raises the original cumulative model evaluation ceiling from US$5 to **US$10**, including all historical costs and unresolved holds. US$0.10 per call and US$5/day remain. It does not authorize twenty-video generation/backfill, an uncapped optimizer, source collection, new subscriptions or automatic publication. A finite private evaluation session reuses the shared financial ledger while ordinary production analysis remains paused.
+
 ## 27 October 2026 — five-video keyword evaluation and adaptive prompts
 
 Founder requested a process using five saved transcripts, the current extraction baseline, 1–10 quality ratings, diagnosis and improved prompts with repeated tests; prefers three or four extraction approaches plus one additional AI checker. On explicit clarification, the founder selected **“Every named mention, including brief mentions and ads”**. This retains exhaustive named-mention inclusion; it does not approve a main-topic, airtime or top-N filter. Preserve uncertain identities without guessing canonical names.

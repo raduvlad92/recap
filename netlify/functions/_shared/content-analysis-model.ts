@@ -218,7 +218,8 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
   // For the new protocol, preserve known billable output before domain
   // validation. A refusal remains terminal; a materialized format failure can
   // take exactly one financially fenced correction. Legacy behavior is stable.
-  const v2=isAnalysisV2CallKey(request.key)||isAnalysisV3CallKey(request.key)||isAnalysisV4CallKey(request.key);
+  const v2=isAnalysisV2CallKey(request.key)||isAnalysisV3CallKey(request.key)||isAnalysisV4CallKey(request.key)
+   ||/^keyword-learning:v1:[A-Za-z0-9._:-]{1,120}$/.test(request.key);
   let validationError:GenerationResult['validationError'];
   if(message.refusal!=null){if(!v2)return analysisFailure('analysis_incomplete_generation');validationError='analysis_provider_refusal';}
   else if(choice.finish_reason!=='stop'){

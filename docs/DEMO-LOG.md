@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 27 October 2026 — keyword-learning implementation, budget and guarded migration
+
+Founder authorized implementation/testing and raised the cumulative model evaluation ceiling to US$10. Actual rollback plus separate committed readback verify global and existing-owner lifetime caps of US$10, with daily US$5/per-call US$0.10 and production spending flags Off. Starting 300 calls/four unresolved holds/US$3.551447750 commitment remain unchanged. No fresh model call has run at this checkpoint.
+
+Implemented a private finite evaluation session, authenticated Netlify adapter, exact-source name matcher, complementary prompts, pattern miner and scored/versioned runner. Actual new-schema rollback, absence readback, committed apply and private-table grants pass; local PostgreSQL tests cover concurrency, budget/idempotency, deletion privacy and settled/unknown charges. All archives, workspaces, AI jobs/calls, reviews and eighteen original native groups remain exact across migration snapshots. Existing scheduled collection telemetry changed in four other groups between snapshots; this is not a claim that all twenty-two groups were frozen. No collection job was dispatched by this work.
+
 ## 27 October 2026 — five-video named-mention improvement loop designed
 
 Type: current-code/failure-evidence inspection, official evaluation guidance and private source-only preparation; not a new model trial or quality pass. Founder clarified the target as every named mention, including brief references and ads. Selected saved ordinals 1/2/6/10/20 total 28,567 characters. All five source hashes and 143 draft surfaces/356 literal occurrences match; these are not 143 distinct identities or an exhaustive human gold standard. Original captures remain partial/unverified. Sources 10/20 are proposed validation cases withheld from the future prompt writer; reserve 14/15 were not opened in this planning pass and are not claimed historically unseen.
