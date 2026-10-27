@@ -145,10 +145,17 @@ export async function generateValidatedAnalysisV4<T>(request:GenerationRequest,g
   const field=proposalField(request),maximum=field==='candidates'?500:6;
   if(context.proposals.length>maximum)return analysisFailure('analysis_output_capacity');
   const repairKey=request.key+':repair:1';entry.repairKey=repairKey;
+  const originalRequest=JSON.parse(request.prompt);
+  if(field==='candidates'&&Array.isArray(originalRequest.lexicalUnits)) {
+   // Same IDs and text, less repeated JSON scaffolding. Full parent hashes and
+   // raw proposals stay in the durable call and host audit, not every prompt row.
+   originalRequest.lexicalUnitFormat='[id,text] tuples';
+   originalRequest.lexicalUnits=originalRequest.lexicalUnits.map(({id,text}:{id:string;text:string})=>[id,text]);
+  }
   const repair:GenerationRequest&{correction:{baseKey:string;errorCode:string}}={...request,key:repairKey,correction:{baseKey:request.key,errorCode},
    schema:analysisV4CorrectionSchema(request.schema,field,context.proposals.map(proposal=>proposal.proposalId)),
    prompt:canonicalAnalysisV4Json({protocolVersion:ANALYSIS_V4_PROTOCOL,generationContractHash:ANALYSIS_V4_GENERATION_CONTRACT_HASH,task:'correct_invalid_response',instruction:ANALYSIS_V4_REPAIR_INSTRUCTION,
-    originalRequest:JSON.parse(request.prompt),invalidResponse:result.value,proposalLineage:context.proposals,errors:diagnostics})};
+    originalRequest,invalidResponse:result.value,proposalLineage:field==='candidates'?context.proposals.map(({proposalId})=>({proposalId})):context.proposals,errors:diagnostics})};
   const corrected=await generate(repair),correctionIssue=generationIssue(corrected);
   if(correctionIssue)return analysisFailure(correctionIssue);
   const normalized=correctionValue(request,result.value,corrected.value,context);
@@ -165,7 +172,9 @@ function boundedResult(result:AnalysisOutput):AnalysisOutput {
  return result;
 }
 function compactCandidate({proposalId,lineage,firstUnitId,lastUnitId,label,kind,confidence,mention,start,end,passageIds}:Candidate) {
- return {proposalId,lineage,firstUnitId,lastUnitId,label,kind,confidence,mention,start,end,passageIds};
+ return {proposalId,lineage:lineage.map(({originalText,originalPassageIds,...parent})=>({...parent,
+  ...(originalText!==null?{originalText}:{}),...(originalPassageIds!==null?{originalPassageIds}:{})})),
+  firstUnitId,lastUnitId,label,kind,confidence,mention,start,end,passageIds};
 }
 function compactInventory(pass:Inventory) {
  const variants=new Map<string,Candidate>();
@@ -269,7 +278,9 @@ function mergeCandidates(proposals:Candidate[]):Candidate[] {
   const key=canonicalKeywordKey(candidate.label) as string,previous=merged.get(key);
   if(!previous)merged.set(key,{...candidate,ranges:[...candidate.ranges]});
   else {
-   previous.ranges=rangesUnion([...previous.ranges,...candidate.ranges]);
+   // Lookup already includes every real cue for the retained literal mention.
+   // Other aliases keep their own evidence in proposals; mixing their timing
+   // here would attach a different phrase's cue to this mention and quote.
    previous.confidence=Math.min(previous.confidence??0,candidate.confidence??0);
    if(previous.kind!==candidate.kind){previous.confidence=0;previous.reason='Within-pass entity-type disagreement requires review. '+previous.reason;}
    if(canonicalKeywordKey(previous.label)!==canonicalKeywordKey(previous.mention)||canonicalKeywordKey(candidate.label)!==canonicalKeywordKey(candidate.mention)) {

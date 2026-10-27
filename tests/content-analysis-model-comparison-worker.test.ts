@@ -207,7 +207,8 @@ describe('v4 admission through the actual worker/store',()=>{
   const raw=JSON.parse(request.prompt),p=raw.originalRequest??raw;
   if(p.task==='verify_summary')return {value:{readComplete:true,verdicts:p.claims.map((point:{id:string})=>({id:point.id,supported:true,sameFinding:true,reason:'Synthetic bound original finding.'}))},actualUsd:.0001,observedUsd:.0001};
   if(request.role==='summary')return {value:{readComplete:true,lastPassageId:p.requiredLastPassageId,highlights:[{text:'Nvidia improved rendering.',passageIds:[p.passages[0].id]}]},actualUsd:.0001,observedUsd:.0001};
-  const unit=p.lexicalUnits.find((unit:{text:string})=>unit.text==='Nvidia');
+  const units=p.lexicalUnits.map((unit:{id:string;text:string}|[string,string])=>Array.isArray(unit)?{id:unit[0],text:unit[1]}:unit);
+  const unit=units.find((unit:{text:string})=>unit.text==='Nvidia');
   return {value:{readComplete:true,lastPassageId:p.requiredLastPassageId,candidates:[{label:'Nvidia',kind:'brand',confidence:100,reason:'Explicit synthetic source identity.',firstUnitId:unit.id,lastUnitId:unit.id}]},actualUsd:.0001,observedUsd:.0001};
  };
  it.each(['summary','keywords'] as const)('binds %s generation, v4 keys and prepared publication without comparison context',async task=>{

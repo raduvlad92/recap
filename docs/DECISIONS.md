@@ -2,6 +2,12 @@
 
 Updated: 27 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
+## 27 October 2026 — implement practical repairs and repeat the small proof
+
+Founder: “ok then do what you recommended, always prioritize some easy fixes athat make sense instead of over engineering”. This approves the recommended keyword/timestamp, correction-size and recap-selection repairs and a small follow-up before deciding about twenty videos. Prefer the smallest sensible correction within the existing stack. The existing US$0.10/call, US$5/day and original US$5 cumulative total, including unknown charges, remain. No twenty-video generation, backfill, new subscription, historical reset or automatic acceptance follows.
+
+Implementation uses a revised v4 contract and preserves all old paid bindings. Saved-response counterfactuals precede fresh inference. Use default DeepSeek for the new three-video/six-task proof: US$0.275 recap and US$0.334 keyword caps fit the remaining US$1.465326440 without increasing the allowance. Old failures and all four holds stay immutable. [Repairs, exact evidence and execution status](tech/PRACTICAL-FIXES-2026-10-27.md).
+
 ## 27 October 2026 — compare three models before deciding about twenty videos
 
 **Completed outcome, not new authorization:** all eighteen model/video tasks ran inside the original US$5 total and US$0.10/call. MiniMax/Luna produced no final output; Sol produced three recaps and one keyword inventory, each needing independent review, with two keyword tasks blocked by the confirmed host phrase/range merge defect. Results stay private. New reported model cost US$3.460844925 plus US$0.004574875 held; cumulative commitment US$3.534673560, leaving US$1.465326440. All historical holds remain counted and unchanged. Spending/runtime Off, all eight admissions closed, DeepSeek restored. Twenty-video generation and backfill require the already requested joint decision; the comparison does not authorize another paid trial or accept the four completed outputs as ready for publication. [Final outcomes, evidence and recommended repair order](tech/MODEL-COMPARISON-2026-10-27.md).

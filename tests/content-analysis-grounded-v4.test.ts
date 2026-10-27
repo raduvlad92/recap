@@ -12,7 +12,10 @@ const context:AnalysisV4Context={protocolVersion:'content-v4',generationContract
 const record=(content:string):SourceUpdate=>({id:'synthetic',sourceId:'synthetic-source',contributorIds:[],title:'Synthetic',summary:'Not evidence',url:'https://example.test/video',publishedAt:'2026-10-26T00:00:00Z',format:'video',topics:[],brands:[],sponsors:[],references:[],insights:[],isSample:false,contentKind:'transcript',content});
 type Body={task:string;requiredLastPassageId:string;passages:Array<{id:string;text:string}>;lexicalUnits:Array<{id:string;text:string}>;claims:Array<{id:string;text:string;originalProposals:Array<{text:string}>}>;findings:Array<{proposalId:string;text:string;passageIds:string[]}>};
 const payload=(request:GenerationRequest)=>JSON.parse(request.prompt);
-const body=(request:GenerationRequest):Body=>payload(request).originalRequest??payload(request);
+const body=(request:GenerationRequest):Body=>{
+ const value=payload(request).originalRequest??payload(request);
+ return {...value,...(Array.isArray(value.lexicalUnits)?{lexicalUnits:value.lexicalUnits.map((unit:any)=>Array.isArray(unit)?{id:unit[0],text:unit[1]}:unit)}:{})};
+};
 const ack=(value:Body)=>({readComplete:true,lastPassageId:value.requiredLastPassageId});
 const settled=(value:unknown):GenerationResult=>({value,observedUsd:0,actualUsd:0});
 const verdicts=(value:Body,sameFinding=true)=>({readComplete:true,verdicts:value.claims.map(claim=>({id:claim.id,supported:true,sameFinding,reason:'Synthetic independently supported finding.'}))});
@@ -188,6 +191,27 @@ describe('strict materialization, financial and evidence failures',()=>{
    return settled({...ack(value),candidates:[{...keyword(value,content,'AeroBox'),firstUnitId:'u9000_9005'}]});
   },context)).rejects.toThrow('analysis_correction_dropped_proposal');expect(calls).toBe(2);
  });
+ it('compacts keyword correction data without dropping source units, proposals or the full host audit',async()=>{
+  const content='AeroBox performs the task.',requests:GenerationRequest[]=[];
+  const result=await analyzeKeywordsV4(record(content),limits,async request=>{
+   requests.push(request);const value=body(request);
+   if(request.correction) {
+    const compact=payload(request),original=payload(requests[0]);
+    expect(compact.originalRequest.lexicalUnitFormat).toBe('[id,text] tuples');
+    expect(compact.originalRequest.lexicalUnits).toEqual(original.lexicalUnits.map(({id,text}:{id:string;text:string})=>[id,text]));
+    expect(compact.originalRequest.passages).toEqual(original.passages);
+    expect(compact.invalidResponse.candidates).toHaveLength(1);
+    expect(compact.proposalLineage).toEqual([{proposalId:expect.any(String)}]);
+    return settled(repaired(request,[keyword(value,content,'AeroBox')]));
+   }
+   const candidate=keyword(value,content,'AeroBox');
+   return settled({...ack(value),candidates:[request.role==='extractor'?{...candidate,firstUnitId:'u9000_9005'}:candidate]});
+  },context);
+  expect(result.state).toBe('ready');expect(requests).toHaveLength(3);
+  const evidence=result.evidence as any,full=evidence.validationAudit[0].proposalLineage[0],compact=evidence.extraction.candidates[0].lineage[0];
+  expect(full).toMatchObject({originalResponseHash:expect.any(String),originalProposalHash:expect.any(String),originalText:null,originalPassageIds:null,corrected:true});
+  expect({...compact,originalText:null,originalPassageIds:null}).toEqual(full);
+ });
  it('does not convert two empty keyword inventories into a successful empty annotation',async()=>{
   let calls=0;
   await expect(analyzeKeywordsV4(record('Ordinary source language with no reviewed empty disposition.'),limits,async request=>{calls++;return settled({...ack(body(request)),candidates:[]});},context)).rejects.toThrow('empty_keyword_inventory_requires_manual_review');expect(calls).toBe(2);
@@ -207,6 +231,32 @@ describe('strict materialization, financial and evidence failures',()=>{
   const result=await analyzeKeywordsV4(update,limits,async request=>settled({...ack(body(request)),candidates:[keyword(body(request),content,'AeroBox')]}),context);
   expect((result.evidence as any).accepted[0].ranges).toEqual([{startSeconds:12,endSeconds:16}]);
   expect((result.evidence as any).accepted[0].seconds).toBe(4);
+ });
+ it.each([false,true])('keeps timing with its exact mention when merging a shorter alias (first mention timed: %s)',async timed=>{
+  const content='We tested AeroBox Plus. Later AeroBox is available. AeroBox Plus remains available.';
+  const transcriptSegments=timed
+   ?[{text:'We tested AeroBox Plus.',startSeconds:12,durationSeconds:4}]
+   :[{text:'We tested AeroBox',startSeconds:12,durationSeconds:2},{text:'Plus.',startSeconds:15,durationSeconds:2}];
+  transcriptSegments.push({text:'Later AeroBox is available.',startSeconds:25,durationSeconds:4},
+   {text:'AeroBox Plus remains available.',startSeconds:40,durationSeconds:4});
+  const result=await analyzeKeywordsV4({...record(content),transcriptSegments},limits,async request=>{
+   const value=body(request);
+   return settled({...ack(value),candidates:[keyword(value,content,'AeroBox Plus'),keyword(value,content,'AeroBox Plus','AeroBox')]});
+  },context);
+  expect(result.state).toBe('review');expect((result.evidence as any).accepted).toEqual([]);
+  expect(result.pending[0]).toMatchObject({label:'AeroBox Plus',confidence:0,ranges:timed
+   ?[{startSeconds:12,endSeconds:16},{startSeconds:40,endSeconds:44}]
+   :[{startSeconds:40,endSeconds:44}]});
+  expect((result.evidence as any).extraction.proposals.map((p:any)=>p.mention)).toEqual(['AeroBox Plus','AeroBox']);
+ });
+ it('does not assign a shorter alias cue to an untimed retained full mention',async()=>{
+  const content='We tested AeroBox Plus. Later AeroBox is available.';
+  const transcriptSegments=[{text:'We tested AeroBox',startSeconds:12,durationSeconds:2},{text:'Plus.',startSeconds:15,durationSeconds:2},
+   {text:'Later AeroBox is available.',startSeconds:25,durationSeconds:4}];
+  const result=await analyzeKeywordsV4({...record(content),transcriptSegments},limits,async request=>{
+   const value=body(request);return settled({...ack(value),candidates:[keyword(value,content,'AeroBox Plus'),keyword(value,content,'AeroBox Plus','AeroBox')]});
+  },context);
+  expect(result.state).toBe('review');expect(result.pending[0]).toMatchObject({label:'AeroBox Plus',confidence:0,ranges:[]});
  });
  it('requires independent empty-summary review and never erases findings_expected',async()=>{
   const generate:AnalysisGenerator=async request=>settled({...ack(body(request)),highlights:[]});
