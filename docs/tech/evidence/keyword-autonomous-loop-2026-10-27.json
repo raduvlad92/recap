@@ -1,0 +1,1957 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-27T21:15:36.932Z",
+  "status": "good_on_seven_audited_saved_transcripts_not_production_promoted",
+  "authorization": {
+    "autonomousLearning": true,
+    "cumulativeLimitUsd": 10,
+    "dailyLimitUsd": 5,
+    "perCallLimitUsd": 0.1,
+    "finiteContinuationCeilingUsd": 1.1,
+    "finiteContinuationMaxCalls": 240,
+    "allNewSessionsClosed": true,
+    "twentyVideoBatchRun": false,
+    "backfillRun": false,
+    "ordinaryAnalysisEnabled": false,
+    "ownerSpendingEnabled": false,
+    "globalSpendingEnabled": false
+  },
+  "selectedProcess": {
+    "extractorModel": "deepseek/deepseek-v4.1-flash-1017",
+    "methods": [
+      "direct full-source inventory",
+      "independent category sweep",
+      "focused source-only patterns"
+    ],
+    "checkerModel": "openai/gpt-6.1-sol-pro",
+    "checkerReasons": false,
+    "checkerMaxOutputTokens": 2000,
+    "exactCandidateDecisionCount": true,
+    "oneAdditionalCheckerRole": true,
+    "hostDerivedLiteralOccurrences": true,
+    "patternMining": "focused",
+    "namednessNotCanonicalSpelling": true
+  },
+  "training": {
+    "ordinals": [
+      1,
+      2,
+      6,
+      10,
+      20
+    ],
+    "cases": [
+      {
+        "ordinal": 1,
+        "title": "Vetroo 850W Power Supply - LABS Test Report",
+        "savedCharacters": 3322,
+        "sourceHash": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+        "requiredIdentities": 11,
+        "retainedRequiredIdentities": 11,
+        "correctRequiredDispositions": 11,
+        "score": 9.9,
+        "good": true,
+        "acceptedLabels": 11,
+        "acceptedLiteralLabels": 11,
+        "reviewLabels": 0,
+        "reviewLiteralLabels": 0,
+        "hostBoundaryChanges": 0,
+        "methods": [
+          {
+            "method": "direct",
+            "status": "complete",
+            "score": 7.1,
+            "requiredCandidateCoverage": 0.8181818181818182
+          },
+          {
+            "method": "type_sweep",
+            "status": "complete",
+            "score": 7.5,
+            "requiredCandidateCoverage": 0.8181818181818182
+          },
+          {
+            "method": "patterns",
+            "status": "complete",
+            "score": 5.6,
+            "requiredCandidateCoverage": 0.5454545454545454
+          }
+        ],
+        "checkerReportedUsd": 0.0204652,
+        "reportSha256": "dbfbe4c2de0a881e1237ee398dfca048ddce182bacc31640cf579e5c2698e167"
+      },
+      {
+        "ordinal": 2,
+        "title": "Everything Apple Announced last week - M4 Macs",
+        "savedCharacters": 6441,
+        "sourceHash": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+        "requiredIdentities": 45,
+        "retainedRequiredIdentities": 45,
+        "correctRequiredDispositions": 45,
+        "score": 9.7,
+        "good": true,
+        "acceptedLabels": 51,
+        "acceptedLiteralLabels": 51,
+        "reviewLabels": 2,
+        "reviewLiteralLabels": 2,
+        "hostBoundaryChanges": 0,
+        "methods": [
+          {
+            "method": "direct",
+            "status": "complete",
+            "score": 7.3,
+            "requiredCandidateCoverage": 0.8
+          },
+          {
+            "method": "type_sweep",
+            "status": "complete",
+            "score": 6.6,
+            "requiredCandidateCoverage": 0.7333333333333333
+          },
+          {
+            "method": "patterns",
+            "status": "complete",
+            "score": 5.8,
+            "requiredCandidateCoverage": 0.4444444444444444
+          }
+        ],
+        "checkerReportedUsd": 0.0469604,
+        "reportSha256": "2e56c3307ef3a1732a0e45e6d84274e5d6121d75cc6c4610e460308b69670cb2"
+      },
+      {
+        "ordinal": 6,
+        "title": "Understanding graphics upscalers like DLSS and FSR",
+        "savedCharacters": 7781,
+        "sourceHash": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+        "requiredIdentities": 34,
+        "retainedRequiredIdentities": 34,
+        "correctRequiredDispositions": 34,
+        "score": 9.9,
+        "good": true,
+        "acceptedLabels": 42,
+        "acceptedLiteralLabels": 42,
+        "reviewLabels": 0,
+        "reviewLiteralLabels": 0,
+        "hostBoundaryChanges": 0,
+        "methods": [
+          {
+            "method": "direct",
+            "status": "complete",
+            "score": 7.1,
+            "requiredCandidateCoverage": 0.7352941176470589
+          },
+          {
+            "method": "type_sweep",
+            "status": "complete",
+            "score": 8.4,
+            "requiredCandidateCoverage": 0.8823529411764706
+          },
+          {
+            "method": "patterns",
+            "status": "complete",
+            "score": 6.5,
+            "requiredCandidateCoverage": 0.7647058823529411
+          }
+        ],
+        "checkerReportedUsd": 0.051572,
+        "reportSha256": "48c574c6665f462d5da55e0e88efe63dd6d2f90902671b24c2d48882209540af"
+      },
+      {
+        "ordinal": 10,
+        "title": "Linus Got Fooled by AI Music",
+        "savedCharacters": 4385,
+        "sourceHash": "6974d009458bffc74d52320b7ddb751781ac6f2ac8b10e4b745364c2544a49f9",
+        "requiredIdentities": 11,
+        "retainedRequiredIdentities": 11,
+        "correctRequiredDispositions": 11,
+        "score": 9.8,
+        "good": true,
+        "acceptedLabels": 11,
+        "acceptedLiteralLabels": 11,
+        "reviewLabels": 0,
+        "reviewLiteralLabels": 0,
+        "hostBoundaryChanges": 0,
+        "methods": [
+          {
+            "method": "direct",
+            "status": "complete",
+            "score": 8.7,
+            "requiredCandidateCoverage": 1
+          },
+          {
+            "method": "type_sweep",
+            "status": "complete",
+            "score": 9,
+            "requiredCandidateCoverage": 1
+          },
+          {
+            "method": "patterns",
+            "status": "complete",
+            "score": 3.8,
+            "requiredCandidateCoverage": 0.2727272727272727
+          }
+        ],
+        "checkerReportedUsd": 0.019862,
+        "reportSha256": "e26d6a3eaf292e558fd8c03d9ca3377c9b3902b6fb64b19af0837bc0a4ed7fd5"
+      },
+      {
+        "ordinal": 20,
+        "title": "Everything to know about SteamOS",
+        "savedCharacters": 6638,
+        "sourceHash": "f93dfd62aa78fd03101873baad9bf302cae05081ab345685a1bd75edba89f29a",
+        "requiredIdentities": 26,
+        "retainedRequiredIdentities": 26,
+        "correctRequiredDispositions": 26,
+        "score": 9.9,
+        "good": true,
+        "acceptedLabels": 32,
+        "acceptedLiteralLabels": 32,
+        "reviewLabels": 0,
+        "reviewLiteralLabels": 0,
+        "hostBoundaryChanges": 0,
+        "methods": [
+          {
+            "method": "direct",
+            "status": "complete",
+            "score": 8.2,
+            "requiredCandidateCoverage": 0.8846153846153846
+          },
+          {
+            "method": "type_sweep",
+            "status": "complete",
+            "score": 8.2,
+            "requiredCandidateCoverage": 0.8846153846153846
+          },
+          {
+            "method": "patterns",
+            "status": "complete",
+            "score": 6.1,
+            "requiredCandidateCoverage": 0.6923076923076923
+          }
+        ],
+        "checkerReportedUsd": 0.0381852,
+        "reportSha256": "1f19001c0dead58a4bb621828f3d88e8e19727387d2951b60104768d465a67ea"
+      }
+    ],
+    "allGood": true,
+    "meanScore": 9.84,
+    "requiredIdentities": 127,
+    "correctRequiredDispositions": 127
+  },
+  "freshValidation": {
+    "ordinals": [
+      14,
+      15
+    ],
+    "frozenBeforeGenerationAt": "2026-10-27T20:57:43.039Z",
+    "promptChangedAfterValidation": false,
+    "initialReferenceVersion": "reference-v6",
+    "initialStrictGoodCount": 0,
+    "initialScores": [
+      9.7,
+      9.2
+    ],
+    "initialRequiredDispositionsCorrect": 37,
+    "unlistedLiteralAliasesFlagged": 5,
+    "sourceOnlyAdjudication": "All five are aliases of existing required identities; no new identities or relaxed dispositions.",
+    "finalReferenceVersion": "reference-v7",
+    "cases": [
+      {
+        "ordinal": 14,
+        "title": "\"Delidding\" RAM with Liquid Nitrogen, ft. Joe's Trick",
+        "savedCharacters": 8498,
+        "sourceHash": "7c4e2a0866a92ec521130a20e8c2fb596051782de25b5dc3676e88b75a5dca18",
+        "requiredIdentities": 14,
+        "retainedRequiredIdentities": 14,
+        "correctRequiredDispositions": 14,
+        "score": 9.9,
+        "good": true,
+        "acceptedLabels": 14,
+        "acceptedLiteralLabels": 14,
+        "reviewLabels": 4,
+        "reviewLiteralLabels": 4,
+        "hostBoundaryChanges": 1,
+        "methods": [
+          {
+            "method": "direct",
+            "status": "complete",
+            "score": 6.6,
+            "requiredCandidateCoverage": 0.8571428571428571
+          },
+          {
+            "method": "type_sweep",
+            "status": "complete",
+            "score": 8.2,
+            "requiredCandidateCoverage": 0.9285714285714286
+          },
+          {
+            "method": "patterns",
+            "status": "complete",
+            "score": 5.6,
+            "requiredCandidateCoverage": 0.14285714285714285
+          }
+        ],
+        "checkerReportedUsd": 0.0292996,
+        "reportSha256": "326478b836e982ae5a658ab6fa9e202b05147ed40b43dc363b72597d34473cf6"
+      },
+      {
+        "ordinal": 15,
+        "title": "Is Tesla Model S Plaid Signature a Future Collectible?",
+        "savedCharacters": 9579,
+        "sourceHash": "85f141058b30a1c79442926700f34729c23e14d177fca571aec53ec2153f7112",
+        "requiredIdentities": 23,
+        "retainedRequiredIdentities": 23,
+        "correctRequiredDispositions": 23,
+        "score": 9.7,
+        "good": true,
+        "acceptedLabels": 32,
+        "acceptedLiteralLabels": 32,
+        "reviewLabels": 1,
+        "reviewLiteralLabels": 0,
+        "hostBoundaryChanges": 5,
+        "methods": [
+          {
+            "method": "direct",
+            "status": "complete",
+            "score": 8.3,
+            "requiredCandidateCoverage": 0.9130434782608695
+          },
+          {
+            "method": "type_sweep",
+            "status": "complete",
+            "score": 7.6,
+            "requiredCandidateCoverage": 0.9130434782608695
+          },
+          {
+            "method": "patterns",
+            "status": "complete",
+            "score": 6,
+            "requiredCandidateCoverage": 0.2608695652173913
+          }
+        ],
+        "checkerReportedUsd": 0.0440588,
+        "reportSha256": "49369cbd769b1e43ba0133f067684e4c520fc0a8da4bba30cf8adfdeec600db8"
+      }
+    ],
+    "allGood": true,
+    "meanScore": 9.8,
+    "requiredIdentities": 37,
+    "correctRequiredDispositions": 37,
+    "newModelCallsForAdjudication": 0
+  },
+  "allSeven": {
+    "requiredIdentities": 164,
+    "correctRequiredDispositions": 164,
+    "acceptedLabels": 193,
+    "acceptedLiteralLabels": 193,
+    "reviewLabels": 7,
+    "reviewLiteralLabels": 6
+  },
+  "reference": {
+    "version": "reference-v7",
+    "sha256": "0d5a807bbc817b52cb7a86e623ef1e3238d987fc297716eaa5414ebdba25326f",
+    "frozenInitialValidationReferenceSha256": "b7fe91d6fbb8f0a5be77380b3ae70b553d78e3aba2dfda214abb46d4ccc87ee4",
+    "originalFrozenV6Preserved": true,
+    "scoringFormulaUnchanged": true,
+    "thresholdsUnchanged": true,
+    "requiredTrainingAdditions": 2,
+    "optionalTrainingTermAdditions": 3,
+    "heldoutGenericTermMovedToOptionalBeforeGeneration": 1,
+    "heldoutAliasesAddedAfterGeneration": 5,
+    "oldOutputsUniformlyRegraded": 127,
+    "sourceOnlyAuditsWithoutModelOutputInspection": true,
+    "humanGoldExhaustive": false,
+    "originalVideoCompletenessVerified": false,
+    "priorReferenceFilesPreserved": true
+  },
+  "learning": {
+    "optimizerCalls": 19,
+    "recordedRoundDecisions": [
+      {
+        "loop": "deepseek-checker/ds1",
+        "version": "ds1-r1",
+        "target": "checker",
+        "evaluated": false,
+        "retained": false,
+        "reason": "source_specific_name_in_keyword_loop_lesson"
+      },
+      {
+        "loop": "deepseek-checker/ds1",
+        "version": "ds1-r2",
+        "target": "checker",
+        "evaluated": true,
+        "retained": false,
+        "reason": "candidate_regressed"
+      },
+      {
+        "loop": "deepseek-checker/ds1",
+        "version": "ds1-r3",
+        "target": "checker",
+        "evaluated": true,
+        "retained": false,
+        "reason": "candidate_regressed"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r1",
+        "target": "checker",
+        "evaluated": false,
+        "retained": false,
+        "reason": "source_specific_name_in_keyword_loop_lesson"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r2",
+        "target": "checker",
+        "evaluated": true,
+        "retained": false,
+        "reason": "candidate_regressed"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r3",
+        "target": "checker",
+        "evaluated": true,
+        "retained": false,
+        "reason": "candidate_regressed"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r4",
+        "target": "checker",
+        "evaluated": true,
+        "retained": false,
+        "reason": "candidate_regressed"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r5",
+        "target": "checker",
+        "evaluated": true,
+        "retained": true,
+        "reason": "candidate_improved_without_regression"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r6",
+        "target": "checker",
+        "evaluated": false,
+        "retained": false,
+        "reason": "keyword_loop_repeated_proposal"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r7",
+        "target": "checker",
+        "evaluated": true,
+        "retained": false,
+        "reason": "candidate_tied"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r8",
+        "target": "checker",
+        "evaluated": true,
+        "retained": false,
+        "reason": "candidate_regressed"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r9",
+        "target": "checker",
+        "evaluated": true,
+        "retained": false,
+        "reason": "candidate_regressed"
+      },
+      {
+        "loop": "deepseek-checker/ds2",
+        "version": "ds2-r10",
+        "target": "checker",
+        "evaluated": true,
+        "retained": true,
+        "reason": "candidate_improved_without_regression"
+      },
+      {
+        "loop": "extended/loop4",
+        "version": "loop4-r1",
+        "target": "checker",
+        "evaluated": false,
+        "retained": false,
+        "reason": "source_specific_name_in_keyword_loop_lesson"
+      },
+      {
+        "loop": "extended/loop4",
+        "version": "loop4-r2",
+        "target": "checker",
+        "evaluated": true,
+        "retained": false,
+        "reason": "candidate_regressed"
+      },
+      {
+        "loop": "extended/loop4",
+        "version": "loop4-r3",
+        "target": "checker",
+        "evaluated": false,
+        "retained": false,
+        "reason": "keyword_loop_policy_shortcut"
+      }
+    ],
+    "configurationsEvaluatedAcrossAllFive": 16,
+    "configurations": [
+      {
+        "configuration": "deepseek-checker/ds1-r0",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "failed",
+            "errorCode": "checker_candidate_decisions_incomplete",
+            "score": null,
+            "good": false,
+            "missingRequired": null,
+            "unresolvedExtraAccepted": null,
+            "unresolvedExtraReview": null
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 7.6,
+            "good": false,
+            "missingRequired": 8,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.7,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.3,
+            "good": false,
+            "missingRequired": 2,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 0
+          }
+        ],
+        "completeFive": false,
+        "goodCases": 1,
+        "meanScore": null
+      },
+      {
+        "configuration": "deepseek-checker/ds1-r2",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 7.5,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 5,
+            "unresolvedExtraReview": 6
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.1,
+            "good": false,
+            "missingRequired": 9,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 5
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.9,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 8,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9,
+            "good": false,
+            "missingRequired": 2,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.2,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 3,
+            "unresolvedExtraReview": 2
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 0,
+        "meanScore": 8.540000000000001
+      },
+      {
+        "configuration": "deepseek-checker/ds1-r3",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 7.9,
+            "good": false,
+            "missingRequired": 8,
+            "unresolvedExtraAccepted": 8,
+            "unresolvedExtraReview": 4
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.5,
+            "good": false,
+            "missingRequired": 3,
+            "unresolvedExtraAccepted": 8,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.7,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.2,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 3
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 1,
+        "meanScore": 8.86
+      },
+      {
+        "configuration": "deepseek-checker/ds1-r4",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.1,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 5,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.6,
+            "good": false,
+            "missingRequired": 8,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.6,
+            "good": false,
+            "missingRequired": 4,
+            "unresolvedExtraAccepted": 8,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.8,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "failed",
+            "errorCode": "keyword_loop_core_module_changed",
+            "score": null,
+            "good": false,
+            "missingRequired": null,
+            "unresolvedExtraAccepted": null,
+            "unresolvedExtraReview": null
+          }
+        ],
+        "completeFive": false,
+        "goodCases": 1,
+        "meanScore": null
+      },
+      {
+        "configuration": "deepseek-checker/ds2-r0",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "focused",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.2,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.3,
+            "good": false,
+            "missingRequired": 9,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 5
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.6,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.1,
+            "good": false,
+            "missingRequired": 2,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.5,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 1
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 0,
+        "meanScore": 8.74
+      },
+      {
+        "configuration": "deepseek-checker/ds2-r10",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "focused",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.4,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 3,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.8,
+            "good": false,
+            "missingRequired": 6,
+            "unresolvedExtraAccepted": 3,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.3,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 5,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.4,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 2
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 1,
+        "meanScore": 9.16
+      },
+      {
+        "configuration": "deepseek-checker/ds2-r2",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "focused",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.2,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.4,
+            "good": false,
+            "missingRequired": 10,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 4
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 7,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.4,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.6,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 0
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 0,
+        "meanScore": 9.120000000000001
+      },
+      {
+        "configuration": "deepseek-checker/ds2-r3",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "focused",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 7.1,
+            "good": false,
+            "missingRequired": 3,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 4
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.3,
+            "good": false,
+            "missingRequired": 8,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 6
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 3
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 10,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.8,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 1
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 1,
+        "meanScore": 8.84
+      },
+      {
+        "configuration": "deepseek-checker/ds2-r4",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "focused",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.5,
+            "good": false,
+            "missingRequired": 8,
+            "unresolvedExtraAccepted": 4,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.1,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.9,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.9,
+            "good": false,
+            "missingRequired": 2,
+            "unresolvedExtraAccepted": 4,
+            "unresolvedExtraReview": 1
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 0,
+        "meanScore": 8.879999999999999
+      },
+      {
+        "configuration": "deepseek-checker/ds2-r5",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "focused",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.5,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 3
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.7,
+            "good": false,
+            "missingRequired": 8,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.1,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 3,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.4,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 2
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 0,
+        "meanScore": 8.94
+      },
+      {
+        "configuration": "deepseek-checker/ds2-r7",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "focused",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 7.8,
+            "good": false,
+            "missingRequired": 2,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.4,
+            "good": false,
+            "missingRequired": 7,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 3
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.7,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.6,
+            "good": false,
+            "missingRequired": 3,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.3,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 0
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 0,
+        "meanScore": 8.559999999999999
+      },
+      {
+        "configuration": "deepseek-checker/ds2-r8",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "focused",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.2,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 4,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.4,
+            "good": false,
+            "missingRequired": 9,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.2,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.8,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.9,
+            "good": false,
+            "missingRequired": 2,
+            "unresolvedExtraAccepted": 3,
+            "unresolvedExtraReview": 1
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 1,
+        "meanScore": 8.9
+      },
+      {
+        "configuration": "deepseek-checker/ds2-r9",
+        "checkerModel": "deepseek/deepseek-v4.1-flash-1017",
+        "patternMining": "focused",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.2,
+            "good": false,
+            "missingRequired": 2,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.5,
+            "good": false,
+            "missingRequired": 9,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 4
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.2,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 6,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.8,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.2,
+            "good": false,
+            "missingRequired": 2,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 1
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 1,
+        "meanScore": 8.98
+      },
+      {
+        "configuration": "extended/loop4-r0",
+        "checkerModel": "openai/gpt-6-luna-pro",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.3,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.6,
+            "good": false,
+            "missingRequired": 7,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.4,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 5,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.7,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.9,
+            "good": false,
+            "missingRequired": 2,
+            "unresolvedExtraAccepted": 3,
+            "unresolvedExtraReview": 1
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 1,
+        "meanScore": 9.18
+      },
+      {
+        "configuration": "extended/loop4-r2",
+        "checkerModel": "openai/gpt-6-luna-pro",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.3,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.9,
+            "good": false,
+            "missingRequired": 4,
+            "unresolvedExtraAccepted": 3,
+            "unresolvedExtraReview": 2
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.1,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 8,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.7,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.2,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 4,
+            "unresolvedExtraReview": 2
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 1,
+        "meanScore": 9.24
+      },
+      {
+        "configuration": "extended/loop4-r4",
+        "checkerModel": "openai/gpt-6-luna-pro",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.6,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "failed",
+            "errorCode": "evaluation_charge_not_settled",
+            "score": null,
+            "good": false,
+            "missingRequired": null,
+            "unresolvedExtraAccepted": null,
+            "unresolvedExtraReview": null
+          }
+        ],
+        "completeFive": false,
+        "goodCases": 0,
+        "meanScore": null
+      },
+      {
+        "configuration": "recovered/loop2-r0",
+        "checkerModel": "openai/gpt-6-luna-pro",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.2,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "failed",
+            "errorCode": "analysis_invalid_json",
+            "score": null,
+            "good": false,
+            "missingRequired": null,
+            "unresolvedExtraAccepted": null,
+            "unresolvedExtraReview": null
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "failed",
+            "errorCode": "analysis_output_capacity",
+            "score": null,
+            "good": false,
+            "missingRequired": null,
+            "unresolvedExtraAccepted": null,
+            "unresolvedExtraReview": null
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.8,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.4,
+            "good": false,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 3,
+            "unresolvedExtraReview": 0
+          }
+        ],
+        "completeFive": false,
+        "goodCases": 1,
+        "meanScore": null
+      },
+      {
+        "configuration": "recovered/loop2-r1",
+        "checkerModel": "openai/gpt-6-luna-pro",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.6,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          }
+        ],
+        "completeFive": false,
+        "goodCases": 0,
+        "meanScore": null
+      },
+      {
+        "configuration": "recovered/loop3-r0",
+        "checkerModel": "openai/gpt-6-luna-pro",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.6,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.5,
+            "good": false,
+            "missingRequired": 8,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "failed",
+            "errorCode": "evaluation_charge_not_settled",
+            "score": null,
+            "good": false,
+            "missingRequired": null,
+            "unresolvedExtraAccepted": null,
+            "unresolvedExtraReview": null
+          }
+        ],
+        "completeFive": false,
+        "goodCases": 0,
+        "meanScore": null
+      },
+      {
+        "configuration": "sol-checker/sol-bounds",
+        "checkerModel": "openai/gpt-6.1-sol-pro",
+        "patternMining": "focused",
+        "checkerReasons": false,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.5,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.7,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.8,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 4,
+        "meanScore": 9.760000000000002
+      },
+      {
+        "configuration": "sol-checker/sol-geography",
+        "checkerModel": "openai/gpt-6.1-sol-pro",
+        "patternMining": "focused",
+        "checkerReasons": false,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.7,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.8,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 5,
+        "meanScore": 9.84
+      },
+      {
+        "configuration": "sol-checker/sol-initial",
+        "checkerModel": "openai/gpt-6.1-sol-pro",
+        "patternMining": "focused",
+        "checkerReasons": false,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.5,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 1,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.8,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          }
+        ],
+        "completeFive": true,
+        "goodCases": 4,
+        "meanScore": 9.799999999999999
+      },
+      {
+        "configuration": "sol-checker/sol-probe",
+        "checkerModel": "openai/gpt-6.1-sol-pro",
+        "patternMining": "focused",
+        "checkerReasons": false,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 9.9,
+            "good": true,
+            "missingRequired": 0,
+            "unresolvedExtraAccepted": 0,
+            "unresolvedExtraReview": 0
+          }
+        ],
+        "completeFive": false,
+        "goodCases": 1,
+        "meanScore": null
+      },
+      {
+        "configuration": "v5",
+        "checkerModel": "openai/gpt-6-luna-pro",
+        "patternMining": "broad",
+        "checkerReasons": true,
+        "cases": [
+          {
+            "ordinal": 1,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.9,
+            "good": false,
+            "missingRequired": 1,
+            "unresolvedExtraAccepted": 2,
+            "unresolvedExtraReview": 0
+          },
+          {
+            "ordinal": 2,
+            "deliveryStatus": "complete",
+            "errorCode": null,
+            "score": 8.1,
+            "good": false,
+            "missingRequired": 6,
+            "unresolvedExtraAccepted": 3,
+            "unresolvedExtraReview": 1
+          },
+          {
+            "ordinal": 6,
+            "deliveryStatus": "failed",
+            "errorCode": "evaluation_request_failed",
+            "score": null,
+            "good": false,
+            "missingRequired": null,
+            "unresolvedExtraAccepted": null,
+            "unresolvedExtraReview": null
+          },
+          {
+            "ordinal": 10,
+            "deliveryStatus": "failed",
+            "errorCode": "keyword_learning_state_conflict",
+            "score": null,
+            "good": false,
+            "missingRequired": null,
+            "unresolvedExtraAccepted": null,
+            "unresolvedExtraReview": null
+          },
+          {
+            "ordinal": 20,
+            "deliveryStatus": "failed",
+            "errorCode": "keyword_learning_state_conflict",
+            "score": null,
+            "good": false,
+            "missingRequired": null,
+            "unresolvedExtraAccepted": null,
+            "unresolvedExtraReview": null
+          }
+        ],
+        "completeFive": false,
+        "goodCases": 0,
+        "meanScore": null
+      }
+    ],
+    "oldV3UnderFinalReference": [
+      {
+        "ordinal": 1,
+        "score": 9.2,
+        "good": false,
+        "missingRequired": 1
+      },
+      {
+        "ordinal": 10,
+        "score": 9.7,
+        "good": true,
+        "missingRequired": 0
+      },
+      {
+        "ordinal": 2,
+        "score": 8.8,
+        "good": false,
+        "missingRequired": 7
+      },
+      {
+        "ordinal": 20,
+        "score": 9.3,
+        "good": false,
+        "missingRequired": 1
+      },
+      {
+        "ordinal": 6,
+        "score": 9.5,
+        "good": false,
+        "missingRequired": 1
+      }
+    ],
+    "allOriginalReportsPreserved": true,
+    "modelWeightsTrained": false
+  },
+  "money": {
+    "calls": 136,
+    "settledCalls": 133,
+    "unknownCalls": 3,
+    "reportedSettledUsd": "0.775139095",
+    "newHeldUsd": "0.112074125",
+    "newCommittedUsd": "0.887213220",
+    "byModel": {
+      "deepseek/deepseek-v4.1-flash-1017": {
+        "calls": 95,
+        "settledUsd": "0.091569200",
+        "unknown": 0,
+        "heldUsd": "0"
+      },
+      "openai/gpt-6.1-sol-pro": {
+        "calls": 17,
+        "settledUsd": "0.6080163",
+        "unknown": 0,
+        "heldUsd": "0"
+      },
+      "openai/gpt-6-luna-pro": {
+        "calls": 24,
+        "settledUsd": "0.075553595",
+        "unknown": 3,
+        "heldUsd": "0.112074125"
+      }
+    },
+    "largestReportedCallUsd": "0.051572",
+    "largestReservationUsd": "0.1"
+  },
+  "cumulativeLedger": {
+    "calls": 503,
+    "reportedSettledUsd": "4.379443949",
+    "heldUsd": "0.125827191",
+    "committedUsd": "4.505271140",
+    "remainingTotalHeadroomUsd": "5.494728860",
+    "dailyCommitmentUsd": 4.445195571,
+    "unknownCalls": 7
+  },
+  "verification": {
+    "localTestsPassed": 2937,
+    "testFiles": 83,
+    "typecheck": true,
+    "build": true,
+    "catalogue": true,
+    "ciRunId": 40578717741,
+    "ciHead": "e058cb79a8f8fd9a2e3c13989e055da2bb8962e7",
+    "ciConclusion": "success",
+    "deployId": "6ae10acb5b3565e9e6103bab",
+    "deployCommit": "e058cb79a8f8fd9a2e3c13989e055da2bb8962e7",
+    "deployState": "ready",
+    "deployPublishedAt": "2026-10-27T20:34:56.167Z",
+    "closedHostedReadback": {
+      "checkedAt": "2026-10-27T21:07:11.010Z",
+      "readStatus": 200,
+      "resultMatches": true,
+      "chargeMatches": true,
+      "requestHashMatches": true,
+      "closedPreflightStatus": 403,
+      "closedPreflightCode": "keyword_learning_not_released",
+      "modelDispatched": false
+    },
+    "oldCallsPreserved": 367,
+    "oldArchivesPreserved": 501,
+    "oldJobsPreserved": 431,
+    "workspacesPreserved": 3,
+    "reviewsPreserved": 96,
+    "unmatchedReviewSuggestionsExcludedFromAcceptedOutput": 1,
+    "newEvaluationCallsWithProductionJob": 0,
+    "concurrentScheduledArchiveAdditions": 3,
+    "activeAIJobs": 0,
+    "defaultModel": "deepseek/deepseek-v4.1-flash-1017",
+    "selectionRevision": 18,
+    "referenceAudits": {
+      "trainingFinal": "ddb9a00cead8e252956b1c7ca715484642f616f4a131c1c38c24c034a4e5a3ce",
+      "heldoutAlias": "0282b81d324a99aecbb42f0c2f977a6aac0b4da3091f265fa9391cdd7dfbad74"
+    }
+  },
+  "limitations": [
+    "All transcripts are saved partial or unverified-original captures; this does not establish complete-original-video recall.",
+    "The references are independently assistant-audited, not exhaustive human gold.",
+    "The seven examples do not establish quality across languages, subjects or platforms.",
+    "Accepted literal namedness does not establish corrected spelling or canonical real-world identity.",
+    "Some accepted labels are useful generic technical terms rather than distinct proper names.",
+    "One source-unmatched normalized spelling was demoted to private review and never entered accepted output; only the six source-backed review labels belong in the usable literal inventory.",
+    "Private evaluation is not publication or production-worker integration."
+  ]
+}

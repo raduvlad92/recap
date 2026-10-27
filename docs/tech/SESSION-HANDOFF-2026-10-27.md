@@ -1,6 +1,20 @@
 # Reliability handoff — 27 October 2026
 
-## Latest executed checkpoint — five-case keyword learning complete
+## Current checkpoint — autonomous keyword loop completed
+
+Read [the final loop report](KEYWORD-AUTONOMOUS-LOOP-2026-10-27.md). The founder instructed the assistant to run the improve/test/learn loop itself. That work is complete; no owner grading is needed. The selected process combines DeepSeek direct extraction, a separate DeepSeek type sweep, focused free pattern mining and one Sol checker without per-row reasons. Names, kinds, dispositions, complete traversal and exact candidate checks remain. All five training cases are **Good: 9.9/9.7/9.9/9.8/9.9**, mean **9.84/10**, with **127/127 required identities correct**.
+
+The prompt froze at **20:57:43 UTC** before withheld cases 14/15. Both first outputs retain all **37/37** known required identities. Reference v6 nevertheless flags five unlisted accepted aliases, so the original blind strict gate did not pass. A separate source-only audit confirms all five as legitimate literal aliases of existing identities; reference v7 regrading gives **9.9/9.7, both Good**, without prompt changes or extra model calls. All seven cases have **164/164** required identities in the expected state. Training-reference corrections (US/Max required, three optional technical terms, one generic term made optional) precede held-out testing; five held-out alias additions follow it and are disclosed. Mark the prompt **Good for this small private evaluation**. Saved captures are partial/unverified and assistant references are not exhaustive human gold.
+
+**Current finances:** 136 new calls, 133 settled for **US$0.775139095**, three unknown holds **US$0.112074125**. Cumulative commitment **US$4.505271140**, including **US$0.125827191 total holds**. Retain **US$10 cumulative / US$5 daily / US$0.10 per call**. The internal experiment ceiling rose US$1 to US$1.10 for verification within these limits; no historical cost/hold was reset. All five new sessions are closed; production/runtime/global/owner Off, DeepSeek revision18, zero active AI jobs. Refresh this actual state before any future paid work. Private final evidence: `.local/keyword-learning-loop-20261027/final-controls.json` and `preservation-and-costs.json`.
+
+**Preservation/release:** 367 old calls, 501 old archives, 431 jobs, three workspaces and 96 reviews remain exact. Three new archives are independent existing hourly collection, not source collection started by this experiment. All **2,937 local tests / 83 files**, typecheck/build/catalogue pass. Functional **`e058cb79`**, [CI40578717741](https://github.com/raduvlad92/recap/actions/runs/40578717741) success; exact ready Netlify **`6ae10acb5b3565e9e6103bab`**, published **20:34:56 UTC**. Hosted closed-session result reread matches (200); fresh preflight refuses (403), no new call. Private persistence is separate from accepted reader publication.
+
+**Next action:** decide together about the twenty-video run, as the founder previously requested. Keep the evaluated prompt, failed attempts, revised references and costs. No twenty-video generation, backfill, publication or production-default change occurred. The ordinary production pipeline remains paused. The provider key stays server-side; existing authentication works. Do not reopen consumed sessions or redispatch unknown payloads.
+
+Everything below is historical context; its old budget balances, failed gates and proposed owner-review steps are superseded by this checkpoint.
+
+## Historical first five-case attempt
 
 Read [actual results and costs](KEYWORD-LEARNING-RESULTS-2026-10-27.md). Founder authorized the proposed implementation/test and raised the cumulative evaluation cap to **US$10**; daily US$5/call US$0.10 remain. The private runner now supports three complementary methods, an optional physical section method, literal-source matching, one additional AI checker, reference grading, saved mistakes, AI prompt revision and exact-response replay. The source-only reference was audited into 125 required identities / 145 literal surfaces; it is not exhaustive human gold. Raw sources/identities and owner/session/provider IDs stay private.
 
@@ -8,15 +22,15 @@ All five new lists completed. Scores **9.5/8.9/9.5/9.7/9.3**, mean 9.38; **122/1
 
 **Financial/off closeout:** 67 new calls all settled, **US$0.066610170**, zero new holds. DeepSeek 54/US$0.017389190; Luna 13/US$0.049220980. Ledger 367 calls, US$3.604304854 settled plus four old holds US$0.013753066 = **US$3.618057920 committed**, remaining US$6.381942080. Finite US$1 session closed, global/owner/runtime analysis Off, DeepSeek selection revision 18, zero active AI jobs. All 300 old call rows, 498 archives, 431 old AI jobs, three workspaces and 96 reviews exact; existing collection telemetry moved independently. No publication, twenty-video run or backfill. Local 2,892 tests/build/catalogue/typecheck pass; actual migration rollback/apply/private grants and hosted closed-session readback pass. Final functional `d48ca9b` is pushed with passing CI40553826540; exact production deploy `6ae0e42bdef7821e774e9c33` matches that commit and is ready/published at 17:50:06 UTC.
 
-**Next:** review the small name-boundary/review exceptions with the founder, decide together about twenty videos, and keep the original accumulated costs/holds in the US$10 ceiling. General prompt history is saved; no new paid optimizer round or production prompt publication follows automatically. The production provider key remains server-side. Evaluation authenticates by the existing worker secret or verified admin and binds the request to configured APP_URL; build-only CONTEXT was not reliable in the function runtime.
+**Superseded next step (historical):** review the small name-boundary/review exceptions with the founder, decide together about twenty videos, and keep the original accumulated costs/holds in the US$10 ceiling. General prompt history is saved; no new paid optimizer round or production prompt publication follows automatically. The production provider key remains server-side. Evaluation authenticates by the existing worker secret or verified admin and binds the request to configured APP_URL; build-only CONTEXT was not reliable in the function runtime.
 
-## Latest planning request — five-video named-mention improvement loop
+## Historical planning request — five-video named-mention improvement loop
 
 Founder proposed five saved transcripts, 1–10 ratings, iterative prompt changes, three or four extraction approaches and one additional AI checker. Clarified target: **every named mention, including brief references and ads**. [Concrete plan and selected five](KEYWORD-LEARNING-PLAN-2026-10-27.md). Ordinals 1/2/6 are development cases; 10/20 are proposed validation cases withheld from the future prompt writer. Private source-reference preparation verifies 143 surfaces/356 literal occurrences, not 143 canonical identities or exhaustive human gold. No five-video baseline, new method/checker run, paid iteration, app/configuration change or new model spend occurred during this planning pass.
 
 Next implementation: a small private evaluation runner, complementary extraction methods, literal-name source matching, one checker, fixed scoring and versioned prompt improvements under a finite cash/round cap. Keep validation inputs/outputs out of the writer context and reserve final-validation costs before optimization. Current 4/10 versus proposed 8/10 are design judgments only. Preserve the last executed pause/cost checkpoint below; refresh actual ledger before any paid call. Twenty-video generation/backfill remain off.
 
-## Latest executed checkpoint — practical fixes released; fresh proof failed
+## Historical checkpoint — practical fixes released; fresh proof failed
 
 Read [practical fixes and final evidence](PRACTICAL-FIXES-2026-10-27.md) first. The founder approved the recommended fixes/test and asked for easy sensible changes. Timing ownership, compact corrections, reversible empty audit-field omission and clearer selection instructions are implemented, pushed and deployed; no new tables/services. All 2,818 local tests/CI, actual guarded migration, saved-response checks and preservation pass. The new DeepSeek trial nevertheless produces zero final recaps/keyword inventories across six tasks. No quality approval or new publication.
 
@@ -70,7 +84,7 @@ The forty tasks comprise six fresh v4 smoke jobs, one recovered historical H3 su
 
 The v4 smoke's two `published` job histories are the withheld recap and private-review keyword inventory. Neither makes this a six-task quality pass. Never infer quality from job state, model-verifier agreement, local tests, replay or a successful database write.
 
-## Ordered remaining work
+## Historical ordered remaining work — superseded by the current checkpoint
 
 1. Work offline from the saved failures. Correction ancestry preserved proposal IDs but still allowed a critical non-recommendation and workload qualification to disappear. Add a defensible critical-finding/qualification retention check and test the actual failure shape before proposing another bounded protocol.
 2. Simplify literal identity selection so two valid unit IDs cannot casually become an entire-transcript mention or a partial domain. Preserve complete source traversal and every uncertain proposal privately; do not truncate inventories, drop candidates or approve the sixty pending candidates merely to obtain a pass.
