@@ -1,6 +1,12 @@
 # Reliability handoff — 27 October 2026
 
-## Latest checkpoint — practical fixes released; fresh proof failed
+## Latest planning request — five-video named-mention improvement loop
+
+Founder proposed five saved transcripts, 1–10 ratings, iterative prompt changes, three or four extraction approaches and one additional AI checker. Clarified target: **every named mention, including brief references and ads**. [Concrete plan and selected five](KEYWORD-LEARNING-PLAN-2026-10-27.md). Ordinals 1/2/6 are development cases; 10/20 are proposed validation cases withheld from the future prompt writer. Private source-reference preparation verifies 143 surfaces/356 literal occurrences, not 143 canonical identities or exhaustive human gold. No five-video baseline, new method/checker run, paid iteration, app/configuration change or new model spend occurred during this planning pass.
+
+Next implementation: a small private evaluation runner, complementary extraction methods, literal-name source matching, one checker, fixed scoring and versioned prompt improvements under a finite cash/round cap. Keep validation inputs/outputs out of the writer context and reserve final-validation costs before optimization. Current 4/10 versus proposed 8/10 are design judgments only. Preserve the last executed pause/cost checkpoint below; refresh actual ledger before any paid call. Twenty-video generation/backfill remain off.
+
+## Latest executed checkpoint — practical fixes released; fresh proof failed
 
 Read [practical fixes and final evidence](PRACTICAL-FIXES-2026-10-27.md) first. The founder approved the recommended fixes/test and asked for easy sensible changes. Timing ownership, compact corrections, reversible empty audit-field omission and clearer selection instructions are implemented, pushed and deployed; no new tables/services. All 2,818 local tests/CI, actual guarded migration, saved-response checks and preservation pass. The new DeepSeek trial nevertheless produces zero final recaps/keyword inventories across six tasks. No quality approval or new publication.
 

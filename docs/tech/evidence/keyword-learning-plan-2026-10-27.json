@@ -1,0 +1,215 @@
+{
+  "schemaVersion": "therecap-keyword-learning-plan-v1",
+  "preparedAt": "2026-10-27T11:41:33.975Z",
+  "status": "design_and_source_preparation_only",
+  "experimentExecuted": false,
+  "newModelCalls": 0,
+  "newModelSpendingUsd": "0.000000000000",
+  "productionCodeChanged": false,
+  "runtimeOrBudgetChanged": false,
+  "founderTarget": "Every named mention, including brief mentions and ads.",
+  "noImportanceFrequencyOrTopNFilter": true,
+  "sourceCases": [
+    {
+      "ordinal": 1,
+      "title": "Vetroo 850W Power Supply - LABS Test Report",
+      "savedCharacters": 3322,
+      "sourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+      "split": "development",
+      "originalCaptureCompletenessVerified": false
+    },
+    {
+      "ordinal": 2,
+      "title": "Everything Apple Announced last week - M4 Macs",
+      "savedCharacters": 6441,
+      "sourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+      "split": "development",
+      "originalCaptureCompletenessVerified": false
+    },
+    {
+      "ordinal": 6,
+      "title": "Understanding graphics upscalers like DLSS and FSR",
+      "savedCharacters": 7781,
+      "sourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+      "split": "development",
+      "originalCaptureCompletenessVerified": false
+    },
+    {
+      "ordinal": 10,
+      "title": "Linus Got Fooled by AI Music",
+      "savedCharacters": 4385,
+      "sourceSha256": "6974d009458bffc74d52320b7ddb751781ac6f2ac8b10e4b745364c2544a49f9",
+      "split": "validation_withheld_from_prompt_writer",
+      "originalCaptureCompletenessVerified": false
+    },
+    {
+      "ordinal": 20,
+      "title": "Everything to know about SteamOS",
+      "savedCharacters": 6638,
+      "sourceSha256": "f93dfd62aa78fd03101873baad9bf302cae05081ab345685a1bd75edba89f29a",
+      "split": "validation_withheld_from_prompt_writer",
+      "originalCaptureCompletenessVerified": false
+    }
+  ],
+  "totalSavedCharacters": 28567,
+  "backupValidationCases": [
+    {
+      "ordinal": 14,
+      "title": "\"Delidding\" RAM with Liquid Nitrogen, ft. Joe's Trick",
+      "savedCharacters": 8498,
+      "sourceSha256": "7c4e2a0866a92ec521130a20e8c2fb596051782de25b5dc3676e88b75a5dca18",
+      "sourceBodyReadDuringThisPlanningPass": false,
+      "historicallyNeverSeenClaimed": false
+    },
+    {
+      "ordinal": 15,
+      "title": "Is Tesla Model S Plaid Signature a Future Collectible?",
+      "savedCharacters": 9579,
+      "sourceSha256": "85f141058b30a1c79442926700f34729c23e14d177fca571aec53ec2153f7112",
+      "sourceBodyReadDuringThisPlanningPass": false,
+      "historicallyNeverSeenClaimed": false
+    }
+  ],
+  "referenceDraft": {
+    "surfaceRowsNamedAndTechnical": 132,
+    "otherNamedSurfaces": 11,
+    "totalSurfaceRows": 143,
+    "literalOccurrencesChecked": 356,
+    "allLiteralOccurrencesMatched": true,
+    "distinctIdentityCount": null,
+    "exhaustiveGoldStandard": false,
+    "humanApproval": false,
+    "eligibilityIdentityCoverageAuditRequired": true,
+    "privateDraftSha256": "746bc6ce44e7736fb11a63d3aaf339fbd085f4b30cfcdce27fc22dfe8464ab7e",
+    "privateLiteralValidationSha256": "5b73854deccb6598125e91511fe120ff4fe676372f80b161709dcdc07ea4dc38"
+  },
+  "methods": [
+    {
+      "id": "direct",
+      "type": "ai",
+      "goal": "Read all source text and list every literal named mention."
+    },
+    {
+      "id": "type_sweep",
+      "type": "ai",
+      "goal": "Independent category-by-category inventory of all eligible names."
+    },
+    {
+      "id": "patterns",
+      "type": "deterministic_code",
+      "goal": "Mine source-present domains, handles, model codes and possible proper names; checker classifies candidates."
+    },
+    {
+      "id": "sections",
+      "type": "ai_optional",
+      "goal": "Independent natural-section inventory preserving sponsor and closing coverage."
+    }
+  ],
+  "initialMethods": [
+    "direct",
+    "type_sweep",
+    "patterns"
+  ],
+  "extractorOutput": "Literal source names, not lexical-unit IDs, generated offsets or timestamps.",
+  "hostGrounding": "Locate exact whole-identity occurrences in saved text; preserve punctuation, versions, source spelling and ambiguity.",
+  "candidateCombination": "union; retain singleton discoveries and host-side method provenance",
+  "checker": {
+    "additionalRoles": 1,
+    "fullSavedSourceRequired": true,
+    "methodAndModelLabelsHidden": true,
+    "candidateListHidden": false,
+    "checkUnsupportedNames": true,
+    "checkMissingNames": true,
+    "checkerIsGroundTruth": false,
+    "calibrateAgainstAuditedReference": true,
+    "logicalRoleMayRequireBoundedBatches": true
+  },
+  "scoring": {
+    "scale": [
+      1,
+      10
+    ],
+    "weights": {
+      "coverage": 4,
+      "correctness": 4,
+      "identityAndVersion": 1,
+      "duplicateHandling": 1
+    },
+    "goodThreshold": 8,
+    "everyFinalCaseMustPass": true,
+    "allFiveMustComplete": true,
+    "noUnsupportedAcceptedName": true,
+    "noMissedKnownRequiredName": true,
+    "technicalFailuresSeparate": true,
+    "semanticScoreWithoutFinalOutput": null,
+    "partialScoresMustBeLabelledProvisional": true,
+    "confidenceScoreIsNotQualityScore": true,
+    "formula": "round(clamp(4*C+4*P+I+D,1,10),1 decimal)",
+    "componentDefinitions": {
+      "C": "Required audited identities correctly captured with expected accepted/review disposition divided by required identities.",
+      "P": "Grounded eligible returned identities divided by returned identities.",
+      "I": "Correct type/version/identity decisions divided by grounded eligible returned identities.",
+      "D": "1 minus redundant entity rows divided by returned entity rows; evidence occurrences remain intact."
+    },
+    "referenceDenominatorsAndAliasesFrozen": true,
+    "recordMarginalValidDiscoveriesPerMethod": true
+  },
+  "iteration": {
+    "maximumImprovementRounds": 3,
+    "changeOneFailurePatternAtATime": true,
+    "retainWinnerOnRegression": true,
+    "stopWhenBudgetInsufficient": true,
+    "stopAfterTwoRoundsGainBelowPoints": 0.5,
+    "frozenGraderAndReference": true,
+    "freezeWinnerBeforeFinalValidation": true,
+    "validationFeedbackUseRequiresNewValidationSet": true,
+    "modelWeightTraining": false,
+    "liveUncontrolledSelfModification": false,
+    "validationSourceOutputsErrorsScoresExcludedFromWriterContext": true,
+    "useFreshIsolatedWriterContextWhenNeeded": true
+  },
+  "budget": {
+    "maximumPerCallUsd": 0.1,
+    "existingDailyLimitUsd": 5,
+    "existingCumulativeLimitUsd": 5,
+    "lastVerifiedCommitmentUsd": "3.551447750000",
+    "lastVerifiedHeldUsd": "0.013753066000",
+    "lastVerifiedRemainingUsd": "1.448552250000",
+    "freshReadbackRequiredBeforeExecution": true,
+    "proposedExperimentCapUsd": 1,
+    "experimentCapActivated": false,
+    "capIncludesBaselineExtractionCheckingAndAiPromptRewrite": true,
+    "allPlannedRoundsGuaranteedToFit": false,
+    "unknownHoldsRetained": true,
+    "setAsideBaselineAndFinalValidationBeforeOptimization": true
+  },
+  "baselineEvidence": {
+    "currentR2Hash": "6388be0aca7cd311339cb258c88486d52ba81adef38911bd6554383ee64bab91",
+    "priorSavedKeywordAttemptOrdinals": [
+      1,
+      2,
+      6
+    ],
+    "priorCompleteKeywordInventories": 0,
+    "baselineForAllFiveExecuted": false,
+    "newCaseOrdinalsNotRun": [
+      10,
+      20
+    ],
+    "currentBaselineKeywordSemanticScore": null
+  },
+  "processDesignRatings": {
+    "current": 4,
+    "proposed": 8,
+    "measuredKeywordAccuracy": false,
+    "actualPromptScoresAvailable": false
+  },
+  "nextImplementation": "One private bounded evaluation runner, versioned method/checker prompts, audited references, exact occurrence matching and score/cost reports; retain production history and budget ledger. No new framework or fine-tuning service required.",
+  "twentyVideoGenerationStarted": false,
+  "backfillStarted": false,
+  "researchSources": [
+    "https://developers.openai.com/api/docs/guides/evaluation-best-practices",
+    "https://developers.openai.com/api/docs/guides/model-optimization"
+  ],
+  "providerKeyStaysOnExistingPrivateServer": true
+}

@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 27 October 2026 — five-video named-mention improvement loop designed
+
+Type: current-code/failure-evidence inspection, official evaluation guidance and private source-only preparation; not a new model trial or quality pass. Founder clarified the target as every named mention, including brief references and ads. Selected saved ordinals 1/2/6/10/20 total 28,567 characters. All five source hashes and 143 draft surfaces/356 literal occurrences match; these are not 143 distinct identities or an exhaustive human gold standard. Original captures remain partial/unverified. Sources 10/20 are proposed validation cases withheld from the future prompt writer; reserve 14/15 were not opened in this planning pass and are not claimed historically unseen.
+
+Saved [the workflow/rubric](tech/KEYWORD-LEARNING-PLAN-2026-10-27.md) and [sanitized plan metadata](tech/evidence/keyword-learning-plan-2026-10-27.json). Proposal: three complementary methods, optional section sweep, union of discoveries and one independent checker role; literal names rather than model-calculated word IDs; fixed scores, retained mistakes, versioned prompts and bounded rounds/cost. Current 4/10 versus proposed 8/10 are design judgments only. No new model-generation call, database operation, source collection, runtime/budget change, publication, twenty-video run or backfill. New model spending US$0; the last verified financial/off checkpoint remains the practical-fix closeout below.
+
 ## 27 October 2026 — practical repairs released; new DeepSeek proof failed
 
 Type: pushed/deployed code, actual guarded production migration and bounded model calls, independent assistant diagnosis and exact native preservation. Functional `b33c782`, 2,818 local tests/79 files/typecheck/build/catalogue and CI40488026404 pass. Migration SHA49f89a286361095c4eaa25098ad209fa22d7a0c4e49355e00c70e22a5f1bcf97 passed actual rollback, external old-schema/data readback, committed apply and separate 22-group/ACL readback; history registration/dry-run pass. [Repairs and all six results](tech/PRACTICAL-FIXES-2026-10-27.md), [sanitized evidence](tech/evidence/practical-fixes-2026-10-27.json).

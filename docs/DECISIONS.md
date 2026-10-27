@@ -2,6 +2,12 @@
 
 Updated: 27 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
+## 27 October 2026 — five-video keyword evaluation and adaptive prompts
+
+Founder requested a process using five saved transcripts, the current extraction baseline, 1–10 quality ratings, diagnosis and improved prompts with repeated tests; prefers three or four extraction approaches plus one additional AI checker. On explicit clarification, the founder selected **“Every named mention, including brief mentions and ads”**. This retains exhaustive named-mention inclusion; it does not approve a main-topic, airtime or top-N filter. Preserve uncertain identities without guessing canonical names.
+
+The current request asks how to achieve this, what to change and how the proposed process compares with the existing one. The [concrete design](tech/KEYWORD-LEARNING-PLAN-2026-10-27.md) prepares ordinals 1/2/6/10/20, three complementary methods plus an optional fourth, a checked union, a fixed rating rubric and finite versioned prompt improvements. The suggested 4/10 current versus 8/10 proposed ratings are design judgments, not measured five-video accuracy. The source-only reference draft is not exhaustive human gold. No new five-video experiment, checker score, paid iteration or production change ran in this planning pass. Existing US$0.10/call and original US$5 total remain, including holds; actual headroom must be refreshed before execution. Twenty-video generation/backfill stay off.
+
 ## 27 October 2026 — implement practical repairs and repeat the small proof
 
 Founder: “ok then do what you recommended, always prioritize some easy fixes athat make sense instead of over engineering”. This approves the recommended keyword/timestamp, correction-size and recap-selection repairs and a small follow-up before deciding about twenty videos. Prefer the smallest sensible correction within the existing stack. The existing US$0.10/call, US$5/day and original US$5 cumulative total, including unknown charges, remain. No twenty-video generation, backfill, new subscription, historical reset or automatic acceptance follows.
