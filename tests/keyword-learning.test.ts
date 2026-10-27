@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error Private evaluation preparation is a standalone JS tool.
-import { validateLiteralInventory, findLiteralNameOccurrences, minePatternNames, combineKeywordInventories, scoreKeywordInventory, compareKeywordMethods } from '../scripts/lib/keyword-learning.mjs';
+import { validateLiteralInventory, findLiteralNameOccurrences, minePatternNames, combineKeywordInventories, resolveKeywordCheckerVerdicts, scoreKeywordInventory, compareKeywordMethods } from '../scripts/lib/keyword-learning.mjs';
 
 const inventory = (names: string[], uncertainNames: string[] = []) => ({ names, uncertainNames });
 const source = 'AeroBox supports C++ and C#. AeroBox 2 sponsors this. Finally NovaPay.';
@@ -81,6 +81,47 @@ describe('literal keyword inventories and source evidence', () => {
     expect(union[4].occurrences).toEqual([]);
     expect(union.every((x: {disposition: string}) => x.disposition === 'review')).toBe(true);
     expect(() => combineKeywordInventories(source, [{ method: 'same', output: inventory([]) }, { method: 'same', output: inventory([]) }])).toThrow('invalid_keyword_method');
+  });
+});
+
+describe('checker verdict normalization with preserved original judgments', () => {
+  const verdict = (name: string, disposition = 'accepted', kind = 'brand', reason = 'Literal named mention.') => ({ name, disposition, kind, reason });
+  it('coalesces consistent repeats, including a missing-name repeat, while retaining every verdict and origin', () => {
+    const value = { readComplete: true, decisions: [verdict('AeroBox'), verdict('AeroBox', 'accepted', 'brand', 'Named in the ad.')],
+      missingNames: [verdict('AeroBox'), verdict('NovaPay')] };
+    const before = JSON.stringify(value);
+    const resolved = resolveKeywordCheckerVerdicts({ content: source, value, names: ['AeroBox'] });
+    expect(resolved.rows).toHaveLength(2);
+    expect(resolved.duplicateVerdicts).toBe(2);
+    expect(resolved.conflicts).toEqual([]);
+    expect(resolved.rows[0]).toMatchObject({ name: 'AeroBox', disposition: 'accepted', kind: 'brand', verdictCount: 3 });
+    expect(resolved.rows[0].originalVerdicts).toEqual([
+      { section: 'decisions', index: 0, verdict: value.decisions[0] },
+      { section: 'decisions', index: 1, verdict: value.decisions[1] },
+      { section: 'missingNames', index: 0, verdict: value.missingNames[0] },
+    ]);
+    expect(JSON.stringify(value)).toBe(before);
+  });
+  it('retains conflicting judgments as review without choosing a type or a majority winner', () => {
+    const value = { readComplete: true, decisions: [verdict('AeroBox'), verdict('AeroBox'), verdict('AeroBox', 'rejected', 'product')], missingNames: [] };
+    const resolved = resolveKeywordCheckerVerdicts({ content: source, value, names: ['AeroBox'] });
+    expect(resolved.rows[0]).toMatchObject({ name: 'AeroBox', disposition: 'review', kind: null, verdictCount: 3 });
+    expect(resolved.rows[0].originalVerdicts).toHaveLength(3);
+    expect(resolved.conflicts).toEqual([{ name: 'AeroBox', kinds: ['brand', 'product'], dispositions: ['accepted', 'rejected'], verdictCount: 3 }]);
+    const statusConflict = resolveKeywordCheckerVerdicts({ content: source, names: ['AeroBox'], value: {
+      readComplete: true, decisions: [verdict('AeroBox')], missingNames: [verdict('AeroBox', 'review')] } });
+    expect(statusConflict.rows[0]).toMatchObject({ disposition: 'review', kind: 'brand' });
+  });
+  it('requires exact candidate coverage and valid complete judgments, and withholds an unsupported acceptance', () => {
+    const run = (value: unknown, names = ['AeroBox']) => resolveKeywordCheckerVerdicts({ content: source, value, names });
+    expect(() => run({ readComplete: false, decisions: [verdict('AeroBox')], missingNames: [] })).toThrow('checker_incomplete');
+    expect(() => run({ readComplete: true, decisions: [], missingNames: [verdict('AeroBox')] })).toThrow('checker_candidate_decisions_incomplete');
+    expect(() => run({ readComplete: true, decisions: [verdict('NovaPay')], missingNames: [] })).toThrow('checker_candidate_decisions_incomplete');
+    expect(() => run({ readComplete: true, decisions: [{ ...verdict('AeroBox'), disposition: 'maybe' }], missingNames: [] })).toThrow('checker_invalid_decision');
+    expect(() => run({ readComplete: true, decisions: [{ ...verdict('AeroBox'), reason: null }], missingNames: [] })).toThrow('checker_invalid_decision');
+    const resolved = run({ readComplete: true, decisions: [verdict('AbsentName')], missingNames: [] }, ['AbsentName']);
+    expect(resolved.rows[0]).toMatchObject({ disposition: 'review', hostReviewReason: 'literal_name_not_in_source', verdictCount: 1 });
+    expect(resolved.rows[0].originalVerdicts[0].verdict.disposition).toBe('accepted');
   });
 });
 

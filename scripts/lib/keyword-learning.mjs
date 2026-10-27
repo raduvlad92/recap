@@ -135,6 +135,45 @@ export function combineKeywordInventories(content, inventories, segments = []) {
   return [...byName.values()];
 }
 
+/** Normalize repeated checker judgments without discarding settled evidence.
+ * Agreement may vary in reason wording. Conflicting kinds/statuses require
+ * review; neither majority voting nor first/last verdict selects the winner. */
+export function resolveKeywordCheckerVerdicts({ content, value, names }) {
+  if (typeof content !== 'string' || !Array.isArray(names) || !names.every(validName)
+    || new Set(names).size !== names.length || !isObject(value) || value.readComplete !== true
+    || !Array.isArray(value.decisions) || !Array.isArray(value.missingNames)) throw fail('checker_incomplete');
+  const candidates = new Set(names), decided = new Set(), grouped = new Map();
+  for (const section of ['decisions', 'missingNames']) for (const [index, verdict] of value[section].entries()) {
+    if (!isObject(verdict) || !validName(verdict.name) || typeof verdict.kind !== 'string' || !verdict.kind.trim()
+      || !['accepted', 'review', 'rejected'].includes(verdict.disposition)
+      || typeof verdict.reason !== 'string' || !verdict.reason.trim()) throw fail('checker_invalid_decision');
+    if (section === 'decisions') {
+      if (!candidates.has(verdict.name)) throw fail('checker_candidate_decisions_incomplete');
+      decided.add(verdict.name);
+    }
+    const audit = grouped.get(verdict.name) ?? [];
+    audit.push({ section, index, verdict: { ...verdict } }); grouped.set(verdict.name, audit);
+  }
+  if (decided.size !== candidates.size) throw fail('checker_candidate_decisions_incomplete');
+  const rows = [], conflicts = []; let duplicateVerdicts = 0;
+  for (const [name, originalVerdicts] of grouped) {
+    duplicateVerdicts += originalVerdicts.length - 1;
+    const kinds = [...new Set(originalVerdicts.map(row => row.verdict.kind))];
+    const dispositions = [...new Set(originalVerdicts.map(row => row.verdict.disposition))];
+    const row = { ...originalVerdicts[0].verdict, verdictCount: originalVerdicts.length, originalVerdicts };
+    if (kinds.length > 1 || dispositions.length > 1) {
+      const conflict = { name, kinds, dispositions, verdictCount: originalVerdicts.length };
+      conflicts.push(conflict); Object.assign(row, { kind: kinds.length === 1 ? kinds[0] : null,
+        disposition: 'review', reason: 'Checker returned conflicting type or disposition judgments; requires review.', checkerConflict: conflict });
+    }
+    if (row.disposition === 'accepted' && !findLiteralNameOccurrences(content, name).length) {
+      row.disposition = 'review'; row.hostReviewReason = 'literal_name_not_in_source';
+    }
+    rows.push(row);
+  }
+  return { rows, duplicateVerdicts, conflicts };
+}
+
 function prepareReference(content, reference) {
   if (!isObject(reference) || typeof reference.version !== 'string' || !reference.version
     || !Array.isArray(reference.identities)) throw fail('invalid_keyword_reference');
