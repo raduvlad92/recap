@@ -8,6 +8,49 @@ export function keywordCheckerDeliveryEvidence(checker) {
     validationError: checker?.generated?.validationError ?? checker?.validationError ?? null,
     rawOutputLength: typeof checker?.generated?.value?.rawOutput === 'string' ? checker.generated.value.rawOutput.length : checker?.rawOutputLength ?? null };
 }
+/** Keep full training sources and actual mistakes; discard bulky correct rows.
+ * Original reports remain the authoritative, unchanged detailed evidence. */
+export function compactKeywordLoopFeedback({ reports, sources, references, rounds = [] }) {
+  const evidence = reports.map(report => {
+    const source = sources.find(item => item.ordinal === report.ordinal);
+    if (typeof source?.source?.record?.content !== 'string') fail('keyword_loop_feedback_source_missing');
+    const reference = references.find(item => item.ordinal === report.ordinal);
+    if (!reference) fail('keyword_loop_feedback_reference_missing');
+    const checker = report.checker, score = checker?.score;
+    const identities = new Map(reference.identities.map(identity => [identity.id, identity]));
+    const identityBySurface = new Map(reference.identities.flatMap(identity => identity.surfaces.map(surface => [surface, identity.id])));
+    const missingIds = new Set((score?.missing ?? []).map(row => row.id));
+    const failedNames = new Set([...(score?.missing ?? []).map(row => row.name), ...(score?.unexpected ?? []).map(row => row.name), ...(score?.unsupportedAccepted ?? [])]);
+    const typeFailures = (score?.diagnostics ?? []).filter(row => row.eligible && row.identityCorrect === false).map(row => {
+      failedNames.add(row.name);
+      return { name: row.name, referenceIdentityId: row.referenceIdentityId,
+        actualKind: checker.rows?.find(candidate => candidate.name === row.name)?.kind ?? null,
+        expectedKind: identities.get(row.referenceIdentityId)?.kind ?? null };
+    });
+    return { ordinal: report.ordinal, content: source.source.record.content,
+      methods: report.methods.map(method => ({ method: method.method, status: method.status, score: method.score?.score ?? null,
+        missingCount: method.score?.missing?.length ?? null,
+        uniqueCorrectDiscoveries: report.extractionComparison?.methods?.find(item => item.method === method.method)?.uniqueCorrectDiscoveries ?? null })),
+      checkedUnion: score ? { score: score.score, good: score.good, missing: score.missing, unexpected: score.unexpected,
+        unsupportedAccepted: score.unsupportedAccepted, typeFailures } : null,
+      ...keywordCheckerDeliveryEvidence(checker),
+      failedCheckerRows: (checker?.rows ?? []).filter(row => failedNames.has(row.name) || missingIds.has(identityBySurface.get(row.name)))
+        .map(row => ({ name: row.name, disposition: row.disposition, kind: row.kind, reason: row.reason,
+          ...(row.hostBoundaryGuard ? { hostBoundaryGuard: row.hostBoundaryGuard } : {}) })) };
+  });
+  const history = rounds.map((round, index) => ({ version: round.version, target: round.target,
+    failureCauses: round.failureCauses, ...(index >= rounds.length - 2 ? { lessons: round.lessons } : {}),
+    decision: { retained: round.decision?.retained, reason: round.decision?.reason,
+      meanScore: round.decision?.candidate?.meanScore ?? null, goodCount: round.decision?.candidate?.goodCount ?? null,
+      namednessErrors: round.decision?.candidate?.namednessErrors ?? null } }));
+  return { evidence, history };
+}
+export function assertKeywordLearningRequestCapacity(request) {
+  if (typeof request?.prompt !== 'string' || request.prompt.length > 100000) {
+    throw Object.assign(new Error('keyword_learning_request_prompt_capacity'), {
+      promptCharacters: typeof request?.prompt === 'string' ? request.prompt.length : null, maximumPromptCharacters: 100000 });
+  }
+}
 export function keywordLoopControls(value = {}) {
   const controls = { maxRounds: 12, maxNewCalls: 240, maxNewUsd: 1, noProgressLimit: 4, ...value };
   if (!safeInteger(controls.maxRounds, 1, 100) || !safeInteger(controls.maxNewCalls, 1, 1000)

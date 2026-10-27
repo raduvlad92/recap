@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest';
 // @ts-expect-error CLI helper has no runtime dependencies.
-import {keywordLoopControls,summarizeKeywordLoopReports,chooseKeywordLoopChampion,validateKeywordLoopLessons,assertKeywordLoopBudget,waitForKeywordLearningReceipt,keywordCheckerDeliveryEvidence} from '../scripts/lib/keyword-learning-loop.mjs';
+import {keywordLoopControls,summarizeKeywordLoopReports,chooseKeywordLoopChampion,validateKeywordLoopLessons,assertKeywordLoopBudget,waitForKeywordLearningReceipt,keywordCheckerDeliveryEvidence,compactKeywordLoopFeedback,assertKeywordLearningRequestCapacity} from '../scripts/lib/keyword-learning-loop.mjs';
 
 const report=(ordinal:number,score=9,missing=1,unexpected=0)=>({ordinal,checker:{status:'complete',score:{score,good:missing===0&&unexpected===0,missing:Array(missing).fill({}),unsupportedAccepted:Array(unexpected).fill('extra'),unexpected:Array(unexpected).fill({})}}});
 describe('bounded keyword learning selection',()=>{
@@ -67,5 +67,35 @@ describe('delivery failures remain usable learning evidence',()=>{
    expect(evidence).toEqual({checkerStatus:'failed',checkerErrorCode:validationError,validationError,rawOutputLength:28000});
    expect(JSON.stringify(evidence)).not.toContain('xxxxx');
   }
+ });
+});
+describe('compact optimizer feedback',()=>{
+ it('preserves all five complete sources and real failures while excluding hundreds of correct generic rejections',()=>{
+  const sources=Array.from({length:5},(_,i)=>({ordinal:i+1,source:{record:{content:`SOURCE ${i+1}: `+'complete text '.repeat(200)+' END'}}}));
+  const genericRows=Array.from({length:500},(_,i)=>({name:`generic-filler-${i}`,disposition:'rejected',kind:'named_mention',reason:'Generic filler.'}));
+  const reports=sources.map(source=>({ordinal:source.ordinal,methods:[{method:'direct',status:'complete',score:{score:7,missing:Array(400).fill({name:'raw-method-detail'})}}],
+   extractionComparison:{methods:[{method:'direct',uniqueCorrectDiscoveries:2}]},
+   checker:{status:'complete',score:{score:9,good:false,missing:[{id:'miss',name:'MissingCanonical',expectedDisposition:'accepted'}],unexpected:[{name:'ExtraName'}],unsupportedAccepted:['ExtraName'],
+    diagnostics:[{name:'WrongKind',referenceIdentityId:'typed',eligible:true,identityCorrect:false}]},
+    rows:[...genericRows,{name:'MissingAlias',disposition:'review',kind:'product',reason:'Noisy literal name.'},{name:'ExtraName',disposition:'accepted',kind:'brand',reason:'Prefix.'},{name:'WrongKind',disposition:'accepted',kind:'product',reason:'Wrong type.'}]}}));
+  const references=sources.map(source=>({ordinal:source.ordinal,identities:[{id:'miss',surfaces:['MissingAlias'],kind:'product'},{id:'typed',surfaces:['WrongKind'],kind:'technology'}]}));
+  const before=JSON.stringify(reports),feedback=compactKeywordLoopFeedback({reports,sources,references});
+  expect(feedback.evidence.map((item:{content:string})=>item.content)).toEqual(sources.map(source=>source.source.record.content));
+  for(const item of feedback.evidence){
+   expect(item.failedCheckerRows.map((row:{name:string})=>row.name)).toEqual(['MissingAlias','ExtraName','WrongKind']);
+   expect(item.methods[0]).toMatchObject({score:7,missingCount:400,uniqueCorrectDiscoveries:2});
+   expect(item.checkedUnion.typeFailures).toEqual([{name:'WrongKind',referenceIdentityId:'typed',actualKind:'product',expectedKind:'technology'}]);
+  }
+  expect(JSON.stringify(feedback)).not.toContain('generic-filler');expect(JSON.stringify(feedback)).not.toContain('raw-method-detail');
+  expect(JSON.stringify(reports)).toBe(before);
+ });
+ it('keeps only the last two full lesson sets and bounds prompts before network dispatch',()=>{
+  const rounds=Array.from({length:5},(_,i)=>({version:`v${i}`,target:'checker',lessons:[`lesson-${i}`],failureCauses:['cause'],decision:{reason:'candidate_tied',retained:false,candidate:{meanScore:9,goodCount:1,cases:Array(500).fill({name:'bulky-history'})}}}));
+  const {history}=compactKeywordLoopFeedback({reports:[],sources:[],references:[],rounds});
+  expect(history.slice(0,3).every((item:{lessons?:string[]})=>item.lessons===undefined)).toBe(true);
+  expect(history.slice(3).map((item:{lessons:string[]})=>item.lessons)).toEqual([['lesson-3'],['lesson-4']]);
+  expect(JSON.stringify(history)).not.toContain('bulky-history');
+  expect(()=>assertKeywordLearningRequestCapacity({prompt:'x'.repeat(100000)})).not.toThrow();
+  expect(()=>assertKeywordLearningRequestCapacity({prompt:'x'.repeat(100001)})).toThrow('keyword_learning_request_prompt_capacity');
  });
 });
