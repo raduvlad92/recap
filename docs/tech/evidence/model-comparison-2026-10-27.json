@@ -1,0 +1,597 @@
+{
+  "schemaVersion": "therecap-model-comparison-final-v1",
+  "recordedAt": "2026-10-27T04:25:56.736Z",
+  "scope": "Three requested models; recaps and keywords on the same three frozen saved transcripts.",
+  "sourceOrdinals": [
+    1,
+    2,
+    6
+  ],
+  "historicalDeepSeekControlledFourthRun": false,
+  "generationContractHash": "e5b7e8411c040ab6f12c064829601936faa147b1e44901fb8ff05390e80b1561",
+  "commonLimits": {
+    "chunkChars": 1250,
+    "overlapChars": 256,
+    "maxChunks": 800,
+    "maxSourceChars": 1000000,
+    "maxOutputTokens": 3072,
+    "maxInputTokens": 27700,
+    "maxCallUsd": 0.1
+  },
+  "models": [
+    {
+      "name": "MiniMax M3.1 Flash",
+      "model": "minimax/minimax-m3.1-flash",
+      "reportedSettledUsd": "0.028936950000",
+      "heldMaximumUsd": "0.000000000000",
+      "suites": [
+        {
+          "task": "summary",
+          "requests": 27,
+          "reportedSettledUsd": "0.011107350000",
+          "heldMaximumUsd": "0.000000000000",
+          "mechanicallyCompleted": 0,
+          "results": [
+            {
+              "ordinal": 1,
+              "title": "Vetroo 850W Power Supply - LABS Test Report",
+              "savedSourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+              "state": "failed",
+              "errorCode": "analysis_correction_dropped_proposal",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 7,
+              "reportedSettledUsd": "0.003639900000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            },
+            {
+              "ordinal": 2,
+              "title": "Everything Apple Announced last week - M4 Macs",
+              "savedSourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+              "state": "failed",
+              "errorCode": "analysis_unsupported_summary_number",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 7,
+              "reportedSettledUsd": "0.002461650000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            },
+            {
+              "ordinal": 6,
+              "title": "Understanding graphics upscalers like DLSS and FSR",
+              "savedSourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+              "state": "failed",
+              "errorCode": "analysis_unsupported_reduction_quote",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 13,
+              "reportedSettledUsd": "0.005005800000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            }
+          ]
+        },
+        {
+          "task": "keywords",
+          "requests": 18,
+          "reportedSettledUsd": "0.017829600000",
+          "heldMaximumUsd": "0.000000000000",
+          "mechanicallyCompleted": 0,
+          "results": [
+            {
+              "ordinal": 1,
+              "title": "Vetroo 850W Power Supply - LABS Test Report",
+              "savedSourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+              "state": "blocked",
+              "errorCode": "analysis_input_limit",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 7,
+              "reportedSettledUsd": "0.005600190000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            },
+            {
+              "ordinal": 2,
+              "title": "Everything Apple Announced last week - M4 Macs",
+              "savedSourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+              "state": "blocked",
+              "errorCode": "analysis_input_limit",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 10,
+              "reportedSettledUsd": "0.010915710000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            },
+            {
+              "ordinal": 6,
+              "title": "Understanding graphics upscalers like DLSS and FSR",
+              "savedSourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+              "state": "blocked",
+              "errorCode": "analysis_input_limit",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 1,
+              "reportedSettledUsd": "0.001313700000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GPT-6 Luna Pro",
+      "model": "openai/gpt-6-luna-pro",
+      "reportedSettledUsd": "0.075846575000",
+      "heldMaximumUsd": "0.004574875000",
+      "suites": [
+        {
+          "task": "summary",
+          "requests": 33,
+          "reportedSettledUsd": "0.027437605000",
+          "heldMaximumUsd": "0.000000000000",
+          "mechanicallyCompleted": 0,
+          "results": [
+            {
+              "ordinal": 1,
+              "title": "Vetroo 850W Power Supply - LABS Test Report",
+              "savedSourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+              "state": "failed",
+              "errorCode": "analysis_incomplete_coverage",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 2,
+              "reportedSettledUsd": "0.001456230000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            },
+            {
+              "ordinal": 2,
+              "title": "Everything Apple Announced last week - M4 Macs",
+              "savedSourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+              "state": "failed",
+              "errorCode": "analysis_invalid_json",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 14,
+              "reportedSettledUsd": "0.012444025000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            },
+            {
+              "ordinal": 6,
+              "title": "Understanding graphics upscalers like DLSS and FSR",
+              "savedSourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+              "state": "failed",
+              "errorCode": "analysis_unsupported_reduction_quote",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 17,
+              "reportedSettledUsd": "0.013537350000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            }
+          ]
+        },
+        {
+          "task": "keywords",
+          "requests": 23,
+          "reportedSettledUsd": "0.048408970000",
+          "heldMaximumUsd": "0.004574875000",
+          "mechanicallyCompleted": 0,
+          "results": [
+            {
+              "ordinal": 1,
+              "title": "Vetroo 850W Power Supply - LABS Test Report",
+              "savedSourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+              "state": "failed",
+              "errorCode": "unsupported_keyword_timing",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 8,
+              "reportedSettledUsd": "0.014671230000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            },
+            {
+              "ordinal": 2,
+              "title": "Everything Apple Announced last week - M4 Macs",
+              "savedSourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+              "state": "failed",
+              "errorCode": "analysis_incomplete_generation",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 5,
+              "reportedSettledUsd": "0.009507300000",
+              "heldMaximumUsd": "0.004574875000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            },
+            {
+              "ordinal": 6,
+              "title": "Understanding graphics upscalers like DLSS and FSR",
+              "savedSourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+              "state": "blocked",
+              "errorCode": "analysis_input_limit",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 10,
+              "reportedSettledUsd": "0.024230440000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GPT-6.1 Sol Pro",
+      "model": "openai/gpt-6.1-sol-pro",
+      "reportedSettledUsd": "3.356061400000",
+      "heldMaximumUsd": "0.000000000000",
+      "suites": [
+        {
+          "task": "summary",
+          "requests": 41,
+          "reportedSettledUsd": "0.624544400000",
+          "heldMaximumUsd": "0.000000000000",
+          "mechanicallyCompleted": 3,
+          "results": [
+            {
+              "ordinal": 1,
+              "title": "Vetroo 850W Power Supply - LABS Test Report",
+              "savedSourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+              "state": "evaluated",
+              "errorCode": null,
+              "mechanicallyComplete": true,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 8,
+              "reportedSettledUsd": "0.126341100000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": 6,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "needs_review"
+            },
+            {
+              "ordinal": 2,
+              "title": "Everything Apple Announced last week - M4 Macs",
+              "savedSourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+              "state": "evaluated",
+              "errorCode": null,
+              "mechanicallyComplete": true,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 14,
+              "reportedSettledUsd": "0.214882800000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": 6,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "needs_review"
+            },
+            {
+              "ordinal": 6,
+              "title": "Understanding graphics upscalers like DLSS and FSR",
+              "savedSourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+              "state": "evaluated",
+              "errorCode": null,
+              "mechanicallyComplete": true,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 19,
+              "reportedSettledUsd": "0.283320500000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": 6,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "needs_review"
+            }
+          ]
+        },
+        {
+          "task": "keywords",
+          "requests": 48,
+          "reportedSettledUsd": "2.731517000000",
+          "heldMaximumUsd": "0.000000000000",
+          "mechanicallyCompleted": 1,
+          "results": [
+            {
+              "ordinal": 1,
+              "title": "Vetroo 850W Power Supply - LABS Test Report",
+              "savedSourceSha256": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+              "state": "failed",
+              "errorCode": "unsupported_keyword_timing",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 8,
+              "reportedSettledUsd": "0.414633600000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            },
+            {
+              "ordinal": 2,
+              "title": "Everything Apple Announced last week - M4 Macs",
+              "savedSourceSha256": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+              "state": "evaluated",
+              "errorCode": null,
+              "mechanicallyComplete": true,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 18,
+              "reportedSettledUsd": "1.026815900000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": 65,
+              "pendingKeywords": 49,
+              "semanticDisposition": "needs_review"
+            },
+            {
+              "ordinal": 6,
+              "title": "Understanding graphics upscalers like DLSS and FSR",
+              "savedSourceSha256": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+              "state": "failed",
+              "errorCode": "unsupported_keyword_timing",
+              "mechanicallyComplete": false,
+              "publicationApproved": false,
+              "published": false,
+              "requests": 22,
+              "reportedSettledUsd": "1.290067500000",
+              "heldMaximumUsd": "0.000000000000",
+              "recapPoints": null,
+              "mechanicallyAcceptedKeywords": null,
+              "pendingKeywords": null,
+              "semanticDisposition": "no_final_output"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "money": {
+    "newTrials": {
+      "rows": 190,
+      "unknownCalls": 1,
+      "settledUsd": "3.460844925000",
+      "heldMaximumUsd": "0.004574875000",
+      "committedUsd": "3.465419800000",
+      "utcDay": "2026-10-27",
+      "dailyCommittedUsd": "3.465419800000"
+    },
+    "cumulative": {
+      "rows": 255,
+      "unknownCalls": 4,
+      "settledUsd": "3.520920494000",
+      "heldMaximumUsd": "0.013753066000",
+      "committedUsd": "3.534673560000",
+      "utcDay": "2026-10-27",
+      "dailyCommittedUsd": "3.474597991000"
+    },
+    "remainingOriginalEvaluationUsd": "1.465326440000",
+    "originalHistoricalHoldsUsd": "0.009178191000",
+    "newLunaHoldUsd": "0.004574875000",
+    "unknownActualCostsAreNotZero": true,
+    "invoiceReconciled": false,
+    "infrastructureAndSupplierCostsIncluded": false
+  },
+  "limits": {
+    "perCallUsd": "0.100000000000",
+    "dailyUsd": "5.000000000000",
+    "originalCumulativeUsd": "5.000000000000",
+    "maximumNewReservedCallUsd": "0.093495000000",
+    "maximumNewReportedChargeUsd": "0.074492300000"
+  },
+  "independentAssistantReview": {
+    "humanApproval": false,
+    "solRecaps": {
+      "locallySupportedSelectedClaims": 18,
+      "completedRecaps": 3,
+      "readyForAutomaticPublication": 0,
+      "issues": [
+        "Power-supply recap: make tested-sample scope explicit and prioritize the negative recommendation.",
+        "Mac recap: retain the selected Apple Intelligence rollout caveat.",
+        "Upscaler recap: restore the main methods and tradeoffs."
+      ]
+    },
+    "solMacKeywords": {
+      "mechanicallyAccepted": 65,
+      "pending": 49,
+      "all65SourcePresent": true,
+      "manualUsefulnessGroups": {
+        "namedIdentitiesAndTechnologies": 29,
+        "technicalOrConcreteCategories": 24,
+        "genericOrIncidentalNeedsReview": 12
+      },
+      "redundantSingularPluralPairs": 2,
+      "importantChipNamesPending": [
+        "M2",
+        "M4",
+        "M4 Pro",
+        "M4 Max"
+      ],
+      "fullWebsiteIdentityMissing": "squarespace.com",
+      "semanticPrecision": null,
+      "exhaustiveRecall": null,
+      "publicationApproved": false
+    },
+    "hostMergeFailures": [
+      "luna:keywords:1",
+      "sol:keywords:1",
+      "sol:keywords:6"
+    ]
+  },
+  "verification": {
+    "allSixReplayPassed": true,
+    "matchedNewRequests": 190,
+    "exactCompletedOutputs": 4,
+    "replayNetworkCalls": 0,
+    "allRequestedTasksCompleted": false,
+    "oldCallsByteExact": 65,
+    "oldJobsByteExact": 407,
+    "workspacesByteExact": 3,
+    "oldReviewsByteExact": 96,
+    "allArchiveRowsByteExact": 496,
+    "frozenSourceHashesMatched": 20,
+    "historicalHoldsUnchanged": true,
+    "savedLunaHoldUnchanged": true,
+    "privateEvidenceSha256": {
+      "finalNative": "d51b529db203efe13a1b656fe1ffbe22b46d9162a376359026dbb4a29ce11646",
+      "finalPreservation": "ac68b7422907520812318254f4bba6be1c737a18171cec002351d75c49fb712f",
+      "allSixReplay": "7de434720296a1a5630f85f3a10c56dead3b45bc0e700f29c279f656894d5a24",
+      "solRecapReview": "dd2671b01f8f8c0c38b928007f02ce4b7d464be549f76bd2f4b29afa0975f88d",
+      "solKeywordReview": "cf9f1138f3c853186f20c5333f9b2cc0acc898b05f3adf6d4acdfdde018ee26b",
+      "keywordReference": "16c523e5374448f92cf4cce06bf084c23d2ec03346804c360400e1f02431a03a",
+      "summaryReference": "a8963be1ac21c79d0ed8c5130908ba2bad4b695fc553fc04313ba52037425f0e"
+    }
+  },
+  "finalControls": {
+    "selectedModel": "deepseek/deepseek-v4.1-flash-1017",
+    "selectionRevision": 16,
+    "globalEnabled": false,
+    "ownerPoliciesEnabled": 0,
+    "dailyLimitUsd": "5.000000000000",
+    "lifetimeLimitUsd": "5.000000000000",
+    "perCallLimitUsd": "0.100000000000",
+    "admissionsClosed": 8,
+    "runtimeEnabled": false,
+    "twentyVideoGenerationStarted": false,
+    "backfillStarted": false,
+    "comparisonOutputsPublished": 0
+  },
+  "release": {
+    "functionalCommit": "59324ce495f9eb9aa3761216113297d2e2f601ea",
+    "ci": {
+      "run": 40443945143,
+      "status": "success"
+    },
+    "localVerification": {
+      "tests": 2795,
+      "files": 78,
+      "typecheck": true,
+      "productionBuild": true,
+      "catalogue": true
+    },
+    "deploy": {
+      "id": "6ae0266042a5d8a336ff640a",
+      "state": "ready",
+      "commit_ref": "59324ce495f9eb9aa3761216113297d2e2f601ea",
+      "published_at": "2026-10-27T04:20:19.228Z",
+      "isCurrentPublishedDeploy": true
+    },
+    "postBuildRuntimeFlagFalse": true,
+    "configurationIsSeparateFromHostedReadback": true,
+    "hostedSignedInUiRepeated": false
+  },
+  "separateOperationalDeltas": [
+    {
+      "group": "hourlyChecks",
+      "added": 117,
+      "changed": 0,
+      "removed": 0
+    },
+    {
+      "group": "hourlyProviders",
+      "added": 0,
+      "changed": 12,
+      "removed": 0
+    },
+    {
+      "group": "hourlySources",
+      "added": 0,
+      "changed": 39,
+      "removed": 0
+    },
+    {
+      "group": "supplierJobs",
+      "added": 0,
+      "changed": 1,
+      "removed": 0
+    }
+  ],
+  "limitations": [
+    "Saved-text coverage is not verified complete-original capture.",
+    "Assistant source review is not human gold or publication approval.",
+    "No final semantic recall score is assigned to missing inventories.",
+    "Host failures prevent a final keyword-quality ranking for two Sol videos.",
+    "Historical DeepSeek used different limits and is not a controlled fourth model."
+  ],
+  "nextAction": "Review results jointly; prioritize host mention/range preservation, bounded corrections, source references and recap meaning coverage before any new three-video trial or twenty-video generation.",
+  "inputCoverage": {
+    "planCoversCompleteSavedTranscripts": true,
+    "everyTaskActuallyReceivedCompletePlannedInput": false,
+    "earlyStopsMayHaveOnlyPrefix": true,
+    "completeOriginalVideoCaptureVerified": false
+  },
+  "referenceExposure": {
+    "keywordRubricFrozenBeforeFreshKeywordOutputs": true,
+    "summaryRubricFrozenBeforeFreshRecapOutputs": true,
+    "earlierDeepSeekEvidenceAlreadySeen": true,
+    "miniMaxLunaKeywordsSeenBeforeSummaryRubric": true,
+    "humanGoldStandard": false
+  },
+  "reportChecks": {
+    "all18TaskResultsAndFinancialSumsVerified": true,
+    "newPublicContentPrivateIdentityScanPassed": true,
+    "newPublicContentCredentialAndEmailScanPassed": true,
+    "relativeMarkdownLinksChecked": 332,
+    "brokenRelativeMarkdownLinks": 0,
+    "whitespaceCheckPassed": true,
+    "costsAreAttemptCostsNotEqualCompletedWorkloads": true
+  }
+}

@@ -4,7 +4,13 @@ Updated: **27 October 2026**. Phase: **functioning v0, admin, creator catalogue 
 
 ## Current execution — reliability points 1–3
 
-**New founder-directed comparison:** test MiniMax, Luna and Sol on the same three videos for recaps and keywords, record each result and return for a joint decision before twenty-video generation. The [comparison record](docs/tech/MODEL-COMPARISON-2026-10-27.md) seals common settings, source review and finite bounds inside the existing US$5 total. Preparation and evaluation-only storage are underway; no new inference at this checkpoint. The preceding closeout below is the last completed live result.
+**Founder-directed comparison finished:** MiniMax, Luna and Sol tested for recaps and keywords on the same three frozen videos. MiniMax and Luna finished no final output. Sol finished three supported-but-needing-review recaps and one keyword inventory needing filtering/review; two keyword tasks hit the confirmed host mention/timestamp merge defect. All eighteen task results and costs are retained in the [comparison record](docs/tech/MODEL-COMPARISON-2026-10-27.md). Four outputs completed privately; none was published. **Twenty-video generation and backfill stay off pending the joint decision.**
+
+New reported settled model cost **US$3.460844925**; new unresolved Luna hold **US$0.004574875**. Cumulative commitment **US$3.534673560**, including all four holds totaling **US$0.013753066**; remaining **US$1.465326440** under the original US$5 total. Every new reservation/charge stays below US$0.10. Global/owner spending and runtime are Off; all eight admissions closed; DeepSeek restored at revision 16. Functional **`59324ce`**, passing CI and **2,795 local tests**, is live in exact off-deploy **`6ae0266042a5d8a336ff640a`**. Final all-six replay matches 190 new requests/four completed outputs; native preservation verifies all old calls/jobs, reader state, reviews and all 496 archive rows. This comparison's final runtime evidence is configuration/deploy readback, not a repeated signed-in UI check.
+
+Next recommendation: fix mention/range ownership, compact correction requests, then improve source-reference and recap-selection reliability. Check saved responses without rebilling first; jointly agree any new bounded three-video proof before twenty-video generation. No further trial follows automatically.
+
+### Prior recovery checkpoint, before this comparison
 
 **Partially complete; live quality blocks expansion.** Founder authorized US$0.10 per model call inside the existing US$5 evaluation total. [Actual results](docs/tech/RELIABILITY-EXECUTION-2026-10-26.md), [twenty-source status](docs/tech/FROZEN-TWENTY-STATUS-2026-10-27.md), [ordered handoff](docs/tech/SESSION-HANDOFF-2026-10-27.md).
 

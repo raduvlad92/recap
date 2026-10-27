@@ -1,8 +1,18 @@
 # Reliability handoff — 27 October 2026
 
+## Latest checkpoint — three-model comparison completed
+
+Read the [final comparison record](MODEL-COMPARISON-2026-10-27.md) before the earlier recovery history below. MiniMax, Luna and Sol have now run recaps and keywords on the same three frozen videos. MiniMax/Luna finish no final output. Sol finishes three recaps and one Mac keyword inventory, each needing review; its two other keyword tasks reveal the host mention/range merge bug. All outputs stay private; no twenty-video expansion or backfill ran.
+
+New comparison cost: **US$3.460844925 reported + US$0.004574875 held**. Whole commitment: **US$3.534673560**, including four holds totaling **US$0.013753066**. Original remaining allowance: **US$1.465326440**. US$0.10/call and US$5/day/original cumulative total remain. Eight admissions closed; global/owner spending and runtime Off; DeepSeek revision16. Functional `59324ce`, exact off-deploy `6ae0266042a5d8a336ff640a`, final native preservation and 190-request/four-output offline replay pass. No new hosted signed-in UI check is claimed by this comparison.
+
+**Next action is the joint decision requested by the founder.** Recommend fixing mention/range ownership, smaller corrections, dependable source references and recap meaning coverage; prove what can be checked from saved responses without new spending, then agree any newly frozen three-video proof before twenty-video generation. Keep old failed jobs, scopes, holds and references intact. Earlier resume/allowance instructions below are historical and do not start another trial.
+
+## Earlier recovery checkpoint
+
 **Partial completion.** One useful recap is recovered. Reliability fixes are released, but the real revised-contract quality gate failed. Accepted live keyword publication and the remaining twenty-video model evaluation are unfinished. No backfill ran.
 
-## Verified outcome
+## Earlier recovery outcome
 
 - The four-point Apple/LG recap was recovered from its exact paid H3 prefix with one new verifier, costing **US$0.000642415**. A separate assistant reviewed all saved text and the four published points; no material unsupported claim or critical omission was found. Actual hosted reload, full transcript and 320×844 checks pass. Human approval and complete-original capture are not claimed.
 - The frozen three-video/six-task v4 trial used **18 settled responses / US$0.018066770**. Four tasks were correctly rejected for evidence/semantic failures. A model-approved recap lost an important conclusion/qualification and was independently rejected and withheld, with paid history retained.
@@ -10,7 +20,7 @@
 - The stock deployed worker then completed that task from **seven cached responses with zero new model calls**, under temporary cumulative caps equal to the exact existing commitment. Its result contains **zero accepted keywords and sixty private pending candidates**. All seven financial/result rows and the 65-call ledger remain exact. Reader cloud reload shows “Keywords awaiting review,” with transcript/original retained. This proves recovery/private-review persistence, not accepted keyword quality.
 - All **2,623 local tests / 75 files**, typecheck, build and catalogue pass. [CI 40424827245](https://github.com/raduvlad92/recap/actions/runs/40424827245) passes 2,076 tests; 547 PostgreSQL cases were skipped in CI and ran locally. Functional commit: `df26c34e86cf63f727400f473225ef9b7de16e6d`.
 
-## Current safety and costs
+## Earlier recovery safety and costs
 
 Both admissions are **closed at revision three**; the v4 admission has no acceptance. Old comparison closed, original scope paused. DeepSeek remains default at selection revision nine. Runtime/global/reader spending are **Off**, with zero running/prepared jobs. US$0.10/call, US$5/day and the existing US$5 cumulative evaluation total remain.
 
