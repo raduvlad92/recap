@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 27 October 2026 — keyword trials recorded; recap scope clarified
+
+Actual model calls: MiniMax made 18 settled calls costing US$0.017829600; all three keyword tasks stopped before oversized correction requests could be paid. Luna made 23 reservations, with 22 reported charges totaling US$0.048408970 and one response-less US$0.004574875 hold. Offline replay matches every request hash and separates model grounding errors, the host mention/range merge failure, provider incompleteness and correction capacity. Neither model produced a final keyword inventory. Spending is Off and both new trials are closed. Whole commitment is US$0.140067205, including unchanged old holds and the new Luna hold.
+
+The founder answered the pending scope question with recaps and keywords. Recap source references and cost bounds are frozen before new recap outputs. A narrow comparison-only hold-isolation change and separate homogeneous recap suites are locally tested; the uncertain charge remains reserved. Sol/recap execution and final release evidence are still ahead. Twenty-video generation and backfill stay off. [Comparison record](tech/MODEL-COMPARISON-2026-10-27.md).
+
 ## 27 October 2026 — three-model keyword comparison prepared
 
 Type: offline source/reference review, current provider metadata, request-capacity checks and evaluation-only implementation. [Comparison record](tech/MODEL-COMPARISON-2026-10-27.md). All three models use complete saved transcripts/common limits within US$0.10/call and the existing US$5 total. Results cannot alter reader annotations/reviews. No new inference, publication, twenty-video run or backfill at this checkpoint. Actual checks, release and paid-result evidence will follow separately.

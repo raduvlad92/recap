@@ -4,6 +4,10 @@ Updated: 27 October 2026. Individual answers below are accepted directions. They
 
 ## 27 October 2026 — compare three models before deciding about twenty videos
 
+The founder subsequently answered the scope question: **recaps and keywords**. Retain the already completed MiniMax/Luna keyword evidence and add separately sealed recap suites on the same three videos; do not repay their keyword trials. The US$0.10/call and existing US$5 total still apply.
+
+Luna's incomplete keyword response leaves US$0.004574875 reserved. A comparison-only guard permits a first run of a different requested model when that hold belongs to the exact same closed, drained suite/round/source cohort with verified immutable job/call identities. Every unknown charge remains fully counted in daily and cumulative totals. Same-model retries, malformed/unrelated holds and ordinary H3/H4 processing retain their strict blocks. This implements the already requested independent model tests without guessing a bill, changing a historical call or retrying Luna. Separate homogeneous three-summary suites add the clarified recap scope; mixed three-task cohorts remain invalid.
+
 Founder requested testing all three other available models, tracking their results and deciding together about the twenty videos afterward. In the keyword investigation, this authorizes MiniMax M3.1 Flash, GPT-6 Luna Pro and GPT-6.1 Sol Pro on the same three frozen sources. Existing US$0.10/call and US$5 cumulative limits persist, including historical charges/holds. Earlier automatic progression to twenty-video generation waits for the joint decision.
 
 Unchanged v4 prompts/rules, complete saved transcripts and identical smaller limits permit a controlled comparison within Sol's call cap. Results stay private and cannot replace annotations/reviews. A dedicated comparison purpose/evaluated terminal state preserves consumed histories and distinguishes test results from reader publication. [Scope and evidence](tech/MODEL-COMPARISON-2026-10-27.md). No new inference at the preparation checkpoint.
