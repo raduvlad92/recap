@@ -65,7 +65,7 @@ const response=(value:unknown,status=200)=>{const r=json(value,status);r.headers
 /** Deliberately separate from production queue flags. Only a manually released,
  * finite private session authorizes inference, while the shared durable ledger
  * still enforces all aggregate/day/owner/per-call monetary ceilings. */
-export function createKeywordLearningHandler(overrides:Partial<Dependencies>={}) {
+export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},options:{generateOnly?:boolean}={}) {
  const deps:Dependencies={env:runtimeEnv,db:()=>database(overrides.env||runtimeEnv),authorize:requireAdmin,workerAuthorized:analysisWorkerAuthorized,generator:createGatewayGenerator,...overrides};
  return async(request:Request):Promise<Response>=>{
   try {
@@ -74,6 +74,7 @@ export function createKeywordLearningHandler(overrides:Partial<Dependencies>={})
    if(!configuredAppRequest(request,deps.env))return fail('keyword_learning_production_required',403);
    if(!request.headers.get('content-type')?.includes('application/json'))return fail('json_required',415);
    let body:unknown;try{body=JSON.parse(await readTextLimited(new Response(request.body),220000));}catch(error){if(error instanceof CollectionError)throw error;return fail('keyword_learning_invalid_input');}
+   if(options.generateOnly&&(!object(body)||body.action!=='generate'))return fail('keyword_learning_invalid_input');
    const db=deps.db();
    if(object(body)&&body.action==='read'){
     if(Object.keys(body).some(k=>!['action','sessionId','callKey'].includes(k))||typeof body.sessionId!=='string'||!UUID.test(body.sessionId)||typeof body.callKey!=='string'||!KEYWORD_LEARNING_KEY.test(body.callKey))return fail('keyword_learning_invalid_input');

@@ -8,12 +8,12 @@ const source='The fictional AeroBox Plus includes C++ support.',sourceHash=creat
 const input={action:'generate',sessionId:'12345678-1234-1234-1234-123456789012',sourceOrdinal:1,sourceHash,model:'deepseek/deepseek-v4.1-flash-1017',
  request:{role:'extractor',key:'keyword-learning:v1:direct-1',system:'List literal names.',prompt:source,schema:{type:'object',properties:{names:{type:'array',items:{type:'string'}}},required:['names'],additionalProperties:false},maxOutputTokens:3000}};
 const result:GenerationResult={value:{names:['AeroBox Plus','C++']},actualUsd:.001,observedUsd:.001,providerId:'gen-fixture'};
-function fixture(patch:Record<string,unknown>={}){
+function fixture(patch:Record<string,unknown>={},generateOnly=false){
  const generate=vi.fn().mockResolvedValue(result),authorize=vi.fn().mockResolvedValue('fixture-admin'),workerAuthorized=vi.fn().mockReturnValue(true);
  const rpc=vi.fn(async(name:string,args:Record<string,unknown>)=>({data:name==='reserve_keyword_learning_call'?{claimed:true,call:{id:'call-fixture',lease_token:'lease-fixture',state:'reserved',actual_usd:null,maximum_usd:.003},requestHash:args.p_request_hash,result:null,errorCode:null}:name==='record_keyword_learning_call'?{call:{state:args.p_result?'settled':'unknown',actual_usd:args.p_result?.['actualUsd' as keyof typeof args.p_result]??null},result:args.p_result,errorCode:args.p_error_code,completed:true}:{call:{state:'settled'},result},error:null}));
  const tables=vi.fn((table:string)=>{const chain:any={select:()=>chain,eq:()=>chain,single:async()=>({data:table==='keyword_learning_sessions'?{user_id:'fixture-owner',state:'released',expires_at:'2099-01-01T00:00:00Z',models:[input.model],sources:[{ordinal:1,sourceHash,updateId:'fixture-video'}]}:{record:{content:source}},error:null})};return chain;});
  const db={from:tables,rpc},env=(key:string)=>({APP_URL:'https://example.test',CONTENT_ANALYSIS_ENABLED:'false',OPENROUTER_API_KEY:'synthetic-unused-fixture'}[key]);
- const handler=createKeywordLearningHandler({env,db:()=>db as never,authorize,workerAuthorized,generator:()=>generate,...patch});
+ const handler=createKeywordLearningHandler({env,db:()=>db as never,authorize,workerAuthorized,generator:()=>generate,...patch},{generateOnly});
  const send=(body:unknown=input,url='https://example.test/.netlify/functions/keyword-learning')=>handler(new Request(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}));
  return {handler,send,generate,authorize,workerAuthorized,rpc,tables};
 }
@@ -50,6 +50,30 @@ describe('private keyword evaluation handler, synthetic adapters only',()=>{
  it('returns a settled cached result without spending again',async()=>{
   const f=fixture();f.rpc.mockResolvedValueOnce({data:{claimed:false,call:{state:'settled',actual_usd:.001},result,errorCode:null},error:null} as never);
   const r=await f.send();expect(r.status).toBe(200);expect(f.generate).not.toHaveBeenCalled();expect(await r.json()).toMatchObject({cached:true,result,providerCall:false});
+ });
+ it.each(['preflight','read','other'])('the background entry rejects %s after authorization, before database access',async action=>{
+  const f=fixture({},true),r=await f.send({...input,action},'https://example.test/.netlify/functions/keyword-learning-worker');
+  expect(r.status).toBe(400);expect(f.workerAuthorized).toHaveBeenCalledTimes(1);expect(f.tables).not.toHaveBeenCalled();expect(f.rpc).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
+ });
+ it('the background entry still rejects unauthorized requests before reading any session',async()=>{
+  const f=fixture({workerAuthorized:()=>false,authorize:vi.fn().mockRejectedValue(new Error('denied'))},true);
+  expect((await f.send(input,'https://example.test/.netlify/functions/keyword-learning-worker')).status).toBe(502);expect(f.tables).not.toHaveBeenCalled();expect(f.rpc).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
+ });
+ it.each(['settled','unknown'] as const)('a background reinvocation cannot resend the same %s request',async state=>{
+  const f=fixture({},true),rpc=f.rpc.getMockImplementation()!;
+  if(state==='unknown')f.generate.mockRejectedValueOnce(new AnalysisError('analysis_provider_timeout'));
+  let alreadyReserved=false;
+  f.rpc.mockImplementation(async(name,args)=>{
+   if(name==='reserve_keyword_learning_call'){
+    if(alreadyReserved)return {data:{claimed:false,call:{state,actual_usd:state==='settled'?.001:null},result:state==='settled'?result:null,errorCode:state==='unknown'?'analysis_provider_timeout':null},error:null} as never;
+    alreadyReserved=true;
+   }
+   return rpc(name,args);
+  });
+  const url='https://example.test/.netlify/functions/keyword-learning-worker';
+  await f.send(input,url);const repeated=await f.send(input,url),body=await repeated.json();
+  expect(repeated.status).toBe(state==='settled'?200:202);expect(body.providerCall).toBe(false);expect(f.generate).toHaveBeenCalledExactlyOnceWith(input.request);
+  expect(f.rpc.mock.calls.filter(([name])=>name==='record_keyword_learning_call')).toHaveLength(1);
  });
  it('persists a provider timeout as unknown cost and never refunds/retries it',async()=>{
   const f=fixture();f.generate.mockRejectedValueOnce(new AnalysisError('analysis_provider_timeout'));
