@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 27 October 2026 — revised-contract trial failed; withholding and timing fix
+
+Type: actual bounded v4 inference, independent source review, guarded production withholding and actual PostgreSQL diagnosis. Eighteen settled responses cost US$0.018066770; four tasks failed model evidence/semantic validation, one model-approved recap failed independent review and was withheld with exact 22-group preservation, and one complete cached keyword inventory is queued behind cue-end arithmetic validation. Read-only production reproduction confirms the numeric blocker; 17 focused and 2,623 full local tests pass after the additive fix. Runtime/spending off, DeepSeek/default, no new unknown holds. New session cost US$0.018709185; total commitment US$0.069253760 including historical holds. Useful H3 recap remains available. No accepted v4 quality gate, twenty-video expansion or backfill. [Execution evidence](tech/RELIABILITY-EXECUTION-2026-10-26.md).
+
 ## 27 October 2026 — one useful recap recovered and reloaded
 
 Type: actual deployed inference, database publication and signed-in hosted reader check. Commit `854fbcd`, CI 40416757770 passes; local 2,606 tests include actual PostgreSQL cases. Guarded same-H3 finalization reused the paid prefix and made one verifier call, settled US$0.000642415, publishing four supported points. The closed finalizer made one attempt; no new unknown charge. A stale Chrome reader loaded the new points after reload; all four real cue links, coverage warning, separate keyword failure, full transcript and actual 320px layout pass. DeepSeek restored; runtime/spending off; commitment US$0.051186990 including old holds. [Execution details](tech/RELIABILITY-EXECUTION-2026-10-26.md). V4 keyword proof and twenty assessments remain ahead; no backfill.
