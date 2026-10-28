@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import type{SourceUpdate}from'../src/lib/types';
 import type{AnalysisOutput}from'../netlify/functions/_shared/content-analysis-engine';
-import {validateKeywordRecoveryTargets,keywordRecoveryRequests,decodeKeywordRecoveryDecisions,applyKeywordRecovery,applyKeywordRecoveryContextReviews,keywordRecoveryHash}from'../netlify/functions/_shared/keyword-recovery';
+import {KEYWORD_RECOVERY_VERSION,KEYWORD_RECOVERY_CONTRACT_HASH,validateKeywordRecoveryTargets,keywordRecoveryRequests,decodeKeywordRecoveryDecisions,applyKeywordRecovery,applyKeywordRecoveryContextReviews,keywordRecoveryHash}from'../netlify/functions/_shared/keyword-recovery';
 const content='🚀 AeroBox Plus runs. The Agency for Space exists. Project Ember is a prior build. Ultra is uncertain.';
 const update={id:'fixture',sourceId:'fixture-source',content,contentKind:'transcript',format:'video',isSample:false}as SourceUpdate;
 const target=(name:string,text=content)=>({name,contexts:[{start:content.indexOf(text),end:content.indexOf(text)+text.length,text}]});
@@ -10,6 +10,20 @@ const baseline=()=>({state:'ready',patch:{keywordRuleVersion:'entities-v2'},pend
 const lineage={originSessionId:'old-closed',baselineContractHash:'a'.repeat(64),baselineReceiptHash:'b'.repeat(64),baselineOutputHash:'c'.repeat(64)};
 const scope={sessionId:'new',ordinal:1,sourceHash:'d'.repeat(64),baselineReceiptHash:lineage.baselineReceiptHash};
 describe('source-bound targeted keyword recovery',()=>{
+ it('versions the general role-and-boundary policy without embedding target names or expected answers',()=>{
+  const request=keywordRecoveryRequests(update,[target('Agency for Space'),target('Project Ember')],scope)[0].body.request;
+  const policy=request.prompt.split('\nALLOWED KINDS\n')[0],input=JSON.parse(request.prompt.split('\n').at(-1)!);
+  expect(KEYWORD_RECOVERY_VERSION).toBe('targeted-named-mentions-v2-role-boundaries');
+  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"d59bdc7c2b265753df671cd73a6b4f2284e98e64554b12f64c5f59276f705755"`);
+  expect(policy).toContain('Distinctive branded class labels count when the source establishes that designation');
+  expect(policy).toContain('ordinary unbranded job/group descriptions do not');
+  expect(policy).toContain('a word explicitly selected as a setting/preset value');
+  expect(policy).toContain('while that boundary remains unresolved');
+  expect(policy).not.toContain('Agency for Space');expect(policy).not.toContain('Project Ember');
+  expect(request.prompt).not.toContain('expectedDisposition');expect(request.prompt).not.toContain('proposedDecision');
+  expect(input).toEqual([{targetId:0,name:'Agency for Space',contexts:[content]},{targetId:1,name:'Project Ember',contexts:[content]}]);
+  expect(request.maxOutputTokens).toBe(1536);
+ });
  it('requires exact original UTF-16 context and never accepts a caller-inserted expected verdict',()=>{
   expect(validateKeywordRecoveryTargets(update,[target('Agency for Space')])).toHaveLength(1);
   expect(()=>validateKeywordRecoveryTargets(update,[{...target('Agency for Space'),expectedDisposition:'accepted'}])).toThrow();
