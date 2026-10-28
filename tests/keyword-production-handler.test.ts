@@ -42,10 +42,10 @@ function fixture(){
   return bound;
  };
  const complete=()=>{
-  const sectionSweepChunks=tables.keyword_production_releases[0].sources[0].sectionSweepChunks;
+  const {sectionSweepChunks,checkerPolicy}=tables.keyword_production_releases[0].sources[0];
   const chunk=planKeywordProductionChunks(update)[0],[a,b]=keywordProductionExtractionCalls(update,chunk,sectionSweepChunks),inventory={names:['AeroBox','NovaPay'],uncertainNames:[]};
   add(a,inventory);add(b,inventory);
-  const check=keywordProductionCheckerCall(update,chunk,{direct:inventory,type_sweep:inventory},'standard',sectionSweepChunks),data=JSON.parse(check.request.prompt.slice(check.request.prompt.lastIndexOf('\n')+1));
+  const check=keywordProductionCheckerCall(update,chunk,{direct:inventory,type_sweep:inventory},checkerPolicy,sectionSweepChunks),data=JSON.parse(check.request.prompt.slice(check.request.prompt.lastIndexOf('\n')+1));
   add(check,{readComplete:true,decisions:data.candidates.map((name:string)=>({name,kind:name==='NovaPay'?'service':'brand',disposition:'accepted'})),missingNames:[]});
  };
  return {send,tables,from,rpc,authorize,workerAuthorized,complete,add,handler};
@@ -84,6 +84,15 @@ describe('finite production keyword publication, synthetic adapters only',()=>{
    const response=await f.send(input);expect(response.status).toBe(409);expect((await response.json()).error.code).toBe('keyword_production_call_not_ready');
   }
   expect((await f.send({action:'plan',stage:'extractors',chunkIndex:0,sectionSweepChunks:[]})).status).toBe(400);expect(f.rpc).not.toHaveBeenCalled();
+ });
+ it('uses the strict context checker only when admitted and reconstructs it for preview',async()=>{
+  const f=fixture();f.tables.keyword_production_releases[0].sources[0].checkerPolicy='strict-context-v1';f.complete();
+  const response=await f.send({action:'plan',stage:'checker',chunkIndex:0}),plan=await response.json(),chunk=planKeywordProductionChunks(update)[0],inventory={names:['AeroBox','NovaPay'],uncertainNames:[]};
+  expect(response.status).toBe(200);expect(plan.calls).toEqual([bindKeywordProductionCall(sid,1,sourceHash,keywordProductionCheckerCall(update,chunk,{direct:inventory,type_sweep:inventory},'strict-context-v1'))]);
+  expect((await f.send({action:'preview'})).status).toBe(200);
+  expect((await f.send({action:'plan',stage:'checker',chunkIndex:0,checkerPolicy:'standard'})).status).toBe(400);
+  f.tables.keyword_production_releases[0].sources[0].checkerPolicy='alias-boundaries-v1';
+  const stale=await f.send({action:'preview'});expect(stale.status).toBe(409);expect((await stale.json()).error.code).toBe('keyword_production_call_not_ready');expect(f.rpc).not.toHaveBeenCalled();
  });
  it.each([null,[0,0],[-1],[1],[0.5],['0']])('rejects malformed private section-sweep admission %j',async value=>{
   const f=fixture();f.tables.keyword_production_releases[0].sources[0].sectionSweepChunks=value;

@@ -143,6 +143,20 @@ describe('production named-mention core',()=>{
   expect(targeted.request.prompt).not.toBe(standard.request.prompt);expect(targeted.request.prompt).toContain('an unquoted internal phrase');expect(data(targeted).content).toBe(update.content);expect(data(targeted).candidates).toEqual(data(standard).candidates);
   expect(()=>keywordProductionCheckerCall(update,chunk,values,'unreleased' as never)).toThrow('keyword_production_checker_policy_invalid');
  });
+ it('adds strict scene/context namedness only to an explicitly selected policy and preserves earlier request bytes',()=>{
+  const update=record('Ari The Ridge Kato reviewed Orion\'s Harbor.'),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(['Ari The Ridge Kato','The Ridge']),type_sweep:inventory([])};
+  const standard=keywordProductionCheckerCall(update,chunk,values),alias=keywordProductionCheckerCall(update,chunk,values,'alias-boundaries-v1'),strict=keywordProductionCheckerCall(update,chunk,values,'strict-context-v1');
+  // Captured before adding strict-context-v1: generation keys include the full
+  // request, so accidental edits would cause unnecessary new paid calls.
+  const digest=(call:KeywordProductionCall)=>createHash('sha256').update(JSON.stringify(call)).digest('hex');
+  expect(digest(standard)).toBe('d232f622b28b22d5f4b57f31d8588720aa44c53a560e2c49993c08b5f64a828c');
+  expect(digest(alias)).toBe('53c34b690334887c279616a789e9fdf4bd13189f558de942f60f22d4c0cd0ef7');
+  expect(strict.request.prompt).toContain('A specific physical object, build, interior or scene does not by itself establish a proper name.');
+  expect(strict.request.prompt).toContain('Use review only when title-versus-description is genuinely ambiguous.');
+  expect(alias.request.prompt).not.toContain('A specific physical object');expect(standard.request.prompt).not.toContain('A specific physical object');
+  expect(data(strict)).toEqual(data(alias));expect(strict.model).toBe(alias.model);expect(strict.request.schema).toEqual(alias.request.schema);expect(digest(strict)).not.toBe(digest(alias));
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(strict,{'Ari The Ridge Kato':'person'},{'The Ridge':'named_mention'})},'strict-context-v1')).not.toThrow();
+ });
  it('retains all private kinds and unresolved names while exposing only accepted labels and host timing',()=>{
   const update=record('Tevi saw AeroBox. Perhaps Cedar address is a joke.'),result=mergeKeywordProductionChunks(update,[chunkResult(update,0,{Tevi:'person',AeroBox:'brand'},{'Cedar address':'named_mention'})]);
   expect(result.state).toBe('review');expect(result.pending).toHaveLength(1);

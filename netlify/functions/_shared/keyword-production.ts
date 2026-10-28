@@ -31,7 +31,8 @@ const CHECKER_DISPOSITIONS = ['accepted','review','rejected'] as const;
 const ALIAS_BOUNDARY_LESSON='For ambiguous identity boundaries, distinguish an explicitly attributed parent brand from an invented personal alias. Retain a parent brand in a possessive product or game title. Keep a complete personal name; an unquoted internal phrase is not automatically a separately established nickname or handle, so use review for that proposed alias unless this source explicitly presents it as an alias. When the source names a document/file collection using a surname without identifying a separate person, retain the full named collection; a separately inferred person belongs in review. Do not expand names or identify people from outside knowledge.';
 const PARENT_ATTRIBUTION_LESSON='A named parent brand counts even when it occurs only inside a complete product, model or game title. It does not need an independent sentence or standalone occurrence. Retain both the actual parent name and the complete named product/family/version. A source-present character or franchise name can likewise remain distinct from its explicitly named installment or add-on.';
 const UNCLEAR_SOURCE_LESSON='Accept an unfamiliar literal name when this source clearly presents it as a named identity or institution. Distinguish genuinely unclear boundaries from unfamiliar spelling: an unbranded merchandise class or ambiguous printed version punctuation belongs in review unless the text itself settles its naming role. Do not call generic nouns or fragments proper names merely because they occur in an ad. A clearly introduced joke name or pseudo-domain may remain a literal named_mention without claiming a working domain. Do not guess corrected names or versions.';
-export type KeywordProductionCheckerPolicy='standard'|'alias-boundaries-v1';
+const STRICT_CONTEXT_LESSON='A specific physical object, build, interior or scene does not by itself establish a proper name. Distinguish an explicitly introduced title or brand from ordinary descriptive object, architectural or style language. Use review only when title-versus-description is genuinely ambiguous. Reject ordinary generic scene, style or building descriptions rather than retaining them as named identities.';
+export type KeywordProductionCheckerPolicy='standard'|'alias-boundaries-v1'|'strict-context-v1';
 
 /** A production version pins both measured prompts and its explicit long-source
  * adaptation. The seven-case proof used one complete-source chunk; chunked
@@ -54,7 +55,8 @@ export const KEYWORD_PRODUCTION_CONTRACT_HASH = contentHash(JSON.stringify({
  maximumNames: KEYWORD_PRODUCTION_MAX_NAMES,
  merge: 'source-present-legacy-key-aliases-conflicts-review-v3', boundaryGuards: true,
  parentBrandGuard:'preserve-checker-accepted-literal-name-prefix-is-not-rejection-v3',
- checkerPolicies:{standard:'frozen-six-lessons',aliasBoundaries:[ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON]},
+ checkerPolicies:{standard:'frozen-six-lessons',aliasBoundaries:[ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON],
+  strictContext:[ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON,STRICT_CONTEXT_LESSON]},
  hostSourceWhitespaceAlignment:'linebreak-runs-with-original-utf16-offsets-v1',
  publicationEvidence:'literal-first-span-all-ranges-and-durable-call-lineage-v1',
  timing:'cached-complete-or-unique-cue-alignment-v1',
@@ -180,9 +182,9 @@ function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories,
 
 export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories,policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown):KeywordProductionCall {
  checkedChunk(update,chunk);
- if(!['standard','alias-boundaries-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
+ if(!['standard','alias-boundaries-v1','strict-context-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
  const names=combinedInventory(chunk,values,secondExtractionMethod(update,chunk,sectionSweepChunks)).map(row=>row.name);
- const lessons=policy==='standard'?frozen.checkerLessons:[...frozen.checkerLessons,ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON];
+ const lessons=policy==='standard'?frozen.checkerLessons:[...frozen.checkerLessons,ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON,...(policy==='strict-context-v1'?[STRICT_CONTEXT_LESSON]:[])];
  const request=keywordCheckerRequest({content:chunk.content,names,lessons,maxOutputTokens:2000,includeReasons:false}) as GenerationRequest;
  return {chunkIndex:chunk.index,step:'checker',model:KEYWORD_PRODUCTION_CHECKER_MODEL,
   request:requestCapacity(compactChecker(names)?compactCheckerRequest(request,names):request)};
@@ -254,7 +256,7 @@ function validateChecker(value:unknown,names:string[]):void {
 
 export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories&{checker:unknown},policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown):KeywordProductionChunkResult {
  checkedChunk(update,chunk);
- if(!['standard','alias-boundaries-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
+ if(!['standard','alias-boundaries-v1','strict-context-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
  const secondExtractorMethod=secondExtractionMethod(update,chunk,sectionSweepChunks),candidates=combinedInventory(chunk,values,secondExtractorMethod).map(row=>row.name);
  const checker=decodedChecker(values.checker,candidates);
  validateChecker(checker,candidates);
