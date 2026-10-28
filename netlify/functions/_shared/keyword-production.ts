@@ -39,6 +39,8 @@ const CURRENT_CHECKER_LESSONS=[...new Set([...frozen.checkerLessons,KEYWORD_CONT
 export type KeywordProductionCheckerPolicy='standard'|'alias-boundaries-v1'|'strict-context-v1';
 export type KeywordProductionGenerationProfile='legacy-v1'|'context-roles-v2';
 export const KEYWORD_PRODUCTION_CURRENT_PROFILE:KeywordProductionGenerationProfile='context-roles-v2';
+export const KEYWORD_PRODUCTION_CURRENT_FAMILY_POLICY='literal-numeric-parent-prefixes-v1';
+export const KEYWORD_PRODUCTION_CURRENT_CHECKER_TRANSPORT='always-explicit-tuples-v1';
 export function validateKeywordProductionGenerationProfile(value:unknown):KeywordProductionGenerationProfile {
  if(value===undefined)return 'legacy-v1';
  if(value==='legacy-v1'||value==='context-roles-v2')return value;
@@ -51,6 +53,8 @@ export const KEYWORD_PRODUCTION_CURRENT_GENERATION_HASH=contentHash(JSON.stringi
  promptVersion:KEYWORD_CONTEXT_ROLES_VERSION,extractorModel:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,
  checkerModel:KEYWORD_PRODUCTION_CHECKER_MODEL,extractorLessons:frozen.extractorLessons,
  secondExtractor:'context_roles',checkerLessons:CURRENT_CHECKER_LESSONS,
+ familyCandidates:{version:KEYWORD_PRODUCTION_CURRENT_FAMILY_POLICY,maximumPrefixesPerDesignation:3,automaticAcceptance:false},
+ checkerTransport:KEYWORD_PRODUCTION_CURRENT_CHECKER_TRANSPORT,
  chunkChars:KEYWORD_PRODUCTION_CHUNK_CHARS,chunkUtf8Bytes:KEYWORD_PRODUCTION_LONG_CHUNK_BYTES,
  overlapChars:KEYWORD_PRODUCTION_OVERLAP_CHARS,byteBudget:'all-source-lengths',checkerMaxOutputTokens:2000,
 }));
@@ -89,7 +93,9 @@ export const KEYWORD_PRODUCTION_CONTRACT_HASH = contentHash(JSON.stringify({
  generationProfiles:{legacy:{profile:'legacy-v1',generationHash:KEYWORD_PRODUCTION_GENERATION_HASH,
   byteBudget:'only-over-character-limit',secondExtractor:'type_sweep-or-admitted-sections'},
   current:{profile:KEYWORD_PRODUCTION_CURRENT_PROFILE,generationHash:KEYWORD_PRODUCTION_CURRENT_GENERATION_HASH,
-   byteBudget:'all-source-lengths',secondExtractor:'context_roles',checkerLessons:CURRENT_CHECKER_LESSONS}},
+   byteBudget:'all-source-lengths',secondExtractor:'context_roles',checkerLessons:CURRENT_CHECKER_LESSONS,
+   familyCandidates:{version:KEYWORD_PRODUCTION_CURRENT_FAMILY_POLICY,maximumPrefixesPerDesignation:3,automaticAcceptance:false},
+   checkerTransport:KEYWORD_PRODUCTION_CURRENT_CHECKER_TRANSPORT}},
 }));
 
 type Disposition = 'accepted' | 'review' | 'rejected';
@@ -208,27 +214,46 @@ export function keywordProductionExtractionCalls(update:SourceUpdate,chunk:Keywo
   request:requestCapacity(keywordExtractionRequest({method:step==='direct'?step:second,content:chunk.content,lessons:frozen.extractorLessons}))}));
 }
 
-function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories,second:'type_sweep'|'sections'|'context_roles'='type_sweep'):Array<{name:string}> {
- const signature=JSON.stringify({values,second}),cached=inventoryCache.get(chunk);
+/** Supplement the two AI inventories with at most three whole-word parent
+ * prefixes of each numeric designation. Literal support is not namedness:
+ * every suggestion still receives the same independent checker verdict. */
+function numericFamilyPrefixes(content:string,inventories:Inventory[]):Inventory {
+ const names=new Set<string>(),find=createKeywordProductionOccurrenceFinder(content);
+ for(const name of new Set(inventories.flatMap(value=>[...value.names,...value.uncertainNames]))){
+  const words=[...name.matchAll(/\S+/gu)];
+  if(words.length<2||!/^(?:v)?\p{N}+(?:\.\p{N}+)*\p{L}*$/iu.test(words.at(-1)![0])||!find(name).length)continue;
+  for(let cut=words.length-1;cut>=Math.max(1,words.length-3);cut--){
+   const prefix=name.slice(0,words[cut].index).trimEnd();
+   if(/\p{L}/u.test(prefix)&&find(prefix).length)names.add(prefix);
+  }
+ }
+ return {names:[...names],uncertainNames:[]};
+}
+
+function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories,second:'type_sweep'|'sections'|'context_roles'='type_sweep',profile:KeywordProductionGenerationProfile='legacy-v1'):Array<{name:string}> {
+ const signature=JSON.stringify({values,second,profile}),cached=inventoryCache.get(chunk);
  if(cached?.signature===signature)return cached.rows;
  const direct=validateLiteralInventory(values.direct) as Inventory, typed=validateLiteralInventory(values.type_sweep) as Inventory;
- const rows=combineKeywordInventories(renderSource(chunk.content).text,[{method:'direct',output:direct},{method:second,output:typed},
-  {method:'patterns',output:minePatternNames(chunk.content,{precision:'focused'})}]) as Array<{name:string}>;
+ const content=renderSource(chunk.content).text;
+ const rows=combineKeywordInventories(content,[{method:'direct',output:direct},{method:second,output:typed},
+  {method:'patterns',output:minePatternNames(chunk.content,{precision:'focused'})},
+  ...(profile==='legacy-v1'?[]:[{method:'numeric_family_prefixes',output:numericFamilyPrefixes(content,[direct,typed])}])]) as Array<{name:string}>;
  inventoryCache.set(chunk,{signature,rows});return rows;
 }
 
 export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories,policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown,profile:KeywordProductionGenerationProfile='legacy-v1'):KeywordProductionCall {
  profile=validateKeywordProductionGenerationProfile(profile);checkedChunk(update,chunk,profile);
  if(!['standard','alias-boundaries-v1','strict-context-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
- const names=combinedInventory(chunk,values,secondExtractionMethod(update,chunk,sectionSweepChunks,profile)).map(row=>row.name);
+ const names=combinedInventory(chunk,values,secondExtractionMethod(update,chunk,sectionSweepChunks,profile),profile).map(row=>row.name);
  const baseLessons=policy==='standard'?frozen.checkerLessons:[...frozen.checkerLessons,ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON,...(policy==='strict-context-v1'?[STRICT_CONTEXT_LESSON]:[])];
  const lessons=profile==='legacy-v1'?baseLessons:CURRENT_CHECKER_LESSONS;
  const request=keywordCheckerRequest({content:chunk.content,names,lessons,maxOutputTokens:2000,includeReasons:false}) as GenerationRequest;
  return {chunkIndex:chunk.index,step:'checker',model:KEYWORD_PRODUCTION_CHECKER_MODEL,...(profile==='legacy-v1'?{}:{generationProfile:profile}),
-  request:requestCapacity(compactChecker(names)?compactCheckerRequest(request,names):request)};
+  request:requestCapacity(compactChecker(names,profile)?compactCheckerRequest(request,names):request)};
 }
 
-function compactChecker(names:string[]):boolean {
+function compactChecker(names:string[],profile:KeywordProductionGenerationProfile='legacy-v1'):boolean {
+ if(profile==='context-roles-v2')return true;
  const encoder=new TextEncoder(),bytes=names.reduce((sum,name)=>sum+encoder.encode(name).length,0);
  return names.length>COMPACT_CHECKER_AFTER_NAMES||bytes>COMPACT_CHECKER_AFTER_NAME_BYTES;
 }
@@ -258,8 +283,8 @@ function compactCheckerRequest(request:GenerationRequest,names:string[]):Generat
 
 /** Reject incomplete, duplicate or out-of-range tuples before source checks.
  * The provider's original tuple JSON remains in the durable paid receipt. */
-function decodedChecker(value:unknown,names:string[]):unknown {
- if(!compactChecker(names))return value;
+function decodedChecker(value:unknown,names:string[],profile:KeywordProductionGenerationProfile):unknown {
+ if(!compactChecker(names,profile))return value;
  if(!record(value)||!exactKeys(value,['readComplete','verdicts','missingNames'])||value.readComplete!==true
   ||!Array.isArray(value.verdicts)||value.verdicts.length!==names.length||!Array.isArray(value.missingNames))return analysisFailure('checker_incomplete');
  const seen=new Set<number>(),decisions:Record<string,unknown>[]=[];
@@ -295,8 +320,8 @@ function validateChecker(value:unknown,names:string[]):void {
 export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories&{checker:unknown},policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown,profile:KeywordProductionGenerationProfile='legacy-v1'):KeywordProductionChunkResult {
  profile=validateKeywordProductionGenerationProfile(profile);checkedChunk(update,chunk,profile);
  if(!['standard','alias-boundaries-v1','strict-context-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
- const secondExtractorMethod=secondExtractionMethod(update,chunk,sectionSweepChunks,profile),candidates=combinedInventory(chunk,values,secondExtractorMethod).map(row=>row.name);
- const checker=decodedChecker(values.checker,candidates);
+ const secondExtractorMethod=secondExtractionMethod(update,chunk,sectionSweepChunks,profile),candidates=combinedInventory(chunk,values,secondExtractorMethod,profile).map(row=>row.name);
+ const checker=decodedChecker(values.checker,candidates,profile);
  validateChecker(checker,candidates);
  const rendered=renderSource(chunk.content).text;
  const normalized=resolveKeywordCheckerVerdicts({content:rendered,names:candidates,
@@ -313,7 +338,7 @@ export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:Keyword
  const boundaryChanges=boundary.changes.map(change=>record(change)&&restoredParents.has(String(change.name))&&change.code==='only_prefix_of_longer_accepted_name'
   ?{...change,guardTo:change.to,to:'accepted',overriddenBy:'source_supported_checker_accepted_name'}:change);
  return {chunk,candidates,rawRows:normalized.rows,rows:boundary.rows,boundaryChanges,secondExtractorMethod,...(profile==='legacy-v1'?{}:{generationProfile:profile}),
-  duplicateVerdicts:normalized.duplicateVerdicts,conflicts:normalized.conflicts,checkerEncoding:compactChecker(candidates)?'numeric_tuples':'named_rows'};
+  duplicateVerdicts:normalized.duplicateVerdicts,conflicts:normalized.conflicts,checkerEncoding:compactChecker(candidates,profile)?'numeric_tuples':'named_rows'};
 }
 
 function legacyKind(kind:string|null):LegacyKind {
@@ -402,7 +427,7 @@ export function mergeKeywordProductionChunks(update:SourceUpdate,results:Keyword
    unmatchedReview:unmatchedReview.map(({label,literalKind,disposition,reason})=>({label,literalKind,disposition,reason})),
    rejected:rejected.map(({label,literalKind,disposition})=>({label,literalKind,disposition})),
    coverage:chunks.map(({start,end})=>({start,end})),chunkCount:chunks.length,crossChunkConflicts,
-   extractionMethods:['direct',...new Set(results.map(result=>result.secondExtractorMethod)),'focused_patterns'],extractorModel:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,checkerModel:KEYWORD_PRODUCTION_CHECKER_MODEL,
+   extractionMethods:['direct',...new Set(results.map(result=>result.secondExtractorMethod)),'focused_patterns',...(profile==='legacy-v1'?[]:['numeric_family_prefixes'])],extractorModel:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,checkerModel:KEYWORD_PRODUCTION_CHECKER_MODEL,
    checkerReasons:false,confidenceOrigin:'legacy_acceptance_marker_not_model_score',
    rawGenerationEvidence:'Exact request payloads and provider responses remain in the bound durable call receipts; this publication proof avoids duplicating them.',
    chunks:results.map(({chunk,candidates,rows,boundaryChanges,duplicateVerdicts,conflicts,checkerEncoding,secondExtractorMethod})=>({index:chunk.index,start:chunk.start,end:chunk.end,chunkHash:chunk.chunkHash,checkerEncoding,secondExtractorMethod,

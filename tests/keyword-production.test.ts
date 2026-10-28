@@ -17,8 +17,12 @@ const record=(content:string):SourceUpdate=>({id:'synthetic-video',sourceId:'syn
 const data=(call:KeywordProductionCall)=>JSON.parse(call.request.prompt.slice(call.request.prompt.lastIndexOf('\n')+1)) as {content:string;candidates?:string[]};
 const inventory=(names:string[])=>({names,uncertainNames:[]});
 const successful=(value:unknown):GenerationResult=>({value,observedUsd:0,actualUsd:0});
-const checker=(call:KeywordProductionCall,accepted:Record<string,string>,review:Record<string,string>={},missing:Array<{name:string;kind:string;disposition:string}>=[])=>({readComplete:true,
- decisions:data(call).candidates!.map(name=>({name,kind:accepted[name]??review[name]??'named_mention',disposition:accepted[name]?'accepted':review[name]?'review':'rejected'})),missingNames:missing});
+const checker=(call:KeywordProductionCall,accepted:Record<string,string>,review:Record<string,string>={},missing:Array<{name:string;kind:string;disposition:string}>=[])=>{
+ const candidates=data(call).candidates! as unknown as Array<string|{candidateIndex:number;name:string}>;
+ if(call.request.schema&&'required'in call.request.schema&&(call.request.schema.required as string[]).includes('verdicts'))return {readComplete:true,
+  verdicts:candidates.map(candidate=>{const {candidateIndex,name}=candidate as {candidateIndex:number;name:string};return [candidateIndex,KEYWORD_LEARNING_KINDS.indexOf(accepted[name]??review[name]??'named_mention'),accepted[name]?0:review[name]?1:2];}),missingNames:missing};
+ return {readComplete:true,decisions:(candidates as string[]).map(name=>({name,kind:accepted[name]??review[name]??'named_mention',disposition:accepted[name]?'accepted':review[name]?'review':'rejected'})),missingNames:missing};
+};
 function chunkResult(update:SourceUpdate,index:number,accepted:Record<string,string>,review:Record<string,string>={},missing:Array<{name:string;kind:string;disposition:string}>=[]):KeywordProductionChunkResult {
  const chunk=planKeywordProductionChunks(update)[index],values={direct:inventory(Object.keys(accepted)),type_sweep:inventory(Object.keys(review))};
  const call=keywordProductionCheckerCall(update,chunk,values);
@@ -88,10 +92,10 @@ describe('production named-mention core',()=>{
   expect(calls.map(call=>call.step)).toEqual(['direct','type_sweep','checker']);
   expect(calls.every(call=>call.generationProfile===KEYWORD_PRODUCTION_CURRENT_PROFILE)).toBe(true);
   expect(calls[1].request.prompt).toContain('Sweep the entire source by naming role');
-  expect(result.evidence.extractionMethods).toEqual(['direct','context_roles','focused_patterns']);
+  expect(result.evidence.extractionMethods).toEqual(['direct','context_roles','focused_patterns','numeric_family_prefixes']);
   expect(result.evidence.generationProfile).toBe(KEYWORD_PRODUCTION_CURRENT_PROFILE);
   expect(data(calls[0])).toEqual({content:update.content});expect(data(calls[1])).toEqual({content:update.content});
-  expect(data(calls[2]).candidates).toContain('C#');
+  expect(data(calls[2]).candidates).toContainEqual({candidateIndex:2,name:'C#'});
   expect(result.state).toBe('ready');
   expect((result.evidence.accepted as Array<{label:string}>).map(row=>row.label)).toEqual(['AeroBox','NovaPay','C#','Tevi']);
   expect(result.evidence).toMatchObject({sourceContentState:'partial',generationContractHash:KEYWORD_PRODUCTION_CONTRACT_HASH});
@@ -276,12 +280,29 @@ describe('production named-mention core',()=>{
   }
   for(const policy of ['alias-boundaries-v1','strict-context-v1'] as const)expect(keywordProductionCheckerCall(update,chunk,values,policy,undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE).request).toEqual(check.request);
   expect(oldCheck.request.prompt).not.toContain('After judging the candidates, reread');
-  expect(check.request.schema).toEqual(oldCheck.request.schema);
+  expect(check.request.schema).toMatchObject({required:['readComplete','verdicts','missingNames']});
+  expect(oldCheck.request.schema).toMatchObject({required:['readComplete','decisions','missingNames']});
   expect(()=>keywordProductionExtractionCalls(update,chunk,[0],KEYWORD_PRODUCTION_CURRENT_PROFILE)).toThrow('keyword_production_section_sweep_invalid');
   expect(()=>planKeywordProductionChunks(update,'future' as never)).toThrow('keyword_production_profile_invalid');
   const result=finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(check,{AeroBox:'brand','quiet focus':'feature'})},'standard',undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE);
   expect(()=>mergeKeywordProductionChunks(update,[result])).toThrow('keyword_production_profile_mismatch');
   expect(mergeKeywordProductionChunks(update,[result],KEYWORD_PRODUCTION_CURRENT_PROFILE).evidence.generationProfile).toBe(KEYWORD_PRODUCTION_CURRENT_PROFILE);
+ });
+ it('adds bounded literal parent-family suggestions only for the current profile and leaves every decision to its checker',()=>{
+  const update=record('AeroTone Quiet Pro 4 and DeskModule 2 use LinkStandard 6.2. A portable charger 8 is generic. pulsar quiet studio dark pro 4 is mentioned. novaprefix has no numeric model. AeroBox is here.'),chunk=planKeywordProductionChunks(update)[0];
+  const values={direct:inventory(['AeroTone Quiet Pro 4','DeskModule 2','LinkStandard 6.2','portable charger 8','pulsar quiet studio dark pro 4','novaprefix 9','Missing Model 9','AeroBox']),type_sweep:inventory([])};
+  const legacy=keywordProductionCheckerCall(update,chunk,values),current=keywordProductionCheckerCall(update,chunk,values,'standard',undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  const names=(data(current).candidates as unknown as Array<{candidateIndex:number;name:string}>).map(c=>c.name);
+  expect(names).toEqual(expect.arrayContaining(['AeroTone Quiet Pro 4','AeroTone Quiet Pro','AeroTone Quiet','AeroTone','DeskModule 2','DeskModule','LinkStandard 6.2','LinkStandard','portable charger','portable']));
+  expect(names.filter(name=>name.startsWith('pulsar ')&&!/\p{N}/u.test(name))).toEqual(['pulsar quiet studio dark pro','pulsar quiet studio dark','pulsar quiet studio']);
+  expect(data(legacy).candidates).not.toContain('AeroTone Quiet Pro');expect(data(legacy).candidates).not.toContain('portable charger');
+  for(const unsupported of ['Missing Model','Missing','LinkStandard 6','DeskMod','novaprefix','pulsar quiet','pulsar'])expect(names).not.toContain(unsupported);
+  const result=finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(current,{AeroBox:'brand','AeroTone Quiet Pro 4':'product','AeroTone Quiet Pro':'product_family','AeroTone Quiet':'product_family',AeroTone:'product_family'})},'standard',undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  expect(result.checkerEncoding).toBe('numeric_tuples');
+  expect(result.rows.find(row=>row.name==='portable charger')?.disposition).toBe('rejected');
+  const output=mergeKeywordProductionChunks(update,[result],KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  expect((output.evidence.accepted as Array<{label:string}>).map(row=>row.label)).not.toContain('portable charger');
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{readComplete:true,decisions:[],missingNames:[]}},'standard',undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE)).toThrow('checker_incomplete');
  });
  it('keeps unanimously accepted names public as generic named mentions when only the subtype differs',()=>{
   const update=record('AeroBox '+ 'filler '.repeat(1800)+' AeroBox NovaPay.'),chunks=planKeywordProductionChunks(update);
@@ -298,7 +319,7 @@ describe('production named-mention core',()=>{
  it.each(['review','rejected'] as const)('keeps accepted versus %s disposition conflicts private even when the type agrees',disposition=>{
   const update=record('AeroBox '+ 'filler '.repeat(1800)+' AeroBox NovaPay.'),chunk=planKeywordProductionChunks(update)[1],first=chunkResult(update,0,{AeroBox:'brand'});
   const values={direct:inventory(['AeroBox','NovaPay']),type_sweep:inventory([])},call=keywordProductionCheckerCall(update,chunk,values);
-  const checked=checker(call,{NovaPay:'service'},disposition==='review'?{AeroBox:'brand'}:{});checked.decisions.find(row=>row.name==='AeroBox')!.kind='brand';
+  const checked=checker(call,{NovaPay:'service'},disposition==='review'?{AeroBox:'brand'}:{});checked.decisions!.find(row=>row.name==='AeroBox')!.kind='brand';
   const second=finalizeKeywordProductionChunk(update,chunk,{...values,checker:checked});
   const result=mergeKeywordProductionChunks(update,[first,second]);
   expect(result.state).toBe('review');expect(result.pending).toContainEqual(expect.objectContaining({label:'AeroBox',disposition:'review',confidence:0}));
@@ -319,10 +340,10 @@ describe('production named-mention core',()=>{
  });
  it('rejects incomplete checker decisions, unknown kinds, unrequested reasons and output-capacity failures',async()=>{
   const update=record('AeroBox NovaPay.'),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(['AeroBox']),type_sweep:inventory(['NovaPay'])},call=keywordProductionCheckerCall(update,chunk,values),good=checker(call,{AeroBox:'brand',NovaPay:'service'});
-  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions.slice(1)}})).toThrow('checker_incomplete');
-  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions.map(row=>({...row,kind:'invented'}))}})).toThrow('checker_invalid_decision');
-  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions.map(row=>({...row,reason:'not requested'}))}})).toThrow('checker_invalid_decision');
-  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions.map(()=>good.decisions[0])}})).toThrow('checker_candidate_decisions_incomplete');
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions!.slice(1)}})).toThrow('checker_incomplete');
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions!.map(row=>({...row,kind:'invented'}))}})).toThrow('checker_invalid_decision');
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions!.map(row=>({...row,reason:'not requested'}))}})).toThrow('checker_invalid_decision');
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions!.map(()=>good.decisions![0])}})).toThrow('checker_candidate_decisions_incomplete');
   await expect(analyzeProductionKeywords(update,async()=>({...successful(inventory([])),validationError:'analysis_output_capacity'}))).rejects.toThrow('analysis_output_capacity');
  });
  it('stops before another paid step when the preceding charge is unknown',async()=>{

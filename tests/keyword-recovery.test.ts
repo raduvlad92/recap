@@ -16,7 +16,7 @@ describe('source-bound targeted keyword recovery',()=>{
   expect(KEYWORD_RECOVERY_VERSION).toBe('targeted-named-mentions-v5-verified-prefix');
   expect(KEYWORD_RECOVERY_BATCH_SIZE).toBe(4);
   expect(KEYWORD_RECOVERY_MAX_TARGETS).toBe(120);
-  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"6ed40879d875c1f7e6aeb98f7239ffe45a4485c7bc8720828620902701401b83"`);
+  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"d0f12e4a89d29fa2fca91fc94e58943c57144a72287c4f99195c925cab15f2a5"`);
   expect(policy).toContain('Distinctive branded class labels count when the source establishes that designation');
   expect(policy).toContain('ordinary unbranded job/group descriptions do not');
   expect(policy).toContain('a word explicitly selected as a setting/preset value');

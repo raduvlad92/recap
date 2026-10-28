@@ -7,6 +7,8 @@ import {KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_CURRENT_PROFILE,plan
 import {analysisRuntimeEnv} from '../netlify/functions/_shared/content-analysis-runtime';
 import {analysisExecutionIdentity,analysisLimits} from '../netlify/functions/_shared/content-analysis-model';
 import {analysisRequestHash} from '../netlify/functions/_shared/content-analysis';
+// @ts-expect-error Shared prompt kind table is also the tuple transport contract.
+import {KEYWORD_LEARNING_KINDS} from '../scripts/lib/keyword-learning-prompts.mjs';
 
 const hash=(value:string)=>createHash('sha256').update(value).digest('hex');
 const sid='12345678-1234-1234-1234-123456789012',owner='synthetic-owner';
@@ -46,7 +48,9 @@ function fixture(){
   const chunk=planKeywordProductionChunks(update,generationProfile)[0],[a,b]=keywordProductionExtractionCalls(update,chunk,sectionSweepChunks,generationProfile),inventory={names:['AeroBox','NovaPay'],uncertainNames:[]};
   add(a,inventory);add(b,inventory);
   const check=keywordProductionCheckerCall(update,chunk,{direct:inventory,type_sweep:inventory},checkerPolicy,sectionSweepChunks,generationProfile),data=JSON.parse(check.request.prompt.slice(check.request.prompt.lastIndexOf('\n')+1));
-  add(check,{readComplete:true,decisions:data.candidates.map((name:string)=>({name,kind:name==='NovaPay'?'service':'brand',disposition:'accepted'})),missingNames:[]});
+  add(check,generationProfile===KEYWORD_PRODUCTION_CURRENT_PROFILE
+   ?{readComplete:true,verdicts:data.candidates.map(({candidateIndex,name}:{candidateIndex:number;name:string})=>[candidateIndex,KEYWORD_LEARNING_KINDS.indexOf(name==='NovaPay'?'service':'brand'),0]),missingNames:[]}
+   :{readComplete:true,decisions:data.candidates.map((name:string)=>({name,kind:name==='NovaPay'?'service':'brand',disposition:'accepted'})),missingNames:[]});
  };
  return {send,tables,from,rpc,authorize,workerAuthorized,complete,add,handler};
 }
@@ -95,7 +99,7 @@ describe('finite production keyword publication, synthetic adapters only',()=>{
   f.complete();const preview=await f.send({action:'preview'}),value=await preview.json();expect(preview.status).toBe(200);
   expect(value.calls.map((c:any)=>c.role)).toEqual(['direct','typed','checker']);
   expect(value.output.evidence.generationProfile).toBe(KEYWORD_PRODUCTION_CURRENT_PROFILE);
-  expect(value.output.evidence.extractionMethods).toEqual(['direct','context_roles','focused_patterns']);
+  expect(value.output.evidence.extractionMethods).toEqual(['direct','context_roles','focused_patterns','numeric_family_prefixes']);
   expect((await f.send({action:'plan',stage:'extractors',chunkIndex:0,generationProfile:'legacy-v1'})).status).toBe(400);
  });
  it.each([null,'current','legacy','context-roles-v3',{},[]])('rejects an invalid sealed generation profile %j',async generationProfile=>{
