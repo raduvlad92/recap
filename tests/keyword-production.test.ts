@@ -209,14 +209,32 @@ describe('production named-mention core',()=>{
   let end=0;for(const chunk of chunks){expect(chunk.start).toBeLessThanOrEqual(end);expect(new TextEncoder().encode(chunk.content).length).toBeLessThanOrEqual(12000);end=chunk.end;}
   expect(chunks.at(-1)!.content.endsWith('LastName')).toBe(true);
  });
- it('merges all source chunks and makes type/disposition disagreements private',()=>{
+ it('keeps unanimously accepted names public as generic named mentions when only the subtype differs',()=>{
   const update=record('AeroBox '+ 'filler '.repeat(1800)+' AeroBox NovaPay.'),chunks=planKeywordProductionChunks(update);
   expect(chunks).toHaveLength(2);
   const first=chunkResult(update,0,{AeroBox:'brand'}),second=chunkResult(update,1,{AeroBox:'organization',NovaPay:'service'}),result=mergeKeywordProductionChunks(update,[first,second]);
-  expect(result.state).toBe('review');expect(result.pending).toContainEqual(expect.objectContaining({label:'AeroBox',literalKind:null,confidence:0}));
-  expect(keywordProductionReaderFields(result).topics).toEqual(['NovaPay']);expect(result.evidence.crossChunkConflicts).toHaveLength(1);
+  expect(result.state).toBe('ready');expect(result.pending).toEqual([]);
+  expect(result.evidence.accepted).toContainEqual(expect.objectContaining({label:'AeroBox',kind:'category',literalKind:'named_mention',disposition:'accepted',confidence:50,confidenceOrigin:'legacy_acceptance_marker_not_model_score',
+   chunkVerdicts:[{chunkIndex:0,kind:'brand',disposition:'accepted'},{chunkIndex:1,kind:'organization',disposition:'accepted'}]}));
+  expect(keywordProductionReaderFields(result).topics).toEqual(['AeroBox','NovaPay']);expect(keywordProductionReaderFields(result).brands).not.toContain('AeroBox');
+  expect(result.evidence.crossChunkConflicts).toEqual([{name:'AeroBox',kinds:['brand','organization'],dispositions:['accepted'],chunkIndices:[0,1],conflictType:'type_only',resolution:'accepted_named_mention_subtype_unresolved'}]);
   expect(()=>mergeKeywordProductionChunks(update,[first])).toThrow('incomplete_keyword_coverage');
   expect(()=>mergeKeywordProductionChunks(update,[second,first])).toThrow('incomplete_keyword_coverage');
+ });
+ it.each(['review','rejected'] as const)('keeps accepted versus %s disposition conflicts private even when the type agrees',disposition=>{
+  const update=record('AeroBox '+ 'filler '.repeat(1800)+' AeroBox NovaPay.'),chunk=planKeywordProductionChunks(update)[1],first=chunkResult(update,0,{AeroBox:'brand'});
+  const values={direct:inventory(['AeroBox','NovaPay']),type_sweep:inventory([])},call=keywordProductionCheckerCall(update,chunk,values);
+  const checked=checker(call,{NovaPay:'service'},disposition==='review'?{AeroBox:'brand'}:{});checked.decisions.find(row=>row.name==='AeroBox')!.kind='brand';
+  const second=finalizeKeywordProductionChunk(update,chunk,{...values,checker:checked});
+  const result=mergeKeywordProductionChunks(update,[first,second]);
+  expect(result.state).toBe('review');expect(result.pending).toContainEqual(expect.objectContaining({label:'AeroBox',disposition:'review',confidence:0}));
+  expect(keywordProductionReaderFields(result).topics).toEqual(['NovaPay']);expect(result.evidence.crossChunkConflicts).toEqual([expect.objectContaining({name:'AeroBox',dispositions:['accepted',disposition],conflictType:'disposition',resolution:'private_review'})]);
+ });
+ it('does not promote a type-only disagreement when all chunks require naming review',()=>{
+  const update=record('AeroBox '+ 'filler '.repeat(1800)+' AeroBox NovaPay.');
+  const result=mergeKeywordProductionChunks(update,[chunkResult(update,0,{},{AeroBox:'brand'}),chunkResult(update,1,{NovaPay:'service'},{AeroBox:'organization'})]);
+  expect(result.state).toBe('review');expect(result.pending).toContainEqual(expect.objectContaining({label:'AeroBox',literalKind:null,disposition:'review',confidence:0}));
+  expect(keywordProductionReaderFields(result).topics).toEqual(['NovaPay']);expect(result.evidence.crossChunkConflicts).toEqual([expect.objectContaining({name:'AeroBox',conflictType:'type_only',resolution:'private_review'})]);
  });
  it('preserves literal case/legacy aliases privately and does not create duplicate publication keys',()=>{
   const update=record('NVIDIA met Nvidia. PS1 and PlayStation appeared.'),result=mergeKeywordProductionChunks(update,[chunkResult(update,0,{NVIDIA:'brand',Nvidia:'brand',PS1:'product',PlayStation:'product'})]);

@@ -53,7 +53,7 @@ export const KEYWORD_PRODUCTION_CONTRACT_HASH = contentHash(JSON.stringify({
  chunkChars: KEYWORD_PRODUCTION_CHUNK_CHARS, overlapChars: KEYWORD_PRODUCTION_OVERLAP_CHARS,
  longSourceChunkUtf8Bytes:KEYWORD_PRODUCTION_LONG_CHUNK_BYTES,
  maximumNames: KEYWORD_PRODUCTION_MAX_NAMES,
- merge: 'source-present-legacy-key-aliases-conflicts-review-v3', boundaryGuards: true,
+ merge: 'source-present-legacy-key-aliases-accepted-type-conflict-named-mention-v4', boundaryGuards: true,
  parentBrandGuard:'preserve-checker-accepted-literal-name-prefix-is-not-rejection-v3',
  checkerPolicies:{standard:'frozen-six-lessons',aliasBoundaries:[ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON],
   strictContext:[ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON,STRICT_CONTEXT_LESSON]},
@@ -292,8 +292,9 @@ function mergedRanges(occurrences:KeywordProductionOccurrence[]):Array<{startSec
 }
 
 /** Preserve literal forms while reconciling the existing reader's identity
- * keys. Conflicting status/type requires review. Source-absent normalization
- * remains in unmatchedReview and never enters accepted reader fields. */
+ * keys. Disposition conflicts require review. Unanimously accepted names stay
+ * accepted when only their subtype differs, without claiming a resolved type.
+ * Source-absent normalization remains private in unmatchedReview. */
 export function mergeKeywordProductionChunks(update:SourceUpdate,results:KeywordProductionChunkResult[]):AnalysisOutput {
  const content=source(update),rendered=renderSource(content),find=createKeywordProductionOccurrenceFinder(rendered.text,update.transcriptSegments??[]),chunks=planKeywordProductionChunks(update),byName=new Map<string,Array<{chunkIndex:number;row:KeywordProductionDecision}>>();
  if(results.length!==chunks.length||results.some((result,index)=>result.chunk.index!==index||JSON.stringify(result.chunk)!==JSON.stringify(chunks[index])))return analysisFailure('incomplete_keyword_coverage');
@@ -324,9 +325,12 @@ export function mergeKeywordProductionChunks(update:SourceUpdate,results:Keyword
   supportedForms.sort((a,b)=>a.occurrences[0].start-b.occurrences[0].start);
   const label=supportedForms[0].label,originalRows=supportedForms.flatMap(alias=>alias.originalRows);
   const kinds=[...new Set(originalRows.map(value=>value.row.kind))],dispositions=[...new Set(originalRows.map(value=>value.row.disposition))];
-  const conflict=kinds.length!==1||dispositions.length!==1, literalKind=kinds.length===1?kinds[0]:null;
-  let disposition:Disposition=conflict?'review':dispositions[0];
-  if(conflict)crossChunkConflicts.push({name:label,kinds,dispositions,chunkIndices:originalRows.map(value=>value.chunkIndex)});
+  const typeConflict=kinds.length!==1,dispositionConflict=dispositions.length!==1,conflict=typeConflict||dispositionConflict;
+  const acceptedTypeConflict=typeConflict&&!dispositionConflict&&dispositions[0]==='accepted',literalKind=typeConflict?(acceptedTypeConflict?'named_mention':null):kinds[0];
+  let disposition:Disposition=acceptedTypeConflict?'accepted':conflict?'review':dispositions[0];
+  if(conflict)crossChunkConflicts.push({name:label,kinds,dispositions,chunkIndices:originalRows.map(value=>value.chunkIndex),
+   conflictType:typeConflict?(dispositionConflict?'type_and_disposition':'type_only'):'disposition',
+   resolution:acceptedTypeConflict?'accepted_named_mention_subtype_unresolved':'private_review'});
   const occurrences=supportedForms.flatMap(alias=>alias.occurrences).sort((a,b)=>a.start-b.start);
   if(disposition==='rejected'){rejected.push({label,literalKind,disposition});continue;}
   if(!occurrences.length){unmatchedReview.push({label,literalKind,disposition:'review',reason:'literal_name_not_in_source',originalRows,literalForms});continue;}
@@ -341,7 +345,7 @@ export function mergeKeywordProductionChunks(update:SourceUpdate,results:Keyword
    // is only a disposition compatibility marker, not requested AI confidence
    // or a calibrated probability. Raw typed verdicts remain private below.
    confidence:disposition==='accepted'?50:0,confidenceOrigin:'legacy_acceptance_marker_not_model_score',
-   reason:conflict?'Chunk judgments disagree; requires private review.':disposition==='accepted'?'Literal named mention accepted by the frozen checker.':'Literal naming role or boundary requires private review.',
+   reason:acceptedTypeConflict?'All chunk judgments accept the literal named mention; subtype remains unresolved in private evidence.':conflict?'Chunk judgments disagree; requires private review.':disposition==='accepted'?'Literal named mention accepted by the frozen checker.':'Literal naming role or boundary requires private review.',
    evidenceQuote:first.quote,mention:first.quote,start:first.start,end:first.end,occurrenceCount:occurrences.length,ranges,
    ...(ranges.length?{seconds:ranges.reduce((sum,range)=>sum+range.endSeconds-range.startSeconds,0)}:{}),
    chunkVerdicts:originalRows.map(({chunkIndex,row})=>({chunkIndex,kind:row.kind,disposition:row.disposition,...(row.hostReviewReason?{hostReviewReason:row.hostReviewReason}:{})}))};
