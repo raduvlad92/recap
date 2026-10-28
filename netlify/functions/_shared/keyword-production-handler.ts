@@ -108,3 +108,7 @@ export function createKeywordProductionHandler(overrides:Partial<Dependencies>={
   }catch(error){if(error instanceof AnalysisError)return response({error:{code:error.code}},409);return errorResponse(error);}
  };
 }
+
+// Recovery reuses the exact original request/charge verifier, including the
+// original session namespace; it never copies historical calls into a new one.
+export {storedFor as readKeywordProductionStored,verifiedCall as verifyKeywordProductionStoredCall};

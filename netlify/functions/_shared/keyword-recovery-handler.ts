@@ -6,7 +6,7 @@ import {analysisExecutionIdentity,analysisLimits,AnalysisError} from './content-
 import {CollectionError,errorResponse,json,readTextLimited,runtimeEnv,type Env} from './security';
 import {KEYWORD_PRODUCTION_CONTRACT_HASH,planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,finalizeKeywordProductionChunk,mergeKeywordProductionChunks,applyKeywordProductionTimingReviews,validateKeywordProductionSectionSweepChunks} from './keyword-production';
 import {readKeywordProductionStored,verifyKeywordProductionStoredCall,canonicalKeywordProductionJson as stable} from './keyword-production-handler';
-import {KEYWORD_RECOVERY_CONTRACT_HASH,keywordRecoveryHash,keywordRecoveryRequests,decodeKeywordRecoveryDecisions,applyKeywordRecovery} from './keyword-recovery';
+import {KEYWORD_RECOVERY_CONTRACT_HASH,keywordRecoveryHash,keywordRecoveryRequests,decodeKeywordRecoveryDecisions,applyKeywordRecovery,applyKeywordRecoveryContextReviews} from './keyword-recovery';
 import type {SourceUpdate} from '../../../src/lib/types';
 
 type DB=ReturnType<typeof database>;
@@ -57,7 +57,7 @@ export function createKeywordRecoveryHandler(overrides:Partial<Dependencies>={})
     receipts.push(direct.receipt,typed.receipt,checked.receipt);results.push(finalizeKeywordProductionChunk(update,chunk,{direct:direct.value,type_sweep:typed.value,checker:checked.value},slot.checkerPolicy,sectionSweepChunks));
    }
    receipts.sort((a,b)=>a.chunkIndex-b.chunkIndex||a.role.localeCompare(b.role));
-   const baseline=applyKeywordProductionTimingReviews(update,mergeKeywordProductionChunks(update,results),slot.timingReviews),baselineOutputHash=keywordRecoveryHash(baseline),baselineReceiptHash=keywordRecoveryHash(receipts),plans=keywordRecoveryRequests(update,slot.repairs,{sessionId:session.id,ordinal:slot.ordinal,sourceHash:slot.sourceHash,baselineReceiptHash});
+   const baseline=applyKeywordRecoveryContextReviews(update,applyKeywordProductionTimingReviews(update,mergeKeywordProductionChunks(update,results),slot.timingReviews),slot.contextReviews),baselineOutputHash=keywordRecoveryHash(baseline),baselineReceiptHash=keywordRecoveryHash(receipts),plans=keywordRecoveryRequests(update,slot.repairs,{sessionId:session.id,ordinal:slot.ordinal,sourceHash:slot.sourceHash,baselineReceiptHash});
    const manifest=plans.map(p=>({sourceOrdinal:slot.ordinal,batchIndex:p.batchIndex,callKey:p.body.request.key,model:p.body.model,...requestProof(p.body,deps.env)}));
    if(planning){
     const sealed=unwrap(await db.rpc('seal_keyword_recovery_plan',{p_session_id:session.id,p_source_ordinal:slot.ordinal,p_baseline_calls:receipts,p_baseline_output_hash:baselineOutputHash,p_requests:manifest}));
