@@ -38,6 +38,47 @@ describe('literal keyword inventories and source evidence', () => {
     expect(findLiteralNameOccurrences(content, 'Café')).toHaveLength(1);
     expect(findLiteralNameOccurrences(content, 'AeroBox')).toHaveLength(2);
   });
+  it('retains exact Arabic names after one token-start conjunction or preposition', () => {
+    const content = '🎥 وسارة بوضع التسلل وجي تي 2 وَليلى.';
+    for (const name of ['سارة', 'وضع التسلل', 'جي تي 2', 'ليلى']) {
+      const found = findLiteralNameOccurrences(content, name);
+      expect(found).toHaveLength(1);
+      expect(found[0]).toMatchObject({ start: content.indexOf(name), end: content.indexOf(name) + name.length, quote: name });
+      expect(content.slice(found[0].start, found[0].end)).toBe(name);
+    }
+    expect(findLiteralNameOccurrences(content, 'سارة')[0].start).toBe(4); // UTF-16 emoji + space + conjunction.
+  });
+  it('does not split arbitrary Arabic words, articles, compound prefixes or short suffixes', () => {
+    for (const content of ['سوبرسارة', 'سوبسارة', 'وبسارة', 'السارة', 'والسارة', 'بسارةx']) {
+      expect(findLiteralNameOccurrences(content, 'سارة')).toEqual([]);
+    }
+    expect(findLiteralNameOccurrences('وضع التسلل', 'ضع التسلل')).toEqual([]);
+    expect(findLiteralNameOccurrences('ورد', 'رد')).toEqual([]);
+    expect(findLiteralNameOccurrences('وًَّسارة', 'سارة')).toEqual([]);
+    expect(findLiteralNameOccurrences('وجي تي 2.1', 'جي تي 2')).toEqual([]);
+    expect(findLiteralNameOccurrences('وجي تي 2.1', 'جي تي 2.1')).toHaveLength(1);
+  });
+  it('recognizes token-start non only for complete uppercase numeric designations', () => {
+    const content = 'nonQPX8 nonQPX8.2 nonQPX80 xenonQPX8 nonQPX8Lite NonQPX9 nonAeroBox nonqpx8';
+    expect(findLiteralNameOccurrences(content, 'QPX8')).toHaveLength(1);
+    expect(findLiteralNameOccurrences(content, 'QPX8.2')).toHaveLength(1);
+    expect(findLiteralNameOccurrences(content, 'QPX80')).toHaveLength(1);
+    expect(findLiteralNameOccurrences(content, 'QPX9')).toHaveLength(1);
+    for (const fragment of ['QPX', 'QPX8Lite', 'AeroBox', 'qpx8']) expect(findLiteralNameOccurrences(content, fragment)).toEqual([]);
+    expect(findLiteralNameOccurrences('nonQPX8.2.1', 'QPX8.2')).toEqual([]);
+    expect(findLiteralNameOccurrences('nonQPX8.2a.1', 'QPX8.2a')).toEqual([]);
+    expect(findLiteralNameOccurrences('nonQPX8.2a', 'QPX8.2a')).toHaveLength(1);
+  });
+  it('aligns prefixed names across complete cues without moving or expanding their evidence', () => {
+    const content = '🎥 بوضع التسلل ثم nonQPX8.';
+    const cues = [{ text: '🎥 بوضع', startSeconds: 2, durationSeconds: 1 },
+      { text: 'التسلل ثم nonQPX8.', startSeconds: 3, durationSeconds: 2 }];
+    expect(findLiteralNameOccurrences(content, 'وضع التسلل', cues)).toEqual([
+      { start: 4, end: 14, quote: 'وضع التسلل', ranges: [{ startSeconds: 2, endSeconds: 5 }] },
+    ]);
+    expect(findLiteralNameOccurrences(content, 'QPX8', cues)[0].ranges).toEqual([{ startSeconds: 3, endSeconds: 5 }]);
+    expect(findLiteralNameOccurrences(content, 'QPX8', [{ text: 'unrelated', startSeconds: 5, durationSeconds: 1 }])[0].ranges).toEqual([]);
+  });
   it('rejects control-bearing model labels instead of silently rewriting them', () => {
     const content = 'AeroBox\n  Plus is here. AeroBox returns.';
     const cues = [{ text: 'AeroBox', startSeconds: 2, durationSeconds: 1 },

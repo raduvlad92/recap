@@ -1,7 +1,8 @@
 type Cue={text:string;startSeconds:number;durationSeconds?:number};
 type Span={start:number;end:number;startSeconds:number;endSeconds:number};
+// @ts-expect-error Keep evaluator/production literal boundaries identical.
+import {hasLiteralNameBoundaries} from '../../../scripts/lib/keyword-learning.mjs';
 const seconds=(n:unknown):n is number=>typeof n==='number'&&Number.isFinite(n)&&n>=0;
-const identity=(v:string|undefined)=>!!v&&/[\p{L}\p{M}\p{N}_+#]/u.test(v);
 function normalizedOffsets(text:string){
  const chars:string[]=[],starts:number[]=[],ends:number[]=[];
  for(let i=0;i<text.length;i++){
@@ -31,8 +32,8 @@ export function createKeywordProductionOccurrenceFinder(content:string,segments:
  return (name:string)=>{
   const occurrences:Array<{start:number;end:number;quote:string;ranges:Array<{startSeconds:number;endSeconds:number}>}>=[];
   for(let start=content.indexOf(name);start>=0;start=content.indexOf(name,start+1)){
-   const end=start+name.length,before=[...content.slice(Math.max(0,start-2),start)].at(-1),after=[...content.slice(end,end+2)][0];
-   if(identity(before)||identity(after)||before==='.'&&/\p{N}/u.test(content[start-2]??'')&&/^\p{N}/u.test(name)||after==='.'&&/\p{N}/u.test(content[end+1]??'')&&/\p{N}$/u.test(name))continue;
+   const end=start+name.length;
+   if(!hasLiteralNameBoundaries(content,name,start))continue;
    const covering=cues.filter(cue=>cue.start<end&&cue.end>start).sort((a,b)=>a.start-b.start);let through=start;
    const usable=covering.length>0&&covering[0].start<=start&&covering.every((cue,index)=>{
     const gap=content.slice(through,Math.max(through,cue.start)),ok=!gap.trim()&&(index===0||cue.start>=covering[index-1].end&&cue.startSeconds>=covering[index-1].startSeconds);through=Math.max(through,cue.end);return ok;

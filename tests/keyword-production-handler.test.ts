@@ -3,7 +3,7 @@ import {describe,it,expect,vi} from 'vitest';
 import type {SourceUpdate} from '../src/lib/types';
 import {CollectionError} from '../netlify/functions/_shared/security';
 import {createKeywordProductionHandler,bindKeywordProductionCall,canonicalKeywordProductionJson as stable} from '../netlify/functions/_shared/keyword-production-handler';
-import {KEYWORD_PRODUCTION_CONTRACT_HASH,planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,type KeywordProductionCall} from '../netlify/functions/_shared/keyword-production';
+import {KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_CURRENT_PROFILE,planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,type KeywordProductionCall} from '../netlify/functions/_shared/keyword-production';
 import {analysisRuntimeEnv} from '../netlify/functions/_shared/content-analysis-runtime';
 import {analysisExecutionIdentity,analysisLimits} from '../netlify/functions/_shared/content-analysis-model';
 import {analysisRequestHash} from '../netlify/functions/_shared/content-analysis';
@@ -42,10 +42,10 @@ function fixture(){
   return bound;
  };
  const complete=()=>{
-  const {sectionSweepChunks,checkerPolicy}=tables.keyword_production_releases[0].sources[0];
-  const chunk=planKeywordProductionChunks(update)[0],[a,b]=keywordProductionExtractionCalls(update,chunk,sectionSweepChunks),inventory={names:['AeroBox','NovaPay'],uncertainNames:[]};
+  const {sectionSweepChunks,checkerPolicy,generationProfile}=tables.keyword_production_releases[0].sources[0];
+  const chunk=planKeywordProductionChunks(update,generationProfile)[0],[a,b]=keywordProductionExtractionCalls(update,chunk,sectionSweepChunks,generationProfile),inventory={names:['AeroBox','NovaPay'],uncertainNames:[]};
   add(a,inventory);add(b,inventory);
-  const check=keywordProductionCheckerCall(update,chunk,{direct:inventory,type_sweep:inventory},checkerPolicy,sectionSweepChunks),data=JSON.parse(check.request.prompt.slice(check.request.prompt.lastIndexOf('\n')+1));
+  const check=keywordProductionCheckerCall(update,chunk,{direct:inventory,type_sweep:inventory},checkerPolicy,sectionSweepChunks,generationProfile),data=JSON.parse(check.request.prompt.slice(check.request.prompt.lastIndexOf('\n')+1));
   add(check,{readComplete:true,decisions:data.candidates.map((name:string)=>({name,kind:name==='NovaPay'?'service':'brand',disposition:'accepted'})),missingNames:[]});
  };
  return {send,tables,from,rpc,authorize,workerAuthorized,complete,add,handler};
@@ -62,9 +62,57 @@ describe('finite production keyword publication, synthetic adapters only',()=>{
  it('does not accept caller authored labels, models or output',async()=>{
   const f=fixture();expect((await f.send({action:'publish',output:{accepted:['invented']}})).status).toBe(400);expect(f.rpc).not.toHaveBeenCalled();expect(f.from).not.toHaveBeenCalled();
  });
+ it.each([undefined,null,'','not-a-date','2000-01-01T00:00:00Z'])('rejects an invalid or expired finite session expiry %j',async expiresAt=>{
+  const f=fixture();f.tables.keyword_learning_sessions[0].expires_at=expiresAt;
+  const response=await f.send({action:'plan',stage:'extractors',chunkIndex:0});expect(response.status).toBe(403);expect((await response.json()).error.code).toBe('keyword_production_not_released');expect(f.rpc).not.toHaveBeenCalled();
+ });
  it('creates exactly the frozen extractor requests without a provider or publication call',async()=>{
   const f=fixture(),r=await f.send({action:'plan',stage:'extractors',chunkIndex:0}),value=await r.json();
   expect(r.status).toBe(200);expect(value.chunkCount).toBe(1);expect(value.calls).toHaveLength(2);expect(value.calls.every((x:any)=>x.model==='deepseek/deepseek-v4.1-flash-1017'&&x.sourceHash===sourceHash&&x.request.key.startsWith('keyword-learning:v1:'))).toBe(true);expect(f.rpc).not.toHaveBeenCalled();
+ });
+ it('preserves the pre-profile legacy bound keys and complete request bodies byte-for-byte',()=>{
+  const chunk=planKeywordProductionChunks(update)[0],calls=keywordProductionExtractionCalls(update,chunk);
+  const expected=[
+   {key:'keyword-learning:v1:a5a3435fb683163b941f68f1551929abf53281e8eac9bf9dbb2da5e34c87f2a1',bodyHash:'f83d3987ebf1156fe1999b3d5a7bf63c9c2973e7e0407a20ada29d838d5c8f19'},
+   {key:'keyword-learning:v1:0fd7902d9ff6b473a553bb62ba810f2bcf5781771b84fab81ea08bdc1a161f7c',bodyHash:'e17c2c112330a04bca18e83f2585b35d575cb25ed9c58e81d907432b8436ae19'},
+  ];
+  calls.forEach((call,index)=>{
+   const bound=bindKeywordProductionCall(sid,1,sourceHash,call);
+   expect(bound.request.key).toBe(expected[index].key);expect(hash(JSON.stringify(bound))).toBe(expected[index].bodyHash);
+   expect(bindKeywordProductionCall(sid,1,sourceHash,{...call,generationProfile:'legacy-v1'})).toEqual(bound);
+  });
+ });
+ it('selects the current profile only from sealed admission while preserving bound POST shape and receipt roles',async()=>{
+  const f=fixture(),chunk=planKeywordProductionChunks(update)[0],legacy=keywordProductionExtractionCalls(update,chunk);
+  f.tables.keyword_production_releases[0].sources[0].generationProfile=KEYWORD_PRODUCTION_CURRENT_PROFILE;
+  const response=await f.send({action:'plan',stage:'extractors',chunkIndex:0}),plan=await response.json();expect(response.status).toBe(200);
+  const current=keywordProductionExtractionCalls(update,chunk,undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  expect(plan.calls).toEqual(current.map(c=>bindKeywordProductionCall(sid,1,sourceHash,c)));
+  expect(plan.calls[0].request.prompt).toBe(legacy[0].request.prompt);
+  expect(plan.calls[0].request.key).not.toBe(bindKeywordProductionCall(sid,1,sourceHash,legacy[0]).request.key);
+  expect(plan.calls[1].request.prompt).toContain('Sweep the entire source by naming role');
+  expect(plan.calls.every((c:any)=>!Object.hasOwn(c,'generationProfile'))).toBe(true);
+  f.complete();const preview=await f.send({action:'preview'}),value=await preview.json();expect(preview.status).toBe(200);
+  expect(value.calls.map((c:any)=>c.role)).toEqual(['direct','typed','checker']);
+  expect(value.output.evidence.generationProfile).toBe(KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  expect(value.output.evidence.extractionMethods).toEqual(['direct','context_roles','focused_patterns']);
+  expect((await f.send({action:'plan',stage:'extractors',chunkIndex:0,generationProfile:'legacy-v1'})).status).toBe(400);
+ });
+ it.each([null,'current','legacy','context-roles-v3',{},[]])('rejects an invalid sealed generation profile %j',async generationProfile=>{
+  const f=fixture();f.tables.keyword_production_releases[0].sources[0].generationProfile=generationProfile;
+  const response=await f.send({action:'plan',stage:'extractors',chunkIndex:0});expect(response.status).toBe(409);expect((await response.json()).error.code).toBe('keyword_production_profile_invalid');expect(f.rpc).not.toHaveBeenCalled();
+ });
+ it('cannot serve a legacy type-sweep receipt as the current focused second sweep',async()=>{
+  const f=fixture();f.complete();const slot=f.tables.keyword_production_releases[0].sources[0];slot.generationProfile=KEYWORD_PRODUCTION_CURRENT_PROFILE;
+  const chunk=planKeywordProductionChunks(update,KEYWORD_PRODUCTION_CURRENT_PROFILE)[0],[direct]=keywordProductionExtractionCalls(update,chunk,undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  f.add(direct,{names:['AeroBox','NovaPay'],uncertainNames:[]});
+  const response=await f.send({action:'plan',stage:'checker',chunkIndex:0});expect(response.status).toBe(409);expect((await response.json()).error.code).toBe('keyword_production_call_not_ready');expect(f.rpc).not.toHaveBeenCalled();
+ });
+ it('rejects a changed sealed profile or current section override before publication',async()=>{
+  const f=fixture(),slot=f.tables.keyword_production_releases[0].sources[0];slot.generationProfile=KEYWORD_PRODUCTION_CURRENT_PROFILE;f.complete();
+  slot.generationProfile='legacy-v1';expect((await f.send({action:'preview'})).status).toBe(409);
+  slot.generationProfile=KEYWORD_PRODUCTION_CURRENT_PROFILE;slot.sectionSweepChunks=[0];
+  const response=await f.send({action:'plan',stage:'extractors',chunkIndex:0});expect(response.status).toBe(409);expect((await response.json()).error.code).toBe('keyword_production_section_sweep_invalid');expect(f.rpc).not.toHaveBeenCalled();
  });
  it('derives a section sweep only from private source admission and verifies its exact settled receipt',async()=>{
   const f=fixture(),chunk=planKeywordProductionChunks(update)[0];f.tables.keyword_production_releases[0].sources[0].sectionSweepChunks=[0];

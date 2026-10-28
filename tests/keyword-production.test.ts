@@ -9,7 +9,7 @@ import {createKeywordProductionOccurrenceFinder} from '../netlify/functions/_sha
 import {findLiteralNameOccurrences} from '../scripts/lib/keyword-learning.mjs';
 // @ts-expect-error Compare the exact existing extraction payloads, without a prompt fork.
 import {keywordExtractionRequest,KEYWORD_LEARNING_KINDS} from '../scripts/lib/keyword-learning-prompts.mjs';
-import {analyzeProductionKeywords,KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_LITERAL_CORE_SHA256,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL,
+import {analyzeProductionKeywords,KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_LITERAL_CORE_SHA256,KEYWORD_PRODUCTION_PROMPT_MODULE_SHA256,KEYWORD_PRODUCTION_CURRENT_PROFILE,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL,
  planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,finalizeKeywordProductionChunk,
  mergeKeywordProductionChunks,keywordProductionReaderFields,applyKeywordProductionTimingReviews,type KeywordProductionCall,type KeywordProductionChunkResult} from '../netlify/functions/_shared/keyword-production';
 
@@ -40,13 +40,38 @@ describe('production named-mention core',()=>{
   }
   expect(findLiteralNameOccurrences(' \nAeroBox\t','AeroBox',[{text:'AeroBox',startSeconds:10,durationSeconds:2}])).toEqual([{start:2,end:9,quote:'AeroBox',ranges:[{startSeconds:10,endSeconds:12}]}]);
  });
+ it('uses the same conservative grammatical-prefix boundaries and timing as the evaluator',()=>{
+  const content='🎥 بوضع التسلل ثم nonQPX8. وسارة وجي تي 2.1؛ وبسارة xenonQPX8 nonQPX8Lite.';
+  const cues=[{text:'🎥 بوضع',startSeconds:2,durationSeconds:1},{text:'التسلل ثم nonQPX8.',startSeconds:3,durationSeconds:2},
+   {text:'وسارة وجي تي 2.1؛ وبسارة xenonQPX8 nonQPX8Lite.',startSeconds:7,durationSeconds:6}];
+  const find=createKeywordProductionOccurrenceFinder(content,cues);
+  for(const name of ['وضع التسلل','سارة','جي تي 2','جي تي 2.1','ضع التسلل','QPX','QPX8','QPX8Lite']){
+   expect(find(name)).toEqual(findLiteralNameOccurrences(content,name,cues));
+  }
+  expect(find('وضع التسلل')).toEqual([{start:4,end:14,quote:'وضع التسلل',ranges:[{startSeconds:2,endSeconds:5}]}]);
+  expect(find('سارة')).toHaveLength(1);expect(find('QPX8')).toHaveLength(1);
+  expect(find('جي تي 2')).toEqual([]);expect(find('ضع التسلل')).toEqual([]);
+ });
+ it('keeps checker-approved prefixed names in the final inventory with literal, unexpanded evidence',()=>{
+  const update={...record('🎥 بوضع التسلل وجي تي 2 وتالا nonQPX8.'),transcriptSegments:[{text:'🎥 بوضع التسلل وجي تي 2 وتالا nonQPX8.',startSeconds:10,durationSeconds:8}]};
+  const output=mergeKeywordProductionChunks(update,[chunkResult(update,0,{'وضع التسلل':'feature','جي تي 2':'product_variant','تالا':'person',QPX8:'standard'})]);
+  const fields=keywordProductionReaderFields(output);
+  expect(fields.topics).toEqual(['وضع التسلل','جي تي 2','تالا','QPX8']);
+  expect(output.evidence.unmatchedReview).toEqual([]);
+  const accepted=output.evidence.accepted as Array<{label:string;start:number;end:number;evidenceQuote:string;ranges:unknown[]}>;
+  for(const row of accepted){
+   expect(row.evidenceQuote).toBe(row.label);expect(update.content!.slice(row.start,row.end)).toBe(row.label);
+   expect(row.ranges).toEqual([{startSeconds:10,endSeconds:18}]);
+  }
+  expect(accepted[0].start).toBe(4);
+ });
  it('cannot alter a cached coverage plan through a returned chunk object or a later source edit',()=>{
   const update=record('AeroBox'),chunk=planKeywordProductionChunks(update)[0];chunk.end=2;chunk.content='Ae';
   expect(()=>keywordProductionExtractionCalls(update,chunk)).toThrow('keyword_production_source_changed');
   expect(planKeywordProductionChunks(update)[0].content).toBe('AeroBox');update.content='NovaPay';expect(planKeywordProductionChunks(update)[0].content).toBe('NovaPay');
  });
  it('keeps the measured shared modules and exact frozen prompts for a complete short source',()=>{
-  for(const [file,expected] of [['scripts/lib/keyword-learning-prompts.mjs',frozen.promptModuleSha256],['scripts/lib/keyword-learning.mjs',KEYWORD_PRODUCTION_LITERAL_CORE_SHA256]])expect(createHash('sha256').update(readFileSync(file)).digest('hex')).toBe(expected);
+  for(const [file,expected] of [['scripts/lib/keyword-learning-prompts.mjs',KEYWORD_PRODUCTION_PROMPT_MODULE_SHA256],['scripts/lib/keyword-learning.mjs',KEYWORD_PRODUCTION_LITERAL_CORE_SHA256]])expect(createHash('sha256').update(readFileSync(file)).digest('hex')).toBe(expected);
   const update=record('AeroBox'),chunk=planKeywordProductionChunks(update)[0],calls=keywordProductionExtractionCalls(update,chunk);
   expect(calls[0].request.prompt).toBe(frozen.extractorPromptTemplate.replace('[UNTRUSTED_SAVED_TRANSCRIPT]','AeroBox'));
   const check=keywordProductionCheckerCall(update,chunk,{direct:inventory(['AeroBox']),type_sweep:inventory([])});
@@ -61,6 +86,10 @@ describe('production named-mention core',()=>{
   const result=await analyzeProductionKeywords(update,async call=>{calls.push(call);return successful(call.step==='direct'?inventory(['AeroBox']):call.step==='type_sweep'?inventory(['NovaPay']):checker(call,{'AeroBox':'brand','NovaPay':'service','C#':'technology'}, {},[{name:'Tevi',kind:'person',disposition:'accepted'}]));});
   expect(calls.map(call=>call.model)).toEqual([KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL]);
   expect(calls.map(call=>call.step)).toEqual(['direct','type_sweep','checker']);
+  expect(calls.every(call=>call.generationProfile===KEYWORD_PRODUCTION_CURRENT_PROFILE)).toBe(true);
+  expect(calls[1].request.prompt).toContain('Sweep the entire source by naming role');
+  expect(result.evidence.extractionMethods).toEqual(['direct','context_roles','focused_patterns']);
+  expect(result.evidence.generationProfile).toBe(KEYWORD_PRODUCTION_CURRENT_PROFILE);
   expect(data(calls[0])).toEqual({content:update.content});expect(data(calls[1])).toEqual({content:update.content});
   expect(data(calls[2]).candidates).toContain('C#');
   expect(result.state).toBe('ready');
@@ -89,7 +118,7 @@ describe('production named-mention core',()=>{
   const update=record('AeroBox '+ 'filler '.repeat(1800)+' NovaPay.'),calls:KeywordProductionCall[]=[];
   const result=await analyzeProductionKeywords(update,async call=>{calls.push(call);const names=['AeroBox','NovaPay'].filter(name=>data(call).content.includes(name));
    return successful(call.step==='checker'?checker(call,{AeroBox:'brand',NovaPay:'service'}):inventory(names));
-  },[1]);
+  },[1],'legacy-v1');
   expect(calls.filter(call=>call.step==='type_sweep')).toHaveLength(2);
   expect(result.evidence.extractionMethods).toEqual(['direct','type_sweep','sections','focused_patterns']);
   expect(result.evidence.chunks).toEqual([expect.objectContaining({index:0,secondExtractorMethod:'type_sweep'}),expect.objectContaining({index:1,secondExtractorMethod:'sections'})]);
@@ -210,6 +239,49 @@ describe('production named-mention core',()=>{
   expect(chunks[0].start).toBe(0);expect(chunks.at(-1)!.end).toBe(content.length);
   let end=0;for(const chunk of chunks){expect(chunk.start).toBeLessThanOrEqual(end);expect(new TextEncoder().encode(chunk.content).length).toBeLessThanOrEqual(12000);end=chunk.end;}
   expect(chunks.at(-1)!.content.endsWith('LastName')).toBe(true);
+ });
+ it('applies the current byte budget below the character limit while preserving legacy chunks and profile caches',()=>{
+  const update=record('ع'.repeat(9000));
+  const legacy=planKeywordProductionChunks(update,'legacy-v1'),current=planKeywordProductionChunks(update,KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  expect(legacy.map(c=>[c.start,c.end])).toEqual([[0,9000]]);
+  expect(current.map(c=>[c.start,c.end])).toEqual([[0,6000],[5800,9000]]);
+  expect(planKeywordProductionChunks(update)).toEqual(legacy);
+  expect(planKeywordProductionChunks(update,KEYWORD_PRODUCTION_CURRENT_PROFILE)).toEqual(current);
+  expect(()=>keywordProductionExtractionCalls(update,legacy[0],undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE)).toThrow('keyword_production_source_changed');
+  expect(()=>keywordProductionExtractionCalls(update,current[0])).toThrow('keyword_production_source_changed');
+ });
+ it('covers every current source position inside the byte budget without cutting surrogate pairs',()=>{
+  const content='ع'.repeat(5999)+'🎥'+'س'.repeat(5000)+' TailName',update=record(content),chunks=planKeywordProductionChunks(update,KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  expect(content.length).toBeLessThan(12000);expect(chunks.length).toBeGreaterThan(1);
+  expect(chunks[0].start).toBe(0);expect(chunks.at(-1)!.end).toBe(content.length);
+  let through=0;for(const [index,chunk]of chunks.entries()){
+   expect(new TextEncoder().encode(chunk.content).length).toBeLessThanOrEqual(12000);
+   expect(chunk.content).toBe(content.slice(chunk.start,chunk.end));
+   expect(chunk.content).not.toMatch(/^[\uDC00-\uDFFF]|[\uD800-\uDBFF]$/u);
+   expect(chunk.start).toBeLessThanOrEqual(through);if(index)expect(chunks[index-1].end-chunk.start).toBeGreaterThanOrEqual(200);through=chunk.end;
+  }
+ });
+ it('pins current focus prompts and checker lessons without altering legacy provider payloads',()=>{
+  const update=record('AeroBox has quiet focus. Nivanian customers use NovaPort 4.'),chunk=planKeywordProductionChunks(update)[0];
+  const legacy=keywordProductionExtractionCalls(update,chunk),current=keywordProductionExtractionCalls(update,chunk,undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  expect(current[0].request).toEqual(legacy[0].request);
+  expect(current[1].request).toEqual(keywordExtractionRequest({method:'context_roles',content:chunk.content,lessons:frozen.extractorLessons}));
+  expect(current.map(c=>c.step)).toEqual(['direct','type_sweep']);
+  const values={direct:inventory(['AeroBox']),type_sweep:inventory(['quiet focus'])};
+  const oldCheck=keywordProductionCheckerCall(update,chunk,values),check=keywordProductionCheckerCall(update,chunk,values,'standard',undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  expect(check.request.prompt).toContain('geographic names and nationality/region adjectives');
+  expect(check.request.prompt).toContain('A named parent brand counts even when it occurs only inside');
+  for(const lesson of ['For ambiguous identity boundaries','Accept an unfamiliar literal name when this source clearly presents it','A specific physical object, build, interior or scene does not by itself establish a proper name']){
+   expect(check.request.prompt.split(lesson)).toHaveLength(2);expect(oldCheck.request.prompt).not.toContain(lesson);
+  }
+  for(const policy of ['alias-boundaries-v1','strict-context-v1'] as const)expect(keywordProductionCheckerCall(update,chunk,values,policy,undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE).request).toEqual(check.request);
+  expect(oldCheck.request.prompt).not.toContain('After judging the candidates, reread');
+  expect(check.request.schema).toEqual(oldCheck.request.schema);
+  expect(()=>keywordProductionExtractionCalls(update,chunk,[0],KEYWORD_PRODUCTION_CURRENT_PROFILE)).toThrow('keyword_production_section_sweep_invalid');
+  expect(()=>planKeywordProductionChunks(update,'future' as never)).toThrow('keyword_production_profile_invalid');
+  const result=finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(check,{AeroBox:'brand','quiet focus':'feature'})},'standard',undefined,KEYWORD_PRODUCTION_CURRENT_PROFILE);
+  expect(()=>mergeKeywordProductionChunks(update,[result])).toThrow('keyword_production_profile_mismatch');
+  expect(mergeKeywordProductionChunks(update,[result],KEYWORD_PRODUCTION_CURRENT_PROFILE).evidence.generationProfile).toBe(KEYWORD_PRODUCTION_CURRENT_PROFILE);
  });
  it('keeps unanimously accepted names public as generic named mentions when only the subtype differs',()=>{
   const update=record('AeroBox '+ 'filler '.repeat(1800)+' AeroBox NovaPay.'),chunks=planKeywordProductionChunks(update);

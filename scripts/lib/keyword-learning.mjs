@@ -11,6 +11,46 @@ const finiteSeconds = value => typeof value === 'number' && Number.isFinite(valu
 const asName = row => typeof row === 'string' ? row : row?.name ?? row?.label;
 const dispositionOf = row => row?.disposition ?? row?.status ?? (row?.uncertain ? 'review' : 'accepted');
 
+const codePointBefore = (text, index) => [...text.slice(Math.max(0, index - 2), index)].at(-1);
+const arabicLetter = value => /\p{L}/u.test(value) && /\p{Script_Extensions=Arabic}/u.test(value);
+const arabicMark = value => /\p{M}/u.test(value) && /\p{Script_Extensions=Arabic}/u.test(value);
+
+/** Admit only narrow grammatical attachments, not arbitrary token suffixes.
+ * This supplies literal spelling support, not proof of namedness or a
+ * morphological/canonical-identity resolution. The checker still owns that
+ * decision. Articles and stacked Arabic clitics deliberately remain intact. */
+function grammaticalPrefixBefore(content, name, start) {
+  const negativeStart = start - 3;
+  if (negativeStart >= 0 && content.slice(negativeStart, start).toLowerCase() === 'non'
+    && !isIdentityChar(codePointBefore(content, negativeStart))
+    && /^[A-Z]{2,}[ \t]?[0-9]+(?:\.[0-9]+)*[a-z]?$/u.test(name)
+    && !/^\.\p{N}/u.test(content.slice(start + name.length, start + name.length + 3))) return true;
+
+  let prefixStart = start, marks = 0;
+  while (prefixStart > 0 && arabicMark(content[prefixStart - 1]) && marks < 2) { prefixStart--; marks++; }
+  if (prefixStart === 0 || !['و', 'ب'].includes(content[prefixStart - 1])) return false;
+  prefixStart--;
+  if (isIdentityChar(codePointBefore(content, prefixStart))) return false;
+  const firstWord = name.split(/\s/u, 1)[0];
+  const letters = [...firstWord].filter(char => /\p{L}/u.test(char));
+  // A two-letter initial word is admitted only in a multiword numeric
+  // designation. This keeps ordinary short suffixes out of the exception.
+  return letters.length > 0 && [...firstWord].every(char => arabicLetter(char) || arabicMark(char))
+    && (letters.length >= 3 || letters.length >= 2 && /\s/u.test(name) && /\p{N}/u.test(name));
+}
+
+/** Shared by the simple evaluator and the cached production finder. Exact
+ * UTF-16 spans are unchanged: a grammatical prefix is never added to a name,
+ * removed from the source, or used to relax right-side/version boundaries. */
+export function hasLiteralNameBoundaries(content, name, start) {
+  const end = start + name.length;
+  const before = codePointBefore(content, start), after = [...content.slice(end, end + 2)][0];
+  const leftVersion = before === '.' && /\p{N}/u.test(content[start - 2] ?? '') && /^\p{N}/u.test(name);
+  const rightVersion = after === '.' && /\p{N}/u.test(content[end + 1] ?? '') && /\p{N}$/u.test(name);
+  return !(isIdentityChar(before) && !grammaticalPrefixBefore(content, name, start))
+    && !isIdentityChar(after) && !leftVersion && !rightVersion;
+}
+
 /** Validate without silently trimming, deduplicating or truncating model output.
  * Duplicate predictions remain available to the quality scorer. */
 export function validateLiteralInventory(output, { maxNames = 500 } = {}) {
@@ -70,11 +110,7 @@ export function findLiteralNameOccurrences(content, name, segments = []) {
   const cues = alignedCues(content, segments), occurrences = [];
   for (let start = content.indexOf(name); start >= 0; start = content.indexOf(name, start + 1)) {
     const end = start + name.length;
-    const before = [...content.slice(Math.max(0, start - 2), start)].at(-1);
-    const after = [...content.slice(end, end + 2)][0];
-    const leftVersion = before === '.' && /\p{N}/u.test(content[start - 2] ?? '') && /^\p{N}/u.test(name);
-    const rightVersion = after === '.' && /\p{N}/u.test(content[end + 1] ?? '') && /\p{N}$/u.test(name);
-    if (isIdentityChar(before) || isIdentityChar(after) || leftVersion || rightVersion) continue;
+    if (!hasLiteralNameBoundaries(content, name, start)) continue;
     const covering = cues.filter(cue => cue.start < end && cue.end > start).sort((a, b) => a.start - b.start);
     let through = start;
     const usable = covering.length > 0 && covering[0].start <= start

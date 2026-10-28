@@ -2,7 +2,7 @@ import type { SourceUpdate } from '../../../src/lib/types';
 import { contentHash, sourceContentState, usableAnalysisContent } from '../../../src/lib/content-processing';
 import frozen from '../../../docs/tech/keyword-autonomous-prompts-2026-10-27.json';
 // @ts-expect-error The measured prompts remain shared with the private evaluator.
-import { keywordExtractionRequest, keywordCheckerRequest, keywordCheckerValueForNormalization, KEYWORD_LEARNING_KINDS } from '../../../scripts/lib/keyword-learning-prompts.mjs';
+import { keywordExtractionRequest, keywordCheckerRequest, keywordCheckerValueForNormalization, KEYWORD_LEARNING_KINDS, KEYWORD_CONTEXT_ROLES_VERSION, KEYWORD_CONTEXT_ROLES_CHECKER_LESSON } from '../../../scripts/lib/keyword-learning-prompts.mjs';
 // @ts-expect-error Reuse the measured literal-evidence and boundary rules unchanged.
 import { validateLiteralInventory, minePatternNames, combineKeywordInventories, resolveKeywordCheckerVerdicts, applyKeywordBoundaryGuards } from '../../../scripts/lib/keyword-learning.mjs';
 // @ts-expect-error Match the existing publication/review key without guessing a display spelling.
@@ -16,7 +16,8 @@ export const KEYWORD_PRODUCTION_VERSION = 'named-mentions-v1';
  * Host-only publication fixes can replay exact settled requests without
  * inventing a new charge or changing the original paid payload. */
 export const KEYWORD_PRODUCTION_GENERATION_HASH = 'e7ae78feabd396e9e774799697afd84c5795bc36667ab1208c20acd69c306323';
-export const KEYWORD_PRODUCTION_LITERAL_CORE_SHA256 = 'bffe9e3d80e1e9d1b872b4fca3bf6a024a7780f410f6eef10587c79c811b1fe3';
+export const KEYWORD_PRODUCTION_PROMPT_MODULE_SHA256 = '3ef38e5e6d57a746ec9f86032fa109f3fb08848e7cb38b2be5c208afc6c0b0bf';
+export const KEYWORD_PRODUCTION_LITERAL_CORE_SHA256 = 'c9618aab3f7598ca3aa9c5a0d7cb71ab7abd07008662569ebedf886e1c1a1f0e';
 export const KEYWORD_PRODUCTION_EXTRACTOR_MODEL = 'deepseek/deepseek-v4.1-flash-1017';
 export const KEYWORD_PRODUCTION_CHECKER_MODEL = 'openai/gpt-6.1-sol-pro';
 export const KEYWORD_PRODUCTION_CHUNK_CHARS = 12_000;
@@ -34,14 +35,36 @@ const ALIAS_BOUNDARY_LESSON='For ambiguous identity boundaries, distinguish an e
 const PARENT_ATTRIBUTION_LESSON='A named parent brand counts even when it occurs only inside a complete product, model or game title. It does not need an independent sentence or standalone occurrence. Retain both the actual parent name and the complete named product/family/version. A source-present character or franchise name can likewise remain distinct from its explicitly named installment or add-on.';
 const UNCLEAR_SOURCE_LESSON='Accept an unfamiliar literal name when this source clearly presents it as a named identity or institution. Distinguish genuinely unclear boundaries from unfamiliar spelling: an unbranded merchandise class or ambiguous printed version punctuation belongs in review unless the text itself settles its naming role. Do not call generic nouns or fragments proper names merely because they occur in an ad. A clearly introduced joke name or pseudo-domain may remain a literal named_mention without claiming a working domain. Do not guess corrected names or versions.';
 const STRICT_CONTEXT_LESSON='A specific physical object, build, interior or scene does not by itself establish a proper name. Distinguish an explicitly introduced title or brand from ordinary descriptive object, architectural or style language. Use review only when title-versus-description is genuinely ambiguous. Reject ordinary generic scene, style or building descriptions rather than retaining them as named identities.';
+const CURRENT_CHECKER_LESSONS=[...new Set([...frozen.checkerLessons,KEYWORD_CONTEXT_ROLES_CHECKER_LESSON,ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON,STRICT_CONTEXT_LESSON])];
 export type KeywordProductionCheckerPolicy='standard'|'alias-boundaries-v1'|'strict-context-v1';
+export type KeywordProductionGenerationProfile='legacy-v1'|'context-roles-v2';
+export const KEYWORD_PRODUCTION_CURRENT_PROFILE:KeywordProductionGenerationProfile='context-roles-v2';
+export function validateKeywordProductionGenerationProfile(value:unknown):KeywordProductionGenerationProfile {
+ if(value===undefined)return 'legacy-v1';
+ if(value==='legacy-v1'||value==='context-roles-v2')return value;
+ return analysisFailure('keyword_production_profile_invalid');
+}
+/** Generation identity depends on provider-request rules, not host-only
+ * matching repairs. The old namespace remains exact for paid-response replay. */
+export const KEYWORD_PRODUCTION_CURRENT_GENERATION_HASH=contentHash(JSON.stringify({
+ profile:KEYWORD_PRODUCTION_CURRENT_PROFILE,promptModuleSha256:KEYWORD_PRODUCTION_PROMPT_MODULE_SHA256,
+ promptVersion:KEYWORD_CONTEXT_ROLES_VERSION,extractorModel:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,
+ checkerModel:KEYWORD_PRODUCTION_CHECKER_MODEL,extractorLessons:frozen.extractorLessons,
+ secondExtractor:'context_roles',checkerLessons:CURRENT_CHECKER_LESSONS,
+ chunkChars:KEYWORD_PRODUCTION_CHUNK_CHARS,chunkUtf8Bytes:KEYWORD_PRODUCTION_LONG_CHUNK_BYTES,
+ overlapChars:KEYWORD_PRODUCTION_OVERLAP_CHARS,byteBudget:'all-source-lengths',checkerMaxOutputTokens:2000,
+}));
+export function keywordProductionGenerationHash(profile:KeywordProductionGenerationProfile='legacy-v1'):string {
+ return validateKeywordProductionGenerationProfile(profile)==='legacy-v1'?KEYWORD_PRODUCTION_GENERATION_HASH:KEYWORD_PRODUCTION_CURRENT_GENERATION_HASH;
+}
 
 /** A production version pins both measured prompts and its explicit long-source
  * adaptation. The seven-case proof used one complete-source chunk; chunked
  * sources are a separately measured extension, never claimed as that proof. */
 export const KEYWORD_PRODUCTION_CONTRACT_HASH = contentHash(JSON.stringify({
  version: KEYWORD_PRODUCTION_VERSION,
- promptModuleSha256: frozen.promptModuleSha256,
+ promptModuleSha256: KEYWORD_PRODUCTION_PROMPT_MODULE_SHA256,
+ evaluatedPromptModuleSha256:frozen.promptModuleSha256,
  evaluatedCoreModuleSha256: frozen.coreModuleSha256,
  coreModuleSha256: KEYWORD_PRODUCTION_LITERAL_CORE_SHA256,
  extractorModel: KEYWORD_PRODUCTION_EXTRACTOR_MODEL,
@@ -63,13 +86,17 @@ export const KEYWORD_PRODUCTION_CONTRACT_HASH = contentHash(JSON.stringify({
  publicationEvidence:'literal-first-span-all-ranges-and-durable-call-lineage-v1',
  timing:'cached-complete-or-unique-cue-alignment-v1',
  auditedTiming:'source-bound-polysemy-withheld-with-exact-named-context-v1',
+ generationProfiles:{legacy:{profile:'legacy-v1',generationHash:KEYWORD_PRODUCTION_GENERATION_HASH,
+  byteBudget:'only-over-character-limit',secondExtractor:'type_sweep-or-admitted-sections'},
+  current:{profile:KEYWORD_PRODUCTION_CURRENT_PROFILE,generationHash:KEYWORD_PRODUCTION_CURRENT_GENERATION_HASH,
+   byteBudget:'all-source-lengths',secondExtractor:'context_roles',checkerLessons:CURRENT_CHECKER_LESSONS}},
 }));
 
 type Disposition = 'accepted' | 'review' | 'rejected';
 type LegacyKind = 'brand' | 'product' | 'game' | 'technology' | 'category';
 export type KeywordProductionStep = 'direct' | 'type_sweep' | 'checker';
 export interface KeywordProductionChunk { index:number; start:number; end:number; content:string; sourceHash:string; chunkHash:string }
-export interface KeywordProductionCall { chunkIndex:number; step:KeywordProductionStep; model:string; request:GenerationRequest }
+export interface KeywordProductionCall { chunkIndex:number; step:KeywordProductionStep; model:string; request:GenerationRequest; generationProfile?:KeywordProductionGenerationProfile }
 export interface KeywordProductionOccurrence { start:number; end:number; quote:string; ranges:Array<{startSeconds:number;endSeconds:number}> }
 export interface KeywordProductionDecision {
  name:string; kind:string|null; disposition:Disposition; reason:string;
@@ -80,14 +107,15 @@ export interface KeywordProductionChunkResult {
  rawRows:KeywordProductionDecision[]; boundaryChanges:unknown[];
  duplicateVerdicts:number; conflicts:unknown[];
  checkerEncoding:'named_rows'|'numeric_tuples';
- secondExtractorMethod:'type_sweep'|'sections';
+ secondExtractorMethod:'type_sweep'|'sections'|'context_roles';
+ generationProfile?:KeywordProductionGenerationProfile;
 }
 interface Inventory { names:string[]; uncertainNames:string[] }
 type ChunkInventories = { direct:unknown; type_sweep:unknown };
 
 const record = (value:unknown):value is Record<string,unknown> => value!==null&&typeof value==='object'&&!Array.isArray(value);
 const exactKeys = (value:Record<string,unknown>, keys:string[]) => Object.keys(value).length===keys.length&&keys.every(key=>Object.hasOwn(value,key));
-const chunkPlanCache=new WeakMap<SourceUpdate,{content:string;chunks:KeywordProductionChunk[]}>();
+const chunkPlanCache=new WeakMap<SourceUpdate,{content:string;chunks:Partial<Record<KeywordProductionGenerationProfile,KeywordProductionChunk[]>>}>();
 const inventoryCache=new WeakMap<KeywordProductionChunk,{signature:string;rows:Array<{name:string}>}>();
 
 /** Prompt source remains byte-for-byte unchanged. Only the host's literal
@@ -120,13 +148,15 @@ function source(update:SourceUpdate):string {
 /** Cover every UTF-16 source position. Overlap is longer than any supported
  * 100-character literal name, and boundaries never split a surrogate pair.
  * No title, description, synthetic text, guessed timing or dropped tail. */
-export function planKeywordProductionChunks(update:SourceUpdate):KeywordProductionChunk[] {
+export function planKeywordProductionChunks(update:SourceUpdate,profile:KeywordProductionGenerationProfile='legacy-v1'):KeywordProductionChunk[] {
+ profile=validateKeywordProductionGenerationProfile(profile);
  const content=source(update),cached=chunkPlanCache.get(update);
- if(cached?.content===content)return cached.chunks.map(chunk=>({...chunk}));
+ const prior=cached?.content===content?cached.chunks[profile]:undefined;
+ if(prior)return prior.map(chunk=>({...chunk}));
  const sourceHash=contentHash(content), chunks:KeywordProductionChunk[]=[];
  for(let start=0;start<content.length;){
   let end=Math.min(content.length,start+KEYWORD_PRODUCTION_CHUNK_CHARS);
-  if(content.length>KEYWORD_PRODUCTION_CHUNK_CHARS&&new TextEncoder().encode(content.slice(start,end)).length>KEYWORD_PRODUCTION_LONG_CHUNK_BYTES){
+  if((profile==='context-roles-v2'||content.length>KEYWORD_PRODUCTION_CHUNK_CHARS)&&new TextEncoder().encode(content.slice(start,end)).length>KEYWORD_PRODUCTION_LONG_CHUNK_BYTES){
    let low=1,high=end-start;
    while(low<high){const middle=Math.ceil((low+high)/2);if(new TextEncoder().encode(content.slice(start,start+middle)).length<=KEYWORD_PRODUCTION_LONG_CHUNK_BYTES)low=middle;else high=middle-1;}
    end=start+low;
@@ -137,12 +167,13 @@ export function planKeywordProductionChunks(update:SourceUpdate):KeywordProducti
   start=end-KEYWORD_PRODUCTION_OVERLAP_CHARS;
   if(/[\uDC00-\uDFFF]/u.test(content[start]))start--;
  }
- chunkPlanCache.set(update,{content,chunks:chunks.map(chunk=>({...chunk}))});
+ const profiles=cached?.content===content?cached.chunks:{};
+ profiles[profile]=chunks.map(chunk=>({...chunk}));chunkPlanCache.set(update,{content,chunks:profiles});
  return chunks;
 }
 
-function checkedChunk(update:SourceUpdate, chunk:KeywordProductionChunk):KeywordProductionChunk {
- const expected=planKeywordProductionChunks(update)[chunk.index];
+function checkedChunk(update:SourceUpdate, chunk:KeywordProductionChunk,profile:KeywordProductionGenerationProfile):KeywordProductionChunk {
+ const expected=planKeywordProductionChunks(update,profile)[chunk.index];
  if(!expected||JSON.stringify(expected)!==JSON.stringify(chunk))return analysisFailure('keyword_production_source_changed');
  return expected;
 }
@@ -154,26 +185,30 @@ function requestCapacity(request:GenerationRequest):GenerationRequest {
 
 /** This policy is private source admission data. It never changes the first
  * extractor or the stable typed receipt role used by the publication ledger. */
-export function validateKeywordProductionSectionSweepChunks(update:SourceUpdate,value:unknown):number[] {
+export function validateKeywordProductionSectionSweepChunks(update:SourceUpdate,value:unknown,profile:KeywordProductionGenerationProfile='legacy-v1'):number[] {
+ profile=validateKeywordProductionGenerationProfile(profile);
  if(value===undefined)return [];
- const count=planKeywordProductionChunks(update).length;
+ const count=planKeywordProductionChunks(update,profile).length;
  if(!Array.isArray(value)||value.length>count||new Set(value).size!==value.length
+  ||profile==='context-roles-v2'&&value.length>0
   ||[...value].some(index=>!Number.isSafeInteger(index)||index<0||index>=count))return analysisFailure('keyword_production_section_sweep_invalid');
  return [...value] as number[];
 }
 
-function secondExtractionMethod(update:SourceUpdate,chunk:KeywordProductionChunk,sectionSweepChunks:unknown):'type_sweep'|'sections' {
- return validateKeywordProductionSectionSweepChunks(update,sectionSweepChunks).includes(chunk.index)?'sections':'type_sweep';
+function secondExtractionMethod(update:SourceUpdate,chunk:KeywordProductionChunk,sectionSweepChunks:unknown,profile:KeywordProductionGenerationProfile):'type_sweep'|'sections'|'context_roles' {
+ const sections=validateKeywordProductionSectionSweepChunks(update,sectionSweepChunks,profile);
+ return profile==='context-roles-v2'?'context_roles':sections.includes(chunk.index)?'sections':'type_sweep';
 }
 
-export function keywordProductionExtractionCalls(update:SourceUpdate,chunk:KeywordProductionChunk,sectionSweepChunks?:unknown):KeywordProductionCall[] {
- checkedChunk(update,chunk);
- const second=secondExtractionMethod(update,chunk,sectionSweepChunks);
+export function keywordProductionExtractionCalls(update:SourceUpdate,chunk:KeywordProductionChunk,sectionSweepChunks?:unknown,profile:KeywordProductionGenerationProfile='legacy-v1'):KeywordProductionCall[] {
+ profile=validateKeywordProductionGenerationProfile(profile);checkedChunk(update,chunk,profile);
+ const second=secondExtractionMethod(update,chunk,sectionSweepChunks,profile);
  return (['direct','type_sweep'] as const).map(step=>({chunkIndex:chunk.index,step,model:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,
+  ...(profile==='legacy-v1'?{}:{generationProfile:profile}),
   request:requestCapacity(keywordExtractionRequest({method:step==='direct'?step:second,content:chunk.content,lessons:frozen.extractorLessons}))}));
 }
 
-function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories,second:'type_sweep'|'sections'='type_sweep'):Array<{name:string}> {
+function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories,second:'type_sweep'|'sections'|'context_roles'='type_sweep'):Array<{name:string}> {
  const signature=JSON.stringify({values,second}),cached=inventoryCache.get(chunk);
  if(cached?.signature===signature)return cached.rows;
  const direct=validateLiteralInventory(values.direct) as Inventory, typed=validateLiteralInventory(values.type_sweep) as Inventory;
@@ -182,13 +217,14 @@ function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories,
  inventoryCache.set(chunk,{signature,rows});return rows;
 }
 
-export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories,policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown):KeywordProductionCall {
- checkedChunk(update,chunk);
+export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories,policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown,profile:KeywordProductionGenerationProfile='legacy-v1'):KeywordProductionCall {
+ profile=validateKeywordProductionGenerationProfile(profile);checkedChunk(update,chunk,profile);
  if(!['standard','alias-boundaries-v1','strict-context-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
- const names=combinedInventory(chunk,values,secondExtractionMethod(update,chunk,sectionSweepChunks)).map(row=>row.name);
- const lessons=policy==='standard'?frozen.checkerLessons:[...frozen.checkerLessons,ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON,...(policy==='strict-context-v1'?[STRICT_CONTEXT_LESSON]:[])];
+ const names=combinedInventory(chunk,values,secondExtractionMethod(update,chunk,sectionSweepChunks,profile)).map(row=>row.name);
+ const baseLessons=policy==='standard'?frozen.checkerLessons:[...frozen.checkerLessons,ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON,...(policy==='strict-context-v1'?[STRICT_CONTEXT_LESSON]:[])];
+ const lessons=profile==='legacy-v1'?baseLessons:CURRENT_CHECKER_LESSONS;
  const request=keywordCheckerRequest({content:chunk.content,names,lessons,maxOutputTokens:2000,includeReasons:false}) as GenerationRequest;
- return {chunkIndex:chunk.index,step:'checker',model:KEYWORD_PRODUCTION_CHECKER_MODEL,
+ return {chunkIndex:chunk.index,step:'checker',model:KEYWORD_PRODUCTION_CHECKER_MODEL,...(profile==='legacy-v1'?{}:{generationProfile:profile}),
   request:requestCapacity(compactChecker(names)?compactCheckerRequest(request,names):request)};
 }
 
@@ -256,10 +292,10 @@ function validateChecker(value:unknown,names:string[]):void {
  }
 }
 
-export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories&{checker:unknown},policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown):KeywordProductionChunkResult {
- checkedChunk(update,chunk);
+export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories&{checker:unknown},policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown,profile:KeywordProductionGenerationProfile='legacy-v1'):KeywordProductionChunkResult {
+ profile=validateKeywordProductionGenerationProfile(profile);checkedChunk(update,chunk,profile);
  if(!['standard','alias-boundaries-v1','strict-context-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
- const secondExtractorMethod=secondExtractionMethod(update,chunk,sectionSweepChunks),candidates=combinedInventory(chunk,values,secondExtractorMethod).map(row=>row.name);
+ const secondExtractorMethod=secondExtractionMethod(update,chunk,sectionSweepChunks,profile),candidates=combinedInventory(chunk,values,secondExtractorMethod).map(row=>row.name);
  const checker=decodedChecker(values.checker,candidates);
  validateChecker(checker,candidates);
  const rendered=renderSource(chunk.content).text;
@@ -276,7 +312,7 @@ export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:Keyword
  }
  const boundaryChanges=boundary.changes.map(change=>record(change)&&restoredParents.has(String(change.name))&&change.code==='only_prefix_of_longer_accepted_name'
   ?{...change,guardTo:change.to,to:'accepted',overriddenBy:'source_supported_checker_accepted_name'}:change);
- return {chunk,candidates,rawRows:normalized.rows,rows:boundary.rows,boundaryChanges,secondExtractorMethod,
+ return {chunk,candidates,rawRows:normalized.rows,rows:boundary.rows,boundaryChanges,secondExtractorMethod,...(profile==='legacy-v1'?{}:{generationProfile:profile}),
   duplicateVerdicts:normalized.duplicateVerdicts,conflicts:normalized.conflicts,checkerEncoding:compactChecker(candidates)?'numeric_tuples':'named_rows'};
 }
 
@@ -297,8 +333,12 @@ function mergedRanges(occurrences:KeywordProductionOccurrence[]):Array<{startSec
  * keys. Disposition conflicts require review. Unanimously accepted names stay
  * accepted when only their subtype differs, without claiming a resolved type.
  * Source-absent normalization remains private in unmatchedReview. */
-export function mergeKeywordProductionChunks(update:SourceUpdate,results:KeywordProductionChunkResult[]):AnalysisOutput {
- const content=source(update),rendered=renderSource(content),find=createKeywordProductionOccurrenceFinder(rendered.text,update.transcriptSegments??[]),chunks=planKeywordProductionChunks(update),byName=new Map<string,Array<{chunkIndex:number;row:KeywordProductionDecision}>>();
+export function mergeKeywordProductionChunks(update:SourceUpdate,results:KeywordProductionChunkResult[],profile:KeywordProductionGenerationProfile='legacy-v1'):AnalysisOutput {
+ profile=validateKeywordProductionGenerationProfile(profile);
+ if(results.some(result=>validateKeywordProductionGenerationProfile(result.generationProfile)!==profile
+  ||profile==='context-roles-v2'&&result.secondExtractorMethod!=='context_roles'
+  ||profile==='legacy-v1'&&result.secondExtractorMethod==='context_roles'))return analysisFailure('keyword_production_profile_mismatch');
+ const content=source(update),rendered=renderSource(content),find=createKeywordProductionOccurrenceFinder(rendered.text,update.transcriptSegments??[]),chunks=planKeywordProductionChunks(update,profile),byName=new Map<string,Array<{chunkIndex:number;row:KeywordProductionDecision}>>();
  if(results.length!==chunks.length||results.some((result,index)=>result.chunk.index!==index||JSON.stringify(result.chunk)!==JSON.stringify(chunks[index])))return analysisFailure('incomplete_keyword_coverage');
  for(const result of results)for(const row of result.rows){const rows=byName.get(row.name)??[];rows.push({chunkIndex:result.chunk.index,row});byName.set(row.name,rows);}
  const byKey=new Map<string,Array<{label:string;originalRows:Array<{chunkIndex:number;row:KeywordProductionDecision}>}>>();
@@ -357,7 +397,7 @@ export function mergeKeywordProductionChunks(update:SourceUpdate,results:Keyword
  if(!accepted.length&&!pending.length)return analysisFailure('empty_keyword_inventory_requires_manual_review');
  accepted.sort((a,b)=>(typeof b.seconds==='number'?b.seconds:-1)-(typeof a.seconds==='number'?a.seconds:-1));
  const result:AnalysisOutput={state:pending.length?'review':'ready',patch:{keywordRuleVersion:'entities-v2'},pending,
-  evidence:{ruleVersion:'entities-v2',protocolVersion:KEYWORD_PRODUCTION_VERSION,generationContractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,
+  evidence:{ruleVersion:'entities-v2',protocolVersion:KEYWORD_PRODUCTION_VERSION,generationContractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,...(profile==='legacy-v1'?{}:{generationProfile:profile}),
    contentHash:contentHash(content),sourceContentState:sourceContentState(update),accepted,
    unmatchedReview:unmatchedReview.map(({label,literalKind,disposition,reason})=>({label,literalKind,disposition,reason})),
    rejected:rejected.map(({label,literalKind,disposition})=>({label,literalKind,disposition})),
@@ -380,14 +420,15 @@ function settled(result:GenerationResult):unknown {
 
 /** The caller supplies durable, metered generation. This module owns no
  * credentials, ledger, retries, scheduling, session release or publication. */
-export async function analyzeProductionKeywords(update:SourceUpdate,generate:(call:KeywordProductionCall)=>Promise<GenerationResult>,sectionSweepChunks?:unknown):Promise<AnalysisOutput> {
+export async function analyzeProductionKeywords(update:SourceUpdate,generate:(call:KeywordProductionCall)=>Promise<GenerationResult>,sectionSweepChunks?:unknown,profile:KeywordProductionGenerationProfile=KEYWORD_PRODUCTION_CURRENT_PROFILE):Promise<AnalysisOutput> {
+ profile=validateKeywordProductionGenerationProfile(profile);
  const results:KeywordProductionChunkResult[]=[];
- for(const chunk of planKeywordProductionChunks(update)){
-  const [directCall,typedCall]=keywordProductionExtractionCalls(update,chunk,sectionSweepChunks),direct=settled(await generate(directCall)),type_sweep=settled(await generate(typedCall));
-  const checkerCall=keywordProductionCheckerCall(update,chunk,{direct,type_sweep},'standard',sectionSweepChunks),checker=settled(await generate(checkerCall));
-  results.push(finalizeKeywordProductionChunk(update,chunk,{direct,type_sweep,checker},'standard',sectionSweepChunks));
+ for(const chunk of planKeywordProductionChunks(update,profile)){
+  const [directCall,typedCall]=keywordProductionExtractionCalls(update,chunk,sectionSweepChunks,profile),direct=settled(await generate(directCall)),type_sweep=settled(await generate(typedCall));
+  const checkerCall=keywordProductionCheckerCall(update,chunk,{direct,type_sweep},'standard',sectionSweepChunks,profile),checker=settled(await generate(checkerCall));
+  results.push(finalizeKeywordProductionChunk(update,chunk,{direct,type_sweep,checker},'standard',sectionSweepChunks,profile));
  }
- return mergeKeywordProductionChunks(update,results);
+ return mergeKeywordProductionChunks(update,results,profile);
 }
 
 /** A source-only audit may establish a name while also proving its spelling
@@ -422,6 +463,7 @@ export function applyKeywordProductionTimingReviews(update:SourceUpdate,output:A
 export function keywordProductionReaderFields(output:AnalysisOutput):Pick<SourceUpdate,'videoKeywords'|'topics'|'brands'|'keywordRuleVersion'|'keywordContentHash'> {
  if(output.evidence.protocolVersion!==KEYWORD_PRODUCTION_VERSION||output.evidence.generationContractHash!==KEYWORD_PRODUCTION_CONTRACT_HASH
   ||!Array.isArray(output.evidence.accepted)||typeof output.evidence.contentHash!=='string')return analysisFailure('keyword_production_invalid_result');
+ validateKeywordProductionGenerationProfile(output.evidence.generationProfile);
  const accepted=output.evidence.accepted as Array<{label:string;kind:LegacyKind;ranges:Array<{startSeconds:number;endSeconds:number}>;seconds?:number}>;
  return {keywordRuleVersion:'entities-v2',keywordContentHash:output.evidence.contentHash,
   videoKeywords:accepted.map(({label,ranges,seconds})=>({label,ranges,...(seconds!==undefined?{seconds}:{})})),

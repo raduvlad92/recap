@@ -5,7 +5,7 @@ import { analysisExecutionIdentity, analysisLimits, AnalysisError, type Generati
 import { analysisRuntimeEnv } from './content-analysis-runtime';
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
 import type { SourceUpdate } from '../../../src/lib/types';
-import { KEYWORD_PRODUCTION_CONTRACT_HASH, KEYWORD_PRODUCTION_GENERATION_HASH, planKeywordProductionChunks, keywordProductionExtractionCalls, keywordProductionCheckerCall, finalizeKeywordProductionChunk, mergeKeywordProductionChunks, applyKeywordProductionTimingReviews, validateKeywordProductionSectionSweepChunks, type KeywordProductionCall } from './keyword-production';
+import { KEYWORD_PRODUCTION_CONTRACT_HASH, keywordProductionGenerationHash, validateKeywordProductionGenerationProfile, planKeywordProductionChunks, keywordProductionExtractionCalls, keywordProductionCheckerCall, finalizeKeywordProductionChunk, mergeKeywordProductionChunks, applyKeywordProductionTimingReviews, validateKeywordProductionSectionSweepChunks, type KeywordProductionCall, type KeywordProductionGenerationProfile } from './keyword-production';
 
 type DB=ReturnType<typeof database>;
 type Row=Record<string,any>;
@@ -23,27 +23,28 @@ function unwrap<T>(value:{data:T;error:{code?:string}|null}):T {
  return value.data;
 }
 const response=(value:unknown,status=200)=>{const r=json(value,status);r.headers.set('cache-control','private, no-store');r.headers.set('x-robots-tag','noindex, nofollow');return r;};
-interface Context {session:Row;slot:Row;update:SourceUpdate;chunks:ReturnType<typeof planKeywordProductionChunks>;sectionSweepChunks:number[]}
+interface Context {session:Row;slot:Row;update:SourceUpdate;chunks:ReturnType<typeof planKeywordProductionChunks>;sectionSweepChunks:number[];generationProfile?:KeywordProductionGenerationProfile}
 interface Stored {requests:Map<string,Row>;charges:Map<string,Row>}
 
 /** Request plans are server-authored. The client chooses only an admitted
  * source/chunk, never a prompt, model, output, accepted label or price. */
 export function bindKeywordProductionCall(sessionId:string,ordinal:number,sourceHash:string,call:KeywordProductionCall) {
- const key='keyword-learning:v1:'+hash(stable({contractHash:KEYWORD_PRODUCTION_GENERATION_HASH,sessionId,ordinal,sourceHash,chunkIndex:call.chunkIndex,step:call.step,model:call.model,request:call.request}));
+ const key='keyword-learning:v1:'+hash(stable({contractHash:keywordProductionGenerationHash(call.generationProfile),sessionId,ordinal,sourceHash,chunkIndex:call.chunkIndex,step:call.step,model:call.model,request:call.request}));
  return {action:'generate',sessionId,sourceOrdinal:ordinal,sourceHash,model:call.model,originalKey:call.request.key,request:{...call.request,key}};
 }
 async function contextFor(db:DB,sessionId:string,ordinal:number):Promise<Context> {
  const session=unwrap(await db.from('keyword_learning_sessions').select('*').eq('id',sessionId).single()) as Row;
  const release=unwrap(await db.from('keyword_production_releases').select('*').eq('session_id',sessionId).single()) as Row;
- if(!session||session.state!=='released'||!session.user_id||Date.parse(session.expires_at)<=Date.now()||!release||release.state!=='released'||release.contract_hash!==KEYWORD_PRODUCTION_CONTRACT_HASH)return fail('keyword_production_not_released',403);
+ if(!session||session.state!=='released'||!session.user_id||!Number.isFinite(Date.parse(session.expires_at))||Date.parse(session.expires_at)<=Date.now()||!release||release.state!=='released'||release.contract_hash!==KEYWORD_PRODUCTION_CONTRACT_HASH)return fail('keyword_production_not_released',403);
  const slots=(release.sources as Row[]).filter(s=>s.ordinal===ordinal),slot=slots[0];
  if(slots.length!==1||!(session.sources as Row[]).some(s=>s.ordinal===ordinal&&s.updateId===slot.updateId&&s.sourceHash===slot.sourceHash))return fail('keyword_production_source_changed');
  const row=unwrap(await db.from('reader_source_updates').select('record').eq('user_id',session.user_id).eq('id',slot.updateId).single()) as Row;
  if(!row?.record||typeof row.record.content!=='string'||hash(row.record.content)!==slot.sourceHash)return fail('keyword_production_source_changed');
- const update=row.record as SourceUpdate,chunks=planKeywordProductionChunks(update);
+ const generationProfile=validateKeywordProductionGenerationProfile(slot.generationProfile);
+ const update=row.record as SourceUpdate,chunks=planKeywordProductionChunks(update,generationProfile);
  if(chunks.length!==slot.chunkCount)return fail('keyword_production_source_changed');
- const sectionSweepChunks=validateKeywordProductionSectionSweepChunks(update,slot.sectionSweepChunks);
- return {session,slot,update,chunks,sectionSweepChunks};
+ const sectionSweepChunks=validateKeywordProductionSectionSweepChunks(update,slot.sectionSweepChunks,generationProfile);
+ return {session,slot,update,chunks,sectionSweepChunks,generationProfile};
 }
 async function storedFor(db:DB,sessionId:string,ordinal:number):Promise<Stored> {
  const requests=unwrap(await db.from('keyword_learning_requests').select('*').eq('session_id',sessionId).eq('source_ordinal',ordinal)) as Row[];
@@ -52,6 +53,7 @@ async function storedFor(db:DB,sessionId:string,ordinal:number):Promise<Stored> 
  return {requests:new Map(requests.map(r=>[r.call_key,r])),charges:new Map(charges.map(c=>[c.id,c]))};
 }
 function verifiedCall(ctx:Context,stored:Stored,call:KeywordProductionCall,env:Env) {
+ if(validateKeywordProductionGenerationProfile(ctx.generationProfile)!==validateKeywordProductionGenerationProfile(call.generationProfile))return fail('keyword_production_call_binding_changed');
  const body=bindKeywordProductionCall(ctx.session.id,ctx.slot.ordinal,ctx.slot.sourceHash,call),r=stored.requests.get(body.request.key),c=r&&stored.charges.get(r.call_id);
  if(!r||!c)return fail('keyword_production_call_not_ready');
  if(!r.completed||r.error_code||!r.result||c.state!=='settled'||c.actual_usd===null||!Number.isFinite(Number(c.actual_usd))||Number(c.actual_usd)<0)return fail('keyword_production_call_not_settled');
@@ -87,20 +89,20 @@ export function createKeywordProductionHandler(overrides:Partial<Dependencies>={
    const ctx=await contextFor(db,input.sessionId,input.sourceOrdinal);
    if(input.action==='plan'){
     if(!Number.isSafeInteger(input.chunkIndex)||input.chunkIndex<0||!ctx.chunks[input.chunkIndex]||!['extractors','checker'].includes(input.stage))return fail('keyword_production_invalid_input',400);
-    const chunk=ctx.chunks[input.chunkIndex],extractions=keywordProductionExtractionCalls(ctx.update,chunk,ctx.sectionSweepChunks);
+    const chunk=ctx.chunks[input.chunkIndex],extractions=keywordProductionExtractionCalls(ctx.update,chunk,ctx.sectionSweepChunks,ctx.generationProfile);
     if(input.stage==='extractors')return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,chunkCount:ctx.chunks.length,calls:extractions.map(c=>bindKeywordProductionCall(input.sessionId,input.sourceOrdinal,ctx.slot.sourceHash,c))});
     const stored=await storedFor(db,input.sessionId,input.sourceOrdinal),direct=verifiedCall(ctx,stored,extractions[0],deps.env).value,type_sweep=verifiedCall(ctx,stored,extractions[1],deps.env).value;
-    const checker=keywordProductionCheckerCall(ctx.update,chunk,{direct,type_sweep},ctx.slot.checkerPolicy,ctx.sectionSweepChunks);
+    const checker=keywordProductionCheckerCall(ctx.update,chunk,{direct,type_sweep},ctx.slot.checkerPolicy,ctx.sectionSweepChunks,ctx.generationProfile);
     return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,chunkCount:ctx.chunks.length,calls:[bindKeywordProductionCall(input.sessionId,input.sourceOrdinal,ctx.slot.sourceHash,checker)]});
    }
    const stored=await storedFor(db,input.sessionId,input.sourceOrdinal),receipts:Row[]=[],results=[];
    for(const chunk of ctx.chunks){
-    const [a,b]=keywordProductionExtractionCalls(ctx.update,chunk,ctx.sectionSweepChunks),direct=verifiedCall(ctx,stored,a,deps.env),typed=verifiedCall(ctx,stored,b,deps.env);
-    const check=keywordProductionCheckerCall(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value},ctx.slot.checkerPolicy,ctx.sectionSweepChunks),checked=verifiedCall(ctx,stored,check,deps.env);
+    const [a,b]=keywordProductionExtractionCalls(ctx.update,chunk,ctx.sectionSweepChunks,ctx.generationProfile),direct=verifiedCall(ctx,stored,a,deps.env),typed=verifiedCall(ctx,stored,b,deps.env);
+    const check=keywordProductionCheckerCall(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value},ctx.slot.checkerPolicy,ctx.sectionSweepChunks,ctx.generationProfile),checked=verifiedCall(ctx,stored,check,deps.env);
     receipts.push(direct.receipt,typed.receipt,checked.receipt);
-    results.push(finalizeKeywordProductionChunk(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value,checker:checked.value},ctx.slot.checkerPolicy,ctx.sectionSweepChunks));
+    results.push(finalizeKeywordProductionChunk(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value,checker:checked.value},ctx.slot.checkerPolicy,ctx.sectionSweepChunks,ctx.generationProfile));
    }
-   const output=applyKeywordProductionTimingReviews(ctx.update,mergeKeywordProductionChunks(ctx.update,results),ctx.slot.timingReviews),outputHash=hash(stable(output));
+   const output=applyKeywordProductionTimingReviews(ctx.update,mergeKeywordProductionChunks(ctx.update,results,ctx.generationProfile),ctx.slot.timingReviews),outputHash=hash(stable(output));
    if(input.action==='preview')return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,outputHash,output,calls:receipts});
    if(input.expectedOutputHash!==outputHash)return fail('keyword_production_reviewed_output_changed');
    const receipt=unwrap(await db.rpc('publish_keyword_production_result',{p_session_id:input.sessionId,p_source_ordinal:input.sourceOrdinal,p_contract_hash:KEYWORD_PRODUCTION_CONTRACT_HASH,p_calls:receipts,p_output:output}));

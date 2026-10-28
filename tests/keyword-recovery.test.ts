@@ -16,7 +16,7 @@ describe('source-bound targeted keyword recovery',()=>{
   expect(KEYWORD_RECOVERY_VERSION).toBe('targeted-named-mentions-v5-verified-prefix');
   expect(KEYWORD_RECOVERY_BATCH_SIZE).toBe(4);
   expect(KEYWORD_RECOVERY_MAX_TARGETS).toBe(120);
-  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"e777edb9471225e5f83427f1eb397b6b46334501d5f83715b558d0b3fa2525fd"`);
+  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"6ed40879d875c1f7e6aeb98f7239ffe45a4485c7bc8720828620902701401b83"`);
   expect(policy).toContain('Distinctive branded class labels count when the source establishes that designation');
   expect(policy).toContain('ordinary unbranded job/group descriptions do not');
   expect(policy).toContain('a word explicitly selected as a setting/preset value');
@@ -130,4 +130,14 @@ describe('source-bound targeted keyword recovery',()=>{
   const out=applyKeywordRecoveryContextReviews(u,b,[{name:'ID',contexts:[{start,end:start+text.length,text}]}]),r=(out.evidence.accepted as any[])[0];
   expect(r.disposition).toBe('accepted');expect(r.ranges).toEqual([]);expect(r.seconds).toBeUndefined();expect(r.start).toBe(start);expect(r.evidenceQuote).toBe('ID');expect((b.evidence.accepted as any[])[0].seconds).toBe(1);
  });
+ it.each([
+  ['وجي تي 2 is selected.','جي تي 2'],
+  ['بوضع التسلل is selected.','وضع التسلل'],
+  ['nonATX3 supplies exist.','ATX3'],
+ ])('recovers an attached-prefix name with exact source offsets: %s',(text,name)=>{
+  const source='🚀 '+text,u={...update,content:source},t={name,contexts:[{start:0,end:source.length,text:source}]};
+  const b=baseline(),out=applyKeywordRecovery(u,b,[t],[{targetId:0,kind:'feature',disposition:'accepted'}],lineage),r=(out.evidence.accepted as any[]).at(-1);
+  expect(source.slice(r.start,r.end)).toBe(name);expect(r.start).toBe(source.indexOf(name));expect(r.ranges).toEqual([]);expect(r.seconds).toBeUndefined();expect(b.evidence.accepted).toEqual([old]);
+ });
+
 });

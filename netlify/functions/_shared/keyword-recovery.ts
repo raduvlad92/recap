@@ -8,7 +8,7 @@ import {KEYWORD_LEARNING_KINDS} from '../../../scripts/lib/keyword-learning-prom
 // @ts-expect-error Preserve the existing source-bound publication key.
 import {canonicalKeywordKey} from '../../../scripts/lib/keyword-analysis.mjs';
 // @ts-expect-error Use the same literal identity boundaries as the evaluated core.
-import {findLiteralNameOccurrences} from '../../../scripts/lib/keyword-learning.mjs';
+import {findLiteralNameOccurrences,hasLiteralNameBoundaries} from '../../../scripts/lib/keyword-learning.mjs';
 
 export const KEYWORD_RECOVERY_VERSION='targeted-named-mentions-v5-verified-prefix';
 export const KEYWORD_RECOVERY_REUSABLE_V4=Object.freeze({version:'targeted-named-mentions-v4-smallbatches',contractHash:'361ae5fe0d4850708b67e8fd45a7c443b877e7f0e1160c3839a66d6b366c8312'});
@@ -62,8 +62,8 @@ const legacy=(kind:string)=>kind==='brand'?'brand':['product','product_family','
 function contextSpan(context:KeywordRecoveryContext,name:string){
  const pattern=name.split(/\s+/u).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('[\\t \\r\\n]+');
  for(const m of context.text.matchAll(new RegExp(pattern,'gu'))){
-  const at=m.index,end=at+m[0].length,before=context.text[at-1],after=context.text[end],identity=(c:string|undefined)=>!!c&&/[\p{L}\p{M}\p{N}_+#]/u.test(c);
-  if(identity(before)||identity(after)||before==='.'&&/\p{N}/u.test(context.text[at-2]??'')&&/^\p{N}/u.test(name)||after==='.'&&/\p{N}/u.test(context.text[end+1]??'')&&/\p{N}$/u.test(name))continue;
+  const at=m.index,end=at+m[0].length;
+  if(!hasLiteralNameBoundaries(context.text,m[0],at))continue;
   return{start:context.start+at,end:context.start+end,quote:m[0]};
  }
  return null;
