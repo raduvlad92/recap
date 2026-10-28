@@ -1,6 +1,18 @@
 # Session handoff — 28 October 2026
 
-## Latest — five existing unclassified videos checked
+## Latest — twenty additional complete inventories checked
+
+The founder requested at least 20 more videos. **Twenty additional complete private inventories are saved from 22 attempted fresh inputs**, with the two checker-capacity failures retained and unscored. Three results are Good in assistant source review, 11 have confirmed gaps, 6 need reference adjudication. All 417 entries / 425 literal forms receive complete saved-source audits. [Full report](KEYWORD-UNCLASSIFIED-TWENTY-2026-10-28.md), [sanitized evidence](evidence/keyword-unclassified-twenty-2026-10-28.json), [outcome chart](evidence/keyword-unclassified-twenty-2026-10-28.html).
+
+All 64 new calls settle for **US$0.659584100**, no new hold. Cumulative **US$8.973349830 committed**, including the unchanged seven holds **US$0.125827191**. **US$1.026650170** total remains; UTC-day remaining **US$0.406094119**. Retain US$10 total / US$5 per UTC day / US$0.10 per call. The initial 58-call scope closes before a six-call replacement scope; both share the unchanged US$1.05 experiment ceiling. One prospective replacement with prior legacy records was excluded before new spending. No failed semantic case is replaced or deleted.
+
+The unchanged process misses named settings, modes and geographic qualifiers. Saved-response evidence independently proves two host anchoring losses involving grammatical prefixes: one alias of a surviving mode, and a specific standard/version whose base survives. Arabic texts shorter than 12,000 characters of 20,924/ 21,433 bytes stay single chunks and hit the checker price preflight, exposing the short-text byte-budget gap. Do not call these actual over-cap charges or assign semantic scores to them.
+
+All 20 completed outputs exactly replay from 60 responses; all 64 request/result/hash/charge bindings match native records. Native 22:02:05.578822 UTC proof preserves all 510 archives, 728 old calls, 431 jobs, 136 old reviews and three workspaces. General generation Off; DeepSeek revision 18; all finite scopes closed; zero executing/prepared AI jobs;271 older queued jobs unchanged. Both scopes refuse fresh plan/preflight 403 while saved-read 200 remains exact. Existing 20 reader publications remain intact; no new publication, code/prompt change or deployment. Private evidence `.local/keyword-unclassified-twenty-20261028/`.
+
+Next: repair prefix anchoring using the saved paid responses, apply UTF-8 chunk bounds to short texts too, then test a focused settings/geographic sweep and clean reference ambiguities while retaining original scores. No broader rollout, recap run or additional paid trial starts from this closeout. Earlier costs below are historical checkpoints.
+
+## Earlier — five existing unclassified videos checked
 
 The founder directed the fresh test to the saved unclassified backlog. **Five full regular-video transcripts were evaluated privately through the unchanged deployed process.** Fifteen new calls settle for **US$0.188830006**, no new hold; no new publication or code/prompt change. [Fresh results](KEYWORD-UNCLASSIFIED-CHECK-2026-10-28.md), [sanitized evidence](evidence/keyword-unclassified-check-2026-10-28.json).
 
@@ -42,4 +54,4 @@ Never put private configs, credentials, owner/session/call IDs, source text or r
 
 ## Next action
 
-Review provider charges and the latest remaining allowance above. Keep broader automation Off. The fresh five-video check now supplies unseen-source evidence and identifies concrete remaining defects; address those before proposing another roster. Neither this recovery nor the fresh check approves a customer launch, recap rollout or uncapped recurring analysis.
+Review provider charges and the latest remaining allowance above. Keep broader automation Off. The fresh five-video and subsequent twenty-complete-result checks supply unseen-source evidence and identify concrete remaining defects; address those before proposing another roster. Neither this recovery nor the fresh check approves a customer launch, recap rollout or uncapped recurring analysis.

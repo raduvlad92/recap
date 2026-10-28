@@ -1,5 +1,13 @@
 # Decisions and interview
 
+## 28 October 2026 — test at least twenty more videos for data
+
+Founder: “ok, test it on at leas 20 videos to gather moore data”. Continue from the saved unclassified backlog, testing the current keyword process rather than changing it mid-benchmark. Preserve US$10 cumulative / US$5 UTC-day / US$0.10 call and historical holds; no broad automation, recap generation or new source collection follows.
+
+Completed:20 fresh initial inputs plus two capacity replacements produce 20 complete private inventories and two retained checker-price failures. A prospective replacement with prior legacy model-call records is excluded before any new call. The replacement scope follows closure of the initial scope and shares the original internal US$1.05 ceiling; no counter/hold reset. All 64 calls settle for US$0.659584100, no new unresolved charge; cumulative commitment US$8.973349830, remaining US$1.026650170.
+
+Independent assistant source audits find 3 Good results, 11 with confirmed gaps and 6 reference-audit cases; the latter are not proved model failures. Original scores/references remain unchanged. Settings/geographic omissions, two grammatical-prefix anchoring losses and short-text byte-size handling are the next targeted fixes. All 510 archives, 728 old calls, seven holds, 431 jobs, 136 reviews and three workspaces are preserved; all finite scopes close, general generation remains Off, no new publication or code/prompt change. [Full result](tech/KEYWORD-UNCLASSIFIED-TWENTY-2026-10-28.md).
+
 ## 28 October 2026 — choose the fresh test from existing unclassified videos
 
 Founder: “just check from the unclassified videos”, responding to the request for fresh test links. Select five suitable existing regular saved transcripts autonomously, including every named mention and ads, under the unchanged US$10 total / US$5 UTC-day / US$0.10 call limits. This is a bounded private keyword evaluation, not a wider publication, recap or collection activation.

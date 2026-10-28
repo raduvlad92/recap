@@ -1,5 +1,13 @@
 # Demo and evidence log
 
+## 28 October 2026 — twenty additional complete keyword checks
+
+Founder-directed larger dataset:22 new saved videos attempted across the initial 11-channel sample, 20 complete inventories and two retained checker-capacity failures. Source-only references freeze before generation for each source. Original ratings average 9.375/ 10, with 3 strict passes and 17 holds; separate full saved-text audits classify 3 Good, 11 confirmed gaps and 6 reference-audit cases. All 417 entries / 425 literal forms are checked; source presence does not prove relevance or canonical identity.
+
+Actual data confirms missed app/driving/fan modes and geographic qualifiers. Two Sol-approved forms are lost by source anchoring: an Arabic preposition-attached alias (other labels survive), and a standard/version inside a negative prefix (its base survives). The two Arabic size failures are unscored and never dispatch a checker; four billed extractor calls remain. Two fresh sources replace incomplete delivery only, not semantic failures. One prospective replacement with older model-call records is excluded before new spending.
+
+All 64 requests settle for US$0.659584100, no new hold. Twenty hosted outputs exactly replay from 60 used responses; all 64 payload/result/hash/charge bindings match native records. Atomic native 22:02:05.578822 UTC proof preserves 510 archives, 728 old calls, seven holds, 431 jobs, 136 reviews and three workspaces. All scopes close; saved-read 200 and fresh-plan/preflight 403 for both scopes. General generation stays Off, original 20 reader publications unchanged. No app code/prompt change, full-suite rerun, deployment or new app/browser/mobile proof. The [chart](tech/evidence/keyword-unclassified-twenty-2026-10-28.html) only visualizes recorded results. [Report](tech/KEYWORD-UNCLASSIFIED-TWENTY-2026-10-28.md), [sanitized evidence](tech/evidence/keyword-unclassified-twenty-2026-10-28.json).
+
 ## 28 October 2026 — five fresh unclassified-video keyword checks
 
 Founder-directed selection from the existing backlog: five full regular-video transcripts with no earlier keyword-learning admission or model charge. The unchanged hosted process returns five private inventories, 183 accepted entries and six review entries. All 15 actual calls settle for US$0.188830006; no new hold or publication. The original pre-generation-reference scores are 9.2/9.5/8.4/9.1/9.5, all strict-held; independent source audits identify false gold/policy flags and retain the original results rather than claiming final accuracy.
