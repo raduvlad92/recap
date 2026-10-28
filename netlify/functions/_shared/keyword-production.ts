@@ -12,14 +12,22 @@ import type { AnalysisOutput } from './content-analysis-engine';
 import { createKeywordProductionOccurrenceFinder } from './keyword-production-occurrences';
 
 export const KEYWORD_PRODUCTION_VERSION = 'named-mentions-v1';
+/** Frozen provider-request namespace from the first production release.
+ * Host-only publication fixes can replay exact settled requests without
+ * inventing a new charge or changing the original paid payload. */
+export const KEYWORD_PRODUCTION_GENERATION_HASH = 'e7ae78feabd396e9e774799697afd84c5795bc36667ab1208c20acd69c306323';
 export const KEYWORD_PRODUCTION_LITERAL_CORE_SHA256 = 'a9bdf8b461615cb1d7e2a28f7e2afad8922449e2c9580eb7919119c0c062d5fd';
 export const KEYWORD_PRODUCTION_EXTRACTOR_MODEL = 'deepseek/deepseek-v4.1-flash-1017';
 export const KEYWORD_PRODUCTION_CHECKER_MODEL = 'openai/gpt-6.1-sol-pro';
 export const KEYWORD_PRODUCTION_CHUNK_CHARS = 12_000;
+export const KEYWORD_PRODUCTION_LONG_CHUNK_BYTES = 12_000;
 export const KEYWORD_PRODUCTION_OVERLAP_CHARS = 200;
 export const KEYWORD_PRODUCTION_MAX_SOURCE_CHARS = 1_000_000;
 export const KEYWORD_PRODUCTION_MAX_NAMES = 500;
 const MAX_PROMPT_CHARS = 100_000;
+const COMPACT_CHECKER_AFTER_NAMES = 100;
+const COMPACT_CHECKER_AFTER_NAME_BYTES = 2200;
+const CHECKER_DISPOSITIONS = ['accepted','review','rejected'] as const;
 
 /** A production version pins both measured prompts and its explicit long-source
  * adaptation. The seven-case proof used one complete-source chunk; chunked
@@ -34,12 +42,17 @@ export const KEYWORD_PRODUCTION_CONTRACT_HASH = contentHash(JSON.stringify({
  extractorLessons: frozen.extractorLessons,
  checkerLessons: frozen.checkerLessons,
  patternMining: 'focused', checkerReasons: false, checkerMaxOutputTokens: 2000,
+ checkerTransport:{version:'explicit-candidate-kind-disposition-integer-tuples-v2',afterCandidateCount:COMPACT_CHECKER_AFTER_NAMES,
+  afterCandidateUtf8Bytes:COMPACT_CHECKER_AFTER_NAME_BYTES,kindIds:KEYWORD_LEARNING_KINDS,dispositionIds:CHECKER_DISPOSITIONS},
  chunkChars: KEYWORD_PRODUCTION_CHUNK_CHARS, overlapChars: KEYWORD_PRODUCTION_OVERLAP_CHARS,
+ longSourceChunkUtf8Bytes:KEYWORD_PRODUCTION_LONG_CHUNK_BYTES,
  maximumNames: KEYWORD_PRODUCTION_MAX_NAMES,
- merge: 'legacy-key-aliases-conflicts-review-v2', boundaryGuards: true,
+ merge: 'source-present-legacy-key-aliases-conflicts-review-v3', boundaryGuards: true,
+ parentBrandGuard:'preserve-source-supported-checker-accepted-parent-brand-or-organization-v1',
  hostSourceWhitespaceAlignment:'linebreak-runs-with-original-utf16-offsets-v1',
  publicationEvidence:'literal-first-span-all-ranges-and-durable-call-lineage-v1',
  timing:'cached-complete-or-unique-cue-alignment-v1',
+ auditedTiming:'source-bound-polysemy-withheld-with-exact-named-context-v1',
 }));
 
 type Disposition = 'accepted' | 'review' | 'rejected';
@@ -56,6 +69,7 @@ export interface KeywordProductionChunkResult {
  chunk:KeywordProductionChunk; candidates:string[]; rows:KeywordProductionDecision[];
  rawRows:KeywordProductionDecision[]; boundaryChanges:unknown[];
  duplicateVerdicts:number; conflicts:unknown[];
+ checkerEncoding:'named_rows'|'numeric_tuples';
 }
 interface Inventory { names:string[]; uncertainNames:string[] }
 type ChunkInventories = { direct:unknown; type_sweep:unknown };
@@ -101,6 +115,11 @@ export function planKeywordProductionChunks(update:SourceUpdate):KeywordProducti
  const sourceHash=contentHash(content), chunks:KeywordProductionChunk[]=[];
  for(let start=0;start<content.length;){
   let end=Math.min(content.length,start+KEYWORD_PRODUCTION_CHUNK_CHARS);
+  if(content.length>KEYWORD_PRODUCTION_CHUNK_CHARS&&new TextEncoder().encode(content.slice(start,end)).length>KEYWORD_PRODUCTION_LONG_CHUNK_BYTES){
+   let low=1,high=end-start;
+   while(low<high){const middle=Math.ceil((low+high)/2);if(new TextEncoder().encode(content.slice(start,start+middle)).length<=KEYWORD_PRODUCTION_LONG_CHUNK_BYTES)low=middle;else high=middle-1;}
+   end=start+low;
+  }
   if(end<content.length&&/[\uD800-\uDBFF]/u.test(content[end-1]))end--;
   chunks.push({index:chunks.length,start,end,content:content.slice(start,end),sourceHash,chunkHash:contentHash(content.slice(start,end))});
   if(end===content.length)break;
@@ -140,8 +159,54 @@ function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories)
 export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories):KeywordProductionCall {
  checkedChunk(update,chunk);
  const names=combinedInventory(chunk,values).map(row=>row.name);
+ const request=keywordCheckerRequest({content:chunk.content,names,lessons:frozen.checkerLessons,maxOutputTokens:2000,includeReasons:false}) as GenerationRequest;
  return {chunkIndex:chunk.index,step:'checker',model:KEYWORD_PRODUCTION_CHECKER_MODEL,
-  request:requestCapacity(keywordCheckerRequest({content:chunk.content,names,lessons:frozen.checkerLessons,maxOutputTokens:2000,includeReasons:false}))};
+  request:requestCapacity(compactChecker(names)?compactCheckerRequest(request,names):request)};
+}
+
+function compactChecker(names:string[]):boolean {
+ const encoder=new TextEncoder(),bytes=names.reduce((sum,name)=>sum+encoder.encode(name).length,0);
+ return names.length>COMPACT_CHECKER_AFTER_NAMES||bytes>COMPACT_CHECKER_AFTER_NAME_BYTES;
+}
+
+/** Large unions retain every candidate and the same semantic instructions.
+ * Only the returned representation changes: the host restores literal names
+ * from immutable input indices instead of asking the model to repeat them. */
+function compactCheckerRequest(request:GenerationRequest,names:string[]):GenerationRequest {
+ const oldRows='Return exactly ONE decisions row per supplied candidate, using that identical name. The decisions array must match the exact candidate count required by the response schema.';
+ const oldFields='Return only name, disposition and kind in every decision and missing-name row. Do not include reason or any explanation fields.';
+ const marker='\nUNTRUSTED TRANSCRIPT AND CANDIDATES\n',at=request.prompt.lastIndexOf(marker);
+ if(at<0||!request.prompt.slice(0,at).includes(oldRows)||!request.prompt.slice(0,at).includes(oldFields))return analysisFailure('keyword_production_checker_contract_changed');
+ const instructions=request.prompt.slice(0,at)
+  .replace(oldRows,'Return exactly ONE verdict tuple per supplied candidate. Use the explicit candidateIndex attached to each input candidate; never infer or count its position. The verdicts array must cover every candidateIndex exactly once; never omit, repeat, rename or collapse candidates.')
+  .replace(oldFields,'For each supplied candidate, return only [candidateIndex,kindIndex,dispositionIndex] in verdicts. All three tuple values are integers, in that order. Use the fixed KIND_IDS and DISPOSITION_IDS tables below. Candidate indices identify the suggestion array, never transcript word positions or offsets. Do not repeat candidate names in verdicts: the host restores their identical literal spelling from candidateIndex. In missingNames, return literal name, disposition and kind as strings. Do not include reasons or explanation fields. Literal-name copying instructions apply to missingNames; supplied candidates keep their original names through the indices.');
+ const base=request.schema as {properties:{readComplete:unknown;missingNames:unknown}};
+ const schema={type:'object',additionalProperties:false,required:['readComplete','verdicts','missingNames'],properties:{
+  readComplete:base.properties.readComplete,
+  verdicts:{type:'array',minItems:names.length,maxItems:names.length,items:{type:'array',minItems:3,maxItems:3,
+   items:{type:'integer',minimum:0,maximum:Math.max(names.length-1,KEYWORD_LEARNING_KINDS.length-1,CHECKER_DISPOSITIONS.length-1)}}},
+  missingNames:base.properties.missingNames,
+ }};
+ const tables='\nFIXED TRANSPORT TABLES (explicit numeric IDs; these are instructions, not source claims)\nKIND_IDS='+JSON.stringify(Object.fromEntries(KEYWORD_LEARNING_KINDS.map((kind:string,id:number)=>[id,kind])))+'\nDISPOSITION_IDS='+JSON.stringify(Object.fromEntries(CHECKER_DISPOSITIONS.map((disposition,id)=>[id,disposition])));
+ const input=JSON.parse(request.prompt.slice(at+marker.length)) as {content:string;candidates:string[]};
+ return {...request,schema,prompt:instructions+tables+marker+JSON.stringify({content:input.content,candidates:names.map((name,candidateIndex)=>({candidateIndex,name}))})};
+}
+
+/** Reject incomplete, duplicate or out-of-range tuples before source checks.
+ * The provider's original tuple JSON remains in the durable paid receipt. */
+function decodedChecker(value:unknown,names:string[]):unknown {
+ if(!compactChecker(names))return value;
+ if(!record(value)||!exactKeys(value,['readComplete','verdicts','missingNames'])||value.readComplete!==true
+  ||!Array.isArray(value.verdicts)||value.verdicts.length!==names.length||!Array.isArray(value.missingNames))return analysisFailure('checker_incomplete');
+ const seen=new Set<number>(),decisions:Record<string,unknown>[]=[];
+ for(const tuple of value.verdicts){
+  if(!Array.isArray(tuple)||tuple.length!==3||!tuple.every(Number.isSafeInteger))return analysisFailure('checker_invalid_decision');
+  const [candidateIndex,kindIndex,dispositionIndex]=tuple as number[];
+  if(candidateIndex<0||candidateIndex>=names.length||kindIndex<0||kindIndex>=KEYWORD_LEARNING_KINDS.length||dispositionIndex<0||dispositionIndex>=CHECKER_DISPOSITIONS.length)return analysisFailure('checker_invalid_decision');
+  if(seen.has(candidateIndex))return analysisFailure('checker_candidate_decisions_incomplete');
+  seen.add(candidateIndex);decisions.push({name:names[candidateIndex],kind:KEYWORD_LEARNING_KINDS[kindIndex],disposition:CHECKER_DISPOSITIONS[dispositionIndex]});
+ }
+ return {readComplete:true,decisions,missingNames:value.missingNames};
 }
 
 /** Enforce the compact response schema again before interpreting persisted
@@ -166,13 +231,24 @@ function validateChecker(value:unknown,names:string[]):void {
 export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories&{checker:unknown}):KeywordProductionChunkResult {
  checkedChunk(update,chunk);
  const candidates=combinedInventory(chunk,values).map(row=>row.name);
- validateChecker(values.checker,candidates);
+ const checker=decodedChecker(values.checker,candidates);
+ validateChecker(checker,candidates);
  const rendered=renderSource(chunk.content).text;
  const normalized=resolveKeywordCheckerVerdicts({content:rendered,names:candidates,
-  value:keywordCheckerValueForNormalization(values.checker,{includeReasons:false})}) as {rows:KeywordProductionDecision[];duplicateVerdicts:number;conflicts:unknown[]};
+  value:keywordCheckerValueForNormalization(checker,{includeReasons:false})}) as {rows:KeywordProductionDecision[];duplicateVerdicts:number;conflicts:unknown[]};
  const boundary=applyKeywordBoundaryGuards({content:rendered,rows:normalized.rows}) as {rows:KeywordProductionDecision[];changes:unknown[]};
- return {chunk,candidates,rawRows:normalized.rows,rows:boundary.rows,boundaryChanges:boundary.changes,
-  duplicateVerdicts:normalized.duplicateVerdicts,conflicts:normalized.conflicts};
+ const originals=new Map(normalized.rows.map(row=>[row.name,row])),restoredParents=new Set<string>();
+ for(const row of boundary.rows){
+  const original=originals.get(row.name),guard=row.hostBoundaryGuard;
+  if(original?.disposition==='accepted'&&['brand','organization'].includes(original.kind??'')&&row.disposition==='rejected'
+   &&record(guard)&&guard.code==='only_prefix_of_longer_accepted_name'){
+   row.disposition='accepted';row.hostBoundaryGuard={...guard,overriddenBy:'explicit_parent_brand'};restoredParents.add(row.name);
+  }
+ }
+ const boundaryChanges=boundary.changes.map(change=>record(change)&&restoredParents.has(String(change.name))&&change.code==='only_prefix_of_longer_accepted_name'
+  ?{...change,guardTo:change.to,to:'accepted',overriddenBy:'explicit_parent_brand'}:change);
+ return {chunk,candidates,rawRows:normalized.rows,rows:boundary.rows,boundaryChanges,
+  duplicateVerdicts:normalized.duplicateVerdicts,conflicts:normalized.conflicts,checkerEncoding:compactChecker(candidates)?'numeric_tuples':'named_rows'};
 }
 
 function legacyKind(kind:string|null):LegacyKind {
@@ -208,21 +284,31 @@ export function mergeKeywordProductionChunks(update:SourceUpdate,results:Keyword
    rejected.push({label:aliases[0].label,literalKind:kinds.length===1?kinds[0]:null,disposition:'rejected'});continue;
   }
   const literalForms=aliases.map(alias=>({...alias,occurrences:sourceOccurrences(update,alias.label,rendered,find)}));
-  literalForms.sort((a,b)=>(a.occurrences[0]?.start??Infinity)-(b.occurrences[0]?.start??Infinity));
-  const label=literalForms[0].label,originalRows=literalForms.flatMap(alias=>alias.originalRows);
+  // A rejected spelling that never occurs in the source cannot dispute a
+  // different, source-present spelling. Retain the rejected suggestion in
+  // private evidence, and reconcile only actual literal forms.
+  for(const form of literalForms.filter(form=>!form.occurrences.length)){
+   const rows=form.originalRows.map(value=>value.row),kinds=[...new Set(rows.map(row=>row.kind))],literalKind=kinds.length===1?kinds[0]:null;
+   if(rows.every(row=>row.disposition==='rejected'))rejected.push({label:form.label,literalKind,disposition:'rejected'});
+   else unmatchedReview.push({label:form.label,literalKind,disposition:'review',reason:'literal_name_not_in_source'});
+  }
+  const supportedForms=literalForms.filter(form=>form.occurrences.length);
+  if(!supportedForms.length)continue;
+  supportedForms.sort((a,b)=>a.occurrences[0].start-b.occurrences[0].start);
+  const label=supportedForms[0].label,originalRows=supportedForms.flatMap(alias=>alias.originalRows);
   const kinds=[...new Set(originalRows.map(value=>value.row.kind))],dispositions=[...new Set(originalRows.map(value=>value.row.disposition))];
   const conflict=kinds.length!==1||dispositions.length!==1, literalKind=kinds.length===1?kinds[0]:null;
   let disposition:Disposition=conflict?'review':dispositions[0];
   if(conflict)crossChunkConflicts.push({name:label,kinds,dispositions,chunkIndices:originalRows.map(value=>value.chunkIndex)});
-  const occurrences=literalForms.flatMap(alias=>alias.occurrences).sort((a,b)=>a.start-b.start);
-  if(disposition==='rejected'){rejected.push({label,literalKind,disposition,originalRows,literalForms});continue;}
+  const occurrences=supportedForms.flatMap(alias=>alias.occurrences).sort((a,b)=>a.start-b.start);
+  if(disposition==='rejected'){rejected.push({label,literalKind,disposition});continue;}
   if(!occurrences.length){unmatchedReview.push({label,literalKind,disposition:'review',reason:'literal_name_not_in_source',originalRows,literalForms});continue;}
   // A label found elsewhere in the full source cannot repair absent local
   // support in the chunk that proposed it. The raw verdict stays auditable.
   if(originalRows.some(value=>value.row.hostReviewReason==='literal_name_not_in_source'))disposition='review';
   const ranges=mergedRanges(occurrences), first=occurrences[0];
   const row={label,kind:legacyKind(literalKind),literalKind,disposition,key,
-   literalForms:literalForms.map(form=>({label:form.label,occurrenceCount:form.occurrences.length,
+   literalForms:supportedForms.map(form=>({label:form.label,occurrenceCount:form.occurrences.length,
     ...(form.occurrences[0]?{start:form.occurrences[0].start,end:form.occurrences[0].end,evidenceQuote:form.occurrences[0].quote}:{})})),
    // The legacy publication contract requires an integer confidence. This
    // is only a disposition compatibility marker, not requested AI confidence
@@ -246,7 +332,7 @@ export function mergeKeywordProductionChunks(update:SourceUpdate,results:Keyword
    extractionMethods:['direct','type_sweep','focused_patterns'],extractorModel:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,checkerModel:KEYWORD_PRODUCTION_CHECKER_MODEL,
    checkerReasons:false,confidenceOrigin:'legacy_acceptance_marker_not_model_score',
    rawGenerationEvidence:'Exact request payloads and provider responses remain in the bound durable call receipts; this publication proof avoids duplicating them.',
-   chunks:results.map(({chunk,candidates,rows,boundaryChanges,duplicateVerdicts,conflicts})=>({index:chunk.index,start:chunk.start,end:chunk.end,chunkHash:chunk.chunkHash,
+   chunks:results.map(({chunk,candidates,rows,boundaryChanges,duplicateVerdicts,conflicts,checkerEncoding})=>({index:chunk.index,start:chunk.start,end:chunk.end,chunkHash:chunk.chunkHash,checkerEncoding,
     candidateCount:candidates.length,acceptedCount:rows.filter(r=>r.disposition==='accepted').length,reviewCount:rows.filter(r=>r.disposition==='review').length,
     rejectedCount:rows.filter(r=>r.disposition==='rejected').length,boundaryChanges,duplicateVerdicts,conflictCount:conflicts.length}))}};
  if(new TextEncoder().encode(JSON.stringify(result)).length>400000)return analysisFailure('keyword_production_evidence_capacity');
@@ -269,6 +355,32 @@ export async function analyzeProductionKeywords(update:SourceUpdate,generate:(ca
   results.push(finalizeKeywordProductionChunk(update,chunk,{direct,type_sweep,checker}));
  }
  return mergeKeywordProductionChunks(update,results);
+}
+
+/** A source-only audit may establish a name while also proving its spelling
+ * is an ordinary word elsewhere. Keep that literal name and exact named
+ * context, but withhold a discussion-time estimate rather than borrowing
+ * unrelated word occurrences. Only private admitted source data supplies this
+ * policy; neither request callers nor model output can introduce it. */
+export function applyKeywordProductionTimingReviews(update:SourceUpdate,output:AnalysisOutput,reviews:unknown):AnalysisOutput {
+ if(reviews===undefined)return output;
+ if(!Array.isArray(reviews)||reviews.length>500)return analysisFailure('keyword_production_invalid_timing_review');
+ const content=source(update),byName=new Map<string,{name:string;evidenceQuote:string;start:number;end:number}>();
+ for(const review of reviews){
+  if(!record(review)||!exactKeys(review,['name','evidenceQuote'])||typeof review.name!=='string'||!review.name.trim()||review.name.length>100
+   ||typeof review.evidenceQuote!=='string'||!review.evidenceQuote.trim()||review.evidenceQuote.length>1000||byName.has(review.name))return analysisFailure('keyword_production_invalid_timing_review');
+  const at=content.indexOf(review.evidenceQuote),within=review.evidenceQuote.indexOf(review.name);
+  if(at<0||within<0)return analysisFailure('keyword_production_unsupported_timing_review');
+  byName.set(review.name,{name:review.name,evidenceQuote:review.evidenceQuote,start:at+within,end:at+within+review.name.length});
+ }
+ const apply=(row:Record<string,any>)=>{
+  const review=[...byName.values()].find(r=>row.label===r.name||row.literalForms?.some((form:Record<string,unknown>)=>form.label===r.name));
+  if(!review)return row;
+  const {seconds:_seconds,...other}=row;
+  return {...other,evidenceQuote:review.evidenceQuote,mention:review.name,start:review.start,end:review.end,ranges:[],timingStatus:'withheld_ambiguous_word_uses'};
+ };
+ return {...output,pending:(output.pending as Record<string,any>[]).map(apply),evidence:{...output.evidence,
+  accepted:(output.evidence.accepted as Record<string,any>[]).map(apply),auditedTimingReviews:[...byName.values()]}};
 }
 
 /** Reader fields are derived from accepted rows only. Private source quotes,

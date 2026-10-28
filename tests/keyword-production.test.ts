@@ -9,7 +9,7 @@ import {createKeywordProductionOccurrenceFinder} from '../netlify/functions/_sha
 import {findLiteralNameOccurrences} from '../scripts/lib/keyword-learning.mjs';
 import {analyzeProductionKeywords,KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_LITERAL_CORE_SHA256,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL,
  planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,finalizeKeywordProductionChunk,
- mergeKeywordProductionChunks,keywordProductionReaderFields,type KeywordProductionCall,type KeywordProductionChunkResult} from '../netlify/functions/_shared/keyword-production';
+ mergeKeywordProductionChunks,keywordProductionReaderFields,applyKeywordProductionTimingReviews,type KeywordProductionCall,type KeywordProductionChunkResult} from '../netlify/functions/_shared/keyword-production';
 
 const record=(content:string):SourceUpdate=>({id:'synthetic-video',sourceId:'synthetic-source',contributorIds:[],title:'Untrusted description must not supply names',summary:'Description only',url:'https://example.test/video',publishedAt:'2026-10-28T00:00:00Z',format:'video',topics:[],brands:[],sponsors:[],references:[],insights:[],isSample:false,content,contentKind:'transcript'});
 const data=(call:KeywordProductionCall)=>JSON.parse(call.request.prompt.slice(call.request.prompt.lastIndexOf('\n')+1)) as {content:string;candidates?:string[]};
@@ -63,6 +63,45 @@ describe('production named-mention core',()=>{
   expect((result.evidence.accepted as Array<{label:string}>).map(row=>row.label)).toEqual(['AeroBox','NovaPay','C#','Tevi']);
   expect(result.evidence).toMatchObject({sourceContentState:'partial',generationContractHash:KEYWORD_PRODUCTION_CONTRACT_HASH});
  });
+ it('keeps the original named-row transport at one hundred short candidates',()=>{
+  const names=Array.from({length:100},(_,i)=>'quux'+i),update=record(names.join(' ')),chunk=planKeywordProductionChunks(update)[0],call=keywordProductionCheckerCall(update,chunk,{direct:inventory(names),type_sweep:inventory([])});
+  expect(data(call).candidates).toEqual(names);expect(call.request.schema).toHaveProperty('properties.decisions');expect(call.request.schema).not.toHaveProperty('properties.verdicts');
+ });
+ it('checks every large-list candidate through numeric tuples and keeps independent literal discoveries',()=>{
+  const names=Array.from({length:101},(_,i)=>'quux'+i),update=record(names.join(' ')+' tevi'),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(names),type_sweep:inventory([])},call=keywordProductionCheckerCall(update,chunk,values);
+  expect(data(call)).toEqual({content:update.content,candidates:names.map((name,candidateIndex)=>({candidateIndex,name}))});expect(call.model).toBe(KEYWORD_PRODUCTION_CHECKER_MODEL);expect(call.request.maxOutputTokens).toBe(2000);
+  expect(call.request.schema).toMatchObject({required:['readComplete','verdicts','missingNames'],properties:{verdicts:{minItems:101,maxItems:101,items:{minItems:3,maxItems:3,items:{type:'integer',minimum:0,maximum:100}}}}});
+  expect(call.request.prompt).toContain('KIND_IDS={"0":"brand","1":"organization","2":"product"');expect(call.request.prompt).toContain('DISPOSITION_IDS={"0":"accepted","1":"review","2":"rejected"');
+  expect(call.request.prompt).not.toContain('Return exactly ONE decisions row');expect(call.request.prompt).not.toContain('Return only name, disposition and kind in every decision');
+  const raw={readComplete:true,verdicts:names.map((_,id)=>[id,2,0]).reverse(),missingNames:[{name:'tevi',kind:'person',disposition:'accepted'}]},saved=JSON.stringify(raw);
+  const result=finalizeKeywordProductionChunk(update,chunk,{...values,checker:raw}),output=mergeKeywordProductionChunks(update,[result]);
+  expect(result.checkerEncoding).toBe('numeric_tuples');expect(result.rows).toHaveLength(102);expect(JSON.stringify(raw)).toBe(saved);
+  expect(new Set(keywordProductionReaderFields(output).topics)).toEqual(new Set([...names,'tevi']));expect(output.evidence.chunks).toEqual([expect.objectContaining({candidateCount:101,checkerEncoding:'numeric_tuples'})]);
+ });
+ it('uses numeric tuples for a smaller union whose literal names are large in UTF-8',()=>{
+  const names=Array.from({length:40},(_,i)=>'شركةالمنتجاتالمتقدمةطويلةالاسمالصريح'+i),update=record(names.join(' ')),chunk=planKeywordProductionChunks(update)[0],call=keywordProductionCheckerCall(update,chunk,{direct:inventory(names),type_sweep:inventory([])});
+  expect(data(call).candidates).toEqual(names.map((name,candidateIndex)=>({candidateIndex,name})));expect(new TextEncoder().encode(names.join('')).length).toBeGreaterThan(2200);expect(call.request.schema).toHaveProperty('properties.verdicts.minItems',40);
+ });
+ it.each([
+  ['missing row',(rows:number[][])=>rows.slice(1),'checker_incomplete'],
+  ['duplicate ID',(rows:number[][])=>rows.map((row,i)=>i===1?[0,row[1],row[2]]:row),'checker_candidate_decisions_incomplete'],
+  ['out-of-range ID',(rows:number[][])=>rows.map((row,i)=>i===1?[101,row[1],row[2]]:row),'checker_invalid_decision'],
+  ['out-of-range kind',(rows:number[][])=>rows.map((row,i)=>i===1?[row[0],24,row[2]]:row),'checker_invalid_decision'],
+  ['out-of-range disposition',(rows:number[][])=>rows.map((row,i)=>i===1?[row[0],row[1],3]:row),'checker_invalid_decision'],
+  ['fractional ID',(rows:number[][])=>rows.map((row,i)=>i===1?[1.5,row[1],row[2]]:row),'checker_invalid_decision'],
+  ['short tuple',(rows:number[][])=>rows.map((row,i)=>i===1?row.slice(1):row),'checker_invalid_decision'],
+ ] as const)('refuses a compact checker %s without partial acceptance',(_label,change,error)=>{
+  const names=Array.from({length:101},(_,i)=>'quux'+i),update=record(names.join(' ')),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(names),type_sweep:inventory([])};
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{readComplete:true,verdicts:change(names.map((_,id)=>[id,2,0])),missingNames:[]}})).toThrow(error);
+ });
+ it('preserves explicit parent brands but retains fragment and source-evidence guards',()=>{
+  const update=record('NZXT e850 and Bas M Pro.'),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(['NZXT','NZXT e850','Bas M','Bas M Pro','MissingBrand']),type_sweep:inventory([])},call=keywordProductionCheckerCall(update,chunk,values);
+  const result=finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(call,{NZXT:'brand','NZXT e850':'product','Bas M':'product','Bas M Pro':'product',MissingBrand:'brand'})});
+  expect(result.rows).toContainEqual(expect.objectContaining({name:'NZXT',disposition:'accepted',kind:'brand'}));expect(result.rows).toContainEqual(expect.objectContaining({name:'Bas M',disposition:'rejected',kind:'product'}));
+  expect(result.rows).toContainEqual(expect.objectContaining({name:'MissingBrand',disposition:'review',hostReviewReason:'literal_name_not_in_source'}));
+  expect(result.boundaryChanges).toContainEqual(expect.objectContaining({name:'NZXT',code:'only_prefix_of_longer_accepted_name',guardTo:'rejected',to:'accepted',overriddenBy:'explicit_parent_brand'}));
+  const fields=keywordProductionReaderFields(mergeKeywordProductionChunks(update,[result]));expect(fields.topics).toContain('NZXT');expect(fields.topics).toContain('NZXT e850');expect(fields.topics).not.toContain('Bas M');expect(fields.topics).not.toContain('MissingBrand');
+ });
  it('retains all private kinds and unresolved names while exposing only accepted labels and host timing',()=>{
   const update=record('Tevi saw AeroBox. Perhaps Cedar address is a joke.'),result=mergeKeywordProductionChunks(update,[chunkResult(update,0,{Tevi:'person',AeroBox:'brand'},{'Cedar address':'named_mention'})]);
   expect(result.state).toBe('review');expect(result.pending).toHaveLength(1);
@@ -78,6 +117,13 @@ describe('production named-mention core',()=>{
   expect(result.evidence.unmatchedReview).toEqual([expect.objectContaining({label:'Aero Box',disposition:'review',reason:'literal_name_not_in_source'})]);
   expect(keywordProductionReaderFields(result).topics).toEqual(['AeroBox']);
  });
+ it('does not let rejected absent capitalization variants demote genuine accepted literal names',()=>{
+  const update=record('ethernet and magic mouse.'),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(['ethernet','Ethernet','magic mouse','Magic Mouse']),type_sweep:inventory([])},call=keywordProductionCheckerCall(update,chunk,values);
+  const output=mergeKeywordProductionChunks(update,[finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(call,{'ethernet':'standard','magic mouse':'product'})})]);
+  expect(output.state).toBe('ready');expect(output.pending).toEqual([]);expect(keywordProductionReaderFields(output).topics).toEqual(['ethernet','magic mouse']);
+  expect(output.evidence.rejected).toContainEqual(expect.objectContaining({label:'Ethernet',disposition:'rejected'}));
+  expect((output.evidence.accepted as Array<{literalForms:Array<{label:string}>}>).flatMap(row=>row.literalForms.map(form=>form.label))).toEqual(['ethernet','magic mouse']);
+ });
  it('maps a rendered multiword name back to exact newline-bearing source evidence and cue times',()=>{
   const update={...record('Tevi tried Google\r\n  Home, then AeroBox.'),transcriptSegments:[{text:'Tevi tried Google',startSeconds:10,durationSeconds:2},{text:'Home, then AeroBox.',startSeconds:12,durationSeconds:3}]};
   const chunk=planKeywordProductionChunks(update)[0],extraction=keywordProductionExtractionCalls(update,chunk)[0];
@@ -87,11 +133,26 @@ describe('production named-mention core',()=>{
   expect(accepted).toMatchObject({label:'Google Home',evidenceQuote:'Google\r\n  Home',mention:'Google\r\n  Home',start:11,end:25,ranges:[{startSeconds:10,endSeconds:15}],seconds:5});
   expect(update.content!.slice(accepted.start as number,accepted.end as number)).toBe(accepted.evidenceQuote);
  });
+ it('keeps an audited ambiguous name without attributing ordinary word uses to discussion time',()=>{
+  const update={...record('May be fine. Stop, May.'),transcriptSegments:[{text:'May be fine.',startSeconds:1,durationSeconds:2},{text:'Stop, May.',startSeconds:3,durationSeconds:2}]};
+  const original=mergeKeywordProductionChunks(update,[chunkResult(update,0,{May:'person'})]),result=applyKeywordProductionTimingReviews(update,original,[{name:'May',evidenceQuote:'Stop, May.'}]);
+  expect(keywordProductionReaderFields(result).videoKeywords).toEqual([{label:'May',ranges:[]}]);
+  expect(result.evidence.accepted).toContainEqual(expect.objectContaining({label:'May',evidenceQuote:'Stop, May.',start:19,end:22,timingStatus:'withheld_ambiguous_word_uses'}));
+  expect(original.evidence.accepted).not.toEqual(result.evidence.accepted);
+  expect(()=>applyKeywordProductionTimingReviews(update,original,[{name:'May',evidenceQuote:'Invented context, May.'}])).toThrow('keyword_production_unsupported_timing_review');
+ });
  it('covers long source tails and surrogate pairs with a complete overlap longer than a legal name',()=>{
   const content='x'.repeat(11999)+'🎥'+' long material '.repeat(1000)+'FinalName',update=record(content),chunks=planKeywordProductionChunks(update);
   expect(chunks.length).toBeGreaterThan(1);expect(chunks[0].start).toBe(0);expect(chunks.at(-1)!.end).toBe(content.length);
   let through=0;for(const chunk of chunks){expect(chunk.start).toBeLessThanOrEqual(through);expect(chunk.end-chunk.start).toBeLessThanOrEqual(12000);expect(chunk.content).toBe(content.slice(chunk.start,chunk.end));expect(chunk.content).not.toMatch(/^[\uDC00-\uDFFF]|[\uD800-\uDBFF]$/u);through=chunk.end;}
   expect(chunks.at(-1)!.content.endsWith('FinalName')).toBe(true);expect(chunks[0].end-chunks[1].start).toBeGreaterThanOrEqual(200);
+ });
+ it('keeps long multilingual chunks inside their byte budget without cutting the source or changing short whole-source tests',()=>{
+  const short=record('ع'.repeat(9000));expect(planKeywordProductionChunks(short)).toHaveLength(1);
+  const content='ع'.repeat(14000)+' LastName',chunks=planKeywordProductionChunks(record(content));
+  expect(chunks[0].start).toBe(0);expect(chunks.at(-1)!.end).toBe(content.length);
+  let end=0;for(const chunk of chunks){expect(chunk.start).toBeLessThanOrEqual(end);expect(new TextEncoder().encode(chunk.content).length).toBeLessThanOrEqual(12000);end=chunk.end;}
+  expect(chunks.at(-1)!.content.endsWith('LastName')).toBe(true);
  });
  it('merges all source chunks and makes type/disposition disagreements private',()=>{
   const update=record('AeroBox '+ 'filler '.repeat(1800)+' AeroBox NovaPay.'),chunks=planKeywordProductionChunks(update);

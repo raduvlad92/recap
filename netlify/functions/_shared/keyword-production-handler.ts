@@ -5,7 +5,7 @@ import { analysisExecutionIdentity, analysisLimits, AnalysisError, type Generati
 import { analysisRuntimeEnv } from './content-analysis-runtime';
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
 import type { SourceUpdate } from '../../../src/lib/types';
-import { KEYWORD_PRODUCTION_CONTRACT_HASH, planKeywordProductionChunks, keywordProductionExtractionCalls, keywordProductionCheckerCall, finalizeKeywordProductionChunk, mergeKeywordProductionChunks, type KeywordProductionCall } from './keyword-production';
+import { KEYWORD_PRODUCTION_CONTRACT_HASH, KEYWORD_PRODUCTION_GENERATION_HASH, planKeywordProductionChunks, keywordProductionExtractionCalls, keywordProductionCheckerCall, finalizeKeywordProductionChunk, mergeKeywordProductionChunks, applyKeywordProductionTimingReviews, type KeywordProductionCall } from './keyword-production';
 
 type DB=ReturnType<typeof database>;
 type Row=Record<string,any>;
@@ -29,7 +29,7 @@ interface Stored {requests:Map<string,Row>;charges:Map<string,Row>}
 /** Request plans are server-authored. The client chooses only an admitted
  * source/chunk, never a prompt, model, output, accepted label or price. */
 export function bindKeywordProductionCall(sessionId:string,ordinal:number,sourceHash:string,call:KeywordProductionCall) {
- const key='keyword-learning:v1:'+hash(stable({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,sessionId,ordinal,sourceHash,chunkIndex:call.chunkIndex,step:call.step,model:call.model,request:call.request}));
+ const key='keyword-learning:v1:'+hash(stable({contractHash:KEYWORD_PRODUCTION_GENERATION_HASH,sessionId,ordinal,sourceHash,chunkIndex:call.chunkIndex,step:call.step,model:call.model,request:call.request}));
  return {action:'generate',sessionId,sourceOrdinal:ordinal,sourceHash,model:call.model,originalKey:call.request.key,request:{...call.request,key}};
 }
 async function contextFor(db:DB,sessionId:string,ordinal:number):Promise<Context> {
@@ -99,7 +99,7 @@ export function createKeywordProductionHandler(overrides:Partial<Dependencies>={
     receipts.push(direct.receipt,typed.receipt,checked.receipt);
     results.push(finalizeKeywordProductionChunk(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value,checker:checked.value}));
    }
-   const output=mergeKeywordProductionChunks(ctx.update,results),outputHash=hash(stable(output));
+   const output=applyKeywordProductionTimingReviews(ctx.update,mergeKeywordProductionChunks(ctx.update,results),ctx.slot.timingReviews),outputHash=hash(stable(output));
    if(input.action==='preview')return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,outputHash,output,calls:receipts});
    if(input.expectedOutputHash!==outputHash)return fail('keyword_production_reviewed_output_changed');
    const receipt=unwrap(await db.rpc('publish_keyword_production_result',{p_session_id:input.sessionId,p_source_ordinal:input.sourceOrdinal,p_contract_hash:KEYWORD_PRODUCTION_CONTRACT_HASH,p_calls:receipts,p_output:output}));
