@@ -149,4 +149,43 @@ describe.skipIf(!available)('closed-origin keyword recovery, disposable PostgreS
  it('denies anonymous and authenticated access to every recovery helper and RPC',()=>{
   for(const role of ['anon','authenticated'])for(const name of ['keyword_recovery_origin_receipts(uuid,integer,jsonb)','seal_keyword_recovery_plan(uuid,integer,jsonb,text,jsonb)','enforce_keyword_recovery_request()','publish_keyword_recovery_result(uuid,integer,text,jsonb,jsonb)'])expect(sql(`select has_function_privilege(${q(role)},${q('public.'+name)},'execute');`)).toBe('f');
  });
+ it('keeps normalization guards and function privileges exact and refuses migration drift',()=>{
+  const signature='public.publish_keyword_recovery_result(uuid,integer,text,jsonb,jsonb)',definition=sql(`select pg_get_functiondef(${q(signature)}::regprocedure);`);
+  expect(definition).toContain('normalized_content:=lower(regexp_replace(');expect(definition).toContain("strpos(normalized_content,lower(candidate->>'label'))=0");
+  expect(definition.match(/normalized_content:=/g)).toHaveLength(1);expect(sql(`select prosecdef from pg_proc where oid=${q(signature)}::regprocedure;`)).toBe('f');
+  expect(sql(`select has_function_privilege('service_role',${q(signature)},'execute');`)).toBe('t');
+  const migration=readFileSync(new URL('../supabase/migrations/20261028130000_keyword_recovery_source_cache.sql',import.meta.url),'utf8');
+  expect(()=>sql(migration)).toThrow();expect(sql(`select pg_get_functiondef(${q(signature)}::regprocedure);`)).toBe(definition);
+  seal();release();const out=output();out.evidence.accepted[0].label='Absent Source Name';pin(out);const before=record();
+  expect(()=>publish(out)).toThrow();expect(record()).toEqual(before);expect(json(`select count(*)::integer from public.keyword_production_publications where session_id=${q(sid)};`)).toBe(0);
+ });
+ it('publishes629 accepted and10 pending labels from232k source under the same eight-second transaction limit',()=>{
+  const acceptedNames=Array.from({length:629},(_,i)=>'Cache Fixture '+String(i).padStart(4,'0')),pendingNames=Array.from({length:10},(_,i)=>'Private Fixture '+i),filler='Ordinary source fixture line.\n';
+  let denseContent=content+'\n'+[...acceptedNames,...pendingNames].map(name=>name+'\n'+filler.repeat(10)).join('');denseContent=(denseContent+filler.repeat(9000)).slice(0,232555);
+  expect([...acceptedNames,...pendingNames].every(name=>denseContent.includes(name))).toBe(true);
+  const denseHash=createHash('sha256').update(denseContent).digest('hex'),denseRecord={...baseRecord,content:denseContent,transcriptSegments:[{text:denseContent,startSeconds:0,durationSeconds:10}],keywordContentHash:denseHash};
+  const out=output();out.evidence.contentHash=denseHash;out.evidence.coverage=[{start:0,end:denseContent.length}];out.evidence.accepted=acceptedNames.map(name=>({...row(name),ranges:[]}));out.pending=pendingNames.map(name=>({...row(name,'category'),confidence:0,ranges:[]}));
+  sql(`update public.reader_source_updates set record=${j(denseRecord)} where user_id=${q(owner)} and id='recover-video';
+   update public.keyword_learning_sessions set sources=jsonb_set(sources,'{0,sourceHash}',to_jsonb(${q(denseHash)}::text)) where id in (${q(origin)},${q(sid)});
+   update public.keyword_production_releases r set sources=jsonb_set(sources,'{0}',sources->0||jsonb_build_object('sourceHash',${q(denseHash)},'sourceRevision',public.content_analysis_source_revision(a.record),'sourceFingerprint',public.content_analysis_source_fingerprint(w.state,a.source_id),'keywordSnapshotHash',public.keyword_production_snapshot(a.record)))
+    from public.reader_source_updates a join public.reader_workspaces w using(user_id) where r.session_id in (${q(origin)},${q(sid)}) and a.user_id=${q(owner)} and a.id='recover-video';`);
+  // Monetary source bindings are immutable: create separate synthetic receipts
+  // for this dense source instead of changing the earlier fixture charges.
+  calls=['direct','typed','checker'].map((role,index)=>{
+   const model=role==='checker'?sol:ds,requestHash=['a','b','c'][index].repeat(64),key='keyword-learning:v1:dense-source-fixture-'+role;
+   const id=sql(`insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,state,actual_usd,request_hash,execution_identity) values(${q(owner)},${q(key)},gen_random_uuid(),${q(model)},${q(denseHash)},.1,'settled',.001,${q(requestHash)},${j(identity(model))}) returning id;`);
+   sql(`insert into public.keyword_learning_requests(session_id,call_key,source_ordinal,source_hash,request_hash,request_payload,call_id,result,completed,completed_at) values(${q(origin)},${q(key)},1,${q(denseHash)},${q(requestHash)},${j({request:{key}})},${q(id)},${j({value:{names:acceptedNames},actualUsd:.001,providerId:'fixture-dense-source',executionIdentity:identity(model)})},true,clock_timestamp());`);
+   return{chunkIndex:0,role,callId:id,requestHash};
+  }).sort((a,b)=>a.role.localeCompare(b.role));
+  seal();release();pin(out);const before=record();
+  const original=readFileSync(new URL('../supabase/migrations/20261028024500_keyword_recovery.sql',import.meta.url),'utf8'),start=original.indexOf('create function public.publish_keyword_recovery_result('),end=original.indexOf('\n$$;',start)+4;
+  expect(start).toBeGreaterThan(0);expect(end).toBeGreaterThan(start);const uncached=original.slice(start,end).replace('create function ','create or replace function ');
+  let oldTimedOut=false;const oldStarted=performance.now();
+  try{sql(`begin;${uncached}\nset local statement_timeout='8s';set local role service_role;${publishQuery(out)}rollback;`);}
+  catch(error){expect(String((error as any).stderr)).toContain('canceling statement due to statement timeout');oldTimedOut=true;}
+  const oldElapsedMs=performance.now()-oldStarted;expect(record()).toEqual(before);expect(json(`select count(*)::integer from public.keyword_production_publications where session_id=${q(sid)};`)).toBe(0);
+  const newStarted=performance.now(),raw=sql(`begin;set local statement_timeout='8s';set local role service_role;${publishQuery(out)}rollback;`),newElapsedMs=performance.now()-newStarted,receipt=JSON.parse(raw);
+  expect(receipt.published).toBe(true);expect(receipt.replayed).toBe(false);expect(record()).toEqual(before);expect(json(`select count(*)::integer from public.keyword_production_publications where session_id=${q(sid)};`)).toBe(0);
+  console.info(JSON.stringify({fixture:'native629accepted10pending232555characters',statementTimeoutMs:8000,oldTimedOut,oldElapsedMs:Math.round(oldElapsedMs),cachedElapsedMs:Math.round(newElapsedMs)}));
+ },25000);
 });
