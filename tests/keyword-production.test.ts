@@ -7,7 +7,7 @@ import frozen from '../docs/tech/keyword-autonomous-prompts-2026-10-27.json';
 import {createKeywordProductionOccurrenceFinder} from '../netlify/functions/_shared/keyword-production-occurrences';
 // @ts-expect-error Compare source/timing behavior to the unchanged evaluated helper.
 import {findLiteralNameOccurrences} from '../scripts/lib/keyword-learning.mjs';
-import {analyzeProductionKeywords,KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL,
+import {analyzeProductionKeywords,KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_LITERAL_CORE_SHA256,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL,
  planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,finalizeKeywordProductionChunk,
  mergeKeywordProductionChunks,keywordProductionReaderFields,type KeywordProductionCall,type KeywordProductionChunkResult} from '../netlify/functions/_shared/keyword-production';
 
@@ -29,10 +29,12 @@ describe('production named-mention core',()=>{
    ['AeroBox supports C and C++ v1.2. AeroBox repeats.',[{text:'AeroBox supports C and C++ v1.2.',startSeconds:1,durationSeconds:4},{text:'AeroBox repeats.',startSeconds:5,durationSeconds:2}]],
    ['AeroBox repeats. AeroBox repeats.',[{text:'AeroBox repeats.',startSeconds:1,durationSeconds:4}]],
    ['Missing intro. AeroBox is present. Missing tail.',[{text:'AeroBox is present.',startSeconds:7,durationSeconds:3}]],
+   [' \t\nAeroBox\t \n', [{text:'AeroBox',startSeconds:10,durationSeconds:2}]],
   ] as const){
    const cues=[...segments].map(s=>({...s})),find=createKeywordProductionOccurrenceFinder(content,cues);
    for(const name of ['AeroBox','C','C++','v1','v1.2'])expect(find(name)).toEqual(findLiteralNameOccurrences(content,name,cues));
   }
+  expect(findLiteralNameOccurrences(' \nAeroBox\t','AeroBox',[{text:'AeroBox',startSeconds:10,durationSeconds:2}])).toEqual([{start:2,end:9,quote:'AeroBox',ranges:[{startSeconds:10,endSeconds:12}]}]);
  });
  it('cannot alter a cached coverage plan through a returned chunk object or a later source edit',()=>{
   const update=record('AeroBox'),chunk=planKeywordProductionChunks(update)[0];chunk.end=2;chunk.content='Ae';
@@ -40,7 +42,7 @@ describe('production named-mention core',()=>{
   expect(planKeywordProductionChunks(update)[0].content).toBe('AeroBox');update.content='NovaPay';expect(planKeywordProductionChunks(update)[0].content).toBe('NovaPay');
  });
  it('keeps the measured shared modules and exact frozen prompts for a complete short source',()=>{
-  for(const [file,expected] of [['scripts/lib/keyword-learning-prompts.mjs',frozen.promptModuleSha256],['scripts/lib/keyword-learning.mjs',frozen.coreModuleSha256]])expect(createHash('sha256').update(readFileSync(file)).digest('hex')).toBe(expected);
+  for(const [file,expected] of [['scripts/lib/keyword-learning-prompts.mjs',frozen.promptModuleSha256],['scripts/lib/keyword-learning.mjs',KEYWORD_PRODUCTION_LITERAL_CORE_SHA256]])expect(createHash('sha256').update(readFileSync(file)).digest('hex')).toBe(expected);
   const update=record('AeroBox'),chunk=planKeywordProductionChunks(update)[0],calls=keywordProductionExtractionCalls(update,chunk);
   expect(calls[0].request.prompt).toBe(frozen.extractorPromptTemplate.replace('[UNTRUSTED_SAVED_TRANSCRIPT]','AeroBox'));
   const check=keywordProductionCheckerCall(update,chunk,{direct:inventory(['AeroBox']),type_sweep:inventory([])});

@@ -12,6 +12,7 @@ import type { AnalysisOutput } from './content-analysis-engine';
 import { createKeywordProductionOccurrenceFinder } from './keyword-production-occurrences';
 
 export const KEYWORD_PRODUCTION_VERSION = 'named-mentions-v1';
+export const KEYWORD_PRODUCTION_LITERAL_CORE_SHA256 = 'a9bdf8b461615cb1d7e2a28f7e2afad8922449e2c9580eb7919119c0c062d5fd';
 export const KEYWORD_PRODUCTION_EXTRACTOR_MODEL = 'deepseek/deepseek-v4.1-flash-1017';
 export const KEYWORD_PRODUCTION_CHECKER_MODEL = 'openai/gpt-6.1-sol-pro';
 export const KEYWORD_PRODUCTION_CHUNK_CHARS = 12_000;
@@ -26,7 +27,8 @@ const MAX_PROMPT_CHARS = 100_000;
 export const KEYWORD_PRODUCTION_CONTRACT_HASH = contentHash(JSON.stringify({
  version: KEYWORD_PRODUCTION_VERSION,
  promptModuleSha256: frozen.promptModuleSha256,
- coreModuleSha256: frozen.coreModuleSha256,
+ evaluatedCoreModuleSha256: frozen.coreModuleSha256,
+ coreModuleSha256: KEYWORD_PRODUCTION_LITERAL_CORE_SHA256,
  extractorModel: KEYWORD_PRODUCTION_EXTRACTOR_MODEL,
  checkerModel: KEYWORD_PRODUCTION_CHECKER_MODEL,
  extractorLessons: frozen.extractorLessons,

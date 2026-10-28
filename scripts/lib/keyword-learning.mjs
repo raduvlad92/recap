@@ -23,17 +23,17 @@ export function validateLiteralInventory(output, { maxNames = 500 } = {}) {
 }
 
 function normalizedOffsets(text) {
-  let normalized = '';
+  const normalized = [];
   const starts = [], ends = [];
   for (let i = 0; i < text.length; i++) {
     if (/\s/u.test(text[i])) {
-      if (!normalized) continue;
-      if (normalized.endsWith(' ')) { ends[ends.length - 1] = i + 1; continue; }
-      normalized += ' '; starts.push(i); ends.push(i + 1);
-    } else { normalized += text[i]; starts.push(i); ends.push(i + 1); }
+      if (!normalized.length) continue;
+      if (normalized.at(-1) === ' ') { ends[ends.length - 1] = i + 1; continue; }
+      normalized.push(' '); starts.push(i); ends.push(i + 1);
+    } else { normalized.push(text[i]); starts.push(i); ends.push(i + 1); }
   }
-  if (normalized.endsWith(' ')) { normalized = normalized.slice(0, -1); starts.pop(); ends.pop(); }
-  return { text: normalized, starts, ends };
+  if (normalized.at(-1) === ' ') { normalized.pop(); starts.pop(); ends.pop(); }
+  return { text: normalized.join(''), starts, ends };
 }
 
 /** Full concatenated cue alignment is unambiguous, including repeated words.

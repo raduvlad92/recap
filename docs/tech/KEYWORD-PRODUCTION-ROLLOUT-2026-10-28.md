@@ -15,4 +15,6 @@ The founder approved connecting the tested keyword process to the live app, prov
 
 The new server core replays the seven saved successful outputs without additional model spending. All seven retain a Good result on the same audited reference. This is saved-response compatibility proof, not fresh production publication.
 
+The complete local check passes 2,990 tests, typecheck, build and catalogue reproduction. Two further cue-index regressions and the focused core/handler checks pass. Long-source fixture capacity checks prompted a small whitespace-index optimization; it preserves the original frozen prompt artifact and explicitly pins the optimized implementation hash in the production contract. Large private proof payloads contain compact source evidence and links to durable raw calls, rather than duplicating all paid responses.
+
 Implementation and live verification are in progress. The final costs, deployment, per-video results, preservation checks and remaining limitations will be recorded here before closeout. Saved captures remain partial/unverified against complete original videos; assistant references are not exhaustive human gold.
