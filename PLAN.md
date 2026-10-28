@@ -1,6 +1,8 @@
 # Tracked implementation and validation plan
 
-**28 October — six keyword holds resolved; all twenty published.** All twenty closed-session reader API reloads match, with 1,617 labels. The bounded recovery costs US$0.418440300; cumulative commitment is US$8.124935724 including US$0.125827191 historical holds. [Final recovery proof](docs/tech/KEYWORD-SIX-RECOVERY-2026-10-28.md). Broader analysis remains Off.
+**28 October — five fresh unclassified-video checks completed.** The existing process produced five private inventories for US$0.188830006; no publication or code/prompt change. Saved-response/native replay confirms an Arabic name-anchoring loss; a quoted dashboard mode is also missed. Keep false reference flags separate from actual defects. [Full check](docs/tech/KEYWORD-UNCLASSIFIED-CHECK-2026-10-28.md). Current commitment US$8.313765730, remaining US$1.686234270; broad generation stays Off.
+
+**Earlier 28 October — six keyword holds resolved; all twenty published.** All twenty closed-session reader API reloads match, with 1,617 labels. The bounded recovery costs US$0.418440300; cumulative commitment is US$8.124935724 including US$0.125827191 historical holds. [Final recovery proof](docs/tech/KEYWORD-SIX-RECOVERY-2026-10-28.md). Broader analysis remains Off.
 
 Version: **1.1 — APPROVAL CANDIDATE**. Updated: 27 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
 
@@ -10,7 +12,7 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 Read the [current handoff](docs/tech/SESSION-HANDOFF-2026-10-28.md). The six held inventories are recovered and published; preserve all twenty publications, raw failed attempts, reference versions and seven old holds. No further grading or paid call is needed to finish this recovery.
 
-Review reported provider charges and the remaining US$1.875064276 before proposing another batch. Keep US$10 cumulative / US$5 daily / US$0.10 per call and all disabled generation controls. A broader run needs evidence from unseen sources; the present assistant-reviewed, post-generation references over partial captures are not a general accuracy or customer-launch proof. No recap/backfill activation follows automatically.
+The founder subsequently directed the fresh test to existing unclassified videos; that five-video check is complete. First repair the confirmed Arabic anchoring loss from saved paid responses without rebilling, align the reference with the frozen currency/geography/alias rules, then test general quoted-setting/base-name checking. Preserve the first scores and the twenty published inventories. Review provider charges and the remaining US$1.686234270 before any further paid batch. Keep US$10 cumulative / US$5 daily / US$0.10 per call and disabled general generation. Partial captures and assistant references remain a limited quality proof. No recap/backfill activation follows automatically.
 
 ## Previous checkpoint — autonomous loop on 27 October
 

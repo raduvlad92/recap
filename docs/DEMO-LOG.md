@@ -1,5 +1,13 @@
 # Demo and evidence log
 
+## 28 October 2026 — five fresh unclassified-video keyword checks
+
+Founder-directed selection from the existing backlog: five full regular-video transcripts with no earlier keyword-learning admission or model charge. The unchanged hosted process returns five private inventories, 183 accepted entries and six review entries. All 15 actual calls settle for US$0.188830006; no new hold or publication. The original pre-generation-reference scores are 9.2/9.5/8.4/9.1/9.5, all strict-held; independent source audits identify false gold/policy flags and retain the original results rather than claiming final accuracy.
+
+Actual saved-response proof shows both extractors and the checker retain an Arabic name that the host subsequently discards at an attached conjunction. A quoted dashboard label is missed by all model stages. Separate base names and unclear ad tokens also need attention; complete game names and a city/state label must not be reported wholly lost. All 189 returned entries receive source audits. No transcripts, private account identifiers or raw inventories are committed.
+
+Five offline host replays and all 15 native request/result/hash/charge bindings match. The atomic native capture verifies 510 archive rows, 713 old calls, seven old holds, 431 jobs, 136 reviews and three workspaces exact. All finite sessions/releases close; plan/preflight return403 and saved-read returns200. General generation is Off; DeepSeek revision18 is unchanged; the twenty published inventories remain. No code/prompt change, new application deployment or new browser/mobile proof. [Report](tech/KEYWORD-UNCLASSIFIED-CHECK-2026-10-28.md), [sanitized evidence](tech/evidence/keyword-unclassified-check-2026-10-28.json).
+
 ## 28 October 2026 — all six keyword recoveries published and verified
 
 Type: actual bounded model corrections, explicit post-generation source/reference adjudication, hosted publication, closed-session API persistence, native preservation and release checks. All six held sources are published; all twenty reader reloads match their saved fields and receipt IDs, with 1,617 public labels. The six scores are 9.8/9.8/9.9/9.8/9.8/9.8 in ordinal order 4/9/14/16/17/19. This is not a new browser/mobile proof, a blind benchmark or proof of complete original captures. [Report](tech/KEYWORD-SIX-RECOVERY-2026-10-28.md), [sanitized evidence](tech/evidence/keyword-six-recovery-2026-10-28.json).

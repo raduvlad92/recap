@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-28T21:11:31.743567+00:00",
+  "kind": "fresh-unclassified-saved-transcript-keyword-check",
+  "status": "check_complete_wider_automation_hold",
+  "generationPromptChanged": false,
+  "applicationCodeChanged": false,
+  "newPublicationCount": 0,
+  "currentReaderInventoryCount": 20,
+  "sourceSelection": {
+    "nativeArchiveCount": 510,
+    "eligiblePreviouslyUnadmittedRegularTranscriptsAtLeast1500Characters": 152,
+    "selected": 5,
+    "distinctChannels": 5,
+    "originalVideosVerifiedComplete": false,
+    "previousChargeOrKeywordLearningAdmissionForSelectedSourceOrHash": false,
+    "shortsAndUnknownFormatsExcluded": true,
+    "fullSavedTranscriptsUsedWithoutTruncation": true
+  },
+  "contractHash": "c351617bee0b51483997dd73d7f76498cdf3c54037fdf89197d33fbd9770338d",
+  "generationHash": "e7ae78feabd396e9e774799697afd84c5795bc36667ab1208c20acd69c306323",
+  "reference": {
+    "preGenerationFileSha256": "a621fa2f9382100d307dc77f4057df66711eccf1c1c9c19405fbec9823a31b38",
+    "originalConfigUnchanged": true,
+    "humanGold": false,
+    "expectedAnswersInModelRequests": false,
+    "originalStrictPassed": 0,
+    "originalStrictHeld": 5,
+    "knownPostGenerationReferencePolicyIssuesDisclosed": true,
+    "originalScoresOverwritten": false,
+    "correctionOrNewModelTrialClaimed": false
+  },
+  "cases": [
+    {
+      "ordinal": 1,
+      "title": "iPhone Duo: What We Missed!",
+      "sourceHash": "20a0bc160a596204a0f4f4af38b6c707ae3e503d2a1d27970e1113725d2aafaa",
+      "completeSavedCharacters": 11075,
+      "chunkCount": 1,
+      "actualCalls": 3,
+      "acceptedInventoryEntries": 28,
+      "privateReviewEntries": 2,
+      "originalFrozenReferenceScore": 9.2,
+      "originalStrictGatePassed": false,
+      "originalScoreIsNotFinalModelAccuracy": true,
+      "actualUsd": "0.038419638",
+      "outputHash": "8bc2a6c5566263496a5732fce0c1317b44d008ffc6fe7fde935c2396113407a1",
+      "requestBindingsAndOfflineReplayExact": true
+    },
+    {
+      "ordinal": 2,
+      "title": "Finally Driving the New 911 Turbo S",
+      "sourceHash": "a72e9f34ebab4dc18d40b3f508a85a0d9e08b0a463722234c7c2c3ae29daf461",
+      "completeSavedCharacters": 10092,
+      "chunkCount": 1,
+      "actualCalls": 3,
+      "acceptedInventoryEntries": 31,
+      "privateReviewEntries": 0,
+      "originalFrozenReferenceScore": 9.5,
+      "originalStrictGatePassed": false,
+      "originalScoreIsNotFinalModelAccuracy": true,
+      "actualUsd": "0.03856021",
+      "outputHash": "4741f0ae5c3d61475961321e77fd0e7060b4fc1fcfea0bcc0d2b0a28086c8bd4",
+      "requestBindingsAndOfflineReplayExact": true
+    },
+    {
+      "ordinal": 3,
+      "title": "Small Team Efficiency | Behind-the-Scenes at Computex",
+      "sourceHash": "81efedf012ec95fa7d674bd2fbd80b8ac46bfe070ef996ca727a95707744b619",
+      "completeSavedCharacters": 5766,
+      "chunkCount": 1,
+      "actualCalls": 3,
+      "acceptedInventoryEntries": 8,
+      "privateReviewEntries": 3,
+      "originalFrozenReferenceScore": 8.4,
+      "originalStrictGatePassed": false,
+      "originalScoreIsNotFinalModelAccuracy": true,
+      "actualUsd": "0.023973518",
+      "outputHash": "fc44f20616166037efeaa2c825bdf4def0b61af40546b4d5e069cc38afd52163",
+      "requestBindingsAndOfflineReplayExact": true
+    },
+    {
+      "ordinal": 4,
+      "title": "Your Next Laptop's RAM will be Weird - CAMM2 and LPCAMM2 explained",
+      "sourceHash": "82f05a133b5c3db0e68ae58c9e41c937879aebaa21b4a5fdb32f04630eafd636",
+      "completeSavedCharacters": 5733,
+      "chunkCount": 1,
+      "actualCalls": 3,
+      "acceptedInventoryEntries": 29,
+      "privateReviewEntries": 0,
+      "originalFrozenReferenceScore": 9.1,
+      "originalStrictGatePassed": false,
+      "originalScoreIsNotFinalModelAccuracy": true,
+      "actualUsd": "0.043378318",
+      "outputHash": "2877315b78e8106d915286f687834bde5615c382dc59eccc4f93ee684cb506dd",
+      "requestBindingsAndOfflineReplayExact": true
+    },
+    {
+      "ordinal": 5,
+      "title": "Nintendo might be cooked too",
+      "sourceHash": "850c1d52ee1a67d27cea2876f5127ff13b2a893b2d5dbcf0c09ae3991bec71ef",
+      "completeSavedCharacters": 8319,
+      "chunkCount": 1,
+      "actualCalls": 3,
+      "acceptedInventoryEntries": 87,
+      "privateReviewEntries": 1,
+      "originalFrozenReferenceScore": 9.5,
+      "originalStrictGatePassed": false,
+      "originalScoreIsNotFinalModelAccuracy": true,
+      "actualUsd": "0.044498322",
+      "outputHash": "d98c10734b319a5de8645a40d2107968b9e7ab12cc14069a8ef9642bc03105ee",
+      "requestBindingsAndOfflineReplayExact": true
+    }
+  ],
+  "models": {
+    "deepseek/deepseek-v4.1-flash-1017": {
+      "calls": 10,
+      "actualUsd": "0.002363006"
+    },
+    "openai/gpt-6.1-sol-pro": {
+      "calls": 5,
+      "actualUsd": "0.1864670"
+    }
+  },
+  "finances": {
+    "reportedActualNewUsd": "0.188830006000",
+    "newCalls": 15,
+    "newUnresolved": 0,
+    "largestActualNewUsd": "0.043893700000",
+    "totalCalls": 728,
+    "totalSettledCalls": 721,
+    "totalUnresolvedCalls": 7,
+    "totalSettledUsd": "8.187938539000",
+    "unchangedHistoricalHoldsUsd": "0.125827191000",
+    "totalCommittedUsd": "8.313765730000",
+    "totalRemainingUsd": "1.686234270000",
+    "dayCommittedUsd": "3.934321781000",
+    "dayRemainingUsd": "1.065678219000"
+  },
+  "findings": [
+    {
+      "code": "arabic_conjunction_anchor_loss",
+      "stage": "host",
+      "ordinal": 2,
+      "bothExtractorsFoundName": true,
+      "checkerAcceptedName": true,
+      "finalHostDroppedName": true,
+      "sourceBareNameBoundaryMatches": 0,
+      "sourceConjunctionPrefixedMatches": 1,
+      "reproducedFromSavedActualResponses": true
+    },
+    {
+      "code": "quoted_dashboard_mode_missing",
+      "stage": "extractors_and_checker",
+      "ordinal": 2,
+      "noLiteralCandidateOrCheckerAddition": true
+    },
+    {
+      "code": "base_family_entries_not_separated",
+      "stage": "extraction_and_checker",
+      "ordinal": 5,
+      "completeGameAndTechnologyNamesRetained": true,
+      "separateBaseNamesMissing": 5
+    },
+    {
+      "code": "unclear_ad_token_accepted_as_brand",
+      "stage": "checker",
+      "ordinal": 4,
+      "literalSupportPresent": true,
+      "properNamedRoleUnresolved": true
+    }
+  ],
+  "referenceAudit": {
+    "auditFiles": [
+      {
+        "name": "result-audit-1-2.json",
+        "sha256": "b1df284cc7a89cfa5b33ae23da0a83984e5ce719b91f5a937767082567f20777"
+      },
+      {
+        "name": "result-audit-3-5.json",
+        "sha256": "eef13563b46e05e663b87f11e9d08427664a4be8ef6c4c1af367b312f1724ba4"
+      }
+    ],
+    "all189ReturnedInventoryEntriesReviewed": true,
+    "doNotTreatEveryOriginalFlagAsModelFailure": true,
+    "validAliasesMissingFromReference": true,
+    "currencyExclusionInFrozenCheckerConflictsWithReference": true,
+    "sourceBoundaryAndGenericModuleClassQuestionsRemain": true,
+    "placeNameRemainsInsideAcceptedCityStateLabel": true
+  },
+  "verification": {
+    "proofFileSha256": "6ca0c4c65b8f80d295185eac3189b54a49fa98ab97a1ae2681c8c8ebe1662f4f",
+    "atomicNativeCaptureAt": "2026-10-28T21:04:50.092936+00:00",
+    "allArchiveRowsExact": 510,
+    "oldCallsExact": 713,
+    "historicalHoldsExact": 7,
+    "oldJobsExact": 431,
+    "oldReviewsExact": 136,
+    "workspacesExact": 3,
+    "all15ActualRequestBodiesResultsHashesAndChargeBindingsMatchNativeRecords": true,
+    "all5HostOutputsExactlyReplayedFrom15PaidResponses": true,
+    "newUnresolved": 0,
+    "allSessionsAndReleasesClosed": true,
+    "globalAndOwnerGeneralGenerationOff": true,
+    "selectedDeepSeekRevision": 18,
+    "executingAIJobs": 0,
+    "preExistingQueuedJobsUnchanged": 271,
+    "independentHourlyChanges": {
+      "hourlyProviders": {
+        "changedRows": 12,
+        "changedFields": [
+          "last_reconciled_at"
+        ]
+      },
+      "hourlySources": {
+        "changedRows": 39,
+        "changedFields": [
+          "content_hash",
+          "cursor",
+          "last_checked_at",
+          "last_started_at",
+          "next_check_at"
+        ]
+      },
+      "supplierJobs": {
+        "changedRows": 1,
+        "changedFields": [
+          "updated_at"
+        ]
+      }
+    },
+    "newBrowserOrMobileProof": false,
+    "fullTestSuiteRerun": false,
+    "newApplicationDeployment": false,
+    "closedEndpointProof": {
+      "closedPlanStatus": 403,
+      "closedPreflightStatus": 403,
+      "savedReadStatus": 200,
+      "savedCallAndActualCostExact": true,
+      "providerCalls": 0
+    },
+    "sessionProofSha256": "bbe53134657b64ea2f2447e61576707e0b9d5526a91bd7b92e3a75378b6f2b47"
+  },
+  "limitations": [
+    "Original scores are against a pre-generation assistant reference that contains separately documented errors and policy mismatches; they are not final accuracy estimates.",
+    "All saved source captures remain partial/unverified against original videos. No audio or canonical-identity repair is inferred.",
+    "These are reported application-provider charges, not provider-invoice reconciliation or total agent/hosting cost."
+  ],
+  "privateEvidenceRoot": ".local/keyword-unclassified-20261028/"
+}

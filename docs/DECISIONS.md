@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 28 October 2026 — choose the fresh test from existing unclassified videos
+
+Founder: “just check from the unclassified videos”, responding to the request for fresh test links. Select five suitable existing regular saved transcripts autonomously, including every named mention and ads, under the unchanged US$10 total / US$5 UTC-day / US$0.10 call limits. This is a bounded private keyword evaluation, not a wider publication, recap or collection activation.
+
+Completed: five full saved transcripts, three extraction approaches and one checker role, 15 settled calls for US$0.188830006, no new unresolved charge. The source-only reference was frozen before generation. Original strict scores hold all five, but independent audits identify reference-policy mistakes; those scores are not final accuracy claims. A definite Arabic host anchoring defect and a missed quoted dashboard mode remain. No prompt/code change or new publication was made. All reader archives, old model calls and seven old holds are preserved; all sessions/releases close and general analysis remains Off. Cumulative commitment US$8.313765730; remaining US$1.686234270. [Evidence and next work](tech/KEYWORD-UNCLASSIFIED-CHECK-2026-10-28.md).
+
 ## 28 October 2026 — recover the six held keyword inventories
 
 Founder: “focus on the six failures and fix them.” This authorizes the bounded recovery and publication of ordinals 4/9/14/16/17/19, preserving the previous fourteen results and the existing US$10 total / US$5 daily / US$0.10 call limits. It does not start a wider backlog, recap run or new collection.

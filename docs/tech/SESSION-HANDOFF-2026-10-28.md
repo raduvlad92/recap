@@ -1,5 +1,17 @@
 # Session handoff — 28 October 2026
 
+## Latest — five existing unclassified videos checked
+
+The founder directed the fresh test to the saved unclassified backlog. **Five full regular-video transcripts were evaluated privately through the unchanged deployed process.** Fifteen new calls settle for **US$0.188830006**, no new hold; no new publication or code/prompt change. [Fresh results](KEYWORD-UNCLASSIFIED-CHECK-2026-10-28.md), [sanitized evidence](evidence/keyword-unclassified-check-2026-10-28.json).
+
+Confirmed: an Arabic name is found by both extractors and accepted by Sol, then discarded by the host because its source conjunction is attached. An explicitly quoted dashboard mode is omitted by both extractors and checker. Other flags include reference errors, currency/geography/generic-class policy mismatches and unresolved caption name boundaries. Original reference/config/scores remain frozen; do not describe all original flags as model mistakes or claim a corrected blind pass. Every returned inventory entry has an independent source audit.
+
+Current cumulative commitment **US$8.313765730**, including **US$0.125827191** in the same seven old holds; **US$1.686234270** total remains. UTC-day commitment US$3.934321781. Retain US$10 / US$5-day / US$0.10-call. All sessions/releases closed, general generation Off, DeepSeek revision18, zero executing/prepared AI jobs; the 271 older queued jobs are unchanged. Native proof preserves all 510 current archives, 713 old calls, 431 jobs, 136 reviews and three workspaces. All 15 actual request/result/hash/charge bindings and five saved-response host replays match. Private evidence: `.local/keyword-unclassified-20261028/`.
+
+Next: repair the Arabic anchoring loss using saved responses without rebilling; align reference policy without overwriting the first evaluation; then test a small general quoted-setting/base-name checker improvement. No further paid trial or wider roster starts automatically. The completed six-case recovery and twenty existing publications below remain intact; costs below are that earlier checkpoint.
+
+## Earlier — completed six-case recovery
+
 All six held keyword inventories are recovered and published. **All twenty saved videos now have reader keyword inventories, 1,617 labels, and exact closed-session API reloads.** No further model call or founder grading is needed to finish this recovery. [Detailed result](KEYWORD-SIX-RECOVERY-2026-10-28.md), [sanitized evidence](evidence/keyword-six-recovery-2026-10-28.json). The earlier [14/20 rollout](KEYWORD-PRODUCTION-ROLLOUT-2026-10-28.md) is historical.
 
 New work: aggregate 500→1,000 capacity without truncation, source-context/name-role corrections, one-level verified reuse of the saved long-source result followed by a two-target checker, and a publisher-only cache of its exact normalized source text. Per-chunk model capacity stays 500. Source 4 publishes 629 new machine-accepted labels plus ten protected pre-existing annotations; ten unresolved candidates stay private. Other recovered public counts: 9=237,14=15,16=79,17=49,19=131. Genuine contextual timing uncertainty remains untimed.
@@ -30,4 +42,4 @@ Never put private configs, credentials, owner/session/call IDs, source text or r
 
 ## Next action
 
-Review provider charges and the remaining allowance. Keep broader automation Off. A future wider rollout needs an explicitly bounded next roster and independent evidence from unseen sources; this recovery does not approve a customer launch, a recap rollout or uncapped recurring analysis.
+Review provider charges and the latest remaining allowance above. Keep broader automation Off. The fresh five-video check now supplies unseen-source evidence and identifies concrete remaining defects; address those before proposing another roster. Neither this recovery nor the fresh check approves a customer launch, recap rollout or uncapped recurring analysis.
