@@ -41,6 +41,7 @@ function normalizedOffsets(text) {
  * conflicting reused cue spans lose timing rather than borrowing another time. */
 function alignedCues(content, segments) {
   if (!Array.isArray(segments)) throw fail('invalid_keyword_cues');
+  if (segments.length === 0) return [];
   const original = normalizedOffsets(content);
   const rows = segments.filter(cue => isObject(cue) && typeof cue.text === 'string' && cue.text.trim())
     .map(cue => ({ cue, normalized: normalizedOffsets(cue.text).text }));
@@ -315,7 +316,7 @@ export function scoreKeywordInventory({ content, rows, reference, deliveryStatus
       if (identityClaimCorrect && disposition === 'accepted' && identity.disposition === 'accepted') acceptedIds.add(id);
     }
     if (grounded && !identity) unexpected.push({ name, disposition, reason: 'reference_audit_required' });
-    if (disposition === 'accepted' && (!grounded || !identity || !identityClaimCorrect)) unsupportedAccepted.push(name);
+    if (disposition === 'accepted' && (!grounded || !identity || !identityClaimCorrect || identity.disposition === 'review')) unsupportedAccepted.push(name);
     diagnostics.push({ name, disposition, grounded, referenceIdentityId: id ?? null,
       eligible: eligiblePrediction, identityCorrect: identityClaimCorrect && typeCorrect,
       kindProvided: typeof input?.kind === 'string', duplicate });

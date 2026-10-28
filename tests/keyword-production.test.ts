@@ -94,13 +94,24 @@ describe('production named-mention core',()=>{
   const names=Array.from({length:101},(_,i)=>'quux'+i),update=record(names.join(' ')),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(names),type_sweep:inventory([])};
   expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{readComplete:true,verdicts:change(names.map((_,id)=>[id,2,0])),missingNames:[]}})).toThrow(error);
  });
- it('preserves explicit parent brands but retains fragment and source-evidence guards',()=>{
+ it('preserves checked parent names while keeping checker uncertainty and source absence private',()=>{
   const update=record('NZXT e850 and Bas M Pro.'),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(['NZXT','NZXT e850','Bas M','Bas M Pro','MissingBrand']),type_sweep:inventory([])},call=keywordProductionCheckerCall(update,chunk,values);
-  const result=finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(call,{NZXT:'brand','NZXT e850':'product','Bas M':'product','Bas M Pro':'product',MissingBrand:'brand'})});
-  expect(result.rows).toContainEqual(expect.objectContaining({name:'NZXT',disposition:'accepted',kind:'brand'}));expect(result.rows).toContainEqual(expect.objectContaining({name:'Bas M',disposition:'rejected',kind:'product'}));
+  const result=finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(call,{NZXT:'brand','NZXT e850':'product','Bas M Pro':'product',MissingBrand:'brand'},{'Bas M':'product'})});
+  expect(result.rows).toContainEqual(expect.objectContaining({name:'NZXT',disposition:'accepted',kind:'brand'}));expect(result.rows).toContainEqual(expect.objectContaining({name:'Bas M',disposition:'review',kind:'product'}));
   expect(result.rows).toContainEqual(expect.objectContaining({name:'MissingBrand',disposition:'review',hostReviewReason:'literal_name_not_in_source'}));
-  expect(result.boundaryChanges).toContainEqual(expect.objectContaining({name:'NZXT',code:'only_prefix_of_longer_accepted_name',guardTo:'rejected',to:'accepted',overriddenBy:'explicit_parent_brand'}));
+  expect(result.boundaryChanges).toContainEqual(expect.objectContaining({name:'NZXT',code:'only_prefix_of_longer_accepted_name',guardTo:'rejected',to:'accepted',overriddenBy:'source_supported_checker_accepted_name'}));
   const fields=keywordProductionReaderFields(mergeKeywordProductionChunks(update,[result]));expect(fields.topics).toContain('NZXT');expect(fields.topics).toContain('NZXT e850');expect(fields.topics).not.toContain('Bas M');expect(fields.topics).not.toContain('MissingBrand');
+ });
+ it('preserves a named parent character/game family rather than treating it as an identity fragment',()=>{
+  const update=record('Nova Hero Horizon and Nova Hero DLC.'),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(['Nova Hero','Nova Hero Horizon','Nova Hero DLC']),type_sweep:inventory([])},call=keywordProductionCheckerCall(update,chunk,values);
+  const result=finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(call,{'Nova Hero':'character','Nova Hero Horizon':'game','Nova Hero DLC':'game'})});
+  expect(result.rows).toContainEqual(expect.objectContaining({name:'Nova Hero',disposition:'accepted'}));
+ });
+ it('uses a separately pinned conservative alias check only for admitted sources needing that policy',()=>{
+  const update=record('Ari The Ridge Kato reviewed Orion\'s Harbor.'),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(['Ari The Ridge Kato','The Ridge']),type_sweep:inventory([])};
+  const standard=keywordProductionCheckerCall(update,chunk,values),targeted=keywordProductionCheckerCall(update,chunk,values,'alias-boundaries-v1');
+  expect(targeted.request.prompt).not.toBe(standard.request.prompt);expect(targeted.request.prompt).toContain('an unquoted internal phrase');expect(data(targeted).content).toBe(update.content);expect(data(targeted).candidates).toEqual(data(standard).candidates);
+  expect(()=>keywordProductionCheckerCall(update,chunk,values,'unreleased' as never)).toThrow('keyword_production_checker_policy_invalid');
  });
  it('retains all private kinds and unresolved names while exposing only accepted labels and host timing',()=>{
   const update=record('Tevi saw AeroBox. Perhaps Cedar address is a joke.'),result=mergeKeywordProductionChunks(update,[chunkResult(update,0,{Tevi:'person',AeroBox:'brand'},{'Cedar address':'named_mention'})]);

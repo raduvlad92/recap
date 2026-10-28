@@ -16,7 +16,7 @@ export const KEYWORD_PRODUCTION_VERSION = 'named-mentions-v1';
  * Host-only publication fixes can replay exact settled requests without
  * inventing a new charge or changing the original paid payload. */
 export const KEYWORD_PRODUCTION_GENERATION_HASH = 'e7ae78feabd396e9e774799697afd84c5795bc36667ab1208c20acd69c306323';
-export const KEYWORD_PRODUCTION_LITERAL_CORE_SHA256 = 'a9bdf8b461615cb1d7e2a28f7e2afad8922449e2c9580eb7919119c0c062d5fd';
+export const KEYWORD_PRODUCTION_LITERAL_CORE_SHA256 = 'bffe9e3d80e1e9d1b872b4fca3bf6a024a7780f410f6eef10587c79c811b1fe3';
 export const KEYWORD_PRODUCTION_EXTRACTOR_MODEL = 'deepseek/deepseek-v4.1-flash-1017';
 export const KEYWORD_PRODUCTION_CHECKER_MODEL = 'openai/gpt-6.1-sol-pro';
 export const KEYWORD_PRODUCTION_CHUNK_CHARS = 12_000;
@@ -28,6 +28,10 @@ const MAX_PROMPT_CHARS = 100_000;
 const COMPACT_CHECKER_AFTER_NAMES = 100;
 const COMPACT_CHECKER_AFTER_NAME_BYTES = 2200;
 const CHECKER_DISPOSITIONS = ['accepted','review','rejected'] as const;
+const ALIAS_BOUNDARY_LESSON='For ambiguous identity boundaries, distinguish an explicitly attributed parent brand from an invented personal alias. Retain a parent brand in a possessive product or game title. Keep a complete personal name; an unquoted internal phrase is not automatically a separately established nickname or handle, so use review for that proposed alias unless this source explicitly presents it as an alias. When the source names a document/file collection using a surname without identifying a separate person, retain the full named collection; a separately inferred person belongs in review. Do not expand names or identify people from outside knowledge.';
+const PARENT_ATTRIBUTION_LESSON='A named parent brand counts even when it occurs only inside a complete product, model or game title. It does not need an independent sentence or standalone occurrence. Retain both the actual parent name and the complete named product/family/version. A source-present character or franchise name can likewise remain distinct from its explicitly named installment or add-on.';
+const UNCLEAR_SOURCE_LESSON='Accept an unfamiliar literal name when this source clearly presents it as a named identity or institution. Distinguish genuinely unclear boundaries from unfamiliar spelling: an unbranded merchandise class or ambiguous printed version punctuation belongs in review unless the text itself settles its naming role. Do not call generic nouns or fragments proper names merely because they occur in an ad. A clearly introduced joke name or pseudo-domain may remain a literal named_mention without claiming a working domain. Do not guess corrected names or versions.';
+export type KeywordProductionCheckerPolicy='standard'|'alias-boundaries-v1';
 
 /** A production version pins both measured prompts and its explicit long-source
  * adaptation. The seven-case proof used one complete-source chunk; chunked
@@ -48,7 +52,8 @@ export const KEYWORD_PRODUCTION_CONTRACT_HASH = contentHash(JSON.stringify({
  longSourceChunkUtf8Bytes:KEYWORD_PRODUCTION_LONG_CHUNK_BYTES,
  maximumNames: KEYWORD_PRODUCTION_MAX_NAMES,
  merge: 'source-present-legacy-key-aliases-conflicts-review-v3', boundaryGuards: true,
- parentBrandGuard:'preserve-source-supported-checker-accepted-parent-brand-or-organization-v1',
+ parentBrandGuard:'preserve-checker-accepted-literal-name-prefix-is-not-rejection-v3',
+ checkerPolicies:{standard:'frozen-six-lessons',aliasBoundaries:[ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON]},
  hostSourceWhitespaceAlignment:'linebreak-runs-with-original-utf16-offsets-v1',
  publicationEvidence:'literal-first-span-all-ranges-and-durable-call-lineage-v1',
  timing:'cached-complete-or-unique-cue-alignment-v1',
@@ -156,10 +161,12 @@ function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories)
  inventoryCache.set(chunk,{signature,rows});return rows;
 }
 
-export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories):KeywordProductionCall {
+export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories,policy:KeywordProductionCheckerPolicy='standard'):KeywordProductionCall {
  checkedChunk(update,chunk);
+ if(!['standard','alias-boundaries-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
  const names=combinedInventory(chunk,values).map(row=>row.name);
- const request=keywordCheckerRequest({content:chunk.content,names,lessons:frozen.checkerLessons,maxOutputTokens:2000,includeReasons:false}) as GenerationRequest;
+ const lessons=policy==='standard'?frozen.checkerLessons:[...frozen.checkerLessons,ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON];
+ const request=keywordCheckerRequest({content:chunk.content,names,lessons,maxOutputTokens:2000,includeReasons:false}) as GenerationRequest;
  return {chunkIndex:chunk.index,step:'checker',model:KEYWORD_PRODUCTION_CHECKER_MODEL,
   request:requestCapacity(compactChecker(names)?compactCheckerRequest(request,names):request)};
 }
@@ -228,8 +235,9 @@ function validateChecker(value:unknown,names:string[]):void {
  }
 }
 
-export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories&{checker:unknown}):KeywordProductionChunkResult {
+export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories&{checker:unknown},policy:KeywordProductionCheckerPolicy='standard'):KeywordProductionChunkResult {
  checkedChunk(update,chunk);
+ if(!['standard','alias-boundaries-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
  const candidates=combinedInventory(chunk,values).map(row=>row.name);
  const checker=decodedChecker(values.checker,candidates);
  validateChecker(checker,candidates);
@@ -240,13 +248,13 @@ export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:Keyword
  const originals=new Map(normalized.rows.map(row=>[row.name,row])),restoredParents=new Set<string>();
  for(const row of boundary.rows){
   const original=originals.get(row.name),guard=row.hostBoundaryGuard;
-  if(original?.disposition==='accepted'&&['brand','organization'].includes(original.kind??'')&&row.disposition==='rejected'
+  if(original?.disposition==='accepted'&&row.disposition==='rejected'
    &&record(guard)&&guard.code==='only_prefix_of_longer_accepted_name'){
-   row.disposition='accepted';row.hostBoundaryGuard={...guard,overriddenBy:'explicit_parent_brand'};restoredParents.add(row.name);
+   row.disposition='accepted';row.hostBoundaryGuard={...guard,overriddenBy:'source_supported_checker_accepted_name'};restoredParents.add(row.name);
   }
  }
  const boundaryChanges=boundary.changes.map(change=>record(change)&&restoredParents.has(String(change.name))&&change.code==='only_prefix_of_longer_accepted_name'
-  ?{...change,guardTo:change.to,to:'accepted',overriddenBy:'explicit_parent_brand'}:change);
+  ?{...change,guardTo:change.to,to:'accepted',overriddenBy:'source_supported_checker_accepted_name'}:change);
  return {chunk,candidates,rawRows:normalized.rows,rows:boundary.rows,boundaryChanges,
   duplicateVerdicts:normalized.duplicateVerdicts,conflicts:normalized.conflicts,checkerEncoding:compactChecker(candidates)?'numeric_tuples':'named_rows'};
 }

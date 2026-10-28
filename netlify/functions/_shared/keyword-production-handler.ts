@@ -89,15 +89,15 @@ export function createKeywordProductionHandler(overrides:Partial<Dependencies>={
     const chunk=ctx.chunks[input.chunkIndex],extractions=keywordProductionExtractionCalls(ctx.update,chunk);
     if(input.stage==='extractors')return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,chunkCount:ctx.chunks.length,calls:extractions.map(c=>bindKeywordProductionCall(input.sessionId,input.sourceOrdinal,ctx.slot.sourceHash,c))});
     const stored=await storedFor(db,input.sessionId,input.sourceOrdinal),direct=verifiedCall(ctx,stored,extractions[0],deps.env).value,type_sweep=verifiedCall(ctx,stored,extractions[1],deps.env).value;
-    const checker=keywordProductionCheckerCall(ctx.update,chunk,{direct,type_sweep});
+    const checker=keywordProductionCheckerCall(ctx.update,chunk,{direct,type_sweep},ctx.slot.checkerPolicy);
     return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,chunkCount:ctx.chunks.length,calls:[bindKeywordProductionCall(input.sessionId,input.sourceOrdinal,ctx.slot.sourceHash,checker)]});
    }
    const stored=await storedFor(db,input.sessionId,input.sourceOrdinal),receipts:Row[]=[],results=[];
    for(const chunk of ctx.chunks){
     const [a,b]=keywordProductionExtractionCalls(ctx.update,chunk),direct=verifiedCall(ctx,stored,a,deps.env),typed=verifiedCall(ctx,stored,b,deps.env);
-    const check=keywordProductionCheckerCall(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value}),checked=verifiedCall(ctx,stored,check,deps.env);
+    const check=keywordProductionCheckerCall(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value},ctx.slot.checkerPolicy),checked=verifiedCall(ctx,stored,check,deps.env);
     receipts.push(direct.receipt,typed.receipt,checked.receipt);
-    results.push(finalizeKeywordProductionChunk(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value,checker:checked.value}));
+    results.push(finalizeKeywordProductionChunk(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value,checker:checked.value},ctx.slot.checkerPolicy));
    }
    const output=applyKeywordProductionTimingReviews(ctx.update,mergeKeywordProductionChunks(ctx.update,results),ctx.slot.timingReviews),outputHash=hash(stable(output));
    if(input.action==='preview')return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,outputHash,output,calls:receipts});

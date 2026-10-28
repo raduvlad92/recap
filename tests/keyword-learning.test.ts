@@ -239,6 +239,14 @@ describe('fixed reference keyword quality scoring', () => {
     expect(scoreKeywordInventory({ content: 'Jax closes.', rows: [{ name: 'Jax', disposition: 'accepted' }], reference: ref }).good).toBe(false);
     expect(scoreKeywordInventory({ content: 'Jax closes.', rows: [{ name: 'Jax', disposition: 'review', identityId: 'invented-full-person' }], reference: ref }).components.coverage).toBe(0);
   });
+  it('does not publish an uncertain identity merely because finding it is optional', () => {
+    const ref = { version: 'optional-review-v1', identities: [
+      { id: 'known', surfaces: ['AeroBox'], disposition: 'accepted' },
+      { id: 'alias', surfaces: ['Jax'], disposition: 'review', required: false },
+    ] };
+    const report = scoreKeywordInventory({ content: 'AeroBox thanks Jax.', rows: [{ name: 'AeroBox', disposition: 'accepted' }, { name: 'Jax', disposition: 'accepted' }], reference: ref });
+    expect(report.missing).toEqual([]);expect(report.unsupportedAccepted).toEqual(['Jax']);expect(report.good).toBe(false);
+  });
   it('separates false names, unexpected literal names requiring reference audit and duplicates', () => {
     const rows = [...completeRows(), { name: 'Invented', kind: 'brand', disposition: 'accepted' }, { name: 'Finally', kind: 'brand', disposition: 'accepted' }, completeRows()[0]];
     const report = scoreKeywordInventory({ content: source, rows, reference });
