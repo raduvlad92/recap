@@ -13,12 +13,17 @@ describe('source-bound targeted keyword recovery',()=>{
  it('versions the general role-and-boundary policy without embedding target names or expected answers',()=>{
   const request=keywordRecoveryRequests(update,[target('Agency for Space'),target('Project Ember')],scope)[0].body.request;
   const policy=request.prompt.split('\nALLOWED KINDS\n')[0],input=JSON.parse(request.prompt.split('\n').at(-1)!);
-  expect(KEYWORD_RECOVERY_VERSION).toBe('targeted-named-mentions-v2-role-boundaries');
-  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"d59bdc7c2b265753df671cd73a6b4f2284e98e64554b12f64c5f59276f705755"`);
+  expect(KEYWORD_RECOVERY_VERSION).toBe('targeted-named-mentions-v3-literal-name-attempts');
+  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"9dd6bb92d8c113f2206d9c3db75cb7cbc22c7384978a8781b0a6a10a0f1f103c"`);
   expect(policy).toContain('Distinctive branded class labels count when the source establishes that designation');
   expect(policy).toContain('ordinary unbranded job/group descriptions do not');
   expect(policy).toContain('a word explicitly selected as a setting/preset value');
   expect(policy).toContain('while that boundary remains unresolved');
+  expect(policy).toContain('Clear introductions of fictional or joke names count');
+  expect(policy).toContain('tentative, mistaken, disputed or later retracted name');
+  expect(policy).toContain('without erasing the completed name mention');
+  expect(policy).toContain('where its boundary lies');
+  expect(policy).toContain('generic fragment whose naming role/boundary cannot be established');
   expect(policy).not.toContain('Agency for Space');expect(policy).not.toContain('Project Ember');
   expect(request.prompt).not.toContain('expectedDisposition');expect(request.prompt).not.toContain('proposedDecision');
   expect(input).toEqual([{targetId:0,name:'Agency for Space',contexts:[content]},{targetId:1,name:'Project Ember',contexts:[content]}]);
