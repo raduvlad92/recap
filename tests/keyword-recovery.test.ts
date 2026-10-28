@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import type{SourceUpdate}from'../src/lib/types';
 import type{AnalysisOutput}from'../netlify/functions/_shared/content-analysis-engine';
-import {KEYWORD_RECOVERY_VERSION,KEYWORD_RECOVERY_CONTRACT_HASH,validateKeywordRecoveryTargets,keywordRecoveryRequests,decodeKeywordRecoveryDecisions,applyKeywordRecovery,applyKeywordRecoveryContextReviews,keywordRecoveryHash}from'../netlify/functions/_shared/keyword-recovery';
+import {KEYWORD_RECOVERY_VERSION,KEYWORD_RECOVERY_BATCH_SIZE,KEYWORD_RECOVERY_MAX_TARGETS,KEYWORD_RECOVERY_CONTRACT_HASH,validateKeywordRecoveryTargets,keywordRecoveryRequests,decodeKeywordRecoveryDecisions,applyKeywordRecovery,applyKeywordRecoveryContextReviews,keywordRecoveryHash}from'../netlify/functions/_shared/keyword-recovery';
 const content='🚀 AeroBox Plus runs. The Agency for Space exists. Project Ember is a prior build. Ultra is uncertain.';
 const update={id:'fixture',sourceId:'fixture-source',content,contentKind:'transcript',format:'video',isSample:false}as SourceUpdate;
 const target=(name:string,text=content)=>({name,contexts:[{start:content.indexOf(text),end:content.indexOf(text)+text.length,text}]});
@@ -13,8 +13,10 @@ describe('source-bound targeted keyword recovery',()=>{
  it('versions the general role-and-boundary policy without embedding target names or expected answers',()=>{
   const request=keywordRecoveryRequests(update,[target('Agency for Space'),target('Project Ember')],scope)[0].body.request;
   const policy=request.prompt.split('\nALLOWED KINDS\n')[0],input=JSON.parse(request.prompt.split('\n').at(-1)!);
-  expect(KEYWORD_RECOVERY_VERSION).toBe('targeted-named-mentions-v3-literal-name-attempts');
-  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"9dd6bb92d8c113f2206d9c3db75cb7cbc22c7384978a8781b0a6a10a0f1f103c"`);
+  expect(KEYWORD_RECOVERY_VERSION).toBe('targeted-named-mentions-v4-smallbatches');
+  expect(KEYWORD_RECOVERY_BATCH_SIZE).toBe(4);
+  expect(KEYWORD_RECOVERY_MAX_TARGETS).toBe(120);
+  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"361ae5fe0d4850708b67e8fd45a7c443b877e7f0e1160c3839a66d6b366c8312"`);
   expect(policy).toContain('Distinctive branded class labels count when the source establishes that designation');
   expect(policy).toContain('ordinary unbranded job/group descriptions do not');
   expect(policy).toContain('a word explicitly selected as a setting/preset value');
@@ -28,6 +30,31 @@ describe('source-bound targeted keyword recovery',()=>{
   expect(request.prompt).not.toContain('expectedDisposition');expect(request.prompt).not.toContain('proposedDecision');
   expect(input).toEqual([{targetId:0,name:'Agency for Space',contexts:[content]},{targetId:1,name:'Project Ember',contexts:[content]}]);
   expect(request.maxOutputTokens).toBe(1536);
+ });
+ it.each([9,36])('keeps every target in batches of at most four with global IDs for %i targets',count=>{
+  const names=Array.from({length:count},(_,i)=>'Fixture Entity '+i),text=names.join('. '),u={...update,content:text};
+  const targets=names.map(name=>({name,contexts:[{start:0,end:text.length,text}]})),plans=keywordRecoveryRequests(u,targets,scope),allIds:number[]=[];
+  expect(plans).toHaveLength(Math.ceil(count/KEYWORD_RECOVERY_BATCH_SIZE));
+  for(const [index,plan]of plans.entries()){
+   const input=JSON.parse(plan.body.request.prompt.split('\n').at(-1)!),ids=input.map((row:any)=>row.targetId),schema=plan.body.request.schema as any;
+   expect(plan.batchIndex).toBe(index);expect(plan.targetStart).toBe(index*KEYWORD_RECOVERY_BATCH_SIZE);expect(plan.targetCount).toBe(input.length);
+   expect(input.length).toBeGreaterThan(0);expect(input.length).toBeLessThanOrEqual(KEYWORD_RECOVERY_BATCH_SIZE);
+   expect(schema.properties.decisions.minItems).toBe(input.length);expect(schema.properties.decisions.maxItems).toBe(input.length);
+   expect(schema.properties.decisions.items.properties.targetId).toMatchObject({minimum:plan.targetStart,maximum:plan.targetStart+input.length-1});
+   const value={readComplete:true,decisions:ids.map((targetId:number)=>({targetId,kind:'named_mention',disposition:'review'}))};
+   expect(decodeKeywordRecoveryDecisions(value,plan.targetStart,plan.targetCount)).toEqual(value.decisions);
+   if(index>0)expect(()=>decodeKeywordRecoveryDecisions({...value,decisions:value.decisions.map((row:any)=>({...row,targetId:row.targetId-plan.targetStart}))},plan.targetStart,plan.targetCount)).toThrow();
+   allIds.push(...ids);
+  }
+  expect(allIds).toEqual(names.map((_,i)=>i));expect(new Set(plans.map(plan=>plan.body.request.key)).size).toBe(plans.length);
+ });
+ it('caps target admission at the thirty-request manifest limit and refuses oversized decoder batches',()=>{
+  const names=Array.from({length:KEYWORD_RECOVERY_MAX_TARGETS+1},(_,i)=>'Fixture Entity '+i),text=names.join('. '),u={...update,content:text};
+  const targets=names.map(name=>{const start=text.indexOf(name);return {name,contexts:[{start,end:start+name.length,text:name}]};});
+  expect(keywordRecoveryRequests(u,targets.slice(0,KEYWORD_RECOVERY_MAX_TARGETS),scope)).toHaveLength(30);
+  expect(()=>keywordRecoveryRequests(u,targets,scope)).toThrow('keyword_recovery_invalid_targets');
+  const decisions=Array.from({length:KEYWORD_RECOVERY_BATCH_SIZE+1},(_,targetId)=>({targetId,kind:'named_mention',disposition:'review'}));
+  expect(()=>decodeKeywordRecoveryDecisions({readComplete:true,decisions},0,decisions.length)).toThrow('keyword_recovery_incomplete_decisions');
  });
  it('requires exact original UTF-16 context and never accepts a caller-inserted expected verdict',()=>{
   expect(validateKeywordRecoveryTargets(update,[target('Agency for Space')])).toHaveLength(1);
