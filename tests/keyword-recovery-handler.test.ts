@@ -5,7 +5,7 @@ import {CollectionError} from '../netlify/functions/_shared/security';
 import {createKeywordRecoveryHandler} from '../netlify/functions/_shared/keyword-recovery-handler';
 import {bindKeywordProductionCall,canonicalKeywordProductionJson as stable} from '../netlify/functions/_shared/keyword-production-handler';
 import {KEYWORD_PRODUCTION_CONTRACT_HASH,planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,finalizeKeywordProductionChunk,mergeKeywordProductionChunks,applyKeywordProductionTimingReviews} from '../netlify/functions/_shared/keyword-production';
-import {KEYWORD_RECOVERY_CONTRACT_HASH,keywordRecoveryHash} from '../netlify/functions/_shared/keyword-recovery';
+import {KEYWORD_RECOVERY_CONTRACT_HASH,KEYWORD_RECOVERY_REUSABLE_V4,keywordRecoveryHash,keywordRecoveryRequests,applyKeywordRecovery} from '../netlify/functions/_shared/keyword-recovery';
 import {analysisRuntimeEnv} from '../netlify/functions/_shared/content-analysis-runtime';
 import {analysisExecutionIdentity,analysisLimits} from '../netlify/functions/_shared/content-analysis-model';
 import {analysisRequestHash} from '../netlify/functions/_shared/content-analysis';
@@ -18,7 +18,8 @@ const sourceHash=hash(update.content!);
 const target={name:'Project Ember',contexts:[{start:0,end:update.content!.length,text:update.content!}]};
 const approved={readComplete:true,decisions:[{targetId:0,kind:'organization',disposition:'accepted'}]};
 
-function fixture(repairs:unknown[]=[structuredClone(target)]){
+function fixture(repairs:unknown[]=[structuredClone(target)],sourceUpdate:SourceUpdate=update){
+ const update=sourceUpdate,sourceHash=hash(update.content!);
  const env=(key:string)=>key==='APP_URL'?'https://example.test':undefined;
  const source={ordinal:1,updateId:update.id,sourceHash};
  const slot:any={...source,chunkCount:1,baselineGenerationContractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,repairs};
@@ -72,7 +73,23 @@ function fixture(repairs:unknown[]=[structuredClone(target)]){
  };
  const seal=async()=>{const response=await send({action:'plan'});expect(response.status).toBe(200);return response.json();};
  const ready=async()=>{const baseline=completeBaseline(),plan=await seal();const fresh=plan.requests.map((call:any)=>add(call,approved));return {baseline,plan,fresh};};
- return {send,handler,tables,current,origin,release,originRelease,slot,from,db,rpc,queries,authorize,workerAuthorized,network,add,completeBaseline,seal,ready};
+ return {send,handler,tables,current,origin,release,originRelease,slot,from,db,rpc,queries,authorize,workerAuthorized,network,add,completeBaseline,seal,ready,update,sourceHash};
+}
+
+function prefixFixture(){
+ const names=Array.from({length:36},(_,i)=>'Fixture Entity '+i),text=update.content+' '+names.join('. '),u={...update,content:text};
+ const targets=names.map(name=>({name,contexts:[{start:0,end:text.length,text}]})),f=fixture(targets.slice(0,2),u),baseline=f.completeBaseline(),prefixId='abcdefab-1234-1234-1234-123456789012';
+ const roles=['direct','typed','checker'],receipts=f.tables.keyword_learning_requests.filter(r=>r.session_id===originId).map((r,i)=>({chunkIndex:0,role:roles[i],callId:r.call_id,requestHash:r.request_hash})).sort((a,b)=>a.role.localeCompare(b.role));
+ const baselineOutputHash=keywordRecoveryHash(baseline),baselineReceiptHash=keywordRecoveryHash(receipts),oldSlot={...structuredClone(f.slot),repairs:targets,baselineOutputHash,baselineReceipts:receipts};
+ const oldSession:any={id:prefixId,user_id:owner,state:'closed',sources:structuredClone(f.current.sources)},oldRelease:any={session_id:prefixId,state:'closed',contract_hash:KEYWORD_RECOVERY_REUSABLE_V4.contractHash,origin_session_id:originId,baseline_contract_hash:baselineContractHash,sources:[oldSlot],recovery_requests:[]};
+ const plans=keywordRecoveryRequests(u,targets,{sessionId:prefixId,ordinal:1,sourceHash:f.sourceHash,baselineReceiptHash},'v4'),allDecisions:any[]=[],oldCalls:any[]=[];
+ for(const plan of plans){
+  const decisions=Array.from({length:plan.targetCount},(_,i)=>({targetId:plan.targetStart+i,kind:'named_mention',disposition:'accepted'}));allDecisions.push(...decisions);
+  const stored=f.add(plan.body,{readComplete:true,decisions});oldCalls.push(stored);oldRelease.recovery_requests.push({sourceOrdinal:1,batchIndex:plan.batchIndex,callKey:plan.body.request.key,model:plan.body.model,requestHash:stored.request.request_hash,requestPayload:structuredClone(stored.request.request_payload),executionIdentity:structuredClone(stored.charge.execution_identity)});
+ }
+ const oldOutput=applyKeywordRecovery(u,baseline,targets,allDecisions,{originSessionId:originId,baselineContractHash,baselineReceiptHash,baselineOutputHash});Object.assign(oldOutput.evidence,{recoveryProtocol:KEYWORD_RECOVERY_REUSABLE_V4.version,recoveryContractHash:KEYWORD_RECOVERY_REUSABLE_V4.contractHash});
+ f.slot.reuseRecovery={sessionId:prefixId,...KEYWORD_RECOVERY_REUSABLE_V4,outputHash:keywordRecoveryHash(oldOutput)};f.tables.keyword_learning_sessions.push(oldSession);f.tables.keyword_production_releases.push(oldRelease);f.current.state=f.release.state='staged';
+ return {...f,oldSession,oldRelease,oldSlot,oldCalls,oldOutput,names};
 }
 
 afterEach(()=>vi.restoreAllMocks());
@@ -85,7 +102,7 @@ describe('finite recovery handler, synthetic adapters only',()=>{
  it('checks the deployment origin before touching the database',async()=>{
   const f=fixture();expect((await f.send({action:'plan'},'https://foreign.test/.netlify/functions/keyword-recovery')).status).toBe(403);expect(f.db).not.toHaveBeenCalled();expect(f.network).not.toHaveBeenCalled();
  });
- it.each(['output','repairs','request','model','semanticReviewHash'])('refuses caller-authored %s before database access',async key=>{
+ it.each(['output','repairs','request','model','semanticReviewHash','reuseRecovery'])('refuses caller-authored %s before database access',async key=>{
   const f=fixture();expect((await f.send({action:'plan',[key]:'caller authored'})).status).toBe(400);expect(f.db).not.toHaveBeenCalled();expect(f.rpc).not.toHaveBeenCalled();
  });
  it.each(['session','release'])('requires the original %s to remain closed',async changed=>{
@@ -177,5 +194,29 @@ describe('finite recovery handler, synthetic adapters only',()=>{
   const response=await f.send({action:'read'}),value=await response.json();expect(response.status).toBe(200);expect(value.receipt).toEqual({published:true,keywordCount:3});expect(value.reader.videoKeywords).toEqual([{label:'AeroBox',ranges:[]}]);
   expect(f.from.mock.calls.map(([table])=>table)).toEqual(['keyword_production_publications','reader_source_updates']);expect(f.rpc).not.toHaveBeenCalled();expect(f.network).not.toHaveBeenCalled();
   expect(response.headers.get('cache-control')).toBe('private, no-store');expect(response.headers.get('x-robots-tag')).toBe('noindex, nofollow');
+ });
+ it('reconstructs nine closed v4 batches and pays only the two new target decisions',async()=>{
+  const f=prefixFixture(),plan=await f.seal();expect(plan.requests).toHaveLength(1);expect(plan.baselineCalls).toHaveLength(3);expect(plan.baselineOutputHash).not.toBe(f.slot.reuseRecovery.outputHash);
+  f.add(plan.requests[0],{readComplete:true,decisions:[{targetId:0,kind:'named_mention',disposition:'review'},{targetId:1,kind:'named_mention',disposition:'accepted'}]});f.current.state=f.release.state='released';
+  const response=await f.send({action:'preview'}),value=await response.json();expect(response.status).toBe(200);const proof=value.output.evidence.reusedRecoveryProof;
+  expect(proof.policy).toEqual(f.slot.reuseRecovery);expect(proof.calls).toHaveLength(9);expect(proof.calls.map((r:any)=>r.callId)).toEqual(f.oldCalls.map(x=>x.charge.id));
+  expect(proof.calls[0]).toMatchObject({actualUsd:.001,resultHash:keywordRecoveryHash(f.oldCalls[0].request.result),requestPayloadHash:keywordRecoveryHash(f.oldCalls[0].request.request_payload),callBindingHash:keywordRecoveryHash(f.oldCalls[0].charge),executionIdentityHash:keywordRecoveryHash(f.oldCalls[0].charge.execution_identity)});
+  expect(value.output.evidence.accepted.filter((r:any)=>!f.names.slice(0,2).includes(r.label))).toEqual((f.oldOutput.evidence.accepted as any[]).filter(r=>!f.names.slice(0,2).includes(r.label)));
+  expect(value.calls).toHaveLength(4);expect(value.calls.filter((r:any)=>r.role==='repair')).toHaveLength(1);expect(value.calls.some((r:any)=>f.oldCalls.some(x=>x.charge.id===r.callId))).toBe(false);
+  expect(f.tables.keyword_learning_requests.filter(r=>r.session_id===sid)).toHaveLength(1);expect(f.tables.keyword_learning_requests.filter(r=>r.session_id===f.oldSession.id)).toHaveLength(9);expect(f.network).not.toHaveBeenCalled();
+  f.slot.reviewedOutputHash=value.outputHash;f.slot.semanticReviewHash=semanticReviewHash;expect((await f.send({action:'publish',expectedOutputHash:value.outputHash})).status).toBe(200);
+  const published=f.rpc.mock.calls.find(([name])=>name==='publish_keyword_recovery_result')![1];expect(published.p_calls).toEqual(value.calls);expect(published.p_output.evidence.reusedRecoveryProof).toEqual(proof);
+ });
+ it.each(['contractHash','version','outputHash','sessionId','extra-key'])('rejects invalid reuse admission %s',async changed=>{
+  const f=prefixFixture();if(changed==='extra-key')f.slot.reuseRecovery.depth=2;else f.slot.reuseRecovery[changed]=changed==='outputHash'?'f'.repeat(64):'invalid';
+  expect((await f.send({action:'plan'})).status).toBe(409);expect(f.rpc).not.toHaveBeenCalled();
+ });
+ it.each(['open-session','open-release','foreign-owner','wrong-origin','wrong-contract','baseline-contract','source-binding','sourceRevision','sourceFingerprint','keywordSnapshotHash','base-host','nested-prefix','checker-policy','sweep-policy','timing-policy','context-policy','baseline-hash','baseline-receipts'])('rejects changed or recursive v4 prefix %s',async changed=>{
+  const f=prefixFixture();if(changed==='open-session')f.oldSession.state='released';if(changed==='open-release')f.oldRelease.state='released';if(changed==='foreign-owner')f.oldSession.user_id='other';if(changed==='wrong-origin')f.oldRelease.origin_session_id=sid;if(changed==='wrong-contract')f.oldRelease.contract_hash='f'.repeat(64);if(changed==='baseline-contract')f.oldRelease.baseline_contract_hash='f'.repeat(64);if(changed==='source-binding')f.oldSession.sources[0].sourceHash='f'.repeat(64);if(['sourceRevision','sourceFingerprint','keywordSnapshotHash'].includes(changed))f.oldSlot[changed]='tampered';if(changed==='base-host')f.oldSlot.baselineGenerationContractHash='f'.repeat(64);if(changed==='nested-prefix')f.oldSlot.reuseRecovery={...f.slot.reuseRecovery};if(changed==='checker-policy')f.oldSlot.checkerPolicy='strict-context-v1';if(changed==='sweep-policy')f.oldSlot.sectionSweepChunks=[0];if(changed==='timing-policy')f.oldSlot.timingReviews=[];if(changed==='context-policy')f.oldSlot.contextReviews=[];if(changed==='baseline-hash')f.oldSlot.baselineOutputHash='f'.repeat(64);if(changed==='baseline-receipts')f.oldSlot.baselineReceipts=[];
+  expect((await f.send({action:'plan'})).status).toBe(409);expect(f.rpc).not.toHaveBeenCalled();expect(f.network).not.toHaveBeenCalled();
+ });
+ it.each(['request','manifest','result','identity','owner','unknown','partial','over-cap','extra-call'])('rejects altered closed-prefix %s evidence before sealing',async changed=>{
+  const f=prefixFixture(),{request,charge}=f.oldCalls[0];if(changed==='request')request.request_payload.request.prompt+=' Changed.';if(changed==='manifest')f.oldRelease.recovery_requests[0].requestHash='f'.repeat(64);if(changed==='result')request.result.value.decisions[0].disposition='review';if(changed==='identity')request.result.executionIdentity={provider:'other'};if(changed==='owner')charge.user_id='other';if(changed==='unknown'){charge.state='unknown';charge.actual_usd=null;}if(changed==='partial')request.completed=false;if(changed==='over-cap'){charge.actual_usd=.11;request.result.actualUsd=.11;}if(changed==='extra-call')f.tables.keyword_learning_requests.push({...request,call_key:'unsealed-extra'});
+  expect((await f.send({action:'plan'})).status).toBe(409);expect(f.rpc).not.toHaveBeenCalled();
  });
 });

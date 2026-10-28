@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import type{SourceUpdate}from'../src/lib/types';
 import type{AnalysisOutput}from'../netlify/functions/_shared/content-analysis-engine';
-import {KEYWORD_RECOVERY_VERSION,KEYWORD_RECOVERY_BATCH_SIZE,KEYWORD_RECOVERY_MAX_TARGETS,KEYWORD_RECOVERY_CONTRACT_HASH,validateKeywordRecoveryTargets,keywordRecoveryRequests,decodeKeywordRecoveryDecisions,applyKeywordRecovery,applyKeywordRecoveryContextReviews,keywordRecoveryHash}from'../netlify/functions/_shared/keyword-recovery';
+import {KEYWORD_RECOVERY_VERSION,KEYWORD_RECOVERY_BATCH_SIZE,KEYWORD_RECOVERY_MAX_TARGETS,KEYWORD_RECOVERY_REUSABLE_V4,KEYWORD_RECOVERY_CONTRACT_HASH,validateKeywordRecoveryTargets,keywordRecoveryRequests,decodeKeywordRecoveryDecisions,applyKeywordRecovery,applyKeywordRecoveryContextReviews,keywordRecoveryHash}from'../netlify/functions/_shared/keyword-recovery';
 const content='🚀 AeroBox Plus runs. The Agency for Space exists. Project Ember is a prior build. Ultra is uncertain.';
 const update={id:'fixture',sourceId:'fixture-source',content,contentKind:'transcript',format:'video',isSample:false}as SourceUpdate;
 const target=(name:string,text=content)=>({name,contexts:[{start:content.indexOf(text),end:content.indexOf(text)+text.length,text}]});
@@ -13,10 +13,10 @@ describe('source-bound targeted keyword recovery',()=>{
  it('versions the general role-and-boundary policy without embedding target names or expected answers',()=>{
   const request=keywordRecoveryRequests(update,[target('Agency for Space'),target('Project Ember')],scope)[0].body.request;
   const policy=request.prompt.split('\nALLOWED KINDS\n')[0],input=JSON.parse(request.prompt.split('\n').at(-1)!);
-  expect(KEYWORD_RECOVERY_VERSION).toBe('targeted-named-mentions-v4-smallbatches');
+  expect(KEYWORD_RECOVERY_VERSION).toBe('targeted-named-mentions-v5-verified-prefix');
   expect(KEYWORD_RECOVERY_BATCH_SIZE).toBe(4);
   expect(KEYWORD_RECOVERY_MAX_TARGETS).toBe(120);
-  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"361ae5fe0d4850708b67e8fd45a7c443b877e7f0e1160c3839a66d6b366c8312"`);
+  expect(KEYWORD_RECOVERY_CONTRACT_HASH).toMatchInlineSnapshot(`"e777edb9471225e5f83427f1eb397b6b46334501d5f83715b558d0b3fa2525fd"`);
   expect(policy).toContain('Distinctive branded class labels count when the source establishes that designation');
   expect(policy).toContain('ordinary unbranded job/group descriptions do not');
   expect(policy).toContain('a word explicitly selected as a setting/preset value');
@@ -26,10 +26,19 @@ describe('source-bound targeted keyword recovery',()=>{
   expect(policy).toContain('without erasing the completed name mention');
   expect(policy).toContain('where its boundary lies');
   expect(policy).toContain('generic fragment whose naming role/boundary cannot be established');
+  expect(policy).toContain('the source attributes a message or quote to that speaker with says');
+  expect(policy).toContain('reference to a particular ordinary object does not itself establish a named model');
   expect(policy).not.toContain('Agency for Space');expect(policy).not.toContain('Project Ember');
   expect(request.prompt).not.toContain('expectedDisposition');expect(request.prompt).not.toContain('proposedDecision');
   expect(input).toEqual([{targetId:0,name:'Agency for Space',contexts:[content]},{targetId:1,name:'Project Ember',contexts:[content]}]);
   expect(request.maxOutputTokens).toBe(1536);
+ });
+ it('retains the known v4 request protocol separately from new requests',()=>{
+  const targets=[target('Agency for Space')],old=keywordRecoveryRequests(update,targets,scope,'v4')[0],current=keywordRecoveryRequests(update,targets,scope)[0];
+  expect(KEYWORD_RECOVERY_REUSABLE_V4).toEqual({version:'targeted-named-mentions-v4-smallbatches',contractHash:'361ae5fe0d4850708b67e8fd45a7c443b877e7f0e1160c3839a66d6b366c8312'});
+  expect(old.body.request.prompt).not.toContain('Ordinary words can be explicit names or handles');
+  expect(current.body.request.prompt).toContain('Ordinary words can be explicit names or handles');
+  expect(old.body.request.schema).toEqual(current.body.request.schema);expect(old.body.request.key).not.toBe(current.body.request.key);
  });
  it.each([9,36])('keeps every target in batches of at most four with global IDs for %i targets',count=>{
   const names=Array.from({length:count},(_,i)=>'Fixture Entity '+i),text=names.join('. '),u={...update,content:text};
@@ -109,6 +118,11 @@ describe('source-bound targeted keyword recovery',()=>{
   const b=baseline();b.evidence.rejected=[{label:'Project Ember',literalKind:'named_mention',disposition:'rejected'}];
   const out=applyKeywordRecovery(update,b,[target('Project Ember')],[{targetId:0,kind:'named_mention',disposition:'review'}],lineage);
   expect((out.evidence.recoveryDecisions as any[])[0].previousDisposition).toBe('rejected');expect((out.pending[0] as any).label).toBe('Project Ember');
+ });
+ it('preserves an already verified prefix proof exactly while changing only a new target',()=>{
+  const b=baseline(),proof={policy:{...KEYWORD_RECOVERY_REUSABLE_V4,sessionId:'closed-prefix',outputHash:'d'.repeat(64)},calls:[{callId:'old-call',resultHash:'e'.repeat(64)}]};b.evidence.reusedRecoveryProof=structuredClone(proof);
+  const out=applyKeywordRecovery(update,b,[target('Project Ember')],[{targetId:0,kind:'named_mention',disposition:'review'}],lineage);
+  expect(out.evidence.reusedRecoveryProof).toEqual(proof);expect(b.evidence.reusedRecoveryProof).toEqual(proof);expect((out.evidence.accepted as any[])[0]).toEqual(old);
  });
  it('withholds a mixed-meaning name timing without changing its model decision or adding a name',()=>{
   const u={...update,content:'ID documents exist. ID makes games.'},b=baseline(),text='ID makes games.',start=u.content!.indexOf(text);
