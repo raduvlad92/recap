@@ -20,7 +20,7 @@ describe.skipIf(!available)('private keyword evaluation, disposable PostgreSQL o
   const dir=new URL('../supabase/migrations/',import.meta.url);for(const name of readdirSync(dir).filter(x=>x.endsWith('.sql')).sort())sql(readFileSync(new URL(name,dir),'utf8'));
  },40000);
  beforeEach(()=>{
-  sql(`truncate public.keyword_learning_requests,public.keyword_learning_sessions;truncate public.reader_workspaces cascade;truncate public.reader_source_updates cascade;truncate public.reader_content_analysis_calls cascade;truncate public.reader_content_analysis_policies;truncate public.content_analysis_provider_cooldowns;
+  sql(`truncate public.keyword_learning_requests,public.keyword_learning_sessions cascade;truncate public.reader_workspaces cascade;truncate public.reader_source_updates cascade;truncate public.reader_content_analysis_calls cascade;truncate public.reader_content_analysis_policies;truncate public.content_analysis_provider_cooldowns;
    insert into public.content_analysis_budget(id,enabled,daily_limit_usd,lifetime_limit_usd) values(true,false,5,10) on conflict(id) do update set enabled=false,daily_limit_usd=5,lifetime_limit_usd=10;
    insert into public.reader_workspaces(user_id,state) values(${q(owner)},'{"version":1,"followedSourceIds":[],"customSources":[],"importedUpdates":[],"savedUpdateIds":[],"readLaterIds":[],"settings":{}}');
    insert into public.reader_content_analysis_policies(user_id,enabled,daily_limit_usd,lifetime_limit_usd,per_call_limit_usd,model) values(${q(owner)},false,5,10,.1,${q(model)});

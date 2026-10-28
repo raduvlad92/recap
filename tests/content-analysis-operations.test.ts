@@ -18,7 +18,7 @@ function stub(options: { calls?: ReturnType<typeof call>[]; laterCalls?: ReturnT
       if (options.failTable === table) return { data: null, count: null, error: { message: 'PRIVATE failure secret synthetic-owner' } };
       if (table === 'content_analysis_runtime_settings') return { data: { selected_model: DEFAULT_ANALYSIS_MODEL, revision: 1, updated_at: old, updated_by: 'synthetic-owner' }, error: null };
       if (table === 'content_analysis_budget') return { data: { enabled: false, daily_limit_usd: 5, lifetime_limit_usd: 5 }, error: null };
-      if (table === 'admin_keyword_reviews') return { data: null, count: options.reviews ?? 0, error: null };
+      if (table === 'admin_keyword_review_queue') return { data: null, count: options.reviews ?? 0, error: null };
       if (table === 'reader_content_analysis_jobs') {
         if (!read.options?.head) return { data: options.errors || [], error: null };
         return { data: null, count: read.filters['lt:lease_until'] ? options.leases ?? 0 : options.counts?.[read.filters['eq:state'] as typeof ANALYSIS_JOB_STATES[number]] ?? 0, error: null };
@@ -79,7 +79,7 @@ describe('private read-only content analysis operations', () => {
   });
   it('selects only head counts and bounded finance/error projections without content, identity or result payloads', async () => {
     const test = stub({ calls: [call(1)] }); await readAnalysisOperations(test.db, now);
-    expect(new Set(test.reads.map(read => read.table))).toEqual(new Set(['reader_content_analysis_jobs', 'reader_content_analysis_calls', 'admin_keyword_reviews']));
+    expect(new Set(test.reads.map(read => read.table))).toEqual(new Set(['reader_content_analysis_jobs', 'reader_content_analysis_calls', 'admin_keyword_review_queue']));
     for (const read of test.reads) {
       expect(read.columns).not.toMatch(/user_id|update_id|source_id|result|usage|execution_identity|provider_id|call_key|\*/);
       if (read.options?.head) expect(read.options).toEqual({ count: 'exact', head: true });

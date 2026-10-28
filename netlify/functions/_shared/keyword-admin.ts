@@ -26,7 +26,7 @@ function unwrap<T>(result: { data: T; error: { code?: string; message: string } 
 export async function listKeywordReviews(db: Database, url: URL, page: number, adminId: string): Promise<KeywordReviewPage> {
   const status = url.searchParams.get('status') ?? 'pending';
   if (!['pending', 'approved', 'rejected'].includes(status)) throw new CollectionError(400, 'invalid_status', 'Choose pending, approved or rejected reviews.');
-  const result = await db.from('admin_keyword_reviews').select(columns, { count: 'exact' })
+  const result = await db.from('admin_keyword_review_queue').select(columns, { count: 'exact' })
     .eq('status', status)
     .order('created_at', { ascending: false }).order('id', { ascending: false }).range(page * 50, page * 50 + 49);
   const rows = unwrap(result) as unknown as KeywordReviewRecord[] | null;

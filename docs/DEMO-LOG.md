@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 28 October 2026 — production keyword connection in progress
+
+Type: implementation, disposable PostgreSQL checks and saved-response replay; live publication remains pending. [Tracked rollout](tech/KEYWORD-PRODUCTION-ROLLOUT-2026-10-28.md). Replaying the seven settled successful outputs through the new server core retains seven Good results with no new model spending. This proves compatibility of the saved responses, not live generation or reader publication. Actual rollback of the additive production migration confirms schema removal; security advisors report no issues. The live financial readback starts from US$4.505271140 committed, including all old holds, with broad analysis off and zero active AI jobs.
+
 ## 27 October 2026 — autonomous keyword loop passed its small private evaluation
 
 Type: actual bounded private inference, scored prompt-feedback iterations, separate source-only reference audit, release checks and hosted private-result readback. [Full report](tech/KEYWORD-AUTONOMOUS-LOOP-2026-10-27.md). Founder instructed the assistant to continue learning/testing without asking the founder to grade failures. The selected process uses DeepSeek direct extraction, a separate type sweep, focused free pattern candidates and one Sol checker without per-row reason text; full names/kinds/decisions and coverage checks remain. Training scores **9.9/9.7/9.9/9.8/9.9**, all Good, mean **9.84**, **127/127** required identities correct.

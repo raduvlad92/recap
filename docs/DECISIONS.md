@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 28 October 2026 — controlled production keyword rollout
+
+Founder: “do it”, followed by “continue”, approving the proposed connection of the measured keyword process, one actual publication/reload proof, the frozen twenty-video run and expansion conditional on those checks and the remaining allowance. Retain US$10 cumulative / US$5 day / US$0.10 call and all historical holds. This is not approval of the unresolved recap process, unlimited recurring spending or new collection. Use a finite admitted roster and keep the broader legacy queue paused.
+
 Updated: 27 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
 ## 27 October 2026 — continue the keyword loop autonomously

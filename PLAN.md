@@ -1,5 +1,7 @@
 # Tracked implementation and validation plan
 
+**28 October — production keyword rollout authorized and in progress:** connect the frozen winning process, prove one live saved/displayed result, process the twenty with automatic quality/cost checks, then assess expansion within the existing caps. [Tracked rollout](docs/tech/KEYWORD-PRODUCTION-ROLLOUT-2026-10-28.md). Preserve sources, recaps, operator decisions, old charges and unresolved holds; keep recap readiness separate.
+
 Version: **1.1 — APPROVAL CANDIDATE**. Updated: 27 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
 
 Approving the named pair permits the local M0–M5 work below. For this broader candidate, paid provider execution remains gated; D20 separately authorizes the deployed v0 and real public-feed collection described below. Customer contact and paid trials are not authorized. Local fixture evidence and actual live integration evidence remain distinct. No fixed launch date is promised.

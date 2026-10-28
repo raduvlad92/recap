@@ -21,7 +21,7 @@ function databaseStub() {
   query.select.mockReturnValue(query); query.eq.mockReturnValue(query); query.order.mockReturnValue(query);
   const insert = vi.fn().mockResolvedValue({ error: null });
   const rpc = vi.fn().mockResolvedValue({ data: { ...record, status: 'approved', resolved_label: record.label }, error: null });
-  const from = vi.fn((table: string) => table === 'admin_keyword_reviews' ? query : { insert });
+  const from = vi.fn((table: string) => table === 'admin_keyword_review_queue' ? query : { insert });
   const db = vi.fn(() => ({ from, rpc })) as unknown as NonNullable<Parameters<typeof createAdminHandler>[0]>['db'];
   return { db, from, rpc, query, insert, result };
 }

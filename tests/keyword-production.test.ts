@@ -1,0 +1,133 @@
+import {createHash} from 'node:crypto';
+import {readFileSync} from 'node:fs';
+import {describe,it,expect} from 'vitest';
+import type {SourceUpdate} from '../src/lib/types';
+import type {GenerationResult} from '../netlify/functions/_shared/content-analysis-model';
+import frozen from '../docs/tech/keyword-autonomous-prompts-2026-10-27.json';
+import {createKeywordProductionOccurrenceFinder} from '../netlify/functions/_shared/keyword-production-occurrences';
+// @ts-expect-error Compare source/timing behavior to the unchanged evaluated helper.
+import {findLiteralNameOccurrences} from '../scripts/lib/keyword-learning.mjs';
+import {analyzeProductionKeywords,KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL,
+ planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,finalizeKeywordProductionChunk,
+ mergeKeywordProductionChunks,keywordProductionReaderFields,type KeywordProductionCall,type KeywordProductionChunkResult} from '../netlify/functions/_shared/keyword-production';
+
+const record=(content:string):SourceUpdate=>({id:'synthetic-video',sourceId:'synthetic-source',contributorIds:[],title:'Untrusted description must not supply names',summary:'Description only',url:'https://example.test/video',publishedAt:'2026-10-28T00:00:00Z',format:'video',topics:[],brands:[],sponsors:[],references:[],insights:[],isSample:false,content,contentKind:'transcript'});
+const data=(call:KeywordProductionCall)=>JSON.parse(call.request.prompt.slice(call.request.prompt.lastIndexOf('\n')+1)) as {content:string;candidates?:string[]};
+const inventory=(names:string[])=>({names,uncertainNames:[]});
+const successful=(value:unknown):GenerationResult=>({value,observedUsd:0,actualUsd:0});
+const checker=(call:KeywordProductionCall,accepted:Record<string,string>,review:Record<string,string>={},missing:Array<{name:string;kind:string;disposition:string}>=[])=>({readComplete:true,
+ decisions:data(call).candidates!.map(name=>({name,kind:accepted[name]??review[name]??'named_mention',disposition:accepted[name]?'accepted':review[name]?'review':'rejected'})),missingNames:missing});
+function chunkResult(update:SourceUpdate,index:number,accepted:Record<string,string>,review:Record<string,string>={},missing:Array<{name:string;kind:string;disposition:string}>=[]):KeywordProductionChunkResult {
+ const chunk=planKeywordProductionChunks(update)[index],values={direct:inventory(Object.keys(accepted)),type_sweep:inventory(Object.keys(review))};
+ const call=keywordProductionCheckerCall(update,chunk,values);
+ return finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(call,accepted,review,missing)});
+}
+
+describe('production named-mention core',()=>{
+ it('indexes cue evidence once while preserving evaluated boundaries and complete/ambiguous partial timing',()=>{
+  for(const [content,segments] of [
+   ['AeroBox supports C and C++ v1.2. AeroBox repeats.',[{text:'AeroBox supports C and C++ v1.2.',startSeconds:1,durationSeconds:4},{text:'AeroBox repeats.',startSeconds:5,durationSeconds:2}]],
+   ['AeroBox repeats. AeroBox repeats.',[{text:'AeroBox repeats.',startSeconds:1,durationSeconds:4}]],
+   ['Missing intro. AeroBox is present. Missing tail.',[{text:'AeroBox is present.',startSeconds:7,durationSeconds:3}]],
+  ] as const){
+   const cues=[...segments].map(s=>({...s})),find=createKeywordProductionOccurrenceFinder(content,cues);
+   for(const name of ['AeroBox','C','C++','v1','v1.2'])expect(find(name)).toEqual(findLiteralNameOccurrences(content,name,cues));
+  }
+ });
+ it('cannot alter a cached coverage plan through a returned chunk object or a later source edit',()=>{
+  const update=record('AeroBox'),chunk=planKeywordProductionChunks(update)[0];chunk.end=2;chunk.content='Ae';
+  expect(()=>keywordProductionExtractionCalls(update,chunk)).toThrow('keyword_production_source_changed');
+  expect(planKeywordProductionChunks(update)[0].content).toBe('AeroBox');update.content='NovaPay';expect(planKeywordProductionChunks(update)[0].content).toBe('NovaPay');
+ });
+ it('keeps the measured shared modules and exact frozen prompts for a complete short source',()=>{
+  for(const [file,expected] of [['scripts/lib/keyword-learning-prompts.mjs',frozen.promptModuleSha256],['scripts/lib/keyword-learning.mjs',frozen.coreModuleSha256]])expect(createHash('sha256').update(readFileSync(file)).digest('hex')).toBe(expected);
+  const update=record('AeroBox'),chunk=planKeywordProductionChunks(update)[0],calls=keywordProductionExtractionCalls(update,chunk);
+  expect(calls[0].request.prompt).toBe(frozen.extractorPromptTemplate.replace('[UNTRUSTED_SAVED_TRANSCRIPT]','AeroBox'));
+  const check=keywordProductionCheckerCall(update,chunk,{direct:inventory(['AeroBox']),type_sweep:inventory([])});
+  expect(check.request.prompt).toBe(frozen.checkerPromptTemplate.replace(JSON.stringify({content:'[UNTRUSTED_SAVED_TRANSCRIPT]',candidates:[]}),JSON.stringify({content:'AeroBox',candidates:data(check).candidates})));
+  expect(check.request.maxOutputTokens).toBe(2000);
+  expect(check.request.schema).toMatchObject({properties:{decisions:{minItems:data(check).candidates!.length,maxItems:data(check).candidates!.length}}});
+  expect(JSON.stringify(check.request.schema)).not.toContain('reason');
+  expect(KEYWORD_PRODUCTION_CONTRACT_HASH).toMatch(/^[a-f0-9]{64}$/);
+ });
+ it('uses two source-only DeepSeek inventories, focused free patterns and one compact Sol check',async()=>{
+  const update=record('AeroBox uses C#. An ad says NovaPay. Finally Tevi.'),calls:KeywordProductionCall[]=[];
+  const result=await analyzeProductionKeywords(update,async call=>{calls.push(call);return successful(call.step==='direct'?inventory(['AeroBox']):call.step==='type_sweep'?inventory(['NovaPay']):checker(call,{'AeroBox':'brand','NovaPay':'service','C#':'technology'}, {},[{name:'Tevi',kind:'person',disposition:'accepted'}]));});
+  expect(calls.map(call=>call.model)).toEqual([KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL]);
+  expect(calls.map(call=>call.step)).toEqual(['direct','type_sweep','checker']);
+  expect(data(calls[0])).toEqual({content:update.content});expect(data(calls[1])).toEqual({content:update.content});
+  expect(data(calls[2]).candidates).toContain('C#');
+  expect(result.state).toBe('ready');
+  expect((result.evidence.accepted as Array<{label:string}>).map(row=>row.label)).toEqual(['AeroBox','NovaPay','C#','Tevi']);
+  expect(result.evidence).toMatchObject({sourceContentState:'partial',generationContractHash:KEYWORD_PRODUCTION_CONTRACT_HASH});
+ });
+ it('retains all private kinds and unresolved names while exposing only accepted labels and host timing',()=>{
+  const update=record('Tevi saw AeroBox. Perhaps Cedar address is a joke.'),result=mergeKeywordProductionChunks(update,[chunkResult(update,0,{Tevi:'person',AeroBox:'brand'},{'Cedar address':'named_mention'})]);
+  expect(result.state).toBe('review');expect(result.pending).toHaveLength(1);
+  expect(result.evidence.accepted).toContainEqual(expect.objectContaining({label:'Tevi',kind:'category',literalKind:'person',confidence:50,confidenceOrigin:'legacy_acceptance_marker_not_model_score'}));
+  const fields=keywordProductionReaderFields(result);
+  expect(fields.topics).toEqual(['Tevi','AeroBox']);expect(fields.brands).toEqual(['AeroBox']);
+  expect(fields.videoKeywords).toEqual([{label:'Tevi',ranges:[]},{label:'AeroBox',ranges:[]}]);
+  expect(JSON.stringify(fields)).not.toMatch(/confidence|evidenceQuote|originalRows|Cedar address/u);
+ });
+ it('keeps unsupported normalization suggestions private without hiding supported accepted names',()=>{
+  const update=record('AeroBox is named.'),result=mergeKeywordProductionChunks(update,[chunkResult(update,0,{AeroBox:'brand'},{},[{name:'Aero Box',kind:'product',disposition:'accepted'}])]);
+  expect(result.state).toBe('ready');expect(result.pending).toEqual([]);
+  expect(result.evidence.unmatchedReview).toEqual([expect.objectContaining({label:'Aero Box',disposition:'review',reason:'literal_name_not_in_source'})]);
+  expect(keywordProductionReaderFields(result).topics).toEqual(['AeroBox']);
+ });
+ it('maps a rendered multiword name back to exact newline-bearing source evidence and cue times',()=>{
+  const update={...record('Tevi tried Google\r\n  Home, then AeroBox.'),transcriptSegments:[{text:'Tevi tried Google',startSeconds:10,durationSeconds:2},{text:'Home, then AeroBox.',startSeconds:12,durationSeconds:3}]};
+  const chunk=planKeywordProductionChunks(update)[0],extraction=keywordProductionExtractionCalls(update,chunk)[0];
+  expect(data(extraction).content).toBe(update.content); // prompts retain the exact saved source
+  const result=mergeKeywordProductionChunks(update,[chunkResult(update,0,{'Google Home':'product'})]);
+  const accepted=(result.evidence.accepted as Array<Record<string,unknown>>)[0];
+  expect(accepted).toMatchObject({label:'Google Home',evidenceQuote:'Google\r\n  Home',mention:'Google\r\n  Home',start:11,end:25,ranges:[{startSeconds:10,endSeconds:15}],seconds:5});
+  expect(update.content!.slice(accepted.start as number,accepted.end as number)).toBe(accepted.evidenceQuote);
+ });
+ it('covers long source tails and surrogate pairs with a complete overlap longer than a legal name',()=>{
+  const content='x'.repeat(11999)+'🎥'+' long material '.repeat(1000)+'FinalName',update=record(content),chunks=planKeywordProductionChunks(update);
+  expect(chunks.length).toBeGreaterThan(1);expect(chunks[0].start).toBe(0);expect(chunks.at(-1)!.end).toBe(content.length);
+  let through=0;for(const chunk of chunks){expect(chunk.start).toBeLessThanOrEqual(through);expect(chunk.end-chunk.start).toBeLessThanOrEqual(12000);expect(chunk.content).toBe(content.slice(chunk.start,chunk.end));expect(chunk.content).not.toMatch(/^[\uDC00-\uDFFF]|[\uD800-\uDBFF]$/u);through=chunk.end;}
+  expect(chunks.at(-1)!.content.endsWith('FinalName')).toBe(true);expect(chunks[0].end-chunks[1].start).toBeGreaterThanOrEqual(200);
+ });
+ it('merges all source chunks and makes type/disposition disagreements private',()=>{
+  const update=record('AeroBox '+ 'filler '.repeat(1800)+' AeroBox NovaPay.'),chunks=planKeywordProductionChunks(update);
+  expect(chunks).toHaveLength(2);
+  const first=chunkResult(update,0,{AeroBox:'brand'}),second=chunkResult(update,1,{AeroBox:'organization',NovaPay:'service'}),result=mergeKeywordProductionChunks(update,[first,second]);
+  expect(result.state).toBe('review');expect(result.pending).toContainEqual(expect.objectContaining({label:'AeroBox',literalKind:null,confidence:0}));
+  expect(keywordProductionReaderFields(result).topics).toEqual(['NovaPay']);expect(result.evidence.crossChunkConflicts).toHaveLength(1);
+  expect(()=>mergeKeywordProductionChunks(update,[first])).toThrow('incomplete_keyword_coverage');
+  expect(()=>mergeKeywordProductionChunks(update,[second,first])).toThrow('incomplete_keyword_coverage');
+ });
+ it('preserves literal case/legacy aliases privately and does not create duplicate publication keys',()=>{
+  const update=record('NVIDIA met Nvidia. PS1 and PlayStation appeared.'),result=mergeKeywordProductionChunks(update,[chunkResult(update,0,{NVIDIA:'brand',Nvidia:'brand',PS1:'product',PlayStation:'product'})]);
+  const accepted=result.evidence.accepted as Array<{label:string;literalForms:Array<{label:string}>}>;
+  expect(accepted.map(row=>row.label)).toEqual(['NVIDIA','PS1']);
+  expect(accepted[0].literalForms.map(row=>row.label)).toEqual(['NVIDIA','Nvidia']);
+  expect(accepted[1].literalForms.map(row=>row.label)).toEqual(['PS1','PlayStation']);
+ });
+ it('rejects incomplete checker decisions, unknown kinds, unrequested reasons and output-capacity failures',async()=>{
+  const update=record('AeroBox NovaPay.'),chunk=planKeywordProductionChunks(update)[0],values={direct:inventory(['AeroBox']),type_sweep:inventory(['NovaPay'])},call=keywordProductionCheckerCall(update,chunk,values),good=checker(call,{AeroBox:'brand',NovaPay:'service'});
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions.slice(1)}})).toThrow('checker_incomplete');
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions.map(row=>({...row,kind:'invented'}))}})).toThrow('checker_invalid_decision');
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions.map(row=>({...row,reason:'not requested'}))}})).toThrow('checker_invalid_decision');
+  expect(()=>finalizeKeywordProductionChunk(update,chunk,{...values,checker:{...good,decisions:good.decisions.map(()=>good.decisions[0])}})).toThrow('checker_candidate_decisions_incomplete');
+  await expect(analyzeProductionKeywords(update,async()=>({...successful(inventory([])),validationError:'analysis_output_capacity'}))).rejects.toThrow('analysis_output_capacity');
+ });
+ it('stops before another paid step when the preceding charge is unknown',async()=>{
+  const calls:KeywordProductionCall[]=[];
+  await expect(analyzeProductionKeywords(record('AeroBox.'),async call=>{calls.push(call);return {value:inventory(['AeroBox']),observedUsd:null,actualUsd:null};})).rejects.toThrow('analysis_unknown_charge_hold');
+  expect(calls).toHaveLength(1);
+ });
+ it('rejects stale chunks, metadata and over-capacity source without silently dropping content',()=>{
+  const update=record('AeroBox'),chunk=planKeywordProductionChunks(update)[0];
+  expect(()=>keywordProductionExtractionCalls({...update,content:'NovaPay'},chunk)).toThrow('keyword_production_source_changed');
+  expect(()=>planKeywordProductionChunks({...update,contentKind:'metadata_only'})).toThrow('usable_keyword_content_required');
+  expect(()=>planKeywordProductionChunks(record('x'.repeat(1_000_001)))).toThrow('analysis_source_capacity');
+ });
+ it('fails the whole inventory rather than retaining only a top 500',()=>{
+  const update=record(Array.from({length:501},(_,index)=>'quux'+index).join(' ')),chunk=planKeywordProductionChunks(update)[0];
+  expect(()=>keywordProductionCheckerCall(update,chunk,{direct:inventory(update.content!.split(' ')),type_sweep:inventory([])})).toThrow('literal_inventory_capacity');
+ });
+});

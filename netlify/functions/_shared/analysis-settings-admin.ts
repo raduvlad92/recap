@@ -64,7 +64,7 @@ export async function readAnalysisOperations(db: Database, now = new Date()): Pr
   const checkedAt = now.toISOString(), day = checkedAt.slice(0, 10);
   const [counts, reviews, leases, errors, firstLedger] = await Promise.all([
     Promise.resolve().then(() => Promise.all(ANALYSIS_JOB_STATES.map(async state => [state, exactCount(await db.from('reader_content_analysis_jobs').select('id', { count: 'exact', head: true }).eq('state', state))] as const))),
-    Promise.resolve().then(() => db.from('admin_keyword_reviews').select('id', { count: 'exact', head: true }).eq('status', 'pending')),
+    Promise.resolve().then(() => db.from('admin_keyword_review_queue').select('id', { count: 'exact', head: true }).eq('status', 'pending')),
     Promise.resolve().then(() => db.from('reader_content_analysis_jobs').select('id', { count: 'exact', head: true }).in('state', ['running', 'prepared']).lt('lease_until', checkedAt)),
     Promise.resolve().then(() => db.from('reader_content_analysis_jobs').select('error_code,updated_at').not('error_code', 'is', null).order('updated_at', { ascending: false }).limit(12)),
     readLedger(db, checkedAt),

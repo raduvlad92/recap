@@ -1,5 +1,7 @@
 # Current status
 
+**28 October — authorized production keyword rollout in progress.** The founder said “do it” to connect the measured keyword process, verify one real publication/reload, run the frozen twenty and expand only after quality and budget checks. [Rollout plan and evidence](docs/tech/KEYWORD-PRODUCTION-ROLLOUT-2026-10-28.md). US$10 cumulative / US$5 day / US$0.10 call and historical holds persist. Recaps remain separate. No broad legacy queue activation follows from releasing the finite keyword batch.
+
 Updated: **27 October 2026**. Phase: **functioning v0, admin, creator catalogue and bounded tech collection deployed and verified**. The founder explicitly authorized autonomous v0 implementation/deployment in D20. **SPEC/PLAN v1.1 remain the broader unapproved candidates**, not a claim that v0 completes every milestone.
 
 ## Current request — autonomous keyword improvement completed
