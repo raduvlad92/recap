@@ -42,9 +42,10 @@ function fixture(){
   return bound;
  };
  const complete=()=>{
-  const chunk=planKeywordProductionChunks(update)[0],[a,b]=keywordProductionExtractionCalls(update,chunk),inventory={names:['AeroBox','NovaPay'],uncertainNames:[]};
+  const sectionSweepChunks=tables.keyword_production_releases[0].sources[0].sectionSweepChunks;
+  const chunk=planKeywordProductionChunks(update)[0],[a,b]=keywordProductionExtractionCalls(update,chunk,sectionSweepChunks),inventory={names:['AeroBox','NovaPay'],uncertainNames:[]};
   add(a,inventory);add(b,inventory);
-  const check=keywordProductionCheckerCall(update,chunk,{direct:inventory,type_sweep:inventory}),data=JSON.parse(check.request.prompt.slice(check.request.prompt.lastIndexOf('\n')+1));
+  const check=keywordProductionCheckerCall(update,chunk,{direct:inventory,type_sweep:inventory},'standard',sectionSweepChunks),data=JSON.parse(check.request.prompt.slice(check.request.prompt.lastIndexOf('\n')+1));
   add(check,{readComplete:true,decisions:data.candidates.map((name:string)=>({name,kind:name==='NovaPay'?'service':'brand',disposition:'accepted'})),missingNames:[]});
  };
  return {send,tables,from,rpc,authorize,workerAuthorized,complete,add,handler};
@@ -64,6 +65,29 @@ describe('finite production keyword publication, synthetic adapters only',()=>{
  it('creates exactly the frozen extractor requests without a provider or publication call',async()=>{
   const f=fixture(),r=await f.send({action:'plan',stage:'extractors',chunkIndex:0}),value=await r.json();
   expect(r.status).toBe(200);expect(value.chunkCount).toBe(1);expect(value.calls).toHaveLength(2);expect(value.calls.every((x:any)=>x.model==='deepseek/deepseek-v4.1-flash-1017'&&x.sourceHash===sourceHash&&x.request.key.startsWith('keyword-learning:v1:'))).toBe(true);expect(f.rpc).not.toHaveBeenCalled();
+ });
+ it('derives a section sweep only from private source admission and verifies its exact settled receipt',async()=>{
+  const f=fixture(),chunk=planKeywordProductionChunks(update)[0];f.tables.keyword_production_releases[0].sources[0].sectionSweepChunks=[0];
+  const plan=await f.send({action:'plan',stage:'extractors',chunkIndex:0}),value=await plan.json();expect(plan.status).toBe(200);
+  expect(value.calls).toEqual(keywordProductionExtractionCalls(update,chunk,[0]).map(call=>bindKeywordProductionCall(sid,1,sourceHash,call)));
+  expect(value.calls[0]).toEqual(bindKeywordProductionCall(sid,1,sourceHash,keywordProductionExtractionCalls(update,chunk)[0]));
+  expect(value.calls[1].request.key).not.toBe(bindKeywordProductionCall(sid,1,sourceHash,keywordProductionExtractionCalls(update,chunk)[1]).request.key);
+  f.complete();expect((await f.send({action:'plan',stage:'checker',chunkIndex:0})).status).toBe(200);
+  const preview=await f.send({action:'preview'}),checked=await preview.json();expect(preview.status).toBe(200);
+  expect(checked.calls.map((call:any)=>call.role)).toEqual(['direct','typed','checker']);
+  expect(checked.output.evidence.extractionMethods).toEqual(['direct','sections','focused_patterns']);expect(checked.output.evidence.chunks[0].secondExtractorMethod).toBe('sections');
+  expect((await f.send({action:'publish',expectedOutputHash:checked.outputHash})).status).toBe(200);
+ });
+ it('cannot replay a type sweep as a newly admitted sections result or accept a caller-supplied policy',async()=>{
+  const f=fixture();f.complete();f.tables.keyword_production_releases[0].sources[0].sectionSweepChunks=[0];
+  for(const input of [{action:'plan',stage:'checker',chunkIndex:0},{action:'preview'}]){
+   const response=await f.send(input);expect(response.status).toBe(409);expect((await response.json()).error.code).toBe('keyword_production_call_not_ready');
+  }
+  expect((await f.send({action:'plan',stage:'extractors',chunkIndex:0,sectionSweepChunks:[]})).status).toBe(400);expect(f.rpc).not.toHaveBeenCalled();
+ });
+ it.each([null,[0,0],[-1],[1],[0.5],['0']])('rejects malformed private section-sweep admission %j',async value=>{
+  const f=fixture();f.tables.keyword_production_releases[0].sources[0].sectionSweepChunks=value;
+  const response=await f.send({action:'plan',stage:'extractors',chunkIndex:0});expect(response.status).toBe(409);expect((await response.json()).error.code).toBe('keyword_production_section_sweep_invalid');expect(f.rpc).not.toHaveBeenCalled();
  });
  it('rejects changed source content before deriving or publishing a result',async()=>{
   const f=fixture();f.tables.reader_source_updates[0].record.content+=' Changed.';

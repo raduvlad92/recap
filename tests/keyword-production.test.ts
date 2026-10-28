@@ -7,6 +7,8 @@ import frozen from '../docs/tech/keyword-autonomous-prompts-2026-10-27.json';
 import {createKeywordProductionOccurrenceFinder} from '../netlify/functions/_shared/keyword-production-occurrences';
 // @ts-expect-error Compare source/timing behavior to the unchanged evaluated helper.
 import {findLiteralNameOccurrences} from '../scripts/lib/keyword-learning.mjs';
+// @ts-expect-error Compare the exact existing extraction payloads, without a prompt fork.
+import {keywordExtractionRequest} from '../scripts/lib/keyword-learning-prompts.mjs';
 import {analyzeProductionKeywords,KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_LITERAL_CORE_SHA256,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL,
  planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,finalizeKeywordProductionChunk,
  mergeKeywordProductionChunks,keywordProductionReaderFields,applyKeywordProductionTimingReviews,type KeywordProductionCall,type KeywordProductionChunkResult} from '../netlify/functions/_shared/keyword-production';
@@ -62,6 +64,34 @@ describe('production named-mention core',()=>{
   expect(result.state).toBe('ready');
   expect((result.evidence.accepted as Array<{label:string}>).map(row=>row.label)).toEqual(['AeroBox','NovaPay','C#','Tevi']);
   expect(result.evidence).toMatchObject({sourceContentState:'partial',generationContractHash:KEYWORD_PRODUCTION_CONTRACT_HASH});
+ });
+ it('preserves default paid payloads and replaces only admitted second-extractor chunks with the existing sections prompt',()=>{
+  const update=record('AeroBox '+ 'filler '.repeat(1800)+' NovaPay.'),chunks=planKeywordProductionChunks(update);
+  expect(chunks).toHaveLength(2);
+  for(const chunk of chunks){
+   const baseline=keywordProductionExtractionCalls(update,chunk),targeted=keywordProductionExtractionCalls(update,chunk,[1]);
+   const old=(['direct','type_sweep'] as const).map(step=>({chunkIndex:chunk.index,step,model:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,
+    request:keywordExtractionRequest({method:step,content:chunk.content,lessons:frozen.extractorLessons})}));
+   expect(JSON.stringify(baseline)).toBe(JSON.stringify(old));expect(JSON.stringify(keywordProductionExtractionCalls(update,chunk,[]))).toBe(JSON.stringify(old));
+   expect(targeted[0]).toEqual(baseline[0]);expect(targeted[1].step).toBe('type_sweep');expect(targeted[1].model).toBe(baseline[1].model);
+   expect(data(targeted[1]).content).toBe(chunk.content);expect(chunk.sourceHash).toBe(createHash('sha256').update(update.content!).digest('hex'));
+   if(chunk.index===1)expect(targeted[1].request).toEqual(keywordExtractionRequest({method:'sections',content:chunk.content,lessons:frozen.extractorLessons}));
+   else expect(targeted).toEqual(baseline);
+  }
+ });
+ it.each([null,[0,0],[-1],[1],[0.5],['0'],{}])('rejects an invalid section-sweep admission %j before generating',value=>{
+  const update=record('AeroBox'),chunk=planKeywordProductionChunks(update)[0];
+  expect(()=>keywordProductionExtractionCalls(update,chunk,value)).toThrow('keyword_production_section_sweep_invalid');
+ });
+ it('records the actual second extraction method for each chunk while retaining the stable typed step',async()=>{
+  const update=record('AeroBox '+ 'filler '.repeat(1800)+' NovaPay.'),calls:KeywordProductionCall[]=[];
+  const result=await analyzeProductionKeywords(update,async call=>{calls.push(call);const names=['AeroBox','NovaPay'].filter(name=>data(call).content.includes(name));
+   return successful(call.step==='checker'?checker(call,{AeroBox:'brand',NovaPay:'service'}):inventory(names));
+  },[1]);
+  expect(calls.filter(call=>call.step==='type_sweep')).toHaveLength(2);
+  expect(result.evidence.extractionMethods).toEqual(['direct','type_sweep','sections','focused_patterns']);
+  expect(result.evidence.chunks).toEqual([expect.objectContaining({index:0,secondExtractorMethod:'type_sweep'}),expect.objectContaining({index:1,secondExtractorMethod:'sections'})]);
+  expect(keywordProductionReaderFields(result).topics).toEqual(['AeroBox','NovaPay']);
  });
  it('keeps the original named-row transport at one hundred short candidates',()=>{
   const names=Array.from({length:100},(_,i)=>'quux'+i),update=record(names.join(' ')),chunk=planKeywordProductionChunks(update)[0],call=keywordProductionCheckerCall(update,chunk,{direct:inventory(names),type_sweep:inventory([])});

@@ -44,6 +44,7 @@ export const KEYWORD_PRODUCTION_CONTRACT_HASH = contentHash(JSON.stringify({
  extractorModel: KEYWORD_PRODUCTION_EXTRACTOR_MODEL,
  checkerModel: KEYWORD_PRODUCTION_CHECKER_MODEL,
  extractorLessons: frozen.extractorLessons,
+ admittedSectionSweep:'unique-in-range-chunk-indices-second-extractor-sections-v1',
  checkerLessons: frozen.checkerLessons,
  patternMining: 'focused', checkerReasons: false, checkerMaxOutputTokens: 2000,
  checkerTransport:{version:'explicit-candidate-kind-disposition-integer-tuples-v2',afterCandidateCount:COMPACT_CHECKER_AFTER_NAMES,
@@ -75,6 +76,7 @@ export interface KeywordProductionChunkResult {
  rawRows:KeywordProductionDecision[]; boundaryChanges:unknown[];
  duplicateVerdicts:number; conflicts:unknown[];
  checkerEncoding:'named_rows'|'numeric_tuples';
+ secondExtractorMethod:'type_sweep'|'sections';
 }
 interface Inventory { names:string[]; uncertainNames:string[] }
 type ChunkInventories = { direct:unknown; type_sweep:unknown };
@@ -146,25 +148,40 @@ function requestCapacity(request:GenerationRequest):GenerationRequest {
  return request;
 }
 
-export function keywordProductionExtractionCalls(update:SourceUpdate,chunk:KeywordProductionChunk):KeywordProductionCall[] {
- checkedChunk(update,chunk);
- return (['direct','type_sweep'] as const).map(step=>({chunkIndex:chunk.index,step,model:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,
-  request:requestCapacity(keywordExtractionRequest({method:step,content:chunk.content,lessons:frozen.extractorLessons}))}));
+/** This policy is private source admission data. It never changes the first
+ * extractor or the stable typed receipt role used by the publication ledger. */
+export function validateKeywordProductionSectionSweepChunks(update:SourceUpdate,value:unknown):number[] {
+ if(value===undefined)return [];
+ const count=planKeywordProductionChunks(update).length;
+ if(!Array.isArray(value)||value.length>count||new Set(value).size!==value.length
+  ||[...value].some(index=>!Number.isSafeInteger(index)||index<0||index>=count))return analysisFailure('keyword_production_section_sweep_invalid');
+ return [...value] as number[];
 }
 
-function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories):Array<{name:string}> {
- const signature=JSON.stringify(values),cached=inventoryCache.get(chunk);
+function secondExtractionMethod(update:SourceUpdate,chunk:KeywordProductionChunk,sectionSweepChunks:unknown):'type_sweep'|'sections' {
+ return validateKeywordProductionSectionSweepChunks(update,sectionSweepChunks).includes(chunk.index)?'sections':'type_sweep';
+}
+
+export function keywordProductionExtractionCalls(update:SourceUpdate,chunk:KeywordProductionChunk,sectionSweepChunks?:unknown):KeywordProductionCall[] {
+ checkedChunk(update,chunk);
+ const second=secondExtractionMethod(update,chunk,sectionSweepChunks);
+ return (['direct','type_sweep'] as const).map(step=>({chunkIndex:chunk.index,step,model:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,
+  request:requestCapacity(keywordExtractionRequest({method:step==='direct'?step:second,content:chunk.content,lessons:frozen.extractorLessons}))}));
+}
+
+function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories,second:'type_sweep'|'sections'='type_sweep'):Array<{name:string}> {
+ const signature=JSON.stringify({values,second}),cached=inventoryCache.get(chunk);
  if(cached?.signature===signature)return cached.rows;
  const direct=validateLiteralInventory(values.direct) as Inventory, typed=validateLiteralInventory(values.type_sweep) as Inventory;
- const rows=combineKeywordInventories(renderSource(chunk.content).text,[{method:'direct',output:direct},{method:'type_sweep',output:typed},
+ const rows=combineKeywordInventories(renderSource(chunk.content).text,[{method:'direct',output:direct},{method:second,output:typed},
   {method:'patterns',output:minePatternNames(chunk.content,{precision:'focused'})}]) as Array<{name:string}>;
  inventoryCache.set(chunk,{signature,rows});return rows;
 }
 
-export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories,policy:KeywordProductionCheckerPolicy='standard'):KeywordProductionCall {
+export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories,policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown):KeywordProductionCall {
  checkedChunk(update,chunk);
  if(!['standard','alias-boundaries-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
- const names=combinedInventory(chunk,values).map(row=>row.name);
+ const names=combinedInventory(chunk,values,secondExtractionMethod(update,chunk,sectionSweepChunks)).map(row=>row.name);
  const lessons=policy==='standard'?frozen.checkerLessons:[...frozen.checkerLessons,ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON];
  const request=keywordCheckerRequest({content:chunk.content,names,lessons,maxOutputTokens:2000,includeReasons:false}) as GenerationRequest;
  return {chunkIndex:chunk.index,step:'checker',model:KEYWORD_PRODUCTION_CHECKER_MODEL,
@@ -235,10 +252,10 @@ function validateChecker(value:unknown,names:string[]):void {
  }
 }
 
-export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories&{checker:unknown},policy:KeywordProductionCheckerPolicy='standard'):KeywordProductionChunkResult {
+export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories&{checker:unknown},policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown):KeywordProductionChunkResult {
  checkedChunk(update,chunk);
  if(!['standard','alias-boundaries-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
- const candidates=combinedInventory(chunk,values).map(row=>row.name);
+ const secondExtractorMethod=secondExtractionMethod(update,chunk,sectionSweepChunks),candidates=combinedInventory(chunk,values,secondExtractorMethod).map(row=>row.name);
  const checker=decodedChecker(values.checker,candidates);
  validateChecker(checker,candidates);
  const rendered=renderSource(chunk.content).text;
@@ -255,7 +272,7 @@ export function finalizeKeywordProductionChunk(update:SourceUpdate,chunk:Keyword
  }
  const boundaryChanges=boundary.changes.map(change=>record(change)&&restoredParents.has(String(change.name))&&change.code==='only_prefix_of_longer_accepted_name'
   ?{...change,guardTo:change.to,to:'accepted',overriddenBy:'source_supported_checker_accepted_name'}:change);
- return {chunk,candidates,rawRows:normalized.rows,rows:boundary.rows,boundaryChanges,
+ return {chunk,candidates,rawRows:normalized.rows,rows:boundary.rows,boundaryChanges,secondExtractorMethod,
   duplicateVerdicts:normalized.duplicateVerdicts,conflicts:normalized.conflicts,checkerEncoding:compactChecker(candidates)?'numeric_tuples':'named_rows'};
 }
 
@@ -337,10 +354,10 @@ export function mergeKeywordProductionChunks(update:SourceUpdate,results:Keyword
    unmatchedReview:unmatchedReview.map(({label,literalKind,disposition,reason})=>({label,literalKind,disposition,reason})),
    rejected:rejected.map(({label,literalKind,disposition})=>({label,literalKind,disposition})),
    coverage:chunks.map(({start,end})=>({start,end})),chunkCount:chunks.length,crossChunkConflicts,
-   extractionMethods:['direct','type_sweep','focused_patterns'],extractorModel:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,checkerModel:KEYWORD_PRODUCTION_CHECKER_MODEL,
+   extractionMethods:['direct',...new Set(results.map(result=>result.secondExtractorMethod)),'focused_patterns'],extractorModel:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,checkerModel:KEYWORD_PRODUCTION_CHECKER_MODEL,
    checkerReasons:false,confidenceOrigin:'legacy_acceptance_marker_not_model_score',
    rawGenerationEvidence:'Exact request payloads and provider responses remain in the bound durable call receipts; this publication proof avoids duplicating them.',
-   chunks:results.map(({chunk,candidates,rows,boundaryChanges,duplicateVerdicts,conflicts,checkerEncoding})=>({index:chunk.index,start:chunk.start,end:chunk.end,chunkHash:chunk.chunkHash,checkerEncoding,
+   chunks:results.map(({chunk,candidates,rows,boundaryChanges,duplicateVerdicts,conflicts,checkerEncoding,secondExtractorMethod})=>({index:chunk.index,start:chunk.start,end:chunk.end,chunkHash:chunk.chunkHash,checkerEncoding,secondExtractorMethod,
     candidateCount:candidates.length,acceptedCount:rows.filter(r=>r.disposition==='accepted').length,reviewCount:rows.filter(r=>r.disposition==='review').length,
     rejectedCount:rows.filter(r=>r.disposition==='rejected').length,boundaryChanges,duplicateVerdicts,conflictCount:conflicts.length}))}};
  if(new TextEncoder().encode(JSON.stringify(result)).length>400000)return analysisFailure('keyword_production_evidence_capacity');
@@ -355,12 +372,12 @@ function settled(result:GenerationResult):unknown {
 
 /** The caller supplies durable, metered generation. This module owns no
  * credentials, ledger, retries, scheduling, session release or publication. */
-export async function analyzeProductionKeywords(update:SourceUpdate,generate:(call:KeywordProductionCall)=>Promise<GenerationResult>):Promise<AnalysisOutput> {
+export async function analyzeProductionKeywords(update:SourceUpdate,generate:(call:KeywordProductionCall)=>Promise<GenerationResult>,sectionSweepChunks?:unknown):Promise<AnalysisOutput> {
  const results:KeywordProductionChunkResult[]=[];
  for(const chunk of planKeywordProductionChunks(update)){
-  const [directCall,typedCall]=keywordProductionExtractionCalls(update,chunk),direct=settled(await generate(directCall)),type_sweep=settled(await generate(typedCall));
-  const checkerCall=keywordProductionCheckerCall(update,chunk,{direct,type_sweep}),checker=settled(await generate(checkerCall));
-  results.push(finalizeKeywordProductionChunk(update,chunk,{direct,type_sweep,checker}));
+  const [directCall,typedCall]=keywordProductionExtractionCalls(update,chunk,sectionSweepChunks),direct=settled(await generate(directCall)),type_sweep=settled(await generate(typedCall));
+  const checkerCall=keywordProductionCheckerCall(update,chunk,{direct,type_sweep},'standard',sectionSweepChunks),checker=settled(await generate(checkerCall));
+  results.push(finalizeKeywordProductionChunk(update,chunk,{direct,type_sweep,checker},'standard',sectionSweepChunks));
  }
  return mergeKeywordProductionChunks(update,results);
 }

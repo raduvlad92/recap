@@ -5,7 +5,7 @@ import { analysisExecutionIdentity, analysisLimits, AnalysisError, type Generati
 import { analysisRuntimeEnv } from './content-analysis-runtime';
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
 import type { SourceUpdate } from '../../../src/lib/types';
-import { KEYWORD_PRODUCTION_CONTRACT_HASH, KEYWORD_PRODUCTION_GENERATION_HASH, planKeywordProductionChunks, keywordProductionExtractionCalls, keywordProductionCheckerCall, finalizeKeywordProductionChunk, mergeKeywordProductionChunks, applyKeywordProductionTimingReviews, type KeywordProductionCall } from './keyword-production';
+import { KEYWORD_PRODUCTION_CONTRACT_HASH, KEYWORD_PRODUCTION_GENERATION_HASH, planKeywordProductionChunks, keywordProductionExtractionCalls, keywordProductionCheckerCall, finalizeKeywordProductionChunk, mergeKeywordProductionChunks, applyKeywordProductionTimingReviews, validateKeywordProductionSectionSweepChunks, type KeywordProductionCall } from './keyword-production';
 
 type DB=ReturnType<typeof database>;
 type Row=Record<string,any>;
@@ -23,7 +23,7 @@ function unwrap<T>(value:{data:T;error:{code?:string}|null}):T {
  return value.data;
 }
 const response=(value:unknown,status=200)=>{const r=json(value,status);r.headers.set('cache-control','private, no-store');r.headers.set('x-robots-tag','noindex, nofollow');return r;};
-interface Context {session:Row;slot:Row;update:SourceUpdate;chunks:ReturnType<typeof planKeywordProductionChunks>}
+interface Context {session:Row;slot:Row;update:SourceUpdate;chunks:ReturnType<typeof planKeywordProductionChunks>;sectionSweepChunks:number[]}
 interface Stored {requests:Map<string,Row>;charges:Map<string,Row>}
 
 /** Request plans are server-authored. The client chooses only an admitted
@@ -42,7 +42,8 @@ async function contextFor(db:DB,sessionId:string,ordinal:number):Promise<Context
  if(!row?.record||typeof row.record.content!=='string'||hash(row.record.content)!==slot.sourceHash)return fail('keyword_production_source_changed');
  const update=row.record as SourceUpdate,chunks=planKeywordProductionChunks(update);
  if(chunks.length!==slot.chunkCount)return fail('keyword_production_source_changed');
- return {session,slot,update,chunks};
+ const sectionSweepChunks=validateKeywordProductionSectionSweepChunks(update,slot.sectionSweepChunks);
+ return {session,slot,update,chunks,sectionSweepChunks};
 }
 async function storedFor(db:DB,sessionId:string,ordinal:number):Promise<Stored> {
  const requests=unwrap(await db.from('keyword_learning_requests').select('*').eq('session_id',sessionId).eq('source_ordinal',ordinal)) as Row[];
@@ -86,18 +87,18 @@ export function createKeywordProductionHandler(overrides:Partial<Dependencies>={
    const ctx=await contextFor(db,input.sessionId,input.sourceOrdinal);
    if(input.action==='plan'){
     if(!Number.isSafeInteger(input.chunkIndex)||input.chunkIndex<0||!ctx.chunks[input.chunkIndex]||!['extractors','checker'].includes(input.stage))return fail('keyword_production_invalid_input',400);
-    const chunk=ctx.chunks[input.chunkIndex],extractions=keywordProductionExtractionCalls(ctx.update,chunk);
+    const chunk=ctx.chunks[input.chunkIndex],extractions=keywordProductionExtractionCalls(ctx.update,chunk,ctx.sectionSweepChunks);
     if(input.stage==='extractors')return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,chunkCount:ctx.chunks.length,calls:extractions.map(c=>bindKeywordProductionCall(input.sessionId,input.sourceOrdinal,ctx.slot.sourceHash,c))});
     const stored=await storedFor(db,input.sessionId,input.sourceOrdinal),direct=verifiedCall(ctx,stored,extractions[0],deps.env).value,type_sweep=verifiedCall(ctx,stored,extractions[1],deps.env).value;
-    const checker=keywordProductionCheckerCall(ctx.update,chunk,{direct,type_sweep},ctx.slot.checkerPolicy);
+    const checker=keywordProductionCheckerCall(ctx.update,chunk,{direct,type_sweep},ctx.slot.checkerPolicy,ctx.sectionSweepChunks);
     return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,chunkCount:ctx.chunks.length,calls:[bindKeywordProductionCall(input.sessionId,input.sourceOrdinal,ctx.slot.sourceHash,checker)]});
    }
    const stored=await storedFor(db,input.sessionId,input.sourceOrdinal),receipts:Row[]=[],results=[];
    for(const chunk of ctx.chunks){
-    const [a,b]=keywordProductionExtractionCalls(ctx.update,chunk),direct=verifiedCall(ctx,stored,a,deps.env),typed=verifiedCall(ctx,stored,b,deps.env);
-    const check=keywordProductionCheckerCall(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value},ctx.slot.checkerPolicy),checked=verifiedCall(ctx,stored,check,deps.env);
+    const [a,b]=keywordProductionExtractionCalls(ctx.update,chunk,ctx.sectionSweepChunks),direct=verifiedCall(ctx,stored,a,deps.env),typed=verifiedCall(ctx,stored,b,deps.env);
+    const check=keywordProductionCheckerCall(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value},ctx.slot.checkerPolicy,ctx.sectionSweepChunks),checked=verifiedCall(ctx,stored,check,deps.env);
     receipts.push(direct.receipt,typed.receipt,checked.receipt);
-    results.push(finalizeKeywordProductionChunk(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value,checker:checked.value},ctx.slot.checkerPolicy));
+    results.push(finalizeKeywordProductionChunk(ctx.update,chunk,{direct:direct.value,type_sweep:typed.value,checker:checked.value},ctx.slot.checkerPolicy,ctx.sectionSweepChunks));
    }
    const output=applyKeywordProductionTimingReviews(ctx.update,mergeKeywordProductionChunks(ctx.update,results),ctx.slot.timingReviews),outputHash=hash(stable(output));
    if(input.action==='preview')return response({contractHash:KEYWORD_PRODUCTION_CONTRACT_HASH,outputHash,output,calls:receipts});
