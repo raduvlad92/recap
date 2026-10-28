@@ -1,5 +1,15 @@
 # Decisions and interview
 
+## 28 October 2026 — recover the six held keyword inventories
+
+Founder: “focus on the six failures and fix them.” This authorizes the bounded recovery and publication of ordinals 4/9/14/16/17/19, preserving the previous fourteen results and the existing US$10 total / US$5 daily / US$0.10 call limits. It does not start a wider backlog, recap run or new collection.
+
+Completed: all six are published, and all twenty reader API reloads match. Aggregate capacity is 1,000 without truncation; per-chunk capacity stays 500. Contextual checks retain every source-established name, including ads and brief mentions, while unresolved names/timing stay private or untimed. The last two decisions reuse a verified closed result rather than rechecking every good decision. The large publisher now normalizes source text once, retaining all existing validation, financial and operator guards.
+
+Reference revisions and earlier failures remain explicit. A browser duplicate is merged with redirect history. The final bag-model disagreement is resolved through compatible source context and the official brand catalogue; the original v13 Bad score/config remains archived and the unchanged response is regraded under v14 with zero new calls. This is post-generation external corroboration, not a blind trial or a model trained on the expected answer.
+
+All 28 new calls settle for US$0.418440300 with no new hold. All old 685 calls, seven holds, reviews, protected reader records and existing annotations are preserved. All sessions/releases close and broad analysis stays Off. [Full result](tech/KEYWORD-SIX-RECOVERY-2026-10-28.md).
+
 ## 28 October 2026 — controlled production keyword rollout
 
 Founder: “do it”, followed by “continue”, approving the proposed connection of the measured keyword process, one actual publication/reload proof, the frozen twenty-video run and expansion conditional on those checks and the remaining allowance. Retain US$10 cumulative / US$5 day / US$0.10 call and all historical holds. This is not approval of the unresolved recap process, unlimited recurring spending or new collection. Use a finite admitted roster and keep the broader legacy queue paused.

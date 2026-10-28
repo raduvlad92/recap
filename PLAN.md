@@ -1,6 +1,6 @@
 # Tracked implementation and validation plan
 
-**28 October — frozen twenty processed; conditional expansion stopped at quality gate.** Fourteen inventories are published (467 labels); five semantic failures and a 649-versus-500 capacity failure remain held. [Final results and exact costs](docs/tech/KEYWORD-PRODUCTION-ROLLOUT-2026-10-28.md). All sessions/releases are closed; analysis remains Off. No backfill follows from 14/20 passing.
+**28 October — six keyword holds resolved; all twenty published.** All twenty closed-session reader API reloads match, with 1,617 labels. The bounded recovery costs US$0.418440300; cumulative commitment is US$8.124935724 including US$0.125827191 historical holds. [Final recovery proof](docs/tech/KEYWORD-SIX-RECOVERY-2026-10-28.md). Broader analysis remains Off.
 
 Version: **1.1 — APPROVAL CANDIDATE**. Updated: 27 October 2026. Matches [SPEC v1.1](SPEC.md), superseding the unapproved v1.0 candidate with modular studio/person/source scope. **Broader candidate not approved; a separately authorized working v0 is deployed and verified under D20.** A separate static visual concept was explicitly authorized and completed as VD01.
 
@@ -8,9 +8,9 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 ## Next-session starting point
 
-Read the [28 October handoff](docs/tech/SESSION-HANDOFF-2026-10-28.md). Preserve the fourteen publications, all raw requests/failed attempts, reference versions and seven old holds. Use the saved 60-response long-source case to repair capacity without truncation or rebilling, then audit its entries; independently resolve omissions/uncertainty/timing in 9/14/16/17/19. Recheck publication before wider automation. Do not reopen consumed sessions or redispatch unknown calls.
+Read the [current handoff](docs/tech/SESSION-HANDOFF-2026-10-28.md). The six held inventories are recovered and published; preserve all twenty publications, raw failed attempts, reference versions and seven old holds. No further grading or paid call is needed to finish this recovery.
 
-New cost US$3.201224284; cumulative commitment US$7.706495424 including US$0.125827191 holds. Retain US$10 total / US$5 daily / US$0.10 call. Full 3,031 local tests/typecheck/build/catalogue and CI40617364524 pass; exact ready deploy `6ae1559d883d7fc228d20e63` uses functional `5efaa499`. Actual publication and 14/20 semantic passes are distinct from code checks.
+Review reported provider charges and the remaining US$1.875064276 before proposing another batch. Keep US$10 cumulative / US$5 daily / US$0.10 per call and all disabled generation controls. A broader run needs evidence from unseen sources; the present assistant-reviewed, post-generation references over partial captures are not a general accuracy or customer-launch proof. No recap/backfill activation follows automatically.
 
 ## Previous checkpoint — autonomous loop on 27 October
 

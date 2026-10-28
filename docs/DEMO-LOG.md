@@ -1,5 +1,15 @@
 # Demo and evidence log
 
+## 28 October 2026 — all six keyword recoveries published and verified
+
+Type: actual bounded model corrections, explicit post-generation source/reference adjudication, hosted publication, closed-session API persistence, native preservation and release checks. All six held sources are published; all twenty reader reloads match their saved fields and receipt IDs, with 1,617 public labels. The six scores are 9.8/9.8/9.9/9.8/9.8/9.8 in ordinal order 4/9/14/16/17/19. This is not a new browser/mobile proof, a blind benchmark or proof of complete original captures. [Report](tech/KEYWORD-SIX-RECOVERY-2026-10-28.md), [sanitized evidence](tech/evidence/keyword-six-recovery-2026-10-28.json).
+
+The long save initially fails through the hosted path, and the exact native publication reproduces an eight-second statement timeout. A three-fragment SQL cache patch preserves the exact matching/security/financial predicates, passes actual rollback under the same deadline, separate rollback-absence/committed readbacks and the hosted publication. All 33 focused disposable-database tests and 3,174 full local tests / 89 files pass, with typecheck/build/catalogue. CI 40693160471 succeeds; exact ready Netlify `6ae1f3c0132257a9e2b4a378` uses `8b90be7`, published 13:08:53.270 UTC.
+
+All 685 old calls, seven holds, 431 jobs, 103 reviews, three workspaces and the previous fourteen reader archives are exact. Of 504 archives, 498 remain exact and six contain only permitted keyword/processing changes. Only source 14 initializes previously absent processing metadata through the existing helper. All sixteen publication rows from the later supplemental boundary stay exact; that boundary already included the first two recoveries. Thirty-three new private review rows are inserted. The nine cached correction responses are verified without cloning charges. Two API duration spellings are accepted only because their finite binary64 bits are identical; native and financial hashes remain exact.
+
+New reported charges US$0.418440300, all 28 calls settled, zero new hold. Whole commitment US$8.124935724 includes unchanged US$0.125827191 historical holds. All sessions/releases closed, runtime/global/owner Off, DeepSeek revision 18, zero active AI jobs. Closed-session preflight refuses 403 and saved-call read returns 200 without a charge. No wider backlog, recap activation or new collection started by this work; independent hourly telemetry is recorded separately.
+
 ## 28 October 2026 — twenty-video keyword rollout completed with six holds
 
 Type: actual bounded inference, source-audited scoring, live publication/readback, authenticated first-video reload/320px proof, release checks and native preservation. **14 strict passes are published (467 labels); five semantic failures and a 649-entry/500-limit capacity failure remain held.** All twenty saved sources were processed; nineteen final inventories assembled. No wider backlog or recap activation. [Per-video report](tech/KEYWORD-PRODUCTION-ROLLOUT-2026-10-28.md), [source-free evidence](tech/evidence/keyword-production-2026-10-28.json).

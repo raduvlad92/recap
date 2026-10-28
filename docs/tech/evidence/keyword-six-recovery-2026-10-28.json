@@ -1,0 +1,521 @@
+{
+  "schemaVersion": "therecap-six-keyword-recovery-evidence-v1",
+  "preparedAt": "2026-10-28T13:22:12.217036+00:00",
+  "status": "complete_for_six_recoveries",
+  "complete": true,
+  "evidenceKind": "actual_saved_publications_scores_paid_receipts_and_final_native_audit_when_available",
+  "expectedOrdinalCount": 6,
+  "actualPublishedCount": 6,
+  "remainingOrdinals": [],
+  "readerLabelsAcrossRecoveredPublications": 1150,
+  "publications": [
+    {
+      "ordinal": 4,
+      "run": "r5",
+      "status": "actual_published_with_saved_readback",
+      "readerKeywordCount": 639,
+      "acceptedModelRowCount": 629,
+      "privatePendingModelRowCount": 10,
+      "readerKeywordState": "review",
+      "score": "9.8",
+      "strictGateGood": true,
+      "missingRequiredCount": 0,
+      "unauditedReturnedNameCount": 0,
+      "unsupportedAcceptedCount": 0,
+      "frozenReferenceVersion": "production-reference-v14",
+      "caseReferenceVersion": "production-reference-v14",
+      "referenceSha256": "2b3e47d2994cdffc200bc3ecfb3ba81b41996df7f4b43064cd82ce4600537e25",
+      "contractHash": "e777edb9471225e5f83427f1eb397b6b46334501d5f83715b558d0b3fa2525fd",
+      "outputHash": "66abf90d70c2e9d8f52f3a3930e3564b624ca866fc3e9ee113c0130a9cad6ac3",
+      "savedApiReadbackArtifactMatchesReceipt": true
+    },
+    {
+      "ordinal": 9,
+      "run": "r3",
+      "status": "actual_published_with_saved_readback",
+      "readerKeywordCount": 237,
+      "acceptedModelRowCount": 237,
+      "privatePendingModelRowCount": 10,
+      "readerKeywordState": "review",
+      "score": "9.8",
+      "strictGateGood": true,
+      "missingRequiredCount": 0,
+      "unauditedReturnedNameCount": 0,
+      "unsupportedAcceptedCount": 0,
+      "frozenReferenceVersion": "production-reference-v12",
+      "caseReferenceVersion": "production-reference-v8-source-audited",
+      "referenceSha256": "7a79ea51766103c17a22df2ccf44f3cd718b26ac8354a0e7ee633d7888b78021",
+      "contractHash": "9dd6bb92d8c113f2206d9c3db75cb7cbc22c7384978a8781b0a6a10a0f1f103c",
+      "outputHash": "4ce4986631575a4caafe570ae650c58f0f85ec786800d2ba36c5ea222f002ec5",
+      "savedApiReadbackArtifactMatchesReceipt": true
+    },
+    {
+      "ordinal": 14,
+      "run": "first",
+      "status": "actual_published_with_saved_readback",
+      "readerKeywordCount": 15,
+      "acceptedModelRowCount": 15,
+      "privatePendingModelRowCount": 4,
+      "readerKeywordState": "review",
+      "score": "9.9",
+      "strictGateGood": true,
+      "missingRequiredCount": 0,
+      "unauditedReturnedNameCount": 0,
+      "unsupportedAcceptedCount": 0,
+      "frozenReferenceVersion": "production-reference-v10",
+      "caseReferenceVersion": "production-reference-v5-source-audited",
+      "referenceSha256": "5d4d2d4c1cc63274cd69719ddc9726211cc57d100ef6afe6edc1a366f290c35e",
+      "contractHash": "7dfe153d154de7c5e467050891fefe62d3d1a4222062f72c5702cbf084391159",
+      "outputHash": "4d815aacd428be0520124eb54d7afca77b6ed78f028dfed639e976d827f45323",
+      "savedApiReadbackArtifactMatchesReceipt": true
+    },
+    {
+      "ordinal": 16,
+      "run": "r2",
+      "status": "actual_published_with_saved_readback",
+      "readerKeywordCount": 79,
+      "acceptedModelRowCount": 79,
+      "privatePendingModelRowCount": 2,
+      "readerKeywordState": "review",
+      "score": "9.8",
+      "strictGateGood": true,
+      "missingRequiredCount": 0,
+      "unauditedReturnedNameCount": 0,
+      "unsupportedAcceptedCount": 0,
+      "frozenReferenceVersion": "production-reference-v11",
+      "caseReferenceVersion": "production-reference-v9-source-audited",
+      "referenceSha256": "c799351e06abd317040d6bdf4e5088884dc27fc338a657b8f3e1f3cf0a22dc24",
+      "contractHash": "d59bdc7c2b265753df671cd73a6b4f2284e98e64554b12f64c5f59276f705755",
+      "outputHash": "841eea2a272bb474e821e438f7b922cb6c3048a39f3e8df28714132b527b5165",
+      "savedApiReadbackArtifactMatchesReceipt": true
+    },
+    {
+      "ordinal": 17,
+      "run": "first",
+      "status": "actual_published_with_saved_readback",
+      "readerKeywordCount": 49,
+      "acceptedModelRowCount": 49,
+      "privatePendingModelRowCount": 4,
+      "readerKeywordState": "review",
+      "score": "9.8",
+      "strictGateGood": true,
+      "missingRequiredCount": 0,
+      "unauditedReturnedNameCount": 0,
+      "unsupportedAcceptedCount": 0,
+      "frozenReferenceVersion": "production-reference-v10",
+      "caseReferenceVersion": "production-reference-v9-source-audited",
+      "referenceSha256": "5d4d2d4c1cc63274cd69719ddc9726211cc57d100ef6afe6edc1a366f290c35e",
+      "contractHash": "7dfe153d154de7c5e467050891fefe62d3d1a4222062f72c5702cbf084391159",
+      "outputHash": "8174efb2022ce04e9d72cb8de871775bedaed30c94e4e4ade602b42f22bfaae6",
+      "savedApiReadbackArtifactMatchesReceipt": true
+    },
+    {
+      "ordinal": 19,
+      "run": "r2",
+      "status": "actual_published_with_saved_readback",
+      "readerKeywordCount": 131,
+      "acceptedModelRowCount": 131,
+      "privatePendingModelRowCount": 3,
+      "readerKeywordState": "review",
+      "score": "9.8",
+      "strictGateGood": true,
+      "missingRequiredCount": 0,
+      "unauditedReturnedNameCount": 0,
+      "unsupportedAcceptedCount": 0,
+      "frozenReferenceVersion": "production-reference-v11",
+      "caseReferenceVersion": "production-reference-v9-source-audited",
+      "referenceSha256": "c799351e06abd317040d6bdf4e5088884dc27fc338a657b8f3e1f3cf0a22dc24",
+      "contractHash": "d59bdc7c2b265753df671cd73a6b4f2284e98e64554b12f64c5f59276f705755",
+      "outputHash": "e74c3de16e987cb6f6f18fdd6da1b43037fce9bae643c157d0f83ac02ee8b6e8",
+      "savedApiReadbackArtifactMatchesReceipt": true
+    }
+  ],
+  "runs": [
+    {
+      "run": "first",
+      "declaredOrdinals": [
+        14,
+        16,
+        17,
+        19,
+        9,
+        4
+      ],
+      "actualPublishedOrdinals": [
+        14,
+        17
+      ],
+      "actualSavedCallCount": 8,
+      "reportedSettledUsd": "0.0965948",
+      "unresolvedHeldUsd": "0",
+      "committedUsd": "0.0965948",
+      "maximumCalls": 8,
+      "maximumUsd": "0.8",
+      "contractHash": "7dfe153d154de7c5e467050891fefe62d3d1a4222062f72c5702cbf084391159",
+      "frozenReferenceVersion": "production-reference-v10",
+      "referenceSha256": "5d4d2d4c1cc63274cd69719ddc9726211cc57d100ef6afe6edc1a366f290c35e"
+    },
+    {
+      "run": "r2",
+      "declaredOrdinals": [
+        16,
+        19,
+        9,
+        4
+      ],
+      "actualPublishedOrdinals": [
+        16,
+        19
+      ],
+      "actualSavedCallCount": 6,
+      "reportedSettledUsd": "0.1045407",
+      "unresolvedHeldUsd": "0",
+      "committedUsd": "0.1045407",
+      "maximumCalls": 6,
+      "maximumUsd": "0.6",
+      "contractHash": "d59bdc7c2b265753df671cd73a6b4f2284e98e64554b12f64c5f59276f705755",
+      "frozenReferenceVersion": "production-reference-v11",
+      "referenceSha256": "c799351e06abd317040d6bdf4e5088884dc27fc338a657b8f3e1f3cf0a22dc24"
+    },
+    {
+      "run": "r3",
+      "declaredOrdinals": [
+        9,
+        4
+      ],
+      "actualPublishedOrdinals": [
+        9
+      ],
+      "actualSavedCallCount": 4,
+      "reportedSettledUsd": "0.0868275",
+      "unresolvedHeldUsd": "0",
+      "committedUsd": "0.0868275",
+      "maximumCalls": 4,
+      "maximumUsd": "0.4",
+      "contractHash": "9dd6bb92d8c113f2206d9c3db75cb7cbc22c7384978a8781b0a6a10a0f1f103c",
+      "frozenReferenceVersion": "production-reference-v12",
+      "referenceSha256": "7a79ea51766103c17a22df2ccf44f3cd718b26ac8354a0e7ee633d7888b78021"
+    },
+    {
+      "run": "r4",
+      "declaredOrdinals": [
+        4
+      ],
+      "actualPublishedOrdinals": [],
+      "actualSavedCallCount": 9,
+      "reportedSettledUsd": "0.1184733",
+      "unresolvedHeldUsd": "0",
+      "committedUsd": "0.1184733",
+      "maximumCalls": 9,
+      "maximumUsd": "0.9",
+      "contractHash": "361ae5fe0d4850708b67e8fd45a7c443b877e7f0e1160c3839a66d6b366c8312",
+      "frozenReferenceVersion": "production-reference-v13",
+      "referenceSha256": "11c99d974be9d3cc65c7c7ae174224dd8eeafb84637a81376fa8622c75537961"
+    },
+    {
+      "run": "r5",
+      "declaredOrdinals": [
+        4
+      ],
+      "actualPublishedOrdinals": [
+        4
+      ],
+      "actualSavedCallCount": 1,
+      "reportedSettledUsd": "0.012004",
+      "unresolvedHeldUsd": "0",
+      "committedUsd": "0.012004",
+      "maximumCalls": 1,
+      "maximumUsd": "0.1",
+      "contractHash": "e777edb9471225e5f83427f1eb397b6b46334501d5f83715b558d0b3fa2525fd",
+      "frozenReferenceVersion": "production-reference-v14",
+      "referenceSha256": "2b3e47d2994cdffc200bc3ecfb3ba81b41996df7f4b43064cd82ce4600537e25"
+    }
+  ],
+  "postGenerationEvaluationRevisions": [
+    {
+      "run": "r5",
+      "type": "post-generation-official-catalogue-corroboration-not-new-model-proof",
+      "ordinal": 4,
+      "originalStrictGate": {
+        "referenceVersion": "production-reference-v13",
+        "referenceSha256": "11c99d974be9d3cc65c7c7ae174224dd8eeafb84637a81376fa8622c75537961",
+        "good": false,
+        "score": "9.8",
+        "missingRequiredCount": 1,
+        "unauditedReturnedNameCount": 0,
+        "unsupportedAcceptedCount": 1,
+        "configArchiveSha256": "6097927bd29755d5d99f32c456303f3f802d5b535f306460dc8d6068a3bf3232",
+        "scoreArchiveSha256": "bb9e9ad6c98ba38237fad6798a67d5a7c9d5edc8dc02db8e1a6e8fcbdebdc711"
+      },
+      "effectiveEvaluation": {
+        "referenceVersion": "production-reference-v14",
+        "referenceSha256": "2b3e47d2994cdffc200bc3ecfb3ba81b41996df7f4b43064cd82ce4600537e25",
+        "good": true,
+        "score": "9.8",
+        "missingRequiredCount": 0,
+        "unauditedReturnedNameCount": 0,
+        "unsupportedAcceptedCount": 0
+      },
+      "sameSourceAndModelOutput": true,
+      "outputHash": "66abf90d70c2e9d8f52f3a3930e3564b624ca866fc3e9ee113c0130a9cad6ac3",
+      "originalPreviewBytesExact": true,
+      "executionConfigUnchangedExceptEvaluationReference": true,
+      "providerCallsForRegrade": 0,
+      "newModelTrial": false,
+      "blindPass": false,
+      "originalArchiveManifestSha256": "562dd49e16e0e1d54387ba4b2ca66e803f82089db73814458f53815415b74118",
+      "primaryCorroborationSources": [
+        "https://www.lttstore.com/products/commuter-backpack",
+        "https://www.lttstore.com/collections/backpacks",
+        "https://www.lttstore.com/products/backpack"
+      ]
+    }
+  ],
+  "accounting": {
+    "basis": "final_native_ledger_audit",
+    "newSavedCalls": 28,
+    "newSettledCalls": 28,
+    "newUnsettledOrUnreportedCalls": 0,
+    "newReportedSettledUsd": "0.4184403",
+    "newUnresolvedHeldUsd": "0",
+    "newCommittedUsd": "0.4184403",
+    "baselineCommitmentUsd": "7.706495424",
+    "historicalHeldUsdAtFrozenStart": "0.125827191",
+    "historicalHoldRowsVerifiedExact": true,
+    "provisionalWholeCommitmentUsd": "8.124935724",
+    "currency": "USD",
+    "byOrdinal": [
+      {
+        "ordinal": 4,
+        "newSavedCalls": 19,
+        "newSettledUsd": "0.3300760",
+        "newHeldUsd": "0",
+        "newCommittedUsd": "0.3300760",
+        "published": true
+      },
+      {
+        "ordinal": 9,
+        "newSavedCalls": 3,
+        "newSettledUsd": "0.0404292",
+        "newHeldUsd": "0",
+        "newCommittedUsd": "0.0404292",
+        "published": true
+      },
+      {
+        "ordinal": 14,
+        "newSavedCalls": 1,
+        "newSettledUsd": "0.007858",
+        "newHeldUsd": "0",
+        "newCommittedUsd": "0.007858",
+        "published": true
+      },
+      {
+        "ordinal": 16,
+        "newSavedCalls": 2,
+        "newSettledUsd": "0.0194071",
+        "newHeldUsd": "0",
+        "newCommittedUsd": "0.0194071",
+        "published": true
+      },
+      {
+        "ordinal": 17,
+        "newSavedCalls": 1,
+        "newSettledUsd": "0.0055004",
+        "newHeldUsd": "0",
+        "newCommittedUsd": "0.0055004",
+        "published": true
+      },
+      {
+        "ordinal": 19,
+        "newSavedCalls": 2,
+        "newSettledUsd": "0.0151696",
+        "newHeldUsd": "0",
+        "newCommittedUsd": "0.0151696",
+        "published": true
+      }
+    ],
+    "finalNativeFinances": {
+      "baseline": {
+        "calls": 685,
+        "settledCalls": 678,
+        "unresolvedCalls": 7,
+        "states": {
+          "reserved": 5,
+          "settled": 678,
+          "unknown": 2
+        },
+        "settledUsd": "7.580668233000",
+        "heldUsd": "0.125827191000",
+        "committedUsd": "7.706495424000",
+        "maximumActualUsd": "0.074492300000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "new": {
+        "calls": 28,
+        "settledCalls": 28,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 28
+        },
+        "settledUsd": "0.418440300000",
+        "heldUsd": "0",
+        "committedUsd": "0.418440300000",
+        "maximumActualUsd": "0.026152700000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "cumulative": {
+        "calls": 713,
+        "settledCalls": 706,
+        "unresolvedCalls": 7,
+        "states": {
+          "reserved": 5,
+          "settled": 706,
+          "unknown": 2
+        },
+        "settledUsd": "7.999108533000",
+        "heldUsd": "0.125827191000",
+        "committedUsd": "8.124935724000",
+        "maximumActualUsd": "0.074492300000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "dailyUtcIncludingAllUnresolvedHolds": {
+        "calls": 217,
+        "settledCalls": 210,
+        "unresolvedCalls": 7,
+        "states": {
+          "reserved": 5,
+          "settled": 210,
+          "unknown": 2
+        },
+        "settledUsd": "3.619664584000",
+        "heldUsd": "0.125827191000",
+        "committedUsd": "3.745491775000",
+        "maximumActualUsd": "0.066539000000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    "wholeCommittedUsd": "8.124935724000",
+    "wholeReportedSettledUsd": "7.999108533000",
+    "historicalHeldUsdVerifiedExact": "0.125827191000"
+  },
+  "preservation": {
+    "status": "verified_by_final_native_audit",
+    "originalBaselineCalls": 685,
+    "historicalUnresolvedCalls": 7,
+    "auditSha256": "c5d611732fe83aabcc0dffb812c2cf1cdc4b24d2f1288798993206c5e7ca87c1",
+    "old685NativeCallRowsExact": true,
+    "old14ReaderArchivesExactFromOriginalStart": true,
+    "old14PublicationRowsExactFromLaterSupplementalBoundary": true,
+    "publicationRowProofStartsAfterFirstTwoRecoveries": true,
+    "apiReaderNumericTransport": {
+      "comparison": "Exact fields/array order/labels and values; only videoKeywords.seconds permits distinct decimal spellings with identical finite binary64 bits. No epsilon. Native, receipt, range endpoint and finance comparisons remain unchanged.",
+      "equivalences": [
+        {
+          "ordinal": 19,
+          "fieldPath": [
+            "videoKeywords",
+            0,
+            "seconds"
+          ],
+          "apiDecimal": "336.482",
+          "nativeDecimal": "336.48200000000002",
+          "binary64Hex": "407507b645a1cac1",
+          "exactBitIdentity": true
+        },
+        {
+          "ordinal": 19,
+          "fieldPath": [
+            "videoKeywords",
+            2,
+            "seconds"
+          ],
+          "apiDecimal": "181.7589999999999",
+          "nativeDecimal": "181.75899999999989",
+          "binary64Hex": "4066b849ba5e353c",
+          "exactBitIdentity": true
+        }
+      ],
+      "initialStrictReport": "native-final-preservation-audit-initial-api-decimal.json"
+    },
+    "reusedPaidPrefixProofs": [
+      {
+        "ordinal": 4,
+        "status": "verified_from_final_native_rows",
+        "prefixProtocol": "targeted-named-mentions-v4-smallbatches",
+        "reusedPriorPaidCalls": 9,
+        "originalReceiptCount": 60,
+        "freshReceiptCount": 1,
+        "prefixCallHashesExact": true,
+        "priorOutputHashExact": true,
+        "fullPolicyAndSourceBindingExact": true,
+        "nestedPrefix": false,
+        "clonedChargeReceipts": false,
+        "newDatabaseCalls": 0,
+        "networkRequests": 0
+      }
+    ]
+  },
+  "artifactBindings": [
+    {
+      "ordinal": 14,
+      "run": "first",
+      "publicationArtifactSha256": "fda776eb920d0d173166902b56b559cb3e148b05f4154602568be8da3cdbc893",
+      "previewArtifactSha256": "1ce5f52a9daec81c319ac1b0ac3ad00e27953eb9579e9a9a582d75ab009a5b31",
+      "scoreArtifactSha256": "5fd510067cebfde193ece2dd76687a888b5b0a85aacd1327a7f59905765bc3ea",
+      "readbackArtifactSha256": "c85f28e75938bd3974d01f3d07ebaa6457e082ab986977d5ee7f45607fa8f5e0"
+    },
+    {
+      "ordinal": 17,
+      "run": "first",
+      "publicationArtifactSha256": "b5dd198b5576d07d5203445f4db38a4ed5ae864ab9a4c81370f844eabae0de55",
+      "previewArtifactSha256": "4a58b9b50e26525f606ee281884e5adbbc198b141c6609de75a90c37d5bbc7ce",
+      "scoreArtifactSha256": "cc49d8d0690d8bb125c03bc31f0b6a994094a1081223bc528fb496f083c47a3f",
+      "readbackArtifactSha256": "a8b79f85f87812d8baef1a166e17079b2edcbabe3f0e8ee39ebe26929dd6206e"
+    },
+    {
+      "ordinal": 16,
+      "run": "r2",
+      "publicationArtifactSha256": "0e18d2099910d6dc88caa057d2152cefda049fadc36ff17d701c41c5a4ba981f",
+      "previewArtifactSha256": "d3ede4cd3d4387e694942d7189d20a9988f9b46db11d04d6d63419b8d5c14977",
+      "scoreArtifactSha256": "5af6791194280d4bca518f922ba519c9b051e44bddded4274429c1db4c1cb941",
+      "readbackArtifactSha256": "351d4473e05e2ad89644ec37bff63f0acb85f55105384ff4f568e46d6e90bbb1"
+    },
+    {
+      "ordinal": 19,
+      "run": "r2",
+      "publicationArtifactSha256": "b6bbdc24c0ea6cddc8d5cf771ba710fb20d4e89e2aeb1e333ece7c754e35c349",
+      "previewArtifactSha256": "7c9e22b57f260d3cd6ab5833f0c1a3192d144d3537ef927771550b2e6180d745",
+      "scoreArtifactSha256": "3d91192e093ed1e99f5ff356358ad0310bb6f8ac3b113116cd7a28ed70f62ed5",
+      "readbackArtifactSha256": "ec29819081e47e2c31d72a29540c063e6f4483d930b9c93e31d71d75c6ac9863"
+    },
+    {
+      "ordinal": 9,
+      "run": "r3",
+      "publicationArtifactSha256": "9958ae7c8c5b6fb640ad8cf76ddd4c14b00a9c83c5520cf073784fd7343b7442",
+      "previewArtifactSha256": "b46d0b4ba30ba7a8ad28a26c516f08a841d47dd1e57140dcc97c96510ba1be53",
+      "scoreArtifactSha256": "5f5cbcf22c39694e2b3aaf28a235b9194c8b0012eadebb143aeb387188aa1dba",
+      "readbackArtifactSha256": "93d52f0743e5872c88a9818b49620352be3ba77bd05993c630790bc2d33e2d02"
+    },
+    {
+      "ordinal": 4,
+      "run": "r5",
+      "publicationArtifactSha256": "f2c87a4ff1ded2880ee662946572ef723e74274432ab264ccb21debd821ee256",
+      "previewArtifactSha256": "0c1b7e52c13259c489d1ffcb4914612555d7e993b8abbbb5360d5c670cf417b3",
+      "scoreArtifactSha256": "ceca2e7e22ec59240758501243d0f07f4b3afd9a6ca0e687b0f01f8327c99462",
+      "readbackArtifactSha256": "d6c61f7ac6b41c0502315bc4369aedf3271b472453c3ba60d61395d7cec8d2c5"
+    }
+  ],
+  "missingEvidence": [],
+  "validationIssues": [],
+  "noNewProviderCallsByBuilder": true,
+  "noNewDatabaseCallsByBuilder": true,
+  "limitations": [
+    "Post-generation assistant source audits and reference corrections are disclosed per run; these are not blind validation or exhaustive human gold.",
+    "An original v13 strict failure and later v14 evaluation-only catalogue correction are separate outcomes on one unchanged model response, not a blind pass or a new model trial.",
+    "Saved transcript completeness against original videos remains partial or unverified.",
+    "Failed and superseded attempts remain included in actual call accounting; their private previews never count as publication.",
+    "The original fourteen publication rows are proven only from the later supplemental capture; their reader archive records are compared against the original native start.",
+    "Saved API readbacks are not a fresh signed-in browser reload. This builder makes no browser UI, deployment, runtime-environment, broad automation or backlog-expansion claim.",
+    "Until the final audit is complete, local artifact counts and charges are a snapshot and may lag active execution."
+  ]
+}
