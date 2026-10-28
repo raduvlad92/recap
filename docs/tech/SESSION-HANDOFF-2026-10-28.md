@@ -1,5 +1,7 @@
 # Session handoff — 28 October 2026
 
+**Superseded latest checkpoint:** [29 October gap-resolution handoff](SESSION-HANDOFF-2026-10-29.md). Known reviewed copies are prepared; the latest automatic test still fails. Functional 60c0f3b is live, all 3,216 tests pass, commitment US$9.270265626/US$10, all finite AI scopes closed and broad generation Off. Earlier figures and next-actions below are historical.
+
 ## Latest — twenty additional complete inventories checked
 
 The founder requested at least 20 more videos. **Twenty additional complete private inventories are saved from 22 attempted fresh inputs**, with the two checker-capacity failures retained and unscored. Three results are Good in assistant source review, 11 have confirmed gaps, 6 need reference adjudication. All 417 entries / 425 literal forms receive complete saved-source audits. [Full report](KEYWORD-UNCLASSIFIED-TWENTY-2026-10-28.md), [sanitized evidence](evidence/keyword-unclassified-twenty-2026-10-28.json), [outcome chart](evidence/keyword-unclassified-twenty-2026-10-28.html).

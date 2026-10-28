@@ -1,5 +1,7 @@
 # Tracked implementation and validation plan
 
+**29 October — reviewed-data gaps corrected; broad generation remains Off.** All 27 private copies have source-grounded reviewed corrections for the 587 known required identities. They are not model-quality passes or publication receipts: the newest automatic trial remains Bad, and the model-only stage with that run satisfies 24/27 selected-case gates. Prefix/UTF-8/context/family/compact-checker fixes are live with 3,216 passing tests and exact native preservation. [Full result](docs/tech/KEYWORD-GAP-RESOLUTION-2026-10-29.md). New spend US$0.296915796; commitment US$9.270265626 / US$10; remaining US$0.729734374.
+
 **28 October — twenty more complete private keyword results, plus two retained capacity failures.** All 64 new calls settle for US$0.659584100; source audits classify 3 Good, 11 confirmed gaps, 6 reference-audit cases. No new publication or code/prompt change. [Larger sample and proof](docs/tech/KEYWORD-UNCLASSIFIED-TWENTY-2026-10-28.md). Current commitment US$8.973349830, remaining US$1.026650170; general generation stays Off.
 
 **Earlier 28 October — five fresh unclassified-video checks completed.** The existing process produced five private inventories for US$0.188830006; no publication or code/prompt change. Saved-response/native replay confirms an Arabic name-anchoring loss; a quoted dashboard mode is also missed. Keep false reference flags separate from actual defects. [Full check](docs/tech/KEYWORD-UNCLASSIFIED-CHECK-2026-10-28.md). At that checkpoint commitment was US$8.313765730, remaining US$1.686234270; broad generation stayed Off.
@@ -12,9 +14,9 @@ Approving the named pair permits the local M0–M5 work below. For this broader 
 
 ## Next-session starting point
 
-Read the [current handoff](docs/tech/SESSION-HANDOFF-2026-10-28.md). The six held inventories are recovered and published; preserve all twenty publications, raw failed attempts, reference versions and seven old holds. No further grading or paid call is needed to finish this recovery.
+Read [29 October handoff](docs/tech/SESSION-HANDOFF-2026-10-29.md). The confirmed old host/byte-size defects are fixed and known reviewed copies are saved. Preserve every old score, failed latest automatic trial, source judgment and corrected copy. Current automatic extraction still needs stronger whole-name boundary correction and independent fresh-source proof before wider activation; use saved responses first. Current profile has four extraction approaches and one Sol checker, still three paid calls/chunk. New sealed slots must explicitly select `context-roles-v2`; old slots preserve legacy requests.
 
-The founder directed a further test on at least20 videos; twenty additional complete results are now saved, with two price-blocked inputs retained and two fresh capacity replacements. First repair grammatical-prefix anchoring using saved paid responses and apply the UTF-8 chunk budget to shorter texts. Then test a small targeted named-setting/geographic-qualifier sweep, keeping the original20-result baseline and reference ambiguities distinct. Preserve all original scores and the twenty published inventories. Review provider charges and the remaining US$1.026650170 total /US$0.406094119 that UTC day before more paid work. Keep US$10 total /US$5 day /US$0.10 call and general generation Off. Partial captures and assistant audits do not establish general production accuracy. No recap/backfill activation follows automatically.
+Retain US$10 cumulative / US$5 UTC-day / US$0.10 call and all seven holds. Review actual remaining headroom live before any further paid call; the Berlin date change is not a UTC budget reset. No founder grading, reader publication, recap/backfill run, new collection or broad activation is needed to finish the reviewed repairs. Broader automatic quality remains unproved.
 
 ## Previous checkpoint — autonomous loop on 27 October
 

@@ -1,0 +1,242 @@
+{
+  "version": 1,
+  "preparedAt": "2026-10-28T23:17:01.559Z",
+  "dateLocal": "2026-10-29",
+  "scope": "27 saved transcripts; private source-reviewed corrections, not a blind model pass",
+  "implementation": {
+    "commits": [
+      "cb61b3415b76a877c962ee3041aae04f071a4f5f",
+      "60c0f3b7242b8b73c06b2e98f85eed28da75976e"
+    ],
+    "generationProfile": "context-roles-v2",
+    "generationHash": "544cdead55c1f10bdfb84c9980a20d0ca3514d80220ad8e5e468aa95de8bf5db",
+    "hostContractHash": "37c45957fd6d58244d73078342a8f08c6644f2e13de6e6b5e9b95578180ef468",
+    "recoveryHash": "d0f12e4a89d29fa2fca91fc94e58943c57144a72287c4f99195c925cab15f2a5",
+    "paidCallsPerChunk": 3,
+    "extractionApproaches": 4,
+    "freeFamilyProposalsPerNumericSeed": 3,
+    "currentSourceUtf8ByteCap": 12000,
+    "allCurrentCheckerResponsesCompact": true,
+    "legacyPaidBodiesAndKeysPreserved": true
+  },
+  "reference": {
+    "postGeneration": true,
+    "humanGold": false,
+    "savedTexts": 27,
+    "requiredIdentities": 587,
+    "groundedReferenceForms": 772,
+    "latestReferenceSha256": "5e3e5a9e10ce54e5d6e52b0a529aa9664d614da8c90cdb197b0018ceeff4fe5d",
+    "earlierFiveReferenceSha256": "6b24badb10868cd4f1282567ff282088f0ca05c790642a086d43c531e6b70f1f"
+  },
+  "freeReplay": {
+    "completedSources": 25,
+    "verifiedOriginalPaidBodies": 75,
+    "recoveredForms": 3,
+    "newModelCalls": 0
+  },
+  "liveRuns": {
+    "contextRoleExtractionSources": 27,
+    "firstFullCurrentSources": 3,
+    "firstFullCurrentSourceOrdinals": [
+      4,
+      7,
+      18
+    ],
+    "firstFullCurrentChunks": 5,
+    "oldCapacityFailuresNowCompleted": 2,
+    "newestCompactFullTrialSources": 1,
+    "newestAutomaticOriginalScore": 9.6,
+    "newestAutomaticPostAdjudicationScore": 9.8,
+    "newestAutomaticStrictPass": false,
+    "deepseekTargetedVerdicts": 56,
+    "solAdjudicatedVerdicts": 34,
+    "solReferenceAgreements": 31,
+    "solReferenceDisagreements": 3
+  },
+  "targetedRepairStages": {
+    "deepseekTargetJudgmentRepairGood": 14,
+    "baselineAlreadySolChecked": true,
+    "primarySolOriginalBaselinesGood": 25,
+    "primarySolNewestBaselineGood": 24,
+    "sources": 27,
+    "notBlind": true
+  },
+  "privateReviewedValidation": {
+    "sources": 27,
+    "strictPass": 27,
+    "requiredIdentities": 587,
+    "missingOrWrongState": 0,
+    "unsupportedAccepted": 0,
+    "unexpected": 0,
+    "acceptedLiteralForms": 685,
+    "privateReviewLiteralForms": 30,
+    "referenceUse": "validation_only",
+    "modelQualityPassClaimed": false,
+    "sourceGroundingResiduals": 0,
+    "sourceReviewOverrideCount": 3,
+    "cachedDecisionReuseCount": 1,
+    "additionalSavedSolDecisionAppliedToLatestSource7": "Huawei sound modes -> rejected",
+    "sourceReviewOverrides": [
+      {
+        "ordinal": 2,
+        "name": "spread Tri a",
+        "disposition": "rejected",
+        "sourceHash": "4bf0a8af1793951fc5a1ded64e91ab348cfc0fa8aab77c6c36a8055dd10ef23e",
+        "sourceReview": {
+          "path": ".local/keyword-gap-resolution-20261028/residual-source-review.json",
+          "sha256": "6320b1107a493b6c4395a00511830a0ced69af979bdbf899d3c5510f70e24d94"
+        }
+      },
+      {
+        "ordinal": 18,
+        "name": "CarPlay \u0627\u0644\u0644\u0627\u0633\u0644\u0643\u064a\u0629",
+        "disposition": "rejected",
+        "sourceHash": "346739dcb5b6deeded22b4af2d3782c1da1dae0b5fb98cc5a7121e0c38188814",
+        "sourceReview": {
+          "path": ".local/keyword-gap-resolution-20261028/residual-source-review.json",
+          "sha256": "6320b1107a493b6c4395a00511830a0ced69af979bdbf899d3c5510f70e24d94"
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "seal test",
+        "disposition": "review",
+        "sourceHash": "0c2b379931a13b6dbc328b42fe817b0872d0bd0526ee176b84f64f5577ec2f01",
+        "sourceReview": {
+          "path": ".local/keyword-gap-resolution-20261028/residual-source-review.json",
+          "sha256": "6320b1107a493b6c4395a00511830a0ced69af979bdbf899d3c5510f70e24d94"
+        }
+      }
+    ],
+    "cachedDecisionReuse": {
+      "type": "imported_from_saved_receipt",
+      "sameSourceHashVerified": "0c2b379931a13b6dbc328b42fe817b0872d0bd0526ee176b84f64f5577ec2f01",
+      "receipt": {
+        "path": ".local/keyword-gap-resolution-20261028/calls/89198a8700c9b9f92899d3401d3e6d9e992b0b1cdb6047dbcb21ba73b564c264.json",
+        "sha256": "77e893940f020a579af76117500437c7cb5b2e7f942cbbb4593521bec28f90d9",
+        "requestHash": "4399abb3f4710b191d1fca67724df867f62e4435d5197dcae92df1a033d416ec",
+        "requestKey": "keyword-learning:v1:d86f971917e36beb66b58d745d1f8babdfd32a1e89be4673d4603808c4e90b1f",
+        "callId": "4dce4086-cbe8-4ed2-8874-0b12dcc5e29e",
+        "model": "openai/gpt-6.1-sol-pro",
+        "sessionId": "3f03b4e9-4616-4ecf-9b05-9f97d24871a6",
+        "sourceOrdinal": 7,
+        "sourceHash": "0c2b379931a13b6dbc328b42fe817b0872d0bd0526ee176b84f64f5577ec2f01",
+        "actualUsd": 0.045809,
+        "bodyExact": true,
+        "settled": true
+      },
+      "bundle": {
+        "path": ".local/keyword-gap-resolution-20261028/full-current-bundles.json",
+        "sha256": "6511dc8767a9c0cffa2f35b088753e8e0d1d755a76945a7e61ec6961b67455f5"
+      },
+      "rawDecisionPath": "response.result.value.missingNames[5]",
+      "rawDecision": {
+        "kind": "feature",
+        "name": "head-tracking",
+        "disposition": "accepted"
+      },
+      "freshModelSuccessClaimed": false,
+      "timingImported": false
+    },
+    "referenceLatest": {
+      "path": ".local/keyword-gap-resolution-20261028/reference-latest-v5.json",
+      "sha256": "5e3e5a9e10ce54e5d6e52b0a529aa9664d614da8c90cdb197b0018ceeff4fe5d"
+    },
+    "referenceEarlier": {
+      "path": ".local/keyword-gap-resolution-20261028/reference-earlier-five-v5.json",
+      "sha256": "6b24badb10868cd4f1282567ff282088f0ca05c790642a086d43c531e6b70f1f"
+    }
+  },
+  "costs": {
+    "newCalls": 75,
+    "newActualUsd": "0.296915796",
+    "byModel": {
+      "deepseek/deepseek-v4.1-flash-1017": {
+        "calls": 65,
+        "actualUsd": "0.009941396"
+      },
+      "openai/gpt-6.1-sol-pro": {
+        "calls": 10,
+        "actualUsd": "0.2869744"
+      }
+    },
+    "committedUsd": "9.270265626",
+    "remainingLifetimeUsd": "0.729734374",
+    "holdUsd": "0.125827191",
+    "sameOldUnresolvedHolds": 7,
+    "utcDayCommittedUsd": "4.890821677",
+    "utcDayRemainingUsd": "0.109178323"
+  },
+  "nativePreservation": {
+    "verifiedAt": "2026-10-28T23:11:40.795598+00:00",
+    "allFullNativeCallRecordsExact": true,
+    "allFullNativeLearningRequestsAndResultsExact": true,
+    "oldCallsExact": 792,
+    "allArchivesExact": 510,
+    "oldJobsExact": 431,
+    "oldReviewsExact": 136,
+    "oldWorkspacesExact": 3,
+    "all27SourceHashesMatch": true,
+    "publishedInventoriesUnchanged": 20,
+    "publishedLabelsUnchanged": 1617,
+    "nativeRowGroupCount": 22,
+    "backgroundChanges": {
+      "newExistingScheduleChecks": 39,
+      "providerReconciledTimestamps": 12,
+      "sourceSchedulingMetadataRows": 39,
+      "existingSupplierUpdatedTimestampRows": 1,
+      "newSupplierJobs": 0,
+      "newSupplierReservations": 0
+    },
+    "nativeSnapshotSha256": "395355772563f2d76a926ed38127142acd57f055ae217514105f85c9979e7fbf",
+    "nativeRequestsSha256": "8d625cbaab584674a31352250e043310eae8f26137e1efa66ada566b2eab4964"
+  },
+  "controls": {
+    "runtimeEnabled": false,
+    "generalAndOwnerEnabled": false,
+    "openLearningSessions": 0,
+    "openProductionReleases": 0,
+    "executingJobs": 0,
+    "lifetimeLimitUsd": 10,
+    "utcDayLimitUsd": 5,
+    "perCallLimitUsd": 0.1,
+    "oldQueuedJobsUntouched": 271
+  },
+  "validation": {
+    "localTests": 3216,
+    "testFiles": 90,
+    "catalogue": true,
+    "typecheck": true,
+    "build": true,
+    "ciRun": 40784466804,
+    "ciConclusion": "success",
+    "deployId": "6ae27fe92a8acaf656046211",
+    "deployCommit": "60c0f3b7242b8b73c06b2e98f85eed28da75976e",
+    "deployState": "ready",
+    "publishedAt": "2026-10-28T23:06:55.160Z",
+    "hosted": {
+      "verifiedAt": "2026-10-28T23:13:49.247Z",
+      "homeStatus": 200,
+      "closedSavedReadStatus": 200,
+      "savedResultExact": true,
+      "closedPreflightStatus": 403,
+      "closedProductionPlanStatus": 403,
+      "oldReaderPublicationStatus": 200,
+      "oldReaderLabels": 11,
+      "providerCalls": false
+    }
+  },
+  "privateArtifactHashes": {
+    "reviewedSummary": "0f60eec31852adedec590a5e324103c415596ec854394d801b5c4f706065cf3a",
+    "referenceResidualSignoff": "6320b1107a493b6c4395a00511830a0ced69af979bdbf899d3c5510f70e24d94",
+    "primarySolResults": "01fbd32a02d8d75c09435a6ca1ae05d768ad976a78609e484434f8b5bde32f6e",
+    "nativeVerification": "fcf283da66dac785ae6b19416833250f38481a24f27e790f0d3a4508b8f27288"
+  },
+  "limitations": [
+    "Final reviewed scores validate curated copies, not autonomous extraction quality.",
+    "References were adjudicated after viewing predictions; all original references and scores remain.",
+    "The latest full automatic trial still fails the strict quality gate.",
+    "Captures are partial/unverified; no original-video completeness or canonical identity proof.",
+    "No private corrected inventory was published and broad generation remains Off."
+  ]
+}

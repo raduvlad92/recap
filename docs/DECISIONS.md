@@ -1,5 +1,15 @@
 # Decisions and interview
 
+## 29 October 2026 — resolve known keyword gaps and ambiguities
+
+Founder: “ok, then resolve all the gaps and ambiguities.” Continue autonomously from the 27 saved texts, preserve every original score/response and the current US$10 cumulative / US$5 UTC-day / US$0.10 call limits. This supports bounded fixes, private source review and live checks; it does not start broad automation or publish the benchmark copies.
+
+Implemented/deployed shared narrow grammatical-prefix matching, current UTF-8 chunk limits for all source lengths, context-role extraction, free literal numeric-family suggestions and compact primary Sol checks. Four extraction approaches still require only two paid extraction calls plus one paid checker per chunk. Legacy paid payloads/keys remain exact; new profiles come only from sealed source slots. The cheap checker is not promoted after its source-role failures.
+
+Apply the founder's every-named-mention rule consistently: literal geographic adjectives, explicit UI/readout/chapter labels, intact named families/standards and complete eponyms count; generic classes and grammatical padding do not. Genuine uncertainty stays private without invented canonical identities or corrected spellings. References are append-only, source-based and post-generation, with all old grades retained.
+
+All 27 source-reviewed private copies account for 587 known required identities. Three source overrides and one verified cached decision are explicit; the newest automatic run is still Bad, so curated validation is not represented as an automatic production-quality pass. Existing twenty publications remain unchanged. New model cost US$0.296915796, all 75 calls settled; commitment US$9.270265626 including seven old holds. Broad AI remains Off, all scopes closed. [Result and exact proof](tech/KEYWORD-GAP-RESOLUTION-2026-10-29.md).
+
 ## 28 October 2026 — test at least twenty more videos for data
 
 Founder: “ok, test it on at leas 20 videos to gather moore data”. Continue from the saved unclassified backlog, testing the current keyword process rather than changing it mid-benchmark. Preserve US$10 cumulative / US$5 UTC-day / US$0.10 call and historical holds; no broad automation, recap generation or new source collection follows.

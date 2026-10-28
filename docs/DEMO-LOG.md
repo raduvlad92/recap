@@ -1,5 +1,17 @@
 # Demo and evidence log
 
+## 29 October 2026 — keyword fixes and reviewed copies
+
+Evidence types remain separate: local checks, free exact paid-response replay, bounded provider calls, post-generation source adjudication, private corrected copies, native preservation and hosted release checks. No new browser/mobile proof, publication or blind holdout proof.
+
+All 25 complete old inventories replay 75 exact paid bodies/keys for free; three lost forms return. New extraction sweeps, full trials and selected-label checks incur 75 settled calls / US$0.296915796, no new hold. Both Arabic capacity cases complete within the call limit. Sol agrees with 31 of 34 selected judgments. The newest automatic run remains 9.6 Bad on its original reference; a separate alias adjudication regrades the unchanged output to 9.8 Bad. Its model-only selected-case stage satisfies 24 of 27 gates.
+
+Reviewed copies use three source decisions and one verified same-source cached Sol decision. Independent validation checks 587 required identities, 715 grounded returned forms, 37 corrected active rows with exact spans/withheld timing, 700 untouched row instances preserved in the final step and 99 unchanged input hashes. This is curated validation, not an AI benchmark pass. All 27 copies have publicationEligible:false.
+
+All 3,216 tests / 90 files, catalogue/typecheck/build and CI 40784466804 pass. Ready deployment 6ae27fe92a8acaf656046211 uses 60c0f3b, published 28 October 23:06:55.160 UTC. Runtime Off, home200, exact closed saved-read200, fresh preflight/plan403 and prior publication200 verify hosted controls. Native preservation covers 510 archives, 792 old calls/seven holds, 431 jobs, 136 reviews, three workspaces and AI controls; all 75 new native bindings match. Existing collection metadata advances separately, with no new supplier job/reservation row. Twenty reader inventories / 1,617 labels remain unchanged.
+
+Commitment is US$9.270265626 / US$10; same old holds US$0.125827191; remaining US$0.729734374. All seven new sessions and all production releases close; broad AI remains Off. [Report](tech/KEYWORD-GAP-RESOLUTION-2026-10-29.md), [sanitized evidence](tech/evidence/keyword-gap-resolution-2026-10-29.json), [handoff](tech/SESSION-HANDOFF-2026-10-29.md).
+
 ## 28 October 2026 — twenty additional complete keyword checks
 
 Founder-directed larger dataset:22 new saved videos attempted across the initial 11-channel sample, 20 complete inventories and two retained checker-capacity failures. Source-only references freeze before generation for each source. Original ratings average 9.375/ 10, with 3 strict passes and 17 holds; separate full saved-text audits classify 3 Good, 11 confirmed gaps and 6 reference-audit cases. All 417 entries / 425 literal forms are checked; source presence does not prove relevance or canonical identity.
