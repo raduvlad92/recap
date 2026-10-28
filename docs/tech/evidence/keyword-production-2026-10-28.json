@@ -1,0 +1,1438 @@
+{
+  "status": "verified_execution_record",
+  "functionalCodeChecksAndDeployment": {
+    "commit": "5efaa499574da6a7b659efe186fc561df05d3974",
+    "ciRun": 40617364524,
+    "ciStatus": "success",
+    "deployment": "6ae1559d883d7fc228d20e63",
+    "deploymentStatus": "ready",
+    "deploymentPublishedAt": "2026-10-28T01:54:12.992Z",
+    "evidenceOrigin": "parent-supplied verified deployment and CI metadata; this offline script does not query services",
+    "localTests": 3031,
+    "localTestFiles": 86
+  },
+  "contractHash": "a9cc00da00da9357cca78f676f2d263d3379aa96ccb62283621a3ea8635f552e",
+  "reference": {
+    "sha256": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+    "sourceAuditedAfterGeneration": true,
+    "blindEvaluation": false,
+    "exhaustiveGold": false,
+    "requiredIdentityCount": 1270
+  },
+  "summary": {
+    "frozenVideos": 20,
+    "generationComplete": 19,
+    "generationIncomplete": 1,
+    "semanticGatePassed": 14,
+    "semanticGateFailedOrIncomplete": 6,
+    "actuallyPublishedVideos": 14,
+    "publicKeywordLabels": 467,
+    "allTwentyPassed": false,
+    "broaderBacklogActivationProven": false
+  },
+  "videos": [
+    {
+      "ordinal": 1,
+      "utf16Characters": 3322,
+      "sourceHash": "b3e907cf631d344b49fb31d281a414fdff1ce4e931c8a00dae9208ecdeb506e4",
+      "generationComplete": true,
+      "score": 9.9,
+      "good": true,
+      "requiredIdentities": 11,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 11,
+      "publicationState": "ready",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 11,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.023078810000",
+        "heldUsd": "0",
+        "committedUsd": "0.023078810000",
+        "maximumActualUsd": "0.022864800000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 2,
+      "utf16Characters": 6441,
+      "sourceHash": "126833757855f3a0ffe78543bd6eb3d1df5de0ae2fbf591fef707804aed55948",
+      "generationComplete": true,
+      "score": 9.8,
+      "good": true,
+      "requiredIdentities": 45,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 48,
+      "publicationState": "review",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "review",
+      "acceptedInventoryLabels": 48,
+      "privatePendingLabels": 1,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.048253838000",
+        "heldUsd": "0",
+        "committedUsd": "0.048253838000",
+        "maximumActualUsd": "0.047751300000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 3,
+      "utf16Characters": 6792,
+      "sourceHash": "a453416ec57980a78517e242fa219ef97177dc592c485fea0c4e62f46560eef2",
+      "generationComplete": true,
+      "score": 9.8,
+      "good": true,
+      "requiredIdentities": 20,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 20,
+      "publicationState": "ready",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 20,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.031403638000",
+        "heldUsd": "0",
+        "committedUsd": "0.031403638000",
+        "maximumActualUsd": "0.031018600000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 4,
+      "utf16Characters": 232555,
+      "sourceHash": "fc9cc0112e7e3ac794da6251a92fba63b83f8bc32f9daedf65ab95bb95e90049",
+      "generationComplete": false,
+      "score": null,
+      "good": false,
+      "requiredIdentities": null,
+      "missingRequired": null,
+      "unexpectedRows": null,
+      "unsupportedAccepted": null,
+      "published": false,
+      "publishedKeywordCount": 0,
+      "publicationState": "held_generation_incomplete",
+      "generationStopErrorCode": "keyword_capacity_requires_review",
+      "modelSpending": {
+        "calls": 60,
+        "settledCalls": 60,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 60
+        },
+        "settledUsd": "1.025719868000",
+        "heldUsd": "0",
+        "committedUsd": "1.025719868000",
+        "maximumActualUsd": "0.059199300000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 5,
+      "utf16Characters": 3375,
+      "sourceHash": "91fe9e3a0117f6f52d28d95497f24f9bf3236ac5c66f6f881c3b36a26ad02be1",
+      "generationComplete": true,
+      "score": 9.9,
+      "good": true,
+      "requiredIdentities": 11,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 13,
+      "publicationState": "ready",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 13,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.023598206000",
+        "heldUsd": "0",
+        "committedUsd": "0.023598206000",
+        "maximumActualUsd": "0.023380500000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 6,
+      "utf16Characters": 7781,
+      "sourceHash": "bd1d4f04d501683499a1b65073a1638aff1a8b1d46960d3f0fe2a68331c8dbe0",
+      "generationComplete": true,
+      "score": 10.0,
+      "good": true,
+      "requiredIdentities": 34,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 40,
+      "publicationState": "review",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 40,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.048202230000",
+        "heldUsd": "0",
+        "committedUsd": "0.048202230000",
+        "maximumActualUsd": "0.047718500000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 7,
+      "utf16Characters": 3467,
+      "sourceHash": "0a32bcd5e207a988047465bf59eeea62199c33f8d46759c6f9eb2c2ebbb42f2d",
+      "generationComplete": true,
+      "score": 9.9,
+      "good": true,
+      "requiredIdentities": 12,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 16,
+      "publicationState": "ready",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 16,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.028478186000",
+        "heldUsd": "0",
+        "committedUsd": "0.028478186000",
+        "maximumActualUsd": "0.028246700000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 8,
+      "utf16Characters": 3707,
+      "sourceHash": "a441b913a2640d89de2760f49299e2a04cf5f35dc2b2d0e7f13b6d302f562c17",
+      "generationComplete": true,
+      "score": 9.8,
+      "good": true,
+      "requiredIdentities": 9,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 10,
+      "publicationState": "ready",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 10,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.024616746000",
+        "heldUsd": "0",
+        "committedUsd": "0.024616746000",
+        "maximumActualUsd": "0.024396600000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 9,
+      "utf16Characters": 80920,
+      "sourceHash": "afdbf5c8164b6240151e569e958c0f1d3bcc79ee5808786447886878f85900f3",
+      "generationComplete": true,
+      "score": 9.7,
+      "good": false,
+      "requiredIdentities": 202,
+      "missingRequired": 5,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 1,
+      "published": false,
+      "publishedKeywordCount": 0,
+      "publicationState": "not_published",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "review",
+      "acceptedInventoryLabels": 233,
+      "privatePendingLabels": 14,
+      "modelSpending": {
+        "calls": 22,
+        "settledCalls": 22,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 22
+        },
+        "settledUsd": "0.345279614000",
+        "heldUsd": "0",
+        "committedUsd": "0.345279614000",
+        "maximumActualUsd": "0.058451800000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 10,
+      "utf16Characters": 4385,
+      "sourceHash": "6974d009458bffc74d52320b7ddb751781ac6f2ac8b10e4b745364c2544a49f9",
+      "generationComplete": true,
+      "score": 10.0,
+      "good": true,
+      "requiredIdentities": 11,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 11,
+      "publicationState": "ready",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 11,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.020138438000",
+        "heldUsd": "0",
+        "committedUsd": "0.020138438000",
+        "maximumActualUsd": "0.019914000000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 11,
+      "utf16Characters": 5350,
+      "sourceHash": "8b0341c8ee21866eddfe04ea8c12b842743fe2485d8cbfbc588310364417e959",
+      "generationComplete": true,
+      "score": 9.9,
+      "good": true,
+      "requiredIdentities": 9,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 11,
+      "publicationState": "ready",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 11,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.023656406000",
+        "heldUsd": "0",
+        "committedUsd": "0.023656406000",
+        "maximumActualUsd": "0.023415800000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 12,
+      "utf16Characters": 7009,
+      "sourceHash": "14fefb781d8a90ccaf93c3b4f571e95e8fc6edbc19cbcf6d886706a9aad97228",
+      "generationComplete": true,
+      "score": 10.0,
+      "good": true,
+      "requiredIdentities": 13,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 20,
+      "publicationState": "review",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "review",
+      "acceptedInventoryLabels": 20,
+      "privatePendingLabels": 1,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.028367606000",
+        "heldUsd": "0",
+        "committedUsd": "0.028367606000",
+        "maximumActualUsd": "0.027869300000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 13,
+      "utf16Characters": 7797,
+      "sourceHash": "6bee1630e741f63570b217f9a040ba6789f745e999c82512aea8fed22453c79e",
+      "generationComplete": true,
+      "score": 10.0,
+      "good": true,
+      "requiredIdentities": 91,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 102,
+      "publicationState": "review",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "review",
+      "acceptedInventoryLabels": 102,
+      "privatePendingLabels": 3,
+      "modelSpending": {
+        "calls": 5,
+        "settledCalls": 5,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 5
+        },
+        "settledUsd": "0.173394426000",
+        "heldUsd": "0",
+        "committedUsd": "0.173394426000",
+        "maximumActualUsd": "0.066539000000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 14,
+      "utf16Characters": 8498,
+      "sourceHash": "7c4e2a0866a92ec521130a20e8c2fb596051782de25b5dc3676e88b75a5dca18",
+      "generationComplete": true,
+      "score": 9.7,
+      "good": false,
+      "requiredIdentities": 15,
+      "missingRequired": 1,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": false,
+      "publishedKeywordCount": 0,
+      "publicationState": "not_published",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "review",
+      "acceptedInventoryLabels": 15,
+      "privatePendingLabels": 3,
+      "modelSpending": {
+        "calls": 5,
+        "settledCalls": 5,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 5
+        },
+        "settledUsd": "0.083951810000",
+        "heldUsd": "0",
+        "committedUsd": "0.083951810000",
+        "maximumActualUsd": "0.029117800000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 15,
+      "utf16Characters": 9579,
+      "sourceHash": "85f141058b30a1c79442926700f34729c23e14d177fca571aec53ec2153f7112",
+      "generationComplete": true,
+      "score": 9.9,
+      "good": true,
+      "requiredIdentities": 29,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 36,
+      "publicationState": "ready",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 36,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 4,
+        "settledCalls": 4,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 4
+        },
+        "settledUsd": "0.088643066000",
+        "heldUsd": "0",
+        "committedUsd": "0.088643066000",
+        "maximumActualUsd": "0.044163000000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 16,
+      "utf16Characters": 10211,
+      "sourceHash": "5f902281016f74804cac842054c3c25d0d8af2cb26c9e80106468bc69e30c386",
+      "generationComplete": true,
+      "score": 9.6,
+      "good": false,
+      "requiredIdentities": 73,
+      "missingRequired": 3,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": false,
+      "publishedKeywordCount": 0,
+      "publicationState": "not_published",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "review",
+      "acceptedInventoryLabels": 76,
+      "privatePendingLabels": 2,
+      "modelSpending": {
+        "calls": 6,
+        "settledCalls": 6,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 6
+        },
+        "settledUsd": "0.153696746000",
+        "heldUsd": "0",
+        "committedUsd": "0.153696746000",
+        "maximumActualUsd": "0.052729800000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 17,
+      "utf16Characters": 15144,
+      "sourceHash": "d7126b0c011b6ecdf594c119b57e50e60f5531bbd99de6e9cec6b01e6e4ab2fb",
+      "generationComplete": true,
+      "score": 9.6,
+      "good": false,
+      "requiredIdentities": 34,
+      "missingRequired": 0,
+      "unexpectedRows": 1,
+      "unsupportedAccepted": 2,
+      "published": false,
+      "publishedKeywordCount": 0,
+      "publicationState": "not_published",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "review",
+      "acceptedInventoryLabels": 52,
+      "privatePendingLabels": 2,
+      "modelSpending": {
+        "calls": 10,
+        "settledCalls": 10,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 10
+        },
+        "settledUsd": "0.213060284000",
+        "heldUsd": "0",
+        "committedUsd": "0.213060284000",
+        "maximumActualUsd": "0.047722600000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 18,
+      "utf16Characters": 30125,
+      "sourceHash": "4466209e3d293664f7280661cb6a1800078dd8d29b0e542b7a42bbc6eba345f6",
+      "generationComplete": true,
+      "score": 9.7,
+      "good": true,
+      "requiredIdentities": 81,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 97,
+      "publicationState": "review",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "review",
+      "acceptedInventoryLabels": 97,
+      "privatePendingLabels": 2,
+      "modelSpending": {
+        "calls": 9,
+        "settledCalls": 9,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 9
+        },
+        "settledUsd": "0.132368874000",
+        "heldUsd": "0",
+        "committedUsd": "0.132368874000",
+        "maximumActualUsd": "0.049383800000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 19,
+      "utf16Characters": 81262,
+      "sourceHash": "16e7986cfe871e82440277abf8b030ba479c7975009288f9228a362439796281",
+      "generationComplete": true,
+      "score": 9.7,
+      "good": false,
+      "requiredIdentities": 103,
+      "missingRequired": 2,
+      "unexpectedRows": 1,
+      "unsupportedAccepted": 0,
+      "published": false,
+      "publishedKeywordCount": 0,
+      "publicationState": "not_published",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "review",
+      "acceptedInventoryLabels": 129,
+      "privatePendingLabels": 5,
+      "modelSpending": {
+        "calls": 28,
+        "settledCalls": 28,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 28
+        },
+        "settledUsd": "0.643319174000",
+        "heldUsd": "0",
+        "committedUsd": "0.643319174000",
+        "maximumActualUsd": "0.060970600000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    {
+      "ordinal": 20,
+      "utf16Characters": 6638,
+      "sourceHash": "f93dfd62aa78fd03101873baad9bf302cae05081ab345685a1bd75edba89f29a",
+      "generationComplete": true,
+      "score": 9.9,
+      "good": true,
+      "requiredIdentities": 26,
+      "missingRequired": 0,
+      "unexpectedRows": 0,
+      "unsupportedAccepted": 0,
+      "published": true,
+      "publishedKeywordCount": 32,
+      "publicationState": "ready",
+      "referenceExhaustive": false,
+      "scoreReferenceHash": "15c487e9efd627763f8e0e07c803a2e14f85f511e73842daf75cdf1cf31888d2",
+      "previewState": "ready",
+      "acceptedInventoryLabels": 32,
+      "privatePendingLabels": 0,
+      "modelSpending": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.041996318000",
+        "heldUsd": "0",
+        "committedUsd": "0.041996318000",
+        "maximumActualUsd": "0.041617200000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    }
+  ],
+  "promptRegressionComparison": {
+    "offlineReplayCallsAreNotNewLiveTrials": true,
+    "comparisonScope": "The prior alias-boundaries policy requests were replayed offline under the current host. Differences mix prompt/checker decisions and host reconstruction; they are diagnostic, not a controlled blind experiment.",
+    "candidates": [
+      {
+        "ordinal": 14,
+        "evidenceKind": "exact-paid-request-offline-replay-current-host-not-new-live-generation",
+        "newModelCalls": 0,
+        "scoreReferenceBinding": "saved source-audited replay score; the artifact does not embed its full reference-file hash",
+        "offlineReplay": {
+          "score": 9.7,
+          "good": false,
+          "requiredIdentities": 15,
+          "missingRequired": 1,
+          "unexpectedRows": 0,
+          "unsupportedAccepted": 1,
+          "referenceExhaustive": false
+        },
+        "currentCandidate": {
+          "score": 9.7,
+          "good": false,
+          "requiredIdentities": 15,
+          "missingRequired": 1,
+          "unexpectedRows": 0,
+          "unsupportedAccepted": 0,
+          "referenceExhaustive": false
+        },
+        "currentScoreMinusReplay": 0.0
+      },
+      {
+        "ordinal": 16,
+        "evidenceKind": "exact-paid-request-offline-replay-current-host-not-new-live-generation",
+        "newModelCalls": 0,
+        "scoreReferenceBinding": "saved source-audited replay score; the artifact does not embed its full reference-file hash",
+        "offlineReplay": {
+          "score": 9.7,
+          "good": false,
+          "requiredIdentities": 73,
+          "missingRequired": 3,
+          "unexpectedRows": 0,
+          "unsupportedAccepted": 0,
+          "referenceExhaustive": false
+        },
+        "currentCandidate": {
+          "score": 9.6,
+          "good": false,
+          "requiredIdentities": 73,
+          "missingRequired": 3,
+          "unexpectedRows": 0,
+          "unsupportedAccepted": 0,
+          "referenceExhaustive": false
+        },
+        "currentScoreMinusReplay": -0.1
+      },
+      {
+        "ordinal": 17,
+        "evidenceKind": "exact-paid-request-offline-replay-current-host-not-new-live-generation",
+        "newModelCalls": 0,
+        "scoreReferenceBinding": "saved source-audited replay score; the artifact does not embed its full reference-file hash",
+        "offlineReplay": {
+          "score": 9.7,
+          "good": false,
+          "requiredIdentities": 34,
+          "missingRequired": 0,
+          "unexpectedRows": 1,
+          "unsupportedAccepted": 0,
+          "referenceExhaustive": false
+        },
+        "currentCandidate": {
+          "score": 9.6,
+          "good": false,
+          "requiredIdentities": 34,
+          "missingRequired": 0,
+          "unexpectedRows": 1,
+          "unsupportedAccepted": 2,
+          "referenceExhaustive": false
+        },
+        "currentScoreMinusReplay": -0.1
+      },
+      {
+        "ordinal": 19,
+        "evidenceKind": "exact-paid-request-offline-replay-current-host-not-new-live-generation",
+        "newModelCalls": 0,
+        "scoreReferenceBinding": "saved source-audited replay score; the artifact does not embed its full reference-file hash",
+        "offlineReplay": {
+          "score": 9.5,
+          "good": false,
+          "requiredIdentities": 103,
+          "missingRequired": 5,
+          "unexpectedRows": 0,
+          "unsupportedAccepted": 0,
+          "referenceExhaustive": false
+        },
+        "currentCandidate": {
+          "score": 9.7,
+          "good": false,
+          "requiredIdentities": 103,
+          "missingRequired": 2,
+          "unexpectedRows": 1,
+          "unsupportedAccepted": 0,
+          "referenceExhaustive": false
+        },
+        "currentScoreMinusReplay": 0.2
+      }
+    ]
+  },
+  "finances": {
+    "currency": "USD",
+    "baseline": {
+      "calls": 503,
+      "settledCalls": 496,
+      "unresolvedCalls": 7,
+      "states": {
+        "reserved": 5,
+        "settled": 496,
+        "unknown": 2
+      },
+      "settledUsd": "4.379443949000",
+      "heldUsd": "0.125827191000",
+      "committedUsd": "4.505271140000",
+      "maximumActualUsd": "0.074492300000",
+      "maximumReservationUsd": "0.100000000000"
+    },
+    "new": {
+      "calls": 182,
+      "settledCalls": 182,
+      "unresolvedCalls": 0,
+      "states": {
+        "settled": 182
+      },
+      "settledUsd": "3.201224284000",
+      "heldUsd": "0",
+      "committedUsd": "3.201224284000",
+      "maximumActualUsd": "0.066539000000",
+      "maximumReservationUsd": "0.100000000000"
+    },
+    "cumulative": {
+      "calls": 685,
+      "settledCalls": 678,
+      "unresolvedCalls": 7,
+      "states": {
+        "reserved": 5,
+        "settled": 678,
+        "unknown": 2
+      },
+      "settledUsd": "7.580668233000",
+      "heldUsd": "0.125827191000",
+      "committedUsd": "7.706495424000",
+      "maximumActualUsd": "0.074492300000",
+      "maximumReservationUsd": "0.100000000000"
+    },
+    "dailyUtcIncludingAllUnresolvedHolds": {
+      "calls": 189,
+      "settledCalls": 182,
+      "unresolvedCalls": 7,
+      "states": {
+        "reserved": 5,
+        "settled": 182,
+        "unknown": 2
+      },
+      "settledUsd": "3.201224284000",
+      "heldUsd": "0.125827191000",
+      "committedUsd": "3.327051475000",
+      "maximumActualUsd": "0.066539000000",
+      "maximumReservationUsd": "0.100000000000"
+    },
+    "byModel": {
+      "deepseek/deepseek-v4.1-flash-1017": {
+        "calls": 110,
+        "settledCalls": 110,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 110
+        },
+        "settledUsd": "0.027614284000",
+        "heldUsd": "0",
+        "committedUsd": "0.027614284000",
+        "maximumActualUsd": "0.000474468000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "openai/gpt-6.1-sol-pro": {
+        "calls": 72,
+        "settledCalls": 72,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 72
+        },
+        "settledUsd": "3.173610000000",
+        "heldUsd": "0",
+        "committedUsd": "3.173610000000",
+        "maximumActualUsd": "0.066539000000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    "byOrdinal": {
+      "1": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.023078810000",
+        "heldUsd": "0",
+        "committedUsd": "0.023078810000",
+        "maximumActualUsd": "0.022864800000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "2": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.048253838000",
+        "heldUsd": "0",
+        "committedUsd": "0.048253838000",
+        "maximumActualUsd": "0.047751300000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "3": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.031403638000",
+        "heldUsd": "0",
+        "committedUsd": "0.031403638000",
+        "maximumActualUsd": "0.031018600000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "4": {
+        "calls": 60,
+        "settledCalls": 60,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 60
+        },
+        "settledUsd": "1.025719868000",
+        "heldUsd": "0",
+        "committedUsd": "1.025719868000",
+        "maximumActualUsd": "0.059199300000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "5": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.023598206000",
+        "heldUsd": "0",
+        "committedUsd": "0.023598206000",
+        "maximumActualUsd": "0.023380500000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "6": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.048202230000",
+        "heldUsd": "0",
+        "committedUsd": "0.048202230000",
+        "maximumActualUsd": "0.047718500000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "7": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.028478186000",
+        "heldUsd": "0",
+        "committedUsd": "0.028478186000",
+        "maximumActualUsd": "0.028246700000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "8": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.024616746000",
+        "heldUsd": "0",
+        "committedUsd": "0.024616746000",
+        "maximumActualUsd": "0.024396600000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "9": {
+        "calls": 22,
+        "settledCalls": 22,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 22
+        },
+        "settledUsd": "0.345279614000",
+        "heldUsd": "0",
+        "committedUsd": "0.345279614000",
+        "maximumActualUsd": "0.058451800000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "10": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.020138438000",
+        "heldUsd": "0",
+        "committedUsd": "0.020138438000",
+        "maximumActualUsd": "0.019914000000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "11": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.023656406000",
+        "heldUsd": "0",
+        "committedUsd": "0.023656406000",
+        "maximumActualUsd": "0.023415800000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "12": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.028367606000",
+        "heldUsd": "0",
+        "committedUsd": "0.028367606000",
+        "maximumActualUsd": "0.027869300000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "13": {
+        "calls": 5,
+        "settledCalls": 5,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 5
+        },
+        "settledUsd": "0.173394426000",
+        "heldUsd": "0",
+        "committedUsd": "0.173394426000",
+        "maximumActualUsd": "0.066539000000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "14": {
+        "calls": 5,
+        "settledCalls": 5,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 5
+        },
+        "settledUsd": "0.083951810000",
+        "heldUsd": "0",
+        "committedUsd": "0.083951810000",
+        "maximumActualUsd": "0.029117800000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "15": {
+        "calls": 4,
+        "settledCalls": 4,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 4
+        },
+        "settledUsd": "0.088643066000",
+        "heldUsd": "0",
+        "committedUsd": "0.088643066000",
+        "maximumActualUsd": "0.044163000000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "16": {
+        "calls": 6,
+        "settledCalls": 6,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 6
+        },
+        "settledUsd": "0.153696746000",
+        "heldUsd": "0",
+        "committedUsd": "0.153696746000",
+        "maximumActualUsd": "0.052729800000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "17": {
+        "calls": 10,
+        "settledCalls": 10,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 10
+        },
+        "settledUsd": "0.213060284000",
+        "heldUsd": "0",
+        "committedUsd": "0.213060284000",
+        "maximumActualUsd": "0.047722600000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "18": {
+        "calls": 9,
+        "settledCalls": 9,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 9
+        },
+        "settledUsd": "0.132368874000",
+        "heldUsd": "0",
+        "committedUsd": "0.132368874000",
+        "maximumActualUsd": "0.049383800000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "19": {
+        "calls": 28,
+        "settledCalls": 28,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 28
+        },
+        "settledUsd": "0.643319174000",
+        "heldUsd": "0",
+        "committedUsd": "0.643319174000",
+        "maximumActualUsd": "0.060970600000",
+        "maximumReservationUsd": "0.100000000000"
+      },
+      "20": {
+        "calls": 3,
+        "settledCalls": 3,
+        "unresolvedCalls": 0,
+        "states": {
+          "settled": 3
+        },
+        "settledUsd": "0.041996318000",
+        "heldUsd": "0",
+        "committedUsd": "0.041996318000",
+        "maximumActualUsd": "0.041617200000",
+        "maximumReservationUsd": "0.100000000000"
+      }
+    },
+    "historicalUnresolvedCalls": 7,
+    "historicalUnresolvedCallRowsExact": true,
+    "caps": {
+      "cumulativeUsd": "10",
+      "dailyUsd": "5",
+      "perModelCallUsd": "0.10",
+      "finiteSessionNewUsd": "3.5",
+      "finiteSessionCalls": 249
+    },
+    "capChecks": {
+      "cumulativeWithin10Usd": true,
+      "dailyWithin5Usd": true,
+      "newMaximumReservationWithin10Cents": true,
+      "newMaximumActualWithin10Cents": true,
+      "finiteNewCommitmentWithinSessionCap": true,
+      "finiteNewCallCountWithinSessionCap": true
+    }
+  },
+  "historyPreservation": {
+    "strictChecksPass": true,
+    "issues": {},
+    "tables": {
+      "calls": {
+        "before": 503,
+        "after": 685,
+        "oldRowsExact": 503,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 182,
+        "changedTopLevelFields": {}
+      },
+      "jobs": {
+        "before": 431,
+        "after": 431,
+        "oldRowsExact": 431,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {}
+      },
+      "reviews": {
+        "before": 96,
+        "after": 103,
+        "oldRowsExact": 96,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 7,
+        "changedTopLevelFields": {}
+      },
+      "settings": {
+        "before": 1,
+        "after": 1,
+        "oldRowsExact": 1,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {}
+      },
+      "policies": {
+        "before": 1,
+        "after": 1,
+        "oldRowsExact": 1,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {}
+      },
+      "budget": {
+        "before": 1,
+        "after": 1,
+        "oldRowsExact": 1,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {}
+      },
+      "hourlyPolicies": {
+        "before": 1,
+        "after": 1,
+        "oldRowsExact": 1,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {}
+      },
+      "supplierBudget": {
+        "before": 1,
+        "after": 1,
+        "oldRowsExact": 1,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {}
+      },
+      "workspaces": {
+        "before": 3,
+        "after": 3,
+        "oldRowsExact": 3,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {}
+      },
+      "archive": {
+        "before": 504,
+        "after": 504,
+        "oldRowsExact": 490,
+        "oldRowsChanged": 14,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {
+          "record": 14
+        }
+      },
+      "comparisons": {
+        "before": 1,
+        "after": 1,
+        "oldRowsExact": 1,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {}
+      },
+      "admissions": {
+        "before": 10,
+        "after": 10,
+        "oldRowsExact": 10,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {}
+      }
+    },
+    "archive": {
+      "protectedFieldsPreserved": true,
+      "sourceHashesMatch": true,
+      "receiptKeywordCountsMatch": true,
+      "publishedRowsChanged": 14,
+      "publishedRowsExact": 0,
+      "changedRecordFields": {
+        "record.brands": 13,
+        "record.keywordContentHash": 13,
+        "record.keywordRuleVersion": 13,
+        "record.processing.content": 5,
+        "record.processing.contentHash": 5,
+        "record.processing.keywords": 13,
+        "record.processing.recap": 5,
+        "record.processing.ruleVersion": 5,
+        "record.processing.updatedAt": 14,
+        "record.topics": 14,
+        "record.videoKeywords": 14
+      },
+      "expectedNewPendingReviewRows": 7,
+      "allowedMutationFields": [
+        "record.brands",
+        "record.keywordContentHash",
+        "record.keywordRuleVersion",
+        "record.topics",
+        "record.videoKeywords",
+        "record.processing.keywords",
+        "record.processing.updatedAt"
+      ],
+      "processingInitialization": {
+        "count": 5,
+        "ordinals": [
+          5,
+          11,
+          12,
+          15,
+          18
+        ],
+        "fields": {
+          "content": 5,
+          "contentHash": 5,
+          "keywords": 5,
+          "recap": 5,
+          "ruleVersion": 5,
+          "updatedAt": 5
+        },
+        "currentDatabaseHelperVerification": {
+          "verified": true,
+          "caseCount": 5,
+          "checkedAt": "2026-10-28T02:16:37.394331+00:00",
+          "helperDefinitionSha256": "50f5ccbc843ba71b98789e9d409676e520255155ac6593c528eb0161966b3049"
+        },
+        "scope": "Only absent/null prior processing; exact existing content_analysis_processing SQL helper metadata verified from unchanged source and recap annotations.",
+        "existingProcessingMetadataOverwriteAllowed": false
+      }
+    },
+    "independentCollectionChanges": {
+      "hourlyChecks": {
+        "before": 4722,
+        "after": 4839,
+        "oldRowsExact": 4722,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 117,
+        "changedTopLevelFields": {},
+        "category": "independent_collection_or_telemetry_differences_reported_without_attribution"
+      },
+      "hourlySources": {
+        "before": 39,
+        "after": 39,
+        "oldRowsExact": 0,
+        "oldRowsChanged": 39,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {
+          "content_hash": 11,
+          "cursor": 11,
+          "last_checked_at": 39,
+          "last_started_at": 39,
+          "next_check_at": 39
+        },
+        "category": "independent_collection_or_telemetry_differences_reported_without_attribution"
+      },
+      "hourlyProviders": {
+        "before": 226,
+        "after": 226,
+        "oldRowsExact": 214,
+        "oldRowsChanged": 12,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {
+          "last_reconciled_at": 12
+        },
+        "category": "independent_collection_or_telemetry_differences_reported_without_attribution"
+      },
+      "supplierJobs": {
+        "before": 939,
+        "after": 939,
+        "oldRowsExact": 938,
+        "oldRowsChanged": 1,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {
+          "updated_at": 1
+        },
+        "category": "independent_collection_or_telemetry_differences_reported_without_attribution"
+      },
+      "supplierReservations": {
+        "before": 290,
+        "after": 290,
+        "oldRowsExact": 290,
+        "oldRowsChanged": 0,
+        "oldRowsMissing": 0,
+        "newRows": 0,
+        "changedTopLevelFields": {},
+        "category": "independent_collection_or_telemetry_differences_reported_without_attribution"
+      }
+    }
+  },
+  "finalControls": {
+    "checkedAt": "2026-10-28T02:07:06.881071+00:00",
+    "allOpenSessions": 0,
+    "allOpenReleases": 0,
+    "activeAIJobs": 0,
+    "ourSessionState": "closed",
+    "ourReleaseState": "closed",
+    "remainingReleaseSources": 6,
+    "globalAiGateEnabled": false,
+    "ownerAiGatesEnabled": false,
+    "deployedBroadRuntimeEnabled": false
+  },
+  "evidenceBoundaries": [
+    "Code checks and deployment readiness establish implementation delivery, not model quality.",
+    "Only receipt-verified published rows with reader readback count as live keyword publication.",
+    "Semantic ratings use saved source-only references corrected after generation, not a blind or human-exhaustive gold set.",
+    "Source captures can be partial or unverified against original videos; full source coverage is not claimed.",
+    "The saved paid-request offline replays do not constitute additional live generation or new provider spending.",
+    "Broader backlog activation and recap generation are not established by this keyword rollout."
+  ],
+  "nativeSnapshotCapture": {
+    "captureKind": "baseline-hash-verified-native-delta",
+    "atomicTransaction": true,
+    "isolation": "repeatable read",
+    "readOnly": true,
+    "capturedAt": "2026-10-28T02:14:45.813632+00:00",
+    "baselineFileSha256": "f32c2377752abc03fe39cd9c9b21fa239477193277acd5c7e5b1a9651a8a8390",
+    "baselineBytes": 43526895,
+    "deltaBytes": 4165210,
+    "groupCount": 22,
+    "allFreshCurrentGroupsVerified": true,
+    "rows": {
+      "currentCount": 8126,
+      "unchangedCount": 7754,
+      "changedCount": 66,
+      "newCount": 306,
+      "removedCount": 0
+    }
+  }
+}

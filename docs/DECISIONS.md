@@ -4,7 +4,12 @@
 
 Founder: “do it”, followed by “continue”, approving the proposed connection of the measured keyword process, one actual publication/reload proof, the frozen twenty-video run and expansion conditional on those checks and the remaining allowance. Retain US$10 cumulative / US$5 day / US$0.10 call and all historical holds. This is not approval of the unresolved recap process, unlimited recurring spending or new collection. Use a finite admitted roster and keep the broader legacy queue paused.
 
-Updated: 27 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
+Execution completed: **14/20 inventories pass and are published, 467 labels**. Five semantic failures and one 649-entry/500-limit capacity failure remain held. The conditional expansion gate did not pass, so no broader backlog or recap activation follows. Host type-only merge/candidate transport corrections are retained; experimental paragraph/context policies do not replace the default universally. Assistant source audits and post-generation reference corrections are disclosed, with original scores/failures preserved.
+
+All 182 new calls settled for **US$3.201224284**; no new hold. Cumulative commitment **US$7.706495424** includes unchanged old holds **US$0.125827191**. Same US$3.50 internal session, no financial reset; all sessions/releases closed, broad analysis Off, DeepSeek revision18, zero active AI jobs. Native preservation passes with five previously absent processing objects explicitly checked against the existing database helper; no existing recap value overwritten. [Full outcome](tech/KEYWORD-PRODUCTION-ROLLOUT-2026-10-28.md).
+
+
+Updated: 28 October 2026. Individual answers below are accepted directions. They do not imply approval of the entire specification.
 
 ## 27 October 2026 — continue the keyword loop autonomously
 
