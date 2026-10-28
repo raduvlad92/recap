@@ -73,7 +73,12 @@ describe('entity keywords with a full-content second check', () => {
     expect(sanitizeSourceUpdate(value)?.brands).toHaveLength(80);
     expect(() => validateStoredVideoAnalysis(value)).not.toThrow();
     expect(() => validateStoredVideoAnalysis({ ...value, videoSummary: undefined })).not.toThrow();
-    expect(sanitizeSourceUpdate({ ...value, videoKeywords: Array(501).fill(value.videoKeywords[0]) })).toBeNull();
+    const complete = { ...value, videoKeywords: Array.from({ length: 1000 }, (_, index) => ({ label: 'Brand' + index, ranges: [] })) };
+    expect(sanitizeSourceUpdate(complete)?.videoKeywords).toHaveLength(1000);
+    expect(() => validateStoredVideoAnalysis(complete)).not.toThrow();
+    const excessive = { ...complete, videoKeywords: [...complete.videoKeywords, { label: 'Brand1000', ranges: [] }] };
+    expect(sanitizeSourceUpdate(excessive)).toBeNull();
+    expect(() => validateStoredVideoAnalysis(excessive)).toThrow('invalid_archive_video_keywords');
   });
 });
 

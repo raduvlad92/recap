@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyFollowToggle, dateKey, filterUpdates, followReasons, groupTopics, isPublicWebUrl, mergeCollection, normalizeSourceUrl, resolveFollowedSources, sanitizeSettings, sanitizeWorkspace, sourceCounts, sourceIdForUrl } from '../src/lib/domain';
+import { applyFollowToggle, dateKey, filterUpdates, followReasons, groupTopics, isPublicWebUrl, mergeCollection, normalizeSourceUrl, resolveFollowedSources, sanitizeSettings, sanitizeSourceUpdate, sanitizeWorkspace, sourceCounts, sourceIdForUrl } from '../src/lib/domain';
 import { createDefaultWorkspace } from '../src/lib/fixtures';
 import { createSampleUpdates, sampleCreators, sampleSources } from './helpers/sample-fixtures';
 import type { Source, SourceUpdate, WorkspaceState } from '../src/lib/types';
@@ -154,6 +154,19 @@ describe('workspace and collection integrity', () => {
     const state = { ...empty(), importedUpdates: Array.from({ length: 3000 }, (_, i) => ({ ...update, id: `old-${i}`, url: `https://example.org/post-${i}` })) };
     expect(() => mergeCollection(state, { source, updates: [update] })).toThrow('3,000');
     expect(state.importedUpdates).toHaveLength(3000);
+  });
+  it('preserves every keyword through 1,000 and rejects 1,001 without truncating the inventory', () => {
+    for (const count of [649, 1000, 1001]) {
+      const labels = Array.from({ length: count }, (_, index) => `NamedItem${index}`);
+      const input = { ...update, videoKeywords: labels.map(label => ({ label, ranges: [] })), topics: labels, brands: labels };
+      const parsed = sanitizeSourceUpdate(input);
+      if (count > 1000) expect(parsed).toBeNull();
+      else {
+        expect(parsed?.videoKeywords?.map(row => row.label)).toEqual(labels);
+        expect(parsed?.topics).toEqual(labels); expect(parsed?.brands).toEqual(labels);
+      }
+      expect(input.videoKeywords).toHaveLength(count);
+    }
   });
   it('rejects unsupported saved versions and unsafe source URLs', () => {
     expect(sanitizeWorkspace({ ...empty(), version: 2 })).toBeNull();

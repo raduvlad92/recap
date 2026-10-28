@@ -23,7 +23,9 @@ export const KEYWORD_PRODUCTION_CHUNK_CHARS = 12_000;
 export const KEYWORD_PRODUCTION_LONG_CHUNK_BYTES = 12_000;
 export const KEYWORD_PRODUCTION_OVERLAP_CHARS = 200;
 export const KEYWORD_PRODUCTION_MAX_SOURCE_CHARS = 1_000_000;
-export const KEYWORD_PRODUCTION_MAX_NAMES = 500;
+/** Complete-source inventory bound; individual chunk requests retain 500. */
+export const KEYWORD_PRODUCTION_MAX_NAMES = 1000;
+const CHUNK_MAX_NAMES = 500;
 const MAX_PROMPT_CHARS = 100_000;
 const COMPACT_CHECKER_AFTER_NAMES = 100;
 const COMPACT_CHECKER_AFTER_NAME_BYTES = 2200;
@@ -241,7 +243,7 @@ function decodedChecker(value:unknown,names:string[]):unknown {
 function validateChecker(value:unknown,names:string[]):void {
  if(!record(value)||!exactKeys(value,['readComplete','decisions','missingNames'])||value.readComplete!==true
   ||!Array.isArray(value.decisions)||value.decisions.length!==names.length||!Array.isArray(value.missingNames)
-  ||value.missingNames.length>KEYWORD_PRODUCTION_MAX_NAMES)return analysisFailure('checker_incomplete');
+  ||value.missingNames.length>CHUNK_MAX_NAMES)return analysisFailure('checker_incomplete');
  const supplied=new Set(names), seen=new Set<string>();
  for(const [section,rows] of [['decisions',value.decisions],['missingNames',value.missingNames]] as const)for(const raw of rows){
   if(!record(raw)||!exactKeys(raw,['name','kind','disposition'])||typeof raw.name!=='string'
@@ -366,7 +368,7 @@ export function mergeKeywordProductionChunks(update:SourceUpdate,results:Keyword
    chunks:results.map(({chunk,candidates,rows,boundaryChanges,duplicateVerdicts,conflicts,checkerEncoding,secondExtractorMethod})=>({index:chunk.index,start:chunk.start,end:chunk.end,chunkHash:chunk.chunkHash,checkerEncoding,secondExtractorMethod,
     candidateCount:candidates.length,acceptedCount:rows.filter(r=>r.disposition==='accepted').length,reviewCount:rows.filter(r=>r.disposition==='review').length,
     rejectedCount:rows.filter(r=>r.disposition==='rejected').length,boundaryChanges,duplicateVerdicts,conflictCount:conflicts.length}))}};
- if(new TextEncoder().encode(JSON.stringify(result)).length>400000)return analysisFailure('keyword_production_evidence_capacity');
+ if(new TextEncoder().encode(JSON.stringify(result)).length>450000)return analysisFailure('keyword_production_evidence_capacity');
  return result;
 }
 
@@ -395,7 +397,7 @@ export async function analyzeProductionKeywords(update:SourceUpdate,generate:(ca
  * policy; neither request callers nor model output can introduce it. */
 export function applyKeywordProductionTimingReviews(update:SourceUpdate,output:AnalysisOutput,reviews:unknown):AnalysisOutput {
  if(reviews===undefined)return output;
- if(!Array.isArray(reviews)||reviews.length>500)return analysisFailure('keyword_production_invalid_timing_review');
+ if(!Array.isArray(reviews)||reviews.length>KEYWORD_PRODUCTION_MAX_NAMES)return analysisFailure('keyword_production_invalid_timing_review');
  const content=source(update),byName=new Map<string,{name:string;evidenceQuote:string;start:number;end:number}>();
  for(const review of reviews){
   if(!record(review)||!exactKeys(review,['name','evidenceQuote'])||typeof review.name!=='string'||!review.name.trim()||review.name.length>100

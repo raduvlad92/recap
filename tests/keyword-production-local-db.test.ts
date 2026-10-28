@@ -128,6 +128,48 @@ describe.skipIf(!available)('finite keyword publication, disposable PostgreSQL o
   sql(`update public.reader_source_updates set record=record||${j({videoKeywords:[row('ExampleBrand','brand')].map(({label,ranges})=>({label,ranges,seconds:10})),topics:['ExampleBrand'],brands:['ExampleBrand']})} where id='kw-video';`);freeze();
   const out=output();out.evidence.accepted[1].kind='category';publish(out);expect(record().brands).toContain('ExampleBrand');expect(record().videoKeywords.find((x:any)=>x.label==='ExampleBrand').ranges).toEqual([{startSeconds:0,endSeconds:10}]);
  });
+ it('validates 1,000 whole-source entries and rejects 1,001 while retaining independent grounding and byte guards',()=>{
+  const labels=Array.from({length:1001},(_,index)=>`NamedItem${index}`),source=labels.join(' '),sourceHash=createHash('sha256').update(source).digest('hex');
+  const candidate=(label:string)=>({...row(label),ranges:[]});
+  const result={...output(),state:'ready',pending:[],evidence:{...output().evidence,contentHash:sourceHash,coverage:[{start:0,end:source.length}],accepted:labels.slice(0,1000).map(candidate)}};
+  const validate=(value:unknown)=>service(`select public.validate_content_analysis_result('keywords',${j(value)},${j({content:source})},${q(sourceHash)});`);
+  expect(()=>validate(result)).not.toThrow();
+  expect(()=>validate({...result,evidence:{...result.evidence,accepted:labels.map(candidate)}})).toThrow(/Invalid keyword inventory/);
+  expect(()=>validate({...result,evidence:{...result.evidence,accepted:result.evidence.accepted.map((item,index)=>index?item:{...item,evidenceQuote:'Not in source'})}})).toThrow(/Invalid keyword candidate/);
+  expect(()=>validate({...result,evidence:{...result.evidence,unused:'x'.repeat(500000)}})).toThrow(/Invalid prepared analysis/);
+ });
+ it('publishes 618 accepted plus 31 private entries with prior annotations intact, then permits an ordinary review above 500',()=>{
+  const labels=Array.from({length:649},(_,index)=>`NamedItem${index}`),source=content+' '+labels.join(' '),sourceHash=createHash('sha256').update(source).digest('hex');
+  const largeRecord={...baseRecord,content:source,keywordContentHash:sourceHash,transcriptSegments:[{text:source,startSeconds:0,durationSeconds:10}]};
+  sql(`update public.reader_source_updates set record=${j(largeRecord)} where id='kw-video';
+   update public.keyword_learning_sessions set sources=${j([{ordinal:1,updateId:'kw-video',sourceHash}])} where id=${q(sid)};
+   update public.keyword_production_releases set sources=(select jsonb_build_array(jsonb_build_object('ordinal',1,'updateId',a.id,'sourceHash',${q(sourceHash)},'sourceRevision',public.content_analysis_source_revision(a.record),'sourceFingerprint',public.content_analysis_source_fingerprint(w.state,a.source_id),'keywordSnapshotHash',public.keyword_production_snapshot(a.record),'chunkCount',1)) from public.reader_source_updates a join public.reader_workspaces w using(user_id) where a.id='kw-video') where session_id=${q(sid)};`);
+  calls=calls.map(prior=>{
+   const key='keyword-learning:v1:large-fixture-'+prior.role;
+   const id=sql(`insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,state,actual_usd,request_hash) select user_id,${q(key)},gen_random_uuid(),model,${q(sourceHash)},maximum_usd,state,actual_usd,request_hash from public.reader_content_analysis_calls where id=${q(prior.callId)} returning id;`);
+   sql(`insert into public.keyword_learning_requests(session_id,call_key,source_ordinal,source_hash,request_hash,request_payload,call_id,result,completed,completed_at) select session_id,${q(key)},source_ordinal,${q(sourceHash)},request_hash,${j({request:{key}})},${q(id)},result,true,clock_timestamp() from public.keyword_learning_requests where call_id=${q(prior.callId)};`);
+   return{...prior,callId:id};
+  });
+  const out={...output(),pending:labels.slice(618).map(label=>({...row(label),confidence:0})),evidence:{...output().evidence,contentHash:sourceHash,coverage:[{start:0,end:source.length}],accepted:labels.slice(0,618).map(label=>row(label))}};
+  const receipt=publish(out);expect(receipt.keywordCount).toBe(619);expect(receipt.acceptedCount).toBe(618);expect(receipt.pendingCount).toBe(31);
+  expect(record().videoKeywords.find((item:any)=>item.label==='C++')).toEqual(baseRecord.videoKeywords[0]);
+  expect(record().content).toBe(source);expect(record().videoHighlights).toEqual(baseRecord.videoHighlights);expect(record().editorialNote).toBe(baseRecord.editorialNote);
+  const pending=json(`select to_jsonb(r) from public.admin_keyword_reviews r where label=${q(labels[618])};`);
+  expect(json(`select public.admin_review_keyword(${q(pending.id)},${q(pending.updated_at)},'fixture-admin','approve',${q(pending.label)},'product');`).status).toBe('approved');
+  expect(record().videoKeywords).toHaveLength(620);expect(service('select count(*) from public.admin_keyword_review_queue;')).toBe('31');
+ });
+ it('changes only the four bounded function predicates without rewriting existing publication data or function privileges',()=>{
+  publish();
+  const snapshot=()=>sql(`select jsonb_build_object('archive',(select jsonb_agg(to_jsonb(r)) from public.reader_source_updates r),'workspace',(select jsonb_agg(to_jsonb(w)) from public.reader_workspaces w),'reviews',(select jsonb_agg(to_jsonb(r) order by id) from public.admin_keyword_reviews r),'publications',(select jsonb_agg(to_jsonb(p)) from public.keyword_production_publications p),'calls',(select jsonb_agg(to_jsonb(c) order by id) from public.reader_content_analysis_calls c),'session',(select jsonb_agg(to_jsonb(s)) from public.keyword_learning_sessions s),'release',(select jsonb_agg(to_jsonb(r)) from public.keyword_production_releases r));`);
+  const signatures=['validate_content_analysis_result(text,jsonb,jsonb,text)','publish_keyword_production_result(uuid,integer,text,jsonb,jsonb)','publish_content_analysis_job(uuid,uuid)','admin_review_keyword_before_content_processing(uuid,timestamp with time zone,text,text,text,text)'];
+  const predicates=[["jsonb_array_length(p_result#>'{evidence,accepted}')+jsonb_array_length(p_result->'pending') not between 1 and 1000","jsonb_array_length(p_result#>'{evidence,accepted}')+jsonb_array_length(p_result->'pending') not between 1 and 500"],['jsonb_each(entries))>1000','jsonb_each(entries))>500'],['jsonb_each(entries))>1000','jsonb_each(entries))>500'],['jsonb_array_length(keywords)>1000 or','jsonb_array_length(keywords)>500 or']];
+  const privileges=()=>sql(`select jsonb_agg(jsonb_build_object('oid',oid,'owner',proowner,'acl',proacl,'securityDefiner',prosecdef,'config',proconfig) order by oid) from pg_proc where oid in (${signatures.map(signature=>q('public.'+signature)+'::regprocedure').join(',')});`);
+  const before=snapshot(),grants=privileges();
+  signatures.forEach((signature,index)=>{const definition=sql(`select pg_get_functiondef(${q('public.'+signature)}::regprocedure);`),[current,prior]=predicates[index];expect(definition.split(current)).toHaveLength(2);sql(definition.replace(current,prior));});
+  sql(readFileSync(new URL('../supabase/migrations/20261028023000_keyword_capacity.sql',import.meta.url),'utf8'));
+  expect(snapshot()).toBe(before);expect(privileges()).toBe(grants);
+  expect(()=>sql(readFileSync(new URL('../supabase/migrations/20261028023000_keyword_capacity.sql',import.meta.url),'utf8'))).toThrow(/Keyword capacity predicate drift/);
+ });
  it('has no ordinary reader access or public EXECUTE permission',()=>{
   for(const role of ['anon','authenticated']){
    expect(()=>sql(`set role ${role};select * from public.keyword_production_releases;`)).toThrow();expect(()=>sql(`set role ${role};select * from public.keyword_production_publications;`)).toThrow();expect(()=>sql(`set role ${role};select * from public.admin_keyword_review_queue;`)).toThrow();expect(()=>sql(`set role ${role};`+publishQuery())).toThrow();

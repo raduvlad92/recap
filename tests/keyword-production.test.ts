@@ -8,7 +8,7 @@ import {createKeywordProductionOccurrenceFinder} from '../netlify/functions/_sha
 // @ts-expect-error Compare source/timing behavior to the unchanged evaluated helper.
 import {findLiteralNameOccurrences} from '../scripts/lib/keyword-learning.mjs';
 // @ts-expect-error Compare the exact existing extraction payloads, without a prompt fork.
-import {keywordExtractionRequest} from '../scripts/lib/keyword-learning-prompts.mjs';
+import {keywordExtractionRequest,KEYWORD_LEARNING_KINDS} from '../scripts/lib/keyword-learning-prompts.mjs';
 import {analyzeProductionKeywords,KEYWORD_PRODUCTION_CONTRACT_HASH,KEYWORD_PRODUCTION_LITERAL_CORE_SHA256,KEYWORD_PRODUCTION_EXTRACTOR_MODEL,KEYWORD_PRODUCTION_CHECKER_MODEL,
  planKeywordProductionChunks,keywordProductionExtractionCalls,keywordProductionCheckerCall,finalizeKeywordProductionChunk,
  mergeKeywordProductionChunks,keywordProductionReaderFields,applyKeywordProductionTimingReviews,type KeywordProductionCall,type KeywordProductionChunkResult} from '../netlify/functions/_shared/keyword-production';
@@ -22,7 +22,9 @@ const checker=(call:KeywordProductionCall,accepted:Record<string,string>,review:
 function chunkResult(update:SourceUpdate,index:number,accepted:Record<string,string>,review:Record<string,string>={},missing:Array<{name:string;kind:string;disposition:string}>=[]):KeywordProductionChunkResult {
  const chunk=planKeywordProductionChunks(update)[index],values={direct:inventory(Object.keys(accepted)),type_sweep:inventory(Object.keys(review))};
  const call=keywordProductionCheckerCall(update,chunk,values);
- return finalizeKeywordProductionChunk(update,chunk,{...values,checker:checker(call,accepted,review,missing)});
+ const input=data(call).candidates as unknown as Array<{candidateIndex:number;name:string}>;
+ const value=typeof input[0]==='object'?{readComplete:true,verdicts:input.map(({candidateIndex,name})=>[candidateIndex,KEYWORD_LEARNING_KINDS.indexOf(accepted[name]??review[name]??'named_mention'),accepted[name]?0:review[name]?1:2]),missingNames:missing}:checker(call,accepted,review,missing);
+ return finalizeKeywordProductionChunk(update,chunk,{...values,checker:value});
 }
 
 describe('production named-mention core',()=>{
@@ -262,8 +264,28 @@ describe('production named-mention core',()=>{
   expect(()=>planKeywordProductionChunks({...update,contentKind:'metadata_only'})).toThrow('usable_keyword_content_required');
   expect(()=>planKeywordProductionChunks(record('x'.repeat(1_000_001)))).toThrow('analysis_source_capacity');
  });
- it('fails the whole inventory rather than retaining only a top 500',()=>{
+ it('keeps the individual chunk inventory bound at 500',()=>{
   const update=record(Array.from({length:501},(_,index)=>'quux'+index).join(' ')),chunk=planKeywordProductionChunks(update)[0];
   expect(()=>keywordProductionCheckerCall(update,chunk,{direct:inventory(update.content!.split(' ')),type_sweep:inventory([])})).toThrow('literal_inventory_capacity');
+ });
+ it('merges a complete 649-name source without truncating accepted or private review evidence',()=>{
+  const first=Array.from({length:330},(_,index)=>'quux'+index),second=Array.from({length:319},(_,index)=>'zorp'+index);
+  const update=record(first.join(' ')+'. '+'ordinary context. '.repeat(700)+second.join(' '));
+  expect(planKeywordProductionChunks(update)).toHaveLength(2);
+  const acceptedFirst=Object.fromEntries(first.map(name=>[name,'named_mention'])),acceptedSecond=Object.fromEntries(second.slice(0,288).map(name=>[name,'named_mention'])),reviewSecond=Object.fromEntries(second.slice(288).map(name=>[name,'named_mention']));
+  const merged=mergeKeywordProductionChunks(update,[chunkResult(update,0,acceptedFirst),chunkResult(update,1,acceptedSecond,reviewSecond)]);
+  expect(merged.evidence.accepted).toHaveLength(618);expect(merged.pending).toHaveLength(31);
+  expect(new Set([...(merged.evidence.accepted as Array<{label:string}>),...(merged.pending as Array<{label:string}>)].map(row=>row.label))).toEqual(new Set([...first,...second]));
+  expect((merged.evidence.accepted as Array<{start:number;end:number;evidenceQuote:string}>).every(row=>update.content!.slice(row.start,row.end)===row.evidenceQuote)).toBe(true);
+  expect(keywordProductionReaderFields(merged).videoKeywords).toHaveLength(618);
+ });
+ it.each([1000,1001])('keeps independent whole-inventory entry and evidence byte guards for %i names',count=>{
+  const blocks=Array.from({length:3},(_,block)=>Array.from({length:block===2?count-668:334},(_,index)=>`quux${block}z${index}`));
+  const update=record(blocks.map(names=>names.join(' ')+'. '+'ordinary context. '.repeat(700)).join(' '));
+  const chunks=planKeywordProductionChunks(update),results=chunks.map((chunk,index)=>{
+   const accepted=Object.fromEntries(blocks.flat().filter(name=>chunk.content.includes(name)).map(name=>[name,'named_mention']));
+   return chunkResult(update,index,accepted);
+  });
+  expect(()=>mergeKeywordProductionChunks(update,results)).toThrow(count>1000?'keyword_capacity_requires_review':'keyword_production_evidence_capacity');
  });
 });

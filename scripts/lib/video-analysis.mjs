@@ -49,7 +49,7 @@ export function validateStoredVideoAnalysis(update) {
   const s=update.videoSummary;
   if(s!==undefined&&(!object(s)||s.ruleVersion!==VIDEO_SUMMARY_RULE||!['ready','unavailable'].includes(s.status)||!['captions','publisher-chapters','none'].includes(s.timingBasis)||!/^[a-f0-9]{64}$/.test(s.captionHash)||Object.keys(s).some(k=>!['ruleVersion','status','timingBasis','captionHash'].includes(k))))throw fail('invalid_archive_video_summary');
   if(s===undefined&&(!['transcript','feed_text'].includes(update.contentKind)||typeof update.content!=='string'||!update.content.trim()))throw fail('keyword_source_content_required');
-  if(!Array.isArray(update.videoKeywords)||update.videoKeywords.length>500)throw fail('invalid_archive_video_keywords');
+  if(!Array.isArray(update.videoKeywords)||update.videoKeywords.length>1000)throw fail('invalid_archive_video_keywords');
   for(const keyword of update.videoKeywords) {
     if(!object(keyword)||typeof keyword.label!=='string'||!keyword.label.trim()||keyword.label.length>100||!Array.isArray(keyword.ranges)||keyword.ranges.length>200||Object.keys(keyword).some(k=>!['label','ranges','seconds'].includes(k)))throw fail('invalid_archive_video_keywords');
     for(const r of keyword.ranges)if(!object(r)||!seconds(r.startSeconds)||!seconds(r.endSeconds)||r.endSeconds<=r.startSeconds||Object.keys(r).some(k=>!['startSeconds','endSeconds'].includes(k)))throw fail('invalid_archive_video_keywords');
