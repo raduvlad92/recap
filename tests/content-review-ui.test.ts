@@ -1,6 +1,16 @@
 import { createElement } from 'react';
+import * as React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+const hooks = vi.hoisted(() => ({ current: null as any }));
+vi.mock('react', async importOriginal => {
+  const actual = await importOriginal<typeof import('react')>();
+  return { ...actual,
+    useState: (initial: any) => hooks.current ? hooks.current.useState(initial) : actual.useState(initial),
+    useRef: (initial: any) => hooks.current ? hooks.current.useRef(initial) : actual.useRef(initial),
+    useEffect: (fn: any, deps: any) => hooks.current ? hooks.current.useEffect(fn, deps) : actual.useEffect(fn, deps),
+  };
+});
 import { AnalysisReviews, ReviewDecisionPanel, ReviewEvidence } from '../src/admin/AnalysisReviews';
 import type { ContentReviewDetail, ContentReviewSummary } from '../src/lib/content-review-types';
 
@@ -87,5 +97,93 @@ describe('compact private content review', () => {
     const empty = renderToStaticMarkup(createElement(AnalysisReviews, { ...props(), data: page([]) }));
     expect(bad).toContain('Reviews could not be read'); expect(bad).toContain('role="alert"');
     expect(empty).toContain('No pending reviews'); expect(empty).not.toContain('could not be read');
+  });
+});
+
+// Exercise the actual component handlers with the same lightweight hook pattern
+// used by the workspace race tests, without a DOM dependency or real requests.
+afterEach(() => { hooks.current = null; vi.restoreAllMocks(); });
+function reviewHarness(input: Parameters<typeof AnalysisReviews>[0]) {
+  const slots: any[] = [], effects: Array<() => void> = []; let index = 0, current = input, mounted = true, lateUpdates = 0;
+  hooks.current = {
+    useState: (initial: any) => {
+      const at = index++, slot = slots[at] ??= { value: typeof initial === 'function' ? initial() : initial };
+      return [slot.value, (next: any) => { if (!mounted) lateUpdates++; slot.value = typeof next === 'function' ? next(slot.value) : next; }];
+    },
+    useRef: (initial: any) => slots[index++] ??= { current: initial },
+    useEffect: (fn: any, deps: any[]) => {
+      const at = index++, previous = slots[at];
+      if (!previous || deps?.length !== previous.deps?.length || deps?.some((value, n) => !Object.is(value, previous.deps[n]))) {
+        const next = { deps, cleanup: previous?.cleanup }; slots[at] = next;
+        effects.push(() => { next.cleanup?.(); next.cleanup = fn(); });
+      }
+    },
+  };
+  const render = (runEffects = true) => { index = 0; const tree = AnalysisReviews(current); if (runEffects) effects.splice(0).forEach(fn => fn()); return tree; };
+  return { render, update: (next: Partial<typeof input>, runEffects = true) => { current = { ...current, ...next }; return render(runEffects); }, unmount: () => { slots.forEach(slot => slot?.cleanup?.()); mounted = false; }, lateUpdates: () => lateUpdates };
+}
+function nodes(tree: any): any[] { if (Array.isArray(tree)) return tree.flatMap(nodes); return tree?.props ? [tree, ...nodes(tree.props.children)] : []; }
+function nodeText(tree: any): string { if (Array.isArray(tree)) return tree.map(nodeText).join(''); return typeof tree === 'string' || typeof tree === 'number' ? String(tree) : tree?.props ? nodeText(tree.props.children) : ''; }
+function button(tree: any, label: string) { const value = nodes(tree).find(node => node.type === 'button' && nodeText(node) === label); if (!value) throw Error('Missing button: ' + label); return value; }
+function checkbox(tree: any, label: string) { const value = nodes(tree).find(node => node.type === 'input' && (node.props['aria-label'] === label || node.props['aria-label']?.startsWith(label + ' from '))); if (!value) throw Error('Missing checkbox: ' + label); return value; }
+const tick = () => new Promise<void>(resolve => setImmediate(resolve));
+function deferred<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(done => { resolve = done; }); return { promise, resolve }; }
+const row = (id: string): ContentReviewSummary => ({ ...summary, id, label: id });
+const confirmed = (record: ContentReviewSummary, decision = 'approve') => ({ record: { ...record, status: decision === 'approve' ? 'approved' as const : 'rejected' as const, updatedAt: '2026-10-29T02:00:00Z' }, published: decision === 'approve' });
+
+describe('visible-page bulk review decisions', () => {
+  it('selects pending rows, reports mixed selection and clears it', () => {
+    const records = [row('first'), row('second'), { ...row('decided'), status: 'approved' as const }], actions = props(), h = reviewHarness({ ...actions, data: page(records) });
+    let tree = h.render(); const selectPage = checkbox(tree, 'Select this page'), input = { indeterminate: false }; selectPage.props.ref.current = input;
+    expect(nodes(tree).filter(n => n.type === 'input').length).toBe(3);
+    checkbox(tree, 'Select keyword first').props.onChange(); tree = h.render();
+    expect(nodeText(tree)).toContain('1 selected'); expect(checkbox(tree, 'Select this page').props['aria-checked']).toBe('mixed'); expect(input.indeterminate).toBe(true);
+    checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); expect(nodeText(tree)).toContain('2 selected'); expect(checkbox(tree, 'Select this page').props.checked).toBe(true);
+    button(tree, 'Clear').props.onClick(); tree = h.render(); expect(nodeText(tree)).toContain('0 selected'); expect(button(tree, 'Confirm and publish selected').props.disabled).toBe(true);
+  });
+  it('uses saved CAS revisions sequentially, preserves partial failures and does not blindly retry', async () => {
+    const records = [row('first'), row('invalid'), row('stale'), row('last')], first = deferred<ReturnType<typeof confirmed>>(), actions = props(); let calls = 0;
+    actions.decide.mockImplementation(async body => { calls++; if (calls === 1) return first.promise; if (body.id === 'invalid') throw { status: 400, message: 'This recap needs supporting quotes.' }; if (body.id === 'stale') throw { status: 409, message: 'The source changed.' }; return confirmed(records.find(r => r.id === body.id)!); });
+    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Confirm and publish selected').props.onClick(); tree = h.render();
+    expect(actions.decide).toHaveBeenCalledTimes(1); expect(button(tree, 'Reject selected').props.disabled).toBe(true);
+    const expanded = nodes(tree).find(node => typeof node.type === 'function' && node.props.record?.id === 'last');
+    await expect(expanded.props.decide({ action: 'review', id: 'last', origin: 'analysis', expectedUpdatedAt: records[3].updatedAt, decision: 'reject' })).rejects.toMatchObject({ status: 409 });
+    first.resolve(confirmed(records[0])); await tick(); tree = h.render();
+    expect(actions.decide).toHaveBeenCalledTimes(4); expect(actions.decide.mock.calls.every(([body, options]) => body.expectedUpdatedAt === summary.updatedAt && options?.silent === true && !('proposal' in body))).toBe(true);
+    expect(nodeText(tree)).toContain('2 confirmed and published; 2 need attention; 0 not attempted.'); expect(nodeText(tree)).toContain('This recap needs supporting quotes.'); expect(nodeText(tree)).toContain('The source changed.');
+    expect(checkbox(tree, 'Select keyword invalid').props.checked).toBe(true); expect(checkbox(tree, 'Select keyword stale').props.checked).toBe(true); expect(checkbox(tree, 'Select keyword invalid').props.disabled).toBe(true);
+    expect(actions.reload).not.toHaveBeenCalled(); expect(nodeText(tree)).toContain('Uses saved proposals; save edits individually.');
+    expect(button(tree, 'Previous').props.disabled).toBe(true); expect(button(tree, 'Next').props.disabled).toBe(true);
+    button(tree, 'Confirm and publish selected').props.onClick(); await tick(); expect(actions.decide).toHaveBeenCalledTimes(4);
+  });
+  it.each([0, 401, 403, 502, 503])('stops after an uncertain or unauthorized response (%s)', async status => {
+    const records = [row('first'), row('blocked'), row('not-started')], actions = props();
+    actions.decide.mockImplementation(async body => { if (body.id === 'blocked') throw { status, message: 'The decision could not be confirmed.' }; return confirmed(records.find(r => r.id === body.id)!); });
+    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Confirm and publish selected').props.onClick(); await tick(); tree = h.render();
+    expect(actions.decide).toHaveBeenCalledTimes(2); expect(nodeText(tree)).toContain('1 confirmed and published; 1 need attention; 1 not attempted.');
+    expect(nodeText(tree)).toContain('Not attempted. Reload before deciding.'); expect(checkbox(tree, 'Select keyword not-started').props.checked).toBe(true);
+    expect(actions.onPendingChange.mock.calls.at(-1)).toEqual([false]);
+  });
+  it('confirms two bulk rejections across analysis and legacy origins', async () => {
+    const records = [row('analysis-item'), { ...row('legacy-item'), origin: 'legacy_keyword' as const }], actions = props();
+    actions.decide.mockImplementation(async body => confirmed(records.find(r => r.id === body.id)!, 'reject'));
+    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Reject selected').props.onClick(); await tick(); tree = h.render();
+    expect(actions.decide).toHaveBeenCalledTimes(2); expect(actions.decide.mock.calls.map(([body]) => [body.origin, body.decision, body.expectedUpdatedAt])).toEqual([['analysis', 'reject', summary.updatedAt], ['legacy_keyword', 'reject', summary.updatedAt]]);
+    expect(nodeText(tree)).toContain('2 rejected; 0 need attention; 0 not attempted.'); expect(nodeText(tree)).toContain('0 selected'); expect(actions.reload).not.toHaveBeenCalled();
+  });
+  it('does not reuse a selection for a replacement revision before reset effects run', async () => {
+    const records = [row('same-id')], actions = props(), h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); const oldAction = button(tree, 'Confirm and publish selected');
+    tree = h.update({ data: page([{ ...records[0], updatedAt: '2026-10-29T03:00:00Z' }]) }, false);
+    expect(nodeText(tree)).toContain('0 selected'); button(tree, 'Confirm and publish selected').props.onClick(); oldAction.props.onClick(); await tick(); expect(actions.decide).not.toHaveBeenCalled();
+  });
+  it('resets visible selection on page and status changes without carrying hidden choices', async () => {
+    const actions = props(), h = reviewHarness({ ...actions, data: page([row('first')]) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); expect(nodeText(tree)).toContain('1 selected');
+    tree = h.update({ page: 1, data: { ...page([row('second')]), page: 1 } }); tree = h.render(); expect(nodeText(tree)).toContain('0 selected');
+    tree = h.update({ status: 'approved', data: page([{ ...row('approved'), status: 'approved' }]), page: 0 }); expect(nodes(tree).filter(n => n.type === 'input').length).toBe(0); expect(actions.decide).not.toHaveBeenCalled();
+  });
+  it('stops remaining writes after unmount and ignores the late response', async () => {
+    const records = [row('first'), row('second')], first = deferred<ReturnType<typeof confirmed>>(), actions = props(); actions.decide.mockReturnValue(first.promise);
+    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Reject selected').props.onClick(); expect(actions.decide).toHaveBeenCalledTimes(1);
+    h.unmount(); first.resolve(confirmed(records[0], 'reject')); await tick(); expect(actions.decide).toHaveBeenCalledTimes(1); expect(h.lateUpdates()).toBe(0);
   });
 });

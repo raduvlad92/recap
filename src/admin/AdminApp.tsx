@@ -142,10 +142,11 @@ function PrivateAdmin({ userId }: { userId: string }) {
     if (!review || review.id !== item.id || review.origin !== item.origin) throw { status: 502, message: 'The source and prompt could not be confirmed. Reload the latest reviews.' } satisfies ApiProblem;
     return review;
   }, [request]);
-  const decideReview: DecideContentReview = useCallback(async body => {
+  const decideReview: DecideContentReview = useCallback(async (body, options) => {
+    if (options?.silent) setReviewFeedback('');
     const result = await request(new URLSearchParams(), { ...body }), record = result.record;
     if (!record || !('origin' in record) || record.id !== body.id || record.origin !== body.origin || record.status !== (body.decision === 'approve' ? 'approved' : 'rejected') || result.published !== (body.decision === 'approve')) throw { status: 502, message: 'The server did not confirm this decision. Reload before trying again.' } satisfies ApiProblem;
-    setReviewFeedback(body.decision === 'approve' ? 'Confirmed and published.' : 'Rejected; kept private.');
+    if (!options?.silent) setReviewFeedback(body.decision === 'approve' ? 'Confirmed and published.' : 'Rejected.');
     return { record, published: result.published };
   }, [request]);
   const saveAnalysis: SaveAnalysisModelRequest = async body => {

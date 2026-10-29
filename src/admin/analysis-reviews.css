@@ -71,3 +71,25 @@
 .ra-review-prompt-pager { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e7eae3; }
 .ra-review-prompt-pager p { margin: 0; font-size: 11px; color: #647657; }
 .ra-review-prompt-pager > div { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.ra-review-bulk-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; padding: 10px 12px; margin-bottom: 12px; border: 1px solid #dedfd9; border-radius: 7px; background: #fff; }
+.ra-review-select-page { display: inline-flex; align-items: center; gap: 7px; min-height: 30px; font-size: 11px; cursor: pointer; }
+.recap-admin .ra-review-select-page input[type=checkbox], .recap-admin .ra-review-row-selection input[type=checkbox] { appearance: auto; width: 16px; height: 16px; min-width: 16px; min-height: 16px; margin: 0; padding: 0; accent-color: #519c8d; }
+.ra-review-selected-count { color: #647657; font-size: 11px; }
+.ra-review-bulk-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+.ra-review-bulk-note { flex-basis: 100%; margin: 0; color: #647657; font-size: 10px; }
+.ra-review-select-row { display: grid; grid-template-columns: 38px minmax(0,1fr); }
+.ra-review-row-selection { display: flex; align-items: flex-start; justify-content: center; min-height: 44px; padding-top: 20px; box-sizing: border-box; cursor: pointer; }
+.ra-review-row-content { min-width: 0; }
+.ra-review-row-result { margin: 0; padding: 0 14px 11px 42px; color: #8e443c; font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+.ra-review-bulk-report { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 12px; padding: 10px 12px; margin-bottom: 12px; border-left: 3px solid #8ba18a; background: #f1f6f1; }
+.ra-review-bulk-report p { margin: 0; font-size: 12px; line-height: 1.5; }
+.ra-review-bulk-report p + p { color: #647657; font-size: 11px; }
+@media (max-width:600px) {
+  .ra-review-select-row { grid-template-columns: 44px minmax(0,1fr); }
+  .ra-review-row-selection { padding-top: 14px; }
+  .ra-review-select-page { min-height: 44px; }
+  .ra-review-bulk-actions { margin-left: 0; flex-basis: 100%; }
+  .recap-admin .ra-review-bulk-actions .ra-button { min-height: 44px; }
+  .ra-review-row-result { padding-left: 11px; }
+}

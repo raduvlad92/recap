@@ -4,7 +4,7 @@ import type { ContentReviewDecision, ContentReviewDecisionResult, ContentReviewD
 import './analysis-reviews.css';
 
 export type LoadContentReview = (record: Pick<ContentReviewSummary, 'id' | 'origin'>, promptPage?: number) => Promise<ContentReviewDetail>;
-export type DecideContentReview = (body: ContentReviewDecision) => Promise<ContentReviewDecisionResult>;
+export type DecideContentReview = (body: ContentReviewDecision, options?: { silent?: boolean }) => Promise<ContentReviewDecisionResult>;
 interface ReviewProblem { status: number; message: string }
 interface Props {
   data: Partial<ContentReviewPage>; status: ContentReviewStatus; page: number;
@@ -21,30 +21,84 @@ function OriginalLink({ url, children }: { url: string | null; children: ReactNo
   return <span>{children}</span>;
 }
 
+interface BulkReviewOutcome {
+  record: ContentReviewSummary;
+  result?: ContentReviewDecisionResult;
+  error?: ReviewProblem;
+  unattempted?: boolean;
+}
+const reviewKey = (record: Pick<ContentReviewSummary, 'id' | 'origin'>) => record.origin + ':' + record.id;
+const uncertainDecision = (error: ReviewProblem) => error.status === 0 || error.status >= 500;
+
 export function AnalysisReviews({ data, status, page, onStatusChange, onPageChange, loadDetail, decide, reload, onPendingChange }: Props) {
-  const [pendingKey, setPendingKey] = useState<string | null>(null), [openKey, setOpenKey] = useState<string | null>(null), locked = useRef(false), active = useRef(true);
+  const [pendingKey, setPendingKey] = useState<string | null>(null), [openKey, setOpenKey] = useState<string | null>(null), [selected, setSelected] = useState<Set<string>>(() => new Set()), [outcomes, setOutcomes] = useState<Record<string, BulkReviewOutcome>>({}), [bulk, setBulk] = useState<{ decision: ContentReviewDecision['decision']; total: number; running: boolean } | null>(null);
+  const locked = useRef(false), active = useRef(true), reloadRequired = useRef(false), selectPageRef = useRef<HTMLInputElement>(null);
+  const records = Array.isArray(data.reviews) ? data.reviews : [], scope = status + ':' + page + ':' + records.map(record => reviewKey(record) + '@' + record.updatedAt).join('|'), currentScope = useRef(scope), selectionScope = useRef(scope);
+  currentScope.current = scope;
   useEffect(() => { active.current = true; return () => { active.current = false; onPendingChange(false); }; }, [onPendingChange]);
+  useEffect(() => { setSelected(new Set()); setOutcomes({}); setBulk(null); setOpenKey(null); reloadRequired.current = false; selectionScope.current = scope; }, [scope]);
+  const shownRecords = records.map(record => outcomes[reviewKey(record)]?.result?.record ?? record), eligible = status === 'pending' ? shownRecords.filter(record => record.status === 'pending') : [];
+  const selectedCount = selectionScope.current === scope ? eligible.filter(record => selected.has(reviewKey(record))).length : 0, allSelected = eligible.length > 0 && selectedCount === eligible.length, mixed = selectedCount > 0 && !allSelected;
+  useEffect(() => { if (selectPageRef.current) selectPageRef.current.indeterminate = mixed; }, [mixed]);
   const save: DecideContentReview = async body => {
-    if (locked.current) throw { status: 0, message: 'A review decision is still being saved.' } satisfies ReviewProblem;
+    if (locked.current || reloadRequired.current) throw { status: 409, message: 'Reload the latest reviews before another decision.' } satisfies ReviewProblem;
     locked.current = true; setPendingKey(body.origin + ':' + body.id); onPendingChange(true);
     try { const result = await decide(body); if (active.current) reload(); return result; }
     finally { locked.current = false; if (active.current) { setPendingKey(null); onPendingChange(false); } }
   };
+  const runBulk = async (decision: ContentReviewDecision['decision']) => {
+    if (locked.current || reloadRequired.current || status !== 'pending' || selectionScope.current !== scope || currentScope.current !== scope) return;
+    const targets = records.filter(record => record.status === 'pending' && selected.has(reviewKey(record))).slice(0, 50).map(record => ({ ...record }));
+    if (!targets.length) return;
+    const frozenScope = scope, results: Record<string, BulkReviewOutcome> = {};
+    locked.current = true; reloadRequired.current = true; setBulk({ decision, total: targets.length, running: true }); onPendingChange(true);
+    const keep = (key: string, outcome: BulkReviewOutcome) => { results[key] = outcome; if (active.current && currentScope.current === frozenScope) setOutcomes({ ...results }); };
+    try {
+      for (let index = 0; index < targets.length; index++) {
+        if (!active.current || currentScope.current !== frozenScope) break;
+        const record = targets[index], key = reviewKey(record); setPendingKey(key);
+        try {
+          const result = await decide({ action: 'review', id: record.id, origin: record.origin, expectedUpdatedAt: record.updatedAt, decision }, { silent: true });
+          if (result.record.id !== record.id || result.record.origin !== record.origin || result.record.status !== (decision === 'approve' ? 'approved' : 'rejected') || result.published !== (decision === 'approve')) throw { status: 502, message: 'The server did not confirm this decision. Reload to check its result.' } satisfies ReviewProblem;
+          keep(key, { record, result });
+          if (active.current && currentScope.current === frozenScope) setSelected(previous => { const next = new Set(previous); next.delete(key); return next; });
+        } catch (value) {
+          const error = problem(value); keep(key, { record, error });
+          if (uncertainDecision(error) || error.status === 401 || error.status === 403 || wasAborted(value)) {
+            for (const remaining of targets.slice(index + 1)) keep(reviewKey(remaining), { record: remaining, unattempted: true });
+            break;
+          }
+        }
+      }
+    } finally {
+      locked.current = false;
+      if (active.current) { setPendingKey(null); onPendingChange(false); if (currentScope.current === frozenScope) setBulk(previous => previous ? { ...previous, running: false } : null); }
+    }
+  };
   const validPage = Array.isArray(data.reviews) && Number.isInteger(data.total) && data.total! >= 0 && data.page === page && Number.isInteger(data.pageSize) && data.pageSize! > 0;
   if (!validPage) return <div className="ra-message ra-message-error" role="alert"><h2>Reviews could not be read</h2><p>The service did not return a complete list.</p><button className="ra-button" type="button" onClick={reload}>Retry</button></div>;
-  const records = data.reviews!, total = data.total!, pageSize = data.pageSize!, busy = pendingKey !== null;
+  const total = data.total!, pageSize = data.pageSize!, busy = pendingKey !== null || bulk?.running === true, needsReload = reloadRequired.current;
   const start = records.length ? page * pageSize + 1 : 0, end = records.length ? Math.min(page * pageSize + records.length, total) : 0;
+  const successes = Object.values(outcomes).filter(outcome => outcome.result).length, failures = Object.values(outcomes).filter(outcome => outcome.error).length, unattempted = Object.values(outcomes).filter(outcome => outcome.unattempted).length;
+  const toggleSelected = (key: string) => { if (locked.current || reloadRequired.current) return; const sameScope = selectionScope.current === scope; selectionScope.current = scope; setSelected(previous => { const next = sameScope ? new Set(previous) : new Set<string>(); if (next.has(key)) next.delete(key); else next.add(key); return next; }); };
   return <section className="ra-review-queue" aria-label="Keyword and recap reviews" aria-busy={busy}>
-    <div className="ra-review-tools"><label htmlFor="ra-review-status">Status<select id="ra-review-status" value={status} disabled={busy} onChange={event => onStatusChange(event.target.value as ContentReviewStatus)}>{Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><p>{total.toLocaleString()} {status} {total === 1 ? 'item' : 'items'}</p></div>
-    {records.length ? <ul className="ra-review-list">{records.map(record => {
-      const key = record.origin + ':' + record.id;
-      return <li key={key + ':' + record.updatedAt}><ReviewRow record={record} open={openKey === key} toggle={() => setOpenKey(value => value === key ? null : key)} loadDetail={loadDetail} decide={save} disabled={busy} pending={pendingKey === key} reload={reload} /></li>;
+    <div className="ra-review-tools"><label htmlFor="ra-review-status">Status<select id="ra-review-status" value={status} disabled={busy} onChange={event => onStatusChange(event.target.value as ContentReviewStatus)}>{Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><p>{bulk ? `${eligible.length.toLocaleString()} pending on this loaded page` : `${total.toLocaleString()} ${status} ${total === 1 ? 'item' : 'items'}`}</p></div>
+    {status === 'pending' && records.length > 0 && <div className="ra-review-bulk-tools" role="group" aria-label="Bulk review decisions">
+      <label className="ra-review-select-page"><input ref={selectPageRef} type="checkbox" aria-label="Select this page" aria-checked={mixed ? 'mixed' : allSelected} checked={allSelected} disabled={busy || needsReload || !eligible.length} onChange={() => { if (!locked.current && !reloadRequired.current) { selectionScope.current = scope; setSelected(allSelected ? new Set() : new Set(eligible.map(reviewKey))); } }} /><span>Select this page</span></label>
+      <button className="ra-text-button" type="button" disabled={busy || selectedCount === 0} onClick={() => setSelected(new Set())}>Clear</button><span className="ra-review-selected-count" role="status">{selectedCount} selected</span>
+      <div className="ra-review-bulk-actions"><button className="ra-button ra-button-primary ra-button-small" type="button" disabled={busy || needsReload || selectedCount === 0} onClick={() => void runBulk('approve')}>Confirm and publish selected</button><button className="ra-button ra-button-small" type="button" disabled={busy || needsReload || selectedCount === 0} onClick={() => void runBulk('reject')}>Reject selected</button></div>
+      <p className="ra-review-bulk-note">Uses saved proposals; save edits individually.</p>
+    </div>}
+    {bulk && <div className="ra-review-bulk-report" role="status"><p>{bulk.running ? `Saving decisions: ${successes + failures} of ${bulk.total} checked.` : `${successes} ${bulk.decision === 'approve' ? 'confirmed and published' : 'rejected'}; ${failures} need attention; ${unattempted} not attempted.`}</p>{!bulk.running && <><p>Results remain on this page. Reload before another decision.</p><button className="ra-button ra-button-small" type="button" onClick={reload}>Reload latest reviews</button></>}</div>}
+    {shownRecords.length ? <ul className="ra-review-list">{shownRecords.map(record => {
+      const key = reviewKey(record), outcome = outcomes[key];
+      return <li key={key + ':' + record.updatedAt}><div className={status === 'pending' ? 'ra-review-select-row' : undefined}>{status === 'pending' && <label className="ra-review-row-selection">{record.status === 'pending' && <input type="checkbox" aria-label={'Select ' + kindLabel(record.kind).toLowerCase() + ' ' + (record.label || 'unnamed item') + ' from ' + (record.sourceTitle || 'untitled source')} checked={selectionScope.current === scope && selected.has(key)} disabled={busy || needsReload} onChange={() => toggleSelected(key)} />}</label>}<div className="ra-review-row-content"><ReviewRow record={record} open={openKey === key} toggle={() => setOpenKey(value => value === key ? null : key)} loadDetail={loadDetail} decide={save} disabled={busy} writeDisabled={needsReload} pending={pendingKey === key} reload={reload} />{outcome?.error && <p className="ra-review-row-result">{uncertainDecision(outcome.error) ? 'Decision not confirmed: ' : 'Not saved: '}{outcome.error.message}</p>}{outcome?.unattempted && <p className="ra-review-row-result ra-muted">Not attempted. Reload before deciding.</p>}</div></div></li>;
     })}</ul> : <div className="ra-review-empty"><h2>{page > 0 ? 'No items on this page' : `No ${status} reviews`}</h2><p>{page > 0 ? 'Go to the previous page or refresh the list.' : status === 'pending' ? 'Held keywords and recaps will appear here.' : `Items you marked ${status} will appear here.`}</p></div>}
-    <div className="ra-pagination"><p>{start.toLocaleString()}–{end.toLocaleString()} of {total.toLocaleString()}</p><div><button className="ra-button ra-button-small" type="button" disabled={busy || page === 0} onClick={() => onPageChange(page - 1)}><ChevronLeft size={15} aria-hidden="true" />Previous</button><button className="ra-button ra-button-small" type="button" disabled={busy || (page + 1) * pageSize >= total} onClick={() => onPageChange(page + 1)}>Next<ChevronRight size={15} aria-hidden="true" /></button></div></div>
+    <div className="ra-pagination"><p>{bulk ? 'Loaded ' : ''}{start.toLocaleString()}–{end.toLocaleString()} of {total.toLocaleString()}</p><div><button className="ra-button ra-button-small" type="button" disabled={busy || needsReload || page === 0} onClick={() => onPageChange(page - 1)}><ChevronLeft size={15} aria-hidden="true" />Previous</button><button className="ra-button ra-button-small" type="button" disabled={busy || needsReload || (page + 1) * pageSize >= total} onClick={() => onPageChange(page + 1)}>Next<ChevronRight size={15} aria-hidden="true" /></button></div></div>
   </section>;
 }
 
-function ReviewRow({ record, open, toggle, loadDetail, decide, disabled, pending, reload }: { record: ContentReviewSummary; open: boolean; toggle: () => void; loadDetail: LoadContentReview; decide: DecideContentReview; disabled: boolean; pending: boolean; reload: () => void }) {
+function ReviewRow({ record, open, toggle, loadDetail, decide, disabled, writeDisabled = false, pending, reload }: { record: ContentReviewSummary; open: boolean; toggle: () => void; loadDetail: LoadContentReview; decide: DecideContentReview; disabled: boolean; writeDisabled?: boolean; pending: boolean; reload: () => void }) {
   const [detail, setDetail] = useState<ContentReviewDetail | null>(null), [loading, setLoading] = useState(false), [error, setError] = useState<ReviewProblem | null>(null), active = useRef(true), loadingRef = useRef(false), prefix = useId();
   useEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
   const load = async () => {
@@ -60,10 +114,10 @@ function ReviewRow({ record, open, toggle, loadDetail, decide, disabled, pending
   const expand = () => { toggle(); if (!open && !detail && !loadingRef.current) void load(); };
   return <>
     <button type="button" className="ra-review-summary" disabled={disabled} onClick={expand} aria-expanded={open} aria-controls={open ? prefix + '-detail' : undefined}>
-      <ChevronRight className="ra-review-chevron" size={15} aria-hidden="true" /><span className="ra-review-kind">{kindLabel(record.kind)}</span><span className="ra-review-label" dir="auto" title={record.label}>{record.label || (record.kind === 'recap' ? 'Recap needs a decision' : 'Keyword needs a decision')}</span><span className="ra-review-source" dir="auto" title={record.sourceTitle}>{record.sourceTitle || 'Untitled source'}</span><span className="ra-review-reason" dir="auto" title={record.reason}>{record.reason || record.decisionRequired}</span><span className="ra-review-state">{statuses[record.status]}</span>
+      <ChevronRight className="ra-review-chevron" size={15} aria-hidden="true" /><span className="ra-review-kind">{kindLabel(record.kind)}</span><span className="ra-review-label" dir="auto" title={record.label}>{record.label || (record.kind === 'recap' ? 'Recap needs a decision' : 'Keyword needs a decision')}</span><span className="ra-review-source" dir="auto" title={record.sourceTitle}>{record.sourceTitle || 'Untitled source'}</span><span className="ra-review-reason" dir="auto" title={record.reason}>{record.reason || record.decisionRequired}</span><span className="ra-review-state">{pending ? 'Saving…' : statuses[record.status]}</span>
     </button>
     {open && <div className="ra-review-detail" id={prefix + '-detail'}>
-      {loading ? <div className="ra-loading" role="status"><RefreshCw size={15} aria-hidden="true" />Loading source and prompt…</div> : error ? <div className="ra-save-error" role="alert"><p>{error.message}</p><button className="ra-button ra-button-small" type="button" onClick={() => void load()}>Retry details</button></div> : detail ? <ReviewDecisionPanel detail={detail} loadDetail={loadDetail} decide={decide} disabled={disabled} pending={pending} reload={reload} /> : null}
+      {loading ? <div className="ra-loading" role="status"><RefreshCw size={15} aria-hidden="true" />Loading source and prompt…</div> : error ? <div className="ra-save-error" role="alert"><p>{error.message}</p><button className="ra-button ra-button-small" type="button" onClick={() => void load()}>Retry details</button></div> : detail ? <ReviewDecisionPanel detail={detail} loadDetail={loadDetail} decide={decide} disabled={disabled || writeDisabled} pending={pending} reload={reload} /> : null}
     </div>}
   </>;
 }
