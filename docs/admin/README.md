@@ -67,3 +67,12 @@ You can review and edit catalogue descriptions and collection plans without star
 If administration says access is unavailable, check that you used the same owner email and completed the normal email-verification flow, then sign out and back in. A service error should show an error/retry state rather than made-up reader or cost figures.
 
 Technical evidence: [live database checks](live-db-checks.json), [delivery plan](PLAN.md), [live import record](../catalogue/LIVE-IMPORT.md), [supplier cost comparison](../catalogue/COLLECTION-COSTS.md). No private reader identities or credentials belong in these documents.
+
+
+### New automatic drafts
+
+New eligible followed YouTube videos now get keyword and recap drafts automatically within the existing budget. In **Analysis**, **Automatic content drafts** shows queued, running, sent-for-review and blocked counts. The standard worker's separate Off setting is historical; this new path has its own private opt-in. Keywords use the reviewed DeepSeek approaches plus Sol checking; recaps use DeepSeek draft/check calls. The model dropdown applies to the standard worker.
+
+For this initial live version, every new suggestion waits for your approval, even when the checker accepted it. Exact original requests are available on those reviews. A draft with unsupported quotes keeps valid quoted points where possible and explains what was withheld; a partial draft may need improvement. The first run also preserves one original failed recap attempt beside its recovered partial draft. Review decisions add to the existing reader item without enabling more spending or training a model.
+
+The remaining cumulative allowance is limited; automatic generation stops at the existing US$10 total, US$5 UTC-day or US$0.10-call bound. This does not activate X/Instagram/LinkedIn freshness collection or daily briefing/email delivery. See the [current live report](../tech/LIVE-WORKFLOW-2026-10-29.md).

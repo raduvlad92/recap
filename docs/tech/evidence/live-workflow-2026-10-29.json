@@ -1,0 +1,324 @@
+{
+  "verifiedAt": "2026-10-29T13:10:51.287Z",
+  "type": "deployed_automatic_review_first_video_workflow",
+  "deployment": {
+    "id": "6ae3456141f1acade23b2a49",
+    "state": "ready",
+    "commit_ref": "1aaa7e514a78d152aaf64351827d983e8d81258d",
+    "published_at": "2026-10-29T13:09:36.716Z"
+  },
+  "ci": {
+    "runId": 40878828153,
+    "conclusion": "success",
+    "passed": 2682,
+    "environmentSkipped": 803
+  },
+  "local": {
+    "testsPassed": 3485,
+    "testFiles": 96,
+    "catalogue": true,
+    "typecheck": true,
+    "build": true,
+    "independentReviewsPassed": true
+  },
+  "database": {
+    "projectRef": "zlfdqzabsfndifxiqguo",
+    "migration": "20261029123923",
+    "sha256": "b48e53559d7eb73c8e972edfedf71d6b3ca9f5f15854731604273c11031552c3",
+    "nativeRollbackFixturePassed": true,
+    "nativeRollbackProviderCalls": 0,
+    "securityAdvisors": "No issues found",
+    "preservation": {
+      "oldNativeHistoryPreserved": true,
+      "authorizedOriginalRowChanges": {
+        "archives": 3,
+        "budget": 1,
+        "policies": 1
+      },
+      "groups": {
+        "analysisReviews": {
+          "oldRows": 257,
+          "changedOldRows": 0,
+          "newRows": 186
+        },
+        "archives": {
+          "oldRows": 513,
+          "changedOldRows": 3,
+          "newRows": 0
+        },
+        "attempts": {
+          "oldRows": 0,
+          "changedOldRows": 0,
+          "newRows": 0
+        },
+        "audit": {
+          "oldRows": 94,
+          "changedOldRows": 0,
+          "newRows": 7
+        },
+        "budget": {
+          "oldRows": 1,
+          "changedOldRows": 1,
+          "newRows": 0
+        },
+        "calls": {
+          "oldRows": 867,
+          "changedOldRows": 0,
+          "newRows": 19
+        },
+        "jobs": {
+          "oldRows": 431,
+          "changedOldRows": 0,
+          "newRows": 0
+        },
+        "keywordReviews": {
+          "oldRows": 140,
+          "changedOldRows": 0,
+          "newRows": 0
+        },
+        "learningSessions": {
+          "oldRows": 22,
+          "changedOldRows": 0,
+          "newRows": 6
+        },
+        "policies": {
+          "oldRows": 1,
+          "changedOldRows": 1,
+          "newRows": 0
+        },
+        "productionReleases": {
+          "oldRows": 9,
+          "changedOldRows": 0,
+          "newRows": 0
+        },
+        "promptReceipts": {
+          "oldRows": 0,
+          "changedOldRows": 0,
+          "newRows": 0
+        },
+        "publications": {
+          "oldRows": 20,
+          "changedOldRows": 0,
+          "newRows": 0
+        },
+        "runtime": {
+          "oldRows": 1,
+          "changedOldRows": 0,
+          "newRows": 0
+        },
+        "scopes": {
+          "oldRows": 1,
+          "changedOldRows": 0,
+          "newRows": 0
+        },
+        "workspaces": {
+          "oldRows": 3,
+          "changedOldRows": 0,
+          "newRows": 0
+        }
+      },
+      "newCalls": 19,
+      "newSessions": 6,
+      "newPendingReviews": 186,
+      "newPublishedItems": 0
+    }
+  },
+  "functions": [
+    {
+      "name": "automatic-content",
+      "schedule": "*/5 * * * *",
+      "mode": "stream",
+      "digest": "cafb392519d1b3a2665fa48e31ec173ebf9ffd84f1a90ed4757a102ef3651d21"
+    },
+    {
+      "name": "automatic-content-worker",
+      "schedule": null,
+      "mode": "background",
+      "digest": "274699dc6087cc1bf3a3ef9b56a77f2bfcdae580a86e73e620b3186a3bd36b00"
+    },
+    {
+      "name": "hourly-collection",
+      "schedule": "0 * * * *",
+      "mode": "stream",
+      "digest": "3c51a7ec4d62b7765bb7c43558767f32b64cb856c9c78622f3782240814c3e4d"
+    },
+    {
+      "name": "hourly-collection-worker",
+      "schedule": null,
+      "mode": "background",
+      "digest": "79afddc2538f4a42eb9758fcf0d451fd8e34209a41c0144190929bcbd1faada9"
+    }
+  ],
+  "collectionAudit": {
+    "checkedAt": "2026-10-29T12:38:00.755087+00:00",
+    "youtubeSourcesChecked": 21,
+    "youtubeHttp200": 21,
+    "newItemsInPrevious24Hours": 9,
+    "freshnessUnsupported": {
+      "X": 10,
+      "Instagram": 8
+    },
+    "captionBacklogItems": 17,
+    "threeNewVideoClassifications": "primary_watch_page_confirmed_regular",
+    "sourceTextUnchanged": true,
+    "newSupplierJobsForThisWork": 0
+  },
+  "realGeneration": {
+    "sources": 3,
+    "sourceCutoff": "2026-10-29T00:00:00Z",
+    "keywordTasksReadyForReview": 3,
+    "pendingKeywordProposals": 182,
+    "checkedRecapDrafts": 2,
+    "additionalRecoveredPartialRecapDrafts": 1,
+    "recoveredExactQuotedPoints": 3,
+    "unsupportedDraftQuotesWithheld": 3,
+    "originalFailedRecapAttemptRetained": true,
+    "allRecapQueueRowsIncludingFailure": 4,
+    "newPendingReviews": 186,
+    "combinedPendingReviews": 514,
+    "realReviewDecisionsApplied": 0,
+    "realNewPublications": 0,
+    "automaticTasks": [
+      {
+        "error_code": null,
+        "items": 3,
+        "last_change": "2026-10-29T13:03:00.046531+00:00",
+        "reviews": 182,
+        "state": "review",
+        "task": "keywords"
+      },
+      {
+        "error_code": null,
+        "items": 2,
+        "last_change": "2026-10-29T13:03:21.757576+00:00",
+        "reviews": 2,
+        "state": "review",
+        "task": "recap"
+      },
+      {
+        "error_code": "automatic_recap_unsupported_draft",
+        "items": 1,
+        "last_change": "2026-10-29T13:06:43.339265+00:00",
+        "reviews": 2,
+        "state": "blocked",
+        "task": "recap"
+      }
+    ],
+    "nativeReceipts": {
+      "allRequestHashesMatch": true,
+      "allSettled": true,
+      "allWithinCallMaximum": true,
+      "calls": 19,
+      "maxActualUsd": 0.0490332,
+      "totalActualUsd": 0.152139736
+    },
+    "byModel": [
+      {
+        "actual_usd": 0.1482815,
+        "calls": 4,
+        "committed_usd": 0.1482815,
+        "holds": 0,
+        "model": "openai/gpt-6.1-sol-pro"
+      },
+      {
+        "actual_usd": 0.003858236,
+        "calls": 15,
+        "committed_usd": 0.003858236,
+        "holds": 0,
+        "model": "deepseek/deepseek-v4.1-flash-1017"
+      }
+    ]
+  },
+  "finance": {
+    "newActualUsd": 0.152139736,
+    "cumulativeCommittedUsd": 9.422405362,
+    "sameOldHoldCount": 7,
+    "sameOldHoldUsd": 0.125827191,
+    "remainingLifetimeUsd": 0.577594638,
+    "utcDayCommittedUsd": 0.277966927,
+    "lifetimeLimitUsd": 10,
+    "utcDayLimitUsd": 5,
+    "perCallLimitUsd": 0.1,
+    "taskSessionMaximumUsd": 0.3,
+    "oldHoldsPreserved": true
+  },
+  "controls": {
+    "automaticPolicyEnabled": true,
+    "automaticDefault": "private_database_opt_in",
+    "standardWorkerRuntimeEnabled": false,
+    "globalAndOwnerFinancialGatesEnabled": true,
+    "oldQueuedJobsUntouched": 271,
+    "oldFrozenScopesUntouched": true,
+    "openFiniteSessions": 0,
+    "automaticQueued": 0,
+    "automaticRunning": 0,
+    "newCallsAllSettled": true
+  },
+  "hosted": {
+    "at": "2026-10-29T13:10:51.287Z",
+    "home": 200,
+    "mainAsset": "/assets/index-DNQtf7a5.js",
+    "mainAssetSha256": "ad6489bd6fc2f4c99bd4cd14042a2e8d77ff4ca010edadd3c75d614b39400d3c",
+    "servedBuildMatchesLocal": true,
+    "ownerAnalysis": 200,
+    "ordinaryReview": 403,
+    "anonymousReview": 401,
+    "ownerReview": 200,
+    "pendingReviews": 514,
+    "automatic": {
+      "runtimeEnabled": true,
+      "enabledReaders": 1,
+      "tasks": {
+        "queued": 0,
+        "running": 0,
+        "review": 5,
+        "blocked": 1,
+        "failed": 0
+      }
+    },
+    "budget": {
+      "enabled": true,
+      "dailyLimitUsd": 5,
+      "lifetimeLimitUsd": 10
+    },
+    "standardRuntimeEnabled": false,
+    "archiveRefresh": 200,
+    "realDecisionsApplied": 0,
+    "newKeywordAndRecapDetailsVerified": true,
+    "exactSourceAndPromptsMatchNative": true,
+    "promptPagesVerified": 3
+  },
+  "cleanup": {
+    "newQaSessionsRevoked": 4,
+    "existingUserSessionsTouched": false,
+    "nativeFixturesRolledBack": true
+  },
+  "limits": [
+    "Every new suggestion awaits administrator approval; no automatic publication or quality score is claimed.",
+    "One original recap attempt remains blocked; a separate exact-quoted partial draft was recovered without a new model call.",
+    "Live generation used the initial bridge; the subsequent partial-draft fix has local, CI and exact deployment evidence.",
+    "X, Instagram and LinkedIn freshness adapters are not implemented.",
+    "Daily cross-source briefings and email delivery are not implemented.",
+    "Old 271 queued jobs are not reactivated; newly eligible followed videos after the fixed cutoff are processed within existing caps.",
+    "Source captures remain partial or completeness-unverified.",
+    "Hosted verification used authenticated HTTP and native fixtures, not a new browser walkthrough."
+  ],
+  "actualScheduledExecution": {
+    "type": "actual_unattended_scheduled_function_requests",
+    "function": "automatic-content",
+    "requests": [
+      {
+        "timestamp": "2026-10-29T13:10:10.765452908Z",
+        "status": 204,
+        "functionInvoked": true,
+        "dispatchObserved": false
+      },
+      {
+        "timestamp": "2026-10-29T13:05:10.067324228Z",
+        "status": 204,
+        "functionInvoked": true,
+        "dispatchObserved": true
+      }
+    ]
+  }
+}

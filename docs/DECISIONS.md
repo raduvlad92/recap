@@ -1,5 +1,13 @@
 # Decisions and interview
 
+## 29 October 2026 — make the supported new-content workflow live
+
+Founder: “make sure everything is live: getting new content, reviewing the content, recaps, keywords, etc.” This authorizes connecting and enabling the supported new-video workflow within the existing financial ceilings. It does not raise the US$10 cumulative model allowance, release old holds, approve uncertain content, add a supplier subscription or approve the wider specification.
+
+Reuse existing generation functions, finite call sessions, shared spending ledger and administrator decisions. The initial live mode sends every new suggestion to human review, including checker-positive proposals, because automatic quality acceptance remains unproved. Preserve failed attempts and exact source/prompt evidence. Keep valid quoted recap points when other draft points fail and disclose the omission, rather than restarting a paid loop. Published subsets remain readable and subsequent approvals append to the same item. New eligible videos are admitted after a fixed cutoff; old evaluations and the historical 271-job queue remain untouched.
+
+Actual three-video readback and US$0.152139736 new settled cost are recorded in the [live-workflow report](tech/LIVE-WORKFLOW-2026-10-29.md). Commitment is US$9.422405362, including the same seven old holds, with US$0.577594638 left. New automatic opt-in and financial gates are On; the standard worker runtime stays Off. The unsupported social adapters and daily briefing/email are not described as live.
+
 ## 29 October 2026 — publish useful subsets without waiting for every review
 
 Founder: pending keywords/recaps must not block a video with at least one recap and one keyword; later approvals should be added to the content. Reader availability follows fresh published annotations rather than unfinished job/review status. Keep existing feed/source/Shorts preferences; do not introduce a stricter eligibility filter or imply complete source coverage.

@@ -1,5 +1,13 @@
 # Demo and evidence log
 
+## 29 October 2026 — automatic new-video drafts and exact review readback
+
+Deployed `1aaa7e514a78d152aaf64351827d983e8d81258d` to ready Netlify `6ae3456141f1acade23b2a49` at 13:09:36.716 UTC; CI40878828153 passes. Local 3,485/3,485 tests, 24 new native PostgreSQL cases, pinned actual-project rollback/apply, original-row preservation and advisors pass. Actual five-minute automatic dispatch/background and hourly collection registrations are read back; unattended 13:05/13:10 UTC scheduler invocations return 204 and the 13:05 log confirms dispatch.
+
+Three real recent videos produced 19 settled calls for US$0.152139736 and 182 pending keyword proposals. Two recap drafts completed their check. One original recap attempt failed on unsupported quotes; its three valid quoted model points were added as a separate partial draft without a new model call. Its failure stays visible and blocked. The queue gained 186 pending reviews, including four recap rows with that original failure. No actual owner decision or new publication was made. Hosted owner source/proposal/actual prompt pages match native saved records; ordinary/anonymous access returns403/401, and archive refresh200. These are authenticated HTTP/native/model receipts, not a new browser walkthrough or semantic quality pass.
+
+All 867 old calls, 431 old jobs, 22 old sessions, nine releases, 20 published inventories and original reviews/workspaces remain exact. Only three source format classifications and the two explicit financial enable gates change original rows. All six new sessions are closed; no new unknown charge or running task remains. Total commitment US$9.422405362, seven old holds US$0.125827191, remaining US$0.577594638. New automatic policy remains enabled within US$10 total / US$5 UTC-day / US$0.10 per call. Four isolated QA sessions revoked; original browser sessions untouched. [Report](tech/LIVE-WORKFLOW-2026-10-29.md), [sanitized evidence](tech/evidence/live-workflow-2026-10-29.json).
+
 ## 29 October 2026 — readable published subsets and later additions
 
 Deployed functional `4e469ad22f42cb46ca89d9af26b85417b183a8ed`: fresh published recap/keywords stay readable during pending additional work; later approvals enrich the same item. Recaps append/dedupe rather than replace, existing valid timing/provenance survive, and all 30 approved points are reachable from a six-point preview. A private-ledger-derived keyword subset works alongside unknown raw labels without blessing them. Archive-mode refresh reads annotation changes without changing collection time or job history.
