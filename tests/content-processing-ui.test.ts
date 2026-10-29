@@ -55,9 +55,25 @@ describe('truthful video-card processing', () => {
       expect(html).toContain('Display');
       expect(html).toContain('href="https://www.youtube.com/watch?v=abcDEFghijk&amp;t=0s"');
       expect(html).toContain('Watch at 0:00.');
-      expect(html).toContain(keywords === 'review' ? 'Keywords awaiting review' : 'Keyword processing failed');
+      expect(html).not.toContain(keywords === 'review' ? 'Keywords awaiting review' : 'Keyword processing failed');
       expect(html).not.toContain('Takeaways pending');
     }
+  });
+  it('shows published recap and keyword while both later stages are still pending', () => {
+    const item = reviewed({ processing: processing({ recap: 'pending', keywords: 'review' }) });
+    const html = card(item);
+    expect(html).toContain(item.videoHighlights![0].text);
+    expect(html).toContain('Display');
+    expect(html).not.toContain('Takeaways pending');
+    expect(html).not.toContain('Keywords awaiting review');
+  });
+  it('keeps all approved additions reachable behind a compact native disclosure', () => {
+    const points = Array.from({ length: 8 }, (_, index) => ({ text: `Approved finding number ${index + 1}.` }));
+    const html = card(reviewed({ videoHighlights: points, videoSummary: { ruleVersion: 'takeaways-v1', status: 'ready', captionHash: contentHash(captions), timingBasis: 'none' }, processing: processing({ recap: 'pending', keywords: 'review' }) }));
+    for (const point of points) expect(html).toContain(point.text);
+    expect(html).toContain('Show 2 more takeaways');
+    expect(html).toContain('<details class="video-more-takeaways">');
+    expect(html).not.toContain('<details open');
   });
   it('shows processing, empty, partial and budget pause as distinct states', () => {
     expect(status(captioned({ processing: processing({ recap: 'running', keywords: 'running' }) }))).toContain('Processing takeaways');

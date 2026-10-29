@@ -3,7 +3,7 @@ import { ArrowUpRight, FileText, Play } from 'lucide-react';
 import type { SourceUpdate } from '../lib/types';
 import { Artwork } from './Artwork';
 import { formatTimestamp, getVideoHighlights, getVideoTimestampUrl, getVideoTranscript, getVideoKeywords, isYouTubeUrl } from '../lib/video';
-import { getContentProcessing } from '../lib/content-processing';
+import { getPublishedContentProcessing } from '../lib/content-processing';
 import type { ContentProcessing } from '../lib/processing-types';
 import { VideoKeywordStrip } from './VideoKeywordStrip';
 import { CardSourcePanel } from './CardSourcePanel';
@@ -23,17 +23,19 @@ interface Props {
   onKeyword?: (label: string) => void;
 }
 
-export function VideoTakeaways({ update, processing }: { update: SourceUpdate; processing?: ContentProcessing }) {
-  const points = (processing ?? getContentProcessing(update)).recap === 'ready' ? getVideoHighlights(update) : [];
+export function VideoTakeaways({ update }: { update: SourceUpdate; processing?: ContentProcessing }) {
+  const published = getPublishedContentProcessing(update);
+  const points = published.recap === 'ready' ? getVideoHighlights(update, { all: true }) : [];
   if (!points.length) return null;
-  return <ul className="video-highlights">{points.map((point, index) => {
+  const renderPoint = (point: typeof points[number], index: number) => {
     const url = point.startSeconds === undefined ? null : getVideoTimestampUrl(update.url, point.startSeconds);
     return <li key={index}>{url ? <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`${point.text} Watch at ${formatTimestamp(point.startSeconds!)}.`}><span className="video-point-text">{point.text}</span>{' '}<span className="video-point-time">{formatTimestamp(point.startSeconds!)}</span></a> : <span>{point.text}</span>}</li>;
-  })}</ul>;
+  };
+  return <><ul className="video-highlights">{points.slice(0, 6).map(renderPoint)}</ul>{points.length > 6 && <details className="video-more-takeaways"><summary>Show {points.length - 6} more takeaways</summary><ul className="video-highlights">{points.slice(6).map(renderPoint)}</ul></details>}</>;
 }
 
 export function YouTubeCard({ update, channelName, channelIcon, date, actions, compact, onChannel, onOpen, onTranscript, onKeyword }: Props) {
-  const processing = useMemo(() => getContentProcessing(update), [update]);
+  const processing = useMemo(() => getPublishedContentProcessing(update), [update]);
   const transcript = useMemo(() => getVideoTranscript(update), [update]);
   const keywords = useMemo(() => getVideoKeywords(update), [update]);
   return <article className={`update-card youtube-card source-layout-card ${compact ? 'update-card-compact' : ''}`}>
@@ -55,7 +57,7 @@ export function YouTubeCard({ update, channelName, channelIcon, date, actions, c
 
 export function VideoTranscript({ update }: { update: SourceUpdate }) {
   const transcript = useMemo(() => getVideoTranscript(update), [update]);
-  const processing = getContentProcessing(update);
+  const processing = getPublishedContentProcessing(update);
   return <>
     <h3 className="transcript-title">{update.title}</h3>
     {transcript && processing.content === 'partial' && <p className="transcript-coverage">All stored captions are shown. Original-video coverage is partial or unverified.</p>}

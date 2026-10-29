@@ -66,7 +66,7 @@ export function getKeywordContentHash(update:Pick<SourceUpdate,'keywordContentHa
  const legacy=update.videoSummary?.captionHash;
  return typeof legacy==='string'&&/^[a-f0-9]{64}$/.test(legacy)?legacy:undefined;
 }
-export function getContentProcessing(update: SourceUpdate & {processing?:ContentProcessing}): ContentProcessing {
+function resolveContentProcessing(update: SourceUpdate & {processing?:ContentProcessing}, published = false): ContentProcessing {
  const usable=usableAnalysisContent(update),cached=hashes.get(update);
  const hash=usable ? cached && cached.text===update.content ? cached.hash : contentHash(update.content!) : undefined;
  if(usable&&hash)hashes.set(update,{text:update.content!,hash});
@@ -75,24 +75,44 @@ export function getContentProcessing(update: SourceUpdate & {processing?:Content
  const cueStarts=new Set((Array.isArray(update.transcriptSegments)?update.transcriptSegments:[]).flatMap(c=>
   c && typeof c==='object' && !Array.isArray(c) && typeof c.startSeconds==='number' && Number.isFinite(c.startSeconds) && c.startSeconds>=0 ? [c.startSeconds] : []));
  const highlights=update.videoHighlights;
- const validHighlights=Array.isArray(highlights) && highlights.length<=6 && highlights.every(p=>p && typeof p==='object' && !Array.isArray(p) && typeof p.text==='string' && !!p.text.trim() && p.text.length<=500 && p.text.trim().split(/\s+/).length<=38
+ const validHighlights=Array.isArray(highlights) && highlights.length<=30 && highlights.every(p=>p && typeof p==='object' && !Array.isArray(p) && typeof p.text==='string' && !!p.text.trim() && p.text.length<=500 && p.text.trim().split(/\s+/).length<=38
   && (p.startSeconds===undefined || Number.isFinite(p.startSeconds) && p.startSeconds>=0 && (update.videoSummary?.timingBasis==='publisher-chapters' || update.videoSummary?.timingBasis==='captions' && cueStarts.has(p.startSeconds))));
  const summary = usable && validHighlights && update.videoSummary?.ruleVersion === 'takeaways-v1' && update.videoSummary.status === 'ready' && update.videoSummary.captionHash === hash;
  const keywordHash=getKeywordContentHash(update);
  const keywordsFresh=usable && keywordHash===hash;
  const legacyKeywords = keywordsFresh && !!update.videoKeywords?.length;
+ const publishedKeywords = keywordsFresh && Array.isArray(update.videoKeywords) && update.videoKeywords.some(keyword => keyword && typeof keyword.label === 'string' && !!keyword.label.trim());
  const defaults: ContentProcessing = { ruleVersion: 'content-v1', ...(hash ? { contentHash: hash } : {}), content: sourceContentState(update),
   recap: summary ? update.videoHighlights?.length ? 'ready' : 'empty' : usable ? 'pending' : 'unavailable',
-  keywords: legacyKeywords ? 'ready' : 'pending',
+  keywords: (published ? publishedKeywords : legacyKeywords) ? 'ready' : 'pending',
   ...(!usable ? { reason: 'usable_content_pending' } : sourceContentState(update) === 'partial' ? { reason: 'source_completeness_unverified' } : {}) };
  if (!valid) return defaults;
  const result={ ...defaults, ...raw, content: usable ? sourceContentState(update) : raw.content };
  if(result.recap==='ready'&&!summary || result.recap==='empty'&&(!summary||!!highlights?.length)) result.recap=defaults.recap;
  if(['ready','review','empty'].includes(result.keywords)&&!keywordsFresh || result.keywords==='ready'&&!update.videoKeywords?.length)result.keywords=defaults.keywords;
+ // Reader availability follows the published subset, independently of other work awaiting review.
+ if(published) {
+  if(summary && highlights?.length) result.recap='ready';
+  if(publishedKeywords) result.keywords='ready';
+  else if(result.keywords==='ready') result.keywords='pending';
+ }
  if(!usable) {
   if(!['blocked','failed','unavailable'].includes(result.content))result.content='pending';
   if(!['blocked','failed'].includes(result.recap))result.recap='unavailable';
   if(!['blocked','failed'].includes(result.keywords))result.keywords='pending';
  }
  return result;
+}
+
+/** Full processing progress remains available to the worker and private admin tools. */
+export function getContentProcessing(update: SourceUpdate & {processing?:ContentProcessing}): ContentProcessing {
+ return resolveContentProcessing(update);
+}
+/** Published annotations remain readable while additional proposals await a decision. */
+export function getPublishedContentProcessing(update: SourceUpdate): ContentProcessing {
+ return resolveContentProcessing(update, true);
+}
+export function hasPublishedAnalysis(update: SourceUpdate): boolean {
+ const published=getPublishedContentProcessing(update);
+ return published.recap==='ready' && published.keywords==='ready';
 }

@@ -15,7 +15,7 @@ import { YouTubeCard, VideoTranscript, VideoTakeaways } from './components/YouTu
 import { ContentProcessingStatus, UnclassifiedVideoUpdates } from './components/ContentProcessingStatus';
 import { VideoKeywordStrip } from './components/VideoKeywordStrip';
 import { getVideoKeywords, getVideoTranscript } from './lib/video';
-import { getContentProcessing } from './lib/content-processing';
+import { getPublishedContentProcessing } from './lib/content-processing';
 import { SocialPostCard, SocialPostContent, socialPostProvenance } from './components/SocialPostCard';
 import { languages, translator } from './components/ui';
 import './app.css';
@@ -313,7 +313,7 @@ export default function App() {
     const social = !!source && ['X', 'Instagram', 'LinkedIn'].includes(source.platform);
     const youtube = source?.platform === 'YouTube';
     const videoKeywords = youtube ? getVideoKeywords(update) : [];
-    const processing = youtube ? getContentProcessing(update) : undefined;
+    const processing = youtube ? getPublishedContentProcessing(update) : undefined;
     return <><div className="detail-source"><Avatar creator={contributor} label={identity.name} color={publisher?.color} /><div><button className="detail-source-name" onClick={() => contributor ? chooseSelection({ kind: 'creator', id: contributor.id }) : chooseSelection({ kind: 'source', id: update.sourceId })}><strong>{identity.name}</strong></button>{contributor && source ? <button className="detail-source-channel" onClick={() => chooseSelection({ kind: 'source', id: source.id })}>{source.name === contributor.name ? `${source.platform} channel` : source.name}</button> : !contributor && publisher && publisher.name !== identity.name ? <span className="detail-source-publisher">Published by {publisher.name}</span> : null}<p><PlatformIcon platform={source?.platform} size={14} />{source?.platform}<span>{update.publishedAt ? longDate(dayKey(update.publishedAt, state.settings.timezone), state.settings.interfaceLanguage) : t('unknownDate')}</span></p></div>{actionButtons(update, true)}</div>{social ? <><SocialPostContent key={update.id} update={update} detail /><p className="provenance social-post-detail-provenance">{socialPostProvenance(update)}</p></> : <><h3 className="detail-title">{update.title}</h3>{!youtube && <p className="detail-summary">{update.summary}</p>}</>}
       {youtube && <section className="detail-section"><h4>Takeaways</h4><VideoTakeaways update={update} processing={processing} /><ContentProcessingStatus update={update} processing={processing} />{videoKeywords.length > 0 && <VideoKeywordStrip keywords={videoKeywords} timingBasis={update.videoSummary?.timingBasis} onKeyword={topic => { setTopicFilter(current => current === topic ? '' : topic); closeDialog(); }} />}{getVideoTranscript(update) && <button className="transcript-button" onClick={() => setDialog({ kind: 'transcript', update })}>Full transcript<ArrowUpRight size={14} aria-hidden="true" /></button>}</section>}
       {update.coverage && <div className="coverage-note"><CheckCircle2 size={16} /><span>{update.coverage}</span></div>}

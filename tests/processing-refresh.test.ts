@@ -85,6 +85,13 @@ describe('private processing refresh', () => {
  it('validates and deduplicates a lightweight processing page without exposing extra fields', () => {
   expect(processingChangePage({ updateIds: ['a', 'a'], windowEnd: '2026-10-24T00:00:00Z', nextCursor: null, evidence: 'private' })).toEqual({ updateIds: ['a'], windowEnd: '2026-10-24T00:00:00Z', nextCursor: null });
  });
+ it.each(['saved-video-text-id','source:video,(item).2026','unicode-📺','x'.repeat(250),'quote"slash\\'])('accepts bounded archive text cursors without requiring UUIDs (%j)',id=>{
+  const page={updateIds:[id],windowEnd:'2026-10-29T03:00:00Z',nextCursor:{id,updatedAt:'2026-10-29T02:00:00Z'}};
+  expect(processingChangePage(page)).toEqual(page);
+ });
+ it.each(['','x'.repeat(251),'line\nend','null\0end'])('rejects unsafe archive text cursors (%j)',id=>{
+  expect(()=>processingChangePage({updateIds:['item'],windowEnd:'2026-10-29T03:00:00Z',nextCursor:{id,updatedAt:'2026-10-29T02:00:00Z'}})).toThrow();
+ });
  it.each([{ updateIds: Array(101).fill('a'), windowEnd: '2026-10-24T00:00:00Z' }, { updateIds: ['a'], windowEnd: 'invalid' }, { updateIds: ['a'], windowEnd: '2026-10-24T00:00:00Z', nextCursor: { id: 'bad', updatedAt: 'bad' } }])('rejects malformed status pagination', page => {
   expect(() => processingChangePage(page)).toThrow();
  });

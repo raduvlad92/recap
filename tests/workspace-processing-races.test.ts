@@ -35,6 +35,7 @@ it('coordinates history retries with polling and fences older reads and other ow
  async function settle(){for(let n=0;n<3;n++){await new Promise(r=>setImmediate(r));render();}}
  try{
   render();await settle();expect(workspace!.isLoaded).toBe(true);expect(poll).toBe(1);
+  expect(new URL(String(vi.mocked(fetch).mock.calls[0][0]),'https://example.test').searchParams.get('mode')).toBe('archive');
   const cacheBefore=JSON.stringify([...storage.entries()]);
   const retry=workspace!.retryArchive(); // An ordinary history retry captures the older pending row.
   intervalFns[0]();await settle(); // A later poll installs the completed annotation.

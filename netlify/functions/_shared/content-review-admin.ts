@@ -166,7 +166,13 @@ async function detailFor(db: Database, row: Row, origin: ContentReviewOrigin, pr
   else if (content===null) cannotApproveReason='The exact source snapshot is unavailable. Reject this attempt rather than approving unsupported content.';
   else if (!current) cannotApproveReason='The source changed after generation. This older attempt cannot be published.';
   else if (!['transcript','feed_text'].includes(text(currentRecord?.contentKind))) cannotApproveReason='This capture has no usable transcript or article text. Reject this attempt instead of publishing from metadata.';
-  else if (kind==='recap' && annotations && currentRecord && (canonical(annotations.videoHighlights??null)!==canonical(currentRecord.videoHighlights??null) || canonical(annotations.videoSummary??null)!==canonical(currentRecord.videoSummary??null))) cannotApproveReason='The reader recap changed after this attempt. This older attempt cannot replace it.';
+  else if (kind==='recap' && annotations && currentRecord && (canonical(annotations.videoHighlights??null)!==canonical(currentRecord.videoHighlights??null) || canonical(annotations.videoSummary??null)!==canonical(currentRecord.videoSummary??null))) {
+    // A prior explicit approval may have added points since this attempt was
+    // held. Only its exact cumulative publication can explain that drift.
+    const published=unwrap(await db.rpc('admin_analysis_published_recap',{p_user_id:row.user_id,p_update_id:row.update_id,p_source_id:row.source_id,p_content_hash:contentHash}));
+    const currentAnnotations={videoHighlights:currentRecord.videoHighlights??null,videoSummary:currentRecord.videoSummary??null};
+    if (!object(published) || canonical(published)!==canonical(currentAnnotations)) cannotApproveReason='The reader recap changed after this attempt. Reload before adding to it.';
+  }
   const canEdit=cannotApproveReason===null;
   let canApprove=canEdit;
   if (canApprove) {try{validateContentReviewProposal(row.proposal,kind,content!);}catch(error){if(!(error instanceof CollectionError))throw error;canApprove=false;cannotApproveReason=error.message;}}

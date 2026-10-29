@@ -428,7 +428,7 @@ export function useWorkspace() {
   }, [client, owner]);
   useEffect(() => () => { archiveRetryAbort.current?.abort(); }, []);
 
-  // Poll a small private job projection while visible, then read only changed
+  // Poll a small private archive-change projection while visible, then read only changed
   // archive IDs through the reader's own RLS. Background analysis never edits a
   // local workspace draft, and account/reset changes invalidate in-flight work.
   useEffect(() => {
@@ -450,7 +450,7 @@ export function useWorkspace() {
         let until: string | undefined;
         let cursor: { updatedAt: string; id: string } | null = null;
         for (let pageNumber = 0; pageNumber < 100 && readIsCurrent(); pageNumber++) {
-          const query = new URLSearchParams({ since });
+          const query = new URLSearchParams({ mode: 'archive', since });
           if (until) query.set('until', until);
           if (cursor) { query.set('afterUpdatedAt', cursor.updatedAt); query.set('afterId', cursor.id); }
           const response = await fetch('/api/content-analysis-status?' + query, { headers: { authorization: 'Bearer ' + token }, signal: AbortSignal.any([abort.signal, AbortSignal.timeout(15_000)]) });

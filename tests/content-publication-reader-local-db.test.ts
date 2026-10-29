@@ -153,7 +153,8 @@ describe.skipIf(!available)('actual publication through authenticated archive lo
   const f=fixture(),workspaceBefore=workspace(f.owner);
   prepare(f.summary,summaryOutput());publish(f.summary);prepare(f.keywords,keywordOutput(true));publish(f.keywords);
   let loaded=reload(f.owner)[0],html=card(loaded);
-  expect(html).toContain('Keywords awaiting review');expect(html).toContain('Nvidia');expect(html).not.toContain('Explicit synthetic mention.');
+  expect(html).not.toContain('Keywords awaiting review');expect(html).toContain('Nvidia');expect(html).not.toContain('Explicit synthetic mention.');
+  expect(getContentProcessing(loaded).keywords).toBe('review');
   expect(loaded.videoKeywords?.map(k=>k.label)).toEqual(['Nvidia']);
   const pending=json(`select to_jsonb(q) from public.admin_keyword_reviews q where user_id=${quote(f.owner)} and label='GPU';`);
   json(`select public.admin_review_keyword(${quote(pending.id)},${quote(pending.updated_at)},'synthetic-admin','approve','Graphics processors','category');`);

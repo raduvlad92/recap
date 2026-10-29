@@ -88,19 +88,20 @@ const identity = (value: string): string => value.toLowerCase().replace(/[^\p{L}
 const boilerplate = (value: string): boolean => /^(?:\[(?:music|applause|laughter)\]|(?:hey|hi|hello)(?:\s+(?:everyone|guys|folks|there))?[,! .]|welcome(?: back)?\b|thanks? (?:you )?for watching\b)/i.test(value) || /(?:brought to you by|today'?s sponsor|sponsored by|don'?t forget to (?:like|subscribe)|like (?:and|&) subscribe|hit (?:the |that )?(?:like|subscribe) button|subscribe to (?:our|my|the) channel)/i.test(value);
 
 /** Reads saved takeaways only. Unprocessed captions remain in the transcript. */
-export function getVideoHighlights(update: SourceUpdate): VideoHighlight[] {
+export function getVideoHighlights(update: SourceUpdate, options: { all?: boolean } = {}): VideoHighlight[] {
   if (update.videoSummary?.status === 'unavailable') return [];
   const supplied = Array.isArray(update.videoHighlights) ? update.videoHighlights : [];
   if (supplied.length) {
+    const published = usableAnalysisContent(update) && update.videoSummary?.status === 'ready' && update.videoSummary.captionHash === contentHash(update.content!);
     const seen = new Set<string>();
     const clean = supplied.filter(point => point && typeof point.text === 'string').flatMap(point => {
       const text = cleanText(point.text), key = identity(text);
-      if (!key || seen.has(key) || boilerplate(text)) return [];
+      if (!key || seen.has(key) || !published && boilerplate(text)) return [];
       seen.add(key);
       return [{ text, ...(validSeconds(point.startSeconds) ? { startSeconds: point.startSeconds } : {}) }];
     });
     // Preserve the existing six-point layout for saved annotations.
-    if (clean.length) return clean.length <= MAX_HIGHLIGHTS ? clean : Array.from({ length: MAX_HIGHLIGHTS }, (_, index) => clean[Math.round(index * (clean.length - 1) / (MAX_HIGHLIGHTS - 1))]);
+    if (clean.length) return options.all ? clean.slice(0, 30) : clean.length <= MAX_HIGHLIGHTS ? clean : Array.from({ length: MAX_HIGHLIGHTS }, (_, index) => clean[Math.round(index * (clean.length - 1) / (MAX_HIGHLIGHTS - 1))]);
   }
   return [];
 }

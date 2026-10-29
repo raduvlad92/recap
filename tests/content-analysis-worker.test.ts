@@ -225,6 +225,34 @@ describe('private dispatch and read-only owner status',()=>{
   expect(query.range).toHaveBeenCalledWith(0,99);expect(query.or).toHaveBeenCalled();
   expect((await handler(new Request('https://example.net/api/content-analysis-status?since=bad'))).status).toBe(400);
  });
+ it('finds manual archive approvals without job changes and pages bounded text IDs safely',async()=>{
+  const cursorId='video,(key):"quotes"\\path',at='2026-10-29T02:00:00Z';
+  const rows=Array.from({length:100},(_,index)=>({id:index===99?cursorId:'saved-video-'+index,updated_at:at}));
+  const query={select:vi.fn(),eq:vi.fn(),gt:vi.fn(),lte:vi.fn(),order:vi.fn(),or:vi.fn(),range:vi.fn(async()=>({data:rows,error:null}))};
+  for(const method of ['select','eq','gt','lte','order','or'] as const)query[method].mockReturnValue(query);
+  const db={from:vi.fn((table:string)=>{if(table!=='reader_source_updates')throw Error('Unchanged jobs must not be queried.');return query;})};
+  const handler=createAnalysisStatusHandler({env:env(),verify:async()=> 'owner',db:db as never});
+  const params=new URLSearchParams({mode:'archive',since:'2026-10-29T01:00:00Z',until:'2026-10-29T03:00:00Z'});
+  const first=await(await handler(new Request('https://example.net/api/content-analysis-status?'+params))).json();
+  expect(first.updateIds).toEqual(rows.map(row=>row.id));expect(first.nextCursor).toEqual({updatedAt:at,id:cursorId});
+  expect(query.select).toHaveBeenCalledWith('id,updated_at');expect(query.eq).toHaveBeenCalledWith('user_id','owner');expect(query.range).toHaveBeenLastCalledWith(0,99);
+  params.set('afterUpdatedAt',first.nextCursor.updatedAt);params.set('afterId',first.nextCursor.id);
+  expect((await handler(new Request('https://example.net/api/content-analysis-status?'+params))).status).toBe(200);
+  expect(query.or).toHaveBeenLastCalledWith('updated_at.gt.2026-10-29T02:00:00Z,and(updated_at.eq.2026-10-29T02:00:00Z,id.gt."video,(key):\\"quotes\\"\\\\path")');
+  expect(query.range).toHaveBeenLastCalledWith(0,99);expect(db.from.mock.calls.every(([table])=>table==='reader_source_updates')).toBe(true);
+ });
+ it.each(['x'.repeat(251),'line\nend','null\0end'])('rejects unsafe archive cursor IDs before reading rows (%j)',async id=>{
+  const db={from:vi.fn()},handler=createAnalysisStatusHandler({env:env(),verify:async()=> 'owner',db:db as never});
+  const params=new URLSearchParams({mode:'archive',since:'2026-10-29T01:00:00Z',until:'2026-10-29T03:00:00Z',afterUpdatedAt:'2026-10-29T02:00:00Z',afterId:id});
+  expect((await handler(new Request('https://example.net/api/content-analysis-status?'+params))).status).toBe(400);expect(db.from).not.toHaveBeenCalled();
+ });
+ it('keeps UUID job cursors as the default and rejects invalid change modes',async()=>{
+  const db={from:vi.fn()},handler=createAnalysisStatusHandler({env:env(),verify:async()=> 'owner',db:db as never});
+  const params=new URLSearchParams({since:'2026-10-29T01:00:00Z',until:'2026-10-29T03:00:00Z',afterUpdatedAt:'2026-10-29T02:00:00Z',afterId:'saved-video-text-id'});
+  expect((await handler(new Request('https://example.net/api/content-analysis-status?'+params))).status).toBe(400);
+  expect((await handler(new Request('https://example.net/api/content-analysis-status?mode=archive'))).status).toBe(400);
+  expect((await handler(new Request('https://example.net/api/content-analysis-status?mode=unknown'))).status).toBe(400);expect(db.from).not.toHaveBeenCalled();
+ });
  it('uses authenticated ownership and returns only public per-item status, with no queue/model mutation',async()=>{
   const query={select:vi.fn(),eq:vi.fn(),order:vi.fn(),range:vi.fn(async()=>({data:[{id:'v',record}],error:null}))};query.select.mockReturnValue(query);query.eq.mockReturnValue(query);query.order.mockReturnValue(query);
   const db={from:vi.fn(()=>query)},verify=vi.fn(async()=> 'owner');

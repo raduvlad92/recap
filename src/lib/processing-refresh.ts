@@ -7,7 +7,7 @@ export interface ProcessingChangePage {
  nextCursor: { updatedAt: string; id: string } | null;
 }
 
-/** Revisit recent transactions and periodically reconcile all job changes.
+/** Revisit recent transactions and periodically reconcile all archive changes.
  * updated_at is assigned before commit, so a wall-clock watermark alone can
  * permanently skip a transaction that was still invisible during the poll. */
 export function processingPollSince(windowEnd: string, completedPolls: number): string {
@@ -21,7 +21,7 @@ export function processingChangePage(value: unknown): ProcessingChangePage {
  if (!Array.isArray(page.updateIds) || page.updateIds.length > 100 || page.updateIds.some(id => typeof id !== 'string' || !id || id.length > 250)
   || typeof page.windowEnd !== 'string' || !Number.isFinite(Date.parse(page.windowEnd))) throw new Error('Invalid processing status response.');
  const cursor = page.nextCursor as Record<string, unknown> | null;
- if (cursor != null && (typeof cursor.updatedAt !== 'string' || !Number.isFinite(Date.parse(cursor.updatedAt)) || typeof cursor.id !== 'string' || !/^[a-f0-9-]{36}$/i.test(cursor.id))) throw new Error('Invalid processing status cursor.');
+ if (cursor != null && (typeof cursor.updatedAt !== 'string' || !Number.isFinite(Date.parse(cursor.updatedAt)) || typeof cursor.id !== 'string' || !cursor.id || cursor.id.length > 250 || /[\x00-\x1f\x7f]/.test(cursor.id))) throw new Error('Invalid processing status cursor.');
  return { updateIds: [...new Set(page.updateIds as string[])], windowEnd: page.windowEnd,
   nextCursor: cursor ? { updatedAt: cursor.updatedAt as string, id: cursor.id as string } : null };
 }

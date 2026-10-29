@@ -67,5 +67,6 @@ describe('saved video takeaways', () => {
     const videoHighlights = Array.from({ length: 12 }, (_, index) => ({ text: `Saved finding ${index}`, startSeconds: index * 300 }));
     const points = getVideoHighlights(update({ videoHighlights }));
     expect(points).toHaveLength(6); expect(points[0]).toEqual(videoHighlights[0]); expect(points.at(-1)).toEqual(videoHighlights.at(-1));
+    expect(getVideoHighlights(update({ videoHighlights }), { all: true })).toEqual(videoHighlights);
   });
 });

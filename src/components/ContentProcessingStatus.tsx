@@ -1,5 +1,5 @@
 import { useId, useState, type ReactNode } from 'react';
-import { getContentProcessing } from '../lib/content-processing';
+import { getPublishedContentProcessing } from '../lib/content-processing';
 import type { ContentProcessing } from '../lib/processing-types';
 import type { SourceUpdate } from '../lib/types';
 import { videoFormatKind } from '../lib/video-format';
@@ -51,8 +51,8 @@ function processingLabels(processing: ContentProcessing, coverage?: string): Sta
   return labels;
 }
 
-export function ContentProcessingStatus({ update, processing }: { update: SourceUpdate; processing?: ContentProcessing }) {
-  const labels = processingLabels(processing ?? getContentProcessing(update), update.coverage);
+export function ContentProcessingStatus({ update }: { update: SourceUpdate; processing?: ContentProcessing }) {
+  const labels = processingLabels(getPublishedContentProcessing(update), update.coverage);
   if (update.format === 'video' && videoFormatKind(update) === 'unknown') labels.unshift({ label: 'Format not checked' });
   if (!labels.length) return null;
   return <ul className="content-processing-status" aria-label="Content processing">

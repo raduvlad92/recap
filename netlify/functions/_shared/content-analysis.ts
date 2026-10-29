@@ -362,6 +362,8 @@ export function createAnalysisStatusHandler(deps:{env?:Env;verify?:typeof authen
   try {
    if(request.method!=='GET') throw new CollectionError(405,'method_not_allowed','Use GET to read processing status.');
    const userId=await (deps.verify||authenticate)(request,env),url=new URL(request.url);
+   const mode=url.searchParams.get('mode')||'jobs',archiveChanges=mode==='archive';
+   if(!['jobs','archive'].includes(mode)||archiveChanges&&!url.searchParams.has('since'))throw new CollectionError(400,'invalid_mode','Use a valid processing status mode.');
    const offset=Number(url.searchParams.get('offset')||0);
    if(!Number.isSafeInteger(offset)||offset<0||offset>100000)throw new CollectionError(400,'invalid_page','Use a valid status page.');
    const db=deps.db||database(env);
@@ -370,18 +372,19 @@ export function createAnalysisStatusHandler(deps:{env?:Env;verify?:typeof authen
     const since=url.searchParams.get('since'),windowEnd=url.searchParams.get('until')||new Date().toISOString();
     const afterAt=url.searchParams.get('afterUpdatedAt'),afterId=url.searchParams.get('afterId');
     if(!timestamp(since)||!timestamp(windowEnd)||Date.parse(windowEnd)<Date.parse(since)
-     ||((afterAt||afterId)&&(!timestamp(afterAt)||!afterId||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(afterId)||Date.parse(afterAt)<Date.parse(since)||Date.parse(afterAt)>Date.parse(windowEnd)))) {
+     ||((afterAt||afterId)&&(!timestamp(afterAt)||!afterId||(archiveChanges?(afterId.length>250||/[\x00-\x1f\x7f]/.test(afterId)):!analysisUuid(afterId))||Date.parse(afterAt)<Date.parse(since)||Date.parse(afterAt)>Date.parse(windowEnd)))) {
      throw new CollectionError(400,'invalid_window','Use a valid processing change window.');
     }
-    let query=db.from('reader_content_analysis_jobs').select('update_id,state,updated_at,id').eq('user_id',userId)
+    let query=(archiveChanges?db.from('reader_source_updates').select('id,updated_at'):db.from('reader_content_analysis_jobs').select('update_id,state,updated_at,id')).eq('user_id',userId)
      .gt('updated_at',since).lte('updated_at',windowEnd).order('updated_at',{ascending:true}).order('id',{ascending:true});
-    // Cursor traversal does not skip untouched rows if earlier jobs move beyond
-    // until during pagination. Offset mode is retained for simple clients.
-    if(afterAt&&afterId)query=query.or('updated_at.gt.'+afterAt+',and(updated_at.eq.'+afterAt+',id.gt.'+afterId+')');
+    // Quote text IDs before the SDK URL-encodes the PostgREST expression.
+    // Cursor traversal remains stable when earlier rows move beyond this window.
+    const quotedId=afterId?'"'+afterId.replace(/\\/g,'\\\\').replace(/"/g,'\\\"')+'"':null;
+    if(afterAt&&afterId)query=query.or('updated_at.gt.'+afterAt+',and(updated_at.eq.'+afterAt+',id.gt.'+(archiveChanges?quotedId:afterId)+')');
     const result=await query.range(afterAt?0:offset,(afterAt?0:offset)+99);
     if(result.error)throw new CollectionError(503,'analysis_status_unavailable','Processing changes could not be read.');
     const last=result.data.at(-1),more=result.data.length===100;
-    return json({updateIds:[...new Set(result.data.map(row=>row.update_id))],lastChangedAt:last?.updated_at||since,windowEnd,
+    return json({updateIds:[...new Set(result.data.map(row=>archiveChanges?row.id:(row as {update_id:string}).update_id))],lastChangedAt:last?.updated_at||since,windowEnd,
      nextOffset:more?offset+100:null,nextCursor:more&&last?{updatedAt:last.updated_at,id:last.id}:null});
    }
    const result=await db.from('reader_source_updates').select('id,record').eq('user_id',userId).order('published_at',{ascending:false}).order('id').range(offset,offset+99);

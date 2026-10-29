@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { describe,it,expect } from 'vitest';
-import { contentHash,getContentProcessing,getKeywordContentHash } from '../src/lib/content-processing';
+import { contentHash,getContentProcessing,getKeywordContentHash,getPublishedContentProcessing,hasPublishedAnalysis } from '../src/lib/content-processing';
 import type { SourceUpdate } from '../src/lib/types';
 const update=(patch:Partial<SourceUpdate>={}):SourceUpdate=>({id:'v',sourceId:'s',contributorIds:[],title:'Video',summary:'Sponsor description',url:'https://example.com/v',publishedAt:'2026-10-24T00:00:00Z',format:'video',topics:[],brands:[],sponsors:[],references:[],insights:[],isSample:false,...patch});
 describe('truthful content-processing state',()=>{
@@ -72,5 +72,49 @@ describe('truthful content-processing state',()=>{
   const raw={ruleVersion:'content-v1',contentHash:contentHash(content),content:'partial',recap:'ready',keywords:'review'} as const;
   expect(getContentProcessing({...update({content,contentKind:'transcript',videoSummary:{ruleVersion:'takeaways-v1',captionHash:contentHash(content),status:'ready',timingBasis:'none'},videoHighlights:[{text:'A supported finding.'}]}),processing:raw})).toMatchObject({recap:'ready',keywords:'review'});
   expect(getContentProcessing({...update({content,contentKind:'transcript'}),processing:{...raw,contentHash:contentHash('old'),recap:'unavailable'}})).toMatchObject({recap:'pending',keywords:'pending'});
+ });
+});
+
+
+describe('published analysis availability',()=>{
+ const content='AeroBox supports Quiet mode.',hash=contentHash(content);
+ const published=(patch:Partial<SourceUpdate>={}):SourceUpdate=>update({content,contentKind:'transcript',videoSummary:{ruleVersion:'takeaways-v1',status:'ready',captionHash:hash,timingBasis:'none'},videoHighlights:[{text:'AeroBox supports Quiet mode.'}],videoKeywords:[{label:'AeroBox',ranges:[]}],keywordContentHash:hash,processing:{ruleVersion:'content-v1',contentHash:hash,content:'partial',recap:'pending',keywords:'review'},...patch});
+ it.each(['pending','running'] as const)('keeps a published subset readable during additional %s work',recap=>{
+  const record=published({processing:{ruleVersion:'content-v1',contentHash:hash,content:'partial',recap,keywords:'review'}});
+  expect(getContentProcessing(record)).toMatchObject({recap,keywords:'review'});
+  expect(getPublishedContentProcessing(record)).toMatchObject({content:'partial',recap:'ready',keywords:'ready'});
+  expect(hasPublishedAnalysis(record)).toBe(true);
+ });
+ it('requires at least one published point and keyword',()=>{
+  expect(hasPublishedAnalysis(published({videoHighlights:[]}))).toBe(false);
+  expect(hasPublishedAnalysis(published({videoKeywords:[]}))).toBe(false);
+  expect(hasPublishedAnalysis(published({videoKeywords:[{label:'   ',ranges:[]}]}))).toBe(false);
+  expect(hasPublishedAnalysis(published({videoKeywords:[{label:'   ',ranges:[]}],processing:{ruleVersion:'content-v1',contentHash:hash,content:'partial',recap:'ready',keywords:'ready'}}))).toBe(false);
+  expect(hasPublishedAnalysis(published({videoKeywords:[{label:'   ',ranges:[]}],processing:undefined}))).toBe(false);
+  expect(hasPublishedAnalysis(published({videoSummary:{ruleVersion:'takeaways-v1',status:'unavailable',captionHash:hash,timingBasis:'none'}}))).toBe(false);
+ });
+ it('does not publish held candidates stored outside the published annotations',()=>{
+  const record={...published({videoHighlights:[],videoKeywords:[]}),pendingKeywords:[{label:'Held name'}],proposedRecap:[{text:'Held point.'}]};
+  expect(hasPublishedAnalysis(record)).toBe(false);
+  expect(getPublishedContentProcessing(record)).toMatchObject({recap:'pending',keywords:'review'});
+ });
+ it('keeps exact recap and keyword source freshness independent',()=>{
+  expect(hasPublishedAnalysis(published({content:'Changed source captions.'}))).toBe(false);
+  expect(hasPublishedAnalysis(published({keywordContentHash:contentHash('old source')}))).toBe(false);
+  expect(hasPublishedAnalysis(published({keywordContentHash:null}))).toBe(false);
+  expect(hasPublishedAnalysis(published({videoSummary:{ruleVersion:'takeaways-v1',status:'ready',captionHash:contentHash('old source'),timingBasis:'none'}}))).toBe(false);
+  expect(hasPublishedAnalysis(published({contentKind:'metadata_only'}))).toBe(false);
+ });
+ it('preserves strict point and caption-time checks despite pending extra work',()=>{
+  const timed=published({videoSummary:{ruleVersion:'takeaways-v1',status:'ready',captionHash:hash,timingBasis:'captions'},transcriptSegments:[{text:content,startSeconds:5}],videoHighlights:[{text:'AeroBox supports Quiet mode.',startSeconds:99}]});
+  expect(hasPublishedAnalysis(timed)).toBe(false);
+  expect(hasPublishedAnalysis({...timed,videoHighlights:[{text:'AeroBox supports Quiet mode.',startSeconds:5}]})).toBe(true);
+  expect(hasPublishedAnalysis(published({videoHighlights:[{text:'too long '.repeat(40)}]}))).toBe(false);
+ });
+ it('accepts additional approved points within the existing archive bound',()=>{
+  const points=Array.from({length:30},(_,index)=>({text:'Approved finding '+(index+1)+'.'}));
+  expect(hasPublishedAnalysis(published({videoHighlights:points.slice(0,7)}))).toBe(true);
+  expect(hasPublishedAnalysis(published({videoHighlights:points}))).toBe(true);
+  expect(hasPublishedAnalysis(published({videoHighlights:[...points,{text:'One point too many.'}]}))).toBe(false);
  });
 });

@@ -37,7 +37,7 @@ describe.skipIf(!available)('compact review inbox, disposable PostgreSQL only',(
  it('lists legacy and new holds without exposing any private table to public roles',()=>{
   row();expect(json('select count(*)::integer from public.admin_analysis_review_queue;')).toBe(1);
   for(const role of ['anon','authenticated'])for(const table of ['admin_analysis_reviews','admin_analysis_prompt_receipts','admin_analysis_review_queue'])expect(sql(`select has_table_privilege(${q(role)},${q('public.'+table)},'select');`)).toBe('f');
-  for(const role of ['anon','authenticated'])for(const fn of ['record_admin_analysis_prompt(uuid,uuid,text,text,jsonb)','admin_decide_analysis_review(uuid,timestamptz,text,text,jsonb)','sync_admin_analysis_reviews(text,integer)'])expect(sql(`select has_function_privilege(${q(role)},${q('public.'+fn)},'execute');`)).toBe('f');
+  for(const role of ['anon','authenticated'])for(const fn of ['record_admin_analysis_prompt(uuid,uuid,text,text,jsonb)','admin_decide_analysis_review(uuid,timestamptz,text,text,jsonb)','sync_admin_analysis_reviews(text,integer)','admin_analysis_published_recap(text,text,text,text,jsonb)'])expect(sql(`select has_function_privilege(${q(role)},${q('public.'+fn)},'execute');`)).toBe('f');
  });
  it('approves or edits a literal keyword atomically through the durable old review decisions',()=>{
   const r=row(),out=decide(r,'approve',{label:'AeroBox',kind:'brand'});expect(out.published).toBe(true);expect(out.record.proposal).toEqual(r.proposal);expect(out.record.resolved).toEqual({label:'AeroBox',kind:'brand'});
@@ -57,6 +57,102 @@ describe.skipIf(!available)('compact review inbox, disposable PostgreSQL only',(
   const proposal={highlights:[{text:'The laboratory measured an improvement over the older design.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]};
   const r=row('recap',proposal),out=decide(r);expect(out.published).toBe(true);expect(out.record.proposal).toEqual(proposal);expect(source().videoHighlights).toEqual([{text:proposal.highlights[0].text}]);expect(source().videoSummary.timingBasis).toBe('none');expect(source().processing.recap).toBe('ready');
   expect(json(`select details->'manualSourceReview'from public.admin_audit_events where action='analysis.review.approved';`)).toBe(true);
+ });
+ it('appends distinct cited approvals from the same held snapshot, preserves their evidence and replays every approved contribution',()=>{
+  const quote='The laboratory found a measurable improvement over the older design.';
+  const first={highlights:[{text:'Measured improvement.',evidenceQuote:quote}]};
+  const second={highlights:[{text:'Measured improvement.',evidenceQuote:quote},{text:'The older design performed worse.',evidenceQuote:quote}]};
+  const a=row('recap',first),b=row('recap',second);
+  expect(decide(a).published).toBe(true);expect(decide(b).published).toBe(true);
+  const expected=[{text:'Measured improvement.'},{text:'The older design performed worse.'}];
+  expect(source().videoHighlights).toEqual(expected);
+  const saved=json(`select jsonb_agg(jsonb_build_object('proposal',proposal,'resolved',resolved,'snapshot',annotation_snapshot)order by updated_at)from public.admin_analysis_reviews;`);
+  expect(saved.map((r:any)=>r.proposal)).toEqual([first,second]);expect(saved.map((r:any)=>r.resolved)).toEqual([first,second]);
+  expect(saved.every((r:any)=>r.snapshot.videoHighlights[0].text==='Prior reviewed finding')).toBe(true);
+  sql(`update public.reader_source_updates set record=record||'{"videoHighlights":[],"title":"Collector update"}'::jsonb where id='review-video';`);
+  expect(source().videoHighlights).toEqual(expected);expect(source().title).toBe('Collector update');
+  expect(()=>decide(b)).toThrow();
+ });
+ it('keeps an already published same-hash recap, timing and keywords while adding later approved points to one reader item',()=>{
+  const seed={...record,videoHighlights:[{text:'AeroBox uses a quiet focus setting.',startSeconds:0}],videoSummary:{ruleVersion:'takeaways-v1',status:'ready',captionHash:hash,timingBasis:'captions'},
+   transcriptSegments:[{text:'AeroBox uses a quiet focus setting.',startSeconds:0,durationSeconds:10}],videoKeywords:[{label:'AeroBox',ranges:[]}],topics:['AeroBox'],keywordContentHash:hash};
+  sql(`update public.reader_source_updates set record=${j(seed)} where id='review-video';`);
+  const a=row('recap',{highlights:[{text:'Measured improvement.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]}),
+   b=row('recap',{highlights:[{text:'AeroBox offers a quiet focus setting.',evidenceQuote:'AeroBox uses a quiet focus setting.'}]});
+  decide(a);decide(b);
+  const current=source();expect(current.videoHighlights).toEqual([seed.videoHighlights[0],{text:'Measured improvement.'},{text:'AeroBox offers a quiet focus setting.'}]);
+  expect(current.videoSummary.timingBasis).toBe('captions');expect(current.videoKeywords).toEqual(seed.videoKeywords);
+  expect(current.topics).toEqual(seed.topics);expect(current.keywordContentHash).toBe(hash);
+  expect(json('select count(*)::integer from public.reader_source_updates;')).toBe(1);
+ });
+ it.each([null,'stale'])('never promotes an unpublished or %s recap seed when adding a cited approval',kind=>{
+  const seed={...record,videoHighlights:[{text:'Unpublished old claim.'}],...(kind?{videoSummary:{ruleVersion:'takeaways-v1',status:'ready',captionHash:'a'.repeat(64),timingBasis:'none'}}:{})};
+  sql(`update public.reader_source_updates set record=${j(seed)} where id='review-video';`);
+  decide(row('recap',{highlights:[{text:'Measured improvement.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]}));
+  expect(source().videoHighlights).toEqual([{text:'Measured improvement.'}]);
+ });
+ it('rejects an additional recap without changing already published points and keeps new keyword approvals additive',()=>{
+  const proposal={highlights:[{text:'Measured improvement.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]};
+  const a=row('recap',proposal),b=row('recap',proposal);decide(a);const before=source();expect(decide(b,'reject').published).toBe(false);expect(source()).toEqual(before);
+  decide(row(),'approve',{label:'quiet focus',kind:'technology'});decide(row('keyword',{label:'AeroBox',kind:'brand'}));
+  expect(source().videoHighlights).toEqual(before.videoHighlights);expect(source().videoKeywords.map((p:any)=>p.label).sort()).toEqual(['AeroBox','quiet focus']);
+ });
+ it('allows thirty distinct published points and duplicate approvals, then rolls back an overflowing contribution without truncation',()=>{
+  const seed={...record,videoHighlights:Array.from({length:28},(_,i)=>({text:'Published point '+i+'.'})),videoSummary:{ruleVersion:'takeaways-v1',status:'ready',captionHash:hash,timingBasis:'none'}};
+  sql(`update public.reader_source_updates set record=${j(seed)} where id='review-video';`);
+  const quote='The laboratory found a measurable improvement over the older design.';
+  const a=row('recap',{highlights:[{text:'New point one.',evidenceQuote:quote},{text:'New point two.',evidenceQuote:quote}]}),
+   duplicate=row('recap',{highlights:[{text:' New point one. ',evidenceQuote:quote}]}),overflow=row('recap',{highlights:[{text:'New point three.',evidenceQuote:quote}]});
+  decide(a);expect(source().videoHighlights).toHaveLength(30);expect(decide(duplicate).published).toBe(true);const before=source();
+  expect(()=>decide(overflow)).toThrow();expect(source()).toEqual(before);
+  expect(service(`select status from public.admin_analysis_reviews where id=${q(overflow.id)};`)).toBe('pending');
+  expect(json("select count(*)::integer from public.admin_audit_events where action='analysis.review.approved';")).toBe(2);
+ });
+ it('keeps published seed text without stale timing when a same-source refresh drops caption cues',()=>{
+  const seed={...record,videoHighlights:[{text:'AeroBox uses a quiet focus setting.',startSeconds:0}],videoSummary:{ruleVersion:'takeaways-v1',status:'ready',captionHash:hash,timingBasis:'captions'},transcriptSegments:[{text:'AeroBox uses a quiet focus setting.',startSeconds:0,durationSeconds:10}]};
+  sql(`update public.reader_source_updates set record=${j(seed)} where id='review-video';`);
+  decide(row('recap',{highlights:[{text:'Measured improvement.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]}));
+  sql(`update public.reader_source_updates set record=(record-'transcriptSegments')||'{"videoHighlights":[]}'::jsonb where id='review-video';`);
+  expect(source().videoHighlights).toEqual([{text:'AeroBox uses a quiet focus setting.'},{text:'Measured improvement.'}]);
+  expect(source().videoSummary.timingBasis).toBe('none');
+ });
+ it('restores approvals only when a refresh returns to their exact prior source version',()=>{
+  const proposal={highlights:[{text:'Measured improvement.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]};decide(row('recap',proposal));
+  sql(`update public.reader_source_updates set record=record||'{"content":"A different source version.","videoHighlights":[]}'::jsonb where id='review-video';`);
+  expect(source().videoHighlights).toEqual([]);
+  sql(`update public.reader_source_updates set record=${j(record)} where id='review-video';`);
+  expect(source().videoHighlights).toEqual([{text:'Measured improvement.'}]);expect(source().videoSummary.captionHash).toBe(hash);
+ });
+ it('advances the archive change cursor for approvals while preserving collection time and job history',()=>{
+  job('failed','summary',null,'analysis_invalid_summary');
+  const r=row('recap',{highlights:[{text:'Measured improvement.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]}),
+   before=json("select jsonb_build_object('collectedAt',collected_at,'updatedAt',updated_at)from public.reader_source_updates where id='review-video';"),
+   jobs=sql('select jsonb_agg(to_jsonb(j)order by id)from public.reader_content_analysis_jobs j;');
+  decide(r);
+  const after=json("select jsonb_build_object('collectedAt',collected_at,'updatedAt',updated_at)from public.reader_source_updates where id='review-video';");
+  expect(after.collectedAt).toBe(before.collectedAt);expect(sql('select jsonb_agg(to_jsonb(j)order by id)from public.reader_content_analysis_jobs j;')).toBe(jobs);
+  const changes=json(`select coalesce(jsonb_agg(jsonb_build_object('id',id,'updated_at',updated_at)order by updated_at,id),'[]')from public.reader_source_updates where user_id=${q(owner)}and updated_at>${q(before.updatedAt)}::timestamptz and updated_at<=clock_timestamp();`);
+  expect(changes).toEqual([{id:'review-video',updated_at:after.updatedAt}]);
+  sql("update public.reader_source_updates set record=record where id='review-video';");
+  expect(json("select to_jsonb(updated_at)from public.reader_source_updates where id='review-video';")).toBe(after.updatedAt);
+ });
+ it.each([
+  {summaryHash:'a'.repeat(64),keywordHash:undefined,expected:'a'.repeat(64)},
+  {summaryHash:null,keywordHash:undefined,expected:null},
+  {summaryHash:'a'.repeat(64),keywordHash:hash,expected:hash},
+  {summaryHash:hash,keywordHash:null,expected:null},
+ ])('keeps independent keyword provenance when a new recap is approved ($summaryHash / $keywordHash)',scenario=>{
+  const seed={...record,videoKeywords:[{label:'Old legacy label',ranges:[]}],topics:['Old legacy label'],
+   ...(scenario.summaryHash?{videoSummary:{ruleVersion:'takeaways-v1',status:'ready',captionHash:scenario.summaryHash,timingBasis:'none'}}:{}),
+   ...(scenario.keywordHash!==undefined?{keywordContentHash:scenario.keywordHash}:{})};
+  sql(`update public.reader_source_updates set record=${j(seed)} where id='review-video';`);
+  decide(row('recap',{highlights:[{text:'Measured improvement.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]}));
+  expect(source().videoSummary.captionHash).toBe(hash);expect(Object.hasOwn(source(),'keywordContentHash')).toBe(true);
+  expect(source().keywordContentHash).toBe(scenario.expected);expect(source().videoKeywords).toEqual(seed.videoKeywords);expect(source().topics).toEqual(seed.topics);
+  // A later refresh omitting the independent field must not borrow the fresh
+  // manual recap hash when the preservation trigger restores that recap.
+  sql("update public.reader_source_updates set record=record-'keywordContentHash' where id='review-video';");
+  expect(source().keywordContentHash).toBe(scenario.expected);
  });
  it('rejects unsupported/empty recap edits and concurrent recap changes but allows unrelated metadata',()=>{
   const proposal={highlights:[{text:'Measured improvement.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]},r=row('recap',proposal);

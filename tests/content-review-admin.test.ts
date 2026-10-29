@@ -17,7 +17,7 @@ const body={action:'review',id,origin:'analysis',expectedUpdatedAt:rev,decision:
 const authorized=async()=> 'user_real_admin';
 function stub() {
   const state={row:structuredClone(original) as Record<string,unknown>,current:structuredClone(source) as Record<string,unknown>,auditError:null as unknown,
-    rpcError:null as {code:string;message:string}|null,published:undefined as boolean|undefined};
+    rpcError:null as {code:string;message:string}|null,published:undefined as boolean|undefined,publishedRecap:null as unknown};
   const queries=new Map<string,Record<string,ReturnType<typeof vi.fn>>>();
   const from=vi.fn((table:string)=>{
     const q:Record<string,ReturnType<typeof vi.fn>>={};
@@ -26,7 +26,7 @@ function stub() {
     q.maybeSingle=vi.fn(async()=>({data:table==='reader_source_updates'?{record:state.current}:table==='admin_analysis_prompt_receipts'?{source_snapshot:source}:state.row,error:null}));
     q.insert=vi.fn(async()=>({data:null,error:state.auditError}));queries.set(table,q);return q;
   });
-  const rpc=vi.fn(async(name:string,args:Record<string,unknown>)=>({data:name==='read_admin_analysis_review_prompts'?{prompts:[],total:0,page:args.p_page,pageSize:3}:name==='admin_review_keyword'?{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved_label:args.p_label,resolved_kind:args.p_kind,updated_at:nextRev}:{record:{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved:args.p_proposal,updated_at:nextRev},published:state.published??args.p_decision==='approve'},error:state.rpcError}));
+  const rpc=vi.fn(async(name:string,args:Record<string,unknown>)=>({data:name==='read_admin_analysis_review_prompts'?{prompts:[],total:0,page:args.p_page,pageSize:3}:name==='admin_analysis_published_recap'?state.publishedRecap:name==='admin_review_keyword'?{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved_label:args.p_label,resolved_kind:args.p_kind,updated_at:nextRev}:{record:{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved:args.p_proposal,updated_at:nextRev},published:state.published??args.p_decision==='approve'},error:state.rpcError}));
   const db=vi.fn(()=>({from,rpc})) as unknown as NonNullable<Parameters<typeof createAdminHandler>[0]>['db'];
   const run=(request:Request)=>createAdminHandler({authorize:authorized,db})(request);
   return {state,from,rpc,db,run,queries};
@@ -113,6 +113,19 @@ describe('compact private content review API',()=>{
   });
   it('blocks recap replacement when a reader annotation changed since capture',async()=>{
     const s=stub();s.state.row.kind='recap';s.state.row.proposal={highlights:[{text:'A supported point.',evidenceQuote:'The setting is quiet mode.'}]};s.state.current.videoHighlights=[{text:'Newly reviewed point'}];const {review}=await(await s.run(get('section=review&id='+id))).json();expect(review.canEdit).toBe(false);expect(review.cannotApproveReason).toContain('reader recap changed');
+  });
+  it('allows adding a cited recap when earlier explicit approvals exactly explain the changed reader recap',async()=>{
+    const s=stub();s.state.row.kind='recap';s.state.row.proposal={highlights:[{text:'A supported addition.',evidenceQuote:'The setting is quiet mode.'}]};
+    s.state.current.videoHighlights=[{text:'Previously approved point.'}];s.state.current.videoSummary={ruleVersion:'takeaways-v1',status:'ready',captionHash:digest,timingBasis:'none'};
+    s.state.publishedRecap={videoHighlights:s.state.current.videoHighlights,videoSummary:s.state.current.videoSummary};
+    const {review}=await(await s.run(get('section=review&id='+id))).json();expect(review.canApprove).toBe(true);expect(review.canEdit).toBe(true);
+    const response=await s.run(patch(body));expect(response.status).toBe(200);expect((await response.json()).published).toBe(true);
+    expect(s.rpc).toHaveBeenCalledWith('admin_analysis_published_recap',{p_user_id:'user_private',p_update_id:'archived',p_source_id:'source',p_content_hash:digest});
+  });
+  it('keeps the annotation conflict when a previous approval does not explain the exact current recap',async()=>{
+    const s=stub();s.state.row.kind='recap';s.state.row.proposal={highlights:[{text:'A supported addition.',evidenceQuote:'The setting is quiet mode.'}]};
+    s.state.current.videoHighlights=[{text:'Unexplained replacement.'}];s.state.publishedRecap={videoHighlights:[{text:'Previously approved point.'}],videoSummary:null};
+    const response=await s.run(patch(body));expect(response.status).toBe(409);expect(s.rpc.mock.calls.some(([name])=>name==='admin_decide_analysis_review')).toBe(false);
   });
   it('uses the separate held-time recap revision rather than older prompt metadata',async()=>{
     const s=stub();s.state.row.kind='recap';s.state.row.proposal={highlights:[{text:'A supported point.',evidenceQuote:'The setting is quiet mode.'}]};
