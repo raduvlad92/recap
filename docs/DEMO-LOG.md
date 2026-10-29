@@ -1,5 +1,13 @@
 # Demo and evidence log
 
+## 29 October 2026 — background review saves without list reloads
+
+Fixed the successful-save reload and global single-save lock. Rows show Saving immediately; distinct rows can save concurrently, confirmed rows/counts update locally, and the other open review keeps its component/editor state. Failed rows remain visible, stale/unknown writes stay blocked per row, and subsequent bulk batches require no refresh. Duplicate guards and explicit page-zero remaining-list loads preserve source/revision safety.
+
+Local **32 UI tests**, typecheck and production build pass. CI **40801895509** passes: **2,569 tests passed / 757 skipped** across 73 passed / 20 skipped files. Ready Netlify `6ae2a4e4d7711c5a72726967` serves `3ea75a00133ea9738c05cfa6ceaaf151b25d1a9a`, published **01:44:41.773 UTC**. Served admin assets match the local tested bundle; actual owner/ordinary/anonymous read-only checks return 200/403/401 at 01:47:10 UTC, with 328 pending. The initial read-only probe received a non-JSON response; its log remains, and the bounded read-only retry passes.
+
+No real decisions, model calls, API/schema changes or new browser walkthrough occurred. Runtime remains false. Both isolated QA sessions are revoked; existing sessions are untouched. [Sanitized evidence](tech/evidence/admin-review-instant-2026-10-29.json); private evidence: `.local/admin-review-instant-20261029/`. Next: refresh the admin page once to load this version, then continue reviewing in place.
+
 ## 29 October 2026 — compact bulk review controls
 
 Delivered row checkboxes, current-page selection/Clear and bulk confirm/publish or reject, reusing individual source/revision guards. All **3,319 tests / 93 files**, including 25 UI behavior checks and 20 disposable PostgreSQL checks, catalogue/typecheck/build and CI **40800098676** pass. Independent review fixes source names on checkboxes and prevents pagination skips after a batch. Ready Netlify `6ae2a0e839bcc5da8dadbe9b` serves `d020b5709c5e0168eb3610ff9be2128dd7f08ce9`, published **01:27:41.188 UTC**. Actual hosted admin assets match the locally tested bundle; owner/ordinary/anonymous queue reads return 200/403/401, with 328 pending at 01:28:09 UTC.

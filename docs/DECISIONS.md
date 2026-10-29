@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 29 October 2026 — keep review saves in place
+
+Founder: accept/reject reloads the whole page/list; make the action immediate so the next review can continue. Show Saving on the selected row before awaiting the existing server request; keep other rows usable, merge confirmed results locally and retain failed rows. Reuse existing source/revision checks without new endpoints or schema. Successful singles and bulk batches do not trigger a list reload; explicit remaining-list loads restart at page zero to avoid skipped items. Do not make real owner decisions during QA or claim that Saving already means published.
+
+Implemented/deployed functional `3ea75a0`; 32 focused UI tests/typecheck/build and CI pass, with 2,569 passing / 757 skipped in CI. Hosted admin assets and private read access are verified. No model calls or new training. [Proof](tech/evidence/admin-review-instant-2026-10-29.json).
+
 ## 29 October 2026 — bulk review and honest feedback scope
 
 Founder: “select multiple” and bulk “reject/accept more than 1,” and asked whether either decision teaches the system. Add compact page selection and reuse the current guarded decision API sequentially. Bulk accepts saved proposals; unsaved edits must be saved individually. Do not approve real items while testing.

@@ -31,7 +31,11 @@ Your decisions and the original evidence remain saved. This does not start paid 
 
 ### Bulk selection
 
-Check individual rows or use **Select this page** for up to 50 visible items; **Clear** removes the selection. Choose **Confirm and publish selected** or **Reject selected**. Each item keeps its own source and revision checks. The result shows separate successes and failures; unsupported or changed items are not silently approved. After a batch, use **Reload latest reviews** before selecting the next batch. An uncertain response is not automatically retried: check the saved state before trying again.
+Check individual rows or use **Select this page** for up to 50 visible items; **Clear** removes the selection. Choose **Confirm and publish selected** or **Reject selected**. Each item keeps its own source and revision checks. The result shows separate successes and failures; unsupported or changed items are not silently approved. An uncertain response is not automatically retried: check that item's saved state before trying again.
+
+### Keep reviewing while a decision saves
+
+A row shows **Saving** immediately while its decision saves in the background. You can continue with the next review. Confirmed decisions leave the pending list without reloading the whole list, including after a successful bulk action. Failed or uncertain items stay visible with their error; reread or reload those items before retrying. Use **Load remaining reviews** to fetch more when needed.
 
 ### What the app remembers
 

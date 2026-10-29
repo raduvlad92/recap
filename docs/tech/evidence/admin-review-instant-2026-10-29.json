@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "verifiedAt": "2026-10-29T01:47:10.604Z",
+  "functionalCommit": "3ea75a00133ea9738c05cfa6ceaaf151b25d1a9a",
+  "ci": {
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "3ea75a00133ea9738c05cfa6ceaaf151b25d1a9a",
+    "url": "https://github.com/raduvlad92/recap/actions/runs/40801895509"
+  },
+  "deployment": {
+    "id": "6ae2a4e4d7711c5a72726967",
+    "state": "ready",
+    "commit_ref": "3ea75a00133ea9738c05cfa6ceaaf151b25d1a9a",
+    "published_at": "2026-10-29T01:44:41.773Z"
+  },
+  "behavior": {
+    "immediateRowSavingFeedback": true,
+    "otherIndividualReviewsUsableWhileSaving": true,
+    "confirmedRowsRemovedLocally": true,
+    "noAutomaticListReloadAfterSingleOrBulkSuccess": true,
+    "otherOpenReviewIdentityPreserved": true,
+    "perRowSynchronousDuplicateGuard": true,
+    "outOfOrderResultsMerged": true,
+    "failedRowsRetained": true,
+    "uncertainRowsIndividuallyBlocked": true,
+    "repeatedBulkWithoutReload": true,
+    "safeExplicitRemainingListReloadFromPageZero": true,
+    "sourceAndRevisionChecksUnchanged": true
+  },
+  "verification": {
+    "localFocusedUiTestsPassed": 32,
+    "localTypecheck": "pass",
+    "localProductionBuild": "pass",
+    "independentReview": "pass after small recovery, selection and pagination fixes",
+    "ciTests": {
+      "passed": 2569,
+      "skipped": 757,
+      "configured": 3326
+    },
+    "ciFiles": {
+      "passed": 73,
+      "skipped": 20,
+      "configured": 93
+    },
+    "servedAdminAssetMatchesLocallyTestedBuild": true
+  },
+  "hostedReadOnly": {
+    "verifiedAt": "2026-10-29T01:47:10.604Z",
+    "type": "hosted_asset_and_read_only_authenticated_HTTP",
+    "adminDocument": 200,
+    "adminAsset": 200,
+    "adminChunk": "/assets/AdminApp-B0K7VnMg.js",
+    "adminChunkSha256": "de49520e7f6c6e2970912f1b95d0af4fe1ebd0bb36e7a104c05b421f941ff8be",
+    "bulkControlsPresent": true,
+    "inPlaceReviewControlsPresent": true,
+    "ownerQueue": 200,
+    "ordinaryQueue": 403,
+    "anonymousQueue": 401,
+    "currentPendingItems": 328,
+    "realDecisionsApplied": 0,
+    "modelCalls": 0,
+    "boundary": "Per-row and bulk handlers are exercised by component tests with mocked requests; no real review decisions or browser walkthrough were performed."
+  },
+  "initialProbe": {
+    "nonJsonResponse": true,
+    "failureLogRetained": true,
+    "readOnlyRetrySucceeded": true,
+    "initialHttpStatus": "not captured"
+  },
+  "operatingState": {
+    "modelRuntimeEnabled": false,
+    "newModelCalls": 0,
+    "newModelSpendUsd": 0,
+    "realReviewDecisionsApplied": 0,
+    "serverApiChanges": false,
+    "schemaChanges": false,
+    "qaSessionsRevoked": 2,
+    "existingUserSessionsTouched": false
+  },
+  "boundaries": [
+    "Per-row and bulk handlers are exercised with mocked requests, including deferred concurrent saves; no real owner decisions were made.",
+    "Hosted proof verifies served assets and read-only authenticated access, not a browser walkthrough.",
+    "CI reports 2569 passed and 757 skipped; this increment does not claim 3326 locally executed passing tests.",
+    "Earlier native database/publication evidence remains scoped to its original release."
+  ]
+}
