@@ -31,74 +31,87 @@ const reviewKey = (record: Pick<ContentReviewSummary, 'id' | 'origin'>) => recor
 const uncertainDecision = (error: ReviewProblem) => error.status === 0 || error.status >= 500;
 
 export function AnalysisReviews({ data, status, page, onStatusChange, onPageChange, loadDetail, decide, reload, onPendingChange }: Props) {
-  const [pendingKey, setPendingKey] = useState<string | null>(null), [openKey, setOpenKey] = useState<string | null>(null), [selected, setSelected] = useState<Set<string>>(() => new Set()), [outcomes, setOutcomes] = useState<Record<string, BulkReviewOutcome>>({}), [bulk, setBulk] = useState<{ decision: ContentReviewDecision['decision']; total: number; running: boolean } | null>(null);
-  const locked = useRef(false), active = useRef(true), reloadRequired = useRef(false), selectPageRef = useRef<HTMLInputElement>(null);
+  const [pendingKeys, setPendingKeys] = useState<Set<string>>(() => new Set()), [openKey, setOpenKey] = useState<string | null>(null), [selected, setSelected] = useState<Set<string>>(() => new Set()), [outcomes, setOutcomes] = useState<Record<string, BulkReviewOutcome>>({}), [bulk, setBulk] = useState<{ decision: ContentReviewDecision['decision']; total: number; running: boolean; results: Record<string, BulkReviewOutcome> } | null>(null);
+  const pending = useRef(new Set<string>()), bulkLocked = useRef(false), active = useRef(true), outcomesRef = useRef<Record<string, BulkReviewOutcome>>({}), selectPageRef = useRef<HTMLInputElement>(null);
   const records = Array.isArray(data.reviews) ? data.reviews : [], scope = status + ':' + page + ':' + records.map(record => reviewKey(record) + '@' + record.updatedAt).join('|'), currentScope = useRef(scope), selectionScope = useRef(scope);
   currentScope.current = scope;
   useEffect(() => { active.current = true; return () => { active.current = false; onPendingChange(false); }; }, [onPendingChange]);
-  useEffect(() => { setSelected(new Set()); setOutcomes({}); setBulk(null); setOpenKey(null); reloadRequired.current = false; selectionScope.current = scope; }, [scope]);
-  const shownRecords = records.map(record => outcomes[reviewKey(record)]?.result?.record ?? record), eligible = status === 'pending' ? shownRecords.filter(record => record.status === 'pending') : [];
+  useEffect(() => { setSelected(new Set()); setOutcomes({}); outcomesRef.current = {}; setBulk(null); setOpenKey(null); selectionScope.current = scope; }, [scope]);
+  const needsRowReload = (key: string) => { const error = outcomesRef.current[key]?.error; return !!error && (uncertainDecision(error) || [401, 403, 409].includes(error.status)); };
+  const shownRecords = records.map(record => outcomes[reviewKey(record)]?.result?.record ?? record).filter(record => record.status === status), eligible = status === 'pending' ? shownRecords.filter(record => !pendingKeys.has(reviewKey(record)) && !outcomes[reviewKey(record)]?.error) : [];
   const selectedCount = selectionScope.current === scope ? eligible.filter(record => selected.has(reviewKey(record))).length : 0, allSelected = eligible.length > 0 && selectedCount === eligible.length, mixed = selectedCount > 0 && !allSelected;
   useEffect(() => { if (selectPageRef.current) selectPageRef.current.indeterminate = mixed; }, [mixed]);
+  const markPending = (key: string, value: boolean) => { if (value) pending.current.add(key); else pending.current.delete(key); if (active.current) { setPendingKeys(new Set(pending.current)); onPendingChange(pending.current.size > 0 || bulkLocked.current); } };
+  const keep = (key: string, outcome: BulkReviewOutcome, savedScope: string) => {
+    if (!active.current || currentScope.current !== savedScope) return;
+    outcomesRef.current = { ...outcomesRef.current, [key]: outcome }; setOutcomes(outcomesRef.current);
+    if (outcome.result || outcome.error) setSelected(previous => { const next = new Set(previous); next.delete(key); return next; });
+  };
+  const validateResult = (body: ContentReviewDecision, result: ContentReviewDecisionResult) => {
+    if (result.record.id !== body.id || result.record.origin !== body.origin || result.record.status !== (body.decision === 'approve' ? 'approved' : 'rejected') || result.published !== (body.decision === 'approve')) throw { status: 502, message: 'The server did not confirm this decision. Reload to check its result.' } satisfies ReviewProblem;
+    return result;
+  };
   const save: DecideContentReview = async body => {
-    if (locked.current || reloadRequired.current) throw { status: 409, message: 'Reload the latest reviews before another decision.' } satisfies ReviewProblem;
-    locked.current = true; setPendingKey(body.origin + ':' + body.id); onPendingChange(true);
-    try { const result = await decide(body); if (active.current) reload(); return result; }
-    finally { locked.current = false; if (active.current) { setPendingKey(null); onPendingChange(false); } }
+    const key = reviewKey(body), record = records.find(item => reviewKey(item) === key);
+    if (bulkLocked.current || pending.current.has(key) || outcomesRef.current[key]?.result || needsRowReload(key) || currentScope.current !== scope || !record) throw { status: 409, message: 'This item is saving, already decided, or needs a reload.' } satisfies ReviewProblem;
+    markPending(key, true); keep(key, { record }, scope);
+    try { const result = validateResult(body, await decide(body, { silent: true })); keep(key, { record, result }, scope); return result; }
+    catch (value) { keep(key, { record, error: problem(value) }, scope); throw value; }
+    finally { markPending(key, false); }
   };
   const runBulk = async (decision: ContentReviewDecision['decision']) => {
-    if (locked.current || reloadRequired.current || status !== 'pending' || selectionScope.current !== scope || currentScope.current !== scope) return;
-    const targets = records.filter(record => record.status === 'pending' && selected.has(reviewKey(record))).slice(0, 50).map(record => ({ ...record }));
+    if (bulkLocked.current || pending.current.size > 0 || status !== 'pending' || selectionScope.current !== scope || currentScope.current !== scope) return;
+    const targets = records.filter(record => record.status === 'pending' && selected.has(reviewKey(record)) && !outcomesRef.current[reviewKey(record)]?.result && !outcomesRef.current[reviewKey(record)]?.error).slice(0, 50).map(record => ({ ...record }));
     if (!targets.length) return;
     const frozenScope = scope, results: Record<string, BulkReviewOutcome> = {};
-    locked.current = true; reloadRequired.current = true; setBulk({ decision, total: targets.length, running: true }); onPendingChange(true);
-    const keep = (key: string, outcome: BulkReviewOutcome) => { results[key] = outcome; if (active.current && currentScope.current === frozenScope) setOutcomes({ ...results }); };
+    bulkLocked.current = true; setBulk({ decision, total: targets.length, running: true, results: {} }); onPendingChange(true);
+    const keepBulk = (key: string, outcome: BulkReviewOutcome) => { results[key] = outcome; keep(key, outcome, frozenScope); if (active.current && currentScope.current === frozenScope) setBulk(previous => previous ? { ...previous, results: { ...results } } : null); };
     try {
       for (let index = 0; index < targets.length; index++) {
         if (!active.current || currentScope.current !== frozenScope) break;
-        const record = targets[index], key = reviewKey(record); setPendingKey(key);
+        const record = targets[index], key = reviewKey(record); markPending(key, true);
         try {
-          const result = await decide({ action: 'review', id: record.id, origin: record.origin, expectedUpdatedAt: record.updatedAt, decision }, { silent: true });
-          if (result.record.id !== record.id || result.record.origin !== record.origin || result.record.status !== (decision === 'approve' ? 'approved' : 'rejected') || result.published !== (decision === 'approve')) throw { status: 502, message: 'The server did not confirm this decision. Reload to check its result.' } satisfies ReviewProblem;
-          keep(key, { record, result });
-          if (active.current && currentScope.current === frozenScope) setSelected(previous => { const next = new Set(previous); next.delete(key); return next; });
+          const body: ContentReviewDecision = { action: 'review', id: record.id, origin: record.origin, expectedUpdatedAt: record.updatedAt, decision };
+          const result = validateResult(body, await decide(body, { silent: true })); keepBulk(key, { record, result });
         } catch (value) {
-          const error = problem(value); keep(key, { record, error });
+          const error = problem(value); keepBulk(key, { record, error });
           if (uncertainDecision(error) || error.status === 401 || error.status === 403 || wasAborted(value)) {
-            for (const remaining of targets.slice(index + 1)) keep(reviewKey(remaining), { record: remaining, unattempted: true });
+            for (const remaining of targets.slice(index + 1)) keepBulk(reviewKey(remaining), { record: remaining, unattempted: true });
             break;
           }
-        }
+        } finally { markPending(key, false); }
       }
     } finally {
-      locked.current = false;
-      if (active.current) { setPendingKey(null); onPendingChange(false); if (currentScope.current === frozenScope) setBulk(previous => previous ? { ...previous, running: false } : null); }
+      bulkLocked.current = false;
+      if (active.current) { onPendingChange(pending.current.size > 0); if (currentScope.current === frozenScope) setBulk(previous => previous ? { ...previous, running: false } : null); }
     }
   };
   const validPage = Array.isArray(data.reviews) && Number.isInteger(data.total) && data.total! >= 0 && data.page === page && Number.isInteger(data.pageSize) && data.pageSize! > 0;
   if (!validPage) return <div className="ra-message ra-message-error" role="alert"><h2>Reviews could not be read</h2><p>The service did not return a complete list.</p><button className="ra-button" type="button" onClick={reload}>Retry</button></div>;
-  const total = data.total!, pageSize = data.pageSize!, busy = pendingKey !== null || bulk?.running === true, needsReload = reloadRequired.current;
-  const start = records.length ? page * pageSize + 1 : 0, end = records.length ? Math.min(page * pageSize + records.length, total) : 0;
-  const successes = Object.values(outcomes).filter(outcome => outcome.result).length, failures = Object.values(outcomes).filter(outcome => outcome.error).length, unattempted = Object.values(outcomes).filter(outcome => outcome.unattempted).length;
-  const toggleSelected = (key: string) => { if (locked.current || reloadRequired.current) return; const sameScope = selectionScope.current === scope; selectionScope.current = scope; setSelected(previous => { const next = sameScope ? new Set(previous) : new Set<string>(); if (next.has(key)) next.delete(key); else next.add(key); return next; }); };
-  return <section className="ra-review-queue" aria-label="Keyword and recap reviews" aria-busy={busy}>
-    <div className="ra-review-tools"><label htmlFor="ra-review-status">Status<select id="ra-review-status" value={status} disabled={busy} onChange={event => onStatusChange(event.target.value as ContentReviewStatus)}>{Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><p>{bulk ? `${eligible.length.toLocaleString()} pending on this loaded page` : `${total.toLocaleString()} ${status} ${total === 1 ? 'item' : 'items'}`}</p></div>
+  const removed = records.filter(record => record.status === status && outcomes[reviewKey(record)]?.result && outcomes[reviewKey(record)]!.result!.record.status !== status).length;
+  const pagingDirty = removed > 0 || Object.keys(outcomes).some(needsRowReload);
+  const total = Math.max(0, data.total! - removed), pageSize = data.pageSize!, busy = pendingKeys.size > 0 || bulk?.running === true, batchBusy = bulk?.running === true;
+  const start = shownRecords.length ? page * pageSize + 1 : 0, end = shownRecords.length ? Math.min(page * pageSize + shownRecords.length, total) : 0;
+  const successes = Object.values(bulk?.results ?? {}).filter(outcome => outcome.result).length, failures = Object.values(bulk?.results ?? {}).filter(outcome => outcome.error).length, unattempted = Object.values(bulk?.results ?? {}).filter(outcome => outcome.unattempted).length;
+  const toggleSelected = (key: string) => { if (bulkLocked.current || pending.current.has(key) || outcomesRef.current[key]?.result || outcomesRef.current[key]?.error) return; const sameScope = selectionScope.current === scope; selectionScope.current = scope; setSelected(previous => { const next = sameScope ? new Set(previous) : new Set<string>(); if (next.has(key)) next.delete(key); else next.add(key); return next; }); };
+  return <section className="ra-review-queue" aria-label="Keyword and recap reviews" aria-busy={batchBusy}>
+    <div className="ra-review-tools"><label htmlFor="ra-review-status">Status<select id="ra-review-status" value={status} disabled={busy} onChange={event => onStatusChange(event.target.value as ContentReviewStatus)}>{Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><p>{`${total.toLocaleString()} ${status} ${total === 1 ? 'item' : 'items'}`}</p></div>
     {status === 'pending' && records.length > 0 && <div className="ra-review-bulk-tools" role="group" aria-label="Bulk review decisions">
-      <label className="ra-review-select-page"><input ref={selectPageRef} type="checkbox" aria-label="Select this page" aria-checked={mixed ? 'mixed' : allSelected} checked={allSelected} disabled={busy || needsReload || !eligible.length} onChange={() => { if (!locked.current && !reloadRequired.current) { selectionScope.current = scope; setSelected(allSelected ? new Set() : new Set(eligible.map(reviewKey))); } }} /><span>Select this page</span></label>
+      <label className="ra-review-select-page"><input ref={selectPageRef} type="checkbox" aria-label="Select this page" aria-checked={mixed ? 'mixed' : allSelected} checked={allSelected} disabled={batchBusy || !eligible.length} onChange={() => { if (!bulkLocked.current) { selectionScope.current = scope; setSelected(allSelected ? new Set() : new Set(eligible.map(reviewKey))); } }} /><span>Select this page</span></label>
       <button className="ra-text-button" type="button" disabled={busy || selectedCount === 0} onClick={() => setSelected(new Set())}>Clear</button><span className="ra-review-selected-count" role="status">{selectedCount} selected</span>
-      <div className="ra-review-bulk-actions"><button className="ra-button ra-button-primary ra-button-small" type="button" disabled={busy || needsReload || selectedCount === 0} onClick={() => void runBulk('approve')}>Confirm and publish selected</button><button className="ra-button ra-button-small" type="button" disabled={busy || needsReload || selectedCount === 0} onClick={() => void runBulk('reject')}>Reject selected</button></div>
+      <div className="ra-review-bulk-actions"><button className="ra-button ra-button-primary ra-button-small" type="button" disabled={busy || selectedCount === 0} onClick={() => void runBulk('approve')}>Confirm and publish selected</button><button className="ra-button ra-button-small" type="button" disabled={busy || selectedCount === 0} onClick={() => void runBulk('reject')}>Reject selected</button></div>
       <p className="ra-review-bulk-note">Uses saved proposals; save edits individually.</p>
     </div>}
-    {bulk && <div className="ra-review-bulk-report" role="status"><p>{bulk.running ? `Saving decisions: ${successes + failures} of ${bulk.total} checked.` : `${successes} ${bulk.decision === 'approve' ? 'confirmed and published' : 'rejected'}; ${failures} need attention; ${unattempted} not attempted.`}</p>{!bulk.running && <><p>Results remain on this page. Reload before another decision.</p><button className="ra-button ra-button-small" type="button" onClick={reload}>Reload latest reviews</button></>}</div>}
+    {bulk && <div className="ra-review-bulk-report" role="status"><p>{bulk.running ? `Saving decisions: ${successes + failures} of ${bulk.total} checked.` : `${successes} ${bulk.decision === 'approve' ? 'confirmed and published' : 'rejected'}; ${failures} need attention; ${unattempted} not attempted.`}</p>{!bulk.running && <><p>You can continue with the remaining items.</p>{failures > 0 && <button className="ra-button ra-button-small" type="button" disabled={busy} onClick={reload}>Reload latest reviews</button>}</>}</div>}
     {shownRecords.length ? <ul className="ra-review-list">{shownRecords.map(record => {
       const key = reviewKey(record), outcome = outcomes[key];
-      return <li key={key + ':' + record.updatedAt}><div className={status === 'pending' ? 'ra-review-select-row' : undefined}>{status === 'pending' && <label className="ra-review-row-selection">{record.status === 'pending' && <input type="checkbox" aria-label={'Select ' + kindLabel(record.kind).toLowerCase() + ' ' + (record.label || 'unnamed item') + ' from ' + (record.sourceTitle || 'untitled source')} checked={selectionScope.current === scope && selected.has(key)} disabled={busy || needsReload} onChange={() => toggleSelected(key)} />}</label>}<div className="ra-review-row-content"><ReviewRow record={record} open={openKey === key} toggle={() => setOpenKey(value => value === key ? null : key)} loadDetail={loadDetail} decide={save} disabled={busy} writeDisabled={needsReload} pending={pendingKey === key} reload={reload} />{outcome?.error && <p className="ra-review-row-result">{uncertainDecision(outcome.error) ? 'Decision not confirmed: ' : 'Not saved: '}{outcome.error.message}</p>}{outcome?.unattempted && <p className="ra-review-row-result ra-muted">Not attempted. Reload before deciding.</p>}</div></div></li>;
-    })}</ul> : <div className="ra-review-empty"><h2>{page > 0 ? 'No items on this page' : `No ${status} reviews`}</h2><p>{page > 0 ? 'Go to the previous page or refresh the list.' : status === 'pending' ? 'Held keywords and recaps will appear here.' : `Items you marked ${status} will appear here.`}</p></div>}
-    <div className="ra-pagination"><p>{bulk ? 'Loaded ' : ''}{start.toLocaleString()}–{end.toLocaleString()} of {total.toLocaleString()}</p><div><button className="ra-button ra-button-small" type="button" disabled={busy || needsReload || page === 0} onClick={() => onPageChange(page - 1)}><ChevronLeft size={15} aria-hidden="true" />Previous</button><button className="ra-button ra-button-small" type="button" disabled={busy || needsReload || (page + 1) * pageSize >= total} onClick={() => onPageChange(page + 1)}>Next<ChevronRight size={15} aria-hidden="true" /></button></div></div>
+      return <li aria-busy={pendingKeys.has(key)} key={key + ':' + record.updatedAt}><div className={status === 'pending' ? 'ra-review-select-row' : undefined}>{status === 'pending' && <label className="ra-review-row-selection">{record.status === 'pending' && <input type="checkbox" aria-label={'Select ' + kindLabel(record.kind).toLowerCase() + ' ' + (record.label || 'unnamed item') + ' from ' + (record.sourceTitle || 'untitled source')} checked={selectionScope.current === scope && selected.has(key)} disabled={batchBusy || pendingKeys.has(key) || !!outcome?.error} onChange={() => toggleSelected(key)} />}</label>}<div className="ra-review-row-content"><ReviewRow record={record} open={openKey === key} toggle={() => setOpenKey(value => value === key ? null : key)} loadDetail={loadDetail} decide={save} disabled={batchBusy || pendingKeys.has(key)} writeDisabled={needsRowReload(key)} reloadDisabled={busy} pending={pendingKeys.has(key)} reload={reload} />{outcome?.error && <p className="ra-review-row-result">{uncertainDecision(outcome.error) ? 'Decision not confirmed: ' : 'Not saved: '}{outcome.error.message}</p>}{outcome?.unattempted && <p className="ra-review-row-result ra-muted">Not attempted.</p>}</div></div></li>;
+    })}</ul> : <div className="ra-review-empty"><h2>{removed > 0 ? 'This loaded page is done' : page > 0 ? 'No items on this page' : `No ${status} reviews`}</h2><p>{removed > 0 ? 'Load remaining reviews when you are ready to continue.' : page > 0 ? 'Go to the previous page or refresh the list.' : status === 'pending' ? 'Held keywords and recaps will appear here.' : `Items you marked ${status} will appear here.`}</p></div>}
+    <div className="ra-pagination">{pagingDirty && <button className="ra-button ra-button-small" type="button" disabled={busy} onClick={reload}>Load remaining reviews</button>}<p>{start.toLocaleString()}–{end.toLocaleString()} of {total.toLocaleString()}</p><div><button className="ra-button ra-button-small" type="button" disabled={busy || pagingDirty || page === 0} onClick={() => onPageChange(page - 1)}><ChevronLeft size={15} aria-hidden="true" />Previous</button><button className="ra-button ra-button-small" type="button" disabled={busy || pagingDirty || (page + 1) * pageSize >= total} onClick={() => onPageChange(page + 1)}>Next<ChevronRight size={15} aria-hidden="true" /></button></div></div>
   </section>;
 }
 
-function ReviewRow({ record, open, toggle, loadDetail, decide, disabled, writeDisabled = false, pending, reload }: { record: ContentReviewSummary; open: boolean; toggle: () => void; loadDetail: LoadContentReview; decide: DecideContentReview; disabled: boolean; writeDisabled?: boolean; pending: boolean; reload: () => void }) {
+function ReviewRow({ record, open, toggle, loadDetail, decide, disabled, writeDisabled = false, reloadDisabled = false, pending, reload }: { record: ContentReviewSummary; open: boolean; toggle: () => void; loadDetail: LoadContentReview; decide: DecideContentReview; disabled: boolean; writeDisabled?: boolean; reloadDisabled?: boolean; pending: boolean; reload: () => void }) {
   const [detail, setDetail] = useState<ContentReviewDetail | null>(null), [loading, setLoading] = useState(false), [error, setError] = useState<ReviewProblem | null>(null), active = useRef(true), loadingRef = useRef(false), prefix = useId();
   useEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
   const load = async () => {
@@ -117,7 +130,7 @@ function ReviewRow({ record, open, toggle, loadDetail, decide, disabled, writeDi
       <ChevronRight className="ra-review-chevron" size={15} aria-hidden="true" /><span className="ra-review-kind">{kindLabel(record.kind)}</span><span className="ra-review-label" dir="auto" title={record.label}>{record.label || (record.kind === 'recap' ? 'Recap needs a decision' : 'Keyword needs a decision')}</span><span className="ra-review-source" dir="auto" title={record.sourceTitle}>{record.sourceTitle || 'Untitled source'}</span><span className="ra-review-reason" dir="auto" title={record.reason}>{record.reason || record.decisionRequired}</span><span className="ra-review-state">{pending ? 'Saving…' : statuses[record.status]}</span>
     </button>
     {open && <div className="ra-review-detail" id={prefix + '-detail'}>
-      {loading ? <div className="ra-loading" role="status"><RefreshCw size={15} aria-hidden="true" />Loading source and prompt…</div> : error ? <div className="ra-save-error" role="alert"><p>{error.message}</p><button className="ra-button ra-button-small" type="button" onClick={() => void load()}>Retry details</button></div> : detail ? <ReviewDecisionPanel detail={detail} loadDetail={loadDetail} decide={decide} disabled={disabled || writeDisabled} pending={pending} reload={reload} /> : null}
+      {loading ? <div className="ra-loading" role="status"><RefreshCw size={15} aria-hidden="true" />Loading source and prompt…</div> : error ? <div className="ra-save-error" role="alert"><p>{error.message}</p><button className="ra-button ra-button-small" type="button" onClick={() => void load()}>Retry details</button></div> : detail ? <ReviewDecisionPanel detail={detail} loadDetail={loadDetail} decide={decide} disabled={disabled} writeDisabled={writeDisabled} reloadDisabled={reloadDisabled} pending={pending} reload={reload} /> : null}
     </div>}
   </>;
 }
@@ -165,13 +178,13 @@ export function ReviewEvidence({ detail, loadDetail, disabled = false, onStale }
   </>;
 }
 
-export function ReviewDecisionPanel({ detail, loadDetail, decide, disabled, pending, reload }: { detail: ContentReviewDetail; loadDetail?: LoadContentReview; decide: DecideContentReview; disabled: boolean; pending: boolean; reload: () => void }) {
+export function ReviewDecisionPanel({ detail, loadDetail, decide, disabled, writeDisabled = false, reloadDisabled = false, pending, reload }: { detail: ContentReviewDetail; loadDetail?: LoadContentReview; decide: DecideContentReview; disabled: boolean; writeDisabled?: boolean; reloadDisabled?: boolean; pending: boolean; reload: () => void }) {
   const shown = detail.resolution ?? detail.proposal, keyword = 'label' in shown ? shown : null, recap = 'highlights' in shown ? shown : null;
   const [editing, setEditing] = useState(false), [label, setLabel] = useState(keyword?.label || ''), [kind, setKind] = useState<ContentReviewKeyword['kind']>(keyword?.kind || 'category'), [points, setPoints] = useState<ContentReviewPoint[]>(() => recap?.highlights.map(point => ({ ...point })) || []), [error, setError] = useState<ReviewProblem | null>(null);
   const prefix = useId(), active = useRef(true), editorRef = useRef<HTMLDivElement>(null);
   useEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
   useEffect(() => { if (editing) editorRef.current?.querySelector<HTMLInputElement | HTMLTextAreaElement>('input, textarea')?.focus(); }, [editing]);
-  const stale = error?.status === 409, needsReload = !!error && [0, 409, 502, 503].includes(error.status), blocked = disabled || needsReload, isPending = detail.status === 'pending';
+  const stale = error?.status === 409, needsReload = !!error && [0, 409, 502, 503].includes(error.status), blocked = disabled || writeDisabled || needsReload, isPending = detail.status === 'pending';
   const save = async (decision: ContentReviewDecision['decision']) => {
     if (blocked || decision === 'approve' && !(editing ? detail.canEdit : detail.canApprove)) return;
     let proposal: ContentReviewProposal | undefined;
@@ -203,7 +216,7 @@ export function ReviewDecisionPanel({ detail, loadDetail, decide, disabled, pend
       </div>}
       {!detail.canApprove && !editing && <p className="ra-note">{detail.cannotApproveReason || 'This item needs a supported correction before it can be confirmed.'}</p>}
       <div className="ra-review-actions"><button className="ra-button ra-button-primary" type="submit" disabled={blocked || (editing ? !detail.canEdit : !detail.canApprove)}>{pending ? 'Saving decision…' : editing ? 'Save and publish' : 'Confirm and publish'}</button><button className="ra-button" type="button" disabled={blocked} onClick={() => void save('reject')}>Reject</button>{detail.canEdit && <button className="ra-button" type="button" disabled={blocked} onClick={() => { if (editing) { setLabel(keyword?.label || ''); setKind(keyword?.kind || 'category'); setPoints(recap?.highlights.map(point => ({ ...point })) || []); } setEditing(value => !value); setError(null); }}>{editing ? 'Cancel edit' : 'Edit'}</button>}</div>
-      {error && <div className="ra-save-error ra-review-error" role="alert"><p>{stale ? 'This review or its source changed. Reload before deciding again.' : error.message}</p><button className="ra-button ra-button-small" type="button" disabled={disabled} onClick={reload}>Reload latest reviews</button></div>}
+      {(error || writeDisabled) && <div className="ra-save-error ra-review-error" role="alert"><p>{stale ? 'This review or its source changed. Reload before deciding again.' : error?.message || 'Reload the latest review before another decision on this item.'}</p><button className="ra-button ra-button-small" type="button" disabled={disabled || reloadDisabled} onClick={reload}>Reload latest reviews</button></div>}
     </form> : <p className="ra-note">{detail.status === 'approved' ? 'Confirmed and published.' : 'Rejected; kept private.'}</p>}
   </>;
 }

@@ -126,6 +126,8 @@ function nodes(tree: any): any[] { if (Array.isArray(tree)) return tree.flatMap(
 function nodeText(tree: any): string { if (Array.isArray(tree)) return tree.map(nodeText).join(''); return typeof tree === 'string' || typeof tree === 'number' ? String(tree) : tree?.props ? nodeText(tree.props.children) : ''; }
 function button(tree: any, label: string) { const value = nodes(tree).find(node => node.type === 'button' && nodeText(node) === label); if (!value) throw Error('Missing button: ' + label); return value; }
 function checkbox(tree: any, label: string) { const value = nodes(tree).find(node => node.type === 'input' && (node.props['aria-label'] === label || node.props['aria-label']?.startsWith(label + ' from '))); if (!value) throw Error('Missing checkbox: ' + label); return value; }
+function reviewRow(tree: any, id: string) { const value = nodes(tree).find(node => typeof node.type === 'function' && node.props.record?.id === id); if (!value) throw Error('Missing review: ' + id); return value; }
+const decisionFor = (record: ContentReviewSummary, decision: 'approve' | 'reject' = 'approve') => ({ action: 'review' as const, id: record.id, origin: record.origin, expectedUpdatedAt: record.updatedAt, decision });
 const tick = () => new Promise<void>(resolve => setImmediate(resolve));
 function deferred<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(done => { resolve = done; }); return { promise, resolve }; }
 const row = (id: string): ContentReviewSummary => ({ ...summary, id, label: id });
@@ -151,7 +153,7 @@ describe('visible-page bulk review decisions', () => {
     first.resolve(confirmed(records[0])); await tick(); tree = h.render();
     expect(actions.decide).toHaveBeenCalledTimes(4); expect(actions.decide.mock.calls.every(([body, options]) => body.expectedUpdatedAt === summary.updatedAt && options?.silent === true && !('proposal' in body))).toBe(true);
     expect(nodeText(tree)).toContain('2 confirmed and published; 2 need attention; 0 not attempted.'); expect(nodeText(tree)).toContain('This recap needs supporting quotes.'); expect(nodeText(tree)).toContain('The source changed.');
-    expect(checkbox(tree, 'Select keyword invalid').props.checked).toBe(true); expect(checkbox(tree, 'Select keyword stale').props.checked).toBe(true); expect(checkbox(tree, 'Select keyword invalid').props.disabled).toBe(true);
+    expect(checkbox(tree, 'Select keyword invalid').props.checked).toBe(false); expect(checkbox(tree, 'Select keyword stale').props.checked).toBe(false); expect(checkbox(tree, 'Select keyword invalid').props.disabled).toBe(true);
     expect(actions.reload).not.toHaveBeenCalled(); expect(nodeText(tree)).toContain('Uses saved proposals; save edits individually.');
     expect(button(tree, 'Previous').props.disabled).toBe(true); expect(button(tree, 'Next').props.disabled).toBe(true);
     button(tree, 'Confirm and publish selected').props.onClick(); await tick(); expect(actions.decide).toHaveBeenCalledTimes(4);
@@ -161,7 +163,7 @@ describe('visible-page bulk review decisions', () => {
     actions.decide.mockImplementation(async body => { if (body.id === 'blocked') throw { status, message: 'The decision could not be confirmed.' }; return confirmed(records.find(r => r.id === body.id)!); });
     const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Confirm and publish selected').props.onClick(); await tick(); tree = h.render();
     expect(actions.decide).toHaveBeenCalledTimes(2); expect(nodeText(tree)).toContain('1 confirmed and published; 1 need attention; 1 not attempted.');
-    expect(nodeText(tree)).toContain('Not attempted. Reload before deciding.'); expect(checkbox(tree, 'Select keyword not-started').props.checked).toBe(true);
+    expect(nodeText(tree)).toContain('Not attempted.'); expect(checkbox(tree, 'Select keyword not-started').props.checked).toBe(true);
     expect(actions.onPendingChange.mock.calls.at(-1)).toEqual([false]);
   });
   it('confirms two bulk rejections across analysis and legacy origins', async () => {
@@ -185,5 +187,67 @@ describe('visible-page bulk review decisions', () => {
     const records = [row('first'), row('second')], first = deferred<ReturnType<typeof confirmed>>(), actions = props(); actions.decide.mockReturnValue(first.promise);
     const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Reject selected').props.onClick(); expect(actions.decide).toHaveBeenCalledTimes(1);
     h.unmount(); first.resolve(confirmed(records[0], 'reject')); await tick(); expect(actions.decide).toHaveBeenCalledTimes(1); expect(h.lateUpdates()).toBe(0);
+  });
+});
+
+
+describe('instant individual review decisions', () => {
+  it('saves different rows concurrently, removes confirmed rows locally and preserves the other open review', async () => {
+    const records = [row('first'), row('second'), row('remaining')], first = deferred<ReturnType<typeof confirmed>>(), second = deferred<ReturnType<typeof confirmed>>(), actions = props();
+    actions.decide.mockImplementation(body => body.id === 'first' ? first.promise : second.promise);
+    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render();
+    reviewRow(tree, 'second').props.toggle(); tree = h.render();
+    const originalSecond = reviewRow(tree, 'second'), oldFirstSave = reviewRow(tree, 'first').props.decide;
+    const firstSave = oldFirstSave(decisionFor(records[0])); tree = h.render();
+    expect(reviewRow(tree, 'first').props.pending).toBe(true); expect(reviewRow(tree, 'first').props.disabled).toBe(true);
+    expect(reviewRow(tree, 'second').props.disabled).toBe(false); expect(reviewRow(tree, 'second').props.open).toBe(true);
+    const secondSave = reviewRow(tree, 'second').props.decide(decisionFor(records[1], 'reject')); tree = h.render();
+    expect(actions.decide).toHaveBeenCalledTimes(2); expect(actions.decide.mock.calls.every(([, options]) => options?.silent === true)).toBe(true);
+    expect(reviewRow(tree, 'remaining').props.disabled).toBe(false);
+    first.resolve(confirmed(records[0])); await firstSave; tree = h.render();
+    expect(nodes(tree).some(node => node.props?.record?.id === 'first')).toBe(false);
+    expect(reviewRow(tree, 'second').props.open).toBe(true); expect(reviewRow(tree, 'second').type).toBe(originalSecond.type);
+    expect(reviewRow(tree, 'second').props.record).toBe(originalSecond.props.record); expect(nodeText(tree)).toContain('2 pending items');
+    await expect(oldFirstSave(decisionFor(records[0]))).rejects.toMatchObject({ status: 409 }); expect(actions.decide).toHaveBeenCalledTimes(2);
+    second.resolve(confirmed(records[1], 'reject')); await secondSave; tree = h.render();
+    expect(nodeText(tree)).toContain('1 pending item'); expect(reviewRow(tree, 'remaining').props.disabled).toBe(false);
+    expect(actions.reload).not.toHaveBeenCalled(); expect(actions.onPendingChange.mock.calls.at(-1)).toEqual([false]);
+    expect(button(tree, 'Load remaining reviews').props.disabled).toBe(false); expect(button(tree, 'Next').props.disabled).toBe(true);
+  });
+  it('keeps a known validation failure editable and leaves other rows usable', async () => {
+    const records = [row('invalid'), row('next')], actions = props(); let attempts = 0;
+    actions.decide.mockImplementation(async body => { if (body.id === 'invalid' && attempts++ === 0) throw { status: 400, message: 'Add supporting source text.' }; return confirmed(records.find(record => record.id === body.id)!); });
+    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render();
+    await expect(reviewRow(tree, 'invalid').props.decide(decisionFor(records[0]))).rejects.toMatchObject({ status: 400 }); tree = h.render();
+    expect(nodeText(tree)).toContain('Add supporting source text.'); expect(reviewRow(tree, 'invalid').props.writeDisabled).toBe(false); expect(reviewRow(tree, 'next').props.disabled).toBe(false);
+    await reviewRow(tree, 'invalid').props.decide({ ...decisionFor(records[0]), proposal: { label: 'Corrected setting', kind: 'technology' } }); tree = h.render();
+    expect(nodes(tree).some(node => node.props?.record?.id === 'invalid')).toBe(false); expect(actions.reload).not.toHaveBeenCalled();
+  });
+  it.each([0, 409, 502])('locks only an uncertain or stale row (%s) and prevents stale pagination', async status => {
+    const records = [row('uncertain'), row('next')], actions = props();
+    actions.decide.mockImplementation(async body => { if (body.id === 'uncertain') throw { status, message: 'Check the latest review.' }; return confirmed(records[1]); });
+    const h = reviewHarness({ ...actions, data: { ...page(records), total: 100 } }); let tree = h.render(); const oldSave = reviewRow(tree, 'uncertain').props.decide;
+    expect(button(tree, 'Next').props.disabled).toBe(false);
+    await expect(oldSave(decisionFor(records[0]))).rejects.toMatchObject({ status }); tree = h.render();
+    expect(reviewRow(tree, 'uncertain').props.writeDisabled).toBe(true); expect(reviewRow(tree, 'next').props.disabled).toBe(false);
+    expect(button(tree, 'Next').props.disabled).toBe(true); expect(button(tree, 'Load remaining reviews').props.disabled).toBe(false);
+    await expect(oldSave(decisionFor(records[0]))).rejects.toMatchObject({ status: 409 }); expect(actions.decide).toHaveBeenCalledTimes(1);
+    await reviewRow(tree, 'next').props.decide(decisionFor(records[1])); tree = h.render();
+    expect(nodes(tree).some(node => node.props?.record?.id === 'next')).toBe(false); expect(actions.reload).not.toHaveBeenCalled();
+  });
+  it('allows a second visible batch after successful local removals without refreshing the list', async () => {
+    const records = [row('first-batch'), row('second-batch')], actions = props();
+    actions.decide.mockImplementation(async body => confirmed(records.find(record => record.id === body.id)!, body.decision));
+    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render();
+    checkbox(tree, 'Select keyword first-batch').props.onChange(); tree = h.render(); button(tree, 'Confirm and publish selected').props.onClick(); await tick(); tree = h.render();
+    expect(nodeText(tree)).toContain('1 pending item'); checkbox(tree, 'Select keyword second-batch').props.onChange(); tree = h.render();
+    expect(button(tree, 'Reject selected').props.disabled).toBe(false); button(tree, 'Reject selected').props.onClick(); await tick(); tree = h.render();
+    expect(actions.decide).toHaveBeenCalledTimes(2); expect(nodeText(tree)).toContain('1 rejected; 0 need attention; 0 not attempted.');
+    expect(nodeText(tree)).toContain('This loaded page is done'); expect(nodeText(tree)).toContain('0 pending items'); expect(actions.reload).not.toHaveBeenCalled();
+  });
+  it('offers enabled reload recovery when writes are blocked after a row error', () => {
+    const html = renderToStaticMarkup(createElement(ReviewDecisionPanel, { detail: keyword, decide: vi.fn(), disabled: false, writeDisabled: true, pending: false, reload: vi.fn() }));
+    expect(html).toMatch(/<button(?![^>]*disabled)[^>]*>Reload latest reviews<\/button>/);
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Confirm and publish<\/button>/);
   });
 });
