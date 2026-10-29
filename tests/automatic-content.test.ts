@@ -63,7 +63,23 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
  });
  it('rejects an unsupported recap quote before checker inference',async()=>{
   const call=vi.fn(async()=>successful({readComplete:true,highlights:[{text:'Invented result.',evidenceQuote:'This quote never occurred in the source.'}]}));
-  await expect(generateAutomaticContent(claim('recap'),call)).rejects.toThrow('automatic_recap_unsupported_draft');expect(call).toHaveBeenCalledTimes(1);
+  await expect(generateAutomaticContent(claim('recap'),call)).rejects.toThrow('automatic_recap_empty_requires_review');expect(call).toHaveBeenCalledTimes(1);
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'Invented result.',evidenceQuote:'This quote never occurred in the source.'}]},content)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it('preserves valid distinct draft points when other paid draft quotes are unsupported, without another draft call',async()=>{
+  const second={text:'AeroBox supports C#.',evidenceQuote:'AeroBox supports C#.'};
+  const call=vi.fn(async(input:KeywordLearningInput)=>{
+   const prompt=JSON.parse(input.request.prompt);
+   if(prompt.task==='recap_check')return successful({readComplete:true,verdicts:prompt.findings.map(({index}:{index:number})=>({index,supported:true,reason:'Supported by the literal quote.'}))});
+   return successful({readComplete:true,highlights:[point,{text:'Invented result.',evidenceQuote:'This quote never occurred in the source.'},second,point,{text:'Invalid quote length.',evidenceQuote:'tiny'}]});
+  });
+  const result=await generateAutomaticContent(claim('recap'),call);
+  expect(call).toHaveBeenCalledTimes(2);expect(result.proposal?.highlights).toEqual([point,second]);expect(result.reason).toContain('2 draft points were withheld');expect(result.reason).toContain('may be incomplete');
+  expect(JSON.parse(call.mock.calls[1][0].request.prompt).findings).toEqual([{index:0,...point},{index:1,...second}]);
+ });
+ it.each([{readComplete:false,highlights:[point]},{readComplete:true,highlights:[point],extra:true},{readComplete:true,highlights:Array(7).fill(point)}])('does not salvage points from an incomplete or malformed source envelope',async value=>{
+  const call=vi.fn(async()=>successful(value));
+  await expect(generateAutomaticContent(claim('recap'),call)).rejects.toThrow('automatic_recap_invalid_draft');expect(call).toHaveBeenCalledTimes(1);
  });
  it('requires distinct complete indexed checker verdicts',async()=>{
   const second={text:'AeroBox supports C#.',evidenceQuote:'AeroBox supports C#.'};
