@@ -1,0 +1,376 @@
+{
+  "version": 1,
+  "verifiedAt": "2026-10-29T02:46:18.469Z",
+  "functionalCommit": "4e469ad22f42cb46ca89d9af26b85417b183a8ed",
+  "ci": {
+    "conclusion": "success",
+    "headSha": "4e469ad22f42cb46ca89d9af26b85417b183a8ed",
+    "status": "completed",
+    "url": "https://github.com/raduvlad92/recap/actions/runs/40807680198"
+  },
+  "deployment": {
+    "id": "6ae2b2f42a8acaf6561aad1c",
+    "state": "ready",
+    "commit_ref": "4e469ad22f42cb46ca89d9af26b85417b183a8ed",
+    "published_at": "2026-10-29T02:44:41.857Z"
+  },
+  "migrations": [
+    {
+      "sha256": "1f3843cbeea76e53837938ad5d5bca1a36b52e9f3afadd920ba31727ebeaba10",
+      "version": "20261029015509"
+    },
+    {
+      "sha256": "c2ad5caeb5887c956fe90f0b5859bc3e94cc6f3d00d1498362edda44a7aa7e0e",
+      "version": "20261029022238"
+    }
+  ],
+  "behavior": {
+    "publishedSubsetReadableWhileMoreWorkPending": true,
+    "laterKeywordApprovalsAddedToSameItem": true,
+    "laterRecapApprovalsAppendDistinctPoints": true,
+    "existingPublishedRecapPreserved": true,
+    "newContributionPointsMax": 6,
+    "aggregatePublishedPointsMax": 30,
+    "concisePoints": 6,
+    "remainingPointsAvailableInNativeDisclosure": true,
+    "mixedUnknownKeywordBatchOnlyApprovedSubsetVisible": true,
+    "oldKeywordArraysAndProvenancePreserved": true,
+    "approvedSubsetSourceHashBoundAndUntimedWhenBatchStale": true,
+    "readerRefreshObservesArchiveChanges": true,
+    "existingVisibleReaderPollSeconds": 60,
+    "noNewStrictFeedFilterOrShortsPreferenceChange": true
+  },
+  "verification": {
+    "localFullCheckTests": 3389,
+    "localFullCheckFiles": 94,
+    "catalogue": "pass",
+    "typecheck": "pass",
+    "productionBuild": "pass",
+    "focusedRecapPgTests": 33,
+    "focusedKeywordProofPgTests": 42,
+    "ciTests": {
+      "passed": 2610,
+      "skipped": 779,
+      "configured": 3389
+    },
+    "nativeRecapRollback": {
+      "archiveWatermarkMoves": true,
+      "collectionTimeExact": true,
+      "collectorPreservesApproved": true,
+      "distinctRecapsAppend": true,
+      "jobsAndCallsUnchanged": true,
+      "keywordsAppend": true,
+      "noOpWatermarkExact": true,
+      "pendingStillPending": true,
+      "privateAcl": true,
+      "publishedSeedPreserved": true,
+      "sameItem": true,
+      "type": "native_rollback_fixture"
+    },
+    "nativeKeywordRollback": {
+      "approvedSubsetProven": true,
+      "forgedProofRemoved": true,
+      "modelCalls": 0,
+      "privateAcl": true,
+      "rawAnnotationsPreserved": true,
+      "rejectionRefreshedImmediately": true,
+      "type": "native_rollback_fixture",
+      "unknownBatchPreserved": true
+    },
+    "securityAdvisors": "No issues found",
+    "earlierFailureLogsRetained": true
+  },
+  "preservation": {
+    "recapMigration": {
+      "verifiedAt": "2026-10-29T02:13:36.124125+00:00",
+      "allOriginalFieldsUnchanged": true,
+      "archiveComparisonExcludesOnlyNewUpdatedAt": true,
+      "groups": {
+        "analysisReviews": {
+          "before": 257,
+          "after": 257,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "archives": {
+          "before": 510,
+          "after": 510,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "attempts": {
+          "before": 0,
+          "after": 0,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "audit": {
+          "before": 93,
+          "after": 93,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "budget": {
+          "before": 1,
+          "after": 1,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "calls": {
+          "before": 867,
+          "after": 867,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "jobs": {
+          "before": 431,
+          "after": 431,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "keywordReviews": {
+          "before": 140,
+          "after": 140,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "learningSessions": {
+          "before": 22,
+          "after": 22,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "policies": {
+          "before": 1,
+          "after": 1,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "productionReleases": {
+          "before": 9,
+          "after": 9,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "promptReceipts": {
+          "before": 0,
+          "after": 0,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "publications": {
+          "before": 20,
+          "after": 20,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "runtime": {
+          "before": 1,
+          "after": 1,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "scopes": {
+          "before": 1,
+          "after": 1,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "workspaces": {
+          "before": 3,
+          "after": 3,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        }
+      }
+    },
+    "proofMigration": {
+      "verifiedAt": "2026-10-29T02:38:23.939391+00:00",
+      "originalFieldsUnchanged": true,
+      "excludedOnlyDerivedKeywordApprovalsAndArchiveUpdatedAt": true,
+      "groups": {
+        "analysisReviews": {
+          "before": 257,
+          "after": 257,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "archives": {
+          "before": 510,
+          "after": 510,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "attempts": {
+          "before": 0,
+          "after": 0,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "audit": {
+          "before": 93,
+          "after": 93,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "budget": {
+          "before": 1,
+          "after": 1,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "calls": {
+          "before": 867,
+          "after": 867,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "jobs": {
+          "before": 431,
+          "after": 431,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "keywordReviews": {
+          "before": 140,
+          "after": 140,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "learningSessions": {
+          "before": 22,
+          "after": 22,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "policies": {
+          "before": 1,
+          "after": 1,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "productionReleases": {
+          "before": 9,
+          "after": 9,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "promptReceipts": {
+          "before": 0,
+          "after": 0,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "publications": {
+          "before": 20,
+          "after": 20,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "runtime": {
+          "before": 1,
+          "after": 1,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "scopes": {
+          "before": 1,
+          "after": 1,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        },
+        "workspaces": {
+          "before": 3,
+          "after": 3,
+          "changed": 0,
+          "new": 0,
+          "removed": 0
+        }
+      }
+    },
+    "existingCurrentApprovalBackfillRows": 0,
+    "originalCollectionTimesUnchanged": true,
+    "reviewHistoryAndRawLabelsUnchanged": true,
+    "fixturesAbsent": true
+  },
+  "hostedReadOnly": {
+    "verifiedAt": "2026-10-29T02:46:18.469Z",
+    "type": "hosted_served_assets_and_read_only_authenticated_http",
+    "mainAsset": "/assets/index-CZ6cRa71.js",
+    "mainAssetSha256": "7c86021c55dcb44d99fe638c06d9ba546bff514b35ab57cdc60a29e2039c91b0",
+    "mainAssetMatchesLocalBuild": true,
+    "publishedReaderCodePresent": true,
+    "ownerAdmin": 200,
+    "ordinaryAdmin": 403,
+    "anonymousAdmin": 401,
+    "currentPendingReviews": 328,
+    "archiveMode": 200,
+    "archiveFirstPageCount": 100,
+    "archiveSecondPageCount": 100,
+    "archiveCursorNoDuplicates": true,
+    "archiveAnonymous": 401,
+    "legacyJobMode": 200,
+    "realDecisionsApplied": 0,
+    "modelCalls": 0,
+    "boundary": "Read-only production checks plus separately recorded native rollback and local reader tests; no real owner decisions or new browser walkthrough."
+  },
+  "financial": {
+    "calls": 867,
+    "committedUsd": 9.270265626,
+    "holdUsd": 0.125827191,
+    "holds": 7,
+    "newModelCalls": 0,
+    "newModelSpendUsd": 0,
+    "remainingLifetimeUsd": 0.729734374,
+    "lifetimeLimitUsd": 10,
+    "dailyLimitUsd": 5,
+    "perCallLimitUsd": 0.1
+  },
+  "operatingState": {
+    "runtimeEnabled": false,
+    "globalEnabled": false,
+    "ownerEnabledPolicies": 0,
+    "openLearning": 0,
+    "openReleases": 0,
+    "executing": 0,
+    "oldQueuedJobs": 271,
+    "qaSessionsRevoked": 4,
+    "existingUserSessionsTouched": false
+  },
+  "boundaries": [
+    "Native approval/publication fixtures are rolled back; no real owner decisions are made during release verification.",
+    "Hosted checks are served assets and authenticated read-only API, without a new browser walkthrough.",
+    "Local deterministic/native tests do not establish automatic model semantic quality or enable generation."
+  ]
+}

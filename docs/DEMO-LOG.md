@@ -1,5 +1,15 @@
 # Demo and evidence log
 
+## 29 October 2026 — readable published subsets and later additions
+
+Deployed functional `4e469ad22f42cb46ca89d9af26b85417b183a8ed`: fresh published recap/keywords stay readable during pending additional work; later approvals enrich the same item. Recaps append/dedupe rather than replace, existing valid timing/provenance survive, and all 30 approved points are reachable from a six-point preview. A private-ledger-derived keyword subset works alongside unknown raw labels without blessing them. Archive-mode refresh reads annotation changes without changing collection time or job history.
+
+Final clean **3,389 tests / 94 files**, catalogue/typecheck/build and CI **40807680198** pass. Two pinned migrations pass real native rolled-back approval/publication fixtures, then apply with exact history entries. Original-field fingerprints across 16 groups match before/after each change: 510 archives, 867 calls, 431 jobs, 140 legacy reviews, 257 inbox records and existing controls/history; only the archive watermark/derived proof namespace are excluded as intentional additions. Existing approval backfill affects 0 rows; no real decision is invented. Security advisors report no issues.
+
+Ready Netlify `6ae2b2f42a8acaf6561aad1c`, published **02:44:41.857 UTC**. Actual hosted assets match the tested build; owner/ordinary/anonymous admin reads return 200/403/401. Archive-mode first/second 100-ID pages use the same window without duplicates; anonymous status 401 and legacy job mode 200 pass. 328 reviews remain pending at 02:46:18 UTC. Native fixtures are rolled back; four isolated QA sessions are revoked. This is native fixture and read-only hosted proof, not a new browser walkthrough or automatic model-quality pass.
+
+New model spending **US$0**, unchanged commitment **US$9.270265626**, including seven holds **US$0.125827191**; **US$0.729734374** remains under10. Runtime/global/owner AI stay Off; zero open sessions/releases/executing jobs and 271 old queued jobs. [Sanitized evidence](tech/evidence/published-review-subset-2026-10-29.json); private evidence: `.local/admin-published-subset-20261029/`. Earlier failed checks remain saved with the exact fixes; the final clean run passes.
+
 ## 29 October 2026 — background review saves without list reloads
 
 Fixed the successful-save reload and global single-save lock. Rows show Saving immediately; distinct rows can save concurrently, confirmed rows/counts update locally, and the other open review keeps its component/editor state. Failed rows remain visible, stale/unknown writes stay blocked per row, and subsequent bulk batches require no refresh. Duplicate guards and explicit page-zero remaining-list loads preserve source/revision safety.

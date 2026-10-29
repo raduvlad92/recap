@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 29 October 2026 — publish useful subsets without waiting for every review
+
+Founder: pending keywords/recaps must not block a video with at least one recap and one keyword; later approvals should be added to the content. Reader availability follows fresh published annotations rather than unfinished job/review status. Keep existing feed/source/Shorts preferences; do not introduce a stricter eligibility filter or imply complete source coverage.
+
+Keyword approvals stay additive; recap approvals append distinct validated points while preserving the earlier published seed and citations in private review history. Keep≤6 points per new contribution and the existing 30 stored-point bound; show six initially with the rest expandable. A server-owned current-hash approved-label projection permits an individual approval beside an unknown old batch without certifying or deleting old labels. The existing reader poll observes archive change timestamps, preserving original collection time and job history. No model call, owner decision, training or activation occurs in release QA. Verified release `4e469ad` is recorded in [the report](tech/PUBLISHED-REVIEW-SUBSET-2026-10-29.md).
+
 ## 29 October 2026 — keep review saves in place
 
 Founder: accept/reject reloads the whole page/list; make the action immediate so the next review can continue. Show Saving on the selected row before awaiting the existing server request; keep other rows usable, merge confirmed results locally and retain failed rows. Reuse existing source/revision checks without new endpoints or schema. Successful singles and bulk batches do not trigger a list reload; explicit remaining-list loads restart at page zero to avoid skipped items. Do not make real owner decisions during QA or claim that Saving already means published.

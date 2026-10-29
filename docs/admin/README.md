@@ -41,6 +41,14 @@ A row shows **Saving** immediately while its decision saves in the background. Y
 
 For the same saved video and unchanged transcript, approved or edited keywords are kept and rejected names stay excluded when results are published again. An approved or edited recap is protected from later replacement. Rejecting a recap dismisses that attempt; it does not ban future recaps. These choices do not transfer to new videos, change the prompts or train the AI.
 
+### Keep published results readable
+
+A video with a published recap and at least one published keyword keeps those results readable while other proposals await review. Later approved keywords and distinct recap points are added to that same video. Each new recap proposal can contain up to six cited points; the video can hold 30 total. The card shows six, with **Show more takeaways** for the rest. Existing published points and valid timing are preserved; duplicates are not added again.
+
+If older keywords are unverified, only the names you actually approve for the current transcript become readable. Their separate approval proof leaves the old labels and their unknown/stale provenance intact; it does not publish those unknown names.
+
+The open reader normally picks up approvals on its next visible-page check, about once a minute. Processing progress can still show pending work without hiding the published results. Shorts, source, history and other feed preferences keep working as before; this does not add a stricter feed filter or start AI processing. [Scope and verification status](../tech/PUBLISHED-REVIEW-SUBSET-2026-10-29.md).
+
 ## Five-minute review
 
 1. Open **Overview**, then **Readers**. Open your own reader record to check that the followed sources match your workspace.
