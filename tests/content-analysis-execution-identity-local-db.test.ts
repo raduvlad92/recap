@@ -88,7 +88,7 @@ describe.skipIf(!available)('D36 actual disposable PostgreSQL execution identity
  it('passes new/duplicate/changed/legacy/day-rollover/unknown-charge/settlement acceptance as service_role', () => {
   expect(sql(readFileSync(new URL('./content-analysis-execution-identity-db.sql', import.meta.url), 'utf8'))).toBe('');
  });
- it('still passes the unmodified D35 rollback-only SQL suite after all migrations', () => {
+ it('passes the D35 rollback-only source/history checks with derived approval proof after all migrations', () => {
   expect(sql(readFileSync(new URL('./content-analysis-db.sql', import.meta.url), 'utf8'))).toBe('');
  });
  it('commits identity before returning permission to contact a provider', () => {

@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { ContentProcessingStatus, UnclassifiedVideoUpdates } from '../src/components/ContentProcessingStatus';
 import { YouTubeCard, VideoTranscript } from '../src/components/YouTubeCard';
-import { readerUpdateSections } from '../src/App';
+import { readerUpdateSections, readerTopicLabels } from '../src/App';
 import { contentHash } from '../src/lib/content-processing';
 import type { ContentProcessing } from '../src/lib/processing-types';
 import type { SourceUpdate, WorkspaceState } from '../src/lib/types';
@@ -66,6 +66,15 @@ describe('truthful video-card processing', () => {
     expect(html).toContain('Display');
     expect(html).not.toContain('Takeaways pending');
     expect(html).not.toContain('Keywords awaiting review');
+  });
+  it('shows a separately approved keyword without reviving the unknown older batch', () => {
+    const item = reviewed({ keywordContentHash: null, keywordApprovals: { contentHash: contentHash(captions), labels: ['Display'] }, topics: ['Unknown old label'], videoKeywords: [{ label: 'Unknown old label', ranges: [] }], processing: processing({ recap: 'pending', keywords: 'review' }) });
+    const html = card(item);
+    expect(html).toContain(item.videoHighlights![0].text);
+    expect(html).toContain('Display');
+    expect(html).not.toContain('Unknown old label');
+    expect(html).not.toContain('Keywords awaiting review');
+    expect(readerTopicLabels(item)).toEqual(['Display']);
   });
   it('keeps all approved additions reachable behind a compact native disclosure', () => {
     const points = Array.from({ length: 8 }, (_, index) => ({ text: `Approved finding number ${index + 1}.` }));

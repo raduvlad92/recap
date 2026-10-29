@@ -17,6 +17,8 @@ describe.skipIf(!available)('compact review inbox, disposable PostgreSQL only',(
  const row=(kind='keyword',proposal:unknown={label:'quiet focus',kind:'technology'})=>json(`insert into public.admin_analysis_reviews(user_id,update_id,source_id,content_hash,kind,dedupe_key,source_snapshot,proposal,reason,provenance)
   values(${q(owner)},'review-video','review-source',${q(hash)},${q(kind)},gen_random_uuid()::text,${j(record)},${j(proposal)},'Unclear naming boundary','{"availability":"unavailable","prompts":[]}')returning to_jsonb(admin_analysis_reviews);`);
  const decide=(r:any,decision='approve',proposal:unknown=null)=>json(`select public.admin_decide_analysis_review(${q(r.id)},${q(r.updated_at)},'admin:fixture',${q(decision)},${proposal===null?'null':j(proposal)});`);
+ const legacy=()=>json(`insert into public.admin_keyword_reviews(user_id,update_id,source_id,content_hash,label,kind,confidence,reason,evidence_quote,proposed_ranges,update_title,update_url)
+  values(${q(owner)},'review-video','review-source',${q(hash)},'quiet focus','technology',0,'Synthetic uncertainty',${q(content)},'[]','Fixture','https://example.test/video')returning to_jsonb(admin_keyword_reviews);`);
  const job=(state='running',task='summary',result:unknown=null,error:string|null=null)=>sql(`insert into public.reader_content_analysis_jobs(user_id,update_id,source_id,content_hash,source_revision,source_fingerprint,workspace_revision,task,state,lease_token,lease_until,result,error_code)
   select ${q(owner)},a.id,a.source_id,${q(hash)},public.content_analysis_source_revision(a.record),public.content_analysis_source_fingerprint(w.state,a.source_id),w.updated_at,${q(task)},${q(state)},gen_random_uuid(),clock_timestamp()+interval '5 minutes',${result===null?'null':j(result)},${error===null?'null':q(error)}
   from public.reader_source_updates a join public.reader_workspaces w using(user_id)where a.user_id=${q(owner)}and a.id='review-video'returning id;`);
@@ -37,7 +39,7 @@ describe.skipIf(!available)('compact review inbox, disposable PostgreSQL only',(
  it('lists legacy and new holds without exposing any private table to public roles',()=>{
   row();expect(json('select count(*)::integer from public.admin_analysis_review_queue;')).toBe(1);
   for(const role of ['anon','authenticated'])for(const table of ['admin_analysis_reviews','admin_analysis_prompt_receipts','admin_analysis_review_queue'])expect(sql(`select has_table_privilege(${q(role)},${q('public.'+table)},'select');`)).toBe('f');
-  for(const role of ['anon','authenticated'])for(const fn of ['record_admin_analysis_prompt(uuid,uuid,text,text,jsonb)','admin_decide_analysis_review(uuid,timestamptz,text,text,jsonb)','sync_admin_analysis_reviews(text,integer)','admin_analysis_published_recap(text,text,text,text,jsonb)'])expect(sql(`select has_function_privilege(${q(role)},${q('public.'+fn)},'execute');`)).toBe('f');
+  for(const role of ['anon','authenticated'])for(const fn of ['record_admin_analysis_prompt(uuid,uuid,text,text,jsonb)','admin_decide_analysis_review(uuid,timestamptz,text,text,jsonb)','sync_admin_analysis_reviews(text,integer)','admin_analysis_published_recap(text,text,text,text,jsonb)','project_approved_keyword_subset()'])expect(sql(`select has_function_privilege(${q(role)},${q('public.'+fn)},'execute');`)).toBe('f');
  });
  it('approves or edits a literal keyword atomically through the durable old review decisions',()=>{
   const r=row(),out=decide(r,'approve',{label:'AeroBox',kind:'brand'});expect(out.published).toBe(true);expect(out.record.proposal).toEqual(r.proposal);expect(out.record.resolved).toEqual({label:'AeroBox',kind:'brand'});
@@ -186,6 +188,50 @@ describe.skipIf(!available)('compact review inbox, disposable PostgreSQL only',(
   sql(`update public.reader_source_updates set record=record||'{"videoKeywords":[{"label":"Unknown old label","ranges":[]}],"topics":["Unknown old label"]}'::jsonb where id='review-video';`);
   decide(row(),'approve',{label:'AeroBox',kind:'brand'});
   expect(source().keywordContentHash).toBeNull();expect(source().videoKeywords.map((r:any)=>r.label)).toContain('Unknown old label');expect(source().processing?.keywords).not.toBe('ready');
+  expect(source().keywordApprovals).toEqual({contentHash:hash,labels:['AeroBox']});
+ });
+ it.each(['inbox','legacy'])('projects only current approved labels after the actual %s decision, without blessing the old raw batch',path=>{
+  const old={label:'Unknown old label',ranges:[{startSeconds:50,endSeconds:60}],seconds:10},seed={...record,videoKeywords:[old],topics:[old.label],brands:[old.label],keywordContentHash:null};
+  sql(`update public.reader_source_updates set record=${j(seed)} where id='review-video';`);
+  if(path==='inbox')decide(row());else{const r=legacy();json(`select public.admin_review_keyword(${q(r.id)},${q(r.updated_at)},'admin:fixture','approve','quiet focus','technology');`);}
+  const approved=source();expect(approved.keywordContentHash).toBeNull();expect(approved.videoKeywords).toContainEqual(old);expect(approved.videoKeywords).toContainEqual({label:'quiet focus',ranges:[]});
+  expect(approved.topics).toContain(old.label);expect(approved.brands).toEqual(seed.brands);expect(approved.keywordApprovals).toEqual({contentHash:hash,labels:['quiet focus']});
+  const before=source();sql(`update public.reader_source_updates set record=jsonb_set(record,'{keywordApprovals}','{"contentHash":"forged","labels":["Unknown old label","Injected"]}')where id='review-video';`);
+  expect(source()).toEqual(before);
+  sql("update public.reader_source_updates set record=record-'keywordApprovals'where id='review-video';");expect(source().keywordApprovals).toEqual(before.keywordApprovals);
+ });
+ it.each(['pending','rejected'])('clears forged proof instead of treating a %s keyword as approved',status=>{
+  const r=legacy();if(status==='rejected')json(`select public.admin_review_keyword(${q(r.id)},${q(r.updated_at)},'admin:fixture','reject','quiet focus','technology');`);
+  sql(`update public.reader_source_updates set record=record||${j({keywordApprovals:{contentHash:hash,labels:['quiet focus']}})} where id='review-video';`);expect(source().keywordApprovals).toBeUndefined();
+  const forged={...record,id:'forged-video',keywordApprovals:{contentHash:hash,labels:['quiet focus']}};
+  sql(`insert into public.reader_source_updates(user_id,id,source_id,collection_id,published_at,record)values(${q(owner)},'forged-video','review-source','fixture','2026-10-28T00:00:00Z',${j(forged)});`);
+  expect(json("select record from public.reader_source_updates where id='forged-video';").keywordApprovals).toBeUndefined();
+ });
+ it.each(['content','source','metadata_only'])('clears prior approval proof after %s changes without changing the decision history',change=>{
+  decide(row());const reviews=sql('select jsonb_agg(to_jsonb(q)order by id)from public.admin_keyword_reviews q;');expect(source().keywordApprovals.labels).toEqual(['quiet focus']);
+  if(change==='content')sql("update public.reader_source_updates set record=jsonb_set(record,'{content}','\"Different transcript\"')where id='review-video';");
+  else if(change==='source')sql("update public.reader_source_updates set source_id='another-source',record=jsonb_set(record,'{sourceId}','\"another-source\"')where id='review-video';");
+  else sql("update public.reader_source_updates set record=jsonb_set(record,'{contentKind}','\"metadata_only\"')where id='review-video';");
+  expect(source().keywordApprovals).toBeUndefined();expect(sql('select jsonb_agg(to_jsonb(q)order by id)from public.admin_keyword_reviews q;')).toBe(reviews);
+ });
+ it('refreshes approved alias proof immediately after an inbox rejection without touching raw annotations',()=>{
+  const text='GPU and graphics cards are explicit terms in this saved transcript.',h=createHash('sha256').update(text).digest('hex'),seed={...record,content:text,videoKeywords:[{label:'Old unknown label',ranges:[]}],topics:['Old unknown label'],keywordContentHash:null};
+  sql(`update public.reader_source_updates set record=${j(seed)} where id='review-video';`);
+  const prior=json(`insert into public.admin_keyword_reviews(user_id,update_id,source_id,content_hash,label,kind,confidence,reason,evidence_quote,proposed_ranges,update_title,update_url)values(${q(owner)},'review-video','review-source',${q(h)},'GPU','category',0,'Synthetic category',${q(text)},'[]','Fixture','https://example.test/video')returning to_jsonb(admin_keyword_reviews);`);
+  json(`select public.admin_review_keyword(${q(prior.id)},${q(prior.updated_at)},'admin:fixture','approve','GPU','category');`);expect(source().keywordApprovals).toEqual({contentHash:h,labels:['GPU']});
+  const rejected=json(`insert into public.admin_analysis_reviews(user_id,update_id,source_id,content_hash,kind,dedupe_key,source_snapshot,proposal,reason)values(${q(owner)},'review-video','review-source',${q(h)},'keyword',gen_random_uuid()::text,${j(seed)},'{"label":"graphics cards","kind":"category"}','Synthetic alias uncertainty')returning to_jsonb(admin_analysis_reviews);`),before=source();
+  expect(decide(rejected,'reject').published).toBe(false);const after=source();expect(after.keywordApprovals).toBeUndefined();delete before.keywordApprovals;expect(after).toEqual(before);
+ });
+ it('backfills actual earlier approvals as derived metadata only, preserving raw annotations, collection time and job history',()=>{
+  const seed={...record,videoKeywords:[{label:'Old unknown label',ranges:[]}],topics:['Old unknown label'],keywordContentHash:null};sql(`update public.reader_source_updates set record=${j(seed)} where id='review-video';`);
+  const r=legacy();json(`select public.admin_review_keyword(${q(r.id)},${q(r.updated_at)},'admin:fixture','approve','quiet focus','technology');`);
+  decide(row('recap',{highlights:[{text:'Measured improvement.',evidenceQuote:'The laboratory found a measurable improvement over the older design.'}]}));job('failed','summary',null,'analysis_invalid_summary');
+  // Emulate a decision made before this additive projection existed.
+  sql("alter table public.reader_source_updates disable trigger y_admin_keyword_approved_subset;update public.reader_source_updates set record=record-'keywordApprovals'where id='review-video';alter table public.reader_source_updates enable trigger y_admin_keyword_approved_subset;");
+  const before=source(),collected=sql("select collected_at from public.reader_source_updates where id='review-video';"),jobs=sql('select jsonb_agg(to_jsonb(j)order by id)from public.reader_content_analysis_jobs j;'),reviews=sql('select jsonb_agg(to_jsonb(q)order by id)from public.admin_keyword_reviews q;');
+  const migration=readFileSync(new URL('../supabase/migrations/20261029022238_approved_keyword_subset.sql',import.meta.url),'utf8');sql(migration.slice(migration.indexOf('update public.reader_source_updates a set record=a.record')));
+  const after=source();expect(after.keywordApprovals).toEqual({contentHash:hash,labels:['quiet focus']});delete after.keywordApprovals;expect(after).toEqual(before);
+  expect(sql("select collected_at from public.reader_source_updates where id='review-video';")).toBe(collected);expect(sql('select jsonb_agg(to_jsonb(j)order by id)from public.reader_content_analysis_jobs j;')).toBe(jobs);expect(sql('select jsonb_agg(to_jsonb(q)order by id)from public.admin_keyword_reviews q;')).toBe(reviews);
  });
  it('captures literal pending proposals with valid legacy kinds and hides duplicate legacy queue rows',()=>{
   const id=job('prepared','keywords',{state:'review',pending:[{label:'quiet focus',kind:'feature',reason:'Uncertain setting name'}]});

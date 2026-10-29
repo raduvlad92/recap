@@ -1,4 +1,4 @@
-import type { SourceUpdate } from './types';
+import type { KeywordApprovals, SourceUpdate } from './types';
 import type { ContentProcessing } from './processing-types';
 
 const SHA256_INITIAL: number[] = [];
@@ -66,6 +66,14 @@ export function getKeywordContentHash(update:Pick<SourceUpdate,'keywordContentHa
  const legacy=update.videoSummary?.captionHash;
  return typeof legacy==='string'&&/^[a-f0-9]{64}$/.test(legacy)?legacy:undefined;
 }
+/** A bounded public projection of server-confirmed approvals, never candidate evidence. */
+export function sanitizeKeywordApprovals(value: unknown): KeywordApprovals | undefined {
+ if(!value || typeof value!=='object' || Array.isArray(value)) return;
+ const row=value as Record<string,unknown>;
+ if(typeof row.contentHash!=='string' || !/^[a-f0-9]{64}$/.test(row.contentHash) || !Array.isArray(row.labels) || row.labels.length>1000
+  || row.labels.some(label=>typeof label!=='string' || !label.trim() || label.length>100)) return;
+ return {contentHash:row.contentHash,labels:[...row.labels] as string[]};
+}
 function resolveContentProcessing(update: SourceUpdate & {processing?:ContentProcessing}, published = false): ContentProcessing {
  const usable=usableAnalysisContent(update),cached=hashes.get(update);
  const hash=usable ? cached && cached.text===update.content ? cached.hash : contentHash(update.content!) : undefined;
@@ -81,7 +89,9 @@ function resolveContentProcessing(update: SourceUpdate & {processing?:ContentPro
  const keywordHash=getKeywordContentHash(update);
  const keywordsFresh=usable && keywordHash===hash;
  const legacyKeywords = keywordsFresh && !!update.videoKeywords?.length;
- const publishedKeywords = keywordsFresh && Array.isArray(update.videoKeywords) && update.videoKeywords.some(keyword => keyword && typeof keyword.label === 'string' && !!keyword.label.trim());
+ const approvals=sanitizeKeywordApprovals(update.keywordApprovals);
+ const publishedKeywords = keywordsFresh && Array.isArray(update.videoKeywords) && update.videoKeywords.some(keyword => keyword && typeof keyword.label === 'string' && !!keyword.label.trim())
+  || usable && approvals?.contentHash===hash && !!approvals?.labels.length;
  const defaults: ContentProcessing = { ruleVersion: 'content-v1', ...(hash ? { contentHash: hash } : {}), content: sourceContentState(update),
   recap: summary ? update.videoHighlights?.length ? 'ready' : 'empty' : usable ? 'pending' : 'unavailable',
   keywords: (published ? publishedKeywords : legacyKeywords) ? 'ready' : 'pending',

@@ -31,6 +31,10 @@ function readFeedDensity(): FeedDensity {
 }
 type Selection = { kind: 'all' } | { kind: 'creator'; id: string } | { kind: 'source'; id: string };
 type Topic = { name: string; items: SourceUpdate[] };
+/** Video filters use the same published subset as the card, including later approvals. */
+export function readerTopicLabels(update: SourceUpdate): string[] {
+  return update.format === 'video' || update.format === 'podcast' ? getVideoKeywords(update).map(keyword => keyword.label) : update.topics;
+}
 type Dialog = null | { kind: 'sources' | 'settings' | 'filters' | 'coverage' | 'reset' | 'delete' | 'mobile' | 'collections' | 'sourceCoverage' } | { kind: 'update' | 'transcript'; update: SourceUpdate } | { kind: 'topic'; topic: Topic };
 const platforms: Platform[] = ['YouTube', 'X', 'Instagram', 'LinkedIn', 'Podcast', 'Substack', 'Blog'];
 const unique = <T,>(items: T[]) => [...new Set(items)];
@@ -102,7 +106,7 @@ export default function App() {
   currentSources.current = sources.map((source) => source.id);
   const requestEpoch = useRef(0);
   const activeRequests = useRef(new Map<string, AbortController>());
-  const updateTopics = (update: SourceUpdate) => update.topics.length ? update.topics : [t('unclassified')];
+  const updateTopics = (update: SourceUpdate) => { const labels = readerTopicLabels(update); return labels.length ? labels : [t('unclassified')]; };
   const sourceById = (id: string) => sources.find((source) => source.id === id);
   const creatorById = (id: string) => creators.find((creator) => creator.id === id);
   const followed = useMemo(() => new Set(state.followedSourceIds), [state.followedSourceIds]);
@@ -130,7 +134,7 @@ export default function App() {
     if (platformFilter && sourceById(update.sourceId)?.platform !== platformFilter) return false;
     if (topicFilter && !updateTopics(update).includes(topicFilter)) return false;
     if (query.trim()) {
-      const text = [update.title, update.summary, update.content || '', ...update.topics, ...update.brands, ...update.sponsors, ...update.insights, ...update.contributorIds.map((id) => creatorById(id)?.name || ''), sourceById(update.sourceId)?.name || ''].join(' ').toLocaleLowerCase();
+      const text = [update.title, update.summary, update.content || '', ...readerTopicLabels(update), ...(update.format === 'video' || update.format === 'podcast' ? [] : update.brands), ...update.sponsors, ...update.insights, ...update.contributorIds.map((id) => creatorById(id)?.name || ''), sourceById(update.sourceId)?.name || ''].join(' ').toLocaleLowerCase();
       if (!text.includes(query.trim().toLocaleLowerCase())) return false;
     }
     return true;
@@ -313,13 +317,15 @@ export default function App() {
     const social = !!source && ['X', 'Instagram', 'LinkedIn'].includes(source.platform);
     const youtube = source?.platform === 'YouTube';
     const videoKeywords = youtube ? getVideoKeywords(update) : [];
+    const publishedLabels = new Set(videoKeywords.map(keyword => keyword.label.toLocaleLowerCase()));
+    const brands = youtube ? update.brands.filter(brand => publishedLabels.has(brand.toLocaleLowerCase())) : update.brands;
     const processing = youtube ? getPublishedContentProcessing(update) : undefined;
     return <><div className="detail-source"><Avatar creator={contributor} label={identity.name} color={publisher?.color} /><div><button className="detail-source-name" onClick={() => contributor ? chooseSelection({ kind: 'creator', id: contributor.id }) : chooseSelection({ kind: 'source', id: update.sourceId })}><strong>{identity.name}</strong></button>{contributor && source ? <button className="detail-source-channel" onClick={() => chooseSelection({ kind: 'source', id: source.id })}>{source.name === contributor.name ? `${source.platform} channel` : source.name}</button> : !contributor && publisher && publisher.name !== identity.name ? <span className="detail-source-publisher">Published by {publisher.name}</span> : null}<p><PlatformIcon platform={source?.platform} size={14} />{source?.platform}<span>{update.publishedAt ? longDate(dayKey(update.publishedAt, state.settings.timezone), state.settings.interfaceLanguage) : t('unknownDate')}</span></p></div>{actionButtons(update, true)}</div>{social ? <><SocialPostContent key={update.id} update={update} detail /><p className="provenance social-post-detail-provenance">{socialPostProvenance(update)}</p></> : <><h3 className="detail-title">{update.title}</h3>{!youtube && <p className="detail-summary">{update.summary}</p>}</>}
       {youtube && <section className="detail-section"><h4>Takeaways</h4><VideoTakeaways update={update} processing={processing} /><ContentProcessingStatus update={update} processing={processing} />{videoKeywords.length > 0 && <VideoKeywordStrip keywords={videoKeywords} timingBasis={update.videoSummary?.timingBasis} onKeyword={topic => { setTopicFilter(current => current === topic ? '' : topic); closeDialog(); }} />}{getVideoTranscript(update) && <button className="transcript-button" onClick={() => setDialog({ kind: 'transcript', update })}>Full transcript<ArrowUpRight size={14} aria-hidden="true" /></button>}</section>}
       {update.coverage && <div className="coverage-note"><CheckCircle2 size={16} /><span>{update.coverage}</span></div>}
       {update.insights.length > 0 && <section className="detail-section"><h4>{t('evidence')}</h4><ul className="insight-list">{update.insights.map((insight, index) => <li key={index}>{insight}</li>)}</ul></section>}
       {!social && !youtube && update.content && <section className="detail-section"><h4>{update.contentKind === 'transcript' ? 'Transcript extract' : 'Source text extract'}</h4><p className="source-text-extract">{update.content.slice(0, 1400)}{update.content.length > 1400 ? '…' : ''}</p><p className="small-copy">A short extract for context. Open the original for the complete source; text availability does not establish visual coverage.</p></section>}
-      {(update.brands.length > 0 || update.sponsors.length > 0) && <section className="detail-section brand-details"><div><h4>{t('brands')}</h4><div className="static-pills">{update.brands.map((brand) => <span key={brand}>{brand}</span>)}</div></div>{update.sponsors.length > 0 && <div><h4>{t('sponsors')}</h4><div className="static-pills sponsor-pills">{update.sponsors.map((sponsor) => <span key={sponsor}><Check size={12} />{sponsor}</span>)}</div></div>}<p className="small-copy">{t('mentionNote')}</p></section>}
+      {(brands.length > 0 || update.sponsors.length > 0) && <section className="detail-section brand-details"><div><h4>{t('brands')}</h4><div className="static-pills">{brands.map((brand) => <span key={brand}>{brand}</span>)}</div></div>{update.sponsors.length > 0 && <div><h4>{t('sponsors')}</h4><div className="static-pills sponsor-pills">{update.sponsors.map((sponsor) => <span key={sponsor}><Check size={12} />{sponsor}</span>)}</div></div>}<p className="small-copy">{t('mentionNote')}</p></section>}
       {linkedReferences.length > 0 && <section className="detail-section"><h4>{t('references')}</h4><p className="small-copy">{t('referenceNote')}</p><div className="reference-list">{linkedReferences.map((reference) => <div key={reference.url}><Link2 size={16} /><span><External url={reference.url}>{reference.title}</External></span></div>)}</div></section>}
       <div className="original-link-section"><External url={update.url}>{t('original')}</External></div>
     </>;

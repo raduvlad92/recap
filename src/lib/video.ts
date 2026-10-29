@@ -1,5 +1,5 @@
 import type { SourceUpdate, VideoKeyword } from './types';
-import { contentHash, usableAnalysisContent, getKeywordContentHash } from './content-processing';
+import { contentHash, usableAnalysisContent, getKeywordContentHash, sanitizeKeywordApprovals } from './content-processing';
 
 export type VideoHighlight = { text: string; startSeconds?: number };
 export type TranscriptSegment = NonNullable<SourceUpdate['transcriptSegments']>[number];
@@ -110,9 +110,13 @@ export function getVideoKeywords(update: SourceUpdate): VideoKeyword[] {
   if (!usableAnalysisContent(update)) return [];
   const hash = contentHash(update.content!);
   const savedHash = getKeywordContentHash(update);
-  if (!savedHash || savedHash !== hash) return [];
+  const approvals = sanitizeKeywordApprovals(update.keywordApprovals);
+  const labels = approvals?.contentHash === hash ? approvals.labels : [];
+  const batch = savedHash === hash && Array.isArray(update.videoKeywords) ? update.videoKeywords : [];
   const seen = new Set<string>();
-  return (update.videoKeywords ?? []).filter(keyword => {
+  // A new approval proves its label only; never borrow timing from a stale batch.
+  return [...batch, ...labels.map<VideoKeyword>(label => ({ label, ranges: [] }))].filter(keyword => {
+    if (!keyword || typeof keyword.label !== 'string') return false;
     const key = keyword.label.trim().toLocaleLowerCase();
     if (!key || seen.has(key)) return false;
     seen.add(key); return true;
