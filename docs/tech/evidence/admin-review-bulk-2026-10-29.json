@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "verifiedAt": "2026-10-29T01:28:09.470Z",
+  "functionalCommit": "d020b5709c5e0168eb3610ff9be2128dd7f08ce9",
+  "ci": {
+    "conclusion": "success",
+    "headSha": "d020b5709c5e0168eb3610ff9be2128dd7f08ce9",
+    "status": "completed",
+    "url": "https://github.com/raduvlad92/recap/actions/runs/40800098676"
+  },
+  "deployment": {
+    "id": "6ae2a0e839bcc5da8dadbe9b",
+    "state": "ready",
+    "commit_ref": "d020b5709c5e0168eb3610ff9be2128dd7f08ce9",
+    "published_at": "2026-10-29T01:27:41.188Z"
+  },
+  "features": {
+    "pendingRowSelection": true,
+    "selectCurrentPageMax": 50,
+    "clearSelection": true,
+    "bulkAcceptPublish": true,
+    "bulkReject": true,
+    "serialExistingDecisions": true,
+    "eachSavedRevisionChecked": true,
+    "partialResultsRemainVisible": true,
+    "uncertainOrUnauthorizedResponseStopsRemaining": true,
+    "noAutomaticRetry": true,
+    "reloadBeforeNextBatch": true,
+    "savedProposalsOnly": true
+  },
+  "checks": {
+    "tests": 3319,
+    "files": 93,
+    "focusedUiTests": 25,
+    "disposablePostgresTests": 20,
+    "typecheck": "pass",
+    "catalogue": "pass",
+    "productionBuild": "pass",
+    "independentReview": "pass after checkbox source labels and pagination fixes",
+    "servedAdminAssetMatchesLocallyTestedBuild": true
+  },
+  "hostedReadOnly": {
+    "verifiedAt": "2026-10-29T01:28:09.470Z",
+    "type": "hosted_asset_and_read_only_authenticated_HTTP",
+    "adminDocument": 200,
+    "adminAsset": 200,
+    "adminChunk": "/assets/AdminApp-GdCZzdzL.js",
+    "adminChunkSha256": "3839bef5de49c4d8131cf53fb6ac296f8c1f570a9be6795f60370f0fa4f48d38",
+    "bulkControlsPresent": true,
+    "ownerQueue": 200,
+    "ordinaryQueue": 403,
+    "anonymousQueue": 401,
+    "currentPendingItems": 328,
+    "realDecisionsApplied": 0,
+    "modelCalls": 0,
+    "boundary": "Bulk handlers are exercised by component tests with mocked requests; no real review decisions or browser walkthrough were performed."
+  },
+  "operatingState": {
+    "modelRuntimeEnabled": false,
+    "newModelCalls": 0,
+    "newModelSpendUsd": 0,
+    "realReviewDecisionsApplied": 0,
+    "apiChanges": false,
+    "schemaChanges": false,
+    "qaSessionsRevoked": 2,
+    "existingUserSessionsTouched": false
+  },
+  "feedbackScope": {
+    "keywords": "Approval, correction and rejection replay for the same reader, saved video and exact transcript hash.",
+    "recapApproval": "Protected against later replacement while that source hash is unchanged.",
+    "recapRejection": "Dismisses this attempt only.",
+    "newVideoFeedbackExamples": false,
+    "automaticPromptUpdates": false,
+    "modelTraining": false
+  },
+  "boundaries": [
+    "Bulk handlers are tested with mocked requests; no real bulk publication was performed during verification.",
+    "Hosted proof checks served assets and authenticated read access, not a browser walkthrough.",
+    "Earlier native preservation snapshots belong to the original individual-review release."
+  ]
+}

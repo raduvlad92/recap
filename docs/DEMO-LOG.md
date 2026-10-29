@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 29 October 2026 — compact bulk review controls
+
+Delivered row checkboxes, current-page selection/Clear and bulk confirm/publish or reject, reusing individual source/revision guards. All **3,319 tests / 93 files**, including 25 UI behavior checks and 20 disposable PostgreSQL checks, catalogue/typecheck/build and CI **40800098676** pass. Independent review fixes source names on checkboxes and prevents pagination skips after a batch. Ready Netlify `6ae2a0e839bcc5da8dadbe9b` serves `d020b5709c5e0168eb3610ff9be2128dd7f08ce9`, published **01:27:41.188 UTC**. Actual hosted admin assets match the locally tested bundle; owner/ordinary/anonymous queue reads return 200/403/401, with 328 pending at 01:28:09 UTC.
+
+Bulk handlers are exercised with mocked requests, including successful accepts/rejects, partial failures, uncertain/auth stops, stale selection and unmounts. No real review decisions, model calls, schema/API changes or new browser walkthrough occurred. Runtime remains false. Both isolated QA sessions are revoked; existing sessions are untouched. The guide explains source-specific remembered decisions without claiming model learning. [Sanitized proof](tech/evidence/admin-review-bulk-2026-10-29.json); private evidence: `.local/admin-review-bulk-20261029/`.
+
 ## 29 October 2026 — compact private review queue
 
 Implemented the founder's human-review option for held keywords and recaps. A compact row gives the proposal, source, plain hold reason and decision; exact source text and saved prompts open on demand. Confirm/Edit publishes only the selected supported item; Reject keeps held content unpublished; rejecting an existing keyword can remove its visible label. The old keyword queue is included, and historical missing prompts/source-audit proposals are labeled honestly.

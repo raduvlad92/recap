@@ -12,6 +12,14 @@ Open [Administration → Review queue](https://recap-v0-radu.netlify.app/admin/?
 
 Reject keeps held content unpublished; rejecting an existing keyword can remove its visible label. Confirming does not start a new model call or enable automatic processing. A changed source or competing edit blocks an outdated confirmation and asks for a reload. Corrected content is untimed rather than given invented timestamps.
 
+## Bulk selection — deployed and verified
+
+Use row checkboxes or **Select this page** for up to 50 visible pending items, then **Confirm and publish selected** or **Reject selected**. **Clear** removes the selection. Bulk actions use saved proposals; save edits individually. Each item retains its own source/revision checks. Results distinguish saved decisions, failures and unattempted items. Uncertain/auth failures stop remaining writes; use **Reload latest reviews** before the next batch. There is no new API or schema.
+
+All **3,319 tests / 93 files**, including 25 UI behavior tests, catalogue/typecheck/build and CI **40800098676** pass. Ready Netlify `6ae2a0e839bcc5da8dadbe9b` serves functional `d020b5709c5e0168eb3610ff9be2128dd7f08ce9`, published **01:27:41.188 UTC**. Hosted admin assets match the tested local bundle. Owner/ordinary/anonymous queue reads return 200/403/401; 328 items remain pending at **01:28:09 UTC**. No real review decisions or model calls were made; both isolated QA sessions are revoked. Runtime remains Off. Bulk behavior is verified through actual component handlers with mocked requests; hosted checks are read-only, without a new browser walkthrough. [Bulk evidence](evidence/admin-review-bulk-2026-10-29.json).
+
+Accepting/editing or rejecting keywords is remembered for the same reader, saved video and unchanged transcript hash. Approved/edited recaps are protected for that source version. Rejecting a recap dismisses only that attempt. These decisions do not become examples for new videos, rewrite prompts or train a model.
+
 ## What is included
 
 The queue combines existing keyword reviews with new held keywords and failed/held recaps. Future analysis records the exact request before a fresh monetary reservation; held results and terminal failures enter the inbox automatically. There is no operator SQL step for each future item.
@@ -19,6 +27,8 @@ The queue combines existing keyword reviews with new held keywords and failed/he
 A missing name proposed by source review is identified as a source-review suggestion, not an AI-returned keyword. Recorded prompts in that case produced the original AI result. Where an old prompt was never saved, the interface says it is unavailable rather than inventing one from today's template. Requests prepared without a completed model response do not become claimed generation evidence.
 
 Human decisions are saved with the original proposal, source version and audit trail. Existing keyword decisions are reused, and an approved recap is protected from later processing while the source text remains unchanged. A different source version does not borrow that approval. This is persistent review feedback, **not fine-tuning or a self-training system**.
+
+Specifically, keyword approval/edit keeps the chosen label and type on later publication for the same reader, saved video and exact transcript hash; rejection excludes the named identity there. Recap approval/edit preserves that chosen recap for the same source version. Recap rejection only dismisses its attempt. New videos do not receive these decisions as examples, and no prompt update or model training happens automatically.
 
 ## Imported review data
 
@@ -29,9 +39,9 @@ The zero-model import added **54 pending proposals from 22 saved sources**, back
 - 25 AI-accepted phrases held after source review;
 - the three latest issues, including the missing setting.
 
-Existing legacy keyword reviews remain in the combined queue. Authenticated readback shows **332 pending items** in the combined queue, including the 54 imported proposals. No real case is approved as part of release testing, and the earlier 27 private reviewed copies are not published wholesale.
+Existing legacy keyword reviews remain in the combined queue. The original 00:40 UTC readback showed **332 pending items** in the combined queue, including the 54 imported proposals. No real case is approved as part of release testing, and the earlier 27 private reviewed copies are not published wholesale.
 
-## Verification obtained
+## Original individual-flow verification — 00:40 UTC
 
 - **3,308 local tests / 93 files pass**, including 20 disposable PostgreSQL review tests. Catalogue validation, typecheck and production build pass.
 - The final pinned migration hash is `81342416977cdb599f4cff8a56976a5c1ef2d8dd4c7a887382bfc569c2402162`.
@@ -58,4 +68,4 @@ Broad model generation remains Off, with zero open finite sessions/releases or e
 
 The [sanitized release evidence](evidence/admin-review-2026-10-29.json) records obtained proof. Private release evidence lives under `.local/admin-review-20261029/`; the final full local log is `full-check-final.log`, with earlier failed checks retained separately. Source texts, requests, account identifiers and credentials do not belong in Git.
 
-The founder can now make the compact source-backed decisions requested in this task. Start with the three latest held issues; approval remains an explicit owner action.
+The founder can use individual or bulk decisions for the remaining pending items. Approval remains an explicit owner action.

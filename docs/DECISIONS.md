@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 29 October 2026 — bulk review and honest feedback scope
+
+Founder: “select multiple” and bulk “reject/accept more than 1,” and asked whether either decision teaches the system. Add compact page selection and reuse the current guarded decision API sequentially. Bulk accepts saved proposals; unsaved edits must be saved individually. Do not approve real items while testing.
+
+Accepting/editing a keyword or rejecting its identity persists for the same reader, saved video and exact transcript hash. An approved recap is protected for that source version; rejecting a recap dismisses only that attempt. These decisions do not become examples in requests, rewrite prompts, transfer to new videos or train a model. Implementation and verification add no model spending or automatic activation. Deployed functional `d020b57` with all 3,319 tests and hosted asset/access checks passing; no real review decision was made during verification. [Proof](tech/evidence/admin-review-bulk-2026-10-29.json).
+
 ## 29 October 2026 — compact human decisions for withheld keywords and recaps
 
 Founder: “DO NOT over engineer,” and either improve through training or put questionable/unclear/unpublished items in the administrator backend to “decide, confirm or reject or improve.” Required context is compact: exact transcript, the generating prompt, why it did not pass and the decision to take. The founder explicitly prioritizes agents for implementation.

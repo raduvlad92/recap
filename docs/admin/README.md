@@ -29,6 +29,14 @@ Open [Review queue](https://recap-v0-radu.netlify.app/admin/?section=reviews). E
 
 Your decisions and the original evidence remain saved. This does not start paid training or automatic AI processing. Reviewing an uncertain name does not verify its outside-world spelling or identity; use the actual source rather than guessing a correction.
 
+### Bulk selection
+
+Check individual rows or use **Select this page** for up to 50 visible items; **Clear** removes the selection. Choose **Confirm and publish selected** or **Reject selected**. Each item keeps its own source and revision checks. The result shows separate successes and failures; unsupported or changed items are not silently approved. After a batch, use **Reload latest reviews** before selecting the next batch. An uncertain response is not automatically retried: check the saved state before trying again.
+
+### What the app remembers
+
+For the same saved video and unchanged transcript, approved or edited keywords are kept and rejected names stay excluded when results are published again. An approved or edited recap is protected from later replacement. Rejecting a recap dismisses that attempt; it does not ban future recaps. These choices do not transfer to new videos, change the prompts or train the AI.
+
 ## Five-minute review
 
 1. Open **Overview**, then **Readers**. Open your own reader record to check that the followed sources match your workspace.
