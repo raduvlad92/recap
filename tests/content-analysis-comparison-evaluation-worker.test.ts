@@ -45,6 +45,7 @@ function prepared(c:AnalysisClaim):AnalysisClaim {
 }
 /** Real store and engine; only the database's transport is replaced. */
 function fixture(initial:AnalysisClaim[],model:string=profiles[1].model){
+ const seenClaims=new Map<string,AnalysisClaim>(),savedRequests=new Map<string,Record<string,any>>();
  const queue=[...initial],calls=new Map<string,AnalysisCall&{job_id:string}>();
  const state={model,revision:37,durableCost:(result:GenerationResult):number|null=>result.actualUsd??null,
   deniedRpc:null as string|null,completionResult:true,missingCompletionMethod:false};
@@ -54,12 +55,21 @@ function fixture(initial:AnalysisClaim[],model:string=profiles[1].model){
   let data:unknown;
   switch(name){
    case 'sync_content_analysis_jobs_v2':data={synchronized:0};break;
-   case 'claim_content_analysis_job_v2':data=queue.shift()??null;break;
+   case 'claim_content_analysis_job_v2':{const c=queue.shift()??null;if(c)seenClaims.set(c.job.id,c);data=c;break;}
+   case 'record_admin_analysis_prompt':{
+    const c=seenClaims.get(args.p_job_id);expect(c).toBeDefined();expect(args.p_lease_token).toBe(c!.leaseToken);
+    expect(args.p_model).toBe(state.model);expect(args.p_request_hash).toMatch(/^[a-f0-9]{64}$/);
+    expect(args.p_request).toEqual(expect.objectContaining({key:expect.any(String),role:expect.any(String),system:expect.any(String),prompt:expect.any(String),schema:expect.any(Object),maxOutputTokens:expect.any(Number)}));
+    const old=calls.get(key(args.p_job_id,args.p_request.key));
+    if(!old)savedRequests.set(key(args.p_job_id,args.p_request.key),args);
+    data=old?{recorded:false,cached:old.model===args.p_model&&old.request_hash===args.p_request_hash&&old.result!=null,reason:'historical_prompt_unavailable',...(!old.result?{blockedReason:old.actual_usd==null?'analysis_unknown_charge_hold':'analysis_provider_retry_exhausted'}:{})}:{recorded:true,replayed:false};break;
+   }
    case 'read_content_analysis_cached_calls_v2':data={calls:[...calls.values()].filter(row=>row.job_id===args.p_job_id&&args.p_call_keys.includes(row.call_key)
     &&(!args.p_after_key||row.call_key!>args.p_after_key)).sort((a,b)=>a.call_key!.localeCompare(b.call_key!)),nextAfterKey:null};break;
    case 'reserve_content_analysis_call_v3':{
     const id=key(args.p_job_id,args.p_call_key),old=calls.get(id);
     if(old){data={claimed:false,call:old};break;}
+    expect(savedRequests.get(key(args.p_job_id,args.p_call_key))).toMatchObject({p_request_hash:args.p_request_hash,p_model:args.p_model,p_lease_token:args.p_lease_token});
     const row={id,job_id:args.p_job_id,call_key:args.p_call_key,maximum_usd:args.p_maximum_usd,model:args.p_model,
      execution_identity:args.p_execution_identity,request_hash:args.p_request_hash,actual_usd:null,state:'reserved'};
     calls.set(id,row);data={claimed:true,call:row};break;

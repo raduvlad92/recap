@@ -34,6 +34,9 @@ export interface AnalysisStore {
  claim(userId:string):Promise<AnalysisClaim|null>;
  /** Optional for older fixture stores. Never grants provider permission. */
  cachedCalls?(claim:AnalysisClaim,keys:string[],afterKey:string|null,model:string):Promise<AnalysisCachePage>;
+ /** Save fresh prompts before reserving funds. Existing cached successes may
+  * be reused without pretending their historical prompt was recorded. */
+ recordPrompt?(claim:AnalysisClaim,request:GenerationRequest,model:string,requestHash:string):Promise<boolean>;
  reserve(claim:AnalysisClaim,request:GenerationRequest,maximumUsd:number,model:string,identity:AnalysisExecutionIdentity,requestHash:string):Promise<AnalysisReservation>;
  recordRejection(call:AnalysisCall,claim:AnalysisClaim,requestHash:string,identity:AnalysisExecutionIdentity,receipt:AnalysisRejectionReceipt):Promise<{retryEligible:false;retryAt:string}>;
  saveCall(call:AnalysisCall,claim:AnalysisClaim,result:GenerationResult):Promise<AnalysisCall|void>;
@@ -60,6 +63,11 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
   sync:(userId,configEpoch)=>rpc('sync_content_analysis_jobs_v2',{p_user_id:userId,p_limit:200,p_config_epoch:configEpoch??env('CONTENT_ANALYSIS_CONFIG_EPOCH')??''}),
   claim:userId=>rpc('claim_content_analysis_job_v2',{p_user_id:userId,p_lease_seconds:900}),
   cachedCalls:(claim,keys,afterKey,model)=>rpc('read_content_analysis_cached_calls_v2',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_keys:keys,p_after_key:afterKey,p_model:model}),
+  async recordPrompt(claim,request,model,requestHash){
+   const receipt=await rpc<{recorded:boolean;cached?:boolean;blockedReason?:string}>('record_admin_analysis_prompt',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_request_hash:requestHash,p_model:model,p_request:request});
+   if(receipt?.blockedReason==='analysis_unknown_charge_hold'||receipt?.blockedReason==='analysis_provider_retry_exhausted')return analysisFailure(receipt.blockedReason);
+   return receipt?.recorded===true||receipt?.cached===true;
+  },
   reserve:(claim,request,maximumUsd,model,identity,requestHash)=>rpc('reserve_content_analysis_call_v3',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_key:request.key,p_maximum_usd:maximumUsd,p_model:model,p_execution_identity:identity,p_request_hash:requestHash}),
   recordRejection:(call,claim,requestHash,identity,receipt)=>rpc('record_content_analysis_known_rejection',{p_call_id:call.id,p_lease_token:claim.leaseToken,p_request_hash:requestHash,p_execution_identity:identity,p_http_status:receipt.httpStatus,p_retry_after_seconds:receipt.retryAfterSeconds,p_provider_request_id:receipt.providerRequestId,p_received_at:receipt.receivedAt,p_pre_generation:receipt.preGeneration}),
   saveCall:(call,claim,result)=>rpc<AnalysisCall>('record_content_analysis_call_result',{p_call_id:call.id,p_lease_token:claim.leaseToken,p_result:result,p_usage:result.usage||{},p_provider_id:result.providerId||null,p_actual_usd:result.actualUsd??null,p_observed_usd:result.observedUsd}),
@@ -255,6 +263,8 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       // Missing/result-less rows still pass through the authoritative stable-key
       // reservation, including unknown holds and authenticated-zero retries.
       if(now()>ownerDeadline-GENERATION_HEADROOM_MS)return analysisFailure('analysis_worker_yield');
+      if(!cached?.result&&store.recordPrompt&&!await store.recordPrompt(claim,request,limits.model,requestHash))
+       return analysisFailure('analysis_prompt_not_recorded');
       const reservation=cached?.result?{claimed:false,call:cached}:await store.reserve(claim,request,maximumUsd,limits.model,executionIdentity,requestHash);
       if(!reservation.claimed) {
        if(reservation.reason==='analysis_provider_cooldown'||reservation.reason==='analysis_provider_rate_limited'){

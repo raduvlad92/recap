@@ -10,13 +10,24 @@ Open [Administration](https://recap-v0-radu.netlify.app/admin/) and use the same
 | **Readers** | Search signups, open a reader and see their saved creator/channel follows, signup and sign-in dates, saved-item counts, languages and recorded collection activity. Fictional starter sources are labeled; development test accounts can also appear in the signup list. |
 | **Creators** | Search the researched catalogue, inspect a creator’s channels and account evidence, edit their content-focus description/topics, or hide their public listing. Public pages can take up to five minutes to reflect a change. |
 | **Collection plans** | Review or edit the proposed provider, Actor reference, intended check interval and notes. Saving a plan never starts a job, turns on a schedule or enables paid collection. Changing the provider or collector clears its previous price quote. |
-| **Keyword review** | Review uncertain names, source excerpts and uncalibrated confidence scores; correct a label and its type, approve or reject. Names below 50/100, unknown scores and extraction disagreements wait here. Decisions check the source and review revision; approving never starts collection. |
+| **Review queue** | Review held keywords and recaps in a compact list. Open a row for its exact saved source, AI prompts, reason and decision needed. Confirm, edit and confirm, or reject. Decisions are saved and checked against the current source. |
 | **Collection jobs** | Filter recorded activity by reader, provider or status. See actual provider-run references, returned-item counts and any reported charge. This view starts recording from the D21 increment; earlier activity was not invented or backfilled. |
 | **Access log** | See recorded private reader-view access and creator/plan edits, with their time and operator reference. This is an operational audit trail, not a customer-analytics report. |
 
 **Configured Actors, used Actors and runs mean different things.** A plan names a possible Actor. An Actor counts as used only after an actual provider-run reference is recorded. One Actor may have many runs; a shared source should not require one paid run per follower.
 
 **Unknown costs stay unknown.** A blank/unreported charge is not zero. “No provider charge” for a public feed means no scraper supplier fee; app hosting, database and other operating costs still exist. The plan’s quoted price is not an invoice or a spending limit.
+
+## Decide a held keyword or recap
+
+Open [Review queue](https://recap-v0-radu.netlify.app/admin/?section=reviews). Each compact row shows the keyword or recap, its source and why it was held. Open only the item you want to decide.
+
+- **Exact transcript / source** shows the saved text used for that analysis. **Saved AI prompt** shows the actual stored system instructions, request and model. Older items may say **Prompt not saved**; a current template is never shown as a historical request. A source-review suggestion is labeled separately from what the AI returned. If there are many saved prompts, use **Next prompts** or **Previous prompts**; your edits stay in place.
+- **Confirm and publish** approves that item and applies it to its reader update. It does not enable analysis for other videos or start collection. Confirmation is disabled when the source changed or the saved proposal is invalid.
+- **Edit** lets you fix a keyword and type, or write up to six recap points with exact supporting text copied from the transcript. **Save and publish** checks and publishes your correction. If no usable recap was saved, you can write supported points or reject the attempt.
+- **Reject** records your decision and keeps the item unpublished. Approved and rejected items remain available through the status filter. If another decision or source change happened meanwhile, reload the latest review before saving again.
+
+Your decisions and the original evidence remain saved. This does not start paid training or automatic AI processing. Reviewing an uncertain name does not verify its outside-world spelling or identity; use the actual source rather than guessing a correction.
 
 ## Five-minute review
 

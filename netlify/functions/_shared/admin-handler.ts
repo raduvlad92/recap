@@ -3,6 +3,7 @@ import { clerkRequest, database, requireAdmin, userSummary, type ClerkUser, type
 import { collectionHealth } from './collect-handler';
 import type { AdminChannelIdentity, CollectionJobRecord } from '../../../src/lib/admin-types';
 import { listKeywordReviews, reviewKeyword } from './keyword-admin';
+import { listContentReviews, readContentReview, decideContentReview } from './content-review-admin';
 import { activityQuery, readCollectionActivity } from './collection-activity';
 import { readAnalysisSettings, saveAnalysisModel } from './analysis-settings-admin';
 import { checkOpenRouterConnection } from './content-analysis-runtime';
@@ -41,9 +42,10 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
    }
    if(request.method==='PATCH') {
     if(!request.headers.get('content-type')?.includes('application/json')) throw new CollectionError(415,'json_required','Send JSON.');
-    let body:Record<string,unknown>;try {body=JSON.parse(await readTextLimited(new Response(request.body),16000));}catch{throw new CollectionError(400,'invalid_input','The saved details could not be read.');}
+    let body:Record<string,unknown>;try {body=JSON.parse(await readTextLimited(new Response(request.body),32000));}catch{throw new CollectionError(400,'invalid_input','The saved details could not be read.');}
     if(!body||Array.isArray(body)||typeof body!=='object') throw new CollectionError(400,'invalid_input','Send record details.');
     if(body.action==='keyword') return success(await reviewKeyword(db,body,adminId));
+    if(body.action==='review') return success(await decideContentReview(db,body,adminId));
     const id=exactText(body.id,160),expected=exactText(body.expectedUpdatedAt,60);
     if(!id||!expected||!Number.isFinite(Date.parse(expected))) throw new CollectionError(400,'invalid_input','Reload the record before editing.');
     if(body.action==='creator') {
@@ -60,6 +62,8 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
    }
    if(section==='analysis') return success(await readAnalysisSettings(db,deps.env));
    if(section==='keywords') return success(await listKeywordReviews(db,url,page,adminId));
+   if(section==='reviews') return success(await listContentReviews(db,url,page,adminId));
+   if(section==='review') return success(await readContentReview(db,url,adminId));
    if(section==='costs') {
     const filters=activityQuery(url,true);
     const report=await readCollectionActivity(db,filters,deps.env);

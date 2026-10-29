@@ -5,28 +5,30 @@ import { useRecapAuth } from '../lib/auth';
 import type { AdminAudit, AdminOverview, AdminUser, CatalogueCreator, CollectionActivityReport, CollectionJobRecord, ProviderPlan } from '../lib/admin-types';
 import type { KeywordReviewRecord } from '../lib/keyword-review-types';
 import { KeywordReviews, type KeywordReviewRequest } from './KeywordReviews';
+import { AnalysisReviews, type DecideContentReview, type LoadContentReview } from './AnalysisReviews';
+import type { ContentReviewDetail, ContentReviewSummary } from '../lib/content-review-types';
 import { CollectionCosts, CostFilterForm } from './CollectionCosts';
 import { AnalysisSettings, type SaveAnalysisModelRequest, type CheckAnalysisConnectionRequest } from './AnalysisSettings';
 import type { AnalysisConnectionStatus, AnalysisModelSelection, AnalysisSettings as AnalysisSettingsData } from '../lib/analysis-settings-types';
 import './admin.css';
 
-type Section = 'overview' | 'users' | 'user' | 'creators' | 'plans' | 'jobs' | 'costs' | 'audit' | 'keywords' | 'analysis';
+type Section = 'overview' | 'users' | 'user' | 'creators' | 'plans' | 'jobs' | 'costs' | 'audit' | 'keywords' | 'reviews' | 'analysis';
 interface Route { section: Section; page: number; q: string; id: string; status: string; provider: string; user: string; from: string; to: string; source: string }
 interface Payload {
   overview?: AdminOverview; development?: boolean; users?: AdminUser[]; creators?: CatalogueCreator[];
-  plans?: ProviderPlan[]; jobs?: CollectionJobRecord[]; events?: AdminAudit[]; keywords?: KeywordReviewRecord[]; total?: number; page?: number; pageSize?: number;
+  plans?: ProviderPlan[]; jobs?: CollectionJobRecord[]; events?: AdminAudit[]; keywords?: KeywordReviewRecord[]; reviews?: ContentReviewSummary[]; review?: ContentReviewDetail; published?: boolean; total?: number; page?: number; pageSize?: number;
   health?: { apifyEnabled: boolean; feedEnabled: boolean; automaticScheduling: boolean };
   costs?: CollectionActivityReport;
   analysis?: AnalysisSettingsData; selection?: AnalysisModelSelection;
   connection?: AnalysisConnectionStatus;
-  record?: CatalogueCreator | ProviderPlan | KeywordReviewRecord;
+  record?: CatalogueCreator | ProviderPlan | KeywordReviewRecord | ContentReviewSummary;
 }
 interface ApiProblem { status: number; message: string }
 type RequestAdmin = (params: URLSearchParams, body?: Record<string, unknown>) => Promise<Payload>;
 const sections = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard }, { id: 'users', label: 'Readers', icon: Users },
   { id: 'creators', label: 'Creators', icon: Library }, { id: 'plans', label: 'Collection plans', icon: Layers },
-  { id: 'keywords', label: 'Keyword review', icon: Tags },
+  { id: 'reviews', label: 'Review queue', icon: Tags },
   { id: 'analysis', label: 'Analysis model', icon: Sparkles },
   { id: 'costs', label: 'Collection costs', icon: Coins },
   { id: 'jobs', label: 'Collection jobs', icon: Activity }, { id: 'audit', label: 'Access log', icon: ClipboardList },
@@ -34,14 +36,14 @@ const sections = [
 const emptyRoute: Route = { section: 'overview', page: 0, q: '', id: '', status: '', provider: '', user: '', from: '', to: '', source: '' };
 function readRoute(): Route {
   const p = new URLSearchParams(window.location.search), section = p.get('section') || 'overview';
-  return { section: ['overview', 'users', 'user', 'creators', 'plans', 'jobs', 'costs', 'audit', 'keywords', 'analysis'].includes(section) ? section as Section : 'overview', page: Math.min(10000, Math.max(0, Number.parseInt(p.get('page') || '0') || 0)), q: (p.get('q') || '').slice(0, 120), id: p.get('id') || '', status: section === 'keywords' ? keywordStatus(p.get('status') || '') : p.get('status') || '', provider: p.get('provider') || '', user: p.get('user') || '', from: p.get('from') || '', to: p.get('to') || '', source: p.get('source') || '' };
+  return { section: ['overview', 'users', 'user', 'creators', 'plans', 'jobs', 'costs', 'audit', 'keywords', 'reviews', 'analysis'].includes(section) ? section as Section : 'overview', page: Math.min(10000, Math.max(0, Number.parseInt(p.get('page') || '0') || 0)), q: (p.get('q') || '').slice(0, 120), id: p.get('id') || '', status: section === 'keywords' || section === 'reviews' ? keywordStatus(p.get('status') || '') : p.get('status') || '', provider: p.get('provider') || '', user: p.get('user') || '', from: p.get('from') || '', to: p.get('to') || '', source: p.get('source') || '' };
 }
 const keywordStatus = (status: string): KeywordReviewRecord['status'] => status === 'approved' || status === 'rejected' ? status : 'pending';
 function routeParams(route: Route) {
   const params = new URLSearchParams({ section: route.section });
   if (route.page) params.set('page', String(route.page));
   for (const key of ['q', 'id', 'status', 'provider', 'user', 'from', 'to', 'source'] as const) if (route[key]) params.set(key, route[key]);
-  if (route.section === 'keywords') params.set('status', keywordStatus(route.status));
+  if (route.section === 'keywords' || route.section === 'reviews') params.set('status', keywordStatus(route.status));
   return params;
 }
 const count = (n: number) => n.toLocaleString();
@@ -109,10 +111,10 @@ function Brand() { return <a className="ra-brand" href="/" aria-label="recap hom
 function AdminGate({ title, children }: { title: string; children: ReactNode }) { return <div className="recap-admin"><header className="ra-topbar"><Brand /><span className="ra-topbar-label">Administration</span></header><main className="ra-gate"><LockKeyhole size={30} strokeWidth={1.5} aria-hidden="true" /><h1>{title}</h1><div className="ra-prose">{children}</div></main></div>; }
 
 function PrivateAdmin({ userId }: { userId: string }) {
-  const request = usePrivateRequest(userId), [route, setRoute] = useState<Route>(readRoute), [refresh, setRefresh] = useState(0), [keywordBusy, setKeywordBusy] = useState(false), [analysisBusy, setAnalysisBusy] = useState(false);
+  const request = usePrivateRequest(userId), [route, setRoute] = useState<Route>(readRoute), [refresh, setRefresh] = useState(0), [keywordBusy, setKeywordBusy] = useState(false), [analysisBusy, setAnalysisBusy] = useState(false), [reviewFeedback, setReviewFeedback] = useState('');
   const [resource, setResource] = useState<{ data: Payload | null; loading: boolean; error: ApiProblem | null; query: string }>({ data: null, loading: true, error: null, query: '' });
   const query = routeParams(route).toString(), titleRef = useRef<HTMLHeadingElement>(null), focusAfterKeywordReload = useRef(false);
-  const go = (next: Route) => { setRoute(next); window.history.pushState(null, '', '/admin/?' + routeParams(next)); };
+  const go = (next: Route) => { setReviewFeedback(''); setRoute(next); window.history.pushState(null, '', '/admin/?' + routeParams(next)); };
   useEffect(() => { const listener = () => setRoute(readRoute()); window.addEventListener('popstate', listener); return () => window.removeEventListener('popstate', listener); }, []);
   useEffect(() => {
     let cancelled = false; setResource({ data: null, loading: true, error: null, query });
@@ -121,12 +123,12 @@ function PrivateAdmin({ userId }: { userId: string }) {
   }, [query, refresh, request]);
   useEffect(() => { titleRef.current?.focus({ preventScroll: true }); }, [route.section, route.id]);
   useEffect(() => {
-    if (focusAfterKeywordReload.current && route.section === 'keywords' && !resource.loading && resource.query === query) {
+    if (focusAfterKeywordReload.current && (route.section === 'keywords' || route.section === 'reviews') && !resource.loading && resource.query === query) {
       focusAfterKeywordReload.current = false;
       titleRef.current?.focus({ preventScroll: true });
     }
   }, [resource.loading, resource.query, query, route.section]);
-  const retry = () => setRefresh(value => value + 1), pageTitle = route.section === 'user' ? 'Reader details' : sections.find(section => section.id === route.section)?.label || 'Overview';
+  const retry = () => setRefresh(value => value + 1), pageTitle = route.section === 'user' ? 'Reader details' : route.section === 'keywords' ? 'Keyword review' : sections.find(section => section.id === route.section)?.label || 'Overview';
   const reloadKeywords = () => { focusAfterKeywordReload.current = true; retry(); };
   const replaceCreator = (record: CatalogueCreator) => setResource(previous => ({ ...previous, data: previous.data ? { ...previous.data, creators: previous.data.creators?.map(item => item.id === record.id ? { ...item, ...record, catalogue_channels: item.catalogue_channels } : item) } : null }));
   const replacePlan = (record: ProviderPlan) => setResource(previous => ({ ...previous, data: previous.data ? { ...previous.data, plans: previous.data.plans?.map(item => item.platform === record.platform ? record : item) } : null }));
@@ -135,6 +137,17 @@ function PrivateAdmin({ userId }: { userId: string }) {
     if (!record || !('content_hash' in record) || record.id !== body.id || record.status !== (body.decision === 'approve' ? 'approved' : 'rejected')) throw { status: 502, message: 'The server did not confirm this keyword decision. Reload the latest reviews before trying again.' } satisfies ApiProblem;
     return record;
   };
+  const loadReview: LoadContentReview = useCallback(async (item, promptPage = 0) => {
+    const { review } = await request(new URLSearchParams({ section: 'review', id: item.id, origin: item.origin, promptPage: String(promptPage) }));
+    if (!review || review.id !== item.id || review.origin !== item.origin) throw { status: 502, message: 'The source and prompt could not be confirmed. Reload the latest reviews.' } satisfies ApiProblem;
+    return review;
+  }, [request]);
+  const decideReview: DecideContentReview = useCallback(async body => {
+    const result = await request(new URLSearchParams(), { ...body }), record = result.record;
+    if (!record || !('origin' in record) || record.id !== body.id || record.origin !== body.origin || record.status !== (body.decision === 'approve' ? 'approved' : 'rejected') || result.published !== (body.decision === 'approve')) throw { status: 502, message: 'The server did not confirm this decision. Reload before trying again.' } satisfies ApiProblem;
+    setReviewFeedback(body.decision === 'approve' ? 'Confirmed and published.' : 'Rejected; kept private.');
+    return { record, published: result.published };
+  }, [request]);
   const saveAnalysis: SaveAnalysisModelRequest = async body => {
     const { selection } = await request(new URLSearchParams({ section: 'analysis' }), { ...body });
     if (!selection) throw { status: 502, message: 'The server did not confirm the model selection. Reload before trying again.' } satisfies ApiProblem;
@@ -149,7 +162,7 @@ function PrivateAdmin({ userId }: { userId: string }) {
     <a className="ra-skip" href="#ra-main">Skip to admin content</a>
     <header className="ra-topbar"><Brand /><span className="ra-topbar-label">Administration</span><div className="ra-header-links"><a href="/">Workspace<ArrowUpRight size={14} aria-hidden="true" /></a><a href="/creators/">Creator directory<ArrowUpRight size={14} aria-hidden="true" /></a><AuthButton /></div></header>
     <div className="ra-layout"><aside className="ra-sidebar"><nav aria-label="Administration">{sections.map(({ id, label, icon: Icon }) => <button key={id} className={route.section === id || (id === 'users' && route.section === 'user') ? 'active' : ''} aria-current={route.section === id || (id === 'users' && route.section === 'user') ? 'page' : undefined} onClick={() => go({ ...emptyRoute, section: id })}><Icon size={18} strokeWidth={1.6} aria-hidden="true" />{label}</button>)}</nav><div className="ra-sidebar-note"><ShieldCheck size={19} aria-hidden="true" /><strong>Private workspace</strong><p>Access is checked on the server. Collection plans stay separate from live runs.</p></div></aside>
-    <main id="ra-main" className="ra-main"><div className="ra-page-top"><div><h1 ref={titleRef} tabIndex={-1}>{pageTitle}</h1><p>{({ overview: 'A clear view of the people, sources and operations behind recap.', users: 'Everyone who signed up, including readers without a saved workspace.', user: 'Actual saved follows and recorded activity for this reader.', creators: 'People, studios and their researched public channels.', plans: 'Compare and prepare providers. Editing a plan never starts collection.', keywords: 'Review suggested keywords against their original mention evidence.', analysis: 'Choose an approved model for future content analysis.', jobs: 'Recorded requests and provider runs, with observed costs kept separate.', costs: 'Supplier fees by source, reader and UTC day, with every check available to inspect.', audit: 'Administrative access and changes, recorded without copied reader content.' })[route.section]}</p></div><button className="ra-button" onClick={route.section === 'keywords' ? reloadKeywords : retry} disabled={resource.loading || keywordBusy || analysisBusy}><RefreshCw size={15} aria-hidden="true" />Refresh</button></div>
+    <main id="ra-main" className="ra-main"><div className="ra-page-top"><div><h1 ref={titleRef} tabIndex={-1}>{pageTitle}</h1><p>{({ overview: 'A clear view of the people, sources and operations behind recap.', users: 'Everyone who signed up, including readers without a saved workspace.', user: 'Actual saved follows and recorded activity for this reader.', creators: 'People, studios and their researched public channels.', plans: 'Compare and prepare providers. Editing a plan never starts collection.', keywords: 'Review suggested keywords against their original mention evidence.', reviews: 'Confirm, improve or reject held keywords and recaps.', analysis: 'Choose an approved model for future content analysis.', jobs: 'Recorded requests and provider runs, with observed costs kept separate.', costs: 'Supplier fees by source, reader and UTC day, with every check available to inspect.', audit: 'Administrative access and changes, recorded without copied reader content.' })[route.section]}</p></div><button className="ra-button" onClick={route.section === 'keywords' || route.section === 'reviews' ? reloadKeywords : retry} disabled={resource.loading || keywordBusy || analysisBusy}><RefreshCw size={15} aria-hidden="true" />Refresh</button></div>
     {resource.loading || resource.query !== query ? <div className="ra-loading" role="status"><RefreshCw size={18} aria-hidden="true" />Loading {pageTitle.toLowerCase()}…</div> : resource.error ? <>{route.section === 'costs' && resource.error.status !== 401 && resource.error.status !== 403 && <CostFilterForm key={query} filters={route} onChange={filters => go({ ...route, ...filters })} />}<PanelMessage error title={resource.error.status === 403 ? 'Administrator access required' : resource.error.status === 503 ? 'Administration needs configuration' : resource.error.status === 401 ? 'Sign-in needs refreshing' : 'This view could not be loaded'} action={<button className="ra-button" onClick={retry}>Retry</button>}><p>{resource.error.message}</p>{resource.error.status === 403 && <p>Use the account granted administrator access. You can switch accounts from the account menu.</p>}{resource.error.status === 503 && <p>No private reader data is shown. Server configuration or access logging needs attention.</p>}</PanelMessage></> : resource.data ? <>
       {route.section === 'overview' && resource.data.overview && <Overview data={resource.data.overview} development={resource.data.development === true} go={go} />}
       {route.section === 'users' && <Readers users={resource.data.users || []} total={resource.data.total || 0} pageSize={resource.data.pageSize} route={route} go={go} />}
@@ -157,6 +170,7 @@ function PrivateAdmin({ userId }: { userId: string }) {
       {route.section === 'creators' && <Creators creators={resource.data.creators || []} total={resource.data.total || 0} route={route} pageSize={resource.data.pageSize} go={go} request={request} onSaved={replaceCreator} reload={retry} />}
       {route.section === 'plans' && <Plans plans={resource.data.plans || []} health={resource.data.health} request={request} onSaved={replacePlan} reload={retry} />}
       {route.section === 'analysis' && (resource.data.analysis ? <AnalysisSettings settings={resource.data.analysis} request={saveAnalysis} checkConnection={checkAnalysisConnection} reload={retry} onPendingChange={setAnalysisBusy} /> : <PanelMessage error title="Analysis settings unavailable"><p>Reload to read the latest model selection.</p><button type="button" className="ra-button" onClick={retry}>Reload latest selection</button></PanelMessage>)}
+      {route.section === 'reviews' && <>{reviewFeedback && <p className="ra-save-success" role="status">{reviewFeedback}</p>}<AnalysisReviews data={resource.data} status={keywordStatus(route.status)} page={route.page} onStatusChange={status => { setReviewFeedback(''); focusAfterKeywordReload.current = true; go({ ...emptyRoute, section: 'reviews', status }); }} onPageChange={page => { setReviewFeedback(''); focusAfterKeywordReload.current = true; go({ ...route, page }); }} loadDetail={loadReview} decide={decideReview} reload={reloadKeywords} onPendingChange={setKeywordBusy} /></>}
       {route.section === 'keywords' && <KeywordReviews data={resource.data} status={keywordStatus(route.status)} page={route.page} onStatusChange={status => { focusAfterKeywordReload.current = true; go({ ...emptyRoute, section: 'keywords', status }); }} onPageChange={page => { focusAfterKeywordReload.current = true; go({ ...route, page }); }} request={reviewKeyword} reload={reloadKeywords} onPendingChange={setKeywordBusy} />}
       {route.section === 'jobs' && <Jobs jobs={resource.data.jobs || []} total={resource.data.total || 0} pageSize={resource.data.pageSize} route={route} go={go} />}
       {route.section === 'costs' && resource.data.costs && <CollectionCosts data={resource.data.costs} filters={route} onChange={filters => go({ ...route, ...filters })} openReader={id => go({ ...emptyRoute, section: 'user', id })} />}

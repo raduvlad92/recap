@@ -11,7 +11,7 @@ function storeFor(queue:AnalysisClaim[]) {
  return {policies:vi.fn(async()=>[{user_id:'owner',enabled:true,model:'fixture/model'}]),sync:vi.fn(async(_userId:string,_epoch?:string)=>({synchronized:2})),claim:vi.fn(async(_userId:string)=>queue.shift()||null),
   reserve:vi.fn<AnalysisStore['reserve']>(async(claim,request,_maximumUsd,model,identity,requestHash)=>{const key=claim.job.id+':'+request.key,call=calls.get(key);if(call)return {claimed:false,call};const row={id:key,model,execution_identity:identity,request_hash:requestHash,result:null};calls.set(key,row);return {claimed:true,call:row};}),
   recordRejection:vi.fn<AnalysisStore['recordRejection']>(async()=>({retryEligible:false,retryAt:'2026-10-24T20:30:00Z'})),
-  saveCall:vi.fn(async(call:AnalysisCall,_claim:unknown,result:unknown)=>{calls.set(call.id,{...calls.get(call.id),id:call.id,result:result as AnalysisCall['result']});}),prepare:vi.fn(async()=>{}),publish:vi.fn(async()=>true),fail:vi.fn(async(_claim:AnalysisClaim,_code:string,_retryable:boolean,_yielded?:boolean)=>{})} satisfies AnalysisStore;
+  saveCall:vi.fn(async(call:AnalysisCall,_claim:unknown,result:unknown)=>{const saved={...calls.get(call.id),id:call.id,result:result as AnalysisCall['result'],actual_usd:(result as {actualUsd?:number}).actualUsd??null,state:(result as {actualUsd?:number}).actualUsd==null?'unknown':'settled'};calls.set(call.id,saved);return saved;}),prepare:vi.fn(async()=>{}),publish:vi.fn(async()=>true),fail:vi.fn(async(_claim:AnalysisClaim,_code:string,_retryable:boolean,_yielded?:boolean)=>{})} satisfies AnalysisStore;
 }
 const generator:AnalysisGenerator=async request=>{const p=JSON.parse(request.prompt);return {value:{readComplete:true,endQuote:p.requiredEndQuote,...(request.role==='summary'?{highlights:[{text:'The GPU test improved from 30 to 45 frames per second.',evidenceQuote:record.content,startSeconds:null}]}:{candidates:[{label:'GPU',kind:'category',confidence:100,reason:'Explicit category.',mention:'GPU',evidenceQuote:'GPU'}]})},observedUsd:.0001,actualUsd:.0001};};
 describe('private durable automatic video analysis worker',()=>{
@@ -232,5 +232,39 @@ describe('private dispatch and read-only owner status',()=>{
   const response=await handler(new Request('https://example.net/api/content-analysis-status?user_id=attacker'));
   const data=await response.json();expect(query.eq).toHaveBeenCalledWith('user_id','owner');expect(data.items[0].processing.recap).toBe('pending');expect(JSON.stringify(data)).not.toContain('description');
   expect((await handler(new Request('https://example.net',{method:'POST'}))).status).toBe(405);
+ });
+});
+
+describe('exact prompt receipts before new model spending',()=>{
+ it('saves the exact request before reserving money or contacting a model',async()=>{
+  const events:string[]=[],store=Object.assign(storeFor([claim('summary')]),{recordPrompt:vi.fn<NonNullable<AnalysisStore['recordPrompt']>>(async()=>{events.push('prompt');return true;})});
+  const reserve=store.reserve.getMockImplementation()!;store.reserve.mockImplementation(async(...args)=>{events.push('reserve');return reserve(...args);});
+  const generate=vi.fn<AnalysisGenerator>(async request=>{events.push('provider');return generator(request);});
+  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
+  expect(events).toEqual(['prompt','reserve','provider']);
+  expect(store.recordPrompt.mock.calls[0][1]).toEqual(generate.mock.calls[0][0]);
+  expect(store.recordPrompt.mock.calls[0][2]).toBe(limits.model);
+  expect(store.recordPrompt.mock.calls[0][3]).toBe(store.reserve.mock.calls[0][5]);
+ });
+ it('does not reserve or spend when the exact request cannot be recorded',async()=>{
+  const store=Object.assign(storeFor([claim('summary')]),{recordPrompt:vi.fn(async()=>false)}),generate=vi.fn(generator);
+  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  expect(store.fail.mock.calls[0][1]).toBe('analysis_prompt_not_recorded');
+  expect(store.reserve).not.toHaveBeenCalled();expect(generate).not.toHaveBeenCalled();expect(store.saveCall).not.toHaveBeenCalled();
+ });
+ it('does not create a charge hold if prompt storage fails',async()=>{
+  const store=Object.assign(storeFor([claim('summary')]),{recordPrompt:vi.fn(async()=>{throw new AnalysisError('analysis_storage_unavailable');})}),generate=vi.fn(generator);
+  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  expect(store.fail.mock.calls[0][1]).toBe('analysis_storage_unavailable');expect(store.reserve).not.toHaveBeenCalled();expect(generate).not.toHaveBeenCalled();
+ });
+ it('replays grounded cached results without retroactively recording a historical prompt',async()=>{
+  const source={...claim('summary'),job:{...claim('summary').job,rule_version:'content-v2' as const}},queue=[source],store=Object.assign(storeFor(queue),{recordPrompt:vi.fn(async()=>true)});
+  const generate=vi.fn<AnalysisGenerator>(async request=>{const p=JSON.parse(request.prompt);return {value:p.task==='verify_summary'?{readComplete:true,verdicts:p.claims.map((c:{id:string})=>({id:c.id,supported:true,reason:'Source comparison is explicit.'}))}:{readComplete:true,lastPassageId:p.requiredLastPassageId,highlights:[{text:'The GPU benchmark improved from 30 to 45 frames per second.',passageIds:[p.passages[0].id]}]},actualUsd:.0001,observedUsd:.0001};});
+  const first=await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();expect(store.fail.mock.calls.map(row=>row[1])).toEqual([]);expect(first.completed).toBe(1);
+  const paid=generate.mock.calls.length,cached=store.saveCall.mock.calls.map(([call,,result])=>({...call,call_key:call.id.slice('summary:'.length),state:'settled',actual_usd:.0001,result:result as AnalysisCall['result']}));
+  Object.assign(store,{cachedCalls:vi.fn<NonNullable<AnalysisStore['cachedCalls']>>(async(_claim,keys)=>({calls:cached.filter(c=>keys.includes(c.call_key)).sort((a,b)=>a.call_key.localeCompare(b.call_key)),nextAfterKey:null}))});
+  store.recordPrompt.mockClear();store.recordPrompt.mockRejectedValue(new Error('Must not invent a missing old prompt'));queue.push(source);
+  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
+  expect(store.recordPrompt).not.toHaveBeenCalled();expect(generate).toHaveBeenCalledTimes(paid);expect(store.reserve).toHaveBeenCalledTimes(paid);
  });
 });
