@@ -70,7 +70,7 @@ describe('D38 four exact synthetic caption-recovery reproducers, corrected behav
   expect(t.patch()).toMatchObject({status:'partial',details:{captionStatus:'response_too_large'}});
   expect(vi.mocked(t.store.finish).mock.calls.every(c=>c[2].length===0)).toBe(true);
   fetcher.mockImplementation(async(url)=>String(url).includes('actor-runs/')?new Response(JSON.stringify({data:{id:j.provider_run_id,actId:YOUTUBE_ACTOR_ID,buildId:values.APIFY_YOUTUBE_BUILD_ID,status:'SUCCEEDED',defaultDatasetId:'SyntheticDataset1',usageTotalUsd:.004}})):new Response(JSON.stringify([{url:record(1).url,date:record(1).publishedAt,title:'Synthetic',subtitles:[{srt:'1\n00:00:01,000 --> 00:00:03,000\nExisting bounded original caption'}]}])));
-  await t.run();expect(j.content_pending).toBe(false);expect(t.patch().pending_captions).toHaveLength(0);expect(t.deps.startApify).not.toHaveBeenCalled();
+  await t.run();expect(j.content_pending).toBe(false);expect(t.patch().pending_captions).toMatchObject([{record:{content:'Existing bounded original caption'},status:'retry',reason:'video_format_unconfirmed'}]);expect(t.deps.startApify).not.toHaveBeenCalled();
  });
 });
 

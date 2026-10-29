@@ -23,6 +23,13 @@ export interface AnalysisSettings extends AnalysisModelSelection {
   budget: { enabled: boolean; dailyLimitUsd: number; lifetimeLimitUsd: number } | null;
   /** Private, read-only monitoring. Older settings responses may omit this. */
   operations?: AnalysisOperations;
+  automatic?: AutomaticContentStatus;
+}
+export const AUTOMATIC_CONTENT_STATES = ['queued', 'running', 'review', 'blocked', 'failed'] as const;
+export interface AutomaticContentStatus {
+  runtimeEnabled: boolean;
+  enabledReaders: number;
+  tasks: Record<typeof AUTOMATIC_CONTENT_STATES[number], number>;
 }
 export const ANALYSIS_JOB_STATES = ['queued', 'running', 'prepared', 'published', 'evaluated', 'failed', 'blocked', 'cancelled', 'skipped'] as const;
 export type AnalysisJobState = typeof ANALYSIS_JOB_STATES[number];

@@ -2,7 +2,7 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { XMLBuilder, XMLParser, XMLValidator } from 'fast-xml-parser';
 import type { Source, SourceUpdate, WorkspaceState } from '../../../src/lib/types';
-import { classifyWatchPageVideoFormat, mergeVideoFormatFields, watchPagePlayer, youtubeVideoId } from '../../../src/lib/video-format';
+import { classifyWatchPageVideoFormat, mergeVideoFormatFields, videoFormatKind, watchPagePlayer, youtubeVideoId } from '../../../src/lib/video-format';
 import { sanitizePostContext } from '../../../src/lib/post-context';
 import { database } from './admin-data';
 import { apifyConfig, startApify, pollStoredApify, verifyHourlyApifyConfiguration, YOUTUBE_ACTOR, YOUTUBE_ACTOR_ID } from './apify';
@@ -285,14 +285,23 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    const deferred = [...captionQueue].filter(([key, task]) => !attemptedIdentities.has(key) && task.status !== 'provider_pending' && Date.parse(task.nextAttemptAt) <= deps.now()).length;
    if (deferred) { partial = true; details.deferredCount = deferred; }
    if (retainedTasks.length) details.invalidCaptionTasks = retainedTasks.length;
-   if (partial && ['collected','unchanged'].includes(patch.status)) patch.status = 'partial';
    if (references.length) {
     const known = references.every(ref => ref.observedCostUsd !== null);
     patch = { ...patch, provider: 'apify', cost_status: known ? 'provider_reported' : 'unknown', observed_cost_usd: known ? references.reduce((sum, ref) => sum + ref.observedCostUsd!, 0) : null,
      ...(references.length === 1 ? { job_id: references[0].jobId, provider_run_id: references[0].providerRunId } : {}) };
     details = { ...details, providerJobs: references, reservedUsd: references.reduce((sum, ref) => sum + ref.reservedUsd, 0) };
    }
-   for (const [key, update] of updates) if (update.contentKind === 'transcript' && update.content) captionQueue.delete(key);
+   for (const [key, update] of updates) if (update.contentKind === 'transcript' && update.content) {
+    if (videoFormatKind(update) !== 'unknown') captionQueue.delete(key);
+    else {
+     // Captions and Shorts classification are independent. Keep a free format
+     // retry after a provider delivers text without a checked video type.
+     const prior = captionQueue.get(key);
+     captionQueue.set(key, { ...(prior || { attempts: 0, nextAttemptAt: new Date(deps.now() + 3600_000).toISOString() }), record: update, status: 'retry', reason: 'video_format_unconfirmed' });
+     partial = true;
+    }
+   }
+   if (partial && ['collected','unchanged'].includes(patch.status)) patch.status = 'partial';
    const outcome = await deps.store.finish(claim, { ...patch, details, pending_captions: [...captionQueue.values(), ...retainedTasks] }, [...updates.values()]);
    if (!outcome.importAccepted) { patch.status = 'blocked'; patch.error_code = 'hourly_state_changed'; return; }
    for (const completed of completedJobs) await deps.store.providerPatch(completed.id, completed.patch);
@@ -356,11 +365,12 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    const candidates = [...captionQueue.values()].filter(task => task.status !== 'provider_pending' && !attemptedIdentities.has(hourlyItemKey(task.record.url)) && Date.parse(task.nextAttemptAt) <= deps.now());
    for (const task of candidates) {
     if (!remainingCaptionAttempts) break;
-    let update = task.record;
+    let update = updates.get(hourlyItemKey(task.record.url)) || task.record;
     if (deps.now() > sourceDeadline - 30_000) { partial = true; details.captionStatus = 'source_time_limit'; break; }
     const itemKey = hourlyItemKey(update.url), videoId = itemKey.slice(8);
     remainingCaptionAttempts--; attemptedIdentities.add(itemKey);
-    if (updates.get(itemKey)?.contentKind === 'transcript') { captionQueue.delete(itemKey); continue; }
+    const hasTranscript = update.contentKind === 'transcript' && !!update.content;
+    if (hasTranscript && videoFormatKind(update) !== 'unknown') { captionQueue.delete(itemKey); continue; }
     // Back off free caption retries, retaining the item through RSS 304/hash
     // responses, budget stops and temporary provider/configuration failures.
     task.attempts++; task.checkedAt = new Date(deps.now()).toISOString(); task.status = 'retry'; task.reason = 'captions_not_retrieved'; task.nextAttemptAt = new Date(deps.now() + Math.min(24, 2 ** Math.min(task.attempts - 1, 5)) * 3600_000).toISOString();
@@ -369,6 +379,14 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     if (captions?.videoFormat) {
      update = { ...update, ...mergeVideoFormatFields(update, { ...update, isShort: undefined, videoFormat: captions.videoFormat }) };
      task.record = update; updates.set(itemKey, update);
+    }
+    if (hasTranscript) {
+     // Never buy captions again, or replace saved source text, merely to learn
+     // whether an already transcribed original is a Short.
+     if (videoFormatKind(update) !== 'unknown') captionQueue.delete(itemKey);
+     else { task.status = 'retry'; task.reason = 'video_format_unconfirmed'; partial = true; }
+     details.captionStatus = videoFormatKind(update) === 'unknown' ? 'video_format_unconfirmed' : 'video_format_recovered';
+     continue;
     }
     if (captions?.captionStatus && captions.captionStatus !== 'retrieved') { task.status = captions.captionStatus; task.reason = captions.reason || 'captions_not_retrieved'; }
     if (captions?.content) {

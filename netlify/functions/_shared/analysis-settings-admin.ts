@@ -1,4 +1,4 @@
-import { ANALYSIS_JOB_STATES, isAnalysisModelId, isAnalysisModelSelection, type AnalysisJobState, type AnalysisModelSelection, type AnalysisOperations, type AnalysisSettings } from '../../../src/lib/analysis-settings-types';
+import { ANALYSIS_JOB_STATES, AUTOMATIC_CONTENT_STATES, isAnalysisModelId, isAnalysisModelSelection, type AutomaticContentStatus, type AnalysisJobState, type AnalysisModelSelection, type AnalysisOperations, type AnalysisSettings } from '../../../src/lib/analysis-settings-types';
 import type { database } from './admin-data';
 import { CollectionError, type Env } from './security';
 
@@ -119,6 +119,14 @@ function selectionFrom(row: unknown): AnalysisModelSelection {
 }
 
 /** All entry points are called only after the existing requireAdmin authorizer succeeds. */
+export async function readAutomaticContentStatus(db: Database, env: Env): Promise<AutomaticContentStatus> {
+  const enabledReaders = exactCount(await db.from('automatic_content_policies').select('user_id', {count:'exact', head:true}).eq('enabled', true));
+  const counts = await Promise.all(AUTOMATIC_CONTENT_STATES.map(async state => [state, exactCount(await db.from('automatic_content_tasks').select('id', {count:'exact', head:true}).eq('state', state))] as const));
+  // The new private policy is the opt-in. An optional environment override can
+  // stop dispatch; activation does not require an additional hosting setting.
+  return { runtimeEnabled: env('AUTOMATIC_CONTENT_ENABLED') === undefined || env('AUTOMATIC_CONTENT_ENABLED') === 'true', enabledReaders, tasks: Object.fromEntries(counts) as AutomaticContentStatus['tasks'] };
+}
+
 export async function readAnalysisSettings(db: Database, env: Env): Promise<{ analysis: AnalysisSettings }> {
   const [settings, budgetResult] = await Promise.all([
     db.from('content_analysis_runtime_settings').select('selected_model,revision,updated_at').eq('id', true).maybeSingle(),
@@ -137,7 +145,9 @@ export async function readAnalysisSettings(db: Database, env: Env): Promise<{ an
   // Optional omission also preserves compatibility with older settings fixtures.
   let operations: AnalysisOperations | undefined;
   try { operations = await readAnalysisOperations(db); } catch { /* UI explicitly reports unavailable monitoring. */ }
-  return { analysis: { ...selection, keyConfigured: !!env('OPENROUTER_API_KEY')?.trim(), runtimeEnabled: env('CONTENT_ANALYSIS_ENABLED') === 'true', budget, ...(operations ? { operations } : {}) } };
+  let automatic: AutomaticContentStatus | undefined;
+  try { automatic = await readAutomaticContentStatus(db, env); } catch { /* Older deployments have no automatic draft tables. */ }
+  return { analysis: { ...selection, keyConfigured: !!env('OPENROUTER_API_KEY')?.trim(), runtimeEnabled: env('CONTENT_ANALYSIS_ENABLED') === 'true', budget, ...(operations ? { operations } : {}), ...(automatic ? { automatic } : {}) } };
 }
 
 /** The RPC owns selection, policy updates and audit insertion in one transaction. */

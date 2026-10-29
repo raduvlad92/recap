@@ -99,16 +99,107 @@ async function storedReview(db: Database, id: string, origin: ContentReviewOrigi
     resolved:row.resolved_label?{label:row.resolved_label,kind:row.resolved_kind||row.kind}:null,
     source_title:row.update_title,source_url:row.update_url};
 }
+async function learningPromptPayloads(db: Database, selected: Row[], metadata: Row[]): Promise<unknown[]|null> {
+  if (!selected.length) return [];
+  const payloads=unwrap(await db.from('keyword_learning_requests').select('call_id,request_hash,request_payload').in('call_id',selected.map(receipt=>text(receipt.callId))).range(0,2)) as unknown;
+  if (!Array.isArray(payloads) || payloads.length!==selected.length) return null;
+  const prompts:unknown[]=[];
+  for (const receipt of selected) {
+    const saved=payloads.find(value=>object(value)&&value.call_id===receipt.callId),binding=metadata.find(value=>value.call_id===receipt.callId);
+    const payload=object(saved)&&object(saved.request_payload)?saved.request_payload:null,request=object(payload?.request)?payload.request:null;
+    if (!object(saved) || saved.request_hash!==receipt.requestHash || !binding || !request || request.key!==binding.call_key
+      || typeof request.system!=='string' || typeof request.prompt!=='string' || !request.prompt || !['extractor','checker'].includes(text(request.role))) return null;
+    prompts.push({role:request.role,model:receipt.model,system:request.system,prompt:request.prompt,requestHash:receipt.requestHash});
+  }
+  return prompts;
+}
+/** Automatic tasks retain their private session and exact request keys. A
+ * planned/reserved request alone is never described as an executed prompt. */
+async function automaticPromptsFor(db: Database, row: Row, provenance: Row, page: number): Promise<{prompts:unknown[];total:number}|null> {
+  const sessionId=provenance.sessionId,keys=provenance.callKeys;
+  if (typeof sessionId!=='string' || !UUID.test(sessionId) || !Array.isArray(keys) || keys.length<1 || keys.length>250
+    || keys.some(key=>typeof key!=='string'||!/^keyword-learning:v1:[A-Za-z0-9._:-]{1,120}$/.test(key)) || new Set(keys).size!==keys.length) return null;
+  const session=unwrap(await db.from('keyword_learning_sessions').select('id,user_id,sources').eq('id',sessionId).maybeSingle()) as unknown;
+  if (!object(session) || session.id!==sessionId || session.user_id!==row.user_id || !Array.isArray(session.sources)
+    || !session.sources.some(slot=>object(slot)&&slot.ordinal===1&&slot.updateId===row.update_id&&slot.sourceHash===row.content_hash)) return null;
+  const requests=unwrap(await db.from('keyword_learning_requests').select('session_id,source_ordinal,source_hash,request_hash,call_id,call_key,completed').eq('session_id',sessionId).in('call_key',keys).order('created_at').order('call_key').range(0,249)) as unknown;
+  if (!Array.isArray(requests) || requests.some(request=>!object(request))) return null;
+  const saved=requests as Row[];
+  if (saved.some(request=>request.session_id!==sessionId || request.source_ordinal!==1 || request.source_hash!==row.content_hash
+    || !keys.includes(request.call_key) || !UUID.test(text(request.call_id)) || !DIGEST.test(text(request.request_hash)))) return null;
+  const ids=saved.map(request=>text(request.call_id));
+  if (!ids.length) return null;
+  if (new Set(ids).size!==ids.length || new Set(saved.map(request=>request.call_key)).size!==saved.length) return null;
+  const charges=unwrap(await db.from('reader_content_analysis_calls').select('id,user_id,source_revision,request_hash,model,result_at,provider_id').in('id',ids).range(0,249)) as unknown;
+  if (!Array.isArray(charges)) return null;
+  const actual:Row[]=[];
+  for (const request of saved) {
+    const charge=charges.find(value=>object(value)&&value.id===request.call_id);
+    if (!object(charge) || charge.user_id!==row.user_id || charge.source_revision!==row.content_hash || charge.request_hash!==request.request_hash || !text(charge.model)) return null;
+    if (request.completed===true && (text(charge.result_at)||text(charge.provider_id))) actual.push({callId:charge.id,model:charge.model,requestHash:charge.request_hash});
+  }
+  if (!actual.length) return null;
+  const prompts=await learningPromptPayloads(db,actual.slice(page*3,page*3+3),saved);
+  return prompts?{prompts,total:actual.length}:null;
+}
+/** A legacy queue row has no prompt pointer. Recover it only from one exact
+ * immutable production proposal and its original native request receipts.
+ * Read small receipt metadata first; fetch at most three large payloads.
+ */
+async function productionPromptsFor(db: Database, row: Row, page: number): Promise<{prompts:unknown[];total:number}|null> {
+  const proposal=object(row.proposal)?row.proposal:{};
+  if (typeof row.label!=='string' || typeof proposal.kind!=='string' || typeof row.evidence_quote!=='string' || !row.evidence_quote || !DIGEST.test(text(row.content_hash))) return null;
+  const pending={label:row.label,kind:proposal.kind,evidenceQuote:row.evidence_quote,reason:row.reason};
+  const matches=unwrap(await db.from('keyword_production_publications')
+    .select('id,session_id,source_ordinal,user_id,update_id,source_hash,generation_receipts,output')
+    .eq('user_id',text(row.user_id)).eq('update_id',text(row.update_id)).eq('source_hash',text(row.content_hash))
+    .contains('output',{pending:[pending]}).order('created_at',{ascending:true}).order('id').range(0,1)) as unknown;
+  // Multiple matching attempts cannot establish which one created this row.
+  if (!Array.isArray(matches) || matches.length!==1 || !object(matches[0])) return null;
+  const publication=matches[0],output=object(publication.output)?publication.output:{};
+  if (publication.user_id!==row.user_id || publication.update_id!==row.update_id || publication.source_hash!==row.content_hash
+    || typeof publication.session_id!=='string' || !UUID.test(publication.session_id) || !Number.isSafeInteger(publication.source_ordinal)
+    || !Array.isArray(output.pending) || !output.pending.some(candidate=>object(candidate) && Object.entries(pending).every(([key,value])=>candidate[key]===value))) return null;
+  const receipts=publication.generation_receipts;
+  if (!Array.isArray(receipts) || receipts.length<3 || receipts.length>249 || receipts.some(receipt=>!object(receipt)
+    || !UUID.test(text(receipt.callId)) || !DIGEST.test(text(receipt.requestHash)) || !text(receipt.model)
+    || !['direct','typed','checker','repair'].includes(text(receipt.role)) || !Number.isSafeInteger(receipt.chunkIndex)
+    || Number(receipt.chunkIndex)<0 || Number(receipt.chunkIndex)>82)) return null;
+  const calls=receipts as Row[],ids=calls.map(receipt=>text(receipt.callId));
+  if (new Set(ids).size!==ids.length) return null;
+  const native=unwrap(await db.from('reader_content_analysis_calls').select('id,user_id,source_revision,request_hash,model,state,actual_usd').in('id',ids).range(0,248)) as unknown;
+  const requests=unwrap(await db.from('keyword_learning_requests').select('session_id,source_ordinal,source_hash,request_hash,call_id,call_key,completed,error_code').in('call_id',ids).range(0,248)) as unknown;
+  if (!Array.isArray(native) || !Array.isArray(requests) || native.length!==calls.length || requests.length!==calls.length) return null;
+  for (const receipt of calls) {
+    const charge=native.find(value=>object(value)&&value.id===receipt.callId),request=requests.find(value=>object(value)&&value.call_id===receipt.callId);
+    const expectedSession=receipt.originSessionId??receipt.sessionId??publication.session_id;
+    if (!object(charge) || !object(request) || !UUID.test(text(expectedSession)) || request.session_id!==expectedSession
+      || request.source_ordinal!==publication.source_ordinal || request.source_hash!==row.content_hash || request.completed!==true || request.error_code!==null
+      || request.request_hash!==receipt.requestHash || charge.request_hash!==receipt.requestHash || charge.user_id!==row.user_id
+      || charge.source_revision!==row.content_hash || charge.model!==receipt.model || charge.state!=='settled'
+      || charge.actual_usd===null || !Number.isFinite(Number(charge.actual_usd)) || Number(charge.actual_usd)<0) return null;
+  }
+  const sorted=[...calls].sort((a,b)=>Number(a.chunkIndex)-Number(b.chunkIndex)||['direct','typed','checker','repair'].indexOf(text(a.role))-['direct','typed','checker','repair'].indexOf(text(b.role)));
+  const selected=sorted.slice(page*3,page*3+3);
+  const prompts=await learningPromptPayloads(db,selected,requests as Row[]);
+  return prompts?{prompts,total:sorted.length}:null;
+}
 async function promptsFor(db: Database, row: Row, page: number): Promise<ContentReviewDetail['provenance']> {
   const provenance=object(row.provenance)?row.provenance:{},embedded=Array.isArray(provenance.prompts)?provenance.prompts:[];
   const pageSize=3;
   let raw:unknown[]=embedded.slice(page*pageSize,page*pageSize+pageSize),total=embedded.length;
-  if (!embedded.length && typeof row.job_id==='string') {
+  if (!embedded.length && provenance.origin==='automatic_content') {
+    const saved=await automaticPromptsFor(db,row,provenance,page);
+    if (saved) {raw=saved.prompts;total=saved.total;}
+  } else if (!embedded.length && typeof row.job_id==='string') {
     const saved=unwrap(await db.rpc('read_admin_analysis_review_prompts',{p_review_id:row.id,p_page:page})) as Row;
     if (!object(saved) || !Array.isArray(saved.prompts) || saved.prompts.length>pageSize || !Number.isInteger(saved.total) || Number(saved.total)<0 || saved.page!==page || saved.pageSize!==pageSize) {
       throw new CollectionError(502,'invalid_review_record','The saved prompts could not be read. Reload the review.');
     }
     raw=saved.prompts;total=Number(saved.total);
+  } else if (!embedded.length && typeof row.label==='string') {
+    const saved=await productionPromptsFor(db,row,page);
+    if (saved) {raw=saved.prompts;total=saved.total;}
   }
   const prompts:ContentReviewPrompt[]=[];
   for (const value of raw) if (object(value) && typeof value.system==='string' && typeof value.prompt==='string' && value.prompt.length && typeof value.model==='string' && value.model && typeof value.role==='string' && value.role) {

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createAdminHandler } from '../netlify/functions/_shared/admin-handler';
 import { requireAdmin, type ClerkUser } from '../netlify/functions/_shared/admin-data';
 import { ANALYSIS_MODEL_IDS, DEFAULT_ANALYSIS_MODEL, isAnalysisModelId, isAnalysisModelSelection } from '../src/lib/analysis-settings-types';
+import { readAutomaticContentStatus } from '../netlify/functions/_shared/analysis-settings-admin';
 
 const timestamp = '2026-10-24T22:00:00.123456+00:00';
 const row = { selected_model: DEFAULT_ANALYSIS_MODEL, revision: 1, updated_at: timestamp, updated_by: 'user_private_admin', private_extra: 'must-not-appear' };
@@ -39,6 +40,44 @@ describe('owner-approved analysis models', () => {
   });
   it.each([0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1, '1', null])('rejects an unreadable client selection revision %s', revision => {
     expect(isAnalysisModelSelection({ ...selected, revision })).toBe(false);
+  });
+});
+
+describe('private automatic content status', () => {
+  const counts={queued:12,running:1,review:9,blocked:2,failed:3};
+  function automaticDb(override: {count?:unknown;error?:unknown;state?:string}={}) {
+    const queries:{table:string;select:ReturnType<typeof vi.fn>;eq:ReturnType<typeof vi.fn>}[]=[];
+    const from=vi.fn((table:string)=>{
+      const q={table,select:vi.fn(),eq:vi.fn(async(column:string,value:string|boolean)=>({
+        data:[{user_id:'private-reader',source_snapshot:{content:'private transcript'},request_payload:'private prompt',error_code:'private arbitrary error'}],
+        count:override.state===value?override.count:table==='automatic_content_policies'?2:counts[value as keyof typeof counts],
+        error:override.state===value?override.error??null:null,
+      }))};
+      q.select.mockReturnValue(q);queries.push(q);return q;
+    });
+    return {db:{from}as unknown as Parameters<typeof readAutomaticContentStatus>[0],from,queries};
+  }
+  it('returns only boolean/count aggregates, using head queries rather than fetching private task data',async()=>{
+    const s=automaticDb(),result=await readAutomaticContentStatus(s.db,key=>key==='AUTOMATIC_CONTENT_ENABLED'?'true':undefined);
+    expect(result).toEqual({runtimeEnabled:true,enabledReaders:2,tasks:counts});
+    expect(JSON.stringify(result)).not.toMatch(/private|source_snapshot|request_payload|user_id|error_code/);
+    expect(s.queries).toHaveLength(6);
+    for(const q of s.queries){expect(q.select).toHaveBeenCalledWith(q.table==='automatic_content_policies'?'user_id':'id',{count:'exact',head:true});}
+    expect(s.queries[0].eq).toHaveBeenCalledWith('enabled',true);
+    expect(s.queries.slice(1).map(q=>q.eq.mock.calls[0])).toEqual(Object.keys(counts).map(state=>['state',state]));
+  });
+  it.each(['false','TRUE','1'])('an explicit stop or unreadable override %s prevents dispatch',async value=>{
+    const s=automaticDb();expect((await readAutomaticContentStatus(s.db,()=>value)).runtimeEnabled).toBe(false);
+  });
+  it('uses the private database policy when there is no additional hosting override',async()=>{
+    const s=automaticDb();expect((await readAutomaticContentStatus(s.db,()=>undefined)).runtimeEnabled).toBe(true);
+  });
+  it.each([null,-1,1.5,Number.MAX_SAFE_INTEGER+1])('does not turn unavailable/invalid task counts %s into a healthy zero',async count=>{
+    const s=automaticDb({state:'review',count});await expect(readAutomaticContentStatus(s.db,()=>undefined)).rejects.toThrow('Unavailable count');
+  });
+  it('withholds the whole monitoring result when a private count query fails',async()=>{
+    const s=automaticDb({state:'queued',count:0,error:{message:'private SQL diagnostic'}});
+    await expect(readAutomaticContentStatus(s.db,()=>undefined)).rejects.toThrow('Unavailable count');
   });
 });
 

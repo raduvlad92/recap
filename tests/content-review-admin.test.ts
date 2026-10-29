@@ -17,19 +17,39 @@ const body={action:'review',id,origin:'analysis',expectedUpdatedAt:rev,decision:
 const authorized=async()=> 'user_real_admin';
 function stub() {
   const state={row:structuredClone(original) as Record<string,unknown>,current:structuredClone(source) as Record<string,unknown>,auditError:null as unknown,
-    rpcError:null as {code:string;message:string}|null,published:undefined as boolean|undefined,publishedRecap:null as unknown};
+    rpcError:null as {code:string;message:string}|null,published:undefined as boolean|undefined,publishedRecap:null as unknown,
+    publications:[] as Record<string,unknown>[],calls:[] as Record<string,unknown>[],requests:[] as Record<string,unknown>[],session:null as Record<string,unknown>|null};
   const queries=new Map<string,Record<string,ReturnType<typeof vi.fn>>>();
   const from=vi.fn((table:string)=>{
     const q:Record<string,ReturnType<typeof vi.fn>>={};
-    for(const name of ['select','eq','not','order','limit'])q[name]=vi.fn(()=>q);
-    q.range=vi.fn(async()=>({data:[{...state.row,origin:'analysis',source_title:source.title,source_url:source.url}],count:1,error:null}));
-    q.maybeSingle=vi.fn(async()=>({data:table==='reader_source_updates'?{record:state.current}:table==='admin_analysis_prompt_receipts'?{source_snapshot:source}:state.row,error:null}));
+    for(const name of ['select','eq','not','order','limit','contains','in'])q[name]=vi.fn(()=>q);
+    q.range=vi.fn(async()=>({data:table==='keyword_production_publications'?state.publications:table==='reader_content_analysis_calls'?state.calls:table==='keyword_learning_requests'?state.requests.filter(request=>{const filter=q.in.mock.calls.at(-1);return filter?.[1].includes(request[filter[0]]);}):[{...state.row,origin:'analysis',source_title:source.title,source_url:source.url}],count:1,error:null}));
+    q.maybeSingle=vi.fn(async()=>({data:table==='reader_source_updates'?{record:state.current}:table==='admin_analysis_prompt_receipts'?{source_snapshot:source}:table==='keyword_learning_sessions'?state.session:state.row,error:null}));
     q.insert=vi.fn(async()=>({data:null,error:state.auditError}));queries.set(table,q);return q;
   });
   const rpc=vi.fn(async(name:string,args:Record<string,unknown>)=>({data:name==='read_admin_analysis_review_prompts'?{prompts:[],total:0,page:args.p_page,pageSize:3}:name==='admin_analysis_published_recap'?state.publishedRecap:name==='admin_review_keyword'?{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved_label:args.p_label,resolved_kind:args.p_kind,updated_at:nextRev}:{record:{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved:args.p_proposal,updated_at:nextRev},published:state.published??args.p_decision==='approve'},error:state.rpcError}));
   const db=vi.fn(()=>({from,rpc})) as unknown as NonNullable<Parameters<typeof createAdminHandler>[0]>['db'];
   const run=(request:Request)=>createAdminHandler({authorize:authorized,db})(request);
   return {state,from,rpc,db,run,queries};
+}
+function productionStub(count=3) {
+  const s=stub();s.state.row={...original,kind:'technology',label:'quiet mode',evidence_quote:'The setting is quiet mode.',update_title:'Legacy title',update_url:'https://example.com/legacy',resolved_label:null};
+  const session='6112201e-c177-4c27-a7ac-e1f319765d48';
+  const receipts=Array.from({length:count},(_,i)=>({chunkIndex:Math.floor(i/3),role:['direct','typed','checker'][i%3],callId:`${String(i+1).padStart(8,'0')}-c177-4c27-a7ac-e1f319765d48`,requestHash:String(i+1).repeat(64).slice(0,64),model:i%3===2?'checker-model':'extractor-model'}));
+  s.state.publications=[{id,session_id:session,source_ordinal:1,user_id:original.user_id,update_id:original.update_id,source_hash:digest,generation_receipts:receipts,
+    output:{pending:[{label:'quiet mode',kind:'technology',evidenceQuote:'The setting is quiet mode.',reason:original.reason}]}}];
+  s.state.calls=receipts.map(receipt=>({id:receipt.callId,user_id:original.user_id,source_revision:digest,request_hash:receipt.requestHash,model:receipt.model,state:'settled',actual_usd:'.001'}));
+  s.state.requests=receipts.map((receipt,i)=>({session_id:session,source_ordinal:1,source_hash:digest,request_hash:receipt.requestHash,call_id:receipt.callId,call_key:'saved-key-'+i,completed:true,error_code:null,
+    request_payload:{request:{key:'saved-key-'+i,role:i%3===2?'checker':'extractor',system:'Exact production system '+i,prompt:'Exact production request '+i}}}));
+  return s;
+}
+function automaticStub(count=3) {
+  const s=productionStub(count),sessionId=s.state.publications[0].session_id;
+  s.state.session={id:sessionId,user_id:original.user_id,sources:[{ordinal:1,updateId:original.update_id,sourceHash:digest}]};
+  s.state.row={...original,provenance:{origin:'automatic_content',sessionId,callKeys:s.state.requests.map((_,i)=>'keyword-learning:v1:saved-'+i)}};
+  s.state.requests.forEach((request,i)=>{request.call_key='keyword-learning:v1:saved-'+i;(request.request_payload as {request:{key:string}}).request.key=request.call_key as string;});
+  s.state.calls.forEach(call=>{call.result_at=rev;});
+  return s;
 }
 
 describe('compact private content review API',()=>{
@@ -87,6 +107,37 @@ describe('compact private content review API',()=>{
     s.rpc.mockResolvedValueOnce({data:{prompts:original.provenance.prompts,total:7,page:1,pageSize:3},error:null}as never);
     const {review}=await(await s.run(get('section=review&id='+id+'&promptPage=1'))).json();expect(s.rpc).toHaveBeenCalledWith('read_admin_analysis_review_prompts',{p_review_id:id,p_page:1});expect(review.provenance).toMatchObject({total:7,page:1,pageSize:3,prompts:original.provenance.prompts});
   });
+  it('shows automatic review prompts from their exact source slot, session keys and actual native calls',async()=>{
+    const s=automaticStub(6),{review}=await(await s.run(get('section=review&id='+id+'&promptPage=1'))).json();
+    expect(review.provenance).toMatchObject({availability:'recorded',total:6,page:1,pageSize:3});
+    expect(review.provenance.prompts.map((p:{prompt:string})=>p.prompt)).toEqual(['Exact production request 3','Exact production request 4','Exact production request 5']);
+    expect(s.queries.get('keyword_learning_sessions')!.eq).toHaveBeenCalledWith('id',s.state.session!.id);
+    expect(s.from.mock.calls.some(([table])=>table==='keyword_production_publications')).toBe(false);expect(s.rpc).not.toHaveBeenCalled();
+    expect(s.queries.get('keyword_learning_requests')!.in).toHaveBeenCalledWith('call_id',s.state.calls.slice(3).map(call=>call.id));
+  });
+  it('does not call an automatic planned reservation an executed prompt',async()=>{
+    const s=automaticStub();s.state.requests[0].completed=false;delete s.state.calls[0].result_at;
+    const {review}=await(await s.run(get('section=review&id='+id))).json();expect(review.provenance).toMatchObject({availability:'recorded',total:2});
+    expect(review.provenance.prompts.map((p:{prompt:string})=>p.prompt)).toEqual(['Exact production request 1','Exact production request 2']);
+  });
+  it('retains exact automatic attempted prompts when the model failed and the charge remains unresolved',async()=>{
+    const s=automaticStub();s.state.calls.forEach(call=>{call.state='held';call.actual_usd=null;});
+    const {review}=await(await s.run(get('section=review&id='+id))).json();expect(review.provenance).toMatchObject({availability:'recorded',total:3});
+  });
+  it.each(['session-owner','session-slot','request-session','request-source','charge-owner','charge-source','charge-hash','no-attempt','payload-key','oversized-keys'])('withholds automatic prompts when exact provenance is missing: %s',async failure=>{
+    const s=automaticStub();
+    if(failure==='session-owner')s.state.session!.user_id='other-reader';
+    if(failure==='session-slot')(s.state.session!.sources as Record<string,unknown>[])[0].updateId='other-video';
+    if(failure==='request-session')s.state.requests[0].session_id=id;
+    if(failure==='request-source')s.state.requests[0].source_hash='f'.repeat(64);
+    if(failure==='charge-owner')s.state.calls[0].user_id='other-reader';
+    if(failure==='charge-source')s.state.calls[0].source_revision='f'.repeat(64);
+    if(failure==='charge-hash')s.state.calls[0].request_hash='f'.repeat(64);
+    if(failure==='no-attempt')s.state.calls.forEach(call=>{delete call.result_at;});
+    if(failure==='payload-key')(s.state.requests[0].request_payload as {request:{key:string}}).request.key='other-key';
+    if(failure==='oversized-keys')(s.state.row.provenance as {callKeys:unknown[]}).callKeys=Array.from({length:251},(_,i)=>'keyword-learning:v1:extra-'+i);
+    const {review}=await(await s.run(get('section=review&id='+id))).json();expect(review.provenance).toMatchObject({availability:'unavailable',prompts:[]});
+  });
   it.each(['-1','NaN','1.5','10001'])('rejects invalid prompt pages %s before private reads',async page=>{
     const s=stub();expect((await s.run(get('section=review&id='+id+'&promptPage='+page))).status).toBe(400);expect(s.from).not.toHaveBeenCalled();
   });
@@ -135,6 +186,48 @@ describe('compact private content review API',()=>{
   it('includes legacy keywords in exact-source detail without inventing historical prompts',async()=>{
     const s=stub();s.state.row={...original,kind:'technology',label:'quiet mode',update_title:'Legacy title',update_url:'https://example.com/legacy',resolved_label:null};
     const {review}=await(await s.run(get('section=review&id='+id+'&origin=legacy_keyword'))).json();expect(review).toMatchObject({origin:'legacy_keyword',kind:'keyword',sourceTitle:'Legacy title',source:{content,current:true},proposal:{label:'quiet mode',kind:'technology'},provenance:{availability:'unavailable',prompts:[]},canApprove:true});
+  });
+  it('recovers actual legacy production prompts only through the exact immutable pending proposal and native receipts',async()=>{
+    const s=productionStub();const {review}=await(await s.run(get('section=review&id='+id+'&origin=legacy_keyword'))).json();
+    expect(review.provenance).toMatchObject({availability:'recorded',total:3,page:0,pageSize:3});
+    expect(review.provenance.prompts).toEqual(s.state.requests.map((request,i)=>{const saved=(request.request_payload as {request:Record<string,unknown>}).request;return {role:saved.role,system:saved.system,prompt:saved.prompt,model:s.state.calls[i].model,requestHash:request.request_hash};}));
+    const publications=s.queries.get('keyword_production_publications')!;
+    expect(publications.eq.mock.calls).toEqual([['user_id',original.user_id],['update_id',original.update_id],['source_hash',digest]]);
+    expect(publications.contains).toHaveBeenCalledWith('output',{pending:[{label:'quiet mode',kind:'technology',evidenceQuote:'The setting is quiet mode.',reason:original.reason}]});
+    expect(publications.range).toHaveBeenCalledWith(0,1);expect(JSON.stringify(review)).not.toContain('user_private');
+    expect(s.queries.get('admin_audit_events')!.insert).toHaveBeenCalledWith(expect.objectContaining({action:'analysis_reviews.viewed'}));
+  });
+  it('paginates large production payloads three at a time while binding the complete small receipt set',async()=>{
+    const s=productionStub(6);const {review}=await(await s.run(get('section=review&id='+id+'&origin=legacy_keyword&promptPage=1'))).json();
+    expect(review.provenance).toMatchObject({availability:'recorded',total:6,page:1,pageSize:3});
+    expect(review.provenance.prompts.map((p:{prompt:string})=>p.prompt)).toEqual(['Exact production request 3','Exact production request 4','Exact production request 5']);
+    expect(s.from.mock.calls.filter(([table])=>table==='keyword_learning_requests')).toHaveLength(2);
+    expect(s.queries.get('keyword_learning_requests')!.in).toHaveBeenCalledWith('call_id',s.state.calls.slice(3).map(call=>call.id));
+    expect(s.queries.get('keyword_learning_requests')!.range).toHaveBeenCalledWith(0,2);
+  });
+  it.each(['ambiguous','other-reader','other-source','other-proposal','wrong-hash','wrong-model','unsettled','incomplete','wrong-session','wrong-payload'])('does not guess production prompt provenance: %s',async failure=>{
+    const s=productionStub(),publication=s.state.publications[0];
+    if(failure==='ambiguous')s.state.publications.push(structuredClone(publication));
+    if(failure==='other-reader')publication.user_id='another-reader';
+    if(failure==='other-source')publication.source_hash='f'.repeat(64);
+    if(failure==='other-proposal')(publication.output as {pending:{label:string}[]}).pending[0].label='Different label';
+    if(failure==='wrong-hash')s.state.calls[0].request_hash='f'.repeat(64);
+    if(failure==='wrong-model')s.state.calls[0].model='another-model';
+    if(failure==='unsettled')s.state.calls[0].state='held';
+    if(failure==='incomplete')s.state.requests[0].completed=false;
+    if(failure==='wrong-session')s.state.requests[0].session_id=id;
+    if(failure==='wrong-payload')(s.state.requests[0].request_payload as {request:{key:string}}).request.key='Not the original request';
+    const {review}=await(await s.run(get('section=review&id='+id+'&origin=legacy_keyword'))).json();expect(review.provenance).toMatchObject({availability:'unavailable',prompts:[]});
+  });
+  it('reads recovery origin receipts without relabeling their original session as the later publication session',async()=>{
+    const s=productionStub(),publication=s.state.publications[0],origin='7112201e-c177-4c27-a7ac-e1f319765d48';
+    for(const receipt of publication.generation_receipts as Record<string,unknown>[])receipt.originSessionId=origin;
+    for(const request of s.state.requests)request.session_id=origin;
+    const {review}=await(await s.run(get('section=review&id='+id+'&origin=legacy_keyword'))).json();expect(review.provenance.availability).toBe('recorded');expect(review.provenance.prompts).toHaveLength(3);
+  });
+  it('does not reconstruct a historical transcript from a matching publication when the source changed',async()=>{
+    const s=productionStub();s.state.current.content='Changed transcript';const {review}=await(await s.run(get('section=review&id='+id+'&origin=legacy_keyword'))).json();
+    expect(review.provenance.availability).toBe('recorded');expect(review.source).toMatchObject({content:null,available:false,current:false});expect(review.canApprove).toBe(false);
   });
   it('routes an explicitly approved legacy keyword through its existing audited transaction',async()=>{
     const s=stub();s.state.row={...original,kind:'technology',label:'quiet mode',update_title:'Legacy title',update_url:'https://example.com/legacy',resolved_label:null};
