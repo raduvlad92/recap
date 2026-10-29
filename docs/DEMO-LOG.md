@@ -1,5 +1,15 @@
 # Demo and evidence log
 
+## 29 October 2026 — compact private review queue
+
+Implemented the founder's human-review option for held keywords and recaps. A compact row gives the proposal, source, plain hold reason and decision; exact source text and saved prompts open on demand. Confirm/Edit publishes only the selected supported item; Reject keeps held content unpublished; rejecting an existing keyword can remove its visible label. The old keyword queue is included, and historical missing prompts/source-audit proposals are labeled honestly.
+
+Local evidence: **3,308 tests / 93 files**, including 20 disposable PostgreSQL review tests, catalogue, typecheck and build pass. The pinned migration `81342416977cdb599f4cff8a56976a5c1ef2d8dd4c7a887382bfc569c2402162` also passes native rollback checks for selected-item publish/reject, stale source/revision protection and preservation of human-approved recaps. QA uses disposable fixture content; no real source has been approved by the agent.
+
+A zero-model import added 54 held proposals from 22 saved sources and 72 real model receipts. All 29 rollback/apply batches completed; CI 40794276926 passes and ready deployment `6ae294119347388e1ec5d8dd` uses `d91bb8a`, published 00:32:57.519 UTC. Authenticated HTTP checks pass owner/ordinary/anonymous access (200/403/401), fixture decisions/reload, unsupported edits 400 and stale decisions 409. The three real latest issues stay pending with exact source/prompt readback. Combined live pending total: 332.
+
+Final native proof at 00:39:40 UTC preserves all 510 archives, 867 calls, 431 jobs, 136 legacy reviews, three workspaces and AI controls exactly. The twenty published inventories / 1,617 labels are unchanged. Disposable QA fixtures are removed; both temporary QA sessions are revoked without touching existing sessions. Background collection adds 39 checks and advances scheduling/reconciliation metadata under unchanged policies, with no new supplier job or reservation. New audit events include QA and view events; all 50 old audit rows remain exact. No new browser walkthrough, automatic-quality pass, model call, training or model spending is claimed. At 00:40:14 UTC, commitment remains US$9.270265626 including seven holds; broad generation is Off, with zero open sessions/releases or executing jobs. [Report](tech/ADMIN-REVIEW-2026-10-29.md), [sanitized release evidence](tech/evidence/admin-review-2026-10-29.json).
+
 ## 29 October 2026 — keyword fixes and reviewed copies
 
 Evidence types remain separate: local checks, free exact paid-response replay, bounded provider calls, post-generation source adjudication, private corrected copies, native preservation and hosted release checks. No new browser/mobile proof, publication or blind holdout proof.

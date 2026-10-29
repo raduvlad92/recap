@@ -1,5 +1,15 @@
 # Decisions and interview
 
+## 29 October 2026 — compact human decisions for withheld keywords and recaps
+
+Founder: “DO NOT over engineer,” and either improve through training or put questionable/unclear/unpublished items in the administrator backend to “decide, confirm or reject or improve.” Required context is compact: exact transcript, the generating prompt, why it did not pass and the decision to take. The founder explicitly prioritizes agents for implementation.
+
+Chosen implementation: one compact private review queue, not another paid training loop. Reuse the existing keyword decision transaction; add a small cited-recap decision flow. Confirm or an edited confirmation publishes only the chosen item after current-source and revision checks. Reject keeps held content unpublished; rejecting an existing keyword can remove its visible label. All access remains behind the existing verified server administrator allowlist. No agent approves real cases while testing.
+
+Preserve actual saved prompts and original proposals. Historical missing prompts stay unavailable; a current template is not substituted. A source-audit suggestion for a missing name is labeled as such, rather than described as an AI-returned keyword. Human choices persist for that source version and protect later processing; they are not model fine-tuning. No autonomous training, model spending or processing restart follows this change.
+
+Implementation, local/native rollback checks, production application/import, deployment, authenticated HTTP decisions/reload and final native preservation pass. The live queue has 332 combined pending items; the import added 54 held proposals across 22 saved sources and 72 actual model receipts. No real case was approved in release QA; disposable fixtures are removed and temporary sessions revoked. All 510 archives, 867 calls, 431 jobs, 136 legacy reviews, three workspaces and AI controls remain exact. The twenty published inventories / 1,617 labels are unchanged. No model call or new model spend occurred; commitment remains US$9.270265626 including the same seven holds, with generation Off. [Current proof and next action](tech/ADMIN-REVIEW-2026-10-29.md).
+
 ## 29 October 2026 — resolve known keyword gaps and ambiguities
 
 Founder: “ok, then resolve all the gaps and ambiguities.” Continue autonomously from the 27 saved texts, preserve every original score/response and the current US$10 cumulative / US$5 UTC-day / US$0.10 call limits. This supports bounded fixes, private source review and live checks; it does not start broad automation or publish the benchmark copies.

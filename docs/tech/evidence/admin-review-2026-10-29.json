@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "verifiedAt": "2026-10-29T00:40:14.276481+00:00",
+  "release": {
+    "functionalCommit": "d91bb8a41245cee53a5fcbcb3eabb13587914cd3",
+    "ci": {
+      "conclusion": "success",
+      "headSha": "d91bb8a41245cee53a5fcbcb3eabb13587914cd3",
+      "status": "completed",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/40794276926"
+    },
+    "netlifyDeploy": "6ae294119347388e1ec5d8dd",
+    "netlifyPublishedAt": "2026-10-29T00:32:57.519Z",
+    "migration": {
+      "sha256": "81342416977cdb599f4cff8a56976a5c1ef2d8dd4c7a887382bfc569c2402162",
+      "version": "20261028233915"
+    }
+  },
+  "localChecks": {
+    "tests": 3308,
+    "files": 93,
+    "disposablePostgresTests": 20,
+    "typecheck": "pass",
+    "catalogue": "pass",
+    "build": "pass"
+  },
+  "reviewQueue": {
+    "pending": 332,
+    "newInboxKeywords": 221,
+    "newInboxRecaps": 36,
+    "legacyRecords": 136,
+    "importedHeldCases": 54,
+    "importedSources": 22,
+    "existingModelReceipts": 72,
+    "realCasesAllPending": true,
+    "realDecisionsApplied": 0
+  },
+  "hostedHttp": {
+    "type": "actual_hosted_authenticated_http_with_disposable_native_fixtures",
+    "verifiedAt": "2026-10-29T00:36:33.516Z",
+    "ownerList": 200,
+    "ordinaryList": 403,
+    "anonymousList": 401,
+    "sourceExact": true,
+    "missingPromptHonest": true,
+    "keywordEditPublished": true,
+    "recapConfirmedPublished": true,
+    "rejectionPublished": false,
+    "unsupportedKeywordStatus": 400,
+    "unsupportedRecapQuoteStatus": 400,
+    "staleDecisionStatus": 409,
+    "reloadDecisionsExact": true,
+    "realSourceDecisionsApplied": false,
+    "modelCalls": 0
+  },
+  "realCaseReadback": {
+    "type": "actual_hosted_read_only_real_case_verification",
+    "verifiedAt": "2026-10-29T00:38:17.622Z",
+    "queuePending": 332,
+    "importedPending": 54,
+    "sourceCount": 22,
+    "distinctExistingModelReceipts": 72,
+    "cases": [
+      {
+        "label": "head-tracking",
+        "pending": true,
+        "sourceExact": true,
+        "promptsExact": 3,
+        "sourceAuditIdentified": true,
+        "ordinaryDetail": 403,
+        "anonymousDetail": 401,
+        "ordinaryDecision": 403,
+        "privateNoStore": true
+      },
+      {
+        "label": "seal test",
+        "pending": true,
+        "sourceExact": true,
+        "promptsExact": 3,
+        "sourceAuditIdentified": false,
+        "ordinaryDetail": 403,
+        "anonymousDetail": 401,
+        "ordinaryDecision": 403,
+        "privateNoStore": true
+      },
+      {
+        "label": "Huawei sound modes",
+        "pending": true,
+        "sourceExact": true,
+        "promptsExact": 3,
+        "sourceAuditIdentified": false,
+        "ordinaryDetail": 403,
+        "anonymousDetail": 401,
+        "ordinaryDecision": 403,
+        "privateNoStore": true
+      }
+    ],
+    "realDecisionsApplied": 0,
+    "modelCalls": 0
+  },
+  "nativePreservation": {
+    "captureAt": "2026-10-29T00:39:40.310393+00:00",
+    "groupsVerified": 22,
+    "allExistingArchivesExact": 510,
+    "allExistingCallsExact": 867,
+    "allExistingJobsExact": 431,
+    "allExistingKeywordReviewsExact": 136,
+    "allExistingWorkspacesExact": 3,
+    "publishedInventoriesUnchanged": 20,
+    "publishedLabelsUnchanged": 1617,
+    "existingAIControlsExact": true,
+    "qaFixturesRemoved": true,
+    "qaSessionsRevoked": 2,
+    "existingUserSessionsTouched": false,
+    "newAuditEvents": 19,
+    "backgroundOnly": {
+      "newChecksUnderUnchangedPolicies": 39,
+      "providerReconcileTimestamps": 12,
+      "sourceSchedulingRows": 39,
+      "existingSupplierUpdateTimestamps": 1,
+      "newSupplierJobs": 0,
+      "newSupplierReservations": 0
+    }
+  },
+  "financial": {
+    "calls": 867,
+    "committedUsd": 9.270265626,
+    "holdUsd": 0.125827191,
+    "remainingLifetimeUsd": 0.729734374,
+    "unresolvedHolds": 7,
+    "utcDayCommittedUsd": 0.125827191,
+    "newModelCalls": 0,
+    "newModelSpendUsd": 0,
+    "lifetimeLimitUsd": 10,
+    "dailyLimitUsd": 5,
+    "perCallLimitUsd": 0.1
+  },
+  "operatingState": {
+    "runtimeEnabled": false,
+    "globalBudgetEnabled": false,
+    "ownerPoliciesEnabled": false,
+    "openFiniteSessions": 0,
+    "openReleases": 0,
+    "executingJobs": 0,
+    "oldQueuedJobsUnchanged": 271
+  },
+  "boundaries": {
+    "evidence": "authenticated HTTP and native database; no new browser walkthrough",
+    "historicalPromptGaps": "Displayed as unavailable; not reconstructed",
+    "sourceAuditSuggestions": "Identified separately from AI output",
+    "training": "No paid training or model calls",
+    "semanticQuality": "No claim of improved automatic keyword accuracy"
+  }
+}

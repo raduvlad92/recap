@@ -1,5 +1,17 @@
 # Session handoff — 29 October 2026
 
+**Latest — compact human-review flow deployed and verified.** The founder chose a compact administrator queue instead of further training loops. Open `/admin/?section=reviews` with the existing owner account. Each item gives the held content, exact saved source, actual recorded prompt/model, a plain reason and the decision needed. Confirm/Edit publishes only that supported item. Reject keeps held content unpublished; rejecting an existing keyword can remove its visible label. No model call or automatic restart follows a decision.
+
+The migration and all 29 bounded import batches are applied: 54 pending proposals across 22 saved sources, using 72 real existing model receipts. Existing legacy keyword reviews remain in the combined queue. No real case has been approved by the agent; rollback QA uses disposable fixtures. Source-review proposals are identified; historical missing prompts are explicitly unavailable. Human choices persist for that source version and are reused, not fine-tuned into a model.
+
+All **3,308 local tests / 93 files**, including 20 disposable PostgreSQL review tests, catalogue/typecheck/build and CI **40794276926** pass. Ready Netlify `6ae294119347388e1ec5d8dd` uses functional `d91bb8a41245cee53a5fcbcb3eabb13587914cd3`, published 29 October 00:32:57.519 UTC. Authenticated HTTP checks pass owner/ordinary/anonymous access (200/403/401), fixture decisions/reload and rejection of unsupported/stale edits. The live queue has 332 pending items; the three real latest issues remain pending with exact source/prompt readback. QA sessions are revoked and fixtures removed. Final native proof preserves all 510 archives, 867 calls, 431 jobs, 136 legacy reviews, three workspaces and AI controls exactly; the twenty inventories / 1,617 published labels remain unchanged. [Current report](ADMIN-REVIEW-2026-10-29.md), [sanitized evidence](evidence/admin-review-2026-10-29.json).
+
+Model spend for this feature is **US$0**. At 00:40:14 UTC, commitment remains **US$9.270265626 / US$10**, including seven unchanged holds of US$0.125827191; US$0.729734374 remains. Current UTC-day commitment is US$0.125827191. Broad generation stays Off, with zero open sessions/releases or executing jobs and 271 old queued jobs unchanged. Preserve US$5 UTC-day / US$0.10 call and all old call/hold records. Existing collection advances scheduling/check metadata separately, without new supplier jobs or reservations.
+
+Next: the founder can use the verified compact decision flow, starting with the three latest held issues. No real case was approved by an agent, and automatic generation remains paused. Private evidence is under `.local/admin-review-20261029/`. Both temporary Clerk QA sessions are already revoked; existing browser sessions are untouched. No further release verification is pending.
+
+## Earlier keyword-gap checkpoint
+
 Known gaps in 27 saved texts are resolved in **source-reviewed private copies**. The newest automatic test still fails. [Result](KEYWORD-GAP-RESOLUTION-2026-10-29.md), [sanitized evidence](evidence/keyword-gap-resolution-2026-10-29.json).
 
 ## Completed
