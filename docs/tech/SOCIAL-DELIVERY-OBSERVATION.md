@@ -1,5 +1,7 @@
 # Bounded social-delivery observation
 
+**Manual-cycle baseline update:** [31 October early cycle](DAILY-CYCLE-2026-10-31.md) is saved as Awaiting review. Its 13 failed, nine partial and 17 unknown source checks and two blocked analysis tasks are known readiness gaps. The local no-dispatch reservation is reconciled to zero; model commitment is US$9.422509392 with the same seven historical unknown calls. Today's slot is consumed; the next normal due time is 1 November 08:00 Berlin. Assess later changes against this newer checkpoint.
+
 This is the read-only follow-up to the [31 October release](SOCIAL-DELIVERY-2026-10-31.md). Three daily checks cover the first 72 hours after deployment. Scheduling a check does not establish that those hours or delivery cycles have passed.
 
 Read the current release evidence and application state before assessing each checkpoint. The private `.local/social-delivery-20261031/observe-readonly.sql` contains a bounded read-only query against the existing recap Supabase project. The accompanying `aggregate.mts` reads the owner's saved reminder preference and aggregate supplier evidence. Neither starts a supplier job or sends mail. Keep credentials, reader identifiers, follows and source bodies private.

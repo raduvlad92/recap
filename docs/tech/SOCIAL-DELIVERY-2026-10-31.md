@@ -1,5 +1,7 @@
 # Social collection and daily delivery — 31 October 2026
 
+**Subsequent requested early run:** [31 October cycle result and fixes](DAILY-CYCLE-2026-10-31.md). The real saved snapshot awaits review; today's slot is consumed and reminders remain off. The original release checkpoints below retain their dated evidence.
+
 **Deployed; hosted private APIs verified; operational acceptance remains partial.** The founder approved the scoped [social collection and daily delivery plan](SOCIAL-COLLECTION-AND-DAILY-DELIVERY-PLAN.md) and requested parallel agents. Collection, analysis/review, saved briefings and optional email are implemented. Five migrations have been applied with exact preservation checks. The full local release check and independent CI pass. Ready Netlify `6ae541ed6c68dc4702769044` serves functional `7bf5911ea10494455da35c7462b30486c61aba1e`. Hosted served assets and private API boundaries match. Supplier results and actual daily-cycle acceptance remain partial as recorded below. The wider SPEC/PLAN v1.1 remains an unapproved candidate.
 
 **Owner preference: “Keep my reminders off.”** That saved preference remains off; no reader sending policy has been enabled and no real email has been sent. A working no-send path is evidence of consent enforcement, not email delivery or Inbox proof.

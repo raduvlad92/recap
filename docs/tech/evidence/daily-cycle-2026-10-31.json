@@ -1,0 +1,128 @@
+{
+  "at": "2026-10-31T01:41:52.666Z",
+  "mode": "requested-early-daily-cycle",
+  "localDate": "2026-10-31",
+  "periodStart": "2026-10-30T01:41:51.587Z",
+  "cutoffAt": "2026-10-31T01:41:51.587Z",
+  "saved": true,
+  "status": "awaiting_review",
+  "publishedAt": null,
+  "topics": 0,
+  "points": 0,
+  "approvedFindingKeys": 0,
+  "coverage": {
+    "followedSources": 39,
+    "checkedSources": 0,
+    "updatedSources": 1,
+    "includedUpdates": 0,
+    "availableUpdates": 1,
+    "pendingReviewUpdates": 1,
+    "missingContentUpdates": 0,
+    "omittedUpdates": 0
+  },
+  "sourceStates": {
+    "unknown": 17,
+    "partial": 9,
+    "failed": 13
+  },
+  "notice": "Approved findings are shown in their original approved wording; translation and new cross-source synthesis have not been generated. 1 update await administrator review. 39 sources have incomplete or unknown checks.",
+  "reminderPreference": false,
+  "settingsUnchanged": true,
+  "outboxRows": 0,
+  "normalDailySlotConsumed": true,
+  "deliveryTimeStill": "08:00",
+  "timezone": "Europe/Berlin",
+  "sourceCoverageGroups": {
+    "X / unknown / freshness_check_unavailable": 7,
+    "Instagram / unknown / empty_or_unusable_response": 7,
+    "Instagram / partial / provider_completeness_unverified": 1,
+    "YouTube / partial / None": 8,
+    "YouTube / failed / source_unavailable": 13,
+    "X / unknown / empty_or_unusable_response": 3
+  },
+  "analysis": {
+    "keywordTask": "blocked-local-credentials-error-before-provider-dispatch",
+    "newLocalReservationActualUsd": "0",
+    "historicalUnknownCallsPreserved": 7,
+    "recapTask": "blocked-automatic_recap_invalid_check",
+    "newSettledProviderCalls": 2,
+    "newReportedModelCostUsd": "0.000104030",
+    "sharedModelCommitmentUsd": "9.422509392",
+    "sharedModelCeilingUsd": "10",
+    "realReviewDecisions": 0
+  },
+  "fixes": {
+    "migration": "20261031013730_daily_briefing_continuity.sql",
+    "sha256": "e691358f92310910fb05b205cb10653d73c4bd015e350e4f3fe31c936f1c4e09",
+    "actualRollback": "passed",
+    "actualApply": "passed",
+    "preservedPublicTables": 56,
+    "preservedRows": 15758,
+    "changesExistingRows": false,
+    "focusedTestsPassed": 41,
+    "fullTestsPassed": 3638,
+    "testFiles": 103,
+    "catalogue": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "securityAdvisors": "no-issues"
+  },
+  "release": {
+    "commit": "f955398088a9c911693c3e7e1ccd33d4a972c170",
+    "ci": {
+      "id": "41156701774",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41156701774",
+      "status": "passed"
+    },
+    "deployment": {
+      "id": "6ae548a5b1de3ee251abb9bb",
+      "state": "ready",
+      "publishedAt": "2026-10-31T01:48:04.492Z"
+    },
+    "hostedReadback": {
+      "at": "2026-10-31T01:48:16.523Z",
+      "home": 200,
+      "mainAsset": "/assets/index-CD3Q1qLs.js",
+      "mainSha256": "a69289130a8cc0d6e5ace78df048a842b81ed534e041be8f5e073ea1e949520d",
+      "servedBuildMatchesLocal": true,
+      "ownerDaily": {
+        "status": 200,
+        "count": 1,
+        "enabled": true,
+        "nextDueAt": "2026-11-01T07:00:00.000Z"
+      },
+      "actualSavedSnapshotMatches": true,
+      "actualBriefingStatus": "awaiting_review",
+      "actualTopics": 0,
+      "actualCoverage": {
+        "checkedSources": 0,
+        "omittedUpdates": 0,
+        "updatedSources": 1,
+        "followedSources": 39,
+        "includedUpdates": 0,
+        "availableUpdates": 1,
+        "pendingReviewUpdates": 1,
+        "missingContentUpdates": 0
+      },
+      "ordinaryDaily": {
+        "status": 200,
+        "count": 0
+      },
+      "anonymousDaily": 401,
+      "unknownDailyId": 404,
+      "crossReaderDaily": 404,
+      "ownerAdmin": 200,
+      "ordinaryAdmin": 403,
+      "modelBudget": {
+        "enabled": true,
+        "dailyLimitUsd": 5,
+        "lifetimeLimitUsd": 10
+      },
+      "unsignedReminderEvent": 400,
+      "invalidUnsubscribe": 400,
+      "realReviewDecisions": 0,
+      "emailsSentByVerification": 0
+    },
+    "nextScheduledCycleExpected": "2026-11-01T07:00:00.000Z"
+  }
+}

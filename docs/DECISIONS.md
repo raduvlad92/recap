@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 31 October 2026 — run today's cycle now; retain reminder opt-out and approval gates
+
+Founder: “run the cycle now and then check results.” Run collection/analysis checks and execute today's unique daily slot early using an actual present cutoff and unchanged settings. Do not simulate a future clock, alter source dates, reset allowances, approve reviews or send email. Today's later scheduled slot is consequently consumed; the next normal cycle is 1 November at the unchanged 08:00 Europe/Berlin. The early-run continuity fix retains intervening updates for that next cycle.
+
+The actual snapshot is Awaiting review, with one usable original caption and no approved findings. A local pre-request credential failure was reconciled only after proving no provider dispatch; the seven historical unknown calls remain preserved. Hosted recap validation failed after two settled calls. No real approval, ready publication or email follows from executing the cycle. [Outcome, costs and release checks](tech/DAILY-CYCLE-2026-10-31.md).
+
 ## 31 October 2026 — implement the scoped social/daily increment; owner email remains off
 
 Founder: “ok, do it. optimize the work with agents in parallel, even agents that have agents. and do not forget to give each agent information built by others (only when necessary).” This approves implementation of the previously requested social collection and daily briefing/email plan. Parallel collection, daily briefing and reminder work shared their database/output contracts and received focused independent review. It does not approve the broader SPEC/PLAN v1.1, customer outreach, paid launch, new subscriptions, increased financial ceilings or automatic publication of newly synthesized wording.
