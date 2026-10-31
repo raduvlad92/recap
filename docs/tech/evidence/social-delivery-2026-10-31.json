@@ -1,0 +1,508 @@
+{
+  "status": "deployed-hosted-api-verified-operational-acceptance-partial",
+  "date": "2026-10-31",
+  "boundaries": {
+    "rawSourceBodiesIncluded": false,
+    "privateReaderIdentitiesIncluded": false,
+    "credentialsIncluded": false,
+    "readerImports": 0,
+    "newModelCalls": 0,
+    "realReviewDecisions": 0,
+    "reminderPreference": "off",
+    "enabledReminderReaderPolicies": 0,
+    "reminderOutboxRows": 0,
+    "emailsSent": 0
+  },
+  "local": {
+    "testsPassed": 3633,
+    "testFilesPassed": 103,
+    "catalogue": "passed",
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "log": ".local/social-delivery-20261031/full-check-release-final.log"
+  },
+  "migrations": {
+    "base": {
+      "versions": [
+        "20261031002750",
+        "20261031002813",
+        "20261031002826",
+        "20261031003121"
+      ],
+      "actualRollback": "passed",
+      "actualApplication": "passed",
+      "preservedOriginalRows": 15515,
+      "preservedOriginalPublicTables": 37,
+      "newTablesWithRls": 19
+    },
+    "capacity": {
+      "version": "20261031005641",
+      "sha256": "1f7ad374eac29ed24834f6f25739086e5517657b07d3a4a7fba9af4f1e94e92b",
+      "actualRollback": "passed",
+      "actualApplication": "passed",
+      "preservedRows": 15691,
+      "preservedPublicTables": 56,
+      "originalRowsChanged": 0,
+      "rlsRetained": true
+    },
+    "securityAdvisors": "final-rerun-no-issues"
+  },
+  "supplierCheckpoint": {
+    "observedAt": "2026-10-31T01:12:34Z",
+    "currency": "USD",
+    "newJobs": 25,
+    "confirmedProviderRuns": 21,
+    "newReportedChargesUsd": "0.040398048999",
+    "newUncertainHoldsUsd": "0.20",
+    "incrementalCommitmentUsd": "0.240398048999",
+    "newUncertainJobs": {
+      "X": 1,
+      "Instagram": 1,
+      "LinkedIn": 2
+    },
+    "aggregateCommitmentUsd": "1.966646372342",
+    "aggregateCeilingUsd": "45",
+    "aggregateAvailableUsd": "43.033353627658",
+    "aggregateUnknownJobs": 16,
+    "preservedHistoricalUnknownJobs": 12,
+    "incrementalPilotCeilingInsideAggregateUsd": "5"
+  },
+  "providerOutcomes": {
+    "X": {
+      "confirmedRuns": 7,
+      "emptyRuns": 7,
+      "nativeWindowAcceptedItems": 0,
+      "coverage": "unknown"
+    },
+    "InstagramPrimary": {
+      "confirmedRuns": 7,
+      "noItemsErrorRows": 7,
+      "nativeWindowAcceptedItems": 0,
+      "coverage": "unknown"
+    },
+    "InstagramBackup": {
+      "actor": "yugenox/instagram-post-scraper",
+      "buildId": "HSW3HhS2U1JDYaXcJ",
+      "confirmedRuns": 4,
+      "runsWithDatedCaptionMediaRows": 3,
+      "emptyRuns": 1,
+      "returnedDatedCaptionMediaRows": 9,
+      "nativeWindowAcceptedItems": 0,
+      "rejectedOutsideOriginalWindows": 9,
+      "reportedChargesUsd": "0.0148",
+      "coverage": "unknown-original-24h-windows",
+      "widerReplayChangesProductionCoverage": false
+    },
+    "LinkedIn": {
+      "confirmedRuns": 3,
+      "initialNativeWindowAcceptedItems": 2,
+      "retainedCompanyPostAcceptedByCorrectedNormalizerInOriginalWindow": 1,
+      "originalRejectedJobRewritten": false,
+      "coverage": "partial-completeness-unverified"
+    }
+  },
+  "retainedReplay": {
+    "capturedAt": "2026-10-31T01:12:42.075Z",
+    "type": "retained-provider-data-read-only-normalizer-replay",
+    "runtimeSourceSha256": "d25e3cd8c5a626173a9a39029907033f2308ce1931877c7e79bf37a29b32ac87",
+    "boundaries": {
+      "providerMethods": [
+        "GET existing run",
+        "GET existing dataset"
+      ],
+      "launches": 0,
+      "providerMutations": 0,
+      "databaseQueries": 0,
+      "databaseWrites": 0,
+      "jobChanges": 0,
+      "actualWindowIsOriginalFrozenProofWindow": true,
+      "widerWindowIsSchemaReplayOnly": true,
+      "widerWindowChangesProductionCoverageOrCharges": false,
+      "rawTextIncludedInEvidence": false,
+      "privateReaderIdentitiesIncluded": false
+    },
+    "cases": [
+      {
+        "platform": "Instagram",
+        "sourceKind": "profile",
+        "actorRef": "yugenox/instagram-post-scraper",
+        "actorBuildId": "HSW3HhS2U1JDYaXcJ",
+        "runId": "cvf5VQkgyKd8DXdbB",
+        "runStatus": "SUCCEEDED",
+        "retainedDatasetSha256": "82eb7f167d5d3d3631a3d54a2d8111b16c178129289e1a37d7e77263b2f1223e",
+        "retainedRows": 3,
+        "originalFrozenWindow": {
+          "from": "2026-10-30T01:08:02.172594+00:00",
+          "to": "2026-10-31T01:08:02.172594+00:00",
+          "status": "unknown",
+          "complete": false,
+          "returned": 3,
+          "accepted": 0,
+          "rejected": {
+            "outside_window": 3
+          },
+          "reason": "provider_returned_older_window",
+          "acceptedTextRows": 0,
+          "acceptedMediaRows": 0
+        },
+        "widerRetainedDataSchemaReplay": {
+          "from": "2026-10-27T19:51:15.999Z",
+          "to": "2026-10-31T01:08:02.172Z",
+          "changesProductionWindow": false,
+          "status": "partial",
+          "complete": false,
+          "returned": 3,
+          "accepted": 3,
+          "rejected": {},
+          "reason": "result_limit_reached",
+          "acceptedTextRows": 3,
+          "acceptedMediaRows": 3
+        },
+        "demoMarkedRows": 0
+      },
+      {
+        "platform": "Instagram",
+        "sourceKind": "profile",
+        "actorRef": "yugenox/instagram-post-scraper",
+        "actorBuildId": "HSW3HhS2U1JDYaXcJ",
+        "runId": "CR8ZHEVGRvdx8SV94",
+        "runStatus": "SUCCEEDED",
+        "retainedDatasetSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "retainedRows": 0,
+        "originalFrozenWindow": {
+          "from": "2026-10-30T01:11:00.10804+00:00",
+          "to": "2026-10-31T01:11:00.10804+00:00",
+          "status": "unknown",
+          "complete": false,
+          "returned": 0,
+          "accepted": 0,
+          "rejected": {},
+          "reason": "empty_or_unusable_response",
+          "acceptedTextRows": 0,
+          "acceptedMediaRows": 0
+        },
+        "widerRetainedDataSchemaReplay": {
+          "from": "2026-10-30T01:11:00.10804+00:00",
+          "to": "2026-10-31T01:11:00.10804+00:00",
+          "changesProductionWindow": false,
+          "status": "unknown",
+          "complete": false,
+          "returned": 0,
+          "accepted": 0,
+          "rejected": {},
+          "reason": "empty_or_unusable_response",
+          "acceptedTextRows": 0,
+          "acceptedMediaRows": 0
+        },
+        "demoMarkedRows": 0
+      },
+      {
+        "platform": "LinkedIn",
+        "sourceKind": "company",
+        "actorRef": "harvestapi/linkedin-profile-posts",
+        "actorBuildId": "ocTvwcnar4NgSvVu9",
+        "runId": "EZm74jt0jen3zoXvw",
+        "runStatus": "SUCCEEDED",
+        "retainedDatasetSha256": "bf979e5d758d91cf5321d5a346a295e5743108726e907bffc21e6ed93f6d969a",
+        "retainedRows": 1,
+        "originalFrozenWindow": {
+          "from": "2026-10-30T00:53:29.847725+00:00",
+          "to": "2026-10-31T00:53:29.847725+00:00",
+          "status": "partial",
+          "complete": false,
+          "returned": 1,
+          "accepted": 1,
+          "rejected": {},
+          "reason": "provider_completeness_unverified",
+          "acceptedTextRows": 1,
+          "acceptedMediaRows": 0
+        },
+        "widerRetainedDataSchemaReplay": {
+          "from": "2026-10-30T00:53:29.846Z",
+          "to": "2026-10-31T00:53:29.847Z",
+          "changesProductionWindow": false,
+          "status": "partial",
+          "complete": false,
+          "returned": 1,
+          "accepted": 1,
+          "rejected": {},
+          "reason": "provider_completeness_unverified",
+          "acceptedTextRows": 1,
+          "acceptedMediaRows": 0
+        },
+        "demoMarkedRows": 0
+      },
+      {
+        "platform": "Instagram",
+        "sourceKind": "profile",
+        "actorRef": "yugenox/instagram-post-scraper",
+        "actorBuildId": "HSW3HhS2U1JDYaXcJ",
+        "runId": "N9y3LmMrPGyU1uyMa",
+        "runStatus": "SUCCEEDED",
+        "retainedDatasetSha256": "04e7f13bc3c75d73121f130da6a02c211ac3ce59f95581c656641a47b94652cf",
+        "retainedRows": 3,
+        "originalFrozenWindow": {
+          "from": "2026-10-30T01:09:48.63122+00:00",
+          "to": "2026-10-31T01:09:48.63122+00:00",
+          "status": "unknown",
+          "complete": false,
+          "returned": 3,
+          "accepted": 0,
+          "rejected": {
+            "outside_window": 3
+          },
+          "reason": "provider_returned_older_window",
+          "acceptedTextRows": 0,
+          "acceptedMediaRows": 0
+        },
+        "widerRetainedDataSchemaReplay": {
+          "from": "2023-05-25T23:36:16.999Z",
+          "to": "2026-10-31T01:09:48.631Z",
+          "changesProductionWindow": false,
+          "status": "partial",
+          "complete": false,
+          "returned": 3,
+          "accepted": 3,
+          "rejected": {},
+          "reason": "result_limit_reached",
+          "acceptedTextRows": 3,
+          "acceptedMediaRows": 3
+        },
+        "demoMarkedRows": 0
+      },
+      {
+        "platform": "Instagram",
+        "sourceKind": "profile",
+        "actorRef": "yugenox/instagram-post-scraper",
+        "actorBuildId": "HSW3HhS2U1JDYaXcJ",
+        "runId": "tkUcyF3MkRIjgLT4Y",
+        "runStatus": "SUCCEEDED",
+        "retainedDatasetSha256": "2b622043ef7416938f5527a08da1e47df063f70f63c739351a675eee2a8b2afa",
+        "retainedRows": 3,
+        "originalFrozenWindow": {
+          "from": "2026-10-30T01:09:47.252047+00:00",
+          "to": "2026-10-31T01:09:47.252047+00:00",
+          "status": "unknown",
+          "complete": false,
+          "returned": 3,
+          "accepted": 0,
+          "rejected": {
+            "outside_window": 3
+          },
+          "reason": "provider_returned_older_window",
+          "acceptedTextRows": 0,
+          "acceptedMediaRows": 0
+        },
+        "widerRetainedDataSchemaReplay": {
+          "from": "2026-10-16T13:00:31.999Z",
+          "to": "2026-10-31T01:09:47.252Z",
+          "changesProductionWindow": false,
+          "status": "partial",
+          "complete": false,
+          "returned": 3,
+          "accepted": 3,
+          "rejected": {},
+          "reason": "result_limit_reached",
+          "acceptedTextRows": 3,
+          "acceptedMediaRows": 3
+        },
+        "demoMarkedRows": 0
+      }
+    ]
+  },
+  "release": {
+    "commit": "7bf5911ea10494455da35c7462b30486c61aba1e",
+    "ci": {
+      "id": "41154400375",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41154400375",
+      "status": "passed"
+    },
+    "deployment": {
+      "id": "6ae541ed6c68dc4702769044",
+      "state": "ready",
+      "functionalCommit": "7bf5911ea10494455da35c7462b30486c61aba1e",
+      "publishedAt": "2026-10-31T01:19:25.499Z",
+      "newSchedules": [
+        "social-collection",
+        "social-content",
+        "daily-briefing",
+        "recap-reminders"
+      ],
+      "cron": "*/5 * * * *"
+    },
+    "hostedReadback": {
+      "at": "2026-10-31T01:19:57.172Z",
+      "home": 200,
+      "mainAsset": "/assets/index-CD3Q1qLs.js",
+      "mainSha256": "a69289130a8cc0d6e5ace78df048a842b81ed534e041be8f5e073ea1e949520d",
+      "servedBuildMatchesLocal": true,
+      "ownerDaily": {
+        "status": 200,
+        "count": 0,
+        "enabled": true,
+        "nextDueAt": "2026-10-31T07:00:00.000Z"
+      },
+      "ordinaryDaily": {
+        "status": 200,
+        "count": 0
+      },
+      "anonymousDaily": 401,
+      "unknownDailyId": 404,
+      "ownerAdmin": 200,
+      "ordinaryAdmin": 403,
+      "modelBudget": {
+        "enabled": true,
+        "dailyLimitUsd": 5,
+        "lifetimeLimitUsd": 10
+      },
+      "unsignedReminderEvent": 400,
+      "invalidUnsubscribe": 400,
+      "realReviewDecisions": 0,
+      "emailsSentByVerification": 0
+    },
+    "operationalObservation72Hours": {
+      "state": "scheduled-not-completed",
+      "firstRunAt": "2026-11-01T01:20:34.271Z",
+      "stopAtOrAfter": "2026-11-03T01:19:25.499Z",
+      "everyMs": 86400000,
+      "readOnly": true
+    },
+    "realReadyBriefing": "unproved",
+    "realEmailInboxProof": "deferred-owner-reminders-off",
+    "push": "complete",
+    "firstHostedTick": {
+      "at": "2026-10-31T01:20:45.766723+00:00",
+      "briefings": [],
+      "dailyControl": true,
+      "enabledReminderPolicies": 0,
+      "modelBudget": {
+        "committedUsd": 9.422405362,
+        "dailyLimitUsd": 5,
+        "enabled": true,
+        "lifetimeLimitUsd": 10,
+        "unknownCalls": 7
+      },
+      "readerDeliveries": 0,
+      "reminders": [],
+      "socialJobs": [
+        {
+          "accepted": 0,
+          "actual_usd": 0.0081,
+          "jobs": 3,
+          "latest_finish": "2026-10-31T01:07:50.739964+00:00",
+          "platform": "Instagram",
+          "purpose": "collection",
+          "referenced_runs": 3,
+          "state": "completed"
+        },
+        {
+          "accepted": 0,
+          "actual_usd": null,
+          "jobs": 3,
+          "latest_finish": null,
+          "platform": "Instagram",
+          "purpose": "collection",
+          "referenced_runs": 3,
+          "state": "running"
+        },
+        {
+          "accepted": 0,
+          "actual_usd": null,
+          "jobs": 1,
+          "latest_finish": null,
+          "platform": "Instagram",
+          "purpose": "proof",
+          "referenced_runs": 0,
+          "state": "ambiguous"
+        },
+        {
+          "accepted": 0,
+          "actual_usd": 0.0256,
+          "jobs": 8,
+          "latest_finish": "2026-10-31T01:11:59.057146+00:00",
+          "platform": "Instagram",
+          "purpose": "proof",
+          "referenced_runs": 8,
+          "state": "completed"
+        },
+        {
+          "accepted": 0,
+          "actual_usd": null,
+          "jobs": 2,
+          "latest_finish": null,
+          "platform": "LinkedIn",
+          "purpose": "proof",
+          "referenced_runs": 0,
+          "state": "ambiguous"
+        },
+        {
+          "accepted": 2,
+          "actual_usd": 0.006150000002,
+          "jobs": 3,
+          "latest_finish": "2026-10-31T00:56:45.384572+00:00",
+          "platform": "LinkedIn",
+          "purpose": "proof",
+          "referenced_runs": 3,
+          "state": "completed"
+        },
+        {
+          "accepted": 0,
+          "actual_usd": null,
+          "jobs": 1,
+          "latest_finish": null,
+          "platform": "X",
+          "purpose": "collection",
+          "referenced_runs": 0,
+          "state": "ambiguous"
+        },
+        {
+          "accepted": 0,
+          "actual_usd": 0.000149658831,
+          "jobs": 2,
+          "latest_finish": "2026-10-31T01:07:50.753798+00:00",
+          "platform": "X",
+          "purpose": "collection",
+          "referenced_runs": 2,
+          "state": "completed"
+        },
+        {
+          "accepted": 0,
+          "actual_usd": 0.000398390166,
+          "jobs": 5,
+          "latest_finish": "2026-10-31T00:56:44.746599+00:00",
+          "platform": "X",
+          "purpose": "proof",
+          "referenced_runs": 5,
+          "state": "completed"
+        }
+      ],
+      "socialSources": [
+        {
+          "ever_complete": 0,
+          "overdue": 0,
+          "paused": 0,
+          "platform": "Instagram",
+          "sources": 8
+        },
+        {
+          "ever_complete": 0,
+          "overdue": 0,
+          "paused": 0,
+          "platform": "X",
+          "sources": 10
+        }
+      ],
+      "socialTasks": [],
+      "supplierBudget": {
+        "accountId": "source-proof",
+        "availableUsd": 43.003353627658,
+        "ceilingUsd": 45,
+        "committedUsd": 1.996646372342,
+        "currency": "USD",
+        "heldEnvelopes": 1,
+        "overCeiling": false,
+        "unknownCostJobs": 19
+      }
+    }
+  }
+}

@@ -1,5 +1,23 @@
 # Decisions and interview
 
+## 31 October 2026 — implement the scoped social/daily increment; owner email remains off
+
+Founder: “ok, do it. optimize the work with agents in parallel, even agents that have agents. and do not forget to give each agent information built by others (only when necessary).” This approves implementation of the previously requested social collection and daily briefing/email plan. Parallel collection, daily briefing and reminder work shared their database/output contracts and received focused independent review. It does not approve the broader SPEC/PLAN v1.1, customer outreach, paid launch, new subscriptions, increased financial ceilings or automatic publication of newly synthesized wording.
+
+Execution uses the existing recap Supabase/Clerk/Netlify stack and reviewed Apify Actors, with US$5 maximum incremental supplier pilot commitments inside the existing US$45 source-proof ceiling. Existing unknown charges stay held; model limits remain US$10 lifetime / US$5 UTC-day / US$0.10 call. Separate social analysis admits only new usable followed post text; proposals enter the existing administrator queue with current-source provenance. The first daily composer copies approved wording/citations deterministically. No real review decision is fabricated for testing.
+
+Actual supplier outcomes and the unchanged financial envelopes are recorded in the execution report. Corrected retained-data replay does not rewrite the initial job outcome or establish full access. The local release passes 3,633 tests and independent CI; the exact deployed asset/private API boundaries pass. Initial hosted source-start liveness is recorded separately from still-pending useful current-window content, ready-briefing and 72-hour proof. Three bounded daily read-only checks add no provider/model execution or email authority.
+
+Founder separately answered **“Keep my reminders off”** to the optional own-account reminder question. Preserve the saved off preference and disabled finite sending policy. Implement/verify optional delivery and its no-send path; do not send a real owner reminder or claim Inbox delivery. [Current implementation, exact evidence and unfinished gates](tech/SOCIAL-DELIVERY-2026-10-31.md).
+
+## 29 October 2026 — plan automatic social collection and daily delivery
+
+Founder requested a plan to finish automatic X/Instagram/LinkedIn collection and daily briefing/email delivery, most likely with separate Apify Actors per platform. This authorizes planning/research, not new supplier execution, external sending or an increased operating allowance.
+
+[Proposed plan v0.1](tech/SOCIAL-COLLECTION-AND-DAILY-DELIVERY-PLAN.md) recommends Xquik for X, Apify's Instagram Scraper and HarvestAPI's LinkedIn Profile Posts Actor, subject to current build/schema/price and useful-content proof. Shared hourly public-source work stays separate from private reader settings/briefings. It includes the missing social-text analysis bridge, saved daily snapshots, local-time/DST rules, optional consent-aware email, preserved administrator publication decisions, finite pilot envelopes and 72-hour unattended verification. Exact proposed choices/effort/envelopes are recommendations, not founder approvals. No new ADR or whole-SPEC approval follows.
+
+Local code and public supplier documentation were inspected; no production/account query, supplier/model call, source collection, application/schema change, email, deployment or subscription occurred. Incremental metered execution cost US$0. Existing live video workflow and historical balances were not changed or freshly reverified.
+
 ## 29 October 2026 — make the supported new-content workflow live
 
 Founder: “make sure everything is live: getting new content, reviewing the content, recaps, keywords, etc.” This authorizes connecting and enabling the supported new-video workflow within the existing financial ceilings. It does not raise the US$10 cumulative model allowance, release old holds, approve uncertain content, add a supplier subscription or approve the wider specification.
