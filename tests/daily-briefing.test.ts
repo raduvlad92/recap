@@ -127,6 +127,19 @@ describe('daily worker and private route', () => {
     const response = await createDailyBriefingsHandler({ env, db })(new Request('https://recap.example/api/daily-briefings'));
     expect(response.status).toBe(401); expect(db).not.toHaveBeenCalled();
   });
+  it.each([
+    [null, '2026-10-31T07:00:00.000Z'],
+    ['2026-10-31', '2026-11-01T07:00:00.000Z'],
+  ])('reports the next unconsumed delivery after an early run (%s)', async (lastDay, expected) => {
+    const db = () => ({ from(table: string) {
+      const result = { error: null, data: table === 'daily_briefings' ? [] : table === 'reader_workspaces' ? { state: { settings } } : table === 'daily_briefing_schedules' ? { enabled: true, last_local_date: lastDay } : { enabled: true } };
+      const query: any = { then: (resolve: any) => Promise.resolve(result).then(resolve), maybeSingle: async () => result };
+      for (const method of ['select', 'eq', 'is', 'order', 'limit']) query[method] = () => query;
+      return query;
+    } }) as any;
+    const response = await createDailyBriefingsHandler({ env, db, verify: async () => 'reader', now: () => Date.parse('2026-10-31T02:00:00Z') })(new Request('https://recap.example/api/daily-briefings'));
+    expect(response.status).toBe(200); expect((await response.json()).nextDueAt).toBe(expected);
+  });
   it('rejects malformed mutations without making a database call', async () => {
     const rpc = vi.fn(), db = () => ({ rpc }) as any;
     const handler = createDailyBriefingsHandler({ env, db, verify: async () => 'reader' });

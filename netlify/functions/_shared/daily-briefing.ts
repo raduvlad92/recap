@@ -231,7 +231,7 @@ export function createDailyBriefingsHandler(overrides: Partial<{ env: Env; db: (
       if (cursor) query = query.lt('local_date', cursor);
       const [result, workspace, control, schedule] = await Promise.all([
         query, db.from('reader_workspaces').select('state').eq('user_id', readerId).maybeSingle(),
-        db.from('daily_briefing_control').select('enabled').eq('id', true).maybeSingle(), db.from('daily_briefing_schedules').select('enabled').eq('reader_id', readerId).maybeSingle(),
+        db.from('daily_briefing_control').select('enabled').eq('id', true).maybeSingle(), db.from('daily_briefing_schedules').select('enabled,last_local_date').eq('reader_id', readerId).maybeSingle(),
       ]);
       if (result.error || workspace.error || control.error || schedule.error) return fail('briefing_read_failed', 502);
       const rows = result.data || [], briefings = rows.slice(0, limit).map(clientBriefing);
@@ -239,7 +239,13 @@ export function createDailyBriefingsHandler(overrides: Partial<{ env: Env; db: (
       const settings = workspace.data?.state?.settings;
       const enabled = dailyBriefingRuntimeAllowed(env) && control.data?.enabled === true && schedule.data?.enabled === true;
       if (settings && typeof settings.timezone === 'string' && typeof settings.deliveryTime === 'string') {
-        try { nextDueAt = briefingCycle(now(), settings.timezone, settings.deliveryTime).nextDueAt; } catch { /* Invalid settings are a visible unscheduled state. */ }
+        try {
+          nextDueAt = briefingCycle(now(), settings.timezone, settings.deliveryTime).nextDueAt;
+          const consumedDay = schedule.data?.last_local_date;
+          if (typeof consumedDay === 'string' && dayPattern.test(consumedDay) && consumedDay >= localParts(Date.parse(nextDueAt), settings.timezone).day) {
+            nextDueAt = localBriefingCutoff(addDay(consumedDay, 1), settings.deliveryTime, settings.timezone);
+          }
+        } catch { /* Invalid settings are a visible unscheduled state. */ }
       }
       return json({ briefings, nextCursor: rows.length > limit ? briefings[briefings.length - 1].localDate : null, nextDueAt: enabled ? nextDueAt : null, enabled } satisfies DailyBriefingPage);
     } catch (error) { return errorResponse(error); }
