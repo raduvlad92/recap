@@ -92,7 +92,7 @@ export function validateAutomaticRecap(value:unknown,content:string,allowed?:Rec
 }
 
 function recapCall(claim:AutomaticContentClaim,stage:string,prompt:Record<string,unknown>,schema:Record<string,unknown>=draftSchema):KeywordLearningInput{
- const original:GenerationRequest={role:'extractor',key:'automatic-recap:v1:'+stage,system:recapSystem,
+ const original:GenerationRequest={role:'extractor',key:'automatic-recap:v1:'+stage,system:claim.record.contentKind==='feed_text'?recapSystem.replaceAll('transcript','post text'):recapSystem,
   prompt:canonicalKeywordProductionJson(prompt),schema,maxOutputTokens:4000};
  const key='keyword-learning:v1:'+sha(canonicalKeywordProductionJson({version:'automatic-recap-review-v1',sessionId:claim.task.session_id,sourceHash:claim.task.content_hash,request:original}));
  return {action:'generate',sessionId:claim.task.session_id,sourceOrdinal:1,sourceHash:claim.task.content_hash,model:KEYWORD_PRODUCTION_EXTRACTOR_MODEL,originalKey:original.key,request:{...original,key}};

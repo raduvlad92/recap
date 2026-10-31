@@ -3,6 +3,9 @@ import { ArrowUpRight, Expand, Reply, Quote } from 'lucide-react';
 import type { Platform, SourcePostReference, SourceUpdate } from '../lib/types';
 import { PostMedia, UnavailablePostMedia } from './PostMedia';
 import { CardSourcePanel, CardImagePreview, TextPostPreview } from './CardSourcePanel';
+import { VideoTakeaways } from './YouTubeCard';
+import { VideoKeywordStrip } from './VideoKeywordStrip';
+import { getVideoKeywords } from '../lib/video';
 
 /** Metadata and attachment tokens are not authored post text. Keep genuine URLs intact. */
 export function socialPostText(update: SourceUpdate): string {
@@ -64,8 +67,10 @@ export function SocialPostCard({ update, heading, channelName, channelIcon, date
     <div className="update-card-body">
       <h2 className="sr-only">{heading}</h2>
       <SocialPostContent update={update} playbackEnabled={playbackEnabled} includeMedia={false} />
+      <VideoTakeaways update={update} />
       <div className="social-post-links"><button onClick={onOpen}>{detailsLabel}<Expand size={14} aria-hidden="true" /></button><a href={update.url} target="_blank" rel="noopener noreferrer">{originalLabel}<ArrowUpRight size={14} aria-hidden="true" /></a></div>
       <div className="update-card-bottom"><div className="topic-pills">{topics}</div><span className="provenance provenance-live">{socialPostProvenance(update)}</span></div>
+      {getVideoKeywords(update).length > 0 && <VideoKeywordStrip keywords={getVideoKeywords(update)} timingBasis="none" />}
     </div>
   </article>;
 }
