@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 1 November 2026, 02:03 Berlin — read-only overnight status
+
+Actual production readback: 337 cumulative completed normal collection runs yield one accepted Instagram post and zero X posts. No additional reader delivery or ready briefing since the early cycle. The 31 October snapshot is still Awaiting review / zero topics; two analysis tasks remain blocked. No 1 November snapshot is due before the saved 08:00 Berlin cutoff. The overdue X check is bound to the already known ambiguous job. Model commitment stays US$9.422509392, seven historical unknown calls; source-ledger commitment is US$2.166122546703 / US$45, including existing reservations. Owner reminder preference is false, no enabled reminder policy or outbox. Existing deployment 6ae548a5b1de3ee251abb9bb remains ready. No provider/model/worker execution, approval, hold release, control change, deployment or email was initiated. [Sanitized native evidence](tech/evidence/social-delivery-status-20261101T010342Z.json).
+
 ## 31 October 2026 — requested early cycle: real saved result, not ready publication
 
 [Cycle result](tech/DAILY-CYCLE-2026-10-31.md): actual cutoff 01:41:51 UTC, one new original Instagram caption, Awaiting review, zero topics; 39 source checks split 13 failed / 9 partial / 17 unknown. Settings and reminder-off preference are unchanged, zero outbox/email, no real review decision. The manual keyword attempt stops before provider dispatch because its local key is absent; exact binding/no-receipt proof permits zero settlement of that new reservation through the existing RPC, preserving all seven old unknown-call financial records. The separate hosted recap makes two settled calls for US$0.000104030 and fails validation; no quality pass or publication is claimed.

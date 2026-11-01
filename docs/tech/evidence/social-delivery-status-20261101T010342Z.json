@@ -1,0 +1,220 @@
+{
+  "kind": "owner-requested-read-only-status",
+  "at": "2026-11-01T01:03:42.866569+00:00",
+  "timeBerlin": "2026-11-01 02:03",
+  "actualScheduledNovember1Cycle": "not-yet-due-at-this-check",
+  "nextScheduledCycle": "2026-11-01T07:00:00.000Z",
+  "normalCollection": {
+    "completedInstagram": 160,
+    "completedX": 177,
+    "completedTotal": 337,
+    "cumulativeAcceptedInstagramPosts": 1,
+    "cumulativeAcceptedXPosts": 0,
+    "readerDeliveries": 1,
+    "additionalDeliveriesSinceEarlyCycle": 0
+  },
+  "observation": {
+    "at": "2026-11-01T01:03:42.866569+00:00",
+    "briefings": [
+      {
+        "briefings": 1,
+        "local_date": "2026-10-31",
+        "published": 0,
+        "status": "awaiting_review",
+        "topics": 0
+      }
+    ],
+    "dailyControl": true,
+    "enabledReminderPolicies": 0,
+    "modelBudget": {
+      "committedUsd": 9.422509392,
+      "dailyLimitUsd": 5,
+      "enabled": true,
+      "lifetimeLimitUsd": 10,
+      "unknownCalls": 7
+    },
+    "readerDeliveries": 1,
+    "reminders": [],
+    "socialJobs": [
+      {
+        "accepted": 1,
+        "actual_usd": 0.1879,
+        "jobs": 160,
+        "latest_finish": "2026-11-01T00:40:13.150092+00:00",
+        "platform": "Instagram",
+        "purpose": "collection",
+        "referenced_runs": 160,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 1,
+        "latest_finish": null,
+        "platform": "Instagram",
+        "purpose": "proof",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.0256,
+        "jobs": 8,
+        "latest_finish": "2026-10-31T01:11:59.057146+00:00",
+        "platform": "Instagram",
+        "purpose": "proof",
+        "referenced_runs": 8,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 2,
+        "latest_finish": null,
+        "platform": "LinkedIn",
+        "purpose": "proof",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 2,
+        "actual_usd": 0.006150000002,
+        "jobs": 3,
+        "latest_finish": "2026-10-31T00:56:45.384572+00:00",
+        "platform": "LinkedIn",
+        "purpose": "proof",
+        "referenced_runs": 3,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 1,
+        "latest_finish": null,
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.015825833192,
+        "jobs": 177,
+        "latest_finish": "2026-11-01T01:00:13.828185+00:00",
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 177,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.000398390166,
+        "jobs": 5,
+        "latest_finish": "2026-10-31T00:56:44.746599+00:00",
+        "platform": "X",
+        "purpose": "proof",
+        "referenced_runs": 5,
+        "state": "completed"
+      }
+    ],
+    "socialSources": [
+      {
+        "ever_complete": 0,
+        "overdue": 0,
+        "paused": 0,
+        "platform": "Instagram",
+        "sources": 8
+      },
+      {
+        "ever_complete": 0,
+        "overdue": 1,
+        "paused": 0,
+        "platform": "X",
+        "sources": 10
+      }
+    ],
+    "socialTasks": [
+      {
+        "state": "blocked",
+        "tasks": 2
+      }
+    ],
+    "supplierBudget": {
+      "accountId": "source-proof",
+      "availableUsd": 42.833877453297,
+      "ceilingUsd": 45,
+      "committedUsd": 2.166122546703,
+      "currency": "USD",
+      "heldEnvelopes": 1,
+      "overCeiling": false,
+      "unknownCostJobs": 16
+    }
+  },
+  "detail": {
+    "activeReaderReviewCounts": [
+      {
+        "kind": "keyword",
+        "reviews": 400,
+        "status": "pending"
+      },
+      {
+        "kind": "recap",
+        "reviews": 41,
+        "status": "pending"
+      },
+      {
+        "kind": "keyword",
+        "reviews": 4,
+        "status": "rejected"
+      }
+    ],
+    "at": "2026-11-01T01:05:11.375979+00:00",
+    "overdueSources": [
+      {
+        "has_active_job": false,
+        "has_known_pre_cycle_ambiguous_job": true,
+        "platform": "X"
+      }
+    ],
+    "readerSchedule": [
+      {
+        "delivery_time": "08:00",
+        "email_reminder": false,
+        "last_cutoff_at": "2026-10-31T01:41:51.587+00:00",
+        "last_local_date": "2026-10-31",
+        "timezone": "Europe/Berlin"
+      }
+    ],
+    "tasks": [
+      {
+        "error_code": "analysis_unknown_charge_hold",
+        "state": "blocked",
+        "task": "keywords",
+        "tasks": 1
+      },
+      {
+        "error_code": "automatic_recap_invalid_check",
+        "state": "blocked",
+        "task": "recap",
+        "tasks": 1
+      }
+    ]
+  },
+  "ownerReminderPreference": false,
+  "hosting": {
+    "publishedDeployId": "6ae548a5b1de3ee251abb9bb",
+    "state": "ready",
+    "functionalCommit": "f955398088a9c911693c3e7e1ccd33d4a972c170"
+  },
+  "actions": {
+    "providerJobsStarted": 0,
+    "modelCallsStarted": 0,
+    "retries": 0,
+    "controlChanges": 0,
+    "holdsReleased": 0,
+    "reviewDecisions": 0,
+    "emailsSent": 0,
+    "deployments": 0
+  },
+  "verdict": "scheduler-active-useful-briefing-still-blocked"
+}

@@ -1,5 +1,15 @@
 # Bounded social-delivery observation
 
+## 1 November, 02:03 Berlin — owner-requested status before the next scheduled cycle
+
+**No usable briefing is ready.** The scheduler continued: normal collection has 160 completed Instagram runs and 177 completed X runs. Those cumulative totals still produce only the same one Instagram caption already present in yesterday's early result; there are no further reader deliveries and no X posts. LinkedIn's two accepted items belong to earlier proof jobs, not recurring reader collection.
+
+The only saved snapshot is 31 October Awaiting review with zero topics. The keyword task retains its known blocked attempt and the recap task retains automatic_recap_invalid_check. There are no approved recap review rows in the active-reader review count. Model commitment is unchanged at US$9.422509392 / US$10, including seven old unknown calls. The single overdue X source has the same pre-early-cycle ambiguous collection job; this is a confirmed existing gap rather than a new failure inferred from an aggregate count.
+
+At this check it is 02:03 Berlin on 1 November. The normal 08:00 cycle and the first 02:20 scheduled read-only follow-up are still in the future. Their absence is not a missed execution. Reminders stay off, no reader sending policy is enabled and the outbox is empty. The previous exact deployment remains ready/published.
+
+This check only read hosting/database state. It started no source, model or worker job, changed no control/hold/review and sent no email. Existing automated application schedules continue within the already configured caps. Source/analysis recovery remains unfinished; scheduling liveness alone does not prove a working useful recap. [Immutable status evidence](evidence/social-delivery-status-20261101T010342Z.json).
+
 **Manual-cycle baseline update:** [31 October early cycle](DAILY-CYCLE-2026-10-31.md) is saved as Awaiting review. Its 13 failed, nine partial and 17 unknown source checks and two blocked analysis tasks are known readiness gaps. The local no-dispatch reservation is reconciled to zero; model commitment is US$9.422509392 with the same seven historical unknown calls. Today's slot is consumed; the next normal due time is 1 November 08:00 Berlin. Assess later changes against this newer checkpoint.
 
 This is the read-only follow-up to the [31 October release](SOCIAL-DELIVERY-2026-10-31.md). Three daily checks cover the first 72 hours after deployment. Scheduling a check does not establish that those hours or delivery cycles have passed.
