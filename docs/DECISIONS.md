@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 3 November 2026 — plan a full hosting move to Cloudflare; retain Supabase
+
+Founder: “let's plan a full move off netlify to cloudflare, we keep the db where it is” and asks to check everything hosted/deployed on Netlify, duplicate it on Cloudflare, switch, then remove Netlify. Accepted direction: retain the existing database, duplicate the full hosting behavior and automatic deployment, cut over only after verification, then retire the Therecap Netlify project. This turn authorizes audit/planning, not immediate provisioning, new subscriptions, DNS/control changes, paid testing or destructive deletion. The broader product specification, financial caps, human publication review and reminder opt-out remain unchanged.
+
+[Proposed migration v0.1](tech/CLOUDFLARE-MIGRATION-PLAN.md) recommends Workers Static Assets plus API handling and a private scheduled/queue Worker, with Supabase keeping job/financial authority. Exact target hostname, secret recoverability, safe source transport, Cloudflare billing/CI/DNS permissions and one-active-runner fencing remain implementation gates. No new architecture ADR is claimed as approved. Live audit confirms the old site is disabled for account-credit exhaustion and returns 503, separate from its ready artifact; redirects/rollback to Netlify are presently unavailable. The block's timing correlates with the last observed scheduled invocation but does not repair or fully diagnose the individual stale jobs. No provider/model/email execution or external mutation occurred.
+
 ## 31 October 2026 — run today's cycle now; retain reminder opt-out and approval gates
 
 Founder: “run the cycle now and then check results.” Run collection/analysis checks and execute today's unique daily slot early using an actual present cutoff and unchanged settings. Do not simulate a future clock, alter source dates, reset allowances, approve reviews or send email. Today's later scheduled slot is consequently consumed; the next normal cycle is 1 November at the unchanged 08:00 Europe/Berlin. The early-run continuity fix retains intervening updates for that next cycle.
