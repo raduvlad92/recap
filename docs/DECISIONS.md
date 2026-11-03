@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 3 November 2026 — permanent Cloudflare address selected
+
+Founder answered the migration hostname question with **“recap.filternode.dev (existing domain; no purchase)”**. Use `https://recap.filternode.dev` as the permanent production origin in the [Cloudflare migration plan](tech/CLOUDFLARE-MIGRATION-PLAN.md), including future auth redirects/origin checks, canonical/sitemap/robots links, reminder/webhook URLs and operator targets. This settles the address choice; it does not establish DNS availability, permissions, TLS or a deployed Cloudflare service. No domain purchase or infrastructure change occurred.
+
 ## 3 November 2026 — plan a full hosting move to Cloudflare; retain Supabase
 
 Founder: “let's plan a full move off netlify to cloudflare, we keep the db where it is” and asks to check everything hosted/deployed on Netlify, duplicate it on Cloudflare, switch, then remove Netlify. Accepted direction: retain the existing database, duplicate the full hosting behavior and automatic deployment, cut over only after verification, then retire the Therecap Netlify project. This turn authorizes audit/planning, not immediate provisioning, new subscriptions, DNS/control changes, paid testing or destructive deletion. The broader product specification, financial caps, human publication review and reminder opt-out remain unchanged.

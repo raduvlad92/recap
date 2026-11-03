@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 3 November 2026 — migration hostname decision recorded
+
+Founder selected **`recap.filternode.dev`**, using the existing domain without a purchase. [Migration plan](tech/CLOUDFLARE-MIGRATION-PLAN.md), STATUS, PLAN and decisions now record the selected production origin and dependent auth/link/callback targets. This is a documentation update; no DNS/API read, TLS setup, hosting deployment, provider/model execution or other infrastructure change was performed. The earlier sanitized audit remains unchanged historical evidence.
+
 ## 3 November 2026 — full Netlify inventory and Cloudflare migration proposal
 
 [Plan v0.1](tech/CLOUDFLARE-MIGRATION-PLAN.md), [planning diagram](tech/demos/cloudflare-migration-plan.html) and [sanitized hosting audit](tech/evidence/cloudflare-migration-audit-2026-11-03.json) preserve live provider/configuration and actual HTTP evidence. Netlify has 29 functions/seven schedules, 35 site variable names/contexts, one checked-main build hook, no custom domain and no indicated hosted database/Identity dependency. Its site is disabled for exhausted account credits (2 November 09:14:53 UTC), and all three probed public paths return 503 despite the artifact being ready. Cloudflare account/Workers/Queues reads pass; Pages/subscriptions/candidate-DNS reads return 403, and no recap-named Worker/Queue was found. No deployment capability or paid tier is inferred from those reads.
