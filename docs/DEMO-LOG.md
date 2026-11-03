@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 3 November — owner-requested project/intake/processing assessment
+
+Fresh SELECT-only database reads at 02:06:30 UTC and a Netlify project read confirm the ready deployment, 560-creator/600-channel catalogue, stalled 18-source social intake, three reader deliveries and three zero-topic Awaiting review daily snapshots. [Sanitized evidence](tech/evidence/project-status-2026-11-03.json) records limits and recommended recovery order. Code/retained evidence explain the separate collection, processing, approval and unfinished RSS/media stages. This is a status assessment, not a demo, new authenticated UI check, source test, model-quality pass or repair. No paid execution, retry, approval, application setting change or email occurred; no new founder decision was made.
+
 ## 1 November 2026, 02:03 Berlin — read-only overnight status
 
 Actual production readback: 337 cumulative completed normal collection runs yield one accepted Instagram post and zero X posts. No additional reader delivery or ready briefing since the early cycle. The 31 October snapshot is still Awaiting review / zero topics; two analysis tasks remain blocked. No 1 November snapshot is due before the saved 08:00 Berlin cutoff. The overdue X check is bound to the already known ambiguous job. Model commitment stays US$9.422509392, seven historical unknown calls; source-ledger commitment is US$2.166122546703 / US$45, including existing reservations. Owner reminder preference is false, no enabled reminder policy or outbox. Existing deployment 6ae548a5b1de3ee251abb9bb remains ready. No provider/model/worker execution, approval, hold release, control change, deployment or email was initiated. [Sanitized native evidence](tech/evidence/social-delivery-status-20261101T010342Z.json).

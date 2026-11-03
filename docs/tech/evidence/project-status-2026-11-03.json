@@ -1,0 +1,51 @@
+{
+  "kind": "owner-requested-read-only-project-status",
+  "databaseCheckedAt": "2026-11-03T02:06:30.634Z",
+  "databaseMethod": "Paginated SELECT-only reads using existing server-side Supabase configuration",
+  "hosting": { "method": "Netlify project connector read", "deployId": "6ae548a5b1de3ee251abb9bb", "state": "ready" },
+  "catalogue": { "creators": 560, "channels": 600 },
+  "social": {
+    "normalCompletedRuns": 783,
+    "instagramCompletedRuns": 372,
+    "xCompletedRuns": 411,
+    "distinctReaderDeliveries": 3,
+    "activeSources": 18,
+    "overdueActiveSources": 18,
+    "longExpiredRunningJobs": 2,
+    "latestInstagramFinish": "2026-11-02T09:00:14.301054+00:00",
+    "latestXFinish": "2026-11-02T08:50:17.392777+00:00",
+    "blockedKeywordTasks": 1,
+    "blockedRecapTasks": 1,
+    "keywordTasksInReview": 2,
+    "recapTasksInReview": 2
+  },
+  "briefings": [
+    { "date": "2026-10-31", "status": "awaiting_review", "topics": 0, "published": false },
+    { "date": "2026-11-01", "status": "awaiting_review", "topics": 0, "published": false },
+    { "date": "2026-11-02", "status": "awaiting_review", "topics": 0, "published": false }
+  ],
+  "model": { "committedUsd": 9.450863337, "historicalUnknownCalls": 7, "existingLifetimeCeilingUsd": 10 },
+  "reminders": { "enabledPolicies": 0, "outboxRows": 0 },
+  "interpretation": {
+    "overall": "Deployed working v0; reliable end-to-end daily recap service not achieved",
+    "collectionStallRootCause": "Not established",
+    "dailyAssembly": "Copies current-source approved findings; no fresh cross-source narrative or translation",
+    "approval": "Required and preserved; drafts are not published findings",
+    "catalogueIsMonitoredSourceCount": false
+  },
+  "recommendedRecoveryOrder": [
+    "Diagnose hosted invocation gap; reconcile existing referenced jobs before new launches",
+    "Verify useful current content and rejection reasons on a small exact-source set",
+    "Repair missing-key preflight/recovery and checker explanation handling without weakening evidence checks",
+    "Review supported proposals and verify the next ordinary daily snapshot",
+    "Connect usable RSS text to review-first analysis; separately add richer article/audio/media extraction"
+  ],
+  "retainedEvidence": ["social-delivery-observation-2026-11-03.json", "ingestion-explanation-2026-11-01.json"],
+  "limitations": [
+    "No new authenticated UI check, source fetch or provider-run reconciliation",
+    "Detailed YouTube HTTP failures and exact parked-task causes come from dated retained evidence",
+    "No new supplier commitment calculation or semantic-quality evaluation"
+  ],
+  "actions": { "sourceContacts": 0, "workerInvocations": 0, "modelCalls": 0, "providerJobsOrRetries": 0, "reviewDecisions": 0, "applicationSettingChanges": 0, "deployments": 0, "externalMessagesOrEmails": 0 },
+  "newFounderDecisions": []
+}
