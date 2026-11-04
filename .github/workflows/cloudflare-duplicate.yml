@@ -46,8 +46,17 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - name: Enable disposable PostgreSQL checks
-        run: echo "$(pg_config --bindir)" >> "$GITHUB_PATH"
+      - name: Enable disposable PostgreSQL 17 checks
+        run: |
+          if [ ! -x /usr/lib/postgresql/17/bin/initdb ]; then
+            sudo apt-get update
+            sudo apt-get install --yes postgresql-17
+          fi
+          for binary in initdb pg_ctl psql; do
+            test -x "/usr/lib/postgresql/17/bin/$binary"
+          done
+          echo "/usr/lib/postgresql/17/bin" >> "$GITHUB_PATH"
+          /usr/lib/postgresql/17/bin/initdb --version
       - run: npm ci --no-fund --no-audit
       - run: npm run check
       - run: npm run check:cloudflare
