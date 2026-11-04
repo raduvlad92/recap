@@ -27,14 +27,27 @@ export async function handleWeb(request: Request, bindings: Bindings): Promise<R
       if (url.pathname === '/api/migration-verification') {
         if (bindings.HOSTING_MODE !== 'shadow') return secureResponse(json({ error: { code: 'not_found' } }, 404), true);
         if (request.method !== 'GET') return secureResponse(json({ error: { code: 'method_not_allowed' } }, 405), true);
-        const limiter = bindings.LIMIT_ADMIN as { limit(options: { key: string }): Promise<{ success: boolean }> } | undefined;
-        if (limiter && !(await limiter.limit({ key: 'migration:' + (request.headers.get('cf-connecting-ip') || 'unknown') })).success) return secureResponse(json({ error: { code: 'rate_limited' } }, 429), true);
-        const userId = await requireAdmin(request);
-        const control = await readControl(bindings);
-        if (!control.paused) throw new CollectionError(503, 'verification_unavailable', 'The isolated account check is unavailable.');
-        const { count, error } = await database().from('reader_workspaces').select('user_id', { count: 'exact', head: true }).eq('user_id', userId);
-        if (error) throw new CollectionError(503, 'workspace_check_unavailable', 'The saved-workspace check could not finish.');
-        return secureResponse(json({ authenticated: true, administrator: true, workspacePresent: count === 1, processingPaused: control.paused, release: bindings.RELEASE_SHA }), true);
+        let phase = 'rate_limit';
+        try {
+          const limiter = bindings.LIMIT_ADMIN as { limit(options: { key: string }): Promise<{ success: boolean }> } | undefined;
+          if (limiter && !(await limiter.limit({ key: 'migration:' + (request.headers.get('cf-connecting-ip') || 'unknown') })).success) return secureResponse(json({ error: { code: 'rate_limited' } }, 429), true);
+          phase = 'identity';
+          const userId = await requireAdmin(request);
+          phase = 'hosting';
+          const control = await readControl(bindings);
+          if (!control.paused) throw new CollectionError(503, 'verification_unavailable', 'The isolated account check is unavailable.');
+          phase = 'workspace';
+          const { count, error } = await database().from('reader_workspaces').select('user_id', { count: 'exact', head: true }).eq('user_id', userId);
+          if (error) throw new CollectionError(503, 'workspace_check_unavailable', 'The saved-workspace check could not finish.');
+          return secureResponse(json({ authenticated: true, administrator: true, workspacePresent: count === 1, processingPaused: control.paused, release: bindings.RELEASE_SHA }), true);
+        } catch (error) {
+          if (error instanceof CollectionError) throw error;
+          // Keep tokens, account data and arbitrary exception messages out of
+          // responses/logs. Function names identify runtime compatibility errors.
+          const frames = error instanceof Error ? [...(error.stack || '').matchAll(/\bat ([A-Za-z_$][A-Za-z0-9_.$]*)\s*\(/g)].slice(0, 8).map(match => match[1]) : [];
+          console.error(JSON.stringify({ event: 'migration_verification_failed', phase, type: error instanceof Error ? error.name : 'unknown', frames }));
+          throw new CollectionError(503, 'verification_' + phase + '_unavailable', 'The account check could not finish.');
+        }
       }
       if (url.pathname === '/robots.txt') return secureResponse(new Response('User-agent: *\nDisallow: /\nAllow: /creators\nAllow: /catalogue.css\nAllow: /fonts/\nAllow: /favicon.svg\nSitemap: ' + bindings.APP_URL + '/sitemap.xml\n', { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300' } }));
       if (name) {

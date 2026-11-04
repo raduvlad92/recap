@@ -69,6 +69,15 @@ describe('Cloudflare host boundaries', () => {
     expect(eq).toHaveBeenCalledExactlyOnceWith('user_id', 'private-owner-fixture');
     expect(calls.map(call => call.name)).toEqual(['read_hosting_runtime']);
   });
+  it('bounds unexpected verification failures without exposing exception details or admitting work', async () => {
+    vi.spyOn(adminData, 'requireAdmin').mockRejectedValue(new TypeError('private exception detail'));
+    const logged = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const result = await handleWeb(new Request('https://recap.filternode.dev/api/migration-verification'), bindings());
+    expect(result.status).toBe(503);
+    expect(await result.json()).toEqual({ error: { code: 'verification_identity_unavailable', message: 'The account check could not finish.' } });
+    expect(JSON.stringify(logged.mock.calls)).not.toContain('private exception detail');
+    expect(fetch).not.toHaveBeenCalled();
+  });
   it('bounds queue messages to opaque identities rather than source/prompt bodies', () => {
     expect(validMessage(message)).toBe(true); expect(validMessage({ ...message, body: 'private text' })).toBe(false);
     expect(validMessage({ ...message, kind: 'unknown' })).toBe(false); expect(validMessage({ ...message, epoch: 0 })).toBe(false);
