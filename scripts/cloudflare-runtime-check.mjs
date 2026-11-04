@@ -17,6 +17,9 @@ try {
   const health = await mf.dispatchFetch('https://recap.filternode.dev/api/health');
   assert.equal(health.status, 200); const body = await health.json();
   assert.equal(body.hosting.release, release); assert.equal(body.hosting.mode, 'shadow'); checks++;
+  const account = await mf.dispatchFetch('https://recap.filternode.dev/api/migration-verification');
+  assert.equal(account.status, 401); assert.equal(account.headers.get('cache-control'), 'no-store'); checks++;
+  assert.equal((await mf.dispatchFetch('https://recap.filternode.dev/api/migration-verification', { method: 'POST' })).status, 405); checks++;
   for (const path of ['/api/admin', '/api/collect', '/api/keyword-learning', '/api/daily-briefings', '/.netlify/functions/keyword-learning-worker']) {
     const response = await mf.dispatchFetch('https://recap.filternode.dev' + path);
     assert.equal(response.status, 503); assert.equal(response.headers.get('cache-control'), 'no-store'); checks++;

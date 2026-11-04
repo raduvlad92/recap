@@ -5,6 +5,7 @@ import { handlers, routeName } from '../cloudflare/handlers';
 import { consumeJobs, scheduleJobs, workers } from '../cloudflare/jobs';
 import { handleWeb } from '../cloudflare/web';
 import { validMessage, type Bindings, type JobMessage } from '../cloudflare/runtime';
+import * as adminData from '../netlify/functions/_shared/admin-data';
 const release = 'a'.repeat(40);
 const bindings = (extra: Partial<Bindings> = {}): Bindings => ({ APP_URL: 'https://recap.filternode.dev', RELEASE_SHA: release, HOSTING_MODE: 'shadow', ...extra });
 const control = { owner: 'cloudflare', epoch: 2, paused: false, old_host_fenced: true, release };
@@ -48,6 +49,25 @@ describe('Cloudflare host boundaries', () => {
     const handler = vi.spyOn(handlers, 'collect');
     const result = await handleWeb(new Request('https://recap.filternode.dev/api/collect', { method: 'POST' }), active());
     expect(result.status).toBe(503); expect(handler).not.toHaveBeenCalled();
+  });
+  it('keeps the temporary account check private, read-only and unavailable after activation', async () => {
+    const url = 'https://recap.filternode.dev/api/migration-verification';
+    expect((await handleWeb(new Request(url), bindings())).status).toBe(401);
+    expect((await handleWeb(new Request(url, { method: 'POST' }), bindings())).status).toBe(405);
+    expect((await handleWeb(new Request(url), active())).status).toBe(404);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  it('checks the existing administrator and returns only workspace existence without admitting work', async () => {
+    vi.spyOn(adminData, 'requireAdmin').mockResolvedValue('private-owner-fixture');
+    const eq = vi.fn().mockResolvedValue({ count: 1, error: null }), select = vi.fn(() => ({ eq })), from = vi.fn(() => ({ select }));
+    vi.spyOn(adminData, 'database').mockReturnValue({ from } as unknown as ReturnType<typeof adminData.database>);
+    const calls = mockRpc({ read_hosting_runtime: { ...control, owner: 'netlify', paused: true } });
+    const result = await handleWeb(new Request('https://recap.filternode.dev/api/migration-verification'), { ...active(), HOSTING_MODE: 'shadow' });
+    expect(result.status).toBe(200); expect(await result.json()).toEqual({ authenticated: true, administrator: true, workspacePresent: true, processingPaused: true, release });
+    expect(from).toHaveBeenCalledExactlyOnceWith('reader_workspaces');
+    expect(select).toHaveBeenCalledExactlyOnceWith('user_id', { count: 'exact', head: true });
+    expect(eq).toHaveBeenCalledExactlyOnceWith('user_id', 'private-owner-fixture');
+    expect(calls.map(call => call.name)).toEqual(['read_hosting_runtime']);
   });
   it('bounds queue messages to opaque identities rather than source/prompt bodies', () => {
     expect(validMessage(message)).toBe(true); expect(validMessage({ ...message, body: 'private text' })).toBe(false);

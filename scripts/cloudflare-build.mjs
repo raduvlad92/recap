@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { build } from 'esbuild';
+import { loadEnv } from 'vite';
 import { assetManifest, fileHash } from './cloudflare-artifacts.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const mode = process.env.HOSTING_BUILD_MODE || 'shadow';
@@ -14,6 +15,14 @@ const env = { ...process.env };
 if (mode === 'shadow') for (const key of ['VITE_CLERK_PUBLISHABLE_KEY', 'VITE_SUPABASE_URL', 'VITE_SUPABASE_PUBLISHABLE_KEY']) env[key] = '';
 execFileSync('npx', ['vite', 'build', '--config', 'vite.cloudflare.config.ts'], { cwd: root, env, stdio: 'inherit' });
 writeFileSync(root + 'dist-cloudflare/_headers', '/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: no-referrer\n  X-Frame-Options: DENY\n  X-Robots-Tag: noindex, nofollow\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n');
+if (mode === 'shadow') {
+  // A separate operator page can sign in, but has no browser database client.
+  // The ordinary guest shell still has all three production VITE values empty.
+  const key = process.env.CLOUDFLARE_CLERK_PUBLISHABLE_KEY || loadEnv('production', root, 'VITE_CLERK_PUBLISHABLE_KEY').VITE_CLERK_PUBLISHABLE_KEY || '';
+  if (key && !/^pk_(?:test|live)_[A-Za-z0-9_=-]+$/.test(key)) throw new Error('Invalid verification publishable key');
+  await build({ entryPoints: [root + 'cloudflare/verification-ui.tsx'], bundle: true, platform: 'browser', format: 'esm', target: 'es2022', jsx: 'automatic', define: { 'process.env.NODE_ENV': '"production"', 'import.meta.env.VITE_CLERK_PUBLISHABLE_KEY': JSON.stringify(key) }, outfile: root + 'dist-cloudflare/migration-check.js' });
+  writeFileSync(root + 'dist-cloudflare/migration-check.html', '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Check your account | recap</title><style>body{font:18px/1.6 system-ui,sans-serif;background:#f5f6f3;color:#182b26;margin:0}main{max-width:40rem;margin:12vh auto;padding:2rem}a{color:inherit}button{font:inherit;padding:.6rem 1.2rem;border:0;border-radius:.6rem;background:#285e50;color:white;cursor:pointer}button:disabled{opacity:.5}h1{line-height:1.2}</style></head><body><div id="root"></div><script type="module" src="/migration-check.js"></script></body></html>');
+}
 mkdirSync(root + '.local/cloudflare-build', { recursive: true });
 mkdirSync(root + '.local/cloudflare-build/source-container', { recursive: true });
 await build({ entryPoints: [root + 'containers/source-server.ts'], bundle: true, platform: 'node', target: 'node22', format: 'esm', outfile: root + '.local/cloudflare-build/source-container/server.mjs' });

@@ -2,10 +2,10 @@ import { handlers, limits, routeName } from './handlers';
 import { assertActive, hostingRpc, readControl, runWithBindings, type Bindings } from './runtime';
 import { randomUUID, createHash } from 'node:crypto';
 import { enqueue } from './jobs';
-import { requireAdmin } from '../netlify/functions/_shared/admin-data';
+import { database, requireAdmin } from '../netlify/functions/_shared/admin-data';
 import { analysisWorkerAuthorized } from '../netlify/functions/_shared/content-analysis';
 import { parseKeywordLearningInput } from '../netlify/functions/_shared/keyword-learning';
-import { authenticate, runtimeEnv, readTextLimited } from '../netlify/functions/_shared/security';
+import { authenticate, CollectionError, runtimeEnv, readTextLimited } from '../netlify/functions/_shared/security';
 import { errorResponse, json } from '../netlify/functions/_shared/security';
 
 const staticHeaders: Record<string, string> = {
@@ -24,6 +24,18 @@ export async function handleWeb(request: Request, bindings: Bindings): Promise<R
   return runWithBindings(bindings, async () => {
     try {
       const url = new URL(request.url), name = routeName(url.pathname);
+      if (url.pathname === '/api/migration-verification') {
+        if (bindings.HOSTING_MODE !== 'shadow') return secureResponse(json({ error: { code: 'not_found' } }, 404), true);
+        if (request.method !== 'GET') return secureResponse(json({ error: { code: 'method_not_allowed' } }, 405), true);
+        const limiter = bindings.LIMIT_ADMIN as { limit(options: { key: string }): Promise<{ success: boolean }> } | undefined;
+        if (limiter && !(await limiter.limit({ key: 'migration:' + (request.headers.get('cf-connecting-ip') || 'unknown') })).success) return secureResponse(json({ error: { code: 'rate_limited' } }, 429), true);
+        const userId = await requireAdmin(request);
+        const control = await readControl(bindings);
+        if (!control.paused) throw new CollectionError(503, 'verification_unavailable', 'The isolated account check is unavailable.');
+        const { count, error } = await database().from('reader_workspaces').select('user_id', { count: 'exact', head: true }).eq('user_id', userId);
+        if (error) throw new Error('Workspace verification failed');
+        return secureResponse(json({ authenticated: true, administrator: true, workspacePresent: count === 1, processingPaused: control.paused, release: bindings.RELEASE_SHA }), true);
+      }
       if (url.pathname === '/robots.txt') return secureResponse(new Response('User-agent: *\nDisallow: /\nAllow: /creators\nAllow: /catalogue.css\nAllow: /fonts/\nAllow: /favicon.svg\nSitemap: ' + bindings.APP_URL + '/sitemap.xml\n', { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300' } }));
       if (name) {
         const handler = handlers[name];

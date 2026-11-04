@@ -62,8 +62,16 @@ jobs:
           echo "/usr/lib/postgresql/17/bin" >> "$GITHUB_PATH"
           /usr/lib/postgresql/17/bin/initdb --version
       - run: npm ci --no-fund --no-audit
-      - run: npm run check
+      - name: Check application and PostgreSQL contracts
+        # Native PostgreSQL fixture hashing exceeds five seconds on shared runners.
+        # Keep every assertion and use a bounded CI deadline.
+        run: |
+          npm run catalogue:check
+          npx vitest run --testTimeout=30000
+          npm run build
       - run: npm run check:cloudflare
+        env:
+          CLOUDFLARE_CLERK_PUBLISHABLE_KEY: ${{ vars.CLOUDFLARE_CLERK_PUBLISHABLE_KEY }}
       - name: Deploy the checked duplicate
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.HOSTING_TARGET != 'cloudflare'
         env:

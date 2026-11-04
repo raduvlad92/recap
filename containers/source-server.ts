@@ -1,7 +1,14 @@
 import { createServer } from 'node:http';
 import { createSourceDownloadHandler } from './source-handler';
+import { idleShutdown } from './idle-shutdown';
 const handler = createSourceDownloadHandler();
+const idle = idleShutdown(() => {
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(0), 5000).unref();
+});
 const server = createServer(async (incoming, outgoing) => {
+  const finished = idle.begin();
+  outgoing.once('finish', finished); outgoing.once('close', finished);
   const chunks: Buffer[] = []; let bytes = 0;
   try {
     for await (const chunk of incoming) {
@@ -21,4 +28,5 @@ const server = createServer(async (incoming, outgoing) => {
 server.maxConnections = 8;
 server.requestTimeout = 55000;
 server.headersTimeout = 5000;
+server.once('close', () => idle.dispose());
 server.listen(8080, '0.0.0.0');
