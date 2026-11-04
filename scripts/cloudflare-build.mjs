@@ -49,4 +49,5 @@ const hashes = Object.fromEntries(['jobs', 'web'].map(kind => [kind, createHash(
 hashes.sourceWorker = createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/source-worker/source.js')).digest('hex');
 hashes.sourceContainer = createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/source-container/server.mjs')).update(readFileSync(root + '.local/cloudflare-build/source-container/Dockerfile')).digest('hex');
 const configs = Object.fromEntries(['source', 'jobs', 'web'].map(kind => [kind, fileHash(root + '.local/cloudflare-build/' + kind + '.json')]));
+configs.sourceRuntime = fileHash(root + 'cloudflare/verified-source-runtime.json');
 writeFileSync(root + '.local/cloudflare-build/release.json', JSON.stringify({ release, mode, appUrl: 'https://recap.filternode.dev', jobsEnabled: false, publicConfig, hashes, configs, assets: assetManifest(root + 'dist-cloudflare') }, null, 2) + '\n');

@@ -1,0 +1,76 @@
+{
+  "recorded_at": "2026-11-04T16:42:52.220350+00:00",
+  "merged_pr": 4,
+  "pr_head": "2b7f4254880eeb26ff334f7755cdc1843e19fa58",
+  "merge_sha": "194c9cfb3d62a871526dd1ce2c74eff3670357b9",
+  "merged_at": "2026-11-04T16:20:40Z",
+  "pr_results": [
+    {
+      "name": "check",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "verify",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "artifact-integrity",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "checkpoint-storage",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "deploy",
+      "conclusion": "SKIPPED"
+    },
+    {
+      "name": "cloudflare-handover-journal-probe",
+      "conclusion": "NEUTRAL"
+    },
+    {
+      "name": "cloudflare-release-journal-probe",
+      "conclusion": "NEUTRAL"
+    }
+  ],
+  "main_application": {
+    "run": 41866280767,
+    "conclusion": "success",
+    "netlify_hook": "skipped"
+  },
+  "main_cloudflare": {
+    "run": 41866280741,
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "verify",
+        "id": 126701174472,
+        "conclusion": "success"
+      },
+      {
+        "name": "deploy",
+        "id": 126709263105,
+        "conclusion": "success"
+      },
+      {
+        "name": "artifact-integrity",
+        "id": 126709266902,
+        "conclusion": "skipped"
+      },
+      {
+        "name": "checkpoint-storage",
+        "id": 126709267111,
+        "conclusion": "skipped"
+      },
+      {
+        "name": "cloudflare-release-journal-probe",
+        "id": 126709753772,
+        "conclusion": "neutral"
+      }
+    ]
+  },
+  "exact_checked_shadow_artifact_auto_deployed": true,
+  "production_processing_activated": false,
+  "netlify_retired": false
+}

@@ -1,12 +1,28 @@
 {
-  "recorded_at": "2026-11-04T15:33:22.600Z",
+  "recorded_at": "2026-11-04T16:49:33.971Z",
   "read_only": true,
-  "repository_head": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
+  "repository_head": "194c9cfb3d62a871526dd1ce2c74eff3670357b9",
   "artifact_matches_head": true,
   "ready_for_handover": false,
   "live_apply_entrypoint_available": false,
   "native_readiness_adapters_configured": true,
   "native_receipts": {
+    "sourceRuntime": {
+      "verified": true,
+      "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+      "enabled": false,
+      "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+      "disabledVersion": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+      "enabledVersion": "ffed3cd5-addb-4240-adb8-42afe273615f",
+      "scriptEtag": "700a70a9944b5242659051b7f4cfacedc400309e154e91ef1a941554a457a9cf",
+      "runtimeHash": "73cad1d108943537644ebf99f2306020eada1e9b2fdc98a900df2fce646c141b",
+      "bindingsHash": "4c98e1d03221b8f3d1154d072920dff77119a5add141202e7a6390ba957cef01",
+      "configurationHash": "bae60331c7d8559a078e528fb0e3768d964cefa11ab1a6f20a9018851313728c",
+      "maximumInstances": 1,
+      "publicRoute": false,
+      "secretBindings": 0,
+      "digest": "f9ebbc691bbc291a39fdf428f072743bfed50ffa43866d88a3e5eb600eba83e0"
+    },
     "fenceReadiness": {
       "verified": true,
       "digest": "c47cc9bdfcef6ff74d8a2dcfbc97c672582fa32344605599b950112a8652e45b",
@@ -151,8 +167,8 @@
     "schema": 1,
     "action": "initial-cloudflare-handover",
     "oldSite": "522a0657-c191-4355-8d72-2ed19c580b81",
-    "target": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
-    "artifactDigest": "415ee58ff1d3e38ef02aeb653a53ab854aebe0747afeb4968c640f911bdbbf76",
+    "target": "194c9cfb3d62a871526dd1ce2c74eff3670357b9",
+    "artifactDigest": "96a269c298d301c7f6c9319e131e993c8e62873ba1d09e56ef3d36ff633b426a",
     "expected": {
       "owner": "netlify",
       "epoch": 1,
@@ -162,8 +178,8 @@
       "revision": "4c119c72-4ddb-4917-96ba-da2943e314df"
     },
     "priorVersions": {
-      "web": "40f9965e-7a2c-4013-b490-7becfef131fb",
-      "jobs": "258e2e17-eb68-453f-afc2-db565ab8dfd5"
+      "web": "9fd6a90d-8336-4cba-8d00-5bf478a704fe",
+      "jobs": "f8eb09d8-8bba-4e63-a4ee-6ab568a1309e"
     },
     "bindings": {
       "web": "95dd06d4302c95b24e502bbbd3d645a27efd3538227c2fd26466f18e315e6a5f",
@@ -200,6 +216,6 @@
       "privateParity_proof_required",
       "usable_cloudflare_rollback_required"
     ],
-    "digest": "0571a59b5438aed8b12bf925e27562851a24bf7669d6e52c8f38aa985a7c7f6a"
+    "digest": "8661c4ebccb7737c29ce746222e01ae26f8600b0c29fd7496bf03f0f2665ba20"
   }
 }
