@@ -1,0 +1,13 @@
+{
+  "recordedAt": "2026-11-04T19:40:42.323Z",
+  "createdByThisTask": true,
+  "fixtureClerkUserDeleted": true,
+  "deletedDatabaseRecords": {
+    "reader_source_updates": 0,
+    "reader_workspaces": 1
+  },
+  "fixtureIdentityRecorded": false,
+  "existingOwnerRecordsDeleted": 0,
+  "sourceCollectionsStarted": 0,
+  "reminderEmails": 0
+}

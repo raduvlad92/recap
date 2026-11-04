@@ -49,6 +49,14 @@ describe('durable GitHub release checkpoints', () => {
     f.state.head = 'b'.repeat(40); await f.github.assertPreparedHandover(target,{ currentMain: false });
     await expect(f.github.assertPreparedHandover(target)).rejects.toThrow('release_checked_head_changed');
   });
+  it('attests a separate active archive from a successful main build and shadow deployment',async()=>{
+    const f=fixture();Object.assign(f.run,{status:'completed',conclusion:'success'});
+    f.jobs.jobs.push({name:'deploy',status:'completed',conclusion:'success'},{name:'prepare-active',status:'completed',conclusion:'success',steps:[{name:'Prepare isolated active handover artifact',status:'completed',conclusion:'success'}]});
+    expect(await f.github.assertPreparedHandover(target)).toMatchObject({preparationKind:'isolated-main-job',artifactName:'therecap-cloudflare-active-'+target,activeArtifactDeploymentSkipped:true});
+    for(const mutate of [()=>{f.jobs.jobs[2].conclusion='skipped';},()=>{f.jobs.jobs[2].steps[0].conclusion='failure';},()=>{f.jobs.jobs[1].conclusion='failure';},()=>{f.run.conclusion='failure';},()=>{f.run.event='workflow_dispatch';}]){
+      const run=structuredClone(f.run),jobs=structuredClone(f.jobs);mutate();await expect(f.github.assertPreparedHandover(target)).rejects.toThrow('handover_preparation_run_required');Object.assign(f.run,run);Object.assign(f.jobs,jobs);
+    }
+  });
   it('creates then reads back the whole checkpoint before acknowledging a save', async () => {
     const f = fixture(), remote = new ReleaseJournal(f.github, plan), journal = { phase: 'prepared', pending: 'pause' };
     await remote.save(journal); expect(remote.id).toBe(1); expect(f.calls).toEqual([['check-runs', 'POST'], ['check-runs/1', 'GET']]);

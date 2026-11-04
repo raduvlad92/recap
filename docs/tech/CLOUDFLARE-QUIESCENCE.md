@@ -1,5 +1,7 @@
 # Prevent overlapping CI and local handover
 
+**Latest:** PR #7 merged as `befa90d`. Native workflow suspension/restoration and real private workspace/ordinary-reader checks pass on an unserved active recovery candidate; current serving-version reads are corrected and isolated main active preparation is implemented. Fresh checked-target/component verification, controlled native switch/recovery and active acceptance remain before site-only retirement. [Current evidence and limits](CLOUDFLARE-WINDOW-AND-PARITY.md).
+
 Checkpoint: 4 November 2026. PR #6 passes all seven results on `95c5c90`: four successful jobs, expected skipped PR deployment and two neutral transport probes. There are no comments/reviews requiring action. It is merged as `f6436cadd2c37cbc54238700de0491ac0175dd8e`. These PR checks are separate from main application/deployment and live readback. [Native PR result](evidence/cloudflare-executor-pr-ci-2026-11-04.json).
 
 `readDeploymentQuiescence` is a fixed-resource metadata reader for workflow `406418558`, `.github/workflows/cloudflare-duplicate.yml`, in the existing repository. It reads exact main, workflow identity/state and all queued/in-progress/requested/waiting/pending runs, including other branches and manual/PR runs. Counts must be complete within the bounded 100-result response; larger/incomplete inventories stop rather than omit runs. It rereads main and the workflow after the inventories. An active workflow or any nonterminal run blocks handover. API failures and changed identity/state fail closed.

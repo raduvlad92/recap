@@ -36,7 +36,11 @@ export class ReleaseGitHub {
     await this.assertCheckedRelease(target,options);
     const [run,jobs] = await Promise.all([this.request('actions/runs/' + this.runId),this.request('actions/runs/' + this.runId + '/jobs?filter=latest&per_page=100')]);
     const verify = jobs.jobs?.find(job => job.name === 'verify');
-    requireState(run.event === 'workflow_dispatch' && run.status === 'completed' && run.conclusion === 'success' && verify?.steps?.some(step => step.name === 'Validate artifact-only handover preparation' && step.status === 'completed' && step.conclusion === 'success') && jobs.jobs?.some(job => job.name === 'deploy' && job.status === 'completed' && job.conclusion === 'skipped'), 'handover_preparation_run_required');
+    const deploy = jobs.jobs?.find(job => job.name === 'deploy'),preparation = jobs.jobs?.find(job => job.name === 'prepare-active');
+    const manual = run.event === 'workflow_dispatch' && verify?.steps?.some(step => step.name === 'Validate artifact-only handover preparation' && step.status === 'completed' && step.conclusion === 'success') && deploy?.status === 'completed' && deploy.conclusion === 'skipped';
+    const automatic = run.event === 'push' && preparation?.status === 'completed' && preparation.conclusion === 'success' && preparation.steps?.some(step => step.name === 'Prepare isolated active handover artifact' && step.status === 'completed' && step.conclusion === 'success') && deploy?.status === 'completed' && deploy.conclusion === 'success';
+    requireState(run.status === 'completed' && run.conclusion === 'success' && (manual || automatic),'handover_preparation_run_required');
+    return { preparationKind: manual ? 'manual-artifact-only' : 'isolated-main-job',artifactName: (manual ? 'therecap-cloudflare-' : 'therecap-cloudflare-active-') + target,activeArtifactDeploymentSkipped: true };
   }
   async probeCheckpoint(target) {
     const summary = JSON.stringify({ schema: 1, kind: 'transport-only', target, activatesProcessing: false });

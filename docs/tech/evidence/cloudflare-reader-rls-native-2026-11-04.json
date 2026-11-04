@@ -1,0 +1,18 @@
+{
+  "recordedAt": "2026-11-04T19:32:23.063Z",
+  "scope": "real-browser-ordinary-reader-session",
+  "realBrowserSessionVerified": true,
+  "disposableFixtureOnly": true,
+  "ownWorkspaceSaveVerified": true,
+  "unfilteredReadReturnsOwnWorkspaceOnly": true,
+  "foreignTenantReadRows": 0,
+  "privilegedHostingRpcStatus": 403,
+  "readerRequestsUsePublishableKey": true,
+  "fixtureIdentityRecorded": false,
+  "privilegesGranted": false,
+  "productionOwnerWrites": 0,
+  "sourceCollectionsStarted": 0,
+  "modelCalls": 0,
+  "reminderEmails": 0,
+  "transport": "Native Node HTTPS using a short-lived token for the disposable reader actual browser session"
+}

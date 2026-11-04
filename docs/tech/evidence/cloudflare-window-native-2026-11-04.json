@@ -1,0 +1,25 @@
+{
+  "recordedAt": "2026-11-04T19:16:06.117Z",
+  "scope": "native-transport-only-workflow-suspension",
+  "target": "befa90dea88197170720ad140f2424d890a6d70f",
+  "operation": "9b3067ac-7450-4a31-81d5-b0b2ee2f8ffa",
+  "journal": {
+    "branch": "ops/therecap-hosting-journal",
+    "path": ".hosting-journal/windows/9b3067ac-7450-4a31-81d5-b0b2ee2f8ffa.json",
+    "purpose": "transport-only",
+    "planDigest": null,
+    "finalPhase": "released"
+  },
+  "suspendedPhase": "drained",
+  "disabledAndDrained": true,
+  "workflowRestoredActive": true,
+  "workflowMutations": 2,
+  "runtimeTrafficPromotions": 0,
+  "databaseWrites": 0,
+  "hostingControlUnchanged": true,
+  "sourceRequests": 0,
+  "modelCalls": 0,
+  "emails": 0,
+  "readyForHandover": false,
+  "restorableHandoverCheckpoint": false
+}

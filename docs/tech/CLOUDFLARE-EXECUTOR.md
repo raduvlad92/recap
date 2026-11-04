@@ -1,5 +1,7 @@
 # Durable initial handover composition
 
+**Latest:** PR #7 merged as `befa90d`. Native workflow suspension/restoration and real private workspace/ordinary-reader checks pass on an unserved active recovery candidate; current serving-version reads are corrected and isolated main active preparation is implemented. Fresh checked-target/component verification, controlled native switch/recovery and active acceptance remain before site-only retirement. [Current evidence and limits](CLOUDFLARE-WINDOW-AND-PARITY.md).
+
 **Latest:** PR #6 merged as `f6436ca`. The local executor now also requires the fixed deployment workflow disabled and drained; native reads correctly block while CI is active. This guard does not itself suspend/restore the workflow or prove private parity/recovery. [Current scope](CLOUDFLARE-QUIESCENCE.md).
 
 Checkpoint: 4 November 2026. PR #5 passed all seven results on `fd6745a` and merged as `1f78d11583ff8635761c5d7c0ee9b7b3aca872f2`. Main application run `41876143446` succeeds. The normal Cloudflare run `41876143792` stopped before deployment when the API did not expose a completed verify job; its failed-job retry succeeds at attempt 2. The follow-up adds no-cache reads and at most five two-second retries only for incomplete/missing verification visibility. Exact main/run/workflow identity and explicit failed verification still stop immediately.

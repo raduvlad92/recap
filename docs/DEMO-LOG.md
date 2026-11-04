@@ -1,5 +1,13 @@
 # Demo and evidence log
 
+## 4 November 2026 — private workspace parity, native window and serving-version correction
+
+PR #7 passes seven results on `516589c` and merges as `befa90d`. Main application succeeds; Cloudflare retry 2 succeeds after the first deploy safely stopped on an unserved active candidate's latest-settings metadata. Native serving-version reads reproduce/correct that distinction; exact shadow uploads restore metadata agreement without promotion. Final live 22-route/two-denial, 72-asset, 560-page and original 56-table/21,115-row/296-definition checks pass. [CI](tech/evidence/cloudflare-window-main-ci-2026-11-04.json), [native identity proof](tech/evidence/cloudflare-serving-version-native-2026-11-04.json), [final readback](tech/evidence/cloudflare-window-main-hosted-readback-2026-11-04.json).
+
+Actual transport-only workflow suspend/drain/restore passes with two workflow mutations, acknowledged remote window restoration and zero runtime/database mutations. An active, unserved `f6436ca` recovery candidate verifies native archive identity and 70 asset hashes. External Chrome verifies owner workspace load/reload and ordinary-reader save/reload, native tenant isolation/private RPC 403 and browser admin denial. The fixture identity/workspace are deleted, temporary windows/tabs closed, preview disabled and original owner session retained. Candidate component hashes match the local active build; a later CI head still requires its own archive/component verification. [Window](tech/evidence/cloudflare-window-native-2026-11-04.json), [browser](tech/evidence/cloudflare-private-workspace-browser-2026-11-04.json), [RLS](tech/evidence/cloudflare-reader-rls-native-2026-11-04.json), [cleanup](tech/evidence/cloudflare-reader-fixture-cleanup-2026-11-04.json), [paused candidate](tech/evidence/cloudflare-paused-recovery-candidate-2026-11-04.json).
+
+Full default check passes 3,936 tests / 125 files, 86 focused and 26 active workerd cases plus the disabled-source check. The new isolated main active-preparation job awaits its first native run after merge. Controlled ownership/recovery promotion, active private-API acceptance and Netlify retirement remain unperformed. No key revocation, source/model job, review approval or reminder send occurs; existing holds/uncertainty remain intact and hosting/API/CI costs are unmeasured. [Implementation and next operation](tech/CLOUDFLARE-WINDOW-AND-PARITY.md).
+
 ## 4 November 2026 — merged executor and native deployment-overlap rejection
 
 PR #6 passes four successful jobs, expected skipped deployment and two neutral transport probes on `95c5c90`, with no comments/reviews. Merge is `f6436ca`. [Native PR receipt](tech/evidence/cloudflare-executor-pr-ci-2026-11-04.json).

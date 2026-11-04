@@ -1,0 +1,30 @@
+{
+  "recordedAt": "2026-11-04T19:12:05.066Z",
+  "scope": "deployed-versus-uploaded-version-native-proof",
+  "observed": {
+    "jobs": {
+      "servingVersion": "b077d440-e31e-412c-b0ec-5748cea6709d",
+      "servingRelease": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+      "servingMode": "shadow",
+      "latestUploadedMode": "active",
+      "unservedShadowVersion": "28e190cd-cb6c-433a-87a7-10b8d56cba0c",
+      "latestModeAfter": "shadow"
+    },
+    "web": {
+      "servingVersion": "30e588a1-8455-48ff-8bc1-4fad6091d12d",
+      "servingRelease": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+      "servingMode": "shadow",
+      "latestUploadedMode": "active",
+      "unservedShadowVersion": "fb5787bf-ad07-4710-bc73-1cf3798aea7e",
+      "latestModeAfter": "shadow"
+    }
+  },
+  "servingTrafficVersionsUnchanged": true,
+  "hostingControlUnchanged": true,
+  "servingDomainChanged": false,
+  "promotions": 0,
+  "sourceRequests": 0,
+  "modelCalls": 0,
+  "emails": 0,
+  "recoveryCandidateRetained": true
+}

@@ -1,0 +1,42 @@
+{
+  "recordedAt": "2026-11-04T19:05:42.806Z",
+  "scope": "unserved-active-recovery-candidate",
+  "release": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+  "artifactDigest": "8abd8f26ba49249070fac9c797f31658f5fd8f3f363344a6404f7a69416f9cb0",
+  "provenance": {
+    "verified": true,
+    "runId": 41886979240,
+    "artifactId": 13354745122,
+    "release": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+    "archiveDigest": "sha256:93241521dbba07667be46879d9286748d1fcabef45af19530fcce30e6d9405bc",
+    "artifactDigest": "8abd8f26ba49249070fac9c797f31658f5fd8f3f363344a6404f7a69416f9cb0",
+    "deploymentSkipped": true,
+    "historicalReadOnly": true
+  },
+  "versions": {
+    "jobs": "cc1dded2-eeab-481f-bcb0-fc66740ede7e",
+    "web": "ca2037bc-bf96-4cad-9d9c-abcf28ddab98"
+  },
+  "policy": {
+    "APIFY_RUNTIME_ENABLED": "false",
+    "HOURLY_COLLECTION_ENABLED": "false",
+    "CONTENT_ANALYSIS_ENABLED": "false",
+    "AUTOMATIC_CONTENT_ENABLED": "false",
+    "SOCIAL_COLLECTION_ENABLED": "false",
+    "SOCIAL_CONTENT_ENABLED": "false",
+    "DAILY_BRIEFING_ENABLED": "false",
+    "REMINDER_EMAIL_ENABLED": "false",
+    "KEYWORD_LEARNING_ENABLED": "false"
+  },
+  "fullLocalFilesRehashed": true,
+  "stagedVersionsMetadataVerified": true,
+  "trafficPromotions": 0,
+  "servingDomainChanged": false,
+  "hostingControlUnchanged": true,
+  "sourceEnabled": false,
+  "sourceRequests": 0,
+  "modelCalls": 0,
+  "emails": 0,
+  "usableRecoveryProof": false,
+  "privateAppParityProof": false
+}

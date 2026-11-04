@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { assetManifest, fileHash } from './cloudflare-artifacts.mjs';
 import { canReuseSource } from './cloudflare-source-proof.mjs';
+import { ReleasePlatform } from './cloudflare-release-platform.mjs';
 const root = process.cwd(), release = JSON.parse(readFileSync('.local/cloudflare-build/release.json', 'utf8'));
 const mode = process.env.HOSTING_DEPLOY_MODE || 'shadow';
 if (mode !== 'shadow') throw new Error('Active promotion requires the separate verified hosting cutover operation');
@@ -10,10 +11,11 @@ if (!process.env.CLOUDFLARE_API_TOKEN || !process.env.CLOUDFLARE_ACCOUNT_ID) thr
 // An erroneous repository target variable must never overwrite an active host
 // with the guest-only duplicate during a later automatic deployment.
 const base = 'https://api.cloudflare.com/client/v4/accounts/' + process.env.CLOUDFLARE_ACCOUNT_ID;
-const existing = await fetch(base + '/workers/scripts/therecap-web/settings', { headers: { authorization: 'Bearer ' + process.env.CLOUDFLARE_API_TOKEN } });
+const platform = new ReleasePlatform({ root,account: process.env.CLOUDFLARE_ACCOUNT_ID,token: process.env.CLOUDFLARE_API_TOKEN });
+const existing = await fetch(base + '/workers/scripts/therecap-web/deployments', { headers: { authorization: 'Bearer ' + process.env.CLOUDFLARE_API_TOKEN },signal: AbortSignal.timeout(15000) });
 if (existing.ok) {
-  const settings = await existing.json();
-  if (settings.result?.bindings?.some(item => item.name === 'HOSTING_MODE' && item.text === 'active')) throw new Error('Refusing to replace an active runtime with a shadow deployment');
+  await existing.body?.cancel();
+  if ((await platform.current('web')).mode === 'active') throw new Error('Refusing to replace an active runtime with a shadow deployment');
 } else if (existing.status !== 404) throw new Error('Current Cloudflare deployment could not be verified');
 const head = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 if (head !== release.release || release.mode !== 'shadow') throw new Error('The tested shadow artifact must match the checked commit');
@@ -34,21 +36,21 @@ const readProvider = async path => {
   if (response.status === 404) return null;
   const result = await response.json(); if (!response.ok || result.success === false) throw new Error('Source deployment state could not be verified'); return result.result;
 };
-const [sourceSettings, sourceDeployments, sourceRoute, applications, domains] = await Promise.all([
-  readProvider('/workers/scripts/therecap-source/settings'), readProvider('/workers/scripts/therecap-source/deployments'), readProvider('/workers/scripts/therecap-source/subdomain'), readProvider('/containers/applications'), readProvider('/workers/domains'),
+const [sourceDeployments, sourceRoute, applications, domains] = await Promise.all([
+  readProvider('/workers/scripts/therecap-source/deployments'), readProvider('/workers/scripts/therecap-source/subdomain'), readProvider('/containers/applications'), readProvider('/workers/domains'),
 ]);
 const sourceApp = applications?.find(item => item.name === 'therecap-source-sourcedownloader');
-const sourceVersions = sourceDeployments?.deployments?.[0]?.versions;
+const sourceCurrent = sourceDeployments ? await platform.current('source') : null;
 const sourceLive = {
-  version: sourceVersions?.length === 1 && sourceVersions[0].percentage === 100 ? sourceVersions[0].version_id : null,
+  version: sourceCurrent?.version || null,
   image: sourceApp?.configuration?.image?.split('@sha256:')[1], maximumInstances: sourceApp?.max_instances,
   publicRoute: sourceRoute?.enabled === false && sourceRoute.previews_enabled === false && domains && !domains.some(item => item.service === 'therecap-source') ? false : true,
-  hasSecrets: sourceSettings?.bindings?.some(item => item.type === 'secret_text'),
-  enabled: sourceSettings?.bindings?.find(item => item.name === 'SOURCE_TRANSPORT_ENABLED')?.text === 'false' ? false : null,
+  hasSecrets: sourceCurrent?.hasSecrets,
+  enabled: sourceCurrent?.enabled ?? null,
 };
-if (sourceSettings && (sourceLive.publicRoute !== false || sourceLive.hasSecrets || sourceLive.enabled !== false || sourceLive.maximumInstances !== 1)) throw new Error('Current source isolation changed; refusing replacement');
+if (sourceCurrent && (sourceLive.publicRoute !== false || sourceLive.hasSecrets || sourceLive.enabled !== false || sourceLive.maximumInstances !== 1)) throw new Error('Current source isolation changed; refusing replacement');
 const reusable = canReuseSource(release, proof, sourceLive);
-if (sourceSettings && proof.workerHash === release.hashes.sourceWorker && proof.containerHash === release.hashes.sourceContainer && !reusable) throw new Error('Unchanged source artifacts no longer match hosted proof; verify the current source first');
+if (sourceCurrent && proof.workerHash === release.hashes.sourceWorker && proof.containerHash === release.hashes.sourceContainer && !reusable) throw new Error('Unchanged source artifacts no longer match hosted proof; verify the current source first');
 if (reusable) console.log(JSON.stringify({ event: 'verified_source_reused', version: proof.version, image: proof.image }));
 else execFileSync('npx', ['wrangler', 'deploy', '--no-bundle', '--config', sourceConfigFile, '--profile', 'therecap-migration-api'], { stdio: 'inherit', env: { ...process.env, WRANGLER_SEND_METRICS: 'false' } });
 for (const kind of ['jobs', 'web']) {
