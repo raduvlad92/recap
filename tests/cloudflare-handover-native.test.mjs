@@ -20,12 +20,13 @@ function fixture(){
    return Response.json(state.site);
   }
   if(url.hostname==='api.supabase.com'){
-   if(url.pathname.endsWith('/database/query')){const query=JSON.parse(init.body).query;expect(query).not.toMatch(/\b(insert|update|delete|alter|drop)\b/i);return Response.json(query.includes('select encrypted_config')?[{encrypted_config:state.cipher}]:query.startsWith("select 'function'")?state.definitions:state.baselineRows);}
+   if(url.pathname.endsWith('/database/query')){const query=JSON.parse(init.body).query;expect(query).not.toMatch(/\b(insert|update|delete|alter|drop)\b/i);return Response.json(query.startsWith('with pending as')?[state.drainSummary]:query.startsWith('select provider_run_id as run_id')?state.references:query.includes('select encrypted_config')?[{encrypted_config:state.cipher}]:query.startsWith("select 'function'")?state.definitions:state.baselineRows);}
    expect(url.pathname).toContain('/projects/'+databaseProject+'/api-keys');
    if(init.method==='POST'){state.keys.push({id:'new-key-id',type:'secret',name:'therecap_cloudflare_hosting',api_key:newKey});if(state.loseCreate)throw Error('lost_create_reply');}
    if(init.method==='DELETE'){expect(url.pathname.endsWith('/old-key-id')).toBe(true);state.keys=state.keys.filter(x=>x.id!=='old-key-id');if(state.loseDelete)throw Error('lost_delete_reply');}
    return Response.json(state.keys);
   }
+  if(url.hostname==='api.apify.com'){expect(init.method).toBe('GET');expect(url.pathname).toMatch(/^\/v2\/(?:actor-runs|acts)\/[A-Za-z0-9]{6,64}$/);return Response.json({data:url.pathname.includes('/actor-runs/')?state.run:state.actor});}
   if(url.hostname===databaseProject+'.supabase.co'){
    const key=init.headers.apikey;return state.keys.some(k=>k.api_key===key)?Response.json(state.status):Response.json({error:'invalid key'},{status:401});
   }
@@ -94,6 +95,17 @@ describe('native handover resource and credential boundaries',()=>{
   const f=fixture();await expect(f.native.pauseBuildsForReview({...status,revision:'stale'})).rejects.toThrow('handover_delivery_control_changed');expect(f.calls).toHaveLength(0);
   const receipt=await f.native.pauseBuildsForReview(status);expect(receipt.buildsStopped).toBe(true);expect(f.calls.filter(c=>c.method==='PATCH')).toHaveLength(1);
   await f.native.pauseBuildsForReview(status);expect(f.calls.filter(c=>c.method==='PATCH')).toHaveLength(1);expect(f.state.status).toEqual(status);
+ });
+ it('checks only exact legacy run metadata, retaining unknown financial records',async()=>{
+  const f=fixture();f.state.site.disabled=true;f.state.site.published_deploy={commit_ref:'f955398088a9c911693c3e7e1ccd33d4a972c170'};f.state.site.build_settings.stop_builds=true;f.state.drainSummary={live_leases:0,unreferenced_jobs:15,latest_activity:new Date(Date.now()-48*3600000).toISOString()};f.state.references=[{run_id:'fixtureRun12',actor:'fixtureActor12'}];f.state.run={id:'fixtureRun12',actId:'fixtureActor12',status:'SUCCEEDED',finishedAt:new Date(Date.now()-48*3600000).toISOString()};
+  const receipt=await f.native.readLegacyDrain('fixture-apify-token');expect(receipt.verified).toBe(true);expect(receipt.billingSettled).toBe(false);expect(receipt.unreferencedCollectionJobRows).toBe(15);expect(JSON.stringify(receipt)).not.toContain('fixtureRun12');expect(f.calls.filter(x=>x.url.includes('api.apify.com'))).toHaveLength(1);
+  const referenceQuery=f.calls.find(x=>x.body?.includes('select provider_run_id as run_id')).body;expect(referenceQuery).toContain("status in ('requested','running')");expect(referenceQuery).toContain("state not in ('completed','failed')");
+  f.state.run.status='RUNNING';f.state.run.finishedAt=null;expect((await f.native.readLegacyDrain('fixture-apify-token')).verified).toBe(false);
+ });
+ it('rejects invalid references and mismatched provider identities without starting work',async()=>{
+  const f=fixture();f.state.site.disabled=true;f.state.drainSummary={live_leases:0,unreferenced_jobs:0,latest_activity:null};f.state.references=[{run_id:'run-sync/evil',actor:'fixtureActor12'}];
+  await expect(f.native.readLegacyDrain('fixture-apify-token')).rejects.toThrow('legacy_provider_reference_invalid');expect(f.calls.some(x=>x.url.includes('api.apify.com'))).toBe(false);
+  f.state.references=[{run_id:'fixtureRun12',actor:'fixtureActor12'}];f.state.run={id:'wrongRunId1',actId:'fixtureActor12'};await expect(f.native.readLegacyDrain('fixture-apify-token')).rejects.toThrow('legacy_provider_run_changed');
  });
  it('stops only the fixed site builds behind the same gates',async()=>{
   const f=fixture();await expect(f.native.stopBuilds({...plan,oldSite:'other-site'},async()=>true)).rejects.toThrow('handover_fence_gates_blocked');expect(f.calls).toHaveLength(0);

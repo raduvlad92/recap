@@ -1,6 +1,6 @@
 # Cloudflare release coordination
 
-Current checkpoint: 4 November 2026. Ordinary release adapters and serialized CI are implemented. A native **disabled review-copy** rehearsal passes on `ca43f97`; the initial ownership switch, rollback execution, full private-app parity, durable old-host fence and retirement remain unfinished. The running website is still an isolated copy.
+Current checkpoint: 4 November 2026. Ordinary release adapters and serialized CI are implemented. Beyond the earlier disabled-copy rehearsal on `ca43f97`, actual merged main `14e1a81` now automatically deploys the exact checked **shadow** artifact. Both main workflows and independent hosted route/asset/original-data readback pass. The Netlify hook is skipped, with `HOSTING_TARGET=paused`. [Main CI](evidence/cloudflare-main-ci-2026-11-04.json), [hosted proof](evidence/cloudflare-main-hosted-readback-2026-11-04.json). Initial ownership switch, usable recovery target/rollback execution, full private-app parity, durable old-host fence and retirement remain unfinished. The running website is still an isolated copy.
 
 `npm run plan:cloudflare` is read-only. It checks built Worker/configuration/assets hashes and reads the exact existing Supabase hosting status and Cloudflare components. It accepts no activation argument and prints no credentials or private reader identity. The [actual current plan](evidence/cloudflare-release-adapter-readiness-2026-11-04.json) correctly blocks active-artifact, Cloudflare-ownership, old-host-fence and active-Worker gates.
 

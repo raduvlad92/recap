@@ -1,5 +1,13 @@
 # Demo and evidence log
 
+## 4 November 2026 — actual main delivery and metadata-only legacy assessment
+
+PR #1 merged as `14e1a81cb0c5d7ecda9966ba6dd220114d8e9bbd`. Main application run `41840413397` and Cloudflare run `41840413367` pass; the old hook is skipped and the exact checked shadow artifact is automatically deployed. Independent readback passes 22 routes/two denials, 72 asset hashes, 560 creator pages and exact preservation of the original 56 tables / 21,115 rows / 296 definitions. Source remains private/inactive, execution flags off, no schedules/consumers, owner Netlify/paused. [Main CI](tech/evidence/cloudflare-main-ci-2026-11-04.json), [hosted audit](tech/evidence/cloudflare-main-hosted-readback-2026-11-04.json).
+
+Exact-existing-run metadata GETs report two terminal Apify runs finished on 2 November; no datasets, logs, inputs or new runs are requested. Native summaries find zero live leases and 15 old unreferenced primary collection-job rows. Their execution-drain inference requires the pinned old runtime, stopped builds, disabled/fenced host and 24-hour quiet window. All uncertain records and financial holds remain unchanged; this is not financial settlement or useful-content proof. [Run metadata](tech/evidence/cloudflare-legacy-run-status-2026-11-04.json), [native readiness](tech/evidence/cloudflare-native-readiness-2026-11-04.json), [protocol/tests](tech/CLOUDFLARE-HANDOVER.md).
+
+Full local check passes 3,776 tests / 117 files, with 60 focused cases; actual main CI separately verifies the 26 workerd cases/disabled gateway. Chrome still returns `cgWindowNotFound`; prior real owner proof remains bound to its earlier release. No source/model launch, review approval, email, key revocation, ownership transfer or Netlify deletion occurs. Hosting usage cost is unmeasured. Remaining: current private parity, active artifact/recovery proof, durable native switch workflow, bounded acceptance and site-only retirement.
+
 ## 4 November 2026 — native readiness, dedicated credentials and build-controller pause
 
 - PR head `1b77821`: four successful jobs, expected skipped deployment and neutral native checkpoint probe; no comments/reviews. Exact artifact download/hash verification passes on a separate runner. Linux source inputs match the hosted immutable pin, and all 87 downloaded files are scanned with zero prepared private-runtime value matches.

@@ -1,5 +1,11 @@
 # Cloudflare migration implementation
 
+## Checked-main delivery and legacy assessment — current, 4 November 2026
+
+PR #1 is merged as `14e1a81`; both actual main workflows pass. Cloudflare automatically deploys the exact checked shadow artifact and reuses the verified private source image; the paused Netlify hook is skipped. Independent readback verifies 22 routes/two denials, 72 matching assets, 560 creator pages and exact preservation of the original 56 tables / 21,115 rows / 296 definitions. [Main CI](evidence/cloudflare-main-ci-2026-11-04.json), [hosted verification](evidence/cloudflare-main-hosted-readback-2026-11-04.json).
+
+The new bounded legacy assessment reads exact existing run metadata only: both referenced runs are terminal, zero live leases remain, and old unreferenced execution is assessed against the pinned old runtime and a 24-hour quiet window. Financial outcomes/holds stay uncertain and untouched. Full local check passes 3,776 tests / 117 files, with 60 focused cases. Private-account/browser parity, active artifact/recovery proof and final native handover/workflow remain open; no ownership transfer, old-key revocation, schedule/consumer activation or retirement occurs. [Assessment, evidence and remaining gates](CLOUDFLARE-HANDOVER.md). Earlier checkpoints below are historical.
+
 ## Native readiness and credential separation — current, 4 November 2026
 
 All six reported checks pass on `1b77821`: four successful jobs, skipped PR deploy and neutral checkpoint probe. The separate runner downloads/verifies the exact checked artifact. Its Linux source inputs also match the hosted immutable source pin, and 87 downloaded files contain zero prepared private-runtime value matches. Main deployment can reuse that verified source component. [CI](evidence/cloudflare-artifact-ci-2026-11-04.json), [Linux/source proof](evidence/cloudflare-linux-source-pin-2026-11-04.json).

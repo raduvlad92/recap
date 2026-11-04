@@ -1,0 +1,31 @@
+{
+  "recorded_at": "2026-11-04T13:46:03.769Z",
+  "scope": "metadata-only-status-of-exact-existing-referenced-runs",
+  "distinctKnownRuns": 2,
+  "runs": [
+    {
+      "runHash": "15fe863aa75c000b97bc1a6ece6b96349d986a4344f3458338e37058cb4517c8",
+      "status": "SUCCEEDED",
+      "startedAt": "2026-11-02T09:05:12.007Z",
+      "finishedAt": "2026-11-02T09:05:13.934Z",
+      "actorIdentityVerified": true,
+      "terminal": true
+    },
+    {
+      "runHash": "7edd30e06642265cff99452a26a6c3df9a2cc7c0f72921ff5c7a51c7a5b296b0",
+      "status": "SUCCEEDED",
+      "startedAt": "2026-11-02T09:05:13.265Z",
+      "finishedAt": "2026-11-02T09:05:14.623Z",
+      "actorIdentityVerified": true,
+      "terminal": true
+    }
+  ],
+  "allKnownRunsTerminal": true,
+  "datasetsRead": false,
+  "databaseWrites": false,
+  "unknownFinancialHoldsReconciled": false,
+  "sourceCoverageOrQualityProven": false,
+  "newRunsStarted": 0,
+  "modelCalls": 0,
+  "emails": 0
+}

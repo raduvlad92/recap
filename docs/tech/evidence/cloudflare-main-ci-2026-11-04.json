@@ -1,0 +1,51 @@
+{
+  "recorded_at": "2026-11-04T14:00:21.232Z",
+  "merged_pr": 1,
+  "merge_sha": "14e1a81cb0c5d7ecda9966ba6dd220114d8e9bbd",
+  "merge_method": "merge",
+  "main_application": {
+    "run": 41840413397,
+    "conclusion": "success",
+    "netlify_hook": "skipped"
+  },
+  "main_cloudflare": {
+    "run": 41840413367,
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "verify",
+        "id": 126610194753,
+        "conclusion": "success"
+      },
+      {
+        "name": "deploy",
+        "id": 126616160191,
+        "conclusion": "success"
+      },
+      {
+        "name": "checkpoint-storage",
+        "id": 126616162806,
+        "conclusion": "skipped"
+      },
+      {
+        "name": "artifact-integrity",
+        "id": 126616164032,
+        "conclusion": "skipped"
+      },
+      {
+        "name": "cloudflare-release-journal-probe",
+        "id": 126616466954,
+        "conclusion": "neutral"
+      }
+    ]
+  },
+  "exact_checked_artifact_auto_deployed": true,
+  "immutable_source_reused": {
+    "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+    "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352"
+  },
+  "delivery_target": "paused",
+  "deployed_mode": "shadow",
+  "production_processing_activated": false,
+  "netlify_retired": false
+}

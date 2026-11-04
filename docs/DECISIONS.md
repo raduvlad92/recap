@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — migration delivery and legacy-drain checkpoint
+
+Implementation under the existing autonomous hosting-migration instruction: PR #1 is merged as `14e1a81`, and actual checked-main shadow deployment is verified with the old hook skipped. This is not a production ownership switch. A read-only assessment separates bounded legacy execution drain (zero live leases, two terminal existing supplier runs, conservative quiet-window inference for old unreferenced rows) from unresolved financial settlement. No old hold or record is cleared. A changed old release or renewed activity blocks the assessment; durable key fencing remains independently required. No new supplier subscription, spending limit, publication/review policy or reminder consent is approved. Private parity, usable recovery, native final handover and later acceptance/retirement remain. [Exact evidence and boundaries](tech/CLOUDFLARE-HANDOVER.md).
+
 ## 4 November 2026 — separate database credentials and pause legacy builds before main verification
 
 Engineering preparation within the authorized migration: create a dedicated Cloudflare secret key, verify the same database permissions/status, install it only in the new hosting/deployment/operator configuration and retain Netlify's original key until the gated fence. The global Supabase Management token remains local. This permits eventual exact-key revocation without disabling Cloudflare and leaves public/legacy signing keys and encrypted reminder settings untouched.
