@@ -20,6 +20,7 @@ try {
     nativeReceipts.fenceReadiness = await native.readFenceReadiness();
     nativeReceipts.preservation = await native.verifyPreservation(JSON.parse(readFileSync(join(root,'.local/cloudflare-preflight/db-before.json'),'utf8')));
     nativeReceipts.secretContinuity = await native.verifySecretContinuity(process.env.CONTENT_ANALYSIS_WORKER_SECRET,await reminderValidator(root));
+    if (process.env.APIFY_API_TOKEN) nativeReceipts.legacyDrain = await native.readLegacyDrain(process.env.APIFY_API_TOKEN);
     snapshot.evidence = Object.fromEntries(Object.entries(nativeReceipts).map(([name,receipt]) => [name,{verified:receipt.verified,release:artifact.release,digest:receipt.digest}]));
     options.policy = nativeReceipts.fenceReadiness.legacy.policy;
     // Preserve the audited pre-migration scheduled-processing policy. Manual

@@ -1,0 +1,15 @@
+{
+  "commit": "f955398088a9c911693c3e7e1ccd33d4a972c170",
+  "codeHashes": {
+    "netlify/functions/_shared/apify.ts": "a9b7b6dc6489be3ac4dc9161b7660ea1a19c8b0f378d3c7fd67debedd48dbb6b",
+    "netlify/functions/_shared/social-collection.ts": "d25e3cd8c5a626173a9a39029907033f2308ce1931877c7e79bf37a29b32ac87"
+  },
+  "youtubeRunTimeoutSeconds": 120,
+  "socialRunTimeoutMaximumSeconds": 600,
+  "nativeBackgroundExecutionMaximumSeconds": 900,
+  "quietWindowSeconds": 86400,
+  "timeoutReferences": [
+    "https://docs.netlify.com/build/functions/background-functions/",
+    "https://docs.apify.com/api/v2/actors-runs-post"
+  ]
+}

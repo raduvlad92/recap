@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
+import { assessLegacyDrain } from './cloudflare-legacy-drain.mjs';
 import { executionFlags, ReleaseError } from './cloudflare-release-state.mjs';
 export const legacySite = '522a0657-c191-4355-8d72-2ed19c580b81';
 export const databaseProject = 'zlfdqzabsfndifxiqguo';
@@ -124,6 +125,27 @@ export class HandoverNative {
     check(rejected, 'reminder_continuity_unverified');
     const receipt = {project:databaseProject,ciphertextHash:fingerprint(JSON.stringify(cipher)),authenticated:true,wrongKeyRejected:true,plaintextRecorded:false};
     return {verified:true,digest:fingerprint(JSON.stringify(receipt)),...receipt};
+  }
+  async readLegacyDrain(apifyToken) {
+    check(typeof apifyToken === 'string' && apifyToken.length > 10, 'legacy_provider_metadata_unconfigured');
+    const query = "with pending as (select greatest(created_at,updated_at) activity from public.collection_jobs where status in ('requested','running') union all select greatest(created_at,lease_until) from public.social_collection_jobs where state not in ('completed','failed') union all select greatest(created_at,last_reconciled_at) from public.reader_collection_provider_jobs where state not in ('completed','failed','blocked') union all select greatest(created_at,updated_at,lease_until) from public.automatic_content_tasks where state not in ('completed','failed','rejected','approved') union all select greatest(created_at,updated_at,lease_until) from public.social_content_tasks where state not in ('completed','failed','rejected','approved') union all select greatest(created_at,updated_at,lease_until) from public.reader_content_analysis_jobs where state not in ('completed','failed','blocked') union all select greatest(created_at,lease_until) from public.daily_briefing_jobs where state not in ('completed','failed') union all select created_at from public.reader_content_analysis_calls where state not in ('completed','failed','settled')), leases as (select lease_until from public.social_collection_jobs union all select lease_until from public.automatic_content_tasks union all select lease_until from public.social_content_tasks union all select lease_until from public.reader_content_analysis_jobs union all select lease_until from public.daily_briefing_jobs) select (select count(*)::integer from leases where lease_until>now()) live_leases,(select count(*)::integer from public.collection_jobs where status in ('requested','running') and provider_run_id is null) unreferenced_jobs,(select max(activity) from pending) latest_activity;";
+    const references = "select provider_run_id as run_id,actor_id as actor from public.collection_jobs where provider_run_id is not null and status in ('requested','running') union select provider_run_id,config->>'actor_id' from public.social_collection_jobs where provider_run_id is not null and state not in ('completed','failed') union select provider_run_id,actor_id from public.reader_collection_provider_jobs where provider_run_id is not null and state not in ('completed','failed','blocked');";
+    const base = 'https://api.supabase.com/v1/projects/'+databaseProject+'/database/query';
+    const [legacy,summary,rows,oldProbe] = await Promise.all([this.inspectLegacy(),this.#request(base,this.managementToken,'POST',{query}),this.#request(base,this.managementToken,'POST',{query:references}),this.databaseStatus(this.oldKey)]);
+    check(Array.isArray(summary) && summary.length===1 && Array.isArray(rows), 'legacy_drain_summary_invalid');
+    const runs = new Map();
+    for (const row of rows) { check(/^[A-Za-z0-9]{6,64}$/.test(row.run_id) && typeof row.actor==='string', 'legacy_provider_reference_invalid'); if (!runs.has(row.run_id)) runs.set(row.run_id,new Set()); runs.get(row.run_id).add(row.actor); }
+    check(runs.size<=20, 'legacy_provider_reference_limit');
+    const receipts = [];
+    for (const [id,expected] of runs) {
+      const envelope = await this.#request('https://api.apify.com/v2/actor-runs/'+id,apifyToken), run=envelope.data;
+      check(run?.id===id && /^[A-Za-z0-9]{6,64}$/.test(run.actId), 'legacy_provider_run_changed');
+      let actor;
+      for (const reference of expected) { if (reference===run.actId) continue; actor ||= (await this.#request('https://api.apify.com/v2/acts/'+run.actId,apifyToken)).data; check(reference===actor?.username+'/'+actor?.name || reference===actor?.username+'~'+actor?.name, 'legacy_provider_actor_changed'); }
+      receipts.push({runHash:fingerprint(id),status:run.status,finishedAt:run.finishedAt || null,actorIdentityVerified:true});
+    }
+    receipts.sort((a,b)=>a.runHash.localeCompare(b.runHash));
+    return assessLegacyDrain({legacy,summary:summary[0],runs:receipts,oldDatabaseStatus:oldProbe.status});
   }
   async #checkedFence(plan, verifyGates) {
     check(plan?.action === 'initial-cloudflare-handover' && plan.oldSite === legacySite && /^[a-f0-9]{40}$/.test(plan.target || '') && Array.isArray(plan.blockers) && plan.blockers.length === 0 && typeof verifyGates === 'function', 'handover_fence_gates_blocked');
