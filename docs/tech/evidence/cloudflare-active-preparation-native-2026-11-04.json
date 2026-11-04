@@ -1,0 +1,20 @@
+{
+  "recordedAt": "2026-11-04T17:58:25.013Z",
+  "kind": "native-checked-active-artifact-preparation",
+  "verified": true,
+  "runId": 41876715035,
+  "artifactId": 13347518932,
+  "release": "1f78d11583ff8635761c5d7c0ee9b7b3aca872f2",
+  "archiveDigest": "sha256:479b1f62cc11cda9f1158b3b56aa259559282a58e7fcff75077be76143fc73c0",
+  "artifactDigest": "5da5cddddb29ae8d963178ce46d4e2e28906cf2762c75352bd348e3447f73e1d",
+  "deploymentSkipped": true,
+  "historicalReadOnly": false,
+  "fullLocalFilesRehashed": true,
+  "liveDeployment": false,
+  "ownershipChanged": false,
+  "sourceRequests": 0,
+  "modelCalls": 0,
+  "emails": 0,
+  "usableRecoveryProof": false,
+  "privateAccountParityProof": false
+}

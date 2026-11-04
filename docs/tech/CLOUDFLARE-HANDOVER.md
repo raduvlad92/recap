@@ -1,5 +1,7 @@
 # Initial Cloudflare handover and recovery
 
+**Latest checkpoint:** PR #5 merged as `1f78d11`; checked active preparation and native operator Git storage now pass, separately from live cutover. Local executor composition/recovery is implemented; private parity, usable active recovery and serialized complete native verification remain. [Current scope and evidence](CLOUDFLARE-EXECUTOR.md) supersede historical next-action statements below.
+
 Current checkpoint: 4 November 2026. PR #4 is merged and checked-main shadow deployment is verified at `194c9cf`. Delivery and ownership/source runtime primitives pass isolated writes and actual metadata-only inspection, without activation. Executable artifacts now bind the source runtime pin; a manual CI mode can prepare an active artifact with deployment skipped after merge. Private parity, usable active recovery and complete durable executor integration remain unfinished. Old builds stay paused, the old key stays valid, and ownership stays Netlify/paused. [Current runtime scope](CLOUDFLARE-RUNTIME-HANDOVER.md).
 
 ## Current proof

@@ -5,7 +5,7 @@ function fixture() {
   const records = new Map(), calls = []; let next = 1;
   const run = { head_sha: target, head_branch: 'main', event: 'push', repository: { full_name: 'raduvlad92/recap' }, path: '.github/workflows/cloudflare-duplicate.yml' };
   const jobs = { jobs: [{ name: 'verify', status: 'completed', conclusion: 'success' }] };
-  const state = { head: target, failRead: false, corruptRead: false };
+  const state = { head: target, failRead: false, corruptRead: false, waits: [], onWait: null };
   const fetcher = async (input, init = {}) => {
     const path = new URL(input).pathname.split('/recap/')[1]; calls.push([path, init.method || 'GET']);
     if (path === 'git/ref/heads/main') return Response.json({ object: { sha: state.head } });
@@ -19,7 +19,7 @@ function fixture() {
     }
     throw new Error('Unexpected fake GitHub endpoint');
   };
-  return { github: new ReleaseGitHub({ token: 'fixture-token', runId: 1, fetcher }), records, calls, state, run, jobs };
+  return { github: new ReleaseGitHub({ token: 'fixture-token', runId: 1, fetcher, wait: async ms => { state.waits.push(ms); state.onWait?.(); } }), records, calls, state, run, jobs };
 }
 describe('durable GitHub release checkpoints', () => {
   it('requires the checked current main SHA and completed canonical verification job', async () => {
@@ -27,6 +27,27 @@ describe('durable GitHub release checkpoints', () => {
     f.state.head = 'b'.repeat(40); await expect(f.github.assertCheckedRelease(target)).rejects.toThrow('release_checked_head_changed');
     f.state.head = target; f.jobs.jobs[0].conclusion = 'failure'; await expect(f.github.assertCheckedRelease(target)).rejects.toThrow('release_verification_job_incomplete');
     f.jobs.jobs[0].conclusion = 'success'; f.run.event = 'pull_request'; await expect(f.github.assertCheckedRelease(target)).rejects.toThrow('release_checked_head_changed');
+  });
+  it('bounds incomplete-job visibility retries while rechecking main on every read', async () => {
+    const f = fixture(); f.jobs.jobs[0].status = 'in_progress';
+    f.state.onWait = () => { if (f.state.waits.length === 2) f.jobs.jobs[0].status = 'completed'; };
+    await f.github.assertCheckedRelease(target); expect(f.state.waits).toEqual([2000,2000]);
+    f.jobs.jobs = []; f.state.waits = []; f.state.onWait = null;
+    await expect(f.github.assertCheckedRelease(target)).rejects.toThrow('release_verification_job_incomplete'); expect(f.state.waits).toHaveLength(5);
+    f.jobs.jobs = [{ name: 'verify',status: 'queued' }]; f.state.waits = []; f.state.onWait = () => { f.state.head = 'b'.repeat(40); };
+    await expect(f.github.assertCheckedRelease(target)).rejects.toThrow('release_checked_head_changed'); expect(f.state.waits).toHaveLength(1);
+  });
+  it('requires a successful artifact-only manual run with its deploy explicitly skipped', async () => {
+    const f = fixture(); Object.assign(f.run,{ event: 'workflow_dispatch',status: 'completed',conclusion: 'success' });
+    f.jobs.jobs[0].steps = [{ name: 'Validate artifact-only handover preparation',status: 'completed',conclusion: 'success' }];
+    f.jobs.jobs.push({ name: 'deploy',status: 'completed',conclusion: 'skipped' });
+    await f.github.assertPreparedHandover(target);
+    for (const mutation of [() => { f.run.event = 'push'; },() => { f.jobs.jobs[1].conclusion = 'success'; },() => { f.jobs.jobs[0].steps[0].conclusion = 'skipped'; },() => { f.run.conclusion = 'failure'; }]) {
+      const run = structuredClone(f.run),jobs = structuredClone(f.jobs); mutation();
+      await expect(f.github.assertPreparedHandover(target)).rejects.toThrow('handover_preparation_run_required'); Object.assign(f.run,run); Object.assign(f.jobs,jobs);
+    }
+    f.state.head = 'b'.repeat(40); await f.github.assertPreparedHandover(target,{ currentMain: false });
+    await expect(f.github.assertPreparedHandover(target)).rejects.toThrow('release_checked_head_changed');
   });
   it('creates then reads back the whole checkpoint before acknowledging a save', async () => {
     const f = fixture(), remote = new ReleaseJournal(f.github, plan), journal = { phase: 'prepared', pending: 'pause' };

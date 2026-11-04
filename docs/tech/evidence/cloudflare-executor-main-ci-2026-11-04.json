@@ -1,0 +1,101 @@
+{
+  "recordedAt": "2026-11-04T18:04:31.060Z",
+  "release": "1f78d11583ff8635761c5d7c0ee9b7b3aca872f2",
+  "runs": [
+    {
+      "id": 41876143446,
+      "event": "push",
+      "head": "1f78d11583ff8635761c5d7c0ee9b7b3aca872f2",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "jobs": [
+        {
+          "name": "check",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "cloudflare-release-journal-probe",
+          "status": "completed",
+          "conclusion": "neutral"
+        }
+      ]
+    },
+    {
+      "id": 41876143792,
+      "event": "push",
+      "head": "1f78d11583ff8635761c5d7c0ee9b7b3aca872f2",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 2,
+      "jobs": [
+        {
+          "name": "deploy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "checkpoint-storage",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "artifact-integrity",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "id": 41876715035,
+      "event": "workflow_dispatch",
+      "head": "1f78d11583ff8635761c5d7c0ee9b7b3aca872f2",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "jobs": [
+        {
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "artifact-integrity",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "checkpoint-storage",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "deploy",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    }
+  ],
+  "normalDeploymentInitialAttempt": {
+    "conclusion": "failure",
+    "error": "release_verification_job_incomplete",
+    "providerMutationReached": false
+  },
+  "normalDeploymentRetry": {
+    "attempt": 2,
+    "conclusion": "success"
+  },
+  "activePreparationDeployed": false,
+  "netlifyHook": {
+    "name": "Deploy checked main to Netlify",
+    "conclusion": "skipped"
+  },
+  "liveReadback": "cloudflare-executor-main-hosted-readback-2026-11-04.json"
+}

@@ -1,0 +1,46 @@
+{
+  "recordedAt": "2026-11-04T18:05:22.196743+00:00",
+  "scope": "local-isolated-executor-contracts",
+  "baseMain": "1f78d11583ff8635761c5d7c0ee9b7b3aca872f2",
+  "fullCheck": {
+    "command": "npm run check",
+    "passed": true,
+    "testFiles": 123,
+    "tests": 3892,
+    "catalogue": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "note": "Full suite completed before the final additional ordinary-release source-runtime contract test; that new case also passes in the focused run."
+  },
+  "focused": {
+    "files": 7,
+    "tests": 116,
+    "passed": true,
+    "includesRealDeliveryAdapterComposition": true,
+    "includesOrdinaryReleaseRuntimePinCheck": true
+  },
+  "cloudflare": {
+    "command": "npm run check:cloudflare",
+    "passed": true,
+    "buildMode": "shadow",
+    "webWorkerdChecks": 21,
+    "jobsWorkerdChecks": 5,
+    "sourceGatewayDisabled": true,
+    "liveProviderRequests": 0,
+    "queueMessagesSent": 0,
+    "containerStarted": false
+  },
+  "nativeOwnershipOrRecoveryExecution": false,
+  "usableActiveRecoveryProven": false,
+  "privateAccountParityProven": false,
+  "liveApplyEntryPoint": false,
+  "sourceJobsStarted": 0,
+  "modelCalls": 0,
+  "emails": 0,
+  "hostingUsageCost": "unmeasured",
+  "privateLogSha256": {
+    "cloudflare-executor-final-check.log": "6c964d46728872082fff5bb682ca785aab0578a7e52cfaf0e6352883d8ad712d",
+    "cloudflare-executor-final-focused.log": "6952442cc961fdda5f801c53b47097f16d1d0c6fd5603b0477d77b27a5f2d544",
+    "cloudflare-executor-workerd.log": "d6f2121d20bf39269fed01146661ee8094dffc29fd702bbe726b772ec8c50ff7"
+  }
+}
