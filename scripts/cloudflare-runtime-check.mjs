@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
+import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 const release = JSON.parse(readFileSync('.local/cloudflare-build/release.json', 'utf8')).release;
 const config = JSON.parse(readFileSync('.local/cloudflare-build/web.json', 'utf8'));
 // Exercise the actual Wrangler-bundled Worker under workerd. No credentials,
@@ -39,6 +40,49 @@ try {
   assert.match(await robots.text(), /Sitemap: https:\/\/recap\.filternode\.dev\/sitemap\.xml/); checks++;
   console.log(JSON.stringify({ runtime: 'workerd', checks, passed: true, outboundNetwork: 'blocked', productionCredentials: false }));
 } finally { await mf.dispose(); }
+// Full protected path in the actual bundled runtime, using only ephemeral
+// signing keys and fake provider responses. No real identity/database traffic.
+const origin = 'https://recap.filternode.dev', issuer = 'https://clerk.fixture.invalid';
+const { privateKey, publicKey } = await generateKeyPair('RS256');
+const jwk = { ...await exportJWK(publicKey), kid: 'runtime-fixture', alg: 'RS256', use: 'sig' };
+const sign = subject => new SignJWT({ azp: origin }).setProtectedHeader({ alg: 'RS256', kid: jwk.kid }).setIssuer(issuer).setSubject(subject).setIssuedAt().setExpirationTime('5m').sign(privateKey);
+let redirectRpc = false, fixturePaused = true;
+const outbound = [];
+const accountRuntime = new Miniflare(convertV4MiniflareOptions({
+  modules: true, scriptPath: '.local/cloudflare-build/web/web.js',
+  compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
+  bindings: { ...config.vars, CLERK_ISSUER_URL: issuer, CLERK_SECRET_KEY: 'fixture-only-clerk-secret', ADMIN_USER_IDS: 'fixture-owner', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
+  outboundService: async request => {
+    const url = new URL(request.url); outbound.push({ origin: url.origin, path: url.pathname });
+    if (url.href === issuer + '/.well-known/jwks.json') return Response.json({ keys: [jwk] });
+    if (url.origin === 'https://api.clerk.com' && ['/v1/users/fixture-owner', '/v1/users/fixture-reader'].includes(url.pathname)) return Response.json({ id: url.pathname.split('/').at(-1), email_addresses: [], primary_email_address_id: null, banned: false, locked: false });
+    if (url.origin === 'https://zlfdqzabsfndifxiqguo.supabase.co' && url.pathname === '/rest/v1/rpc/read_hosting_runtime') {
+      assert.equal(request.method, 'POST'); assert.equal(await request.text(), '{}');
+      if (redirectRpc) return new Response(null, { status: 302, headers: { location: 'https://must-not-receive-secrets.invalid/' } });
+      return Response.json({ owner: 'netlify', epoch: 1, paused: fixturePaused, old_host_fenced: false, release: '0'.repeat(40) });
+    }
+    if (url.origin === 'https://zlfdqzabsfndifxiqguo.supabase.co' && url.pathname === '/rest/v1/reader_workspaces') {
+      assert.equal(request.method, 'HEAD'); assert.equal(url.searchParams.get('user_id'), 'eq.fixture-owner');
+      return new Response(null, { headers: { 'content-range': '0-0/1' } });
+    }
+    throw new Error('Unexpected outbound destination in protected runtime check');
+  },
+}));
+try {
+  const headers = { authorization: 'Bearer ' + await sign('fixture-owner'), origin };
+  const path = origin + '/api/migration-verification';
+  const positive = await accountRuntime.dispatchFetch(path, { headers });
+  assert.equal(positive.status, 200); assert.deepEqual(await positive.json(), { authenticated: true, administrator: true, workspacePresent: true, processingPaused: true, release }); checks++;
+  assert.equal((await accountRuntime.dispatchFetch(path, { headers: { ...headers, origin: 'https://foreign.invalid' } })).status, 403); checks++;
+  assert.equal((await accountRuntime.dispatchFetch(path, { headers: { authorization: 'Bearer ' + await sign('fixture-reader'), origin } })).status, 403); checks++;
+  fixturePaused = false;
+  assert.equal((await accountRuntime.dispatchFetch(path, { headers })).status, 503); checks++;
+  fixturePaused = true; redirectRpc = true;
+  const redirected = await accountRuntime.dispatchFetch(path, { headers });
+  assert.equal(redirected.status, 503); assert.equal((await redirected.json()).error.code, 'verification_hosting_unavailable');
+  assert(outbound.every(item => !item.origin.includes('must-not-receive-secrets'))); checks++;
+  console.log(JSON.stringify({ runtime: 'workerd', protectedAccountChecks: 5, totalWebChecks: checks, liveProviderRequests: 0, redirectedCredentials: false }));
+} finally { await accountRuntime.dispose(); }
 const source = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/source-worker/source.js',
   compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,

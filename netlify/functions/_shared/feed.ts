@@ -1,3 +1,4 @@
+import { fetchNoRedirect } from './fetch-no-redirect';
 import { lookup } from 'node:dns/promises';
 import { request as httpsRequest } from 'node:https';
 import type { LookupFunction } from 'node:net';
@@ -70,10 +71,10 @@ export async function downloadYouTubeFeed(urlString: string, validators: FeedVal
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetcher(url.href, {
-      redirect: 'error', signal: controller.signal,
+    const response = await fetchNoRedirect(url.href, {
+      signal: controller.signal,
       headers: { accept: 'application/atom+xml, application/xml, text/xml', ...conditionalFeedHeaders(validators) },
-    });
+    }, fetcher);
     const metadata = {
       status: response.status, etag: response.headers.get('etag')?.slice(0, 512),
       lastModified: response.headers.get('last-modified')?.slice(0, 128),

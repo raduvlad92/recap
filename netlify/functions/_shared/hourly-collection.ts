@@ -1,3 +1,4 @@
+import { fetchNoRedirect } from './fetch-no-redirect';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { XMLBuilder, XMLParser, XMLValidator } from 'fast-xml-parser';
@@ -198,7 +199,7 @@ export async function downloadHourlyWatchPage(value: string, _redirects = 0, _va
  if (url.hostname !== 'www.youtube.com' || url.pathname !== '/watch' || url.searchParams.size !== 1 || !youtubeVideoId(url.href)) throw new CollectionError(400, 'unsafe_watch_page', 'Only an exact public YouTube watch page is supported.');
  const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 8_000);
  try {
-  const response = await fetcher(url.href, { redirect: 'error', signal: controller.signal, headers: { accept: 'text/html' } });
+  const response = await fetchNoRedirect(url.href, { signal: controller.signal, headers: { accept: 'text/html' } }, fetcher);
   if (response.status !== 200 || response.url && youtubeVideoId(response.url) !== youtubeVideoId(url.href)) {
    await response.body?.cancel(); throw new CollectionError(422, 'source_unavailable', 'The public video page is unavailable.', response.status);
   }
@@ -531,9 +532,9 @@ export async function dispatchHourly(env: Env = runtimeEnv, fetcher: typeof fetc
  if (env('HOURLY_COLLECTION_ENABLED') !== 'true') return { dispatched: false };
  const secret = env('HOURLY_COLLECTION_WORKER_SECRET') || '', app = publicHttpsUrl(env('APP_URL'));
  if (secret.length < 32 || secret.length > 256) throw new CollectionError(503, 'hourly_worker_not_configured', 'Hourly background dispatch is not configured.');
- const response = await fetcher(new URL('/.netlify/functions/hourly-collection-worker', app).href, {
-  method: 'POST', headers: { 'x-hourly-collection-secret': secret, 'content-type': 'application/json' }, body: '{}', redirect: 'error', signal: AbortSignal.timeout(10_000),
- });
+ const response = await fetchNoRedirect(new URL('/.netlify/functions/hourly-collection-worker', app).href, {
+  method: 'POST', headers: { 'x-hourly-collection-secret': secret, 'content-type': 'application/json' }, body: '{}', signal: AbortSignal.timeout(10_000),
+ }, fetcher);
  await response.body?.cancel();
  if (response.status !== 202) throw new CollectionError(503, 'hourly_dispatch_failed', 'Hourly background work was not accepted.');
  return { dispatched: true };

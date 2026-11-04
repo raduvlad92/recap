@@ -1,3 +1,4 @@
+import { fetchNoRedirect } from './fetch-no-redirect';
 import { createHash } from 'node:crypto';
 import type { DailyBriefing, DailyBriefingCitation, DailyBriefingPage, DailyBriefingSnapshot, DailyBriefingSourceCoverage, DailyBriefingStatus, DailyBriefingTopic, DailyBriefingUpdate } from '../../../src/lib/daily-briefing-types';
 import type { ReaderSettings } from '../../../src/lib/types';
@@ -188,9 +189,9 @@ export function createDailyBriefingWorker(overrides: Partial<{ env: Env; store: 
 }
 export async function dispatchDailyBriefings(env: Env = runtimeEnv, fetcher: typeof fetch = fetch): Promise<{ dispatched: boolean }> {
   if (!dailyBriefingRuntimeAllowed(env) || !configured(env)) return { dispatched: false };
-  const response = await fetcher(new URL('/.netlify/functions/daily-briefing-worker', publicHttpsUrl(env('APP_URL'))), {
-    method: 'POST', headers: { 'content-type': 'application/json', 'x-content-analysis-secret': env('CONTENT_ANALYSIS_WORKER_SECRET')! }, body: '{}', redirect: 'error', signal: AbortSignal.timeout(10000),
-  });
+  const response = await fetchNoRedirect(new URL('/.netlify/functions/daily-briefing-worker', publicHttpsUrl(env('APP_URL'))), {
+    method: 'POST', headers: { 'content-type': 'application/json', 'x-content-analysis-secret': env('CONTENT_ANALYSIS_WORKER_SECRET')! }, body: '{}', signal: AbortSignal.timeout(10000),
+  }, fetcher);
   await response.body?.cancel(); if (response.status !== 202) return fail('daily_briefing_dispatch_failed', 502); return { dispatched: true };
 }
 export function dailyBriefingWorkerAuthorized(request: Request, env: Env = runtimeEnv): boolean {

@@ -1,3 +1,4 @@
+import { fetchNoRedirect } from './fetch-no-redirect';
 import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { clerkRequest, database, type ClerkUser } from './admin-data';
 import { analysisWorkerAuthorized } from './content-analysis';
@@ -199,8 +200,8 @@ export function createRecapReminderWorker(deps: { env?: Env; store?: ReminderSto
       if (!authorization.authorized) { stats.blocked++; continue; }
       let response: Response;
       try {
-        response = await fetcher('https://api.resend.com/emails', { method: 'POST', redirect: 'error', signal: AbortSignal.timeout(10_000),
-          headers: { authorization: 'Bearer ' + config.apiKey, 'content-type': 'application/json', 'Idempotency-Key': claim.outbox.idempotency_key }, body: JSON.stringify(payload) });
+        response = await fetchNoRedirect('https://api.resend.com/emails', { method: 'POST', signal: AbortSignal.timeout(10_000),
+          headers: { authorization: 'Bearer ' + config.apiKey, 'content-type': 'application/json', 'Idempotency-Key': claim.outbox.idempotency_key }, body: JSON.stringify(payload) }, fetcher);
       } catch { await store.finish(claim, 'uncertain', undefined, 'reminder_acceptance_unknown'); stats.deferred++; continue; }
       let body: unknown = null;
       try { body = JSON.parse(await readTextLimited(response, 65_536)); } catch { /* Unknown acceptance remains held below. */ }
@@ -224,7 +225,7 @@ export async function dispatchRecapReminders(env: Env = runtimeEnv, fetcher: typ
   if (!reminderRuntimeAllowed(env)) return { dispatched: false };
   reminderConfiguration(env);
   const secret = env('CONTENT_ANALYSIS_WORKER_SECRET') || ''; if (secret.length < 32 || secret.length > 256) return fail('reminder_worker_not_configured');
-  const response = await fetcher(new URL('/.netlify/functions/recap-reminder-worker', publicHttpsUrl(env('APP_URL'))), { method: 'POST', headers: { 'content-type': 'application/json', 'x-content-analysis-secret': secret }, body: '{}', redirect: 'error', signal: AbortSignal.timeout(10_000) });
+  const response = await fetchNoRedirect(new URL('/.netlify/functions/recap-reminder-worker', publicHttpsUrl(env('APP_URL'))), { method: 'POST', headers: { 'content-type': 'application/json', 'x-content-analysis-secret': secret }, body: '{}', signal: AbortSignal.timeout(10_000) }, fetcher);
   await response.body?.cancel(); if (response.status !== 202) return fail('reminder_dispatch_failed');
   return { dispatched: true };
 }

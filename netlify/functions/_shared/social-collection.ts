@@ -1,3 +1,4 @@
+import { fetchNoRedirect } from './fetch-no-redirect';
 import { createHash } from 'node:crypto';
 import type { SourceUpdate, SourceMedia } from '../../../src/lib/types';
 import { extractPostContext } from '../../../actors/tech-collector/src/post-context.mjs';
@@ -121,7 +122,7 @@ export function normalizeSocialDataset(job: SocialJob, rows: unknown[]): { items
 
 async function apify(path: string, env: Env, fetcher: typeof fetch, init: RequestInit = {}): Promise<unknown> {
  const token = env('APIFY_API_TOKEN'); if (!token) throw new CollectionError(503, 'social_provider_unconfigured', 'Social collection requires the existing provider connection.');
- const response = await fetcher('https://api.apify.com/v2/' + path, { ...init, headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' }, redirect: 'error', signal: AbortSignal.timeout(15_000) });
+ const response = await fetchNoRedirect('https://api.apify.com/v2/' + path, { ...init, headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' }, signal: AbortSignal.timeout(15_000) }, fetcher);
  if (!response.ok) { await response.body?.cancel(); throw new CollectionError(502, 'social_provider_error', 'The social provider request could not finish.'); }
  try { return JSON.parse(await readTextLimited(response, 4 * 1024 * 1024)); } catch (error) { if (error instanceof CollectionError) throw error; throw new CollectionError(502, 'social_provider_invalid', 'The social provider returned unreadable data.'); }
 }
@@ -197,7 +198,7 @@ export async function collectSocialProof(job: SocialJob, env: Env = runtimeEnv, 
 export async function dispatchSocial(env: Env = runtimeEnv, fetcher: typeof fetch = fetch): Promise<{ dispatched: boolean }> {
  const secret = env('HOURLY_COLLECTION_WORKER_SECRET') || '';
  if (secret.length < 32 || secret.length > 256) throw new CollectionError(503, 'social_dispatch_unconfigured', 'Social collection worker is not configured.');
- const response = await fetcher(new URL('/.netlify/functions/social-collection-worker', publicHttpsUrl(env('APP_URL'))).href, { method: 'POST', headers: { 'x-hourly-collection-secret': secret, 'content-type': 'application/json' }, body: '{}', redirect: 'error', signal: AbortSignal.timeout(10_000) });
+ const response = await fetchNoRedirect(new URL('/.netlify/functions/social-collection-worker', publicHttpsUrl(env('APP_URL'))).href, { method: 'POST', headers: { 'x-hourly-collection-secret': secret, 'content-type': 'application/json' }, body: '{}', signal: AbortSignal.timeout(10_000) }, fetcher);
  await response.body?.cancel(); if (response.status !== 202) throw new CollectionError(503, 'social_dispatch_failed', 'Social collection work was not accepted.');
  return { dispatched: true };
 }

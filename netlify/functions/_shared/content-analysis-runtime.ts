@@ -1,3 +1,4 @@
+import { fetchNoRedirect } from './fetch-no-redirect';
 import { createHash } from 'node:crypto';
 import { ANALYSIS_MODEL_IDS, type AnalysisConnectionStatus, type AnalysisModelId } from '../../../src/lib/analysis-settings-types';
 import { analysisFailure } from './content-analysis-model';
@@ -106,10 +107,10 @@ export async function checkOpenRouterConnection(env: Env, fetcher: typeof fetch 
     try { void (reader ? reader.cancel() : response?.body?.cancel())?.catch(() => {}); } catch { /* already closed */ }
   };
   const request = async (): Promise<AnalysisConnectionStatus> => {
-    response = await fetcher(KEY_URL, {
+    response = await fetchNoRedirect(KEY_URL, {
       method: 'GET', headers: { Authorization: `Bearer ${key}`, Accept: 'application/json' },
-      redirect: 'error', signal: controller.signal, cache: 'no-store',
-    });
+      signal: controller.signal, cache: 'no-store',
+    }, fetcher);
     if (controller.signal.aborted) { cancel(); return unavailable; }
     if (response.redirected || response.url && response.url !== KEY_URL) { cancel(); return unavailable; }
     if (response.status !== 200) {
