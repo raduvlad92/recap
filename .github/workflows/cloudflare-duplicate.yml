@@ -97,6 +97,29 @@ jobs:
             .local/cloudflare-build/jobs/**
             .local/cloudflare-build/source-worker/**
             .local/cloudflare-build/source-container/**
+  checkpoint-storage:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - name: Verify isolated remote checkpoint storage
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHECKPOINT_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          node --input-type=module <<'JS'
+          import { ReleaseGitHub } from './scripts/cloudflare-release-github.mjs';
+          const github = new ReleaseGitHub({ token: process.env.GITHUB_TOKEN, runId: process.env.GITHUB_RUN_ID });
+          await github.probeCheckpoint(process.env.CHECKPOINT_SHA);
+          console.log('GitHub checkpoint write/read/update verified; no runtime credentials or processing.');
+          JS
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: verify

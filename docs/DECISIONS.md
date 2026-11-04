@@ -1,5 +1,12 @@
 # Decisions and interview
 
+## 4 November 2026 — persist release intent before provider changes
+
+Engineering decision within the authorized migration: ordinary releases use a sanitized GitHub check-run journal, acknowledged with a separate read before each mutation, plus a local durable backup. This avoids another business-data queue/table for orchestration, at the cost of explicit GitHub App Checks write permission and a dependency on GitHub availability; missing acknowledgement stops the release. Main uses one serialized production group and the verification job's exact artifact. Initial ownership transfer is excluded from this entrypoint.
+
+Checked database transitions also compare a per-operation revision recorded before execution. A later operator update, including pausing an already paused runtime, invalidates the earlier operation. Lost replies can reconcile only their own nonce. Native verification promotes only the disabled review copy, with original data/control/source preserved; it does not establish an initial switch or active runtime. The new isolated PR storage probe and checked-main deployment still need their own CI evidence. [Implementation and native proof](tech/CLOUDFLARE-RELEASE-CONTROLLER.md).
+
+
 ## 4 November 2026 — reuse a verified source component independently of website releases
 
 Engineering decision within the authorized migration: a routine shadow website deploy reuses an unchanged source Worker/image only when its input hashes, immutable live version/image, private/no-secret scope, disabled state and one-instance bound match the committed hosted proof. Unexpected drift stops deployment. A source change remains disabled until new hosted proof. This avoids needless rebuilds and proof/digest drift, at the cost of independently recording the source component release/version instead of claiming all three components always share the website SHA. Actual `5ddf873` web/jobs deployment preserves verified source version `af6e82f8…` / image `bc1713…`. This grants no production ownership/activation or retirement authority beyond the existing staged gates. [Design and native evidence](tech/CLOUDFLARE-RELEASE-CONTROLLER.md).

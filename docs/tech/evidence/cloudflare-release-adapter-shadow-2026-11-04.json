@@ -1,0 +1,47 @@
+{
+  "recorded_at": "2026-11-04T11:26:13.654Z",
+  "stage": "native-disabled-shadow-version-adapter-only",
+  "release": "ca43f97e50ee068649d3c05e17d76ac61ef966d7",
+  "previous_versions": {
+    "jobs": "28fd0bdd-535e-49c9-beb5-6318b7fa21ea",
+    "web": "8b21e8f1-d025-46a1-a07b-274a55e849f1"
+  },
+  "uploaded_versions": {
+    "jobs": "466b9869-741c-41c1-b452-dc2453d1ab94",
+    "web": "e25b5702-2223-45c1-b958-c8fbb223f824"
+  },
+  "upload_did_not_change_serving_versions": true,
+  "lost_upload_reply_reconciled_without_second_upload": true,
+  "lost_promotion_reply_reconciled_without_second_promotion": true,
+  "exact_versions_promoted_at_100_percent": true,
+  "binding_inventory_and_ordinary_bounds_preserved": true,
+  "source_pin_unchanged": {
+    "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+    "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+    "workerHash": "df652e8eb8f334939eb27cb25e6c289ba5a2061d327a636a62242585d1270b23",
+    "containerHash": "82350aa896df6cea39ba99e28a4a36a20506efcc0ee1c56bb732736a7960e1a6",
+    "enabled": false
+  },
+  "public_health_and_all_static_assets_verified": true,
+  "all_execution_flags_off": true,
+  "hosting_control_and_revision_unchanged": true,
+  "hosting_control": {
+    "epoch": 1,
+    "owner": "netlify",
+    "paused": true,
+    "release": "0000000000000000000000000000000000000000",
+    "old_host_fenced": false
+  },
+  "hosting_work": {
+    "queued": 0,
+    "running": 0,
+    "uncertain": 0,
+    "expired_running": 0
+  },
+  "github_app_checkpoint_write_verified": false,
+  "initial_switch_tested": false,
+  "active_runtime_deployed": false,
+  "model_inferences": 0,
+  "scraper_runs": 0,
+  "emails": 0
+}

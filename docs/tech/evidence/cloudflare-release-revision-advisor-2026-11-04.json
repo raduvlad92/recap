@@ -8,7 +8,7 @@
   "kinds": [
     "rls_enabled_no_policy"
   ],
-  "new_hosting_objects_findings": [
+  "hosting_table_information_notices": [
     {
       "name": "rls_enabled_no_policy",
       "level": "INFO"
