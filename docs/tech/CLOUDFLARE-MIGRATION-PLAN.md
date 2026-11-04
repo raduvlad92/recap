@@ -2,6 +2,8 @@
 
 Version **0.1 — implementation proposal**, 3 November 2026. Founder direction: duplicate Therecap on Cloudflare, keep the database where it is, switch when the duplicate is ready, then remove the Netlify project. This session audits and plans that move; it does not provision, change DNS, enable jobs, purchase a plan or delete hosting. Existing product, financial, review and reminder controls remain authoritative.
 
+**4 November continuation:** the founder authorized implementation. Hosted Workers socket checks failed certificate-hostname validation; the native Node downloader fallback is prepared as a third, private container gateway with bounded usage. Workers Paid approval and hosted container verification are still required. [Current implementation record](CLOUDFLARE-MIGRATION-IMPLEMENTATION.md) supersedes the original planning-only execution status below; the acceptance, billing, cutover and retirement gates remain applicable.
+
 ## Recommended result
 
 Cloudflare serves the existing website, public creator pages, APIs and background processing. GitHub still checks changes before automatically deploying them. The **same recap Supabase project `zlfdqzabsfndifxiqguo`** retains all readers, catalogue records, content, jobs, reviews, schedules and financial history; the **same Clerk app** retains authentication. No data copy, replacement database, D1, Hyperdrive or R2 is required for this move. A small additive runtime-ownership control in the existing database is proposed; application data and existing IDs stay in place.
@@ -108,8 +110,8 @@ Do not copy the current hook's race: it requests a build of `main`, does not nam
 
 | Stage | Deliverable / exit gate | Current state |
 | --- | --- | --- |
-| CF0 — preflight | Verify selected `recap.filternode.dev` hostname/DNS rights, paid-tier state, scoped CI token and secure secret continuity; resolve downloader design | Hostname selected; execution gates unresolved |
-| CF1 — portable runtime | Worker adapters, guarded transport, routes/headers/auth parity and queue dispatch; no external production execution | Not started |
+| CF0 — preflight | Verify selected `recap.filternode.dev` hostname/DNS rights, paid-tier state, scoped CI token and secure secret continuity; resolve downloader design | DNS/CI/key access verified; Free-plan CPU gate and hosted source transport unresolved |
+| CF1 — portable runtime | Worker adapters, guarded transport, routes/headers/auth parity and queue dispatch; no external production execution | Code/local checks and paused preserved database preparation complete; hosted parity pending |
 | CF2 — isolated duplicate | Deploy exact artifacts to Cloudflare; prove read/write behaviors with disposable data, no production jobs; prepare ownership gate on both hosts | Not started |
 | CF3 — release rehearsal | Test handover/rollback, duplicate delivery, stale owners, key decryption and preservation with synthetic state; capture production read-only baseline | Not started |
 | CF4 — switch | Stop old admission, drain/reconcile, transfer execution ownership, route readers and move webhook/origin configuration; verify | Not started |

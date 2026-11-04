@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 4 November 2026 — begin the Cloudflare migration implementation
+
+Founder: **“ok, start working on it”**, referring to the full duplication/switch/retirement plan and the selected `recap.filternode.dev` hostname. This authorizes scoped implementation, verification and the Cloudflare duplicate using the same Supabase/Clerk resources. Complete the migration gates before activating a second runner or retiring Netlify. Existing financial holds/caps, review approval and reminder opt-out stay in force; no new supplier or hosting subscription is purchased through this instruction alone.
+
+[Implementation record](tech/CLOUDFLARE-MIGRATION-IMPLEMENTATION.md) separates code/local checks, the preserved additive database migration, empty queue setup and credential access from future hosted parity, cutover and acceptance. Cloudflare's explicit Free-plan CPU-limit rejection is a real billing gate. Source transport remains disabled until hosted certificate/address checks pass; local compatibility is insufficient. The hosted socket test accepted a wrong certificate hostname, so the plan's narrow native Node container fallback is prepared, with one lite instance, idle shutdown and a 3,000-request UTC-day guard. This requires the Paid-plan decision; no container was started on Cloudflare.
+
 ## 3 November 2026 — permanent Cloudflare address selected
 
 Founder answered the migration hostname question with **“recap.filternode.dev (existing domain; no purchase)”**. Use `https://recap.filternode.dev` as the permanent production origin in the [Cloudflare migration plan](tech/CLOUDFLARE-MIGRATION-PLAN.md), including future auth redirects/origin checks, canonical/sitemap/robots links, reminder/webhook URLs and operator targets. This settles the address choice; it does not establish DNS availability, permissions, TLS or a deployed Cloudflare service. No domain purchase or infrastructure change occurred.

@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 4 November 2026 — Cloudflare runtime implementation and preserved database preparation
+
+[Implementation record](tech/CLOUDFLARE-MIGRATION-IMPLEMENTATION.md) records 3,661 passing application tests / 106 files, catalogue/typecheck/build, focused host/network/queue tests and 14 workerd routing/isolation checks with outbound network blocked. Existing functionality remains distinct from new hosted proof. Real migration rollback/absence/apply/readback preserves all 21,115 existing rows / 56 tables and 296 function/index definitions; new control is Netlify-owned, paused and unfenced, with no hosting work. New Cloudflare main/dead-letter queues are empty and have no activated consumer. GitHub deployment credential setup is separate from a successful automatic deployment.
+
+Plain Node TLS hostname verification failed its negative workerd probe and was removed; the replacement socket API passed locally but accepted a wrong hostname in production, so it was removed too. The prepared native Node container passes its real TLS identity checks; the private container remains undeployed pending the Paid-plan and hosted acceptance gates. Controlled probes contact DNS infrastructure only. Cloudflare's Free-plan CPU-limit rejection is retained as a billing blocker; no subscription purchase, production collection/model call, real review, reminder send, traffic switch or Netlify deletion was performed. The retained reminder key decrypts current private settings; OpenRouter credential validation is a metadata GET rather than inference. Private credentials/raw native snapshots are ignored; exact release/hosted readbacks are added only after obtained.
+
 ## 3 November 2026 — migration hostname decision recorded
 
 Founder selected **`recap.filternode.dev`**, using the existing domain without a purchase. [Migration plan](tech/CLOUDFLARE-MIGRATION-PLAN.md), STATUS, PLAN and decisions now record the selected production origin and dependent auth/link/callback targets. This is a documentation update; no DNS/API read, TLS setup, hosting deployment, provider/model execution or other infrastructure change was performed. The earlier sanitized audit remains unchanged historical evidence.

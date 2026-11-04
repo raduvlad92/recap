@@ -4,6 +4,7 @@ import type { ClientRequest, IncomingMessage } from 'node:http';
 import type { LookupFunction } from 'node:net';
 import { XMLParser } from 'fast-xml-parser';
 import { isPublicAddress, publicHttpsUrl } from './security';
+import { hostRuntime } from './host-runtime';
 
 export interface YouTubeChannelMetadata { name: string; avatarUrl?: string }
 
@@ -158,6 +159,23 @@ export function parseYouTubeChannelMetadata(html: string): YouTubeChannelMetadat
 /** One wall-clock deadline covers DNS, every redirect, headers and the body. */
 export function downloadYouTubeChannelHtml(value: string): Promise<string> {
   const startUrl = normalizeYouTubeChannelUrl(value);
+  const host = hostRuntime();
+  if (host?.download) return host.download(startUrl, {
+    kind: 'metadata',
+    validate: value => new URL(normalizeYouTubeChannelUrl(value)),
+    headers: { accept: 'text/html', 'accept-language': 'en', 'user-agent': 'therecap-channel-metadata/0.1', cookie: PUBLIC_COOKIE_CHOICES },
+    maxBytes: MAX_HTML_BYTES, timeoutMs: DEADLINE_MS, redirects: 0, ipv4Only: true,
+  }).then(result => {
+    if (result.status !== 200 || !/^(?:text\/html|application\/xhtml\+xml)(?:;|$)/i.test(result.contentType)) throw unavailable();
+    return result.text;
+  }).catch(error => {
+    if (error instanceof SourceMetadataError) throw error;
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'source_timeout') throw new SourceMetadataError(504, 'metadata_timeout', 'The public channel metadata request took too long.');
+      if (error.code === 'feed_too_large') throw new SourceMetadataError(502, 'metadata_response_too_large', 'The public channel page exceeded the metadata size limit.');
+    }
+    throw unavailable();
+  });
   return new Promise((resolve, reject) => {
     let settled = false;
     let activeRequest: ClientRequest | undefined;
