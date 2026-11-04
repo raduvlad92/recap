@@ -58,6 +58,13 @@ describe('initial ownership handover with isolated ports',()=>{
   await expect(runHandover(plan,p.api,p.save)).rejects.toThrow('handover_phase_uncertain');
   await runHandover(plan,p.api,p.save,p.saved.at(-1));expect(p.events.filter(value=>value===operation)).toHaveLength(1);
  });
+ it('acknowledges its own resumed handover after new legitimate work begins',async()=>{
+  const{plan,snapshot}=fixture(),p=ports(snapshot),original=p.api.resume;
+  p.api.resume=async(...args)=>{await original(...args);p.state.work.queued=1;p.state.evidence=false;throw Error('lost_reply');};
+  await expect(runHandover(plan,p.api,p.save)).rejects.toThrow('handover_phase_uncertain');
+  const complete=await runHandover(plan,p.api,p.save,p.saved.at(-1));expect(complete.phase).toBe('complete');expect(p.events.filter(x=>x==='resume')).toHaveLength(1);
+  await runHandover(plan,p.api,p.save,complete);expect(p.state.work.queued).toBe(1);
+ });
  it.each(['commit','resume'])('refuses an operator pause after the ambiguous %s reply',async operation=>{
   const{plan,snapshot}=fixture(),p=ports(snapshot),original=p.api[operation];
   p.api[operation]=async(...args)=>{await original(...args);p.state.control.paused=true;p.state.revision=randomUUID();throw Error('lost_reply');};

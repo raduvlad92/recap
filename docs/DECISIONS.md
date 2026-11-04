@@ -1,5 +1,12 @@
 # Decisions and interview
 
+## 4 November 2026 — separate database credentials and pause legacy builds before main verification
+
+Engineering preparation within the authorized migration: create a dedicated Cloudflare secret key, verify the same database permissions/status, install it only in the new hosting/deployment/operator configuration and retain Netlify's original key until the gated fence. The global Supabase Management token remains local. This permits eventual exact-key revocation without disabling Cloudflare and leaves public/legacy signing keys and encrypted reminder settings untouched.
+
+Reversibly stop the exact Netlify site's builds and select GitHub `HOSTING_TARGET=paused` before merging the inert preparation increment after green checks. The merged main workflow skips its legacy hook and deploys only the shadow copy. Published Netlify deployment/key and runtime ownership remain intact; this is safe automatic-delivery verification, not the production switch or retirement. The destructive fence still requires full fresh gates, exact paused control/revision/key identities, replacement access and acknowledged intent. [Native receipts and remaining gates](tech/CLOUDFLARE-HANDOVER.md).
+
+
 ## 4 November 2026 — initial ownership commit and rollback stay separately guarded
 
 Engineering implementation within the existing migration authorization: the initial ownership commit compares the exact paused Netlify owner/epoch/release/revision and the coordinator's independently verified fence assertion, and always leaves Cloudflare paused. It cannot resume jobs. A native transaction rehearses transfer/replay and rolls it back; only the guard function is installed. Existing rows/control remain unchanged.

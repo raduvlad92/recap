@@ -1,0 +1,170 @@
+{
+  "recorded_at": "2026-11-04T13:10:40.496Z",
+  "read_only": true,
+  "repository_head": "1b778217cdb0300029ed297f74b3e00e7279f08a",
+  "artifact_matches_head": true,
+  "ready_for_handover": false,
+  "live_apply_entrypoint_available": false,
+  "native_readiness_adapters_configured": true,
+  "native_receipts": {
+    "fenceReadiness": {
+      "verified": true,
+      "digest": "c47cc9bdfcef6ff74d8a2dcfbc97c672582fa32344605599b950112a8652e45b",
+      "identity": {
+        "site": "522a0657-c191-4355-8d72-2ed19c580b81",
+        "project": "zlfdqzabsfndifxiqguo",
+        "oldKeyIdHash": "616fba69d9aea77355ea46cea002f68461a39ce8bb082b2a5223a083cf8f6ecb",
+        "oldKeyHash": "c9f3928dc5e26c2e26be7e4e6b320de939c2914b19d29697d7013a695365d5bb",
+        "replacementKeyIdHash": "ca9f6982363e3306f430a0a84f6e6aead38e900d783f19e3fe49a5d044427a5d",
+        "replacementKeyHash": "f0edec80668ebed6f72563d949764ce42fb9435f1471cb37e3c67e0e14274bfd",
+        "policyDigest": "ad9c64c8442b22ae03b83d8a75fea061d91d212a9cad0b70dbb41ac588273824"
+      },
+      "legacy": {
+        "site": "522a0657-c191-4355-8d72-2ed19c580b81",
+        "name": "recap-v0-radu",
+        "disabled": true,
+        "buildsStopped": true,
+        "publishedRelease": "f955398088a9c911693c3e7e1ccd33d4a972c170",
+        "databaseKeyHash": "c9f3928dc5e26c2e26be7e4e6b320de939c2914b19d29697d7013a695365d5bb",
+        "variableNames": [
+          "ADMIN_ALLOWED_EMAILS",
+          "ADMIN_USER_IDS",
+          "APIFY_API_TOKEN",
+          "APIFY_MAX_ITEMS",
+          "APIFY_MAX_TOTAL_CHARGE_USD",
+          "APIFY_RUNTIME_ENABLED",
+          "APIFY_YOUTUBE_BUILD",
+          "APIFY_YOUTUBE_BUILD_ID",
+          "APIFY_YOUTUBE_PRICING_SHA256",
+          "APP_URL",
+          "CLERK_ISSUER_URL",
+          "CLERK_SECRET_KEY",
+          "COLLECTION_ALLOWED_USER_IDS",
+          "COLLECTION_JOB_SECRET",
+          "CONTENT_ANALYSIS_CONFIG_EPOCH",
+          "CONTENT_ANALYSIS_ENABLED",
+          "CONTENT_ANALYSIS_MODEL",
+          "CONTENT_ANALYSIS_OPENROUTER_PROVIDER",
+          "CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME",
+          "CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL",
+          "CONTENT_ANALYSIS_PRICE_MODEL",
+          "CONTENT_ANALYSIS_PRICING_VERIFIED",
+          "CONTENT_ANALYSIS_PRICING_VERSION",
+          "CONTENT_ANALYSIS_RECONCILIATION_IDS",
+          "CONTENT_ANALYSIS_ROUTE",
+          "CONTENT_ANALYSIS_WORKER_SECRET",
+          "HOURLY_COLLECTION_ENABLED",
+          "HOURLY_COLLECTION_MAX_NEW_VIDEOS",
+          "HOURLY_COLLECTION_PROVIDER_VERIFIED",
+          "HOURLY_COLLECTION_WORKER_SECRET",
+          "OPENROUTER_API_KEY",
+          "SUPABASE_SECRET_KEY",
+          "VITE_CLERK_PUBLISHABLE_KEY",
+          "VITE_SUPABASE_PUBLISHABLE_KEY",
+          "VITE_SUPABASE_URL"
+        ],
+        "policy": {
+          "APIFY_RUNTIME_ENABLED": "true",
+          "HOURLY_COLLECTION_ENABLED": "true",
+          "CONTENT_ANALYSIS_ENABLED": "false",
+          "AUTOMATIC_CONTENT_ENABLED": "true",
+          "SOCIAL_COLLECTION_ENABLED": "true",
+          "SOCIAL_CONTENT_ENABLED": "true",
+          "DAILY_BRIEFING_ENABLED": "true",
+          "REMINDER_EMAIL_ENABLED": "false",
+          "KEYWORD_LEARNING_ENABLED": "true"
+        },
+        "policySources": {
+          "APIFY_RUNTIME_ENABLED": "explicit-production-environment",
+          "HOURLY_COLLECTION_ENABLED": "explicit-production-environment",
+          "CONTENT_ANALYSIS_ENABLED": "explicit-production-environment",
+          "AUTOMATIC_CONTENT_ENABLED": "legacy-handler-default",
+          "SOCIAL_COLLECTION_ENABLED": "legacy-handler-default",
+          "SOCIAL_CONTENT_ENABLED": "legacy-handler-default",
+          "DAILY_BRIEFING_ENABLED": "legacy-handler-default",
+          "REMINDER_EMAIL_ENABLED": "founder-reminder-opt-out",
+          "KEYWORD_LEARNING_ENABLED": "existing-private-manual-endpoint-no-cron"
+        },
+        "policyDigest": "ad9c64c8442b22ae03b83d8a75fea061d91d212a9cad0b70dbb41ac588273824"
+      },
+      "oldKeyStatus": 200,
+      "replacementKeyStatus": 200,
+      "oldKeyPresent": true,
+      "externalFenceEstablished": false
+    },
+    "preservation": {
+      "verified": true,
+      "digest": "2ea414a390d138ead184ede1552ed57276197299a5c82385c2b367ffc4780602",
+      "project": "zlfdqzabsfndifxiqguo",
+      "baselineDigest": "d41fb58581a408106cd940332a6f0278ed1705f957db3826545d0890d8b29bfa",
+      "protectedTables": 56,
+      "protectedRows": 21115,
+      "protectedDefinitions": 296,
+      "allOriginalsPreserved": true
+    },
+    "secretContinuity": {
+      "verified": true,
+      "digest": "d8ead9be759875dd429240690b62c4e61a5cd33259b9ca166f3462e505f3b08a",
+      "project": "zlfdqzabsfndifxiqguo",
+      "ciphertextHash": "6379974fe307d9f1505d6bb4bd846746df00789a5805a80dfb33bdf7b3a0194b",
+      "authenticated": true,
+      "wrongKeyRejected": true,
+      "plaintextRecorded": false
+    }
+  },
+  "plan": {
+    "schema": 1,
+    "action": "initial-cloudflare-handover",
+    "oldSite": "522a0657-c191-4355-8d72-2ed19c580b81",
+    "target": "1b778217cdb0300029ed297f74b3e00e7279f08a",
+    "artifactDigest": "b5d1b4bee07ea48ff7a31bd3b3e98a2edcff7d9bd4a1f27333353392823b2b4c",
+    "expected": {
+      "owner": "netlify",
+      "epoch": 1,
+      "release": "0000000000000000000000000000000000000000",
+      "paused": true,
+      "old_host_fenced": false,
+      "revision": "4c119c72-4ddb-4917-96ba-da2943e314df"
+    },
+    "priorVersions": {
+      "web": "de222bdf-761e-4509-a58a-c5cac440f442",
+      "jobs": "6701c72b-1344-44d2-9a5e-06b95b346401"
+    },
+    "bindings": {
+      "web": "95dd06d4302c95b24e502bbbd3d645a27efd3538227c2fd26466f18e315e6a5f",
+      "jobs": "a09bb5f981f74a981ea54c121b0f54f340f94e26a6bfb0d2c480d1ef13ee683a"
+    },
+    "sourcePin": {
+      "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+      "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+      "workerHash": "df652e8eb8f334939eb27cb25e6c289ba5a2061d327a636a62242585d1270b23",
+      "containerHash": "82350aa896df6cea39ba99e28a4a36a20506efcc0ee1c56bb732736a7960e1a6",
+      "enabled": false
+    },
+    "policy": {
+      "APIFY_RUNTIME_ENABLED": "true",
+      "HOURLY_COLLECTION_ENABLED": "true",
+      "CONTENT_ANALYSIS_ENABLED": "false",
+      "AUTOMATIC_CONTENT_ENABLED": "true",
+      "SOCIAL_COLLECTION_ENABLED": "true",
+      "SOCIAL_CONTENT_ENABLED": "true",
+      "DAILY_BRIEFING_ENABLED": "true",
+      "REMINDER_EMAIL_ENABLED": "false",
+      "KEYWORD_LEARNING_ENABLED": "true"
+    },
+    "resumeProcessing": true,
+    "receipts": {
+      "secretContinuity": "d8ead9be759875dd429240690b62c4e61a5cd33259b9ca166f3462e505f3b08a",
+      "preservation": "2ea414a390d138ead184ede1552ed57276197299a5c82385c2b367ffc4780602",
+      "fenceReadiness": "c47cc9bdfcef6ff74d8a2dcfbc97c672582fa32344605599b950112a8652e45b"
+    },
+    "rollback": null,
+    "blockers": [
+      "active_artifact_required",
+      "privateParity_proof_required",
+      "legacyDrain_proof_required",
+      "usable_cloudflare_rollback_required"
+    ],
+    "digest": "afec0427d2d039efab6bf85c7f14ea993806885b999f30dea8612209abbd5c6f"
+  }
+}

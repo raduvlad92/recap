@@ -11,9 +11,9 @@ const evidenceNames = ['privateParity', 'secretContinuity', 'preservation', 'leg
 const phases = ['prepared', 'delivery-stopped', 'fenced', 'staged', 'transferred', 'routed', 'verified', 'selected', 'complete'];
 const workEmpty = status => status.work && ['queued', 'running', 'expired_running', 'uncertain'].every(name => status.work[name] === 0);
 const targetControl = plan => ({ owner: 'cloudflare', epoch: plan.expected.epoch + 1, release: plan.target, paused: true, old_host_fenced: true });
-function statusMatches(status, expected, revision) {
+function statusMatches(status, expected, revision, requireEmpty = true) {
   check(status && Object.entries(expected).every(([key,value]) => status.control?.[key] === value) && status.revision === revision, 'handover_control_changed');
-  check(workEmpty(status), 'handover_work_not_drained');
+  check(status.work && ['queued','running','expired_running','uncertain'].every(name => Number.isSafeInteger(status.work[name]) && status.work[name] >= 0) && (!requireEmpty || workEmpty(status)), 'handover_work_not_drained');
 }
 
 /** Pure planning. Receipt hashes identify independently verified evidence;
@@ -80,7 +80,7 @@ export async function runHandover(plan, api, save, prior = null) {
   const pausedTarget = async () => statusMatches(await api.status(), targetControl(plan), journal.revision);
   try {
     if (journal.phase === 'complete') {
-      await fresh(); statusMatches(await api.status(), { ...targetControl(plan), paused: !plan.resumeProcessing }, journal.revision);
+      await api.assertCheckedHandover(plan); statusMatches(await api.status(), { ...targetControl(plan), paused: !plan.resumeProcessing }, journal.revision, !plan.resumeProcessing);
       check(await api.verifyReadback(plan, journal.versions) === true && await api.verifyTarget('cloudflare') === true && await api.verifyFence(plan, journal.fenceReceipt) === true, 'handover_readback_failed'); return journal;
     }
     if (journal.phase === 'prepared') {
@@ -110,11 +110,21 @@ export async function runHandover(plan, api, save, prior = null) {
       await before('select-target'); await pausedTarget(); await api.selectCloudflare(plan); check(await api.verifyTarget('cloudflare') === true, 'handover_target_unverified'); await after('selected');
     }
     if (journal.phase === 'selected') {
+      // A lost resume acknowledgement may be followed by legitimate new work.
+      // Reconcile only our own applied nonce; do not demand frozen pre-switch
+      // domain rows or replay admission/resume after processing already began.
+      const live = await api.status();
+      if (plan.resumeProcessing && journal.intents.resume && live.control?.paused === false && live.revision === journal.intents.resume) {
+        await api.assertCheckedHandover(plan);
+        statusMatches(live, { ...targetControl(plan), paused: false }, journal.intents.resume, false);
+        check(await api.verifyTarget('cloudflare') === true && await api.verifyFence(plan, journal.fenceReceipt) === true && await api.verifyReadback(plan, journal.versions) === true, 'handover_readback_failed');
+        journal.revision = live.revision; await after('complete'); return journal;
+      }
       await before('resume'); check(await api.verifyTarget('cloudflare') === true && await api.verifyFence(plan, journal.fenceReceipt) === true && await api.verifyReadback(plan, journal.versions) === true, 'handover_readback_failed');
       let status = await api.status();
       if (plan.resumeProcessing) {
         if (!(status.control?.paused === false && status.revision === journal.intents.resume)) { statusMatches(status, targetControl(plan), journal.revision); status = await api.resume(plan, journal.revision, journal.intents.resume); }
-        statusMatches(status, { ...targetControl(plan), paused: false }, journal.intents.resume); journal.revision = status.revision;
+        statusMatches(status, { ...targetControl(plan), paused: false }, journal.intents.resume, false); journal.revision = status.revision;
       } else statusMatches(status, targetControl(plan), journal.revision);
       await after('complete');
     }

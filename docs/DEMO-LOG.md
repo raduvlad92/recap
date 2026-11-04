@@ -1,5 +1,19 @@
 # Demo and evidence log
 
+## 4 November 2026 — native readiness, dedicated credentials and build-controller pause
+
+- PR head `1b77821`: four successful jobs, expected skipped deployment and neutral native checkpoint probe; no comments/reviews. Exact artifact download/hash verification passes on a separate runner. Linux source inputs match the hosted immutable pin, and all 87 downloaded files are scanned with zero prepared private-runtime value matches.
+- Native adapters verify the fixed old site/repository/database/key, effective legacy defaults and reminder opt-out, pinned original 56 tables / 21,115 rows / 296 definitions, and authenticated original encrypted reminder settings. No private reader IDs, ciphertext/plaintext or credentials enter receipts.
+- Created/verified a dedicated `therecap_cloudflare_hosting` key, installed it on web/jobs and in `CLOUDFLARE_HOSTING_DATABASE_KEY`, and updated only the matching local server key. Original Netlify key remains valid. No global Management token is put in CI. Native Worker versions advance only for the secret copy; code/runtime/bounds/binding inventory/release/disabled flags are unchanged at `ca43f97`. Source stays disabled/unchanged.
+- Reversibly stopped native Netlify builds and set GitHub target `paused`. Netlify published release/database key and hosting control/revision are unchanged. The merged main workflow will suppress its old hook and deploy only shadow Cloudflare. This prepares checked-main verification; no durable runtime fence or ownership switch is claimed.
+- Guarded native revocation is tested with isolated transports: exact recorded key/project/site only, fresh complete gates and control/revision, stopped builds, replacement operator access and acknowledged durable intent, then old 401/new 200/key absence. Lost replies reconcile without another deletion; operator changes/checkpoint failures stop before DELETE. This destructive path was not executed.
+- Full local 3,764 tests / 116 files, 48 focused cases and 26 workerd cases plus disabled-source check pass. A new lost-resume case admits legitimate new work after the same applied nonce without replaying resume or demanding frozen pre-switch rows; operator pauses still win.
+- Native readiness now passes policy/preservation/secret/fence preparation and still blocks active artifact/private parity/legacy drain/usable recovery target. Chrome readiness is requested asynchronously while independent work continues. No repeat payment/key/admin setup is needed.
+- Evidence: [protocol](tech/CLOUDFLARE-HANDOVER.md), [artifact CI](tech/evidence/cloudflare-artifact-ci-2026-11-04.json), [Linux source/artifact scan](tech/evidence/cloudflare-linux-source-pin-2026-11-04.json), [dedicated key](tech/evidence/cloudflare-dedicated-key-2026-11-04.json), [Worker readback](tech/evidence/cloudflare-dedicated-key-live-state-2026-11-04.json), [delivery pause](tech/evidence/cloudflare-delivery-pause-2026-11-04.json), [native readiness](tech/evidence/cloudflare-native-readiness-2026-11-04.json).
+- Cost/outcomes: metered hosting/API usage unmeasured; no new subscription, supplier/model run, email, review approval, old-key revocation, committed ownership transfer or Netlify deletion. Existing financial holds/records remain exact.
+- Next: green new-head CI, merge inert preparation and prove actual checked-main shadow delivery; finish private parity/drain/recovery target and final handover workflow, rehearse full switch/rollback, then gated transfer, bounded acceptance and site-only retirement.
+
+
 ## 4 November 2026 — initial handover guards and recovery rehearsal
 
 - Trigger: five checks passed on PR head `5ae9fb9`. Verified three successful jobs, skipped PR deploy, neutral actual GitHub App probe `126553853774`, and no comments/reviews. Checkpoint transport is proved; checked-main deployment remains separate.

@@ -1,0 +1,44 @@
+{
+  "recorded_at": "2026-11-04T12:59:37.036Z",
+  "stage": "dedicated-key-copy-native-readback",
+  "workers": {
+    "web": {
+      "version": "de222bdf-761e-4509-a58a-c5cac440f442",
+      "release": "ca43f97e50ee068649d3c05e17d76ac61ef966d7",
+      "codeAndRuntimeUnchanged": true,
+      "ordinaryBoundsAndBindingInventoryUnchanged": true,
+      "allFlagsOff": true
+    },
+    "jobs": {
+      "version": "6701c72b-1344-44d2-9a5e-06b95b346401",
+      "release": "ca43f97e50ee068649d3c05e17d76ac61ef966d7",
+      "codeAndRuntimeUnchanged": true,
+      "ordinaryBoundsAndBindingInventoryUnchanged": true,
+      "allFlagsOff": true
+    }
+  },
+  "sourceVersion": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+  "sourceStillDisabled": true,
+  "hostingControlAndRevisionUnchanged": true,
+  "status": {
+    "work": {
+      "queued": 0,
+      "running": 0,
+      "uncertain": 0,
+      "expired_running": 0
+    },
+    "control": {
+      "epoch": 1,
+      "owner": "netlify",
+      "paused": true,
+      "release": "0000000000000000000000000000000000000000",
+      "old_host_fenced": false
+    },
+    "revision": "4c119c72-4ddb-4917-96ba-da2943e314df"
+  },
+  "originalPrivateConfigurationNamesRetained": true,
+  "backendKeyCopyAcknowledgedByProvider": true,
+  "realOwnerBrowserReadbackAfterKeyCopy": false,
+  "oldKeyRevoked": false,
+  "productionProcessingActivated": false
+}

@@ -1,0 +1,52 @@
+{
+  "recorded_at": "2026-11-04T12:44:48.312Z",
+  "head": "1b778217cdb0300029ed297f74b3e00e7279f08a",
+  "checks": [
+    {
+      "name": "check",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41827869634/job/126567139214"
+    },
+    {
+      "name": "verify",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41827869625/job/126567139975"
+    },
+    {
+      "name": "artifact-integrity",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41827869625/job/126571698037"
+    },
+    {
+      "name": "checkpoint-storage",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41827869625/job/126571698292"
+    },
+    {
+      "name": "deploy",
+      "status": "COMPLETED",
+      "conclusion": "SKIPPED",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41827869625/job/126571700523"
+    },
+    {
+      "name": "cloudflare-release-journal-probe",
+      "status": "COMPLETED",
+      "conclusion": "NEUTRAL",
+      "url": "https://github.com/raduvlad92/recap/runs/126571763533"
+    }
+  ],
+  "artifact_integrity": {
+    "native_separate_runner": true,
+    "checked_worker_configuration_source_and_asset_hashes_match": true,
+    "deployment_credentials_used": false,
+    "deployment_performed": false
+  },
+  "native_checkpoint_transport_passed": true,
+  "comments": 0,
+  "reviews": 0,
+  "checked_main_deployment_proven": false
+}

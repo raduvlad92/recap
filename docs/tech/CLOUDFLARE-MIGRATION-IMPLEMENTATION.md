@@ -1,5 +1,16 @@
 # Cloudflare migration implementation
 
+## Native readiness and credential separation — current, 4 November 2026
+
+All six reported checks pass on `1b77821`: four successful jobs, skipped PR deploy and neutral checkpoint probe. The separate runner downloads/verifies the exact checked artifact. Its Linux source inputs also match the hosted immutable source pin, and 87 downloaded files contain zero prepared private-runtime value matches. Main deployment can reuse that verified source component. [CI](evidence/cloudflare-artifact-ci-2026-11-04.json), [Linux/source proof](evidence/cloudflare-linux-source-pin-2026-11-04.json).
+
+Native fixed-resource adapters now read the exact old site/project/key and effective legacy policy, verify all original 56 tables / 21,115 rows / 296 definitions and authenticate the original encrypted reminder settings. A dedicated Cloudflare database key is created/verified, installed on both paused Workers, configured in the deployment secret and copied into the matching local server environment. The old Netlify key remains valid. Native version readback proves Worker code/runtime/bounds/flags unchanged; live code remains `ca43f97`. No global Supabase Management token is added to CI. [Key preparation](evidence/cloudflare-dedicated-key-2026-11-04.json), [Worker readback](evidence/cloudflare-dedicated-key-live-state-2026-11-04.json).
+
+Netlify native builds are now reversibly stopped, and GitHub target is `paused` so the merged workflow skips its old build hook and continues only shadow Cloudflare delivery. Published Netlify release/key and database control/revision stay unchanged. This is preparation for checked-main verification, not a production switch or durable runtime fence. The native deletion operator is gated by complete fresh evidence, exact control/key identity, stopped builds, replacement access and durable intent; its destructive path is transport-tested only. [Build pause](evidence/cloudflare-delivery-pause-2026-11-04.json).
+
+[Native readiness](evidence/cloudflare-native-readiness-2026-11-04.json) now verifies policy, preservation, secret continuity and fence preparation; it still blocks the shadow artifact, private parity, legacy drain and usable recovery target. Full local 3,764 tests / 116 files, 48 focused cases and 26 workerd cases pass. Lost-resume reconciliation also handles legitimate new work after its own applied nonce without replaying resume; operator changes still stop it. After new-head CI, merge the inert preparation increment and verify actual main auto-deployment, then complete the remaining handover gates. Source/model execution, review approval, reminders, old-key revocation, ownership transfer and Netlify deletion remain off/unperformed. [Current protocol](CLOUDFLARE-HANDOVER.md). Earlier sections below retain their exact release/proof boundaries.
+
+
 ## Initial handover safeguards — current, 4 November 2026
 
 All five reported checks on `5ae9fb9` are verified: three successful jobs, the expected skipped PR deploy and the neutral native GitHub checkpoint probe. The actual GitHub App token writes/reads/updates the transport-only checkpoint on the exact head. Checked-main automatic deployment remains separate. [CI evidence](evidence/cloudflare-checkpoint-ci-2026-11-04.json).

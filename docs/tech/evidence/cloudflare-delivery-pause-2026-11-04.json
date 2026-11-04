@@ -1,0 +1,34 @@
+{
+  "recorded_at": "2026-11-04T13:04:59.859Z",
+  "stage": "reversible-build-controller-pause-not-production-switch",
+  "site": "522a0657-c191-4355-8d72-2ed19c580b81",
+  "previousBuildsStopped": false,
+  "buildsStopped": true,
+  "publishedReleaseUnchanged": true,
+  "databaseKeyUnchanged": true,
+  "hostingControlUnchanged": true,
+  "previousGitHubTarget": null,
+  "githubTarget": "paused",
+  "oldGitHubBuildHookSuppressed": true,
+  "cloudflareMainDeployMode": "shadow",
+  "oldKeyRevoked": false,
+  "oldServingDeploymentReplaced": false,
+  "productionProcessingActivated": false,
+  "sourceUnchanged": true,
+  "hostingStatus": {
+    "work": {
+      "queued": 0,
+      "running": 0,
+      "uncertain": 0,
+      "expired_running": 0
+    },
+    "control": {
+      "epoch": 1,
+      "owner": "netlify",
+      "paused": true,
+      "release": "0000000000000000000000000000000000000000",
+      "old_host_fenced": false
+    },
+    "revision": "4c119c72-4ddb-4917-96ba-da2943e314df"
+  }
+}
