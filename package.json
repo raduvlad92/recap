@@ -18,7 +18,8 @@
     "catalogue:build": "node scripts/build-catalogue.mjs",
     "build:cloudflare": "node scripts/cloudflare-build.mjs",
     "check:cloudflare": "npm run typecheck && npm run build:cloudflare && node scripts/cloudflare-runtime-check.mjs",
-    "deploy:cloudflare": "node scripts/cloudflare-deploy.mjs"
+    "deploy:cloudflare": "node scripts/cloudflare-deploy.mjs",
+    "plan:cloudflare": "node scripts/cloudflare-release-plan.mjs"
   },
   "dependencies": {
     "@clerk/react": "6.18.0",

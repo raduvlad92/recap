@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { assetManifest, fileHash } from './cloudflare-artifacts.mjs';
+import { canReuseSource } from './cloudflare-source-proof.mjs';
 const root = process.cwd(), release = JSON.parse(readFileSync('.local/cloudflare-build/release.json', 'utf8'));
 const mode = process.env.HOSTING_DEPLOY_MODE || 'shadow';
 if (mode !== 'shadow') throw new Error('Active promotion requires the separate verified hosting cutover operation');
@@ -27,7 +28,29 @@ if (sourceConfig.vars.SOURCE_TRANSPORT_ENABLED !== 'false' || sourceConfig.vars.
   || sourceConfig.containers[0].max_instances !== 1 || sourceConfig.containers[0].instance_type !== 'lite') throw new Error('Source deployment exceeds its private, disabled scope');
 // A named, empty auth profile prevents cached interactive OAuth scopes from
 // incorrectly overriding the explicitly supplied deployment API token.
-execFileSync('npx', ['wrangler', 'deploy', '--no-bundle', '--config', sourceConfigFile, '--profile', 'therecap-migration-api'], { stdio: 'inherit', env: { ...process.env, WRANGLER_SEND_METRICS: 'false' } });
+const proof = JSON.parse(readFileSync('cloudflare/verified-source.json', 'utf8'));
+const readProvider = async path => {
+  const response = await fetch(base + path, { headers: { authorization: 'Bearer ' + process.env.CLOUDFLARE_API_TOKEN }, signal: AbortSignal.timeout(15000) });
+  if (response.status === 404) return null;
+  const result = await response.json(); if (!response.ok || result.success === false) throw new Error('Source deployment state could not be verified'); return result.result;
+};
+const [sourceSettings, sourceDeployments, sourceRoute, applications, domains] = await Promise.all([
+  readProvider('/workers/scripts/therecap-source/settings'), readProvider('/workers/scripts/therecap-source/deployments'), readProvider('/workers/scripts/therecap-source/subdomain'), readProvider('/containers/applications'), readProvider('/workers/domains'),
+]);
+const sourceApp = applications?.find(item => item.name === 'therecap-source-sourcedownloader');
+const sourceVersions = sourceDeployments?.deployments?.[0]?.versions;
+const sourceLive = {
+  version: sourceVersions?.length === 1 && sourceVersions[0].percentage === 100 ? sourceVersions[0].version_id : null,
+  image: sourceApp?.configuration?.image?.split('@sha256:')[1], maximumInstances: sourceApp?.max_instances,
+  publicRoute: sourceRoute?.enabled === false && sourceRoute.previews_enabled === false && domains && !domains.some(item => item.service === 'therecap-source') ? false : true,
+  hasSecrets: sourceSettings?.bindings?.some(item => item.type === 'secret_text'),
+  enabled: sourceSettings?.bindings?.find(item => item.name === 'SOURCE_TRANSPORT_ENABLED')?.text === 'false' ? false : null,
+};
+if (sourceSettings && (sourceLive.publicRoute !== false || sourceLive.hasSecrets || sourceLive.enabled !== false || sourceLive.maximumInstances !== 1)) throw new Error('Current source isolation changed; refusing replacement');
+const reusable = canReuseSource(release, proof, sourceLive);
+if (sourceSettings && proof.workerHash === release.hashes.sourceWorker && proof.containerHash === release.hashes.sourceContainer && !reusable) throw new Error('Unchanged source artifacts no longer match hosted proof; verify the current source first');
+if (reusable) console.log(JSON.stringify({ event: 'verified_source_reused', version: proof.version, image: proof.image }));
+else execFileSync('npx', ['wrangler', 'deploy', '--no-bundle', '--config', sourceConfigFile, '--profile', 'therecap-migration-api'], { stdio: 'inherit', env: { ...process.env, WRANGLER_SEND_METRICS: 'false' } });
 for (const kind of ['jobs', 'web']) {
   const main = root + '/.local/cloudflare-build/' + kind + '/' + kind + '.js';
   const hash = createHash('sha256').update(readFileSync(main)).digest('hex');

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 const available = ['initdb', 'pg_ctl', 'psql'].every(bin => { try { execFileSync(bin, ['--version'], { stdio: 'ignore' }); return true; } catch { return false; } });
@@ -14,6 +14,7 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     args = ['-X', '-qAt', '-v', 'ON_ERROR_STOP=1', '-h', join(root, 'socket'), '-p', '55621', '-U', 'postgres', '-d', 'postgres'];
     sql('create role anon; create role authenticated; create role service_role;');
     sql(readFileSync(new URL('../supabase/migrations/20261104090000_hosting_runtime_handover.sql', import.meta.url), 'utf8'));
+    sql(readFileSync(new URL('../supabase/migrations/20261104095658_hosting_release_quiesce.sql', import.meta.url), 'utf8'));
   });
   afterAll(() => { if (started) execFileSync('pg_ctl', ['-D', join(root, 'data'), 'stop', '-m', 'immediate'], { stdio: 'ignore' }); if (root) rmSync(root, { recursive: true, force: true }); });
   it('starts paused, keeps all tables private, and denies public execution', () => {
@@ -51,5 +52,50 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     const before = sql('select to_jsonb(protected_fixture) from protected_fixture;');
     sql(`select change_hosting_runtime('cloudflare',3,'netlify','${release}',true,true);`);
     expect(sql('select to_jsonb(protected_fixture) from protected_fixture;')).toBe(before);
+  });
+  const isolated = (query: string, isolation = '') => sql(`begin ${isolation}; truncate hosting_work; update hosting_runtime_control set owner='cloudflare',epoch=10,release='${release}',paused=false,old_host_fenced=true; ${query}; rollback;`);
+  it('keeps deployment status and pause RPCs service-only', () => {
+    for (const role of ['anon', 'authenticated']) for (const signature of ['read_hosting_release_status()', 'quiesce_hosting_release(bigint,text)']) {
+      expect(sql(`select has_function_privilege('${role}','${signature}','execute');`)).toBe('f');
+    }
+    expect(JSON.parse(isolated('set local role service_role; select read_hosting_release_status()'))).toMatchObject({ work: { queued: 0, running: 0, uncertain: 0 } });
+  });
+  it('refuses to strand queued work or change owner/epoch while pausing', () => {
+    expect(() => isolated(`select admit_hosting_work('pending','keyword-learning',10,'${release}','{"fixture":true}'); select quiesce_hosting_release(10,'${release}')`)).toThrow();
+    const result = JSON.parse(isolated(`select quiesce_hosting_release(10,'${release}')`));
+    expect(result.control).toMatchObject({ owner: 'cloudflare', epoch: 10, release, paused: true, old_host_fenced: true });
+    expect(() => isolated(`select quiesce_hosting_release(9,'${release}')`)).toThrow();
+    expect(() => isolated(`update hosting_runtime_control set old_host_fenced=false; select quiesce_hosting_release(10,'${release}')`)).toThrow();
+    expect(() => isolated(`select quiesce_hosting_release(10,'${release}')`, 'isolation level repeatable read')).toThrow();
+  });
+  it('reports running and uncertain work without expiring, retrying or deleting it', () => {
+    const result = isolated(`select admit_hosting_work('active','http',10,'${release}'); select begin_hosting_work('active','http',10,'${release}'); update hosting_work set lease_until=now()-interval '1 day'; insert into hosting_work(key,kind,epoch,release,state) values('held','http',9,'${release}','uncertain'); select quiesce_hosting_release(10,'${release}')`).split('\n').at(-1)!;
+    expect(JSON.parse(result).work).toEqual({ queued: 0, running: 1, expired_running: 1, uncertain: 1 });
+    expect(() => isolated(`select quiesce_hosting_release(10,'${release}'); select admit_hosting_work('late','http',10,'${release}')`)).toThrow();
+  });
+  it('serializes pause behind a concurrent admission and sees its committed queued row', async () => {
+    sql(`truncate hosting_work; update hosting_runtime_control set owner='cloudflare',epoch=10,release='${release}',paused=false,old_host_fenced=true;`);
+    const child = spawn('psql', args, { stdio: ['pipe', 'pipe', 'pipe'] });
+    const finished = new Promise<number | null>(resolve => child.on('exit', resolve));
+    await new Promise<void>((resolve, reject) => {
+      child.once('error', reject); child.stdout.on('data', chunk => { if (String(chunk).includes('admitted-fixture')) resolve(); });
+      child.stdin.write(`begin; select admit_hosting_work('concurrent','http',10,'${release}'); select 'admitted-fixture';\n`);
+    });
+    const pauser = spawn('psql', args, { env: { ...process.env, PGAPPNAME: 'recap-quiesce-fixture' }, stdio: ['pipe', 'pipe', 'pipe'] });
+    let error = ''; pauser.stderr.on('data', chunk => { error += String(chunk); });
+    const paused = new Promise<number | null>(resolve => pauser.on('exit', resolve));
+    pauser.stdin.end(`select quiesce_hosting_release(10,'${release}');`);
+    try {
+      let waiting = false;
+      for (let attempt = 0; attempt < 30; attempt++) {
+        waiting = sql("select exists(select 1 from pg_stat_activity where application_name='recap-quiesce-fixture' and wait_event_type='Lock');") === 't';
+        if (waiting) break;
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+      expect(waiting).toBe(true);
+    } finally { child.stdin.end('commit;\n'); }
+    expect(await finished).toBe(0); expect(await paused).not.toBe(0);
+    expect(error).toContain('Drain queued hosting work before pausing');
+    expect(JSON.parse(sql('select read_hosting_runtime();')).paused).toBe(false);
   });
 });
