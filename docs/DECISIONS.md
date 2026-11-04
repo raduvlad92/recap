@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 5 November 2026 — immediate Therecap-only Netlify retirement
+
+Founder explicitly instructed **“just remove the netlify now, no need to wait”**. This supersedes the earlier 72-hour/two-cutoff prerequisite for deleting the old site. Delete only Therecap's verified Netlify site and its obsolete hook/secret/exclusive deploy keys, preserve all other sites/shared account resources, and verify Cloudflare availability afterward. Actual deletion and cleanup are complete; the observation interval is not claimed passed. Cancel the obsolete final retirement task and keep the two already-scheduled daily cutoff checks as read-only Cloudflare observations with updated instructions. No change to database/authentication, data, spending caps, review approval or reminder consent is implied. [Evidence and limits](tech/NETLIFY-RETIREMENT.md).
+
 ## 4 November 2026 — active restoration and finite acceptance observation
 
 The checked normal active release preserves the acknowledged maintenance pause; the same maintenance journal then acknowledges restoration against that exact release/checkpoint. Current native browser/API/callback/finance checks establish the new acceptance start, **4 November 22:26:36.944 UTC**, rather than counting the earlier defective active interval. Observe at least 72 hours and two genuine daily cutoffs through three finite thread-bound tasks. Normal reconciliation may settle old holds only with exact provider evidence; keep original records/maxima/launch identity and unknown costs. The existing Resend callback moves to the permanent Cloudflare origin without changing its secret/events or email consent. Netlify retirement remains limited to Therecap after fresh acceptance. No product, subscription, cap, review-approval or reminder decision changes. [Evidence and continuation](tech/CLOUDFLARE-ACCEPTANCE.md).

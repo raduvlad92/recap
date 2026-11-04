@@ -1,5 +1,7 @@
 # Full Netlify → Cloudflare migration
 
+**5 November Berlin — retirement completed at founder request:** the founder explicitly waived the waiting period. Only Therecap's Netlify site and obsolete hook/secret/exclusive deploy keys are deleted; native absence and continued Cloudflare availability verify. The acceptance interval is not claimed complete. [Current evidence and remaining read-only checks](NETLIFY-RETIREMENT.md). Earlier implementation/retirement states below are historical.
+
 **Current native state:** Cloudflare ownership and target selection are committed; the old key is fenced and the workflow restored. Active acceptance exposed an empty-completion response bug, so processing is under an acknowledged maintenance pause pending the checked fix. The 72-hour window and Netlify retirement have not started. [Exact proof and continuation](CLOUDFLARE-CUTOVER.md).
 
 **Latest checkpoint:** PR #5 merged as `1f78d11`; checked active preparation and native operator Git storage now pass, separately from live cutover. Local executor composition/recovery is implemented; private parity, usable active recovery and serialized complete native verification remain. [Current scope and evidence](CLOUDFLARE-EXECUTOR.md) supersede historical next-action statements below.

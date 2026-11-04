@@ -1,6 +1,6 @@
 # Your recap admin guide
 
-Open [Administration](https://recap-v0-radu.netlify.app/admin/) and use the same owner email you use for the Clerk dashboard. On your first app visit, choose **Sign up** if you have not created an app account yet; a dashboard account and an app account are separate. Verify that same email through the normal sign-in flow. Owner access is already configured on the server; you do not need to provide tokens or change Supabase settings. Other readers cannot see this panel or its private data. The [current release status](../../STATUS.md) records deployment verification separately from this guide.
+Open [Administration](https://recap.filternode.dev/admin/) and use the same owner email you use for the Clerk dashboard. On your first app visit, choose **Sign up** if you have not created an app account yet; a dashboard account and an app account are separate. Verify that same email through the normal sign-in flow. Owner access is already configured on the server; you do not need to provide tokens or change Supabase settings. Other readers cannot see this panel or its private data. The [current release status](../../STATUS.md) records deployment verification separately from this guide.
 
 ## What each area shows
 
@@ -20,7 +20,7 @@ Open [Administration](https://recap-v0-radu.netlify.app/admin/) and use the same
 
 ## Decide a held keyword or recap
 
-Open [Review queue](https://recap-v0-radu.netlify.app/admin/?section=reviews). Each compact row shows the keyword or recap, its source and why it was held. Open only the item you want to decide.
+Open [Review queue](https://recap.filternode.dev/admin/?section=reviews). Each compact row shows the keyword or recap, its source and why it was held. Open only the item you want to decide.
 
 - **Exact transcript / source** shows the saved text used for that analysis. **Saved AI prompt** shows the actual stored system instructions, request and model. Older items may say **Prompt not saved**; a current template is never shown as a historical request. A source-review suggestion is labeled separately from what the AI returned. If there are many saved prompts, use **Next prompts** or **Previous prompts**; your edits stay in place.
 - **Confirm and publish** approves that item and applies it to its reader update. It does not enable analysis for other videos or start collection. Confirmation is disabled when the source changed or the saved proposal is invalid.
@@ -54,7 +54,7 @@ The open reader normally picks up approvals on its next visible-page check, abou
 1. Open **Overview**, then **Readers**. Open your own reader record to check that the followed sources match your workspace.
 2. Search **Creators** for **Marques Brownlee**. Its three evidenced channels share one creator page.
 3. Open **Collection plans** and inspect the different billing units. YouTube video records, X profile queries and transcript minutes are separate costs.
-4. Open [the public creator directory](https://recap-v0-radu.netlify.app/creators/) and follow a creator page to its original account links. Pages explain the planned collection and its gaps; they do not claim collected posts.
+4. Open [the public creator directory](https://recap.filternode.dev/creators/) and follow a creator page to its original account links. Pages explain the planned collection and its gaps; they do not claim collected posts.
 
 There are **600 researched platform accounts: 120 each on YouTube, Instagram, X, Substack and LinkedIn**. They form **560 canonical creator records**, with 33 having multiple evidenced channels. People and publishing groups remain separate. One Ottolenghi Instagram/Substack identity pair remains unresolved and is clearly recorded in the [import manifest](../catalogue/IMPORT-REPORT.md); matching names alone did not merge it.
 

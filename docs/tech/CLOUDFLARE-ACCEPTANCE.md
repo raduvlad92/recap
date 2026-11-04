@@ -1,5 +1,7 @@
 # Cloudflare acceptance and remaining Netlify retirement
 
+**Superseded retirement gate, 5 November Berlin:** the founder explicitly requested immediate Netlify removal without waiting. The site, hook/secret and exclusive deploy keys are now removed, with native absence and post-removal Cloudflare checks verified. The final retirement task is deleted; the first two cutoff checks remain read-only observations with updated instructions. The 72-hour/two-cutoff interval below was not completed or claimed passed. [Current retirement evidence](NETLIFY-RETIREMENT.md). The original checkpoint and schedule below remain historical evidence.
+
 Checkpoint: **4 November 2026, 22:29 UTC.** Cloudflare serves the permanent origin, owns processing and receives automatic checked-main deployments. The maintenance correction is deployed and processing is restored. Active browser/API checks pass. **Acceptance started at 22:26:36.944 UTC; it is incomplete. Netlify is fenced, not deleted.**
 
 ## Checked release and restored processing

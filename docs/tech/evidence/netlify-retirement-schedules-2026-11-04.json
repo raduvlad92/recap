@@ -1,0 +1,28 @@
+{
+  "recorded_at": "2026-11-04T23:33:40.497739+00:00",
+  "source": "Actual native T3 scheduled-task delete/update responses",
+  "changes": [
+    {
+      "title": "Recap Cloudflare: final acceptance and site-only retirement",
+      "action": "deleted",
+      "result": {
+        "scheduledTaskId": "scheduled-task:command:mcp:84ab0680-6785-471f-9520-ad4ecc3aeca3:schedule-task:therecap-cf-acceptance-80c3d6c-final-20261107",
+        "deleted": true
+      }
+    },
+    {
+      "title": "Recap Cloudflare: second normal daily cutoff",
+      "action": "updated_read_only",
+      "scheduledTaskId": "scheduled-task:command:mcp:84ab0680-6785-471f-9520-ad4ecc3aeca3:schedule-task:therecap-cf-acceptance-80c3d6c-cutoff2-20261106",
+      "nextRunAt": "2026-11-06T07:15:00.000Z",
+      "enabled": true
+    },
+    {
+      "title": "Recap Cloudflare: first normal daily cutoff",
+      "action": "updated_read_only",
+      "scheduledTaskId": "scheduled-task:command:mcp:84ab0680-6785-471f-9520-ad4ecc3aeca3:schedule-task:therecap-cf-acceptance-80c3d6c-cutoff1-20261105",
+      "nextRunAt": "2026-11-05T07:15:00.000Z",
+      "enabled": true
+    }
+  ]
+}

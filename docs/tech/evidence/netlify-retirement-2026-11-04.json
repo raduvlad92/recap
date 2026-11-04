@@ -1,0 +1,112 @@
+{
+  "started_at": "2026-11-04T23:30:38.139Z",
+  "authorization": "Founder explicitly requested immediate Netlify removal and waived waiting for the 72-hour acceptance window.",
+  "site": {
+    "id": "522a0657-c191-4355-8d72-2ed19c580b81",
+    "name": "recap-v0-radu"
+  },
+  "actions": [
+    {
+      "action": "delete_site_build_hook",
+      "status": 204
+    },
+    {
+      "action": "delete_repository_secret",
+      "name": "NETLIFY_BUILD_HOOK"
+    },
+    {
+      "action": "delete_exclusive_readonly_repository_deploy_key"
+    },
+    {
+      "action": "delete_netlify_site",
+      "status": 204,
+      "at": "2026-11-04T23:30:44.598Z"
+    },
+    {
+      "action": "delete_exclusive_netlify_deploy_key",
+      "status": 404
+    }
+  ],
+  "acceptance_window_completed": false,
+  "before_cloudflare": {
+    "checked_at": "2026-11-04T23:30:40.568Z",
+    "health_status": 200,
+    "hosting": {
+      "provider": "cloudflare",
+      "mode": "active",
+      "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+      "jobsConfigured": true
+    },
+    "routes": [
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/creators/",
+        "status": 200
+      },
+      {
+        "path": "/api/admin",
+        "status": 401
+      }
+    ],
+    "hosting_target": "cloudflare",
+    "deployment_workflow": "active",
+    "successful_deployment": "https://github.com/raduvlad92/recap/actions/runs/41920092072"
+  },
+  "preflight": {
+    "site_id": "522a0657-c191-4355-8d72-2ed19c580b81",
+    "site_name": "recap-v0-radu",
+    "repo": "https://github.com/raduvlad92/recap",
+    "builds_stopped": true,
+    "custom_domain": null,
+    "aliases": [],
+    "has_database": false,
+    "identity_present": false,
+    "build_hooks": 1,
+    "deploy_key_exclusive_site_count": 1,
+    "matching_readonly_repository_keys": 1,
+    "other_sites": 18
+  },
+  "site_absence_status": 404,
+  "other_sites_preserved": 18,
+  "remaining_repository_secret_names": [
+    "CLOUDFLARE_API_TOKEN",
+    "CLOUDFLARE_HOSTING_DATABASE_KEY"
+  ],
+  "after_cloudflare": {
+    "checked_at": "2026-11-04T23:30:48.472Z",
+    "health_status": 200,
+    "hosting": {
+      "provider": "cloudflare",
+      "mode": "active",
+      "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+      "jobsConfigured": true
+    },
+    "routes": [
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/creators/",
+        "status": 200
+      },
+      {
+        "path": "/api/admin",
+        "status": 401
+      }
+    ],
+    "hosting_target": "cloudflare",
+    "deployment_workflow": "active",
+    "successful_deployment": "https://github.com/raduvlad92/recap/actions/runs/41920092072"
+  },
+  "completed_at": "2026-11-04T23:30:48.473Z",
+  "netlify_site_deleted": true,
+  "shared_netlify_account_preserved": true,
+  "manual_provider_model_runs": 0,
+  "emails_sent": 0,
+  "database_auth_and_processing_policy_changed": false,
+  "costs": "No new subscription or paid provider/model execution; hosting/API costs unmeasured and account billing not inferred from site deletion."
+}

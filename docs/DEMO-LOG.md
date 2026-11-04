@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 5 November 2026 — immediate Netlify removal and live Cloudflare readback
+
+At the founder's explicit instruction to remove Netlify without waiting, deleted exact site `522a0657-c191-4355-8d72-2ed19c580b81` at **4 November 23:30:44 UTC / 5 November 00:30 Berlin**. Native DELETE returns 204; subsequent GET returns 404 and the full inventory lacks the site. Its one build hook, repository hook secret and matched exclusive read-only deploy keys are absent. All 18 other sites retain their exact IDs. Before/after live health reports active Cloudflare `80c3d6c`, jobs configured, homepage/directory 200 and anonymous admin 401; target/workflow and exact-release successful deployment verify. [Sanitized operational receipt](tech/evidence/netlify-retirement-2026-11-04.json).
+
+The 72-hour/two-cutoff wait was explicitly waived for retirement, not completed. Removed the obsolete final retirement task and updated the existing 5/6 November 08:15 Berlin read-only checks to acknowledge completed retirement. No new observer, manual source/model run, email, database/auth change or budget/consent change. Shared-account billing and metered hosting/API/CI costs are not inferred from deletion. Repository cleanup/check/PR results are separate from actual deletion. [Current scope and continuation](tech/NETLIFY-RETIREMENT.md).
+
 ## 4 November 2026 — checked active correction, real private APIs and acceptance start
 
 PR #9 has four successful jobs, two expected skips and two neutral probes on `0dd7abf`, no comments/reviews, and merges as `80c3d6c`. Both main workflows succeed; the normal active deployment's native archive/full manifest and complete GitHub App release checkpoint verify. Its expected pause chains to the remote maintenance operation; an acknowledged checked restoration resumes Cloudflare/epoch 3/fenced with original policy, private enabled source and bounded delivery. Original 56-table/21,115-row/296-definition preservation passes before resume. [CI/archive](tech/evidence/cloudflare-patched-main-ci-2026-11-04.json), [restoration](tech/evidence/cloudflare-maintenance-restored-2026-11-04.json).
