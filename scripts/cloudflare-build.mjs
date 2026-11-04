@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { build } from 'esbuild';
+import { assetManifest, fileHash } from './cloudflare-artifacts.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const mode = process.env.HOSTING_BUILD_MODE || 'shadow';
 const release = process.env.RELEASE_SHA || execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
@@ -31,4 +32,5 @@ for (const kind of ['jobs', 'web']) {
 const hashes = Object.fromEntries(['jobs', 'web'].map(kind => [kind, createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/' + kind + '/' + kind + '.js')).digest('hex')]));
 hashes.sourceWorker = createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/source-worker/source.js')).digest('hex');
 hashes.sourceContainer = createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/source-container/server.mjs')).update(readFileSync(root + '.local/cloudflare-build/source-container/Dockerfile')).digest('hex');
-writeFileSync(root + '.local/cloudflare-build/release.json', JSON.stringify({ release, mode, appUrl: 'https://recap.filternode.dev', jobsEnabled: false, hashes }, null, 2) + '\n');
+const configs = Object.fromEntries(['jobs', 'web'].map(kind => [kind, fileHash(root + '.local/cloudflare-build/' + kind + '.json')]));
+writeFileSync(root + '.local/cloudflare-build/release.json', JSON.stringify({ release, mode, appUrl: 'https://recap.filternode.dev', jobsEnabled: false, hashes, configs, assets: assetManifest(root + 'dist-cloudflare') }, null, 2) + '\n');

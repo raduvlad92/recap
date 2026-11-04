@@ -8,6 +8,9 @@
   ],
   "workers_dev": true,
   "preview_urls": false,
+  "routes": [
+    { "pattern": "recap.filternode.dev", "custom_domain": true, "zone_name": "filternode.dev" }
+  ],
   "assets": {
     "directory": "../dist-cloudflare",
     "binding": "ASSETS",

@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { assetManifest, fileHash } from './cloudflare-artifacts.mjs';
 const root = process.cwd(), release = JSON.parse(readFileSync('.local/cloudflare-build/release.json', 'utf8'));
 const mode = process.env.HOSTING_DEPLOY_MODE || 'shadow';
 if (mode !== 'shadow') throw new Error('Active promotion requires the separate verified hosting cutover operation');
@@ -16,13 +17,17 @@ if (existing.ok) {
 const head = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 if (head !== release.release || release.mode !== 'shadow') throw new Error('The tested shadow artifact must match the checked commit');
 const changed = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'], { encoding: 'utf8' }).split('\n');
-if (changed.some(line => /^(?:.{3})(?:src\/|netlify\/|cloudflare\/|containers\/|scripts\/|package(?:-lock)?\.json|tsconfig\.json|vite\.)/.test(line))) throw new Error('Commit production source changes before deploying the tested artifact');
+if (changed.some(line => /^(?:.{3})(?:src\/|public\/|index\.html|netlify\/|cloudflare\/|containers\/|scripts\/|package(?:-lock)?\.json|tsconfig\.json|vite\.)/.test(line))) throw new Error('Commit production source changes before deploying the tested artifact');
+if (JSON.stringify(assetManifest(root + '/dist-cloudflare')) !== JSON.stringify(release.assets)) throw new Error('Built assets changed after verification');
 for (const kind of ['jobs', 'web']) {
   const main = root + '/.local/cloudflare-build/' + kind + '/' + kind + '.js';
   const hash = createHash('sha256').update(readFileSync(main)).digest('hex');
   if (hash !== release.hashes[kind]) throw new Error('Built Worker artifact changed after verification');
-  const config = JSON.parse(readFileSync('.local/cloudflare-build/' + kind + '.json', 'utf8'));
-  if (config.vars.HOSTING_MODE !== 'shadow' || config.triggers.crons.length) throw new Error('Shadow deployment cannot have schedules');
+  const configFile = '.local/cloudflare-build/' + kind + '.json';
+  if (fileHash(configFile) !== release.configs?.[kind]) throw new Error('Built deployment configuration changed after verification');
+  const config = JSON.parse(readFileSync(configFile, 'utf8'));
+  if (config.vars.HOSTING_MODE !== 'shadow' || config.vars.RELEASE_SHA !== head || config.triggers.crons.length || config.queues.consumers.length
+    || Object.entries(config.vars).some(([key, value]) => key.endsWith('_ENABLED') && value !== 'false')) throw new Error('Shadow deployment cannot activate processing');
   config.main = main;
   // Upload exactly the tested bundle, never rebuild from a moving Git branch.
   const file = '.local/cloudflare-build/' + kind + '.deploy.json'; writeFileSync(file, JSON.stringify(config, null, 2));
