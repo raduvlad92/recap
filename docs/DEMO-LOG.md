@@ -1,5 +1,13 @@
 # Demo and evidence log
 
+## 4 November 2026 — second main deployment verified; durable switch journal rehearsed
+
+All six PR #2 results pass on `3612e2d`: four successful jobs, expected skipped PR deployment and neutral release-checkpoint probe. Merge `72380f5a7b0bc60ceb2bf10397c2ec26dc974f43` passes actual main runs `41850333486` / `41850333556`; the Netlify hook is skipped and Cloudflare deploys the exact checked shadow artifact. Independent readback passes 22 routes/two denials, 72 exact assets, 560 creator pages and preservation of the original 56 tables / 21,115 rows / 296 definitions. Source stays private/inactive, flags off, no schedules/consumers; Netlify-owned/paused control and old uncertain records/holds remain. [CI](tech/evidence/cloudflare-main-followup-ci-2026-11-04.json), [hosted proof](tech/evidence/cloudflare-main-followup-hosted-readback-2026-11-04.json).
+
+The new handover/rollback journal validates closed sanitized state and the full original artifact, saves/reads back operation IDs, reconciles lost writes and refuses stale/duplicate/changed checkpoints. Isolated GitHub transport plus coordinator fixtures prove interrupted ownership/pause/restore operations run once. Full local check passes 3,804 tests / 118 files, with 93 focused cases. The workflow adds a separate neutral transport-only storage probe; its real GitHub App result awaits new-PR CI. No executable fake checkpoint is created. [Local proof and limits](tech/evidence/cloudflare-handover-journal-local-2026-11-04.json).
+
+External Chrome still returns `cgWindowNotFound`; controlled-tab creation reports `The browser access host is unavailable`. Earlier actual owner proof retains its original release. Private parity, active recovery proof and complete native switch workflow remain. No key revocation, committed transfer, provider/model job, content approval, reminder or Netlify deletion occurs. Metered hosting cost is unmeasured.
+
 ## 4 November 2026 — actual main delivery and metadata-only legacy assessment
 
 PR #1 merged as `14e1a81cb0c5d7ecda9966ba6dd220114d8e9bbd`. Main application run `41840413397` and Cloudflare run `41840413367` pass; the old hook is skipped and the exact checked shadow artifact is automatically deployed. Independent readback passes 22 routes/two denials, 72 asset hashes, 560 creator pages and exact preservation of the original 56 tables / 21,115 rows / 296 definitions. Source remains private/inactive, execution flags off, no schedules/consumers, owner Netlify/paused. [Main CI](tech/evidence/cloudflare-main-ci-2026-11-04.json), [hosted audit](tech/evidence/cloudflare-main-hosted-readback-2026-11-04.json).

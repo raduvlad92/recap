@@ -1,5 +1,9 @@
 # Cloudflare migration implementation
 
+## Durable switch journal and second main deployment — current, 4 November 2026
+
+PR #2 merged as `72380f5`; both actual main workflows and the independent hosted route/asset/original-data audit pass with shadow processing still off. A separate durable handover/recovery journal now validates the complete artifact and sanitized progress, saves operation IDs remotely, reconciles lost writes and refuses stale checkpoints. Full local check passes 3,804 tests / 118 files, with 93 focused cases. Its new native GitHub App transport-only probe awaits PR CI; private parity, usable active recovery and final native switch wiring remain. [Current protocol/local limits](CLOUDFLARE-HANDOVER.md), [follow-up CI](evidence/cloudflare-main-followup-ci-2026-11-04.json), [hosted proof](evidence/cloudflare-main-followup-hosted-readback-2026-11-04.json). No ownership transfer, key revocation, execution activation or retirement occurs. Earlier checkpoints below are historical.
+
 ## Checked-main delivery and legacy assessment — current, 4 November 2026
 
 PR #1 is merged as `14e1a81`; both actual main workflows pass. Cloudflare automatically deploys the exact checked shadow artifact and reuses the verified private source image; the paused Netlify hook is skipped. Independent readback verifies 22 routes/two denials, 72 matching assets, 560 creator pages and exact preservation of the original 56 tables / 21,115 rows / 296 definitions. [Main CI](evidence/cloudflare-main-ci-2026-11-04.json), [hosted verification](evidence/cloudflare-main-hosted-readback-2026-11-04.json).
