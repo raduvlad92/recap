@@ -32,6 +32,7 @@ try {
   const app = await mf.dispatchFetch('https://recap.filternode.dev/admin/');
   assert.equal(app.status, 200); assert.equal(app.headers.get('x-frame-options'), 'DENY'); assert.match(app.headers.get('x-robots-tag'), /noindex/); checks++;
   const robots = await mf.dispatchFetch('https://recap.filternode.dev/robots.txt');
+  assert.match(robots.headers.get('x-robots-tag'), /noindex/); assert.equal(robots.headers.get('x-content-type-options'), 'nosniff');
   assert.match(await robots.text(), /Sitemap: https:\/\/recap\.filternode\.dev\/sitemap\.xml/); checks++;
   console.log(JSON.stringify({ runtime: 'workerd', checks, passed: true, outboundNetwork: 'blocked', productionCredentials: false }));
 } finally { await mf.dispose(); }

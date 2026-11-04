@@ -24,7 +24,7 @@ export async function handleWeb(request: Request, bindings: Bindings): Promise<R
   return runWithBindings(bindings, async () => {
     try {
       const url = new URL(request.url), name = routeName(url.pathname);
-      if (url.pathname === '/robots.txt') return new Response('User-agent: *\nDisallow: /\nAllow: /creators\nAllow: /catalogue.css\nAllow: /fonts/\nAllow: /favicon.svg\nSitemap: ' + bindings.APP_URL + '/sitemap.xml\n', { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300' } });
+      if (url.pathname === '/robots.txt') return secureResponse(new Response('User-agent: *\nDisallow: /\nAllow: /creators\nAllow: /catalogue.css\nAllow: /fonts/\nAllow: /favicon.svg\nSitemap: ' + bindings.APP_URL + '/sitemap.xml\n', { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300' } }));
       if (name) {
         const handler = handlers[name];
         // Background/scheduler URLs have no public execution path here.
