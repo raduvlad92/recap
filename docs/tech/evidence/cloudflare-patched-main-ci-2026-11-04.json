@@ -1,0 +1,111 @@
+{
+  "recordedAt": "2026-11-04T22:29:24.868Z",
+  "pullRequest": 9,
+  "head": "0dd7abfd94507b156b19e3d976d2c621b6ec009d",
+  "merge": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+  "mergedAt": "2026-11-04T21:52:18Z",
+  "comments": 0,
+  "reviews": 0,
+  "checks": [
+    {
+      "name": "cloudflare-handover-journal-probe",
+      "status": "completed",
+      "conclusion": "neutral"
+    },
+    {
+      "name": "cloudflare-release-journal-probe",
+      "status": "completed",
+      "conclusion": "neutral"
+    },
+    {
+      "name": "deploy",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "prepare-active",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "checkpoint-storage",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "artifact-integrity",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "verify",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "check",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "main": {
+    "application": {
+      "runId": 41920092192,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "cloudflare": {
+      "runId": 41920092072,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "deploy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "artifact-integrity",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "prepare-active",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "checkpoint-storage",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "cloudflare-release-checkpoint",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  },
+  "activeArtifact": {
+    "artifactId": 13367931126,
+    "archiveDigest": "sha256:d7c03751621413dcde23e857eb67786a2acbe9c2665b8ab7bee15719cb6aef9b",
+    "artifactDigest": "6d067682405aa6eb78fdb95b3a5fbe9c948a7e452d23c7ae475294c291aca0ca",
+    "nativeZipAndAllCheckedFilesVerified": true
+  },
+  "releaseCheckpoint": {
+    "checkRunId": 126896081640,
+    "phase": "complete",
+    "planDigest": "371a7f4c5f36fb97798c2b9e65495840c3867b860e4a0a8e1de6424d538512ca",
+    "maintenancePauseInherited": true,
+    "versions": {
+      "jobs": "9a795c99-a874-4c51-88b7-795a0c8721dc",
+      "web": "7dec3ee9-8f82-4c47-9cd3-bb8eb79801cf"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # Native cutover and acceptance maintenance
 
-Checkpoint: 4 November 2026. **Cloudflare owns the application; processing is deliberately paused for a checked compatibility fix. Netlify is fenced and has not been deleted. The 72-hour acceptance window has not started.**
+Historical checkpoint: 4 November 2026, before the compatibility deployment. **The fix is now deployed, maintenance is restored and active browser/API checks pass. Acceptance began at 22:26:36.944 UTC. Netlify remains fenced and is not deleted.** Follow [current acceptance and finite follow-ups](CLOUDFLARE-ACCEPTANCE.md); the paused state and continuation below describe the earlier checkpoint.
 
 ## Exact checked release
 

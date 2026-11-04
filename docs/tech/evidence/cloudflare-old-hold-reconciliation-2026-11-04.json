@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-11-04T22:26:04.049Z",
+  "scope": "authenticated-old-run-financial-readback",
+  "originalSourceReservationsRetained": 19,
+  "unchangedHolds": 17,
+  "settledByNormalScheduledReconciliation": 2,
+  "allOriginalLaunchAttemptsAndMaximumsUnchanged": true,
+  "originalUnknownModelFinancialRowsUnchanged": 7,
+  "providerReceipts": [
+    {
+      "status": "SUCCEEDED",
+      "usageTotalUsd": 0.0000734989750650194,
+      "finishedAt": "2026-11-02T09:05:14.623Z",
+      "actualCostUsd": "0.000073498976",
+      "updatedAt": "2026-11-04 22:15:24.899262+00",
+      "terminalReportedFeeMatches": true,
+      "rounding": "ceiling-to-12-decimal-USD"
+    },
+    {
+      "status": "SUCCEEDED",
+      "usageTotalUsd": 0.00008321147666871547,
+      "finishedAt": "2026-11-02T09:05:13.934Z",
+      "actualCostUsd": "0.000083211477",
+      "updatedAt": "2026-11-04 22:15:24.876739+00",
+      "terminalReportedFeeMatches": true,
+      "rounding": "ceiling-to-12-decimal-USD"
+    }
+  ],
+  "providerMetadataGetRequests": 3,
+  "providerRunsStartedByVerification": 0,
+  "manualFinancialWrites": 0,
+  "chargesAreProviderReportedNotFinalInvoice": true
+}

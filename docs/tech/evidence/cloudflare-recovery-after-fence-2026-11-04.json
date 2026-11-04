@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-11-04T22:29:07.966Z",
+  "scope": "post-fence-unserved-paused-recovery-readback",
+  "release": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+  "versions": {
+    "jobs": "cc1dded2-eeab-481f-bcb0-fc66740ede7e",
+    "web": "ca2037bc-bf96-4cad-9d9c-abcf28ddab98"
+  },
+  "archiveAndAllLocalFilesRehashed": true,
+  "immutableVersionPolicyAndBindingsVerified": true,
+  "allCandidateExecutionFlagsFalse": true,
+  "candidateHealth": 200,
+  "privateApiStatus": 503,
+  "privateApiCode": "hosting_execution_paused",
+  "revokedKeyFailureExcluded": true,
+  "previewsRestoredDisabled": true,
+  "primaryServingVersionsUnchanged": true,
+  "hostingControlAndRevisionUnchanged": true,
+  "sourcePolicyUnchanged": true,
+  "deliveryUnchanged": true,
+  "nativeRecoveryPromotionPerformed": false,
+  "manualSourceOrModelRuns": 0,
+  "emailsSent": 0
+}
