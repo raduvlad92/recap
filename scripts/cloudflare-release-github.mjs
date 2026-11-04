@@ -11,7 +11,8 @@ export class ReleaseGitHub {
     const response = await this.fetcher('https://api.github.com/repos/' + repository + '/' + path, {
       method: method || (body ? 'POST' : 'GET'), headers: { authorization: 'Bearer ' + this.token, accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', ...(body ? { 'content-type': 'application/json' } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}), redirect: 'error', signal: AbortSignal.timeout(15000),
     });
-    const result = await response.json(); requireState(response.ok, 'release_github_request_failed'); return result;
+    if (!response.ok) { await response.body?.cancel(); throw new ReleaseError('release_github_request_failed'); }
+    return response.status === 204 ? null : response.json();
   }
   async assertCheckedRelease(target) {
     const [ref, run, jobs] = await Promise.all([this.request('git/ref/heads/main'), this.request('actions/runs/' + this.runId), this.request('actions/runs/' + this.runId + '/jobs?filter=latest&per_page=100')]);

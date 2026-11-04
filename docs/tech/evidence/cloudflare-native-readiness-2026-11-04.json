@@ -1,7 +1,7 @@
 {
-  "recorded_at": "2026-11-04T14:59:08.479Z",
+  "recorded_at": "2026-11-04T15:33:22.600Z",
   "read_only": true,
-  "repository_head": "72380f5a7b0bc60ceb2bf10397c2ec26dc974f43",
+  "repository_head": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
   "artifact_matches_head": true,
   "ready_for_handover": false,
   "live_apply_entrypoint_available": false,
@@ -151,8 +151,8 @@
     "schema": 1,
     "action": "initial-cloudflare-handover",
     "oldSite": "522a0657-c191-4355-8d72-2ed19c580b81",
-    "target": "72380f5a7b0bc60ceb2bf10397c2ec26dc974f43",
-    "artifactDigest": "c029b87143c955f744b800a753605adb04de100ed5749063c67fde05221f9c35",
+    "target": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
+    "artifactDigest": "415ee58ff1d3e38ef02aeb653a53ab854aebe0747afeb4968c640f911bdbbf76",
     "expected": {
       "owner": "netlify",
       "epoch": 1,
@@ -162,8 +162,8 @@
       "revision": "4c119c72-4ddb-4917-96ba-da2943e314df"
     },
     "priorVersions": {
-      "web": "c79d0185-a508-4584-a398-4cb365068bad",
-      "jobs": "bbc5c508-5cb2-47f3-8a6d-3fad5083d733"
+      "web": "40f9965e-7a2c-4013-b490-7becfef131fb",
+      "jobs": "258e2e17-eb68-453f-afc2-db565ab8dfd5"
     },
     "bindings": {
       "web": "95dd06d4302c95b24e502bbbd3d645a27efd3538227c2fd26466f18e315e6a5f",
@@ -200,6 +200,6 @@
       "privateParity_proof_required",
       "usable_cloudflare_rollback_required"
     ],
-    "digest": "3dacac49e70b0cf5e3e2460e11d0de6b0a5c614b0396e5c225dbc10698ded73f"
+    "digest": "0571a59b5438aed8b12bf925e27562851a24bf7669d6e52c8f38aa985a7c7f6a"
   }
 }

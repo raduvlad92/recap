@@ -1,0 +1,33 @@
+{
+  "recorded_at": "2026-11-04T15:26:25.248Z",
+  "scope": "native-read-only-fixed-delivery-metadata",
+  "target": {
+    "name": "HOSTING_TARGET",
+    "value": "paused",
+    "updatedAt": "2026-11-04T13:04:59Z"
+  },
+  "schedules": {
+    "web": [],
+    "jobs": [],
+    "source": []
+  },
+  "queues": {
+    "therecap-jobs": {
+      "idHash": "58324d916eaf0516240c6e15462c422be3b94039ba7bc424173a246fbd246177",
+      "consumers": 0
+    },
+    "therecap-jobs-dead": {
+      "idHash": "e899109ee1837c4d4c4a6ad14267101eec4e1c6ea005f019b994e1e750683f0e",
+      "consumers": 0
+    }
+  },
+  "getRequests": 7,
+  "allRequestsGet": true,
+  "credentialsRecorded": false,
+  "runtimeChanged": false,
+  "providerWrites": 0,
+  "databaseWrites": 0,
+  "consumerCreated": false,
+  "schedulesEnabled": false,
+  "targetSelected": false
+}

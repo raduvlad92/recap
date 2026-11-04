@@ -1,0 +1,354 @@
+{
+  "recorded_at": "2026-11-04T15:31:03.151Z",
+  "stage": "actual-checked-main-shadow-autodeploy",
+  "url": "https://recap.filternode.dev",
+  "release": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
+  "workers": {
+    "therecap-web": {
+      "release": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
+      "mode": "shadow",
+      "allExecutionFlagsOff": true,
+      "secrets": [
+        "ADMIN_ALLOWED_EMAILS",
+        "ADMIN_USER_IDS",
+        "APIFY_API_TOKEN",
+        "APIFY_MAX_ITEMS",
+        "APIFY_MAX_TOTAL_CHARGE_USD",
+        "APIFY_YOUTUBE_BUILD",
+        "APIFY_YOUTUBE_BUILD_ID",
+        "APIFY_YOUTUBE_PRICING_SHA256",
+        "CLERK_ISSUER_URL",
+        "CLERK_SECRET_KEY",
+        "COLLECTION_ALLOWED_USER_IDS",
+        "COLLECTION_JOB_SECRET",
+        "CONTENT_ANALYSIS_CONFIG_EPOCH",
+        "CONTENT_ANALYSIS_MODEL",
+        "CONTENT_ANALYSIS_OPENROUTER_PROVIDER",
+        "CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME",
+        "CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL",
+        "CONTENT_ANALYSIS_PRICE_MODEL",
+        "CONTENT_ANALYSIS_PRICING_VERIFIED",
+        "CONTENT_ANALYSIS_PRICING_VERSION",
+        "CONTENT_ANALYSIS_ROUTE",
+        "CONTENT_ANALYSIS_WORKER_SECRET",
+        "HOURLY_COLLECTION_MAX_NEW_VIDEOS",
+        "HOURLY_COLLECTION_PROVIDER_VERIFIED",
+        "HOURLY_COLLECTION_WORKER_SECRET",
+        "OPENROUTER_API_KEY",
+        "SUPABASE_SECRET_KEY",
+        "VITE_CLERK_PUBLISHABLE_KEY",
+        "VITE_SUPABASE_PUBLISHABLE_KEY",
+        "VITE_SUPABASE_URL"
+      ],
+      "schedules": 0,
+      "version": "40f9965e-7a2c-4013-b490-7becfef131fb"
+    },
+    "therecap-jobs": {
+      "release": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
+      "mode": "shadow",
+      "allExecutionFlagsOff": true,
+      "secrets": [
+        "ADMIN_ALLOWED_EMAILS",
+        "ADMIN_USER_IDS",
+        "APIFY_API_TOKEN",
+        "APIFY_MAX_ITEMS",
+        "APIFY_MAX_TOTAL_CHARGE_USD",
+        "APIFY_YOUTUBE_BUILD",
+        "APIFY_YOUTUBE_BUILD_ID",
+        "APIFY_YOUTUBE_PRICING_SHA256",
+        "CLERK_ISSUER_URL",
+        "CLERK_SECRET_KEY",
+        "COLLECTION_ALLOWED_USER_IDS",
+        "COLLECTION_JOB_SECRET",
+        "CONTENT_ANALYSIS_CONFIG_EPOCH",
+        "CONTENT_ANALYSIS_MODEL",
+        "CONTENT_ANALYSIS_OPENROUTER_PROVIDER",
+        "CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME",
+        "CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL",
+        "CONTENT_ANALYSIS_PRICE_MODEL",
+        "CONTENT_ANALYSIS_PRICING_VERIFIED",
+        "CONTENT_ANALYSIS_PRICING_VERSION",
+        "CONTENT_ANALYSIS_ROUTE",
+        "CONTENT_ANALYSIS_WORKER_SECRET",
+        "HOURLY_COLLECTION_MAX_NEW_VIDEOS",
+        "HOURLY_COLLECTION_PROVIDER_VERIFIED",
+        "HOURLY_COLLECTION_WORKER_SECRET",
+        "OPENROUTER_API_KEY",
+        "SUPABASE_SECRET_KEY",
+        "VITE_CLERK_PUBLISHABLE_KEY",
+        "VITE_SUPABASE_PUBLISHABLE_KEY",
+        "VITE_SUPABASE_URL"
+      ],
+      "schedules": 0,
+      "version": "258e2e17-eb68-453f-afc2-db565ab8dfd5"
+    },
+    "therecap-source": {
+      "mode": "private-disabled",
+      "release": "3c22f7f89378e3f80c2e8fbb2e903c3de232b9b4",
+      "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+      "secrets": [],
+      "sourceEnabled": false,
+      "publicRoute": false,
+      "image_sha256": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+      "maximum_instances": 1,
+      "instance_states": [
+        "inactive"
+      ]
+    }
+  },
+  "http": [
+    {
+      "path": "/api/health",
+      "method": "GET",
+      "status": 200,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html",
+      "noindex": true,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "/creators/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/creators",
+      "method": "GET",
+      "status": 301,
+      "type": null,
+      "noindex": true,
+      "cache": null
+    },
+    {
+      "path": "/creators/",
+      "method": "HEAD",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/sitemap.xml",
+      "method": "GET",
+      "status": 200,
+      "type": "application/xml; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/creators/3blue1brown-ddff00d2/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/creators/zuzka-light-6f86daac/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/creators/therecap-migration-missing-creator/",
+      "method": "GET",
+      "status": 404,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/robots.txt",
+      "method": "GET",
+      "status": 200,
+      "type": "text/plain; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=300"
+    },
+    {
+      "path": "/admin/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html",
+      "noindex": true,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "/workspace",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html",
+      "noindex": true,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "/api/admin",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/collect",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/daily-briefings",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/keyword-learning",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/.netlify/functions/keyword-learning-worker",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/unknown",
+      "method": "GET",
+      "status": 404,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/nested/path",
+      "method": "GET",
+      "status": 404,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/.netlify/functions/social-collection-worker",
+      "method": "GET",
+      "status": 404,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/.netlify/functions/hourly-collection",
+      "method": "GET",
+      "status": 404,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/migration-verification",
+      "method": "GET",
+      "status": 401,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    }
+  ],
+  "assets": {
+    "verified_files": 72,
+    "all_deployed_bytes_match_build": true,
+    "frontend_private_and_database_credentials_absent": true,
+    "clerk_public_key_only_on_separate_verification_page": true,
+    "artifact_tamper_rejection_tested_in_isolated_tests": true
+  },
+  "catalogue": {
+    "creator_pages": 560,
+    "sampled_creator_pages": 2,
+    "canonical_origin": "https://recap.filternode.dev",
+    "noindex": true
+  },
+  "queues": [
+    {
+      "name": "therecap-jobs",
+      "consumers": 0,
+      "messages_sent_by_this_work": 0
+    },
+    {
+      "name": "therecap-jobs-dead",
+      "consumers": 0,
+      "messages_sent_by_this_work": 0
+    }
+  ],
+  "domain": {
+    "hostname": "recap.filternode.dev",
+    "worker": "therecap-web",
+    "https_verified": true
+  },
+  "database": {
+    "existing_tables": 56,
+    "existing_rows": 21115,
+    "existing_function_index_definitions": 296,
+    "all_preserved": true,
+    "control": {
+      "epoch": 1,
+      "owner": "netlify",
+      "paused": true,
+      "release": "0000000000000000000000000000000000000000",
+      "old_host_fenced": false
+    },
+    "hosting_work_rows": 0
+  },
+  "source_container_deployed": true,
+  "temporary_probe_workers_absent": true,
+  "private_runtime_values_uploaded_per_worker": 30,
+  "workers_paid_entitlement_verified": true,
+  "production_processing_activated": false,
+  "traffic_cutover": false,
+  "netlify_deleted": false,
+  "model_inferences": 0,
+  "scraper_runs": 0,
+  "emails": 0,
+  "verification": {
+    "main_application_run": 41855753339,
+    "main_cloudflare_run": 41855753477,
+    "checked_main_sha": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
+    "automatic_deploy_succeeded": true,
+    "netlify_hook_skipped": true,
+    "web_workerd_checks": 21,
+    "jobs_workerd_checks": 5,
+    "source_gateway_disabled_check": true
+  },
+  "owner_browser_proof": {
+    "prior_exact_release": "8fdfbae205992235950e7097719f6952ed326f76",
+    "retained": true,
+    "current_release_browser_recheck": false,
+    "private_app_save_reload_and_ordinary_user_parity": false
+  },
+  "source_component_reused": {
+    "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+    "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+    "original_release": "3c22f7f89378e3f80c2e8fbb2e903c3de232b9b4",
+    "new_website_release": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
+    "exact_verified_component_preserved": true
+  }
+}

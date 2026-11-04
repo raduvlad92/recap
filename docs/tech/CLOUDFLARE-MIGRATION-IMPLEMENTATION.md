@@ -1,5 +1,9 @@
 # Cloudflare migration implementation
 
+## Fixed delivery controls — current, 4 November 2026
+
+PR #3 is merged as `63cf1be`, with native handover-storage proof and actual checked-main shadow deployment verified. The new delivery adapter implements guarded bounded consumer/cron setup, target selection and recovery admission stop without dropping admitted work. Full local check passes 3,830 tests / 119 files, including 37 focused cases; seven actual metadata GETs confirm target paused and schedules/consumers absent. Live delivery writes, complete native executor integration, private parity and usable active recovery remain gated. [Delivery contract/evidence](CLOUDFLARE-DELIVERY.md), [current main CI](evidence/cloudflare-delivery-main-ci-2026-11-04.json), [hosted proof](evidence/cloudflare-delivery-main-hosted-readback-2026-11-04.json). No activation or Netlify retirement occurs. Earlier checkpoints below are historical.
+
 ## Durable switch journal and second main deployment — current, 4 November 2026
 
 PR #2 merged as `72380f5`; both actual main workflows and the independent hosted route/asset/original-data audit pass with shadow processing still off. A separate durable handover/recovery journal now validates the complete artifact and sanitized progress, saves operation IDs remotely, reconciles lost writes and refuses stale checkpoints. Full local check passes 3,804 tests / 118 files, with 93 focused cases. Its new native GitHub App transport-only probe awaits PR CI; private parity, usable active recovery and final native switch wiring remain. [Current protocol/local limits](CLOUDFLARE-HANDOVER.md), [follow-up CI](evidence/cloudflare-main-followup-ci-2026-11-04.json), [hosted proof](evidence/cloudflare-main-followup-hosted-readback-2026-11-04.json). No ownership transfer, key revocation, execution activation or retirement occurs. Earlier checkpoints below are historical.
