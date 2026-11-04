@@ -1,5 +1,15 @@
 # Demo and evidence log
 
+## 4 November 2026 — merged executor and native deployment-overlap rejection
+
+PR #6 passes four successful jobs, expected skipped deployment and two neutral transport probes on `95c5c90`, with no comments/reviews. Merge is `f6436ca`. [Native PR receipt](tech/evidence/cloudflare-executor-pr-ci-2026-11-04.json).
+
+A new fixed-resource guard checks disabled workflow state and complete all-branch/all-event nonterminal run inventories before local handover/recovery actions. Actual metadata correctly blocks while main delivery and preparation are admitted; workflow/runtime/database writes remain zero. All 134 focused cases / eight files pass, covering workflow re-enable between acknowledged intent and ownership commit. Full CI-deadline suite passes 3,911 tests / 124 files, catalogue/typecheck/build. The first default run timed out one unchanged eight-lease PostgreSQL case at 5,319 ms; its explicit deadline now matches the adjacent case/CI (30 seconds), with all assertions preserved and its separate single-case rerun passing. [Local receipt](tech/evidence/cloudflare-quiescence-local-2026-11-04.json). [Native negative-gate receipt](tech/evidence/cloudflare-quiescence-native-2026-11-04.json), [scope and remaining wrapper](tech/CLOUDFLARE-QUIESCENCE.md).
+
+Main application/Cloudflare runs `41886422424` / `41886422423` now succeed on `f6436ca`, with the Netlify hook skipped. Independent checked-artifact hosted readback passes 22 routes/two denials, 72 assets, 560 creator pages and all original 56 tables / 21,115 rows / 296 definitions, with processing/source off and ownership unchanged. Active preparation `41886979240` is in progress; no current-head active archive has been attested yet. [Main CI](tech/evidence/cloudflare-quiescence-main-ci-2026-11-04.json), [hosted proof](tech/evidence/cloudflare-quiescence-main-hosted-readback-2026-11-04.json).
+
+Chrome native control works again, but the reloaded account page has a disabled Sign in control, the shared window changes, and the tab host remains unavailable. No authenticated/private-app parity is claimed. The original owner proof is preserved with its exact release. [Current retry](tech/evidence/cloudflare-quiescence-browser-retry-2026-11-04.json). No new key/payment/admin setup, workflow suspension, ownership transfer, old-key revocation, source/model job, email or Netlify deletion occurs; hosting/API/CI usage is unmeasured.
+
 ## 4 November 2026 — checked active artifact and durable operator executor
 
 All seven PR #5 results pass on `fd6745a`; merged main is `1f78d11`. Application run `41876143446` succeeds; Cloudflare run `41876143792` succeeds on failed-job retry after its initial verification-visibility stop. Exact-head manual preparation run `41876715035` succeeds with deploy skipped. The downloaded active ZIP matches native digest; full manifest and extracted build files rehash correctly. It is not served and is not usable-recovery/private-parity proof. [Preparation receipt](tech/evidence/cloudflare-active-preparation-native-2026-11-04.json).

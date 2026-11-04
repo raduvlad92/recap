@@ -1,0 +1,30 @@
+{
+  "recordedAt": "2026-11-04T18:29:32.569Z",
+  "scope": "native-read-only-deployment-quiescence",
+  "verified": false,
+  "target": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+  "workflowId": 406418558,
+  "path": ".github/workflows/cloudflare-duplicate.yml",
+  "state": "active",
+  "updatedAt": "2026-11-04T14:41:30.000+01:00",
+  "activeRuns": [
+    {
+      "id": 41886422423,
+      "status": "in_progress"
+    },
+    {
+      "id": 41886979240,
+      "status": "pending"
+    }
+  ],
+  "blockers": [
+    "deployment_workflow_active",
+    "deployment_runs_not_drained"
+  ],
+  "readOnly": true,
+  "workflowWrites": 0,
+  "providerRuntimeMutations": 0,
+  "databaseWrites": 0,
+  "sourceRequests": 0,
+  "readyForCutover": false
+}

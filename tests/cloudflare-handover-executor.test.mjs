@@ -14,6 +14,14 @@ describe('integrated handover executor with isolated native contracts',()=>{
   expect(f.state.status.control.paused).toBe(false);expect(f.state.target.value).toBe('cloudflare');
   const recovered=await run(f,{action:'rollback',handover:done,deliveryFactory:undefined});expect(recovered.phase).toBe('complete');expect(f.state.target.value).toBe('paused');expect(f.state.consumer).not.toBe(null);expect(f.state.crons).toEqual([]);
  });
+ it('requires the actual deployment workflow to be disabled and drained before any native mutation',async()=>{
+  const f=executorFixture();f.state.workflowState='active';
+  await expect(run(f)).rejects.toThrow('handover_deployment_not_quiescent');expect(f.mutations).toEqual([]);
+ });
+ it('rechecks deployment suspension after the durable native intent',async()=>{
+  const f=executorFixture();f.state.afterIntent=operation=>{if(operation==='commit')f.state.workflowState='active';};
+  await expect(run(f)).rejects.toThrow('handover_deployment_not_quiescent');expect(f.mutations).not.toContain('commit');expect(f.state.status.control.owner).toBe('netlify');
+ });
  it.each(['prepared','evidence','recovery','storage','artifact'])('blocks missing or changed %s before a runtime mutation',async reason=>{
   const f=executorFixture();if(reason==='prepared')f.state.prepared=false;if(reason==='evidence')f.state.evidence=false;if(reason==='recovery')f.state.recovery=false;if(reason==='storage')f.state.storage=false;if(reason==='artifact')f.put('dist-cloudflare/index.html','changed');
   await expect(run(f)).rejects.toThrow();expect(f.mutations).toEqual([]);

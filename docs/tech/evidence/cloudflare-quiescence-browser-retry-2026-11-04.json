@@ -1,0 +1,18 @@
+{
+  "recordedAt": "2026-11-04T18:31:11.698606+00:00",
+  "browser": "external Google Chrome",
+  "url": "https://recap.filternode.dev/migration-check",
+  "nativeAppControlAvailable": true,
+  "browserTabControlAvailable": false,
+  "browserTabControlError": "The browser access host is unavailable",
+  "pageReloaded": true,
+  "observedSignInControl": "disabled",
+  "visibleAccountVerificationSuccess": false,
+  "sharedNativeWindowChangedDuringControl": true,
+  "browserAppParityVerified": false,
+  "currentMainReleaseBrowserProof": false,
+  "databaseWrites": 0,
+  "sourceRequests": 0,
+  "emails": 0,
+  "priorOwnerProofRetained": "cloudflare-owner-browser-2026-11-04.json"
+}

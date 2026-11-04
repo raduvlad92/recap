@@ -1,5 +1,7 @@
 # Durable initial handover composition
 
+**Latest:** PR #6 merged as `f6436ca`. The local executor now also requires the fixed deployment workflow disabled and drained; native reads correctly block while CI is active. This guard does not itself suspend/restore the workflow or prove private parity/recovery. [Current scope](CLOUDFLARE-QUIESCENCE.md).
+
 Checkpoint: 4 November 2026. PR #5 passed all seven results on `fd6745a` and merged as `1f78d11583ff8635761c5d7c0ee9b7b3aca872f2`. Main application run `41876143446` succeeds. The normal Cloudflare run `41876143792` stopped before deployment when the API did not expose a completed verify job; its failed-job retry succeeds at attempt 2. The follow-up adds no-cache reads and at most five two-second retries only for incomplete/missing verification visibility. Exact main/run/workflow identity and explicit failed verification still stop immediately.
 
 Independent hosted readback of the exact downloaded main shadow artifact passes 22 routes/two denials, 72 exact assets and 560 creator pages, preserving every original 56 tables / 21,115 rows / 296 definitions. All nine execution flags remain false, source private/inactive, schedules/consumers absent, owner Netlify/paused. [Main CI](evidence/cloudflare-executor-main-ci-2026-11-04.json), [hosted readback](evidence/cloudflare-executor-main-hosted-readback-2026-11-04.json).
