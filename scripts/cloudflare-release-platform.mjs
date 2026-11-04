@@ -48,14 +48,21 @@ export class ReleasePlatform {
     return response.json();
   }
   status() { return this.rpc('read_hosting_release_status'); }
-  async current(kind) {
+  async servingVersion(kind) {
     requireState(['web', 'jobs', 'source'].includes(kind), 'invalid_worker_kind');
-    const [settings, deployments] = await Promise.all([this.cf('/workers/scripts/therecap-' + kind + '/settings'), this.cf('/workers/scripts/therecap-' + kind + '/deployments')]);
+    const deployments = await this.cf('/workers/scripts/therecap-' + kind + '/deployments');
     const versions = deployments.deployments?.[0]?.versions;
     requireState(versions?.length === 1 && versions[0].percentage === 100 && uuid(versions[0].version_id), 'release_split_traffic_unsupported');
-    const bindings = settings.bindings;
+    // /settings can describe the latest uploaded, unserved version. Bind all
+    // policy/secret/bounds decisions to the immutable 100%-serving version.
+    const version = await this.cf('/workers/scripts/therecap-' + kind + '/versions/' + versions[0].version_id);
+    requireState(version.id === versions[0].version_id && Array.isArray(version.resources?.bindings), 'release_serving_version_changed');
+    return { version: version.id,bindings: version.resources.bindings };
+  }
+  async current(kind) {
+    const { version,bindings } = await this.servingVersion(kind);
     if (kind !== 'source') requireState(text(bindings, 'APP_URL') === origin && text(bindings, 'CONTEXT') === 'production', 'release_origin_configuration_changed');
-    return { version: versions[0].version_id, mode: text(bindings, 'HOSTING_MODE'), release: text(bindings, 'RELEASE_SHA'), sourceVerified: text(bindings, 'SOURCE_TRANSPORT_VERIFIED') === 'true', flags: Object.fromEntries(executionFlags.map(flag => [flag, text(bindings, flag)])), bindingsHash: bindingHash(bindings), enabled: text(bindings, 'SOURCE_TRANSPORT_ENABLED') === 'true' ? true : text(bindings, 'SOURCE_TRANSPORT_ENABLED') === 'false' ? false : null, hasSecrets: bindings.some(item => item.type === 'secret_text') };
+    return { version, mode: text(bindings, 'HOSTING_MODE'), release: text(bindings, 'RELEASE_SHA'), sourceVerified: text(bindings, 'SOURCE_TRANSPORT_VERIFIED') === 'true', flags: Object.fromEntries(executionFlags.map(flag => [flag, text(bindings, flag)])), bindingsHash: bindingHash(bindings), enabled: text(bindings, 'SOURCE_TRANSPORT_ENABLED') === 'true' ? true : text(bindings, 'SOURCE_TRANSPORT_ENABLED') === 'false' ? false : null, hasSecrets: bindings.some(item => item.type === 'secret_text') };
   }
   async source(artifact) {
     const proof = JSON.parse(readFileSync(join(this.root, 'cloudflare/verified-source.json'), 'utf8'));
@@ -97,7 +104,7 @@ export class ReleasePlatform {
     if (found) return this.assertVersion(kind, found.id, artifact, policy, mode, bindingsHashExpected);
     const config = JSON.parse(readFileSync(join(this.root, '.local/cloudflare-build/' + kind + '.json'), 'utf8'));
     requireState(config.vars.RELEASE_SHA === artifact.release, 'release_configuration_changed');
-    const settings = await this.cf('/workers/scripts/therecap-' + kind + '/settings');
+    const settings = await this.servingVersion(kind);
     requireState(bindingHash(settings.bindings) === bindingsHashExpected, 'release_worker_drift');
     config.vars = { ...Object.fromEntries(settings.bindings.filter(item => item.type === 'plain_text').map(item => [item.name, item.text])), ...policy, RELEASE_SHA: artifact.release, HOSTING_MODE: mode, SOURCE_TRANSPORT_VERIFIED: mode === 'active' ? 'true' : 'false' };
     config.main = join(this.root, '.local/cloudflare-build/' + kind + '/' + kind + '.js');

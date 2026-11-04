@@ -1,0 +1,60 @@
+{
+  "recordedAt": "2026-11-04T20:16:42.381Z",
+  "kind": "eligible-paused-recovery-candidate",
+  "host": "cloudflare",
+  "mode": "active",
+  "release": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+  "artifactDigest": "8abd8f26ba49249070fac9c797f31658f5fd8f3f363344a6404f7a69416f9cb0",
+  "versions": {
+    "jobs": "cc1dded2-eeab-481f-bcb0-fc66740ede7e",
+    "web": "ca2037bc-bf96-4cad-9d9c-abcf28ddab98"
+  },
+  "policy": {
+    "APIFY_RUNTIME_ENABLED": "false",
+    "HOURLY_COLLECTION_ENABLED": "false",
+    "CONTENT_ANALYSIS_ENABLED": "false",
+    "AUTOMATIC_CONTENT_ENABLED": "false",
+    "SOCIAL_COLLECTION_ENABLED": "false",
+    "SOCIAL_CONTENT_ENABLED": "false",
+    "DAILY_BRIEFING_ENABLED": "false",
+    "REMINDER_EMAIL_ENABLED": "false",
+    "KEYWORD_LEARNING_ENABLED": "false"
+  },
+  "archiveProvenance": {
+    "verified": true,
+    "runId": 41886979240,
+    "artifactId": 13354745122,
+    "release": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+    "archiveDigest": "sha256:93241521dbba07667be46879d9286748d1fcabef45af19530fcce30e6d9405bc",
+    "artifactDigest": "8abd8f26ba49249070fac9c797f31658f5fd8f3f363344a6404f7a69416f9cb0",
+    "deploymentSkipped": true,
+    "historicalReadOnly": true
+  },
+  "receipts": {
+    "cloudflare-recovery-version-readback-2026-11-04.json": "4ccbc870f62ba3fde2f219eef146071ca3912de71188f77bc55139b1d1548c1d",
+    "cloudflare-private-workspace-browser-2026-11-04.json": "c3ad6fec50af96ea4532a0f4925344b2d129a260515a8b781c69e31b813111d8",
+    "cloudflare-reader-rls-native-2026-11-04.json": "66e2e582c1ba86bcd04880992bc4621b65fb5e765c1049224f09a67259caf4c3",
+    "cloudflare-reader-fixture-cleanup-2026-11-04.json": "f3d874b9190a742906f6d1b02bb152d71af985fb4545dd909e3e3583d74edaf3"
+  },
+  "sourceRemainsDisabled": true,
+  "privateWorkspaceUsableWhilePaused": true,
+  "processingAvailableWhilePaused": false,
+  "nativeOwnershipTransfer": false,
+  "nativeRecoveryPromotionPerformed": false,
+  "versionPins": {
+    "jobs": {
+      "version": "cc1dded2-eeab-481f-bcb0-fc66740ede7e",
+      "scriptEtag": "5d476a7cad70809c0538f6c60cd3ecd7b294353aaea402095c7cbab576f43b96",
+      "resourcesDigest": "780033aff1032c3cce6d1dabc6a86055106dda1b91c9a69a7df6e73fd1b5f57d",
+      "bindingsHash": "a09bb5f981f74a981ea54c121b0f54f340f94e26a6bfb0d2c480d1ef13ee683a"
+    },
+    "web": {
+      "version": "ca2037bc-bf96-4cad-9d9c-abcf28ddab98",
+      "scriptEtag": "d42835246c0a3cdd36d04773ab3dd6df5c12b5daf6d8ec877ec0f1117a203c09",
+      "resourcesDigest": "134a84415f40893321968d16eb163dbdf20f8346aa1ce382a700d63ce767c133",
+      "bindingsHash": "95dd06d4302c95b24e502bbbd3d645a27efd3538227c2fd26466f18e315e6a5f"
+    }
+  },
+  "digest": "02b5067f80abc7a2083216bfa815d042f7a4c6af049ab49093edec502f59c55a",
+  "scope": "Candidate eligibility; fresh version/archive/component checks still required by the live operator"
+}

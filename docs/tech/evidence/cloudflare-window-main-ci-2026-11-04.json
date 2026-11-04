@@ -1,0 +1,119 @@
+{
+  "recordedAt": "2026-11-04T20:02:35.191Z",
+  "pr": {
+    "number": 7,
+    "state": "MERGED",
+    "head": "516589c7f3639d15f9d6b91aa7f242d016304efb",
+    "merge": "befa90dea88197170720ad140f2424d890a6d70f",
+    "checks": [
+      {
+        "name": "check",
+        "conclusion": "SUCCESS",
+        "status": "COMPLETED"
+      },
+      {
+        "name": "verify",
+        "conclusion": "SUCCESS",
+        "status": "COMPLETED"
+      },
+      {
+        "name": "artifact-integrity",
+        "conclusion": "SUCCESS",
+        "status": "COMPLETED"
+      },
+      {
+        "name": "checkpoint-storage",
+        "conclusion": "SUCCESS",
+        "status": "COMPLETED"
+      },
+      {
+        "name": "deploy",
+        "conclusion": "SKIPPED",
+        "status": "COMPLETED"
+      },
+      {
+        "name": "cloudflare-handover-journal-probe",
+        "conclusion": "NEUTRAL",
+        "status": "COMPLETED"
+      },
+      {
+        "name": "cloudflare-release-journal-probe",
+        "conclusion": "NEUTRAL",
+        "status": "COMPLETED"
+      }
+    ],
+    "comments": 0,
+    "reviews": 0
+  },
+  "runs": [
+    {
+      "id": 41891704750,
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "head": "befa90dea88197170720ad140f2424d890a6d70f",
+      "jobs": [
+        {
+          "name": "check",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "cloudflare-release-journal-probe",
+          "status": "completed",
+          "conclusion": "neutral"
+        }
+      ],
+      "legacyHook": [
+        {
+          "name": "Deploy checked main to Netlify",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "id": 41891704769,
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 2,
+      "head": "befa90dea88197170720ad140f2424d890a6d70f",
+      "jobs": [
+        {
+          "name": "deploy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "checkpoint-storage",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "artifact-integrity",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ],
+      "legacyHook": []
+    }
+  ],
+  "initialDeploymentFailure": {
+    "error": "refusing_shadow_over_active_release",
+    "actualServedMode": "shadow",
+    "cause": "Latest uploaded bindings were read as serving bindings",
+    "runtimePromotionReached": false
+  },
+  "redundantManualPreparation": {
+    "id": 41892285064,
+    "status": "completed",
+    "conclusion": "cancelled",
+    "intentionallyCancelled": true,
+    "activeArchiveAttested": false
+  },
+  "mainHostedProof": "cloudflare-window-main-hosted-readback-2026-11-04.json"
+}

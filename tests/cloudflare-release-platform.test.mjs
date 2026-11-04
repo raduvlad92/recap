@@ -15,16 +15,17 @@ function fixture() {
   writeFileSync(join(root, '.local/cloudflare-build/web.json'), JSON.stringify({ main: 'unused', vars, assets: { directory: 'unused' } }));
   const extra = [{ name: 'SUPABASE_SECRET_KEY', type: 'secret_text' }, { name: 'SOURCE_DOWNLOADER', type: 'service', service: 'therecap-source', environment: 'production' }];
   const settings = { bindings: [...textBindings({ ...vars, PRIVATE_OPERATOR_BOUND: 'fixture-existing-bound' }), ...extra] };
+  const servingSettings = structuredClone(settings), state = { wrongId: false, missingBindings: false, split: false };
   let current = ids.prior, uploaded = null, uploads = 0; const posts = [];
   const response = result => Response.json({ success: true, result });
   const fetcher = async (input, init = {}) => {
     const path = new URL(input).pathname;
     if (path.endsWith('/settings')) return response(settings);
-    if (path.endsWith('/versions/' + ids.uploaded)) return response({ id: ids.uploaded, resources: { bindings: uploaded.bindings } });
+    if ([ids.prior,ids.uploaded,ids.other].some(id => path.endsWith('/versions/' + id))) { const id = path.split('/').at(-1);return response({ id: state.wrongId ? ids.other : id,resources: state.missingBindings ? {} : { bindings: id === ids.uploaded && uploaded ? uploaded.bindings : servingSettings.bindings } }); }
     if (path.endsWith('/versions')) return response({ items: uploaded ? [{ id: ids.uploaded, annotations: { 'workers/message': uploaded.message } }] : [] });
     if (path.endsWith('/deployments')) {
       if (init.method === 'POST') { const body = JSON.parse(init.body); posts.push(body); current = body.versions[0].version_id; }
-      return response({ deployments: [{ versions: [{ version_id: current, percentage: 100 }] }] });
+      return response({ deployments: [{ versions: state.split ? [{ version_id: current,percentage: 50 },{ version_id: ids.other,percentage: 50 }] : [{ version_id: current,percentage: 100 }] }] });
     }
     throw new Error('Unexpected fake provider endpoint');
   };
@@ -35,7 +36,7 @@ function fixture() {
     return 'Uploaded therecap-web\nWorker Version ID: ' + ids.uploaded;
   };
   const platform = new ReleasePlatform({ root, account: '0'.repeat(32), token: 'fixture-token', fetcher, runner });
-  return { platform, settings, hash: () => bindingHash(settings.bindings), posts, uploads: () => uploads, setCurrent: value => { current = value; }, setRunner: value => { platform.runner = value; }, runner };
+  return { platform, settings, servingSettings, state, hash: () => bindingHash(settings.bindings), posts, uploads: () => uploads, setCurrent: value => { current = value; }, setRunner: value => { platform.runner = value; }, runner };
 }
 describe('real release provider adapter with isolated transport', () => {
   it('fingerprints secret/service/queue/ordinary variable bindings independently of JSON key order', () => {
@@ -43,6 +44,17 @@ describe('real release provider adapter with isolated transport', () => {
     const b = [{ text: 'fixture-bound', type: 'plain_text', name: 'bound' }, { name: 'server-key', type: 'secret_text' }];
     expect(bindingHash(a)).toBe(bindingHash(b)); expect(bindingHash(a)).not.toBe(bindingHash(a.slice(1)));
     expect(bindingHash(a)).not.toBe(bindingHash([{ ...a[1], text: 'changed' }, a[0]]));
+  });
+  it('reads the deployed version even when the latest uploaded settings describe an active candidate',async()=>{
+    const f=fixture(),expected=await f.platform.current('web'),priorHash=f.hash();
+    f.settings.bindings.find(b=>b.name==='HOSTING_MODE').text='active';f.settings.bindings.find(b=>b.name==='RELEASE_SHA').text='b'.repeat(40);
+    f.settings.bindings.find(b=>b.name==='PRIVATE_OPERATOR_BOUND').text='unserved-bound';f.settings.bindings.push({name:'UNSERVED_SECRET',type:'secret_text'});
+    expect(await f.platform.current('web')).toEqual(expected);expect(expected).toMatchObject({version:ids.prior,mode:'shadow',bindingsHash:priorHash});
+    await f.platform.uploadVersion('web',{release,mode:'shadow'},policy,'shadow',priorHash,'after-active-preparation');expect(f.uploads()).toBe(1);
+  });
+  it.each(['id','bindings','split'])('rejects changed deployed %s metadata',async reason=>{
+    const f=fixture();if(reason==='id')f.state.wrongId=true;if(reason==='bindings')f.state.missingBindings=true;if(reason==='split')f.state.split=true;
+    await expect(f.platform.current('web')).rejects.toThrow(reason==='split'?'release_split_traffic_unsupported':'release_serving_version_changed');
   });
   it('uploads exact policy, preserves unknown bounds and inherited secret inventory, and reuses a marked version', async () => {
     const f = fixture(), artifact = { release, mode: 'shadow' };

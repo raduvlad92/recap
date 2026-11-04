@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — serving-version authority and isolated active preparation
+
+Use the immutable 100%-serving Worker version for policy, secret inventory, bounds and upload inheritance: native recovery staging proves that `/settings` can instead describe an unserved upload. Keep recovery candidates unserved while testing their exact active assets/private workspace paths. Bind later targets through explicit component comparison; retain the actual tested release in every receipt. A separate public-only, ten-minute main job prepares the active archive after the same successful verification, without publishing it or repeating the database suite. Workflow suspension has a distinct acknowledged Git checkpoint and explicit restoration; failures retain suspension. These are implementation choices within the authorized migration. Source/model spending, review approval and reminder consent are unchanged. [Evidence and remaining controlled operation](tech/CLOUDFLARE-WINDOW-AND-PARITY.md).
+
 ## 4 November 2026 — suspend and drain deployment CI for the local operator
 
 A local initial handover cannot share Actions' concurrency group simply by using a Git journal. Require the fixed Cloudflare workflow disabled and every admitted run completed, checking all nonterminal statuses without branch/event filters before native actions. Pause selection alone still permits shadow deployment. Keep suspension/restoration under durable operator control; do not re-enable CI automatically after an ambiguous failure. This read-only guard does not itself acquire a window or authorize cutover. [ADR 0004](adr/0004-suspend-cloudflare-ci-during-local-handover.md), [implementation/evidence](tech/CLOUDFLARE-QUIESCENCE.md).

@@ -1,0 +1,35 @@
+{
+  "recordedAt": "2026-11-04T20:02:35.193Z",
+  "baseMain": "befa90dea88197170720ad140f2424d890a6d70f",
+  "fullCheck": {
+    "command": "npm run check",
+    "passed": true,
+    "tests": 3936,
+    "files": 125,
+    "catalogue": "passed",
+    "typecheck": "passed",
+    "build": "passed"
+  },
+  "focused": {
+    "passed": true,
+    "tests": 86,
+    "files": 7
+  },
+  "cloudflareActiveCheck": {
+    "command": "npm run check:cloudflare",
+    "passed": true,
+    "publicConfigPinned": true,
+    "serverBuildFlagsInert": true,
+    "webWorkerdCases": 21,
+    "jobsWorkerdCases": 5,
+    "sourceGatewayDisabled": true,
+    "liveProviderRequests": 0
+  },
+  "automaticMainPreparationNativeProof": false,
+  "nativeOwnershipTransfer": false,
+  "nativeRollbackPerformed": false,
+  "privateLogSha256": {
+    "cloudflare-window-complete-check.log": "68dad7d500680cb3ca4f15cd849aebf67af568a514edc8172d38187a7f5dd49f",
+    "cloudflare-window-final-focused.log": "e0884705c95496506cbdabee22645be37239070b479ce1c44e4928121df575b9"
+  }
+}

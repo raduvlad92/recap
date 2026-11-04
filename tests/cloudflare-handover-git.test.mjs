@@ -1,8 +1,9 @@
 import { describe,expect,it } from 'vitest';
 import { createHash,randomUUID } from 'node:crypto';
-import { GitHandoverJournal,hostingJournalBranch,probeGitHandoverJournal } from '../scripts/cloudflare-handover-git.mjs';
+import { GitHandoverJournal,GitDeploymentWindowJournal,hostingJournalBranch,probeGitHandoverJournal } from '../scripts/cloudflare-handover-git.mjs';
 import { ReleaseGitHub } from '../scripts/cloudflare-release-github.mjs';
 import { planHandover } from '../scripts/cloudflare-handover-state.mjs';
+import { deploymentWindowState } from '../scripts/cloudflare-deployment-window.mjs';
 import { executionFlags } from '../scripts/cloudflare-release-state.mjs';
 const target='a'.repeat(40),hash='b'.repeat(64),ids={web:'11111111-1111-4111-8111-111111111111',jobs:'22222222-2222-4222-8222-222222222222',source:'33333333-3333-4333-8333-333333333333'};
 const blob=text=>createHash('sha1').update('blob '+Buffer.byteLength(text)+'\0').update(text).digest('hex');
@@ -66,5 +67,28 @@ describe('operator journal with expected-blob writes',()=>{
  it('verifies native-style storage and stale-write rejection with a non-restorable probe',async()=>{
   const f=fixture(),proof=await probeGitHandoverJournal(f.github,target);expect(proof).toMatchObject({storageVerified:true,staleWriteRejected:true,activatesProcessing:false,restorableCheckpoint:false});
   expect(JSON.parse(f.files.get(proof.path)).kind).toBe('transport-only-operator-journal');expect(f.files.size).toBe(1);
+ });
+});
+
+describe('separate operator deployment-window storage',()=>{
+ it('acknowledges and restores a transport-only window without constructing a handover plan',async()=>{
+  const f=fixture(),state=deploymentWindowState(target,'transport-only'),remote=new GitDeploymentWindowJournal(f.github,state);await remote.save(state);
+  const restored=await GitDeploymentWindowJournal.restore(f.github,state.operation);expect(restored.state).toEqual(state);
+  expect(remote.path).toBe('.hosting-journal/windows/'+state.operation+'.json');expect(f.files.size).toBe(1);
+  await expect(GitHandoverJournal.restore(f.github,f.plan.digest,f.artifact)).rejects.toThrow();
+ });
+ it('reconciles a lost storage reply and rejects stale window writers',async()=>{
+  const f=fixture(),state=deploymentWindowState(target,'transport-only'),remote=new GitDeploymentWindowJournal(f.github,state);f.state.lose=true;
+  await expect(remote.save(state)).rejects.toThrow('lost-git-write-reply');await remote.save(state);
+  const stale=await GitDeploymentWindowJournal.restore(f.github,state.operation),next={...state,phase:'disable-intent',workflow:{id:406418558,path:'.github/workflows/cloudflare-duplicate.yml',priorUpdatedAt:'2026-11-04T00:00:00Z',disabledUpdatedAt:null}};
+  await remote.save(next);await expect(stale.remote.save({...next,phase:'suspended',workflow:{...next.workflow,disabledUpdatedAt:'2026-11-04T01:00:00Z'}})).rejects.toThrow('deployment_window_requires_resume');
+ });
+ it('rejects changed identity, private fields and arbitrary restore paths',async()=>{
+  const f=fixture(),state=deploymentWindowState(target,'transport-only'),remote=new GitDeploymentWindowJournal(f.github,state);await remote.save(state);
+  await expect(remote.save({...state,target:'c'.repeat(40)})).rejects.toThrow('deployment_window_checkpoint_changed');
+  await expect(remote.save({...state,token:'private'})).rejects.toThrow('deployment_window_checkpoint_changed');
+  await expect(GitDeploymentWindowJournal.restore(f.github,'../private')).rejects.toThrow('invalid_deployment_window_checkpoint');
+  const value=JSON.parse(f.files.get(remote.path));value.state.purpose='handover';f.files.set(remote.path,JSON.stringify(value));
+  await expect(GitDeploymentWindowJournal.restore(f.github,state.operation)).rejects.toThrow('deployment_window_checkpoint_changed');
  });
 });

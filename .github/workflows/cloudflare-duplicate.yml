@@ -109,6 +109,43 @@ jobs:
             .local/cloudflare-build/jobs/**
             .local/cloudflare-build/source-worker/**
             .local/cloudflare-build/source-container/**
+  prepare-active:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.HOSTING_TARGET == 'paused'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - name: Prepare isolated active handover artifact
+        run: npm run check:cloudflare
+        env:
+          HOSTING_BUILD_MODE: active
+          CLOUDFLARE_CLERK_PUBLISHABLE_KEY: ${{ vars.CLOUDFLARE_CLERK_PUBLISHABLE_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.CLOUDFLARE_CLERK_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.CLOUDFLARE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.CLOUDFLARE_SUPABASE_PUBLISHABLE_KEY }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: therecap-cloudflare-active-${{ github.sha }}
+          include-hidden-files: true
+          retention-days: 30
+          path: |
+            dist-cloudflare/**
+            .local/cloudflare-build/release.json
+            .local/cloudflare-build/web.json
+            .local/cloudflare-build/jobs.json
+            .local/cloudflare-build/source.json
+            .local/cloudflare-build/web/**
+            .local/cloudflare-build/jobs/**
+            .local/cloudflare-build/source-worker/**
+            .local/cloudflare-build/source-container/**
   artifact-integrity:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     needs: verify
