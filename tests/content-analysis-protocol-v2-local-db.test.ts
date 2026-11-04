@@ -481,7 +481,8 @@ describe.skipIf(!available)('D38 actual disposable PostgreSQL private content-v2
   prepare(c, summary(f)); expect(service(publishSql(c))).toBe('t');
   expect(service(`select count(*),sum(actual_usd) from public.reader_content_analysis_calls where job_id='${c.job.id}';`)).toBe('16|0.001600000000');
   expect(job(c).state).toBe('published');
- });
+ // Repeated real PostgreSQL cache replay can exceed five seconds under load.
+ },30000);
  it('three no-progress yields stop instead of running forever', () => {
   let { f, c } = active();
   for (let n = 0; n < 3; n++) {

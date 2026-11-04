@@ -1,0 +1,44 @@
+{
+  "recordedAt": "2026-11-04T18:35:56.397628+00:00",
+  "baseMain": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+  "scope": "local-isolated-deployment-quiescence",
+  "focused": {
+    "files": 8,
+    "tests": 134,
+    "passed": true
+  },
+  "fullSuite": {
+    "command": "npm run catalogue:check && npx vitest run --testTimeout=30000 && npm run build",
+    "files": 124,
+    "tests": 3911,
+    "passed": true,
+    "catalogue": "passed",
+    "typecheck": "passed",
+    "build": "passed"
+  },
+  "initialDefaultRun": {
+    "passed": false,
+    "passedTests": 3910,
+    "failedTests": 1,
+    "reason": "Existing eight-lease PostgreSQL replay case exceeded default 5000ms (5319ms); no assertion failure."
+  },
+  "deadlineCorrection": {
+    "case": "long work continues across eight leases representing >11 minutes, replaying sixteen immutable paid successes without another charge",
+    "timeoutMs": 30000,
+    "assertionsChanged": false,
+    "singleCaseDefaultCommandPassed": true,
+    "note": "The existing CI verification step already uses this bounded deadline. The single-case rerun skips 78 other cases; it is separate from the full suite above."
+  },
+  "workerRuntimeCodeChanged": false,
+  "databaseSchemaChanged": false,
+  "liveProviderRequestsFromTests": 0,
+  "workflowWrites": 0,
+  "ownershipTransferred": false,
+  "sourceRequests": 0,
+  "emails": 0,
+  "privateLogsSha256": {
+    "cloudflare-quiescence-focused.log": "38c708d6c03f2c37ced576e295ab7d76b800d6da636671e52ecae0b0a98af4a0",
+    "cloudflare-quiescence-full-check.log": "277dbaf5d34b3e6c25f8a26ae5cf32af0cda6bde67210e5f2d059f2a21d6c874",
+    "cloudflare-quiescence-replay-case.log": "c6f28c8ad5a152964c4f19e9cb2490bc98dcc26b0ca270bdd6310924b0e10173"
+  }
+}

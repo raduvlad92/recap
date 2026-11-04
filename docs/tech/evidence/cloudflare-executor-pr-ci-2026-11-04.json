@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-11-04T18:31:11.697007+00:00",
+  "pr": 6,
+  "head": "95c5c906e3ab8159e67ff8f7f1a0c4eae79c2a7a",
+  "merge": "f6436cadd2c37cbc54238700de0491ac0175dd8e",
+  "state": "MERGED",
+  "mergedAt": "2026-11-04T18:21:55Z",
+  "checks": [
+    {
+      "name": "check",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "verify",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "artifact-integrity",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "checkpoint-storage",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS"
+    },
+    {
+      "name": "deploy",
+      "status": "COMPLETED",
+      "conclusion": "SKIPPED"
+    },
+    {
+      "name": "cloudflare-handover-journal-probe",
+      "status": "COMPLETED",
+      "conclusion": "NEUTRAL"
+    },
+    {
+      "name": "cloudflare-release-journal-probe",
+      "status": "COMPLETED",
+      "conclusion": "NEUTRAL"
+    }
+  ],
+  "comments": 0,
+  "reviews": 0,
+  "nativeMainDeploymentProof": false,
+  "cutover": false
+}

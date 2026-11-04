@@ -5,6 +5,7 @@ import { assertHandoverPlan,assertHandoverCheckpoint,runHandover,runHandoverRoll
 import { runtimeDigest } from './cloudflare-source-runtime.mjs';
 import { executionFlags,ReleaseError } from './cloudflare-release-state.mjs';
 import { legacySite,databaseProject } from './cloudflare-handover-native.mjs';
+import { assertDeploymentQuiescence } from './cloudflare-deployment-quiescence.mjs';
 const check = (value,code) => { if (!value) throw new ReleaseError(code); };
 const same = (a,b) => runtimeDigest(a) === runtimeDigest(b);
 const oldControl = plan => ({ control: Object.fromEntries(['owner','epoch','release','paused','old_host_fenced'].map(key => [key,plan.expected[key]])),revision: plan.expected.revision });
@@ -43,6 +44,7 @@ export class HandoverExecutor {
     return this.#nativeSave({ ...this.native,operations: { ...this.native.operations,[key]: structuredClone(intent) } });
   }
   async #checked() {
+    await assertDeploymentQuiescence(this.github,this.plan.target);
     const proof = await this.prepared.assert(this.artifact);
     check(proof?.verified === true && proof.historicalReadOnly === false && proof.deploymentSkipped === true && proof.release === this.plan.target && proof.artifactDigest === this.plan.artifactDigest && runtimeDigest(checkedArtifact(this.platform.root)) === this.plan.artifactDigest, 'handover_executor_artifact_changed');
     const source = await this.runtime.verifySource();check(source.verified, 'source_runtime_unverified');
