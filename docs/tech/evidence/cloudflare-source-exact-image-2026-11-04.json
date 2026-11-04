@@ -93,5 +93,7 @@
   "actual_instance_states": [
     "inactive"
   ],
-  "idle_state_recorded_at": "2026-11-04T10:13:09.184Z"
+  "idle_state_recorded_at": "2026-11-04T10:13:09.184Z",
+  "enabled_source_worker_version": "ffed3cd5-addb-4240-adb8-42afe273615f",
+  "enabled_disabled_code_runtime_match": true
 }

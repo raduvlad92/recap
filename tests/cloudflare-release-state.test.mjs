@@ -4,25 +4,25 @@ const oldRelease = 'a'.repeat(40), target = 'b'.repeat(40);
 const ids = { jobs: '11111111-1111-4111-8111-111111111111', web: '22222222-2222-4222-8222-222222222222' };
 const flags = Object.fromEntries(executionFlags.map(flag => [flag, 'false']));
 function fixture({ paused = false } = {}) {
-  const snapshot = { control: { owner: 'cloudflare', epoch: 2, release: oldRelease, paused, old_host_fenced: true }, work: { queued: 0, running: 0, expired_running: 0, uncertain: 7 }, domain: 'recap.filternode.dev', sourceVerified: true,
-    workers: Object.fromEntries(['web', 'jobs'].map(kind => [kind, { version: ids[kind], mode: 'active', release: oldRelease, sourceVerified: true, flags: { ...flags } }])) };
+  const snapshot = { control: { owner: 'cloudflare', epoch: 2, release: oldRelease, paused, old_host_fenced: true }, revision: ids.jobs, work: { queued: 0, running: 0, expired_running: 0, uncertain: 7 }, domain: 'recap.filternode.dev', sourceVerified: true,
+    workers: Object.fromEntries(['web', 'jobs'].map(kind => [kind, { version: ids[kind], mode: 'active', release: oldRelease, sourceVerified: true, bindingsHash: '1'.repeat(64), flags: { ...flags } }])) };
   const artifact = { release: target, mode: 'active', hashes: { web: 'c'.repeat(64), jobs: 'd'.repeat(64), sourceWorker: 'e'.repeat(64), sourceContainer: 'f'.repeat(64) } };
-  snapshot.sourcePin = { version: ids.jobs, image: '0'.repeat(64), workerHash: artifact.hashes.sourceWorker, containerHash: artifact.hashes.sourceContainer };
+  snapshot.sourcePin = { version: ids.jobs, image: '0'.repeat(64), workerHash: artifact.hashes.sourceWorker, containerHash: artifact.hashes.sourceContainer, enabled: false };
   return { artifact, snapshot, plan: planRelease(artifact, snapshot) };
 }
 function ports(snapshot) {
-  let status = { control: structuredClone(snapshot.control), work: structuredClone(snapshot.work) }, stored;
+  let status = { control: structuredClone(snapshot.control), work: structuredClone(snapshot.work), revision: snapshot.revision }, stored;
   const calls = [];
   const api = {
     async assertCheckedRelease() { calls.push('checked'); },
     async preflight() { calls.push('preflight'); },
     async status() { return structuredClone(status); },
-    async quiesce() { calls.push('pause'); if (status.work.queued) throw new Error('queue raced'); status.control.paused = true; return api.status(); },
+    async quiesce(expected, nonce) { if (status.revision === nonce && status.control.paused) return api.status(); if (status.revision !== expected.revision || status.work.queued) throw new Error('pause raced'); calls.push('pause'); status.control.paused = true; status.revision = nonce; return api.status(); },
     async upload() { calls.push('upload'); return ids; },
-    async transfer() { calls.push('transfer'); status.control.release = target; status.control.epoch++; return api.status(); },
+    async transfer(_expected, _target, revision, nonce) { if (status.revision !== revision) throw new Error('revision raced'); calls.push('transfer'); status.control.release = target; status.control.epoch++; status.revision = nonce; return api.status(); },
     async promote() { calls.push('promote'); },
     async verify() { calls.push('verify'); return true; },
-    async resume() { calls.push('resume'); status.control.paused = false; return api.status(); },
+    async resume(_expected, revision, nonce) { if (status.revision !== revision) throw new Error('revision raced'); calls.push('resume'); status.control.paused = false; status.revision = nonce; return api.status(); },
   };
   return { api, calls, save: async value => { stored = structuredClone(value); }, journal: () => stored, status: () => status };
 }
@@ -71,14 +71,14 @@ describe('Cloudflare release coordination without business execution', () => {
   });
   it('reconciles a transfer response lost after commit without advancing the epoch twice', async () => {
     const { plan, snapshot } = fixture(), p = ports(snapshot), original = p.api.transfer;
-    p.api.transfer = async () => { await original(); throw new Error('transport disconnected'); };
+    p.api.transfer = async (...args) => { await original(...args); throw new Error('transport disconnected'); };
     await expect(runRelease(plan, p.api, p.save)).rejects.toThrow('release_phase_uncertain');
     await runRelease(plan, p.api, p.save, p.journal());
     expect(p.calls.filter(value => value === 'transfer')).toHaveLength(1); expect(p.status().control.epoch).toBe(3);
   });
   it('reconciles a lost resume acknowledgement without repeating promotion or resume', async () => {
     const { plan, snapshot } = fixture(), p = ports(snapshot), original = p.api.resume;
-    p.api.resume = async () => { await original(); throw new Error('lost acknowledgement'); };
+    p.api.resume = async (...args) => { await original(...args); throw new Error('lost acknowledgement'); };
     await expect(runRelease(plan, p.api, p.save)).rejects.toThrow('release_phase_uncertain');
     await runRelease(plan, p.api, p.save, p.journal()); expect(p.calls.filter(value => value === 'resume')).toHaveLength(1); expect(p.calls.filter(value => value === 'promote')).toHaveLength(1);
   });
@@ -101,5 +101,17 @@ describe('Cloudflare release coordination without business execution', () => {
     const complete = await runRelease(plan, p.api, p.save, p.journal());
     p.api.verify = async () => false;
     await expect(runRelease(plan, p.api, p.save, complete)).rejects.toThrow('release_readback_failed');
+  });
+  it('reconciles a lost pause reply with its exact nonce', async () => {
+    const { plan, snapshot } = fixture(), p = ports(snapshot), original = p.api.quiesce;
+    p.api.quiesce = async (...args) => { const result = await original(...args); if (p.calls.filter(call => call === 'pause').length === 1 && !p.api.failedOnce) { p.api.failedOnce = true; throw new Error('reply lost'); } return result; };
+    await expect(runRelease(plan, p.api, p.save)).rejects.toThrow('release_phase_uncertain');
+    await runRelease(plan, p.api, p.save, p.journal()); expect(p.calls.filter(call => call === 'pause')).toHaveLength(1);
+  });
+  it('keeps a new operator pause in force during deployment', async () => {
+    const { plan, snapshot } = fixture(), p = ports(snapshot);
+    p.api.verify = async () => { p.status().revision = '99999999-9999-4999-8999-999999999999'; return true; };
+    await expect(runRelease(plan, p.api, p.save)).rejects.toThrow('hosting_release_revision_changed');
+    expect(p.status().control.paused).toBe(true); expect(p.calls).not.toContain('resume');
   });
 });

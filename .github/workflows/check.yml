@@ -17,7 +17,7 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - run: npm run check
       - name: Deploy checked main to Netlify
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.HOSTING_TARGET != 'cloudflare' && vars.HOSTING_TARGET != 'paused'
         env:
           NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
         run: |

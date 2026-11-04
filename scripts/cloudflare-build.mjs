@@ -5,11 +5,13 @@ import { createHash } from 'node:crypto';
 import { build } from 'esbuild';
 import { loadEnv } from 'vite';
 import { assetManifest, fileHash } from './cloudflare-artifacts.mjs';
+import { validateActivePublicConfig } from './cloudflare-public-config.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const mode = process.env.HOSTING_BUILD_MODE || 'shadow';
 const release = process.env.RELEASE_SHA || execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
 if (!['shadow', 'active'].includes(mode) || !/^[a-f0-9]{40}$/.test(release)) throw new Error('Invalid release configuration');
 const env = { ...process.env };
+const publicConfig = mode === 'active' ? validateActivePublicConfig(env, JSON.parse(readFileSync(root + 'cloudflare/verified-public-config.json', 'utf8'))) : null;
 // Vite reads .env.local too. Explicit empty values prevent an isolated preview
 // from signing readers into the production database through direct browser RPC.
 if (mode === 'shadow') for (const key of ['VITE_CLERK_PUBLISHABLE_KEY', 'VITE_SUPABASE_URL', 'VITE_SUPABASE_PUBLISHABLE_KEY']) env[key] = '';
@@ -47,4 +49,4 @@ const hashes = Object.fromEntries(['jobs', 'web'].map(kind => [kind, createHash(
 hashes.sourceWorker = createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/source-worker/source.js')).digest('hex');
 hashes.sourceContainer = createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/source-container/server.mjs')).update(readFileSync(root + '.local/cloudflare-build/source-container/Dockerfile')).digest('hex');
 const configs = Object.fromEntries(['source', 'jobs', 'web'].map(kind => [kind, fileHash(root + '.local/cloudflare-build/' + kind + '.json')]));
-writeFileSync(root + '.local/cloudflare-build/release.json', JSON.stringify({ release, mode, appUrl: 'https://recap.filternode.dev', jobsEnabled: false, hashes, configs, assets: assetManifest(root + 'dist-cloudflare') }, null, 2) + '\n');
+writeFileSync(root + '.local/cloudflare-build/release.json', JSON.stringify({ release, mode, appUrl: 'https://recap.filternode.dev', jobsEnabled: false, publicConfig, hashes, configs, assets: assetManifest(root + 'dist-cloudflare') }, null, 2) + '\n');

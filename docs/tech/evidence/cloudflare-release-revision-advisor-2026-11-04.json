@@ -1,0 +1,21 @@
+{
+  "recorded_at": "2026-11-04T11:23:37.108Z",
+  "native_management_api": true,
+  "total": 47,
+  "levels": {
+    "INFO": 47
+  },
+  "kinds": [
+    "rls_enabled_no_policy"
+  ],
+  "new_hosting_objects_findings": [
+    {
+      "name": "rls_enabled_no_policy",
+      "level": "INFO"
+    },
+    {
+      "name": "rls_enabled_no_policy",
+      "level": "INFO"
+    }
+  ]
+}

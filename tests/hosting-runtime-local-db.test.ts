@@ -15,6 +15,7 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     sql('create role anon; create role authenticated; create role service_role;');
     sql(readFileSync(new URL('../supabase/migrations/20261104090000_hosting_runtime_handover.sql', import.meta.url), 'utf8'));
     sql(readFileSync(new URL('../supabase/migrations/20261104095658_hosting_release_quiesce.sql', import.meta.url), 'utf8'));
+    sql(readFileSync(new URL('../supabase/migrations/20261104110432_hosting_release_revision.sql', import.meta.url), 'utf8'));
   });
   afterAll(() => { if (started) execFileSync('pg_ctl', ['-D', join(root, 'data'), 'stop', '-m', 'immediate'], { stdio: 'ignore' }); if (root) rmSync(root, { recursive: true, force: true }); });
   it('starts paused, keeps all tables private, and denies public execution', () => {
@@ -97,5 +98,29 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     expect(await finished).toBe(0); expect(await paused).not.toBe(0);
     expect(error).toContain('Drain queued hosting work before pausing');
     expect(JSON.parse(sql('select read_hosting_runtime();')).paused).toBe(false);
+  });
+  it('uses exact revision nonces for idempotent pause/transfer/resume and blocks initial ownership', () => {
+    const pause = '33333333-3333-4333-8333-333333333333', transfer = '44444444-4444-4444-8444-444444444444', resume = '55555555-5555-4555-8555-555555555555';
+    const result = isolated(`do $$ declare revision uuid; first jsonb; begin
+      select release_revision into revision from hosting_runtime_control;
+      first:=quiesce_hosting_release_checked(10,'${release}',revision,'${pause}');
+      if first<>quiesce_hosting_release_checked(10,'${release}',revision,'${pause}') then raise exception 'Pause replay changed'; end if;
+      first:=advance_hosting_release_checked(10,'${release}','${pause}','${next}',false,'${transfer}');
+      if first<>advance_hosting_release_checked(10,'${release}','${pause}','${next}',false,'${transfer}') then raise exception 'Transfer replay changed'; end if;
+      first:=advance_hosting_release_checked(11,'${next}','${transfer}','${next}',true,'${resume}');
+      if first<>advance_hosting_release_checked(11,'${next}','${transfer}','${next}',true,'${resume}') then raise exception 'Resume replay changed'; end if;
+    end $$; select read_hosting_release_status()`);
+    expect(JSON.parse(result).control).toMatchObject({ epoch: 11, release: next, paused: false });
+    expect(JSON.parse(result).revision).toBe(resume);
+    expect(() => isolated(`update hosting_runtime_control set owner='netlify'; select quiesce_hosting_release_checked(10,'${release}',release_revision,'${pause}') from hosting_runtime_control`)).toThrow();
+  });
+  it('lets an operator pause supersede a release even after an ambiguous acknowledgement', () => {
+    expect(() => isolated(`do $$ declare revision uuid; begin
+      select release_revision into revision from hosting_runtime_control;
+      perform quiesce_hosting_release_checked(10,'${release}',revision,'33333333-3333-4333-8333-333333333333');
+      perform change_hosting_runtime('cloudflare',10,'cloudflare','${release}',true,true);
+      perform advance_hosting_release_checked(10,'${release}','33333333-3333-4333-8333-333333333333','${next}',false,'44444444-4444-4444-8444-444444444444');
+    end $$`)).toThrow();
+    for (const role of ['anon', 'authenticated']) for (const signature of ['quiesce_hosting_release_checked(bigint,text,uuid,uuid)', 'advance_hosting_release_checked(bigint,text,uuid,text,boolean,uuid)']) expect(sql(`select has_function_privilege('${role}','${signature}','execute');`)).toBe('f');
   });
 });
