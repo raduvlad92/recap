@@ -1,0 +1,36 @@
+{
+  "recordedAt": "2026-11-04T21:31:47.611Z",
+  "basedOnMain": "22dbe516db3dfd02315063f62b7f38cc2c898ad0",
+  "workingTreeCodeDigest": "e9e555186275321d27907e7124ffd9c9e9a5bf6d55daaa0949cd45378ac1718b",
+  "fullCheck": {
+    "passed": true,
+    "tests": 3946,
+    "files": 125,
+    "catalogue": true,
+    "typecheck": true,
+    "build": true
+  },
+  "focused": {
+    "passed": true,
+    "tests": 67,
+    "files": 3
+  },
+  "regressionBeforeFix": {
+    "failed": 6,
+    "file": "tests/cloudflare-hosting.test.ts"
+  },
+  "cloudflareActiveCheck": {
+    "passed": true,
+    "webWorkerdCases": 26,
+    "jobsWorkerdCases": 7,
+    "disabledSourceGateway": true,
+    "liveProviderRequests": 0,
+    "realQueueMessages": 0
+  },
+  "localFixedWorkerDeployed": false,
+  "acceptanceStarted": false,
+  "privateLogSha256": {
+    "full": "b315812f853d8c7a8ae4aeb526f5284b52a12d5093c451741f80ae8250929d11",
+    "focused": "998348648f9641523a05a40ccd29389a4cee03197df4fa5a6517c8c516f9a1c8"
+  }
+}

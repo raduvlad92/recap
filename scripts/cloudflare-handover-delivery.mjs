@@ -15,6 +15,12 @@ export function deliveryPolicy(policy) {
   check(Object.keys(policy || {}).length === executionFlags.length && executionFlags.every(flag => ['true','false'].includes(policy[flag])) && policy.REMINDER_EMAIL_ENABLED === 'false', 'delivery_policy_unverified');
   return { crons: [...(scheduledFlags.some(flag => policy[flag] === 'true') ? [knownCrons[0]] : []),...(policy.HOURLY_COLLECTION_ENABLED === 'true' ? [knownCrons[1]] : [])],consumer: [...scheduledFlags,'HOURLY_COLLECTION_ENABLED','KEYWORD_LEARNING_ENABLED'].some(flag => policy[flag] === 'true') ? consumerBody() : null };
 }
+// Cloudflare's native response may use script instead of script_name.
+// Accept either spelling, and reject contradictory identities.
+function consumerScript(item) {
+  check(item.script_name === undefined || item.script === undefined || item.script_name === item.script, 'delivery_consumer_changed');
+  return item.script_name ?? item.script;
+}
 async function target(github) {
   const data = await github.request(targetPath);
   check(data?.name === 'HOSTING_TARGET' && ['paused','netlify','cloudflare'].includes(data.value) && Number.isFinite(Date.parse(data.updated_at)), 'delivery_target_unverified');
@@ -37,7 +43,7 @@ export async function readDelivery(platform,github) {
   }));
   return { target: selection,schedules,queues: Object.fromEntries(selected.map((queue,index) => {
     check(Array.isArray(consumers[index]), 'delivery_consumer_inventory_invalid');
-    return [queue.queue_name,{ id: queue.queue_id,consumers: consumers[index].map(item => ({ id: item.consumer_id,type: item.type,script_name: item.script_name,dead_letter_queue: item.dead_letter_queue,settings: Object.fromEntries(Object.keys(consumerSettings).map(key => [key,item.settings?.[key]])) })) }];
+    return [queue.queue_name,{ id: queue.queue_id,consumers: consumers[index].map(item => ({ id: item.consumer_id,type: item.type,script_name: consumerScript(item),dead_letter_queue: item.dead_letter_queue,settings: Object.fromEntries(Object.keys(consumerSettings).map(key => [key,item.settings?.[key]])) })) }];
   })) };
 }
 function scoped(surface) {

@@ -52,6 +52,24 @@ describe('fixed-resource handover delivery adapters',()=>{
   await f.delivery.selectCloudflare(f.expected,f.versions,f.witness);expect(f.state.selection.value).toBe('cloudflare');expect(f.state.status).toEqual(control);expect(f.mutations().at(-1)).toMatchObject({method:'PATCH',body:{name:'HOSTING_TARGET',value:'cloudflare'}});
   const before=f.mutations().length;await f.delivery.selectCloudflare(f.expected,f.versions,f.witness);expect(f.mutations()).toHaveLength(before);
  });
+ it('accepts the real native script field without recreating the existing bounded consumer',async()=>{
+  const f=fixture(),{script_name,...body}=deliveryPolicy(f.plan.policy).consumer;
+  f.state.consumers['1'.repeat(32)]=[{...body,script:script_name,consumer_id:'3'.repeat(32)}];
+  await f.delivery.configureDelivery(f.expected,f.versions);await f.delivery.selectCloudflare(f.expected,f.versions,f.witness);
+  expect(f.mutations().map(call=>call.method)).toEqual(['PUT','PATCH']);
+  expect((await readDelivery(f.platform,f.github)).queues['therecap-jobs'].consumers[0]).toMatchObject({script_name:'therecap-jobs',settings:{batch_size:1,max_concurrency:6,max_retries:3,max_wait_time_ms:1000,retry_delay:60}});
+ });
+ it('accepts agreeing documented and native consumer names',async()=>{
+  const f=fixture(),body=deliveryPolicy(f.plan.policy).consumer;
+  f.state.consumers['1'.repeat(32)]=[{...body,script:body.script_name,consumer_id:'3'.repeat(32)}];
+  await f.delivery.configureDelivery(f.expected,f.versions);expect(f.mutations().map(call=>call.method)).toEqual(['PUT']);
+ });
+ it.each(['conflicting','wrong','missing'])('rejects a %s native consumer identity before a delivery mutation',async reason=>{
+  const f=fixture(),{script_name,...body}=deliveryPolicy(f.plan.policy).consumer;
+  const identity=reason==='conflicting'?{script_name:'another-worker',script:script_name}:reason==='wrong'?{script:'another-worker'}:{};
+  f.state.consumers['1'.repeat(32)]=[{...body,...identity,consumer_id:'3'.repeat(32)}];
+  await expect(f.delivery.configureDelivery(f.expected,f.versions)).rejects.toThrow('delivery_consumer_changed');expect(f.mutations()).toEqual([]);
+ });
  it('persists real delivery intents through the executor checkpoint validator',async()=>{
   const f=fixture(),nonce=randomUUID();
   const journal={schema:1,planDigest:f.plan.digest,phase:'transferred',pending:'route',error:null,versions:f.versions,fenceReceipt:'b'.repeat(64),revision:nonce,intents:{transfer:nonce},native:{schema:1,targetWitness:f.witness,operations:{}}};
