@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — reuse a verified source component independently of website releases
+
+Engineering decision within the authorized migration: a routine shadow website deploy reuses an unchanged source Worker/image only when its input hashes, immutable live version/image, private/no-secret scope, disabled state and one-instance bound match the committed hosted proof. Unexpected drift stops deployment. A source change remains disabled until new hosted proof. This avoids needless rebuilds and proof/digest drift, at the cost of independently recording the source component release/version instead of claiming all three components always share the website SHA. Actual `5ddf873` web/jobs deployment preserves verified source version `af6e82f8…` / image `bc1713…`. This grants no production ownership/activation or retirement authority beyond the existing staged gates. [Design and native evidence](tech/CLOUDFLARE-RELEASE-CONTROLLER.md).
+
 ## 4 November 2026 — continue in reopened external Chrome
 
 Founder: **“Chrome is open; continue.”** Resume the existing account check with the already approved Paid account; no new billing, API key or administrator setup is requested. The native Chrome connection is restored. The real request passes the unchanged identity/admin checks and isolates a hosting-fetch compatibility error; the shared redirect fix is deployed in shadow mode. The final visible browser result, remaining private parity and migration gates are still required. This continuation does not change runtime ownership, existing holds/caps, review approval or reminder opt-out. [Exact account checkpoint](tech/evidence/cloudflare-account-hosted-readback-2026-11-04.json).

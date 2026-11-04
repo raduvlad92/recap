@@ -531,5 +531,12 @@
     "hosting_redirect_rejected": true,
     "live_provider_requests": 0,
     "queue_messages_sent": 0
+  },
+  "source_verification_correction": {
+    "recorded_on": "2026-11-04",
+    "prior_hosted_image": "44bd7f4732fc99d379e2bbee9d801371ad8f9863f45e9ad1407b0aee80e70801",
+    "image_at_this_checkpoint": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+    "exact_image_proof_was_not_established_at_this_checkpoint": true,
+    "later_exact_image_rerun": "docs/tech/evidence/cloudflare-source-exact-image-2026-11-04.json"
   }
 }

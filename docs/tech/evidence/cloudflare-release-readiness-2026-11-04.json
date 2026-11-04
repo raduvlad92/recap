@@ -1,0 +1,56 @@
+{
+  "recorded_at": "2026-11-04T10:23:54.818Z",
+  "read_only": true,
+  "repository_head": "5ddf873ac8d6f159aaf6300cd0257469541913c2",
+  "artifact_matches_head": true,
+  "ready_for_release": false,
+  "plan": {
+    "schema": 1,
+    "action": "cloudflare-release",
+    "target": "5ddf873ac8d6f159aaf6300cd0257469541913c2",
+    "expected": {
+      "owner": "netlify",
+      "epoch": 1,
+      "release": "0000000000000000000000000000000000000000",
+      "paused": true,
+      "old_host_fenced": false
+    },
+    "priorVersions": {
+      "web": "8b21e8f1-d025-46a1-a07b-274a55e849f1",
+      "jobs": "28fd0bdd-535e-49c9-beb5-6318b7fa21ea"
+    },
+    "policy": {
+      "APIFY_RUNTIME_ENABLED": "false",
+      "HOURLY_COLLECTION_ENABLED": "false",
+      "CONTENT_ANALYSIS_ENABLED": "false",
+      "AUTOMATIC_CONTENT_ENABLED": "false",
+      "SOCIAL_COLLECTION_ENABLED": "false",
+      "SOCIAL_CONTENT_ENABLED": "false",
+      "DAILY_BRIEFING_ENABLED": "false",
+      "REMINDER_EMAIL_ENABLED": "false",
+      "KEYWORD_LEARNING_ENABLED": "false"
+    },
+    "artifactHashes": {
+      "web": "701b5ff80d8b891afc7adcf17670a17461964409ffc9b148a39d3d93e72ba9c6",
+      "jobs": "9813032709742ee11cc3f64c89d152dadd75d8cf1ddf6b97aa8dd70c9ec77f7e",
+      "sourceWorker": "df652e8eb8f334939eb27cb25e6c289ba5a2061d327a636a62242585d1270b23",
+      "sourceContainer": "82350aa896df6cea39ba99e28a4a36a20506efcc0ee1c56bb732736a7960e1a6"
+    },
+    "sourcePin": {
+      "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+      "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+      "workerHash": "df652e8eb8f334939eb27cb25e6c289ba5a2061d327a636a62242585d1270b23",
+      "containerHash": "82350aa896df6cea39ba99e28a4a36a20506efcc0ee1c56bb732736a7960e1a6"
+    },
+    "blockers": [
+      "active_artifact_required",
+      "cloudflare_ownership_required",
+      "durable_old_host_fence_required",
+      "web_active_release_mismatch",
+      "web_source_verification_required",
+      "jobs_active_release_mismatch",
+      "jobs_source_verification_required"
+    ],
+    "digest": "45333d30ecb95576fef19a4d2885a8490b68bce6626c64e63bb6a201e549e904"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "recorded_at": "2026-11-04T10:12:35.214Z",
+  "migration": "20261104095658_hosting_release_quiesce",
+  "rollback_verified": true,
+  "apply_verified": true,
+  "existing_tables_preserved": 58,
+  "existing_rows_preserved": 21116,
+  "existing_definitions_preserved": 304,
+  "new_functions": 2,
+  "new_indexes": 1,
+  "protected_original_tables": 56,
+  "protected_original_rows": 21115,
+  "protected_original_definitions": 296,
+  "status": {
+    "work": {
+      "queued": 0,
+      "running": 0,
+      "uncertain": 0,
+      "expired_running": 0
+    },
+    "control": {
+      "epoch": 1,
+      "owner": "netlify",
+      "paused": true,
+      "release": "0000000000000000000000000000000000000000",
+      "old_host_fenced": false
+    }
+  },
+  "privileges": [
+    {
+      "role_name": "anon",
+      "status": false,
+      "quiesce": false
+    },
+    {
+      "role_name": "authenticated",
+      "status": false,
+      "quiesce": false
+    },
+    {
+      "role_name": "service_role",
+      "status": true,
+      "quiesce": true
+    }
+  ],
+  "source_model_jobs_started": 0,
+  "control_transferred": false
+}

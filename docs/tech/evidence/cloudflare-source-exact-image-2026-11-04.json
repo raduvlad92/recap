@@ -1,0 +1,97 @@
+{
+  "recorded_at": "2026-11-04T10:10:45.113Z",
+  "environment": "actual-cloudflare-container",
+  "probe_script_sha256": "1148554030f49ea235674e3959e18ec8202ac48dc7813942bd0ba2269c5b9038",
+  "disabled_guard": {
+    "name": "good",
+    "http": 503,
+    "error": "source_transport_disabled",
+    "elapsed_ms": 40
+  },
+  "unauthenticated_probe_blocked": true,
+  "checks": [
+    {
+      "name": "good",
+      "http": 200,
+      "bytes": 7,
+      "status": 200,
+      "elapsed_ms": 2046
+    },
+    {
+      "name": "infra",
+      "http": 200,
+      "bytes": 1381,
+      "status": 200,
+      "elapsed_ms": 96
+    },
+    {
+      "name": "tls",
+      "http": 422,
+      "error": "source_tls_identity_invalid",
+      "elapsed_ms": 1851
+    },
+    {
+      "name": "private",
+      "http": 400,
+      "error": "unsafe_url",
+      "elapsed_ms": 80
+    },
+    {
+      "name": "credentials",
+      "http": 400,
+      "error": "unsafe_url",
+      "elapsed_ms": 76
+    },
+    {
+      "name": "redirect",
+      "http": 200,
+      "bytes": 7,
+      "status": 200,
+      "elapsed_ms": 175
+    },
+    {
+      "name": "redirect_private",
+      "http": 400,
+      "error": "unsafe_url",
+      "elapsed_ms": 98
+    },
+    {
+      "name": "loop",
+      "http": 400,
+      "error": "redirect_limit",
+      "elapsed_ms": 183
+    },
+    {
+      "name": "large",
+      "http": 413,
+      "error": "feed_too_large",
+      "elapsed_ms": 157
+    },
+    {
+      "name": "slow",
+      "http": 504,
+      "error": "source_timeout",
+      "elapsed_ms": 8098
+    }
+  ],
+  "passed": true,
+  "creator_sources_contacted": 0,
+  "scraper_runs": 0,
+  "model_inferences": 0,
+  "emails": 0,
+  "source_runtime_credentials": 0,
+  "instances_max": 1,
+  "source_gateway_left_disabled": true,
+  "temporary_probe_removed": true,
+  "image_sha256": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+  "source_worker_version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+  "source_worker_hash": "df652e8eb8f334939eb27cb25e6c289ba5a2061d327a636a62242585d1270b23",
+  "source_container_hash": "82350aa896df6cea39ba99e28a4a36a20506efcc0ee1c56bb732736a7960e1a6",
+  "prior_proof_image_sha256": "44bd7f4732fc99d379e2bbee9d801371ad8f9863f45e9ad1407b0aee80e70801",
+  "correction": "The rebuild digest differs. These ten hosted checks were rerun against the exact pinned current image, not inferred from earlier code/image proof.",
+  "idle_state_recheck_pending": false,
+  "actual_instance_states": [
+    "inactive"
+  ],
+  "idle_state_recorded_at": "2026-11-04T10:13:09.184Z"
+}
