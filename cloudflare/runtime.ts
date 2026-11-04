@@ -1,4 +1,3 @@
-import { fetchNoRedirect } from '../netlify/functions/_shared/fetch-no-redirect';
 import type { Env } from '../netlify/functions/_shared/security';
 import { CollectionError } from '../netlify/functions/_shared/security';
 import { withHostRuntime } from '../netlify/functions/_shared/host-runtime';
@@ -26,9 +25,11 @@ export const runWithBindings = <T>(bindings: Bindings, action: () => T): T => wi
 export async function hostingRpc<T>(bindings: Bindings, name: string, args: Record<string, unknown> = {}): Promise<T> {
   const env = bindingEnv(bindings), base = env('VITE_SUPABASE_URL'), key = env('SUPABASE_SECRET_KEY');
   if (!base || !key || new URL(base).hostname !== 'zlfdqzabsfndifxiqguo.supabase.co') throw new CollectionError(503, 'hosting_database_unconfigured', 'Hosting configuration is incomplete.');
-  const response = await fetchNoRedirect(base + '/rest/v1/rpc/' + name, {
+  // Timer/queue RPCs also run outside a web request's async context. Always
+  // choose Workers-compatible manual mode here; !ok rejects every redirect.
+  const response = await fetch(base + '/rest/v1/rpc/' + name, {
     method: 'POST', headers: { apikey: key, authorization: 'Bearer ' + key, 'content-type': 'application/json' },
-    body: JSON.stringify(args), signal: AbortSignal.timeout(8000),
+    body: JSON.stringify(args), signal: AbortSignal.timeout(8000), redirect: 'manual',
   });
   if (!response.ok) { await response.body?.cancel(); throw new CollectionError(503, 'hosting_state_unavailable', 'Hosting execution could not be verified.'); }
   return await response.json() as T;

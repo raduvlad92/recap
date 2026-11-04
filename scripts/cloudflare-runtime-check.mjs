@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { generateKeyPair, exportJWK, SignJWT } from 'jose';
+import { build } from 'esbuild';
 const release = JSON.parse(readFileSync('.local/cloudflare-build/release.json', 'utf8')).release;
 const config = JSON.parse(readFileSync('.local/cloudflare-build/web.json', 'utf8'));
 // Exercise the actual Wrangler-bundled Worker under workerd. No credentials,
@@ -79,10 +80,48 @@ try {
   assert.equal((await accountRuntime.dispatchFetch(path, { headers })).status, 503); checks++;
   fixturePaused = true; redirectRpc = true;
   const redirected = await accountRuntime.dispatchFetch(path, { headers });
-  assert.equal(redirected.status, 503); assert.equal((await redirected.json()).error.code, 'verification_hosting_unavailable');
+  assert.equal(redirected.status, 503); assert.equal((await redirected.json()).error.code, 'hosting_state_unavailable');
   assert(outbound.every(item => !item.origin.includes('must-not-receive-secrets'))); checks++;
   console.log(JSON.stringify({ runtime: 'workerd', protectedAccountChecks: 5, totalWebChecks: checks, liveProviderRequests: 0, redirectedCredentials: false }));
 } finally { await accountRuntime.dispose(); }
+// Timer/queue handlers run without a browser request context. Exercise their
+// actual exports under workerd with fake RPCs and no provider/queue admission.
+await build({ entryPoints: ['tests/fixtures/cloudflare-jobs-runtime.ts'], bundle: true, platform: 'browser', format: 'esm', target: 'es2022', external: ['node:*'], outfile: '.local/cloudflare-build/jobs-fixture.js' });
+let jobsPaused = false, jobsRedirect = false;
+const jobCalls = [];
+const jobRuntime = new Miniflare(convertV4MiniflareOptions({
+  modules: true, scriptPath: '.local/cloudflare-build/jobs-fixture.js',
+  compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
+  bindings: { ...config.vars, HOSTING_MODE: 'active', SOURCE_TRANSPORT_VERIFIED: 'true', HOURLY_COLLECTION_ENABLED: 'true', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
+  outboundService: async request => {
+    const url = new URL(request.url), name = url.pathname.split('/').at(-1);
+    assert.equal(url.origin, 'https://zlfdqzabsfndifxiqguo.supabase.co');
+    assert.equal(request.method, 'POST'); jobCalls.push(name);
+    if (name === 'read_hosting_runtime') {
+      if (jobsRedirect) return new Response(null, { status: 302, headers: { location: 'https://must-not-receive-secrets.invalid/' } });
+      return Response.json({ owner: 'cloudflare', epoch: 2, paused: jobsPaused, old_host_fenced: true, release });
+    }
+    if (name === 'begin_hosting_work') return Response.json(null);
+    throw new Error('Unexpected job admission/provider request in runtime fixture');
+  },
+}));
+try {
+  const cron = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/cron');
+  assert.equal(cron.status, 200, 'Timer result: ' + await cron.clone().text()); assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime']);
+  const stale = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/stale');
+  assert.deepEqual(await stale.json(), { completed: true, acknowledgements: 1, retries: [] }); assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime']);
+  jobsPaused = true;
+  const paused = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/queue');
+  assert.deepEqual(await paused.json(), { completed: true, acknowledgements: 0, retries: [300] }); assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime']);
+  jobsPaused = false;
+  const duplicate = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/queue');
+  assert.deepEqual(await duplicate.json(), { completed: true, acknowledgements: 1, retries: [] }); assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime', 'begin_hosting_work']);
+  jobsRedirect = true;
+  const redirected = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/cron');
+  assert.equal(redirected.status, 503); assert.equal((await redirected.json()).code, 'hosting_state_unavailable');
+  assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime']);
+  console.log(JSON.stringify({ runtime: 'workerd', jobsChecks: 5, liveProviderRequests: 0, queueMessagesSent: 0, redirectedCredentials: false }));
+} finally { await jobRuntime.dispose(); }
 const source = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/source-worker/source.js',
   compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
