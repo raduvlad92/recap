@@ -4,6 +4,8 @@ Version **0.1 — implementation proposal**, 3 November 2026. Founder direction:
 
 **4 November continuation:** the founder authorized implementation. The isolated web/API and private jobs duplicate is now deployed at `recap.filternode.dev` with actual HTTPS, 21 route checks, 70 matching static-file hashes and the real public catalogue. Execution ownership has not switched. Hosted Workers socket checks failed certificate-hostname validation; the native Node downloader fallback is prepared as a third, private container gateway with bounded usage. Workers Paid approval and hosted container verification are still required. [Current implementation record](CLOUDFLARE-MIGRATION-IMPLEMENTATION.md) supersedes the original planning-only execution status below; the acceptance, billing, cutover and retirement gates remain applicable.
 
+**Later 4 November:** Workers Paid is now explicitly approved and active. The private source container passes ten actual hosted checks and is observed inactive after the native idle guard. All three components/configuration are deployed with processing disabled. Remaining account-origin/browser verification is blocked by external Chrome control (`cgWindowNotFound`); current CI/automatic delivery and CF3–CF6 remain open. [Paid-stage readback](evidence/cloudflare-paid-readback-2026-11-04.json).
+
 ## Recommended result
 
 Cloudflare serves the existing website, public creator pages, APIs and background processing. GitHub still checks changes before automatically deploying them. The **same recap Supabase project `zlfdqzabsfndifxiqguo`** retains all readers, catalogue records, content, jobs, reviews, schedules and financial history; the **same Clerk app** retains authentication. No data copy, replacement database, D1, Hyperdrive or R2 is required for this move. A small additive runtime-ownership control in the existing database is proposed; application data and existing IDs stay in place.
@@ -110,9 +112,9 @@ Do not copy the current hook's race: it requests a build of `main`, does not nam
 
 | Stage | Deliverable / exit gate | Current state |
 | --- | --- | --- |
-| CF0 — preflight | Verify selected `recap.filternode.dev` hostname/DNS rights, paid-tier state, scoped CI token and secure secret continuity; resolve downloader design | DNS/CI/key access verified; Free-plan CPU gate and hosted source transport unresolved |
+| CF0 — preflight | Verify selected `recap.filternode.dev` hostname/DNS rights, paid-tier state, scoped CI token and secure secret continuity; resolve downloader design | DNS, CI credentials, Paid entitlement, key continuity and hosted source transport verified; old receipt allowlist remains unavailable/disabled |
 | CF1 — portable runtime | Worker adapters, guarded transport, routes/headers/auth parity and queue dispatch; no external production execution | Code/local checks and paused preserved database preparation complete; hosted parity pending |
-| CF2 — isolated duplicate | Deploy exact artifacts to Cloudflare; prove read/write behaviors with disposable data, no production jobs; prepare ownership gate on both hosts | HTTPS/public catalogue/exact artifact and isolation readbacks pass; private auth/data and hosted container parity pending |
+| CF2 — isolated duplicate | Deploy exact artifacts to Cloudflare; prove read/write behaviors with disposable data, no production jobs; prepare ownership gate on both hosts | HTTPS/catalogue/artifact/isolation and hosted container transport/idle proof pass; full private browser/data parity pending |
 | CF3 — release rehearsal | Test handover/rollback, duplicate delivery, stale owners, key decryption and preservation with synthetic state; capture production read-only baseline | Not started |
 | CF4 — switch | Stop old admission, drain/reconcile, transfer execution ownership, route readers and move webhook/origin configuration; verify | Not started |
 | CF5 — acceptance | Hosting/auth/SEO parity, exact preserved state and at least 72 hours of bounded operation/two normal daily cutoffs; preserve known product defects | Not started |

@@ -1,5 +1,14 @@
 # Decisions and interview
 
+## 4 November 2026 — Workers Paid approved and activated; external Chrome required
+
+Founder explicitly answered **“Approve Workers Paid and continue verification”** for **US$5/account/month plus metered usage**. At the concrete checkout, the founder chose **“I’ll complete the checkout in Chrome”**, updated the card and reported **“done”**. Independent Containers API reads then changed from the explicit Paid-plan denial to HTTP 200; the private source application was created successfully. This supersedes the earlier subscription-approval gate for this migration. Invoice/payment settlement and actual metered charges are not independently measured. Existing source/model budgets, unknown holds, approval controls and reminder opt-out remain unchanged.
+
+Founder: **“always open the external browser, chrome, not the internal one”**. Use external Chrome for this work. The internal preview tab was closed; the existing Chrome session reached the correct account's checkout and the real Recap Google sign-in. Later native Chrome control returned `cgWindowNotFound`, so interactive owner-verification completion is not inferred from the Google login alone.
+
+The source container passes ten actual hosted transport checks and the independent Node process guard is observed inactive after the idle interval. The gateway is left disabled, temporary source/backend probes are removed, and web/jobs remain shadow/off with no schedules or consumers. Thirty existing server configuration values are copied privately; activation flags and browser database credentials are not copied into the guest shell. The old private receipt-reconciliation allowlist remains unavailable and is not broadened. This approval does not waive authenticated parity, old-host fencing, cutover, bounded acceptance or site-only retirement.
+
+
 ## 4 November 2026 — begin the Cloudflare migration implementation
 
 Founder: **“ok, start working on it”**, referring to the full duplication/switch/retirement plan and the selected `recap.filternode.dev` hostname. This authorizes scoped implementation, verification and the Cloudflare duplicate using the same Supabase/Clerk resources. Complete the migration gates before activating a second runner or retiring Netlify. Existing financial holds/caps, review approval and reminder opt-out stay in force; no new supplier or hosting subscription is purchased through this instruction alone.
