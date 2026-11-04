@@ -1,0 +1,106 @@
+{
+  "recorded_at": "2026-11-04T12:06:23.799Z",
+  "stage": "handover-guard-readback-without-cutover",
+  "live_release": "ca43f97e50ee068649d3c05e17d76ac61ef966d7",
+  "workers": {
+    "web": {
+      "version": "e25b5702-2223-45c1-b958-c8fbb223f824",
+      "mode": "shadow",
+      "release": "ca43f97e50ee068649d3c05e17d76ac61ef966d7",
+      "sourceVerified": false,
+      "flags": {
+        "APIFY_RUNTIME_ENABLED": "false",
+        "HOURLY_COLLECTION_ENABLED": "false",
+        "CONTENT_ANALYSIS_ENABLED": "false",
+        "AUTOMATIC_CONTENT_ENABLED": "false",
+        "SOCIAL_COLLECTION_ENABLED": "false",
+        "SOCIAL_CONTENT_ENABLED": "false",
+        "DAILY_BRIEFING_ENABLED": "false",
+        "REMINDER_EMAIL_ENABLED": "false",
+        "KEYWORD_LEARNING_ENABLED": "false"
+      },
+      "bindingsHash": "95dd06d4302c95b24e502bbbd3d645a27efd3538227c2fd26466f18e315e6a5f",
+      "enabled": null,
+      "hasSecrets": true
+    },
+    "jobs": {
+      "version": "466b9869-741c-41c1-b452-dc2453d1ab94",
+      "mode": "shadow",
+      "release": "ca43f97e50ee068649d3c05e17d76ac61ef966d7",
+      "sourceVerified": false,
+      "flags": {
+        "APIFY_RUNTIME_ENABLED": "false",
+        "HOURLY_COLLECTION_ENABLED": "false",
+        "CONTENT_ANALYSIS_ENABLED": "false",
+        "AUTOMATIC_CONTENT_ENABLED": "false",
+        "SOCIAL_COLLECTION_ENABLED": "false",
+        "SOCIAL_CONTENT_ENABLED": "false",
+        "DAILY_BRIEFING_ENABLED": "false",
+        "REMINDER_EMAIL_ENABLED": "false",
+        "KEYWORD_LEARNING_ENABLED": "false"
+      },
+      "bindingsHash": "a09bb5f981f74a981ea54c121b0f54f340f94e26a6bfb0d2c480d1ef13ee683a",
+      "enabled": null,
+      "hasSecrets": true
+    }
+  },
+  "source_pin": {
+    "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+    "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+    "workerHash": "df652e8eb8f334939eb27cb25e6c289ba5a2061d327a636a62242585d1270b23",
+    "containerHash": "82350aa896df6cea39ba99e28a4a36a20506efcc0ee1c56bb732736a7960e1a6",
+    "enabled": false
+  },
+  "source_verified": true,
+  "source_instance_states": [
+    "inactive"
+  ],
+  "all_execution_flags_off": true,
+  "schedules": {
+    "web": 0,
+    "jobs": 0
+  },
+  "queues": [
+    {
+      "name": "therecap-jobs",
+      "consumers": 0
+    },
+    {
+      "name": "therecap-jobs-dead",
+      "consumers": 0
+    }
+  ],
+  "hosting_control": {
+    "epoch": 1,
+    "owner": "netlify",
+    "paused": true,
+    "release": "0000000000000000000000000000000000000000",
+    "old_host_fenced": false
+  },
+  "hosting_revision": "4c119c72-4ddb-4917-96ba-da2943e314df",
+  "hosting_work": {
+    "queued": 0,
+    "running": 0,
+    "uncertain": 0,
+    "expired_running": 0
+  },
+  "security_advisor": {
+    "total": 47,
+    "levels": {
+      "INFO": 47
+    },
+    "kinds": [
+      "rls_enabled_no_policy"
+    ],
+    "new_handover_function_findings": 0
+  },
+  "actual_external_browser_recheck": false,
+  "browser_errors": [
+    "cgWindowNotFound",
+    "The browser access host is unavailable"
+  ],
+  "production_processing_activated": false,
+  "netlify_deleted": false,
+  "model_or_scraper_jobs_started": 0,
+  "emails": 0
+}

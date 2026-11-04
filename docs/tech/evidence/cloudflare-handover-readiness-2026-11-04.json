@@ -1,0 +1,55 @@
+{
+  "recorded_at": "2026-11-04T12:09:53.602Z",
+  "read_only": true,
+  "repository_head": "5ae9fb928aefbbbad21a048b1e9305d7025f7163",
+  "artifact_matches_head": true,
+  "ready_for_handover": false,
+  "live_apply_entrypoint_available": false,
+  "plan": {
+    "schema": 1,
+    "action": "initial-cloudflare-handover",
+    "oldSite": "522a0657-c191-4355-8d72-2ed19c580b81",
+    "target": "5ae9fb928aefbbbad21a048b1e9305d7025f7163",
+    "artifactDigest": "b44594ba3f714a249a9864f2dd6e5ae3ddb628c412b9af404812703a2677b028",
+    "expected": {
+      "owner": "netlify",
+      "epoch": 1,
+      "release": "0000000000000000000000000000000000000000",
+      "paused": true,
+      "old_host_fenced": false,
+      "revision": "4c119c72-4ddb-4917-96ba-da2943e314df"
+    },
+    "priorVersions": {
+      "web": "e25b5702-2223-45c1-b958-c8fbb223f824",
+      "jobs": "466b9869-741c-41c1-b452-dc2453d1ab94"
+    },
+    "bindings": {
+      "web": "95dd06d4302c95b24e502bbbd3d645a27efd3538227c2fd26466f18e315e6a5f",
+      "jobs": "a09bb5f981f74a981ea54c121b0f54f340f94e26a6bfb0d2c480d1ef13ee683a"
+    },
+    "sourcePin": {
+      "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+      "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+      "workerHash": "df652e8eb8f334939eb27cb25e6c289ba5a2061d327a636a62242585d1270b23",
+      "containerHash": "82350aa896df6cea39ba99e28a4a36a20506efcc0ee1c56bb732736a7960e1a6",
+      "enabled": false
+    },
+    "policy": {},
+    "resumeProcessing": false,
+    "receipts": {},
+    "rollback": null,
+    "blockers": [
+      "active_artifact_required",
+      "explicit_existing_execution_policy_required",
+      "reminder_policy_unverified",
+      "explicit_resume_policy_required",
+      "privateParity_proof_required",
+      "secretContinuity_proof_required",
+      "preservation_proof_required",
+      "legacyDrain_proof_required",
+      "fenceReadiness_proof_required",
+      "usable_cloudflare_rollback_required"
+    ],
+    "digest": "80fd71ad2d5a1f858b3684577191c68925aed5bc853190e55823d29521ee496b"
+  }
+}

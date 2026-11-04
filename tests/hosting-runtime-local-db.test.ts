@@ -16,6 +16,7 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     sql(readFileSync(new URL('../supabase/migrations/20261104090000_hosting_runtime_handover.sql', import.meta.url), 'utf8'));
     sql(readFileSync(new URL('../supabase/migrations/20261104095658_hosting_release_quiesce.sql', import.meta.url), 'utf8'));
     sql(readFileSync(new URL('../supabase/migrations/20261104110432_hosting_release_revision.sql', import.meta.url), 'utf8'));
+    sql(readFileSync(new URL('../supabase/migrations/20261104115513_hosting_handover_checked.sql', import.meta.url), 'utf8'));
   });
   afterAll(() => { if (started) execFileSync('pg_ctl', ['-D', join(root, 'data'), 'stop', '-m', 'immediate'], { stdio: 'ignore' }); if (root) rmSync(root, { recursive: true, force: true }); });
   it('starts paused, keeps all tables private, and denies public execution', () => {
@@ -123,4 +124,30 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     end $$`)).toThrow();
     for (const role of ['anon', 'authenticated']) for (const signature of ['quiesce_hosting_release_checked(bigint,text,uuid,uuid)', 'advance_hosting_release_checked(bigint,text,uuid,text,boolean,uuid)']) expect(sql(`select has_function_privilege('${role}','${signature}','execute');`)).toBe('f');
   });
+  it('commits an initial fenced handover only while paused and keeps replay idempotent', () => {
+    const nonce='66666666-6666-4666-8666-666666666666';
+    const result=isolated(`update hosting_runtime_control set owner='netlify',paused=true,old_host_fenced=false;
+      do $$ declare revision uuid; first jsonb; begin
+        select release_revision into revision from hosting_runtime_control;
+        first:=commit_hosting_handover_checked(10,'${release}',revision,'${next}',true,'${nonce}');
+        if first<>commit_hosting_handover_checked(10,'${release}',revision,'${next}',true,'${nonce}') then raise exception 'Handover replay changed'; end if;
+      end $$; select read_hosting_release_status()`);
+    expect(JSON.parse(result)).toMatchObject({control:{owner:'cloudflare',epoch:11,release:next,paused:true,old_host_fenced:true},revision:nonce});
+  });
+  it('rejects an unfenced, unpaused, stale or interrupted initial handover', () => {
+    const start="update hosting_runtime_control set owner='netlify',paused=true,old_host_fenced=false;";
+    const call=`select commit_hosting_handover_checked(10,'${release}',release_revision,'${next}',true,'66666666-6666-4666-8666-666666666666') from hosting_runtime_control`;
+    for(const mutation of ["update hosting_runtime_control set paused=false;","update hosting_runtime_control set owner='cloudflare';","update hosting_runtime_control set epoch=11;",`update hosting_runtime_control set release='${next}';`])expect(()=>isolated(start+mutation+call)).toThrow();
+    expect(()=>isolated(start+call.replace(',true,',',false,'))).toThrow();
+    expect(()=>isolated(start+call.replace('release_revision',"'77777777-7777-4777-8777-777777777777'"))).toThrow();
+    expect(()=>isolated(start+call,'isolation level repeatable read')).toThrow();
+    expect(()=>isolated(start+`do $$ declare revision uuid; begin select release_revision into revision from hosting_runtime_control; update hosting_runtime_control set paused=true; perform commit_hosting_handover_checked(10,'${release}',revision,'${next}',true,'66666666-6666-4666-8666-666666666666'); end $$`)).toThrow();
+  });
+  it('retains every queued, running or uncertain hosting record rather than forcing initial transfer', () => {
+    for(const state of ['queued','running','uncertain'])expect(()=>isolated(`update hosting_runtime_control set owner='netlify',paused=true; insert into hosting_work(key,kind,epoch,release,state) values('retained','http',9,'${release}','${state}'); select commit_hosting_handover_checked(10,'${release}',release_revision,'${next}',true,'66666666-6666-4666-8666-666666666666') from hosting_runtime_control`)).toThrow();
+  });
+  it('keeps initial handover RPC service-only', () => {
+    for(const role of ['anon','authenticated','service_role'])expect(sql(`select has_function_privilege('${role}','commit_hosting_handover_checked(bigint,text,uuid,text,boolean,uuid)','execute');`)).toBe(role==='service_role'?'t':'f');
+  });
+
 });

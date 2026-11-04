@@ -1,0 +1,8 @@
+{
+  "recorded_at": "2026-11-04T12:04:57.064Z",
+  "service_unfenced_handover_status": 400,
+  "anonymous_handover_status": 401,
+  "control_and_revision_unchanged": true,
+  "committed_ownership_change": false,
+  "processing_activated": false
+}

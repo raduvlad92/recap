@@ -1,5 +1,12 @@
 # Decisions and interview
 
+## 4 November 2026 — initial ownership commit and rollback stay separately guarded
+
+Engineering implementation within the existing migration authorization: the initial ownership commit compares the exact paused Netlify owner/epoch/release/revision and the coordinator's independently verified fence assertion, and always leaves Cloudflare paused. It cannot resume jobs. A native transaction rehearses transfer/replay and rolls it back; only the guard function is installed. Existing rows/control remain unchanged.
+
+The switch/rollback library requires independently verified current evidence and a usable Cloudflare recovery artifact; an unavailable Netlify origin cannot be used as fallback. Rollback restores only the proved Cloudflare release/versions, retains the old-host fence and leaves processing paused for controlled recovery. This trades automatic processing restoration for avoiding duplicate/ambiguous work during recovery. Native fence/policy/journal/workflow adapters and full private parity remain unfinished, with no apply entrypoint exposed. Actual native GitHub checkpoint transport is now verified separately. [Protocol and evidence](tech/CLOUDFLARE-HANDOVER.md).
+
+
 ## 4 November 2026 — persist release intent before provider changes
 
 Engineering decision within the authorized migration: ordinary releases use a sanitized GitHub check-run journal, acknowledged with a separate read before each mutation, plus a local durable backup. This avoids another business-data queue/table for orchestration, at the cost of explicit GitHub App Checks write permission and a dependency on GitHub availability; missing acknowledgement stops the release. Main uses one serialized production group and the verification job's exact artifact. Initial ownership transfer is excluded from this entrypoint.

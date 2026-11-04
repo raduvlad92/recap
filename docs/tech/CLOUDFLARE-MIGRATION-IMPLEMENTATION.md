@@ -1,5 +1,16 @@
 # Cloudflare migration implementation
 
+## Initial handover safeguards — current, 4 November 2026
+
+All five reported checks on `5ae9fb9` are verified: three successful jobs, the expected skipped PR deploy and the neutral native GitHub checkpoint probe. The actual GitHub App token writes/reads/updates the transport-only checkpoint on the exact head. Checked-main automatic deployment remains separate. [CI evidence](evidence/cloudflare-checkpoint-ci-2026-11-04.json).
+
+Initial switch/rollback state machines now pass isolated rehearsals with explicit parity/policy/fence/recovery gates, saved intent, lost-reply reconciliation and operator-pause precedence. They remain orchestration ports; native fence/policy/journal/workflow adapters are not connected and no apply command exists. The new read-only `plan:cloudflare:handover` correctly refuses the current missing gates. [Protocol, proof and boundaries](CLOUDFLARE-HANDOVER.md).
+
+The service-only checked initial-transfer function is installed after native transaction/replay/rollback rehearsal. The committed migration changes no existing row/definition: all 58 public tables / 21,116 rows / 310 definitions remain exact, including original 56/21,115/296. Control/revision stay Netlify/epoch 1/paused/unfenced. Real API denies anonymous and unfenced transfer. Existing reminder ciphertext decrypts with the preserved original key in Node, rejects the wrong key and stays unchanged; no hosted decryption or email is inferred. Full local verification passes 3,751 tests / 115 files; 35 focused handover/database cases pass.
+
+Fresh native state keeps live web/jobs review release `ca43f97`, source disabled/private/inactive and all processing/schedules/consumers off. External Chrome reports `cgWindowNotFound` and browser-host unavailability again, so latest private save/reload/ordinary-user parity remains unfinished; prior owner-browser proof retains its exact release. No committed switch, credential revocation/fence, source/model job, review approval, reminder or Netlify deletion occurs. Earlier checkpoints below retain their original release/proof boundaries.
+
+
 ## Release-adapter continuation — current, 4 November 2026
 
 Both checks passed on `ac5d050` (runs `41814859268` and `41814859106`); no new review/comment was present. Functional **`ca43f97e50ee068649d3c05e17d76ac61ef966d7`** is now deployed to web/jobs in shadow mode. The native adapter uploads versions without changing traffic, preserves existing bindings/ordinary bounds, recovers deliberately lost successful upload/promotion replies without repeating either mutation, and promotes only those exact inert versions. Source remains the same disabled/private/inactive pin. [Native adapter proof](evidence/cloudflare-release-adapter-shadow-2026-11-04.json), [independent hosted readback](evidence/cloudflare-release-adapter-hosted-readback-2026-11-04.json).

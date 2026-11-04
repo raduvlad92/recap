@@ -1,0 +1,53 @@
+{
+  "recorded_at": "2026-11-04T12:04:27.204Z",
+  "head": "5ae9fb928aefbbbad21a048b1e9305d7025f7163",
+  "checks": [
+    {
+      "name": "check",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41821778144/job/126546432646"
+    },
+    {
+      "name": "verify",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41821777966/job/126546432689"
+    },
+    {
+      "name": "checkpoint-storage",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41821777966/job/126553801554"
+    },
+    {
+      "name": "deploy",
+      "status": "COMPLETED",
+      "conclusion": "SKIPPED",
+      "url": "https://github.com/raduvlad92/recap/actions/runs/41821777966/job/126553803963"
+    },
+    {
+      "name": "cloudflare-release-journal-probe",
+      "status": "COMPLETED",
+      "conclusion": "NEUTRAL",
+      "url": "https://github.com/raduvlad92/recap/runs/126553853774"
+    }
+  ],
+  "native_checkpoint": {
+    "check_run_id": 126553853774,
+    "app": "github-actions",
+    "head": "5ae9fb928aefbbbad21a048b1e9305d7025f7163",
+    "status": "completed",
+    "conclusion": "neutral",
+    "summary": {
+      "schema": 1,
+      "kind": "transport-only",
+      "target": "5ae9fb928aefbbbad21a048b1e9305d7025f7163",
+      "activatesProcessing": false
+    }
+  },
+  "new_reviews_or_comments": 0,
+  "pr_deployment_skipped": true,
+  "actual_checked_main_deployment_proven": false,
+  "processing_activated": false
+}

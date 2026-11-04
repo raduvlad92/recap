@@ -1,5 +1,19 @@
 # Demo and evidence log
 
+## 4 November 2026 — initial handover guards and recovery rehearsal
+
+- Trigger: five checks passed on PR head `5ae9fb9`. Verified three successful jobs, skipped PR deploy, neutral actual GitHub App probe `126553853774`, and no comments/reviews. Checkpoint transport is proved; checked-main deployment remains separate.
+- Added exact-artifact initial handover planning/orchestration and explicit Cloudflare-only rollback with evidence/policy/fence/usable-recovery gates, saved intent, lost-reply reconciliation and operator-pause precedence. These are tested ports; native policy/fence/journal/workflow adapters remain unconnected. `plan:cloudflare:handover` is read-only and correctly blocked; no apply flag exists.
+- Added a credential-free cross-runner PR artifact download/hash check, pending new-head CI. PR builds stay shadow even after the production target becomes Cloudflare; the exact artifact whitelist remains isolated.
+- Native migration rehearsal transfers/replays ownership inside an uncommitted transaction, then rolls back. The committed change installs one service-only checked transfer function, preserving every existing 58 public tables / 21,116 rows / 310 definitions, including original 56/21,115/296. Owner/epoch/release/pause/fence/revision remain unchanged. Real unfenced service request is 400; anonymous request is 401. No credential is revoked and no external fence is created.
+- Actual stored reminder ciphertext decrypts/authenticates under the preserved original worker key in Node, rejects a wrong key and stays unchanged. No plaintext/credentials are recorded, hosted decryption is not inferred and reminders remain off.
+- Full local check: 3,751 tests / 115 files; 35 focused handover/database cases and 26 workerd cases plus the disabled-source check pass. Native live readback retains functional review release `ca43f97`, all nine flags off, no schedules/consumers, unchanged source pin and inactive container. Advisor remains 47 INFO notices with no new-function finding.
+- External Chrome returns `cgWindowNotFound`; tab creation returns `The browser access host is unavailable`. Prior real owner proof remains attached to `8fdfbae`; current main-app save/reload/ordinary-user parity is not claimed. No new billing/key/admin setup is requested.
+- Costs/outcomes: metered hosting usage unmeasured; zero supplier/model jobs or emails, no approval/publication, committed ownership change, fence/revocation, Netlify deletion or new subscription. All old holds/references/preferences remain intact.
+- Evidence: [protocol](tech/CLOUDFLARE-HANDOVER.md), [CI](tech/evidence/cloudflare-checkpoint-ci-2026-11-04.json), [native guard rehearsal/apply](tech/evidence/cloudflare-handover-checked-migration-2026-11-04.json), [API](tech/evidence/cloudflare-handover-api-2026-11-04.json), [secret continuity](tech/evidence/cloudflare-reminder-secret-continuity-2026-11-04.json), [blocked readiness](tech/evidence/cloudflare-handover-readiness-2026-11-04.json), [live state](tech/evidence/cloudflare-handover-live-state-2026-11-04.json).
+- Next: new-head CI, native handover adapters, latest private parity/usable Cloudflare recovery artifact, complete switch/rollback rehearsal, checked-main delivery, durable fencing/gated handover, bounded acceptance, then Therecap-only retirement.
+
+
 ## 4 November 2026 — Cloudflare release adapter, native disabled recovery rehearsal
 
 - Trigger: PR #1 reports both checks passed on `ac5d050`; runs `41814859268` / `41814859106` verified, no comments/reviews to resolve.

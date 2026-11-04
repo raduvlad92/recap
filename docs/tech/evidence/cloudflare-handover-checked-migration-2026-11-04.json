@@ -1,0 +1,48 @@
+{
+  "recorded_at": "2026-11-04T12:04:40.355Z",
+  "migration": "20261104115513_hosting_handover_checked",
+  "native_uncommitted_handover_and_idempotent_replay_rehearsed": true,
+  "rehearsal_rolled_back": true,
+  "apply_installed_function_only": true,
+  "all_existing_public_tables_preserved": 58,
+  "all_existing_public_rows_preserved": 21116,
+  "all_existing_definitions_preserved": 310,
+  "new_service_only_functions": 1,
+  "protected_original_tables": 56,
+  "protected_original_rows": 21115,
+  "protected_original_definitions": 296,
+  "control_and_revision_unchanged": true,
+  "status": {
+    "work": {
+      "queued": 0,
+      "running": 0,
+      "uncertain": 0,
+      "expired_running": 0
+    },
+    "control": {
+      "epoch": 1,
+      "owner": "netlify",
+      "paused": true,
+      "release": "0000000000000000000000000000000000000000",
+      "old_host_fenced": false
+    },
+    "revision": "4c119c72-4ddb-4917-96ba-da2943e314df"
+  },
+  "privileges": [
+    {
+      "role_name": "anon",
+      "handover": false
+    },
+    {
+      "role_name": "authenticated",
+      "handover": false
+    },
+    {
+      "role_name": "service_role",
+      "handover": true
+    }
+  ],
+  "committed_ownership_change": false,
+  "external_fence_created": false,
+  "production_processing_activated": false
+}
