@@ -1,0 +1,542 @@
+{
+  "recorded_at": "2026-11-04T09:25:04.219Z",
+  "stage": "jobs-context-verified-shadow-not-cutover",
+  "url": "https://recap.filternode.dev",
+  "release": "3c22f7f89378e3f80c2e8fbb2e903c3de232b9b4",
+  "workers": {
+    "therecap-web": {
+      "release": "3c22f7f89378e3f80c2e8fbb2e903c3de232b9b4",
+      "mode": "shadow",
+      "allExecutionFlagsOff": true,
+      "secrets": [
+        "ADMIN_ALLOWED_EMAILS",
+        "ADMIN_USER_IDS",
+        "APIFY_API_TOKEN",
+        "APIFY_MAX_ITEMS",
+        "APIFY_MAX_TOTAL_CHARGE_USD",
+        "APIFY_YOUTUBE_BUILD",
+        "APIFY_YOUTUBE_BUILD_ID",
+        "APIFY_YOUTUBE_PRICING_SHA256",
+        "CLERK_ISSUER_URL",
+        "CLERK_SECRET_KEY",
+        "COLLECTION_ALLOWED_USER_IDS",
+        "COLLECTION_JOB_SECRET",
+        "CONTENT_ANALYSIS_CONFIG_EPOCH",
+        "CONTENT_ANALYSIS_MODEL",
+        "CONTENT_ANALYSIS_OPENROUTER_PROVIDER",
+        "CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME",
+        "CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL",
+        "CONTENT_ANALYSIS_PRICE_MODEL",
+        "CONTENT_ANALYSIS_PRICING_VERIFIED",
+        "CONTENT_ANALYSIS_PRICING_VERSION",
+        "CONTENT_ANALYSIS_ROUTE",
+        "CONTENT_ANALYSIS_WORKER_SECRET",
+        "HOURLY_COLLECTION_MAX_NEW_VIDEOS",
+        "HOURLY_COLLECTION_PROVIDER_VERIFIED",
+        "HOURLY_COLLECTION_WORKER_SECRET",
+        "OPENROUTER_API_KEY",
+        "SUPABASE_SECRET_KEY",
+        "VITE_CLERK_PUBLISHABLE_KEY",
+        "VITE_SUPABASE_PUBLISHABLE_KEY",
+        "VITE_SUPABASE_URL"
+      ],
+      "schedules": 0,
+      "version": "2026d092-d0c2-46df-a95a-a0247e119211"
+    },
+    "therecap-jobs": {
+      "release": "3c22f7f89378e3f80c2e8fbb2e903c3de232b9b4",
+      "mode": "shadow",
+      "allExecutionFlagsOff": true,
+      "secrets": [
+        "ADMIN_ALLOWED_EMAILS",
+        "ADMIN_USER_IDS",
+        "APIFY_API_TOKEN",
+        "APIFY_MAX_ITEMS",
+        "APIFY_MAX_TOTAL_CHARGE_USD",
+        "APIFY_YOUTUBE_BUILD",
+        "APIFY_YOUTUBE_BUILD_ID",
+        "APIFY_YOUTUBE_PRICING_SHA256",
+        "CLERK_ISSUER_URL",
+        "CLERK_SECRET_KEY",
+        "COLLECTION_ALLOWED_USER_IDS",
+        "COLLECTION_JOB_SECRET",
+        "CONTENT_ANALYSIS_CONFIG_EPOCH",
+        "CONTENT_ANALYSIS_MODEL",
+        "CONTENT_ANALYSIS_OPENROUTER_PROVIDER",
+        "CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME",
+        "CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL",
+        "CONTENT_ANALYSIS_PRICE_MODEL",
+        "CONTENT_ANALYSIS_PRICING_VERIFIED",
+        "CONTENT_ANALYSIS_PRICING_VERSION",
+        "CONTENT_ANALYSIS_ROUTE",
+        "CONTENT_ANALYSIS_WORKER_SECRET",
+        "HOURLY_COLLECTION_MAX_NEW_VIDEOS",
+        "HOURLY_COLLECTION_PROVIDER_VERIFIED",
+        "HOURLY_COLLECTION_WORKER_SECRET",
+        "OPENROUTER_API_KEY",
+        "SUPABASE_SECRET_KEY",
+        "VITE_CLERK_PUBLISHABLE_KEY",
+        "VITE_SUPABASE_PUBLISHABLE_KEY",
+        "VITE_SUPABASE_URL"
+      ],
+      "schedules": 0,
+      "version": "67dc7e63-af80-4d84-90be-8b4ae4af46d1"
+    },
+    "therecap-source": {
+      "mode": "private-disabled",
+      "release": "3c22f7f89378e3f80c2e8fbb2e903c3de232b9b4",
+      "version": "15072f45-c6bd-40fb-b0d1-cafbd0d686eb",
+      "secrets": [],
+      "sourceEnabled": false,
+      "publicRoute": false,
+      "image_sha256": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+      "maximum_instances": 1,
+      "instance_states": [
+        "inactive"
+      ]
+    }
+  },
+  "http": [
+    {
+      "path": "/api/health",
+      "method": "GET",
+      "status": 200,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html",
+      "noindex": true,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "/creators/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/creators",
+      "method": "GET",
+      "status": 301,
+      "type": null,
+      "noindex": true,
+      "cache": null
+    },
+    {
+      "path": "/creators/",
+      "method": "HEAD",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/sitemap.xml",
+      "method": "GET",
+      "status": 200,
+      "type": "application/xml; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/creators/3blue1brown-ddff00d2/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/creators/zuzka-light-6f86daac/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/creators/therecap-migration-missing-creator/",
+      "method": "GET",
+      "status": 404,
+      "type": "text/html; charset=utf-8",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/robots.txt",
+      "method": "GET",
+      "status": 200,
+      "type": "text/plain; charset=utf-8",
+      "noindex": true,
+      "cache": "public, max-age=300"
+    },
+    {
+      "path": "/admin/",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html",
+      "noindex": true,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "/workspace",
+      "method": "GET",
+      "status": 200,
+      "type": "text/html",
+      "noindex": true,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "/api/admin",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/collect",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/daily-briefings",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/keyword-learning",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/.netlify/functions/keyword-learning-worker",
+      "method": "GET",
+      "status": 503,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/unknown",
+      "method": "GET",
+      "status": 404,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/nested/path",
+      "method": "GET",
+      "status": 404,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/.netlify/functions/social-collection-worker",
+      "method": "GET",
+      "status": 404,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/.netlify/functions/hourly-collection",
+      "method": "GET",
+      "status": 404,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/migration-verification",
+      "method": "GET",
+      "status": 401,
+      "type": "application/json",
+      "noindex": true,
+      "cache": "no-store"
+    }
+  ],
+  "assets": {
+    "verified_files": 72,
+    "all_deployed_bytes_match_build": true,
+    "frontend_private_and_database_credentials_absent": true,
+    "clerk_public_key_only_on_separate_verification_page": true,
+    "asset_tamper_rejected_before_upload": true
+  },
+  "catalogue": {
+    "creator_pages": 560,
+    "sampled_creator_pages": 2,
+    "canonical_origin": "https://recap.filternode.dev",
+    "noindex": true
+  },
+  "queues": [
+    {
+      "name": "therecap-jobs",
+      "consumers": 0,
+      "messages_sent_by_this_work": 0
+    },
+    {
+      "name": "therecap-jobs-dead",
+      "consumers": 0,
+      "messages_sent_by_this_work": 0
+    }
+  ],
+  "domain": {
+    "hostname": "recap.filternode.dev",
+    "worker": "therecap-web",
+    "https_verified": true
+  },
+  "database": {
+    "existing_tables": 56,
+    "existing_rows": 21115,
+    "existing_function_index_definitions": 296,
+    "all_preserved": true,
+    "control": {
+      "epoch": 1,
+      "owner": "netlify",
+      "paused": true,
+      "release": "0000000000000000000000000000000000000000",
+      "old_host_fenced": false
+    },
+    "hosting_work_rows": 0
+  },
+  "source_container_deployed": true,
+  "temporary_probe_workers_absent": true,
+  "private_runtime_values_uploaded_per_worker": 30,
+  "workers_paid_entitlement_verified": true,
+  "production_processing_activated": false,
+  "traffic_cutover": false,
+  "netlify_deleted": false,
+  "model_inferences": 0,
+  "scraper_runs": 0,
+  "emails": 0,
+  "hosted_source_verification": {
+    "recorded_at": "2026-11-04T02:56:23.400Z",
+    "environment": "actual-cloudflare-container",
+    "probe_script_sha256": "5befb594119a778208c9cd1761cc74990bf8655562ecc4e2db5638bd267e8e09",
+    "disabled_guard": {
+      "name": "good",
+      "http": 503,
+      "error": "source_transport_disabled",
+      "elapsed_ms": 31
+    },
+    "unauthenticated_probe_blocked": true,
+    "checks": [
+      {
+        "name": "good",
+        "http": 200,
+        "bytes": 7,
+        "status": 200,
+        "elapsed_ms": 117
+      },
+      {
+        "name": "infra",
+        "http": 200,
+        "bytes": 1381,
+        "status": 200,
+        "elapsed_ms": 92
+      },
+      {
+        "name": "tls",
+        "http": 422,
+        "error": "source_tls_identity_invalid",
+        "elapsed_ms": 557
+      },
+      {
+        "name": "private",
+        "http": 400,
+        "error": "unsafe_url",
+        "elapsed_ms": 55
+      },
+      {
+        "name": "credentials",
+        "http": 400,
+        "error": "unsafe_url",
+        "elapsed_ms": 55
+      },
+      {
+        "name": "redirect",
+        "http": 200,
+        "bytes": 7,
+        "status": 200,
+        "elapsed_ms": 104
+      },
+      {
+        "name": "redirect_private",
+        "http": 400,
+        "error": "unsafe_url",
+        "elapsed_ms": 66
+      },
+      {
+        "name": "loop",
+        "http": 400,
+        "error": "redirect_limit",
+        "elapsed_ms": 119
+      },
+      {
+        "name": "large",
+        "http": 413,
+        "error": "feed_too_large",
+        "elapsed_ms": 126
+      },
+      {
+        "name": "slow",
+        "http": 504,
+        "error": "source_timeout",
+        "elapsed_ms": 8110
+      }
+    ],
+    "passed": true,
+    "creator_sources_contacted": 0,
+    "scraper_runs": 0,
+    "model_inferences": 0,
+    "emails": 0,
+    "source_runtime_credentials": 0,
+    "instances_max": 1,
+    "source_gateway_left_disabled": true,
+    "temporary_probe_removed": true
+  },
+  "backend_reads": [
+    {
+      "kind": "hosting",
+      "explicitUa": false,
+      "http": 200,
+      "paused": true
+    },
+    {
+      "kind": "clerk",
+      "explicitUa": false,
+      "http": 200
+    },
+    {
+      "kind": "workspace",
+      "explicitUa": false,
+      "http": 200,
+      "count": "1"
+    },
+    {
+      "kind": "jwks",
+      "explicitUa": false,
+      "http": 200,
+      "keys": 1
+    },
+    {
+      "kind": "hosting",
+      "explicitUa": true,
+      "http": 200,
+      "paused": true
+    },
+    {
+      "kind": "clerk",
+      "explicitUa": true,
+      "http": 200
+    },
+    {
+      "kind": "workspace",
+      "explicitUa": true,
+      "http": 200,
+      "count": "1"
+    },
+    {
+      "kind": "jwks",
+      "explicitUa": true,
+      "http": 200,
+      "keys": 1
+    },
+    {
+      "kind": "async-context",
+      "preserved": true
+    }
+  ],
+  "backend_role_diagnostic": {
+    "signatureVerified": true,
+    "hasAuthorizedParty": false,
+    "existingAdministratorVerified": true,
+    "workspaceCount": 1,
+    "workspaceError": null
+  },
+  "owner_browser_verification": {
+    "recorded_at": "2026-11-04T09:16:10.139Z",
+    "url": "https://recap.filternode.dev/migration-check",
+    "browser": "external Google Chrome",
+    "functional_release": "8fdfbae205992235950e7097719f6952ed326f76",
+    "visible_result": "Account and administrator access verified. Your saved workspace is present. Processing remains paused.",
+    "existing_signed_in_owner": true,
+    "administrator_check_passed": true,
+    "saved_workspace_present": true,
+    "processing_paused": true,
+    "endpoint_kind": "GET-only read-only verification",
+    "private_workspace_restored_in_main_app": false,
+    "ordinary_user_live_parity": false,
+    "database_writes": 0,
+    "hosting_work_admitted": 0,
+    "scraper_runs": 0,
+    "model_inferences": 0,
+    "emails": 0,
+    "ci": {
+      "head": "7080a34f6ecea6480edbc8038970d0b854d6a30d",
+      "check": {
+        "conclusion": "SUCCESS",
+        "run": "41802565106",
+        "job": "126481631342"
+      },
+      "duplicate": {
+        "conclusion": "SUCCESS",
+        "run": "41802564936",
+        "job": "126483268931"
+      }
+    },
+    "cutover": false,
+    "netlify_deleted": false,
+    "latest_release_recheck": {
+      "completed": false,
+      "error": "cgWindowNotFound",
+      "prior_real_owner_check_retained": true
+    }
+  },
+  "verification": {
+    "last_full_application_tests": 3676,
+    "last_full_application_files": 108,
+    "last_full_checked_head": "7080a34f6ecea6480edbc8038970d0b854d6a30d",
+    "current_focused_tests": 20,
+    "current_focused_files": 2,
+    "web_workerd_checks": 21,
+    "jobs_workerd_checks": 5,
+    "source_gateway_disabled_check": true
+  },
+  "jobs_context_regression": {
+    "before_fix_timer_http": 503,
+    "after_fix_timer_http": 200,
+    "stale_message_acknowledged": true,
+    "paused_message_retried_after_seconds": 300,
+    "duplicate_claim_not_executed": true,
+    "hosting_redirect_rejected": true,
+    "live_provider_requests": 0,
+    "queue_messages_sent": 0
+  },
+  "source_verification_correction": {
+    "recorded_on": "2026-11-04",
+    "prior_hosted_image": "44bd7f4732fc99d379e2bbee9d801371ad8f9863f45e9ad1407b0aee80e70801",
+    "image_at_this_checkpoint": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+    "exact_image_proof_was_not_established_at_this_checkpoint": true,
+    "later_exact_image_rerun": "docs/tech/evidence/cloudflare-source-exact-image-2026-11-04.json"
+  }
+}

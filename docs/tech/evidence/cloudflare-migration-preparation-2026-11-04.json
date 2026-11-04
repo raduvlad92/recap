@@ -1,0 +1,90 @@
+{
+  "recorded_at": "2026-11-04T01:40:31.080Z",
+  "stage": "prepared-duplicate-not-cutover",
+  "target": "https://recap.filternode.dev",
+  "database": {
+    "project": "zlfdqzabsfndifxiqguo",
+    "migration": "20261104090000_hosting_runtime_handover",
+    "sha256": "aed986fb33ebbd2db9a79b12c687e7fde69e6bf75daad9a77c0a698748327266",
+    "rollback_passed": true,
+    "applied": true,
+    "protected_tables": 56,
+    "protected_rows": 21115,
+    "protected_existing_function_index_definitions": 296,
+    "all_preserved": true,
+    "control": {
+      "epoch": 1,
+      "owner": "netlify",
+      "paused": true,
+      "release": "0000000000000000000000000000000000000000",
+      "old_host_fenced": false
+    }
+  },
+  "verification": {
+    "full_application_tests": 3661,
+    "full_test_files": 106,
+    "focused_tests": 155,
+    "focused_files": 5,
+    "typecheck": true,
+    "catalogue": true,
+    "build": true,
+    "web_workerd_checks": 14,
+    "source_gateway_disabled_workerd_check": true,
+    "workerd_outbound_network": "blocked",
+    "source_worker_dry_run": true,
+    "linux_amd64_image_built": true,
+    "node_tls_correct_hostname": true,
+    "node_tls_wrong_hostname_rejected": true,
+    "node_tls_negative_code": "ERR_TLS_CERT_ALTNAME_INVALID"
+  },
+  "native_socket_rejection": {
+    "hosted_correct_hostname_accepted": true,
+    "hosted_wrong_hostname_rejected": false,
+    "decision": "removed-native-socket-downloader; use-native-node-container",
+    "temporary_proof_workers_removed": true
+  },
+  "infrastructure": {
+    "empty_queues_created": [
+      "therecap-jobs",
+      "therecap-jobs-dead"
+    ],
+    "queue_messages_sent": 0,
+    "consumers_activated": 0,
+    "github_deployment_secret_configured": true,
+    "github_account_variable_configured": true,
+    "live_dns_record_at_target_before_setup": false
+  },
+  "access": {
+    "dns": true,
+    "workers": true,
+    "queues": true,
+    "containers": false,
+    "containers_read_http": 403,
+    "workers_free_plan_confirmed_by_error": 100328,
+    "paid_plan_purchased": false,
+    "reminder_key_continuity_verified": true,
+    "openrouter_metadata_get": 200,
+    "credentials_exported_to_git": false
+  },
+  "container_proposal": {
+    "instances_max": 1,
+    "type": "lite",
+    "memory_mib": 256,
+    "vcpu": "1/16",
+    "disk_gb": 2,
+    "idle_sleep": "1m",
+    "maximum_source_requests_per_utc_day": 3000,
+    "container_deployed": false
+  },
+  "boundaries": {
+    "creator_sources_contacted": 0,
+    "scraper_runs_started": 0,
+    "model_inferences_started": 0,
+    "emails_sent": 0,
+    "review_decisions": 0,
+    "traffic_switched": false,
+    "netlify_deleted": false,
+    "supplier_model_execution_usd": 0,
+    "infrastructure_read_compute_cost": "unmeasured"
+  }
+}

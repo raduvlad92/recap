@@ -1,0 +1,13 @@
+{
+  "recorded_at": "2026-11-04T10:21:06.528Z",
+  "source": "authenticated Supabase Management API",
+  "connected_tool_access": "denied",
+  "total_findings": 47,
+  "new_object_findings": [],
+  "counts": {
+    "rls_enabled_no_policy:INFO": 47
+  },
+  "remediation_urls": [
+    "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+  ]
+}

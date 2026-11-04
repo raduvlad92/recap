@@ -1,0 +1,894 @@
+{
+  "recorded_at": "2026-11-03T08:26:35.896Z",
+  "scope": "Read-only hosting/configuration audit for planning; no supplier/model/email execution or external mutations",
+  "repository": {
+    "name": "raduvlad92/recap",
+    "head": "69649322c39179fefdce27f626f6b6c9da0fea3a",
+    "branch": "docs/cloudflare-migration-plan",
+    "workflow": ".github/workflows/check.yml",
+    "github_audit": {
+      "latest_success_run": "https://github.com/raduvlad92/recap/actions/runs/41156701774",
+      "functional_commit": "f955398088a9c911693c3e7e1ccd33d4a972c170",
+      "listed_secret_names": [
+        "NETLIFY_BUILD_HOOK"
+      ],
+      "configured_environments": 0,
+      "main_branch_protection_read_status": 403
+    }
+  },
+  "netlify": {
+    "site": {
+      "id": "522a0657-c191-4355-8d72-2ed19c580b81",
+      "name": "recap-v0-radu",
+      "url": "https://recap-v0-radu.netlify.app",
+      "custom_domain": null,
+      "domain_aliases": [],
+      "disabled": true,
+      "disabled_reason": "Account usage exceeded for credits",
+      "lifecycle_state": "active",
+      "has_database": false,
+      "identity_instance_present": false,
+      "forms_ignored": true,
+      "build_plugins": []
+    },
+    "build_settings": {
+      "provider": "github",
+      "repo_url": "https://github.com/raduvlad92/recap",
+      "repo_branch": "main",
+      "cmd": "npm run build",
+      "dir": "dist",
+      "functions_dir": "netlify/functions",
+      "allowed_branches": [
+        "main"
+      ],
+      "stop_builds": false,
+      "skip_prs": null,
+      "skip_automatic_builds": null,
+      "build_filter": null
+    },
+    "build_hooks": {
+      "status": 200,
+      "hooks": [
+        {
+          "title": "GitHub main after checks",
+          "branch": "main",
+          "created_at": "2026-10-21T01:57:26.318Z"
+        }
+      ]
+    },
+    "published": {
+      "id": "6ae548a5b1de3ee251abb9bb",
+      "state": "ready",
+      "sha": "f955398088a9c911693c3e7e1ccd33d4a972c170",
+      "published_at": "2026-10-31T01:48:04.492Z",
+      "functions": [
+        {
+          "name": "admin",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "automatic-content",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "automatic-content-worker",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "background",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "catalogue",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "collect",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "collection-activity",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "content-analysis",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "content-analysis-reconciliation",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "content-analysis-status",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "content-analysis-worker",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "background",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "daily-briefing",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "daily-briefing-worker",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "background",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "daily-briefings",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "health",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "hourly-collection",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "hourly-collection-worker",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "background",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "keyword-learning",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "keyword-learning-worker",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "background",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "keyword-production",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "keyword-recovery",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "recap-reminder-worker",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "background",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "recap-reminders",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "reminder-events",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "reminder-unsubscribe",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "social-collection",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "social-collection-worker",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "background",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "social-content",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "social-content-worker",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "background",
+          "observability_extension": "netlify-observability-extension"
+        },
+        {
+          "name": "source-metadata",
+          "runtime": "nodejs22.x",
+          "memory_mb": 1024,
+          "invocation": "stream",
+          "observability_extension": "netlify-observability-extension"
+        }
+      ],
+      "schedules": [
+        {
+          "cron": "*/5 * * * *",
+          "name": "automatic-content"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "content-analysis"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "daily-briefing"
+        },
+        {
+          "cron": "0 * * * *",
+          "name": "hourly-collection"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "recap-reminders"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "social-collection"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "social-content"
+        }
+      ]
+    },
+    "http_probes": [
+      {
+        "path": "/",
+        "status": 503,
+        "content_type": "application/json",
+        "unavailable_body_detected": true
+      },
+      {
+        "path": "/api/health",
+        "status": 503,
+        "content_type": "application/json",
+        "unavailable_body_detected": true
+      },
+      {
+        "path": "/creators/",
+        "status": 503,
+        "content_type": "application/json",
+        "unavailable_body_detected": true
+      }
+    ],
+    "services": {
+      "forms": {
+        "status": 404,
+        "count": null
+      },
+      "snippets": {
+        "status": 200,
+        "count": 0
+      },
+      "service_instances": {
+        "status": 200,
+        "count": 0
+      },
+      "shared_environment": {
+        "status": 200,
+        "count": 0
+      }
+    },
+    "environment": {
+      "status": 200,
+      "variables": [
+        {
+          "key": "ADMIN_USER_IDS",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "all"
+          ]
+        },
+        {
+          "key": "CLERK_SECRET_KEY",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "all"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_MODEL",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "ADMIN_ALLOWED_EMAILS",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "all"
+          ]
+        },
+        {
+          "key": "APIFY_MAX_ITEMS",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "APP_URL",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "all"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_PRICING_VERIFIED",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "HOURLY_COLLECTION_MAX_NEW_VIDEOS",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "COLLECTION_JOB_SECRET",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "APIFY_MAX_TOTAL_CHARGE_USD",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_PRICE_MODEL",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "HOURLY_COLLECTION_ENABLED",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "dev",
+            "branch-deploy",
+            "deploy-preview",
+            "production"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_ENABLED",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "HOURLY_COLLECTION_PROVIDER_VERIFIED",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "VITE_SUPABASE_PUBLISHABLE_KEY",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "all"
+          ]
+        },
+        {
+          "key": "APIFY_API_TOKEN",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "APIFY_YOUTUBE_BUILD_ID",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "COLLECTION_ALLOWED_USER_IDS",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "HOURLY_COLLECTION_WORKER_SECRET",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "APIFY_RUNTIME_ENABLED",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "dev",
+            "branch-deploy",
+            "deploy-preview",
+            "production"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_CONFIG_EPOCH",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_OPENROUTER_PROVIDER",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_ROUTE",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_WORKER_SECRET",
+          "is_secret": true,
+          "scopes": [
+            "builds",
+            "functions",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "SUPABASE_SECRET_KEY",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "all"
+          ]
+        },
+        {
+          "key": "VITE_CLERK_PUBLISHABLE_KEY",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "all"
+          ]
+        },
+        {
+          "key": "APIFY_YOUTUBE_PRICING_SHA256",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "CLERK_ISSUER_URL",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "all"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_PRICING_VERSION",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "OPENROUTER_API_KEY",
+          "is_secret": true,
+          "scopes": [
+            "builds",
+            "functions",
+            "runtime"
+          ],
+          "contexts": [
+            "dev",
+            "branch-deploy",
+            "deploy-preview",
+            "production",
+            "dev-server"
+          ]
+        },
+        {
+          "key": "APIFY_YOUTUBE_BUILD",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "CONTENT_ANALYSIS_RECONCILIATION_IDS",
+          "is_secret": true,
+          "scopes": [
+            "builds",
+            "functions",
+            "runtime"
+          ],
+          "contexts": [
+            "production"
+          ]
+        },
+        {
+          "key": "VITE_SUPABASE_URL",
+          "is_secret": false,
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "contexts": [
+            "all"
+          ]
+        }
+      ],
+      "values_exported": false
+    },
+    "billing": {
+      "plan": "Free",
+      "plan_slug": "credit-free",
+      "credits": 300,
+      "auto_topup_enabled": false,
+      "usages_exceeded": [
+        {
+          "usage_type": "credits",
+          "limit_type": "enforced",
+          "exceeded_at": "2026-11-02T09:14:53.365Z"
+        }
+      ],
+      "itemized_project_usage_obtained": false,
+      "invoice_obtained": false
+    }
+  },
+  "cloudflare": {
+    "account_listing_status": 200,
+    "workers": {
+      "status": 200,
+      "success": true,
+      "matching_recap_resources": []
+    },
+    "queues": {
+      "status": 200,
+      "success": true,
+      "matching_recap_resources": []
+    },
+    "pages": {
+      "status": 403,
+      "success": false,
+      "errors": [
+        {
+          "code": 10000,
+          "message": "Authentication error"
+        }
+      ],
+      "matching_recap_resources": null
+    },
+    "subscriptions": {
+      "status": 403,
+      "success": false,
+      "errors": [
+        {
+          "code": 10000,
+          "message": "Authentication error"
+        }
+      ],
+      "matching_recap_resources": null
+    },
+    "owned_candidate_zone": {
+      "name": "filternode.dev",
+      "listing_status": 200,
+      "active": true
+    },
+    "candidate_dns": {
+      "name": "recap.filternode.dev",
+      "status": 403,
+      "success": false,
+      "availability_verified": false,
+      "errors": [
+        {
+          "code": 10000,
+          "message": "Authentication error"
+        }
+      ]
+    }
+  },
+  "database": {
+    "project_ref": "zlfdqzabsfndifxiqguo",
+    "migration_requested": false,
+    "live_database_queried_this_audit": false
+  },
+  "boundaries": {
+    "provider_runs_started": 0,
+    "model_calls_started": 0,
+    "emails_sent": 0,
+    "external_mutations": 0,
+    "incremental_supplier_model_cost_usd": 0,
+    "ordinary_infrastructure_read_cost": "unmeasured"
+  },
+  "limitations": [
+    "Cloudflare write/deploy and billing tier not proven by reads",
+    "No exact Therecap usage allocation/invoice",
+    "No live authenticated UI test; old website returns 503",
+    "Netlify-marked secret recoverability not verified; names/scopes only retained",
+    "No source/provider/model runtime repaired or retried"
+  ]
+}

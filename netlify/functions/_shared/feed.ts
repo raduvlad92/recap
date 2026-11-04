@@ -1,3 +1,4 @@
+import { fetchNoRedirect } from './fetch-no-redirect';
 import { lookup } from 'node:dns/promises';
 import { request as httpsRequest } from 'node:https';
 import type { LookupFunction } from 'node:net';
@@ -5,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import type { CollectionResult, Reference, Source, SourceUpdate } from '../../../src/lib/types';
 import { CollectionError, isPublicAddress, publicHttpsUrl, readTextLimited } from './security';
+import { hostRuntime } from './host-runtime';
 
 const MAX_BYTES = 2 * 1024 * 1024;
 const CONTENT_LIMIT = 24_000;
@@ -69,10 +71,10 @@ export async function downloadYouTubeFeed(urlString: string, validators: FeedVal
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetcher(url.href, {
-      redirect: 'error', signal: controller.signal,
+    const response = await fetchNoRedirect(url.href, {
+      signal: controller.signal,
       headers: { accept: 'application/atom+xml, application/xml, text/xml', ...conditionalFeedHeaders(validators) },
-    });
+    }, fetcher);
     const metadata = {
       status: response.status, etag: response.headers.get('etag')?.slice(0, 512),
       lastModified: response.headers.get('last-modified')?.slice(0, 128),
@@ -97,6 +99,12 @@ export async function downloadHourlySource(urlString: string, redirects = 0, val
 }
 
 async function downloadPinned(urlString: string, redirects: number, validators: FeedValidators, validate: (value: string) => URL): Promise<Download> {
+  const host = hostRuntime();
+  if (host?.download) return host.download(urlString, {
+    kind: validate === youtubeCaptionUrl ? 'caption' : 'feed',
+    validate, redirects, maxBytes: MAX_BYTES, timeoutMs: 8000,
+    headers: { accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml, text/html;q=0.5', 'user-agent': 'therecap-source-check/0.1', ...conditionalFeedHeaders(validators) },
+  });
   const url = validate(urlString);
   let dnsTimer: ReturnType<typeof setTimeout> | undefined;
   const addresses = await Promise.race([

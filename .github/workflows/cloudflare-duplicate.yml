@@ -1,0 +1,182 @@
+name: Verify and deploy Cloudflare
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'netlify/**'
+      - 'cloudflare/**'
+      - 'containers/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'supabase/migrations/**'
+      - 'package*.json'
+      - 'tsconfig.json'
+      - 'vite*.ts'
+      - '.github/workflows/cloudflare-duplicate.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'netlify/**'
+      - 'cloudflare/**'
+      - 'containers/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'supabase/migrations/**'
+      - 'package*.json'
+      - 'tsconfig.json'
+      - 'vite*.ts'
+      - '.github/workflows/cloudflare-duplicate.yml'
+  workflow_dispatch:
+    inputs:
+      checkpoint_id:
+        description: 'Existing normal-release checkpoint to resume (same checked main commit)'
+        required: false
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('cloudflare-verify-{0}', github.ref) || 'therecap-hosting-production' }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Enable disposable PostgreSQL 17 checks
+        run: |
+          if [ ! -x /usr/lib/postgresql/17/bin/initdb ]; then
+            sudo install -d /usr/share/postgresql-common/pgdg
+            sudo curl --fail --silent --show-error --output /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+            . /etc/os-release
+            echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" | sudo tee /etc/apt/sources.list.d/recap-pgdg.list
+            sudo apt-get update
+            sudo apt-get install --yes postgresql-17
+          fi
+          for binary in initdb pg_ctl psql; do
+            test -x "/usr/lib/postgresql/17/bin/$binary"
+          done
+          echo "/usr/lib/postgresql/17/bin" >> "$GITHUB_PATH"
+          /usr/lib/postgresql/17/bin/initdb --version
+      - run: npm ci --no-fund --no-audit
+      - name: Check application and PostgreSQL contracts
+        # Native PostgreSQL fixture hashing exceeds five seconds on shared runners.
+        # Keep every assertion and use a bounded CI deadline.
+        run: |
+          npm run catalogue:check
+          npx vitest run --testTimeout=30000
+          npm run build
+      - run: npm run check:cloudflare
+        env:
+          HOSTING_BUILD_MODE: ${{ github.event_name != 'pull_request' && vars.HOSTING_TARGET == 'cloudflare' && 'active' || 'shadow' }}
+          CLOUDFLARE_CLERK_PUBLISHABLE_KEY: ${{ vars.CLOUDFLARE_CLERK_PUBLISHABLE_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.CLOUDFLARE_CLERK_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.CLOUDFLARE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.CLOUDFLARE_SUPABASE_PUBLISHABLE_KEY }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+        with:
+          name: therecap-cloudflare-${{ github.sha }}
+          include-hidden-files: true
+          retention-days: ${{ github.event_name == 'pull_request' && 7 || 30 }}
+          path: |
+            dist-cloudflare/**
+            .local/cloudflare-build/release.json
+            .local/cloudflare-build/web.json
+            .local/cloudflare-build/jobs.json
+            .local/cloudflare-build/source.json
+            .local/cloudflare-build/web/**
+            .local/cloudflare-build/jobs/**
+            .local/cloudflare-build/source-worker/**
+            .local/cloudflare-build/source-container/**
+  artifact-integrity:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: therecap-cloudflare-${{ github.sha }}
+          path: .
+      - name: Verify the exact artifact on a separate runner
+        run: |
+          node --input-type=module <<'JS'
+          import { checkedArtifact } from './scripts/cloudflare-release-platform.mjs';
+          const artifact = checkedArtifact(process.cwd());
+          if (artifact.release !== process.env.GITHUB_SHA || artifact.mode !== 'shadow') throw new Error('PR artifact identity changed');
+          console.log('Checked Worker/configuration/source/assets survived upload/download unchanged; no deployment.');
+          JS
+  checkpoint-storage:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - name: Verify isolated remote checkpoint storage
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CHECKPOINT_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          node --input-type=module <<'JS'
+          import { ReleaseGitHub } from './scripts/cloudflare-release-github.mjs';
+          const github = new ReleaseGitHub({ token: process.env.GITHUB_TOKEN, runId: process.env.GITHUB_RUN_ID });
+          await github.probeCheckpoint(process.env.CHECKPOINT_SHA);
+          console.log('GitHub checkpoint write/read/update verified; no runtime credentials or processing.');
+          JS
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: therecap-cloudflare-${{ github.sha }}
+          path: .
+      - name: Deploy the exact checked artifact
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          HOSTING_TARGET: ${{ vars.HOSTING_TARGET }}
+          RELEASE_CHECKPOINT_ID: ${{ inputs.checkpoint_id }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          SUPABASE_SECRET_KEY: ${{ secrets.CLOUDFLARE_HOSTING_DATABASE_KEY }}
+        run: npm run deploy:cloudflare:main
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: therecap-release-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 30
+          path: .local/cloudflare-release/checkpoint.json

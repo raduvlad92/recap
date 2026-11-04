@@ -1,0 +1,22 @@
+{
+  "recorded_at": "2026-11-04T10:19:59.371Z",
+  "anonymous_status": 401,
+  "anonymous_error_code": "42501",
+  "service_status": 200,
+  "status": {
+    "work": {
+      "queued": 0,
+      "running": 0,
+      "uncertain": 0,
+      "expired_running": 0
+    },
+    "control": {
+      "epoch": 1,
+      "owner": "netlify",
+      "paused": true,
+      "release": "0000000000000000000000000000000000000000",
+      "old_host_fenced": false
+    }
+  },
+  "public_response_contains_control": false
+}

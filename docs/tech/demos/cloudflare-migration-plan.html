@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Therecap hosting migration plan</title>
+<style>
+*{box-sizing:border-box}body{margin:0;color:var(--foreground);font-family:var(--font-sans);font-size:14px;line-height:1.5}.hosts{display:grid;grid-template-columns:1fr 1fr;gap:16px}.box{padding:16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}h2{font-size:19px;margin:0 0 3px}p{margin:8px 0 0}.muted{color:var(--muted-foreground)}.status{font-size:12px;font-weight:600}.old .status{color:var(--warning)}.new .status{color:var(--info)}.bar{height:13px;display:flex;margin:16px 0 7px;overflow:hidden;border-radius:4px}.http{background:var(--chart-1);width:48.276%}.cron{background:var(--chart-2);width:24.138%}.jobs{background:var(--chart-3);width:27.586%}.legend{font-size:12px;display:flex;flex-wrap:wrap;gap:4px 14px}.legend i{display:inline-block;width:8px;height:8px;margin-right:5px}.legend .a{background:var(--chart-1)}.legend .b{background:var(--chart-2)}.legend .c{background:var(--chart-3)}.database{text-align:center;margin:16px 0;padding:14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--secondary)}.database strong{display:block}.phases{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.phase{border-top:3px solid var(--border);padding-top:9px}.phase strong{display:block}.phase span{font-size:12px;color:var(--muted-foreground)}.note{font-size:12px;color:var(--muted-foreground);margin-top:14px}@media(max-width:500px){.hosts{grid-template-columns:1fr}.phases{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="hosts" aria-label="Current host and proposed duplicate">
+ <section class="box old"><h2>Netlify</h2><div class="status">Current host · paused · HTTP 503</div><p>Website, creator pages and all 29 function entrypoints.</p><div class="bar" role="img" aria-label="14 HTTP handlers, 7 schedules and 8 background workers"><span class="http"></span><span class="cron"></span><span class="jobs"></span></div><div class="legend"><span><i class="a"></i>14 HTTP</span><span><i class="b"></i>7 schedules</span><span><i class="c"></i>8 workers</span></div></section>
+ <section class="box new"><h2>Cloudflare</h2><div class="status">Proposed duplicate · not deployed</div><p><strong>Web/API Worker</strong> + static website<br><strong>Private jobs Worker</strong> + durable queues</p><p class="muted">GitHub checks → exact tested release → automatic deployment.</p></section>
+</div>
+<div class="database"><strong>Same Supabase database · Same Clerk app</strong>Reader data, history, reviews and spending records stay in place.</div>
+<div class="phases" aria-label="Migration stages">
+ <div class="phase"><strong>1 · Duplicate</strong><span>Isolated target; production jobs stay off.</span></div>
+ <div class="phase"><strong>2 · Verify</strong><span>Routes, login, data, secrets and runtime safety.</span></div>
+ <div class="phase"><strong>3 · Switch</strong><span>One active job runner; move domain and deployment target.</span></div>
+ <div class="phase"><strong>4 · Retire</strong><span>After acceptance, remove only the old Netlify site.</span></div>
+</div>
+<p class="note">Planning evidence, 3 November 2026. The Netlify address cannot move to Cloudflare; use an owned domain. The current credit pause prevents a working old-host redirect or fallback.</p>
+</body></html>

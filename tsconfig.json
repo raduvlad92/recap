@@ -25,6 +25,9 @@
     "netlify",
     "tests",
     "scripts/keyword-learning.mts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "cloudflare",
+    "vite.cloudflare.config.ts",
+    "containers"
   ]
 }

@@ -1,0 +1,15 @@
+{
+  "recorded_at": "2026-11-04T13:07:20.001Z",
+  "ciRun": "41827869625",
+  "artifactName": "therecap-cloudflare-2600fae526a763a19e8b98f46dca62f90ee60d0c",
+  "artifactRelease": "2600fae526a763a19e8b98f46dca62f90ee60d0c",
+  "artifactMode": "shadow",
+  "linuxSourceWorkerHash": "df652e8eb8f334939eb27cb25e6c289ba5a2061d327a636a62242585d1270b23",
+  "linuxContainerContextHash": "82350aa896df6cea39ba99e28a4a36a20506efcc0ee1c56bb732736a7960e1a6",
+  "bothMatchNativeHostedSourcePin": true,
+  "unchangedSourceCanBeReusedOnMain": true,
+  "downloadedArtifactContainsNoRuntimeSecrets": true,
+  "mainDeploymentPerformed": false,
+  "filesScannedForPreparedPrivateRuntimeValues": 87,
+  "privateRuntimeValueMatches": 0
+}

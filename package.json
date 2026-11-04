@@ -15,10 +15,18 @@
     "preview": "vite preview --host 127.0.0.1",
     "dev:netlify": "netlify dev",
     "catalogue:check": "node scripts/build-catalogue.mjs --check",
-    "catalogue:build": "node scripts/build-catalogue.mjs"
+    "catalogue:build": "node scripts/build-catalogue.mjs",
+    "build:cloudflare": "node scripts/cloudflare-build.mjs",
+    "check:cloudflare": "npm run typecheck && npm run build:cloudflare && node scripts/cloudflare-runtime-check.mjs",
+    "deploy:cloudflare": "node scripts/cloudflare-deploy.mjs",
+    "plan:cloudflare": "node scripts/cloudflare-release-plan.mjs",
+    "release:cloudflare": "node scripts/cloudflare-release.mjs",
+    "deploy:cloudflare:main": "node scripts/cloudflare-deploy-main.mjs",
+    "plan:cloudflare:handover": "node scripts/cloudflare-handover-plan.mjs"
   },
   "dependencies": {
     "@clerk/react": "6.18.0",
+    "@cloudflare/containers": "0.3.7",
     "@fontsource/onest": "5.3.1",
     "@supabase/supabase-js": "2.118.0",
     "fast-xml-parser": "5.11.2",
@@ -29,14 +37,18 @@
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "5.20261103.1",
     "@netlify/functions": "6.0.3",
     "@netlify/vite-plugin": "3.0.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
+    "esbuild": "0.28.1",
+    "miniflare": "5.20261103.0-beta",
     "netlify-cli": "27.14.0",
     "typescript": "6.0.3",
     "vite": "8.3.4",
-    "vitest": "5.0.5"
+    "vitest": "5.0.5",
+    "wrangler": "4.157.0"
   }
 }

@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "recordedFromRelease": "3c22f7f89378e3f80c2e8fbb2e903c3de232b9b4",
+  "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+  "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+  "workerHash": "df652e8eb8f334939eb27cb25e6c289ba5a2061d327a636a62242585d1270b23",
+  "containerHash": "82350aa896df6cea39ba99e28a4a36a20506efcc0ee1c56bb732736a7960e1a6",
+  "hostedChecks": 10,
+  "evidence": "docs/tech/evidence/cloudflare-source-exact-image-2026-11-04.json",
+  "note": "Ten exact-image hosted checks exercised the enabled version; the disabled version has identical code/runtime/bindings apart from SOURCE_TRANSPORT_ENABLED.",
+  "enabledVersion": "ffed3cd5-addb-4240-adb8-42afe273615f"
+}

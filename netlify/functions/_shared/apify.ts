@@ -1,3 +1,4 @@
+import { fetchNoRedirect } from './fetch-no-redirect';
 import { classifyProviderVideoFormat, videoFormatFields } from '../../../src/lib/video-format';
 import { createHash } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
@@ -46,10 +47,10 @@ export function youtubeInput(source: Source, maxItems: number): Record<string, u
 
 type Fetcher = typeof fetch;
 async function apifyRequest(path: string, config: ApifyConfig, fetcher: Fetcher, init: RequestInit = {}): Promise<unknown> {
-  const response = await fetcher('https://api.apify.com/v2/' + path, {
-    ...init, redirect: 'error', signal: AbortSignal.timeout(12_000),
+  const response = await fetchNoRedirect('https://api.apify.com/v2/' + path, {
+    ...init, signal: AbortSignal.timeout(12_000),
     headers: { authorization: 'Bearer ' + config.token, 'content-type': 'application/json', ...init.headers },
-  });
+  }, fetcher);
   if (!response.ok) {
     await response.body?.cancel();
     throw new CollectionError(502, 'provider_error', 'The collection provider did not accept this request. No automatic retry was started.');

@@ -13,3 +13,6 @@ playwright-report/
 test-results/
 supabase/.temp/
 .clerk/
+
+dist-cloudflare/
+.wrangler/

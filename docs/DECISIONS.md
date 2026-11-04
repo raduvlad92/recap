@@ -1,5 +1,61 @@
 # Decisions and interview
 
+## 4 November 2026 — separate database credentials and pause legacy builds before main verification
+
+Engineering preparation within the authorized migration: create a dedicated Cloudflare secret key, verify the same database permissions/status, install it only in the new hosting/deployment/operator configuration and retain Netlify's original key until the gated fence. The global Supabase Management token remains local. This permits eventual exact-key revocation without disabling Cloudflare and leaves public/legacy signing keys and encrypted reminder settings untouched.
+
+Reversibly stop the exact Netlify site's builds and select GitHub `HOSTING_TARGET=paused` before merging the inert preparation increment after green checks. The merged main workflow skips its legacy hook and deploys only the shadow copy. Published Netlify deployment/key and runtime ownership remain intact; this is safe automatic-delivery verification, not the production switch or retirement. The destructive fence still requires full fresh gates, exact paused control/revision/key identities, replacement access and acknowledged intent. [Native receipts and remaining gates](tech/CLOUDFLARE-HANDOVER.md).
+
+
+## 4 November 2026 — initial ownership commit and rollback stay separately guarded
+
+Engineering implementation within the existing migration authorization: the initial ownership commit compares the exact paused Netlify owner/epoch/release/revision and the coordinator's independently verified fence assertion, and always leaves Cloudflare paused. It cannot resume jobs. A native transaction rehearses transfer/replay and rolls it back; only the guard function is installed. Existing rows/control remain unchanged.
+
+The switch/rollback library requires independently verified current evidence and a usable Cloudflare recovery artifact; an unavailable Netlify origin cannot be used as fallback. Rollback restores only the proved Cloudflare release/versions, retains the old-host fence and leaves processing paused for controlled recovery. This trades automatic processing restoration for avoiding duplicate/ambiguous work during recovery. Native fence/policy/journal/workflow adapters and full private parity remain unfinished, with no apply entrypoint exposed. Actual native GitHub checkpoint transport is now verified separately. [Protocol and evidence](tech/CLOUDFLARE-HANDOVER.md).
+
+
+## 4 November 2026 — persist release intent before provider changes
+
+Engineering decision within the authorized migration: ordinary releases use a sanitized GitHub check-run journal, acknowledged with a separate read before each mutation, plus a local durable backup. This avoids another business-data queue/table for orchestration, at the cost of explicit GitHub App Checks write permission and a dependency on GitHub availability; missing acknowledgement stops the release. Main uses one serialized production group and the verification job's exact artifact. Initial ownership transfer is excluded from this entrypoint.
+
+Checked database transitions also compare a per-operation revision recorded before execution. A later operator update, including pausing an already paused runtime, invalidates the earlier operation. Lost replies can reconcile only their own nonce. Native verification promotes only the disabled review copy, with original data/control/source preserved; it does not establish an initial switch or active runtime. The new isolated PR storage probe and checked-main deployment still need their own CI evidence. [Implementation and native proof](tech/CLOUDFLARE-RELEASE-CONTROLLER.md).
+
+
+## 4 November 2026 — reuse a verified source component independently of website releases
+
+Engineering decision within the authorized migration: a routine shadow website deploy reuses an unchanged source Worker/image only when its input hashes, immutable live version/image, private/no-secret scope, disabled state and one-instance bound match the committed hosted proof. Unexpected drift stops deployment. A source change remains disabled until new hosted proof. This avoids needless rebuilds and proof/digest drift, at the cost of independently recording the source component release/version instead of claiming all three components always share the website SHA. Actual `5ddf873` web/jobs deployment preserves verified source version `af6e82f8…` / image `bc1713…`. This grants no production ownership/activation or retirement authority beyond the existing staged gates. [Design and native evidence](tech/CLOUDFLARE-RELEASE-CONTROLLER.md).
+
+## 4 November 2026 — continue in reopened external Chrome
+
+Founder: **“Chrome is open; continue.”** Resume the existing account check with the already approved Paid account; no new billing, API key or administrator setup is requested. The native Chrome connection is restored. The real request passes the unchanged identity/admin checks and isolates a hosting-fetch compatibility error; the shared redirect fix is deployed in shadow mode. The final visible browser result, remaining private parity and migration gates are still required. This continuation does not change runtime ownership, existing holds/caps, review approval or reminder opt-out. [Exact account checkpoint](tech/evidence/cloudflare-account-hosted-readback-2026-11-04.json).
+
+## 4 November 2026 — Workers Paid approved and activated; external Chrome required
+
+Founder explicitly answered **“Approve Workers Paid and continue verification”** for **US$5/account/month plus metered usage**. At the concrete checkout, the founder chose **“I’ll complete the checkout in Chrome”**, updated the card and reported **“done”**. Independent Containers API reads then changed from the explicit Paid-plan denial to HTTP 200; the private source application was created successfully. This supersedes the earlier subscription-approval gate for this migration. Invoice/payment settlement and actual metered charges are not independently measured. Existing source/model budgets, unknown holds, approval controls and reminder opt-out remain unchanged.
+
+Founder: **“always open the external browser, chrome, not the internal one”**. Use external Chrome for this work. The internal preview tab was closed; the existing Chrome session reached the correct account's checkout and the real Recap Google sign-in. Later native Chrome control returned `cgWindowNotFound`, so interactive owner-verification completion is not inferred from the Google login alone.
+
+The source container passes ten actual hosted transport checks and the independent Node process guard is observed inactive after the idle interval. The gateway is left disabled, temporary source/backend probes are removed, and web/jobs remain shadow/off with no schedules or consumers. Thirty existing server configuration values are copied privately; activation flags and browser database credentials are not copied into the guest shell. The old private receipt-reconciliation allowlist remains unavailable and is not broadened. This approval does not waive authenticated parity, old-host fencing, cutover, bounded acceptance or site-only retirement.
+
+
+## 4 November 2026 — begin the Cloudflare migration implementation
+
+Founder: **“ok, start working on it”**, referring to the full duplication/switch/retirement plan and the selected `recap.filternode.dev` hostname. This authorizes scoped implementation, verification and the Cloudflare duplicate using the same Supabase/Clerk resources. Complete the migration gates before activating a second runner or retiring Netlify. Existing financial holds/caps, review approval and reminder opt-out stay in force; no new supplier or hosting subscription is purchased through this instruction alone.
+
+[Implementation record](tech/CLOUDFLARE-MIGRATION-IMPLEMENTATION.md) separates code/local checks, the preserved additive database migration, empty queue setup and credential access from future hosted parity, cutover and acceptance. Cloudflare's explicit Free-plan CPU-limit rejection is a real billing gate. Source transport remains disabled until hosted certificate/address checks pass; local compatibility is insufficient. The hosted socket test accepted a wrong certificate hostname, so the plan's narrow native Node container fallback is prepared, with one lite instance, idle shutdown and a 3,000-request UTC-day guard. This requires the Paid-plan decision; no container was started on Cloudflare.
+
+The isolated copy is now attached to the selected hostname with real HTTPS and public catalogue readback. Execution ownership is still Netlify/paused; DNS attachment alone is not the switch. The remaining owner decision is Workers Paid (current US$5/account/month starting price plus usage), because [AGENTS.md](../AGENTS.md) does not authorize a new supplier subscription. The prepared code/evidence is reviewable before that decision; no upgrade is made. The separately supplied container-token candidate does not replace the verified Workers/Queues/DNS deployment credential, and its container permissions remain unverified until the account entitlement gate is resolved.
+
+## 3 November 2026 — permanent Cloudflare address selected
+
+Founder answered the migration hostname question with **“recap.filternode.dev (existing domain; no purchase)”**. Use `https://recap.filternode.dev` as the permanent production origin in the [Cloudflare migration plan](tech/CLOUDFLARE-MIGRATION-PLAN.md), including future auth redirects/origin checks, canonical/sitemap/robots links, reminder/webhook URLs and operator targets. This settles the address choice; it does not establish DNS availability, permissions, TLS or a deployed Cloudflare service. No domain purchase or infrastructure change occurred.
+
+## 3 November 2026 — plan a full hosting move to Cloudflare; retain Supabase
+
+Founder: “let's plan a full move off netlify to cloudflare, we keep the db where it is” and asks to check everything hosted/deployed on Netlify, duplicate it on Cloudflare, switch, then remove Netlify. Accepted direction: retain the existing database, duplicate the full hosting behavior and automatic deployment, cut over only after verification, then retire the Therecap Netlify project. This turn authorizes audit/planning, not immediate provisioning, new subscriptions, DNS/control changes, paid testing or destructive deletion. The broader product specification, financial caps, human publication review and reminder opt-out remain unchanged.
+
+[Proposed migration v0.1](tech/CLOUDFLARE-MIGRATION-PLAN.md) recommends Workers Static Assets plus API handling and a private scheduled/queue Worker, with Supabase keeping job/financial authority. Exact target hostname, secret recoverability, safe source transport, Cloudflare billing/CI/DNS permissions and one-active-runner fencing remain implementation gates. No new architecture ADR is claimed as approved. Live audit confirms the old site is disabled for account-credit exhaustion and returns 503, separate from its ready artifact; redirects/rollback to Netlify are presently unavailable. The block's timing correlates with the last observed scheduled invocation but does not repair or fully diagnose the individual stale jobs. No provider/model/email execution or external mutation occurred.
+
 ## 31 October 2026 — run today's cycle now; retain reminder opt-out and approval gates
 
 Founder: “run the cycle now and then check results.” Run collection/analysis checks and execute today's unique daily slot early using an actual present cutoff and unchanged settings. Do not simulate a future clock, alter source dates, reset allowances, approve reviews or send email. Today's later scheduled slot is consequently consumed; the next normal cycle is 1 November at the unchanged 08:00 Europe/Berlin. The early-run continuity fix retains intervening updates for that next cycle.

@@ -1,0 +1,14 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "therecap-source",
+  "main": "source-container.ts",
+  "compatibility_date": "2026-11-04",
+  "workers_dev": false,
+  "preview_urls": false,
+  "limits": { "cpu_ms": 1000 },
+  "vars": { "SOURCE_TRANSPORT_ENABLED": "false" },
+  "containers": [{ "class_name": "SourceDownloader", "image": "../.local/cloudflare-build/source-container/Dockerfile", "instance_type": "lite", "max_instances": 1 }],
+  "durable_objects": { "bindings": [{ "name": "SOURCE_CONTAINER", "class_name": "SourceDownloader" }] },
+  "exports": { "SourceDownloader": { "type": "durable-object", "storage": "sqlite" } },
+  "observability": { "enabled": true, "head_sampling_rate": 1 }
+}

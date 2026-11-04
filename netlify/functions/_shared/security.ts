@@ -1,5 +1,6 @@
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 import { isIP } from 'node:net';
+import { hostRuntime } from './host-runtime';
 
 export type Env = (name: string) => string | undefined;
 
@@ -8,6 +9,8 @@ export class CollectionError extends Error {
 }
 
 export const runtimeEnv: Env = (name) => {
+  const host = hostRuntime();
+  if (host) return host.env(name);
   const runtime = (globalThis as typeof globalThis & { Netlify?: { env: { get: Env } } }).Netlify;
   return runtime ? runtime.env.get(name) : process.env[name];
 };
