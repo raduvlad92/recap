@@ -1,0 +1,64 @@
+{
+  "recordedAt": "2026-11-04T22:28:29.741Z",
+  "scope": "early-native-hosting-cadence-not-completed-acceptance",
+  "hostingWork": [
+    {
+      "kind": "automatic-content",
+      "state": "completed",
+      "count": 3,
+      "oldest": "2026-11-04 22:15:17.482348+00",
+      "newest": "2026-11-04 22:25:17.691302+00"
+    },
+    {
+      "kind": "daily-briefing",
+      "state": "completed",
+      "count": 3,
+      "oldest": "2026-11-04 22:15:21.660811+00",
+      "newest": "2026-11-04 22:25:25.781935+00"
+    },
+    {
+      "kind": "social-collection",
+      "state": "completed",
+      "count": 3,
+      "oldest": "2026-11-04 22:15:19.393519+00",
+      "newest": "2026-11-04 22:25:22.710903+00"
+    },
+    {
+      "kind": "social-content",
+      "state": "completed",
+      "count": 3,
+      "oldest": "2026-11-04 22:15:20.513603+00",
+      "newest": "2026-11-04 22:25:24.063149+00"
+    }
+  ],
+  "queueMetrics": [
+    {
+      "name": "therecap-jobs",
+      "metrics": {
+        "backlog_count": 0,
+        "backlog_bytes": 0,
+        "oldest_message_timestamp_ms": 0
+      }
+    },
+    {
+      "name": "therecap-jobs-dead",
+      "metrics": {
+        "backlog_count": 0,
+        "backlog_bytes": 0,
+        "oldest_message_timestamp_ms": 0
+      }
+    }
+  ],
+  "dailyScheduleCount": 1,
+  "dailySchedules": [
+    {
+      "enabled": true,
+      "last_local_date": "2026-11-04",
+      "last_cutoff_at": "2026-11-04 07:00:00+00",
+      "starts_at": "2026-10-31 00:57:32.360376+00"
+    }
+  ],
+  "normalDailyCutoffsObservedSinceAcceptance": 0,
+  "hostingCompletionDoesNotProveUsefulContent": true,
+  "manualSourceOrModelRuns": 0
+}

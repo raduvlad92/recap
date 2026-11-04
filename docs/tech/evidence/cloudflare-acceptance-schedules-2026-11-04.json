@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-11-04T22:28:15.716Z",
+  "scope": "finite-migration-acceptance-followups",
+  "acceptanceStartedAt": "2026-11-04T22:26:36.944Z",
+  "notBefore": "2026-11-07T22:26:36.944Z",
+  "minimumNormalDailyCutoffs": 2,
+  "schedules": [
+    {
+      "title": "Recap Cloudflare: first normal daily cutoff",
+      "scheduledTaskId": "scheduled-task:command:mcp:84ab0680-6785-471f-9520-ad4ecc3aeca3:schedule-task:therecap-cf-acceptance-80c3d6c-cutoff1-20261105",
+      "nextRunAt": "2026-11-05T07:15:00.000Z",
+      "enabled": true,
+      "boundToCurrentThread": true,
+      "type": "once"
+    },
+    {
+      "title": "Recap Cloudflare: second normal daily cutoff",
+      "scheduledTaskId": "scheduled-task:command:mcp:84ab0680-6785-471f-9520-ad4ecc3aeca3:schedule-task:therecap-cf-acceptance-80c3d6c-cutoff2-20261106",
+      "nextRunAt": "2026-11-06T07:15:00.000Z",
+      "enabled": true,
+      "boundToCurrentThread": true,
+      "type": "once"
+    },
+    {
+      "title": "Recap Cloudflare: final acceptance and site-only retirement",
+      "scheduledTaskId": "scheduled-task:command:mcp:84ab0680-6785-471f-9520-ad4ecc3aeca3:schedule-task:therecap-cf-acceptance-80c3d6c-final-20261107",
+      "nextRunAt": "2026-11-07T22:40:00.000Z",
+      "enabled": true,
+      "boundToCurrentThread": true,
+      "type": "once"
+    }
+  ]
+}

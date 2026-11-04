@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — active restoration and finite acceptance observation
+
+The checked normal active release preserves the acknowledged maintenance pause; the same maintenance journal then acknowledges restoration against that exact release/checkpoint. Current native browser/API/callback/finance checks establish the new acceptance start, **4 November 22:26:36.944 UTC**, rather than counting the earlier defective active interval. Observe at least 72 hours and two genuine daily cutoffs through three finite thread-bound tasks. Normal reconciliation may settle old holds only with exact provider evidence; keep original records/maxima/launch identity and unknown costs. The existing Resend callback moves to the permanent Cloudflare origin without changing its secret/events or email consent. Netlify retirement remains limited to Therecap after fresh acceptance. No product, subscription, cap, review-approval or reminder decision changes. [Evidence and continuation](tech/CLOUDFLARE-ACCEPTANCE.md).
+
 ## 4 November 2026 — committed cutover and explicit acceptance maintenance
 
 The authorized initial switch is now committed, with the old database key rejected, Cloudflare ownership and deployment target selected, and the deployment workflow restored. An actual native 204 void reply exposes a Worker compatibility defect during active acceptance. Retain an acknowledged maintenance pause, preserve it across the checked normal-release fix, and require an independently acknowledged restoration plus successful live private-API readback before starting the 72-hour/two-cutoff window. A brief unpaused interval is not acceptance. Native consumer aliases may normalize `script`/`script_name` only while rejecting conflicting identities and retaining every existing delivery bound. No spending, approval, reminder or broader product decision changes. [Evidence and next action](tech/CLOUDFLARE-CUTOVER.md).

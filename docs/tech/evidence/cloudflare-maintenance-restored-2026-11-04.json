@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-11-04T22:11:00.930Z",
+  "kind": "checked-maintenance-restoration",
+  "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+  "runId": 41920092072,
+  "archiveDigest": "sha256:d7c03751621413dcde23e857eb67786a2acbe9c2665b8ab7bee15719cb6aef9b",
+  "artifactDigest": "6d067682405aa6eb78fdb95b3a5fbe9c948a7e452d23c7ae475294c291aca0ca",
+  "releaseCheckpoint": 126896081640,
+  "maintenance": {
+    "operation": "b0d222fb-e8e9-4caf-ae90-f3065b8d7ed8",
+    "path": ".hosting-journal/maintenance/b0d222fb-e8e9-4caf-ae90-f3065b8d7ed8.json",
+    "sha": "f464a2baeaa9f904545b7726a8c55b0636a2779a",
+    "phase": "resumed",
+    "resumeRevision": "2b7f630e-2f78-4223-9c35-5f207c460add"
+  },
+  "control": {
+    "epoch": 3,
+    "owner": "cloudflare",
+    "paused": false,
+    "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+    "old_host_fenced": true
+  },
+  "work": {
+    "queued": 0,
+    "running": 0,
+    "uncertain": 0,
+    "expired_running": 0
+  },
+  "source": {
+    "version": "ffed3cd5-addb-4240-adb8-42afe273615f",
+    "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+    "enabled": true,
+    "private": true,
+    "maximumInstances": 1
+  },
+  "oldKeyStatus": 401,
+  "replacementKeyStatus": 200,
+  "delivery": {
+    "target": "cloudflare",
+    "crons": [
+      "*/5 * * * *",
+      "0 * * * *"
+    ],
+    "consumerCount": 1
+  },
+  "remindersEnabled": false,
+  "manualSourceOrModelRuns": 0,
+  "acceptanceStarted": false,
+  "netlifyDeleted": false
+}

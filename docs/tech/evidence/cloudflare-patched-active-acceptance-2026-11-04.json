@@ -1,0 +1,224 @@
+{
+  "recordedAt": "2026-11-04T22:26:36.944Z",
+  "scope": "actual-active-hosting-acceptance-start",
+  "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+  "origin": "https://recap.filternode.dev",
+  "control": {
+    "epoch": 3,
+    "owner": "cloudflare",
+    "paused": false,
+    "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+    "old_host_fenced": true
+  },
+  "sourceEnabled": true,
+  "delivery": {
+    "target": "cloudflare",
+    "crons": [
+      "*/5 * * * *",
+      "0 * * * *"
+    ],
+    "consumerCount": 1
+  },
+  "oldKeyStatus": 401,
+  "replacementKeyStatus": 200,
+  "immutableVersionsAndAllActiveAssetsVerified": true,
+  "http": [
+    {
+      "path": "/api/admin",
+      "status": 401,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/collect",
+      "status": 401,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/collection-activity",
+      "status": 401,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/content-analysis-reconciliation",
+      "status": 401,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/content-analysis-status",
+      "status": 401,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/daily-briefings",
+      "status": 401,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/keyword-learning",
+      "status": 401,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/keyword-production",
+      "status": 401,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/keyword-recovery",
+      "status": 401,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/unknown",
+      "status": 404,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/.netlify/functions/hourly-collection",
+      "status": 404,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/.netlify/functions/social-collection-worker",
+      "status": 404,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/health",
+      "status": 200,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/creators/",
+      "status": 200,
+      "method": "GET",
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "method": "GET",
+      "cache": "public, max-age=0, s-maxage=300"
+    },
+    {
+      "path": "/api/source-metadata",
+      "status": 405,
+      "method": "POST",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/reminder-events",
+      "status": 400,
+      "method": "POST",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/reminder-unsubscribe?token=invalid",
+      "status": 400,
+      "method": "GET",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/reminder-events",
+      "status": 200,
+      "method": "POST",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/reminder-events",
+      "status": 200,
+      "method": "POST",
+      "cache": "no-store"
+    },
+    {
+      "path": "/api/reminder-unsubscribe?token=<unmatched-fixture>",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "path": "/api/reminder-unsubscribe?token=<unmatched-fixture>",
+      "status": 200,
+      "method": "POST"
+    },
+    {
+      "path": "/api/admin?section=access",
+      "status": 200,
+      "method": "GET",
+      "session": "actual-existing-browser"
+    },
+    {
+      "path": "/api/admin?section=overview",
+      "status": 200,
+      "method": "GET",
+      "session": "actual-existing-browser"
+    },
+    {
+      "path": "/api/admin?section=analysis",
+      "status": 200,
+      "method": "GET",
+      "session": "actual-existing-browser"
+    },
+    {
+      "path": "/api/daily-briefings?limit=1",
+      "status": 200,
+      "method": "GET",
+      "session": "actual-existing-browser"
+    },
+    {
+      "path": "/api/collection-activity",
+      "status": 200,
+      "method": "GET",
+      "session": "actual-existing-browser"
+    },
+    {
+      "path": "/api/keyword-learning",
+      "status": 405,
+      "method": "GET",
+      "session": "actual-existing-browser"
+    }
+  ],
+  "allFourteenHandlerFamiliesReachedWithoutSourceOrModelExecution": true,
+  "invalidWebhookAndUnsubscribeRejected": true,
+  "validSignedUnmatchedWebhookAcceptedTwice": true,
+  "validUnmatchedUnsubscribeGetAndPostAccepted": true,
+  "webhookAndUnsubscribeFixtureDomainRowsWritten": 0,
+  "matchedOutboxReplayProvedByIsolatedTestsOnly": true,
+  "existingOwnerBrowserSessionUsed": true,
+  "ownerVerifiedThroughBrowserApiReceipt": true,
+  "backendTokenWithoutAuthorizedPartyNotUsed": true,
+  "ownerPrivateApiReadsSucceeded": true,
+  "ownerSessionCreated": false,
+  "privateIdentityOrTokenRecorded": false,
+  "originalUnknownModelCallsPreserved": 7,
+  "originalSourceReservationRecordsRetained": 19,
+  "originalSourceHoldsUnchanged": 17,
+  "oldSourceHoldsSettledByNormalReconciliation": 2,
+  "settlementsHaveAuthenticatedTerminalProviderFeeEvidence": true,
+  "providerBillingFinalityClaimed": false,
+  "remindersEnabled": false,
+  "manualSourceOrModelRuns": 0,
+  "manualReviewApprovals": 0,
+  "emailsSentByVerification": 0,
+  "acceptance": {
+    "startedAt": "2026-11-04T22:26:36.944Z",
+    "notBefore": "2026-11-07T22:26:36.944Z",
+    "requiredHours": 72,
+    "requiredNormalDailyCutoffs": 2,
+    "completed": false
+  },
+  "nativeRecoveryPromotionPerformed": false,
+  "netlifyDeleted": false
+}

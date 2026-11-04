@@ -1,0 +1,47 @@
+{
+  "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+  "checkedAt": "2026-11-04T22:23:32.564Z",
+  "authorizedPartyMatches": true,
+  "realSignedInBrowserSession": true,
+  "tokenPrinted": false,
+  "checks": [
+    {
+      "path": "/api/admin?section=access",
+      "status": 200,
+      "payloadValid": true
+    },
+    {
+      "path": "/api/admin?section=overview",
+      "status": 200,
+      "payloadValid": true
+    },
+    {
+      "path": "/api/admin?section=analysis",
+      "status": 200,
+      "payloadValid": true
+    },
+    {
+      "path": "/api/daily-briefings?limit=1",
+      "status": 200,
+      "payloadValid": true
+    },
+    {
+      "path": "/api/collection-activity",
+      "status": 200,
+      "payloadValid": true
+    },
+    {
+      "path": "/api/keyword-learning",
+      "status": 405,
+      "payloadValid": true
+    }
+  ],
+  "browser": "external Google Chrome",
+  "origin": "https://recap.filternode.dev",
+  "workspaceSyncedVisible": true,
+  "devtoolsClosed": true,
+  "recapTabLeftInFront": true,
+  "ownerDataEdited": false,
+  "privateIdentityOrFollowsRecorded": false,
+  "ownerSessionCreated": false
+}

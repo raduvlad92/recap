@@ -1,0 +1,20 @@
+{
+  "recordedAt": "2026-11-04T22:18:02.979Z",
+  "scope": "existing-Resend-webhook-endpoint-migration",
+  "endpoint": "https://recap.filternode.dev/api/reminder-events",
+  "status": "enabled",
+  "events": [
+    "email.sent",
+    "email.delivered",
+    "email.bounced",
+    "email.complained"
+  ],
+  "endpointUpdated": true,
+  "signingSecretUnchanged": true,
+  "signingSecretMatchesEncryptedRuntime": true,
+  "statusUnchanged": true,
+  "eventsUnchanged": true,
+  "secretExposed": false,
+  "emailsSent": 0,
+  "readerConsentChanged": false
+}
