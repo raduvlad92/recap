@@ -19,6 +19,11 @@ mkdirSync(root + '.local/cloudflare-build/source-container', { recursive: true }
 await build({ entryPoints: [root + 'containers/source-server.ts'], bundle: true, platform: 'node', target: 'node22', format: 'esm', outfile: root + '.local/cloudflare-build/source-container/server.mjs' });
 copyFileSync(root + 'containers/Dockerfile', root + '.local/cloudflare-build/source-container/Dockerfile');
 await build({ entryPoints: [root + 'cloudflare/source-container.ts'], bundle: true, platform: 'browser', format: 'esm', target: 'es2022', external: ['cloudflare:workers'], outfile: root + '.local/cloudflare-build/source-worker/source.js' });
+const sourceConfig = JSON.parse(readFileSync(root + 'cloudflare/wrangler.source.jsonc', 'utf8'));
+sourceConfig.main = root + '.local/cloudflare-build/source-worker/source.js';
+sourceConfig.containers[0].image = root + '.local/cloudflare-build/source-container/Dockerfile';
+sourceConfig.vars.RELEASE_SHA = release;
+writeFileSync(root + '.local/cloudflare-build/source.json', JSON.stringify(sourceConfig, null, 2));
 for (const kind of ['jobs', 'web']) {
   const config = JSON.parse(readFileSync(root + 'cloudflare/wrangler.' + kind + '.jsonc', 'utf8'));
   config.main = root + 'cloudflare/' + kind + '.ts';
@@ -32,5 +37,5 @@ for (const kind of ['jobs', 'web']) {
 const hashes = Object.fromEntries(['jobs', 'web'].map(kind => [kind, createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/' + kind + '/' + kind + '.js')).digest('hex')]));
 hashes.sourceWorker = createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/source-worker/source.js')).digest('hex');
 hashes.sourceContainer = createHash('sha256').update(readFileSync(root + '.local/cloudflare-build/source-container/server.mjs')).update(readFileSync(root + '.local/cloudflare-build/source-container/Dockerfile')).digest('hex');
-const configs = Object.fromEntries(['jobs', 'web'].map(kind => [kind, fileHash(root + '.local/cloudflare-build/' + kind + '.json')]));
+const configs = Object.fromEntries(['source', 'jobs', 'web'].map(kind => [kind, fileHash(root + '.local/cloudflare-build/' + kind + '.json')]));
 writeFileSync(root + '.local/cloudflare-build/release.json', JSON.stringify({ release, mode, appUrl: 'https://recap.filternode.dev', jobsEnabled: false, hashes, configs, assets: assetManifest(root + 'dist-cloudflare') }, null, 2) + '\n');

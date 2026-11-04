@@ -19,6 +19,15 @@ if (head !== release.release || release.mode !== 'shadow') throw new Error('The 
 const changed = execFileSync('git', ['status', '--porcelain', '--untracked-files=all'], { encoding: 'utf8' }).split('\n');
 if (changed.some(line => /^(?:.{3})(?:src\/|public\/|index\.html|netlify\/|cloudflare\/|containers\/|scripts\/|package(?:-lock)?\.json|tsconfig\.json|vite\.)/.test(line))) throw new Error('Commit production source changes before deploying the tested artifact');
 if (JSON.stringify(assetManifest(root + '/dist-cloudflare')) !== JSON.stringify(release.assets)) throw new Error('Built assets changed after verification');
+const sourceConfigFile = '.local/cloudflare-build/source.json';
+if (fileHash(sourceConfigFile) !== release.configs?.source || fileHash('.local/cloudflare-build/source-worker/source.js') !== release.hashes.sourceWorker
+  || createHash('sha256').update(readFileSync('.local/cloudflare-build/source-container/server.mjs')).update(readFileSync('.local/cloudflare-build/source-container/Dockerfile')).digest('hex') !== release.hashes.sourceContainer) throw new Error('Prepared source artifacts changed after verification');
+const sourceConfig = JSON.parse(readFileSync(sourceConfigFile, 'utf8'));
+if (sourceConfig.vars.SOURCE_TRANSPORT_ENABLED !== 'false' || sourceConfig.vars.RELEASE_SHA !== head || sourceConfig.workers_dev || sourceConfig.containers.length !== 1
+  || sourceConfig.containers[0].max_instances !== 1 || sourceConfig.containers[0].instance_type !== 'lite') throw new Error('Source deployment exceeds its private, disabled scope');
+// A named, empty auth profile prevents cached interactive OAuth scopes from
+// incorrectly overriding the explicitly supplied deployment API token.
+execFileSync('npx', ['wrangler', 'deploy', '--no-bundle', '--config', sourceConfigFile, '--profile', 'therecap-migration-api'], { stdio: 'inherit', env: { ...process.env, WRANGLER_SEND_METRICS: 'false' } });
 for (const kind of ['jobs', 'web']) {
   const main = root + '/.local/cloudflare-build/' + kind + '/' + kind + '.js';
   const hash = createHash('sha256').update(readFileSync(main)).digest('hex');
@@ -26,7 +35,7 @@ for (const kind of ['jobs', 'web']) {
   const configFile = '.local/cloudflare-build/' + kind + '.json';
   if (fileHash(configFile) !== release.configs?.[kind]) throw new Error('Built deployment configuration changed after verification');
   const config = JSON.parse(readFileSync(configFile, 'utf8'));
-  if (config.vars.HOSTING_MODE !== 'shadow' || config.vars.RELEASE_SHA !== head || config.triggers.crons.length || config.queues.consumers.length
+  if (config.vars.HOSTING_MODE !== 'shadow' || config.vars.SOURCE_TRANSPORT_VERIFIED !== 'false' || config.vars.RELEASE_SHA !== head || config.triggers.crons.length || config.queues.consumers.length
     || Object.entries(config.vars).some(([key, value]) => key.endsWith('_ENABLED') && value !== 'false')) throw new Error('Shadow deployment cannot activate processing');
   config.main = main;
   // Upload exactly the tested bundle, never rebuild from a moving Git branch.

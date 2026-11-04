@@ -8,10 +8,13 @@
   ],
   "workers_dev": false,
   "preview_urls": false,
+  "limits": { "cpu_ms": 300000 },
+  "services": [{ "binding": "SOURCE_DOWNLOADER", "service": "therecap-source" }],
   "vars": {
     "APP_URL": "https://recap.filternode.dev",
     "CONTEXT": "production",
     "HOSTING_MODE": "shadow",
+    "SOURCE_TRANSPORT_VERIFIED": "false",
     "RELEASE_SHA": "0000000000000000000000000000000000000000",
     "APIFY_RUNTIME_ENABLED": "false",
     "HOURLY_COLLECTION_ENABLED": "false",
