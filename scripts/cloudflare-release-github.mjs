@@ -3,21 +3,40 @@ const repository = 'raduvlad92/recap', checkName = 'cloudflare-release-checkpoin
 const requireState = (condition, code) => { if (!condition) throw new ReleaseError(code); };
 
 export class ReleaseGitHub {
-  constructor({ token, runId, fetcher = fetch }) {
+  constructor({ token, runId, fetcher = fetch, wait = ms => new Promise(resolve => setTimeout(resolve,ms)) }) {
     requireState(token && /^\d+$/.test(String(runId)), 'release_github_unconfigured');
-    Object.assign(this, { token, runId: String(runId), fetcher });
+    Object.assign(this, { token, runId: String(runId), fetcher, wait });
   }
-  async request(path, body, method) {
+  async request(path, body, method, allowMissing = false) {
     const response = await this.fetcher('https://api.github.com/repos/' + repository + '/' + path, {
-      method: method || (body ? 'POST' : 'GET'), headers: { authorization: 'Bearer ' + this.token, accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', ...(body ? { 'content-type': 'application/json' } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}), redirect: 'error', signal: AbortSignal.timeout(15000),
+      method: method || (body ? 'POST' : 'GET'), headers: { authorization: 'Bearer ' + this.token, accept: 'application/vnd.github+json', 'cache-control': 'no-cache', 'x-github-api-version': '2022-11-28', ...(body ? { 'content-type': 'application/json' } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}), redirect: 'error', signal: AbortSignal.timeout(15000),
     });
-    if (!response.ok) { await response.body?.cancel(); throw new ReleaseError('release_github_request_failed'); }
+    if (!response.ok) {
+      await response.body?.cancel();
+      if (response.status === 404 && allowMissing && (!method || method === 'GET') && !body) return null;
+      throw new ReleaseError(response.status === 409 ? 'release_github_conflict' : 'release_github_request_failed');
+    }
     return response.status === 204 ? null : response.json();
   }
-  async assertCheckedRelease(target) {
-    const [ref, run, jobs] = await Promise.all([this.request('git/ref/heads/main'), this.request('actions/runs/' + this.runId), this.request('actions/runs/' + this.runId + '/jobs?filter=latest&per_page=100')]);
-    requireState(ref.object?.sha === target && run.head_sha === target && run.head_branch === 'main' && ['push', 'workflow_dispatch'].includes(run.event) && run.repository?.full_name === repository && run.path?.split('@')[0] === '.github/workflows/cloudflare-duplicate.yml', 'release_checked_head_changed');
-    requireState(jobs.jobs?.some(job => job.name === 'verify' && job.status === 'completed' && job.conclusion === 'success'), 'release_verification_job_incomplete');
+  async assertCheckedRelease(target, { currentMain = true } = {}) {
+    // GitHub may start the dependent deployment before its jobs read model
+    // exposes the completed verification. Retry only that incomplete read;
+    // changed identity, explicit failure and provider errors still stop now.
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const [ref, run, jobs] = await Promise.all([this.request('git/ref/heads/main'), this.request('actions/runs/' + this.runId), this.request('actions/runs/' + this.runId + '/jobs?filter=latest&per_page=100')]);
+      requireState((!currentMain || ref.object?.sha === target) && run.head_sha === target && run.head_branch === 'main' && ['push', 'workflow_dispatch'].includes(run.event) && run.repository?.full_name === repository && run.path?.split('@')[0] === '.github/workflows/cloudflare-duplicate.yml', 'release_checked_head_changed');
+      const verify = jobs.jobs?.find(job => job.name === 'verify');
+      if (verify?.status === 'completed' && verify.conclusion === 'success') return;
+      requireState(attempt < 5 && (!verify || verify.status !== 'completed'), 'release_verification_job_incomplete');
+      await this.wait(2000);
+    }
+  }
+
+  async assertPreparedHandover(target, options) {
+    await this.assertCheckedRelease(target,options);
+    const [run,jobs] = await Promise.all([this.request('actions/runs/' + this.runId),this.request('actions/runs/' + this.runId + '/jobs?filter=latest&per_page=100')]);
+    const verify = jobs.jobs?.find(job => job.name === 'verify');
+    requireState(run.event === 'workflow_dispatch' && run.status === 'completed' && run.conclusion === 'success' && verify?.steps?.some(step => step.name === 'Validate artifact-only handover preparation' && step.status === 'completed' && step.conclusion === 'success') && jobs.jobs?.some(job => job.name === 'deploy' && job.status === 'completed' && job.conclusion === 'skipped'), 'handover_preparation_run_required');
   }
   async probeCheckpoint(target) {
     const summary = JSON.stringify({ schema: 1, kind: 'transport-only', target, activatesProcessing: false });

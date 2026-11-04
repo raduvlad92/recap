@@ -66,6 +66,11 @@ describe('guarded native handover runtime with isolated providers',()=>{
   const f=fixture();const {status}=await activated(f);expect(status.control).toMatchObject({owner:'cloudflare',epoch:2,release:target,paused:false,old_host_fenced:true});
   expect(f.writes).toEqual(['upload-jobs','upload-web','commit_hosting_handover_checked','promote-source','promote-jobs','promote-web','advance_hosting_release_checked']);expect(f.intents.length).toBe(7);expect(f.calls.some(call=>/download|messages|purge|api-keys/.test(call.url))).toBe(false);
  });
+ it('checks the pinned runtime settings during ordinary release source verification',async()=>{
+  const f=fixture(),plan={sourcePin:(await f.platform.source(f.artifact)).pin};
+  await f.platform.assertSource(plan,f.artifact);f.state.app.max_instances=2;
+  await expect(f.platform.assertSource(plan,f.artifact)).rejects.toThrow('source_container_settings_changed');expect(f.writes).toEqual([]);
+ });
  it.each(['etag','runtime','binding','current-binding','secret','flag','image','capacity','private'])('refuses changed source %s before runtime writes',async reason=>{
   const f=fixture();if(reason==='etag')f.state.resources[ids.enabled].script.etag='0'.repeat(64);if(reason==='runtime')f.state.resources[ids.enabled].script_runtime.limits.cpu_ms=300000;if(reason==='binding')f.state.resources[ids.enabled].bindings[0].namespace_id='different';if(reason==='secret')f.state.resources[ids.enabled].bindings.push({name:'PRIVATE_KEY',type:'secret_text'});if(reason==='flag')f.state.resources[ids.enabled].bindings.at(-1).text='false';if(reason==='image')f.state.app.configuration.image='unverified-image';if(reason==='capacity')f.state.app.max_instances=2;if(reason==='private')f.state.sourceTrusted=false;
   if(reason==='current-binding')f.state.currentBindingsChanged=true;await expect(f.adapter.stage(f.expected)).rejects.toThrow();expect(f.writes).toEqual([]);

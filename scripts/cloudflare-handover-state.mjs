@@ -78,11 +78,21 @@ export function assertHandoverCheckpoint(plan, journal, action = 'handover') {
   const recovery = action === 'rollback', code = recovery ? 'handover_rollback_checkpoint_changed' : 'handover_checkpoint_changed';
   check(['handover','rollback'].includes(action), code);
   const names = recovery ? ['schema','planDigest','phase','pending','error','expected','revision','intents'] : ['schema','planDigest','phase','pending','error','versions','fenceReceipt','revision','intents'];
+  if (Object.hasOwn(journal || {},'native')) names.push('native');
   check(keysAre(journal,names) && journal.schema === 1 && journal.planDigest === plan.digest && (journal.error === null || typeof journal.error === 'string' && /^[a-z0-9_]{1,96}$/.test(journal.error)), code);
-  const pending = recovery ? ['pause','restore','verify'] : ['stop-delivery','fence','stage','transfer','route','select-target','resume'];
+  const pending = recovery ? ['pause','restore','restore-versions','verify'] : ['stop-delivery','fence','stage','transfer','route','select-target','resume'];
   check(journal.pending === null || pending.includes(journal.pending), code);
+  if (Object.hasOwn(journal,'native')) {
+    const n = journal.native;
+    check(keysAre(n,['schema','targetWitness','operations']) && n.schema === 1 && n.operations && typeof n.operations === 'object' && !Array.isArray(n.operations) && Object.keys(n.operations).length <= 48, code);
+    check(n.targetWitness === null || keysAre(n.targetWitness,['name','value','updatedAt']) && n.targetWitness.name === 'HOSTING_TARGET' && ['netlify','paused','cloudflare'].includes(n.targetWitness.value) && Number.isFinite(Date.parse(n.targetWitness.updatedAt)), code);
+    for (const [key,op] of Object.entries(n.operations)) {
+      check(keysAre(op,['kind','planDigest','operation','digest']) && ['hosting-runtime','hosting-delivery','hosting-fence'].includes(op.kind) && op.planDigest === plan.digest && /^[a-z][a-z0-9:-]{0,99}$/.test(op.operation) && key === op.kind + ':' + op.operation, code);
+      const { digest: stored,...body } = op; check(stored === digest(body), code);
+    }
+  }
   if (recovery) {
-    check(['prepared','paused','restored','complete'].includes(journal.phase) && keysAre(journal.intents,['pause','restore']) && uuid(journal.intents.pause) && uuid(journal.intents.restore), code);
+    check(['prepared','paused','restore-committed','restored','complete'].includes(journal.phase) && keysAre(journal.intents,['pause','restore']) && uuid(journal.intents.pause) && uuid(journal.intents.restore), code);
     if (journal.expected !== null) {
       const e = journal.expected;
       check(keysAre(e,['control','revision','work']) && keysAre(e.control,['owner','epoch','release','paused','old_host_fenced']) && e.control.owner === 'cloudflare' && e.control.epoch === plan.expected.epoch + 1 && e.control.release === plan.target && e.control.old_host_fenced === true && typeof e.control.paused === 'boolean' && uuid(e.revision), code);
@@ -188,7 +198,11 @@ export async function runHandoverRollback(plan, api, save, prior = null) {
     if (journal.phase === 'paused') {
       await before('restore'); let status = await api.status();
       if (status.revision !== journal.intents.restore) { statusMatches(status, { ...journal.expected.control, paused: true }, journal.revision); status = await api.restoreRelease(journal.expected, plan.rollback.release, journal.revision, journal.intents.restore); }
-      statusMatches(status, restored(), journal.intents.restore); journal.revision = status.revision; await api.restoreVersions(plan.rollback); await after('restored');
+      statusMatches(status, restored(), journal.intents.restore); journal.revision = status.revision; await after('restore-committed');
+    }
+    if (journal.phase === 'restore-committed') {
+      await before('restore-versions');statusMatches(await api.status(),restored(),journal.revision);
+      await api.restoreVersions(plan.rollback);await after('restored');
     }
     if (journal.phase === 'restored' || journal.phase === 'complete') {
       await before('verify'); statusMatches(await api.status(), restored(), journal.revision);

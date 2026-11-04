@@ -38,6 +38,7 @@ export class HandoverRuntime {
     const result = await readSourceRuntime(this.platform,this.artifact);
     check(enabled === null || result.enabled === enabled, 'handover_source_state_changed');return result;
   }
+  verifySource() { return this.#source(); }
   async #workers(versions,exact = false) {
     for (const kind of ['jobs','web']) {
       const worker = await this.platform.current(kind), old = worker.version === this.plan.priorVersions[kind] && worker.mode === 'shadow' && executionFlags.every(flag => worker.flags?.[flag] === 'false');

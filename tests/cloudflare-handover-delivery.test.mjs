@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { HandoverDelivery,deliveryPolicy,readDelivery } from '../scripts/cloudflare-handover-delivery.mjs';
 import { ReleasePlatform } from '../scripts/cloudflare-release-platform.mjs';
 import { ReleaseGitHub } from '../scripts/cloudflare-release-github.mjs';
-import { planHandover } from '../scripts/cloudflare-handover-state.mjs';
+import { planHandover,assertHandoverCheckpoint } from '../scripts/cloudflare-handover-state.mjs';
 import { executionFlags } from '../scripts/cloudflare-release-state.mjs';
 const target='a'.repeat(40),hash='b'.repeat(64),ids={web:'11111111-1111-4111-8111-111111111111',jobs:'22222222-2222-4222-8222-222222222222',source:'33333333-3333-4333-8333-333333333333',newWeb:'44444444-4444-4444-8444-444444444444',newJobs:'55555555-5555-4555-8555-555555555555'};
 const off=Object.fromEntries(executionFlags.map(flag=>[flag,'false']));
@@ -51,6 +51,13 @@ describe('fixed-resource handover delivery adapters',()=>{
   const f=fixture(),control=structuredClone(f.state.status);await f.delivery.configureDelivery(f.expected,f.versions);expect(f.mutations().map(call=>call.method)).toEqual(['POST','PUT']);expect(f.intents.map(intent=>intent.operation)).toEqual(['create-consumer','configure-schedules']);
   await f.delivery.selectCloudflare(f.expected,f.versions,f.witness);expect(f.state.selection.value).toBe('cloudflare');expect(f.state.status).toEqual(control);expect(f.mutations().at(-1)).toMatchObject({method:'PATCH',body:{name:'HOSTING_TARGET',value:'cloudflare'}});
   const before=f.mutations().length;await f.delivery.selectCloudflare(f.expected,f.versions,f.witness);expect(f.mutations()).toHaveLength(before);
+ });
+ it('persists real delivery intents through the executor checkpoint validator',async()=>{
+  const f=fixture(),nonce=randomUUID();
+  const journal={schema:1,planDigest:f.plan.digest,phase:'transferred',pending:'route',error:null,versions:f.versions,fenceReceipt:'b'.repeat(64),revision:nonce,intents:{transfer:nonce},native:{schema:1,targetWitness:f.witness,operations:{}}};
+  f.state.onIntent=intent=>{journal.native.operations[intent.kind+':'+intent.operation]=intent;assertHandoverCheckpoint(f.plan,journal);};
+  await f.delivery.configureDelivery(f.expected,f.versions);await f.delivery.selectCloudflare(f.expected,f.versions,f.witness);
+  expect(Object.keys(journal.native.operations)).toHaveLength(3);
  });
  it.each(['consumer','schedules','target'])('reconciles an applied %s with a lost response without repeating it',async operation=>{
   const f=fixture();if(operation==='target')await f.delivery.configureDelivery(f.expected,f.versions);f.state.lose=operation;

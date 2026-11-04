@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — local initial-handover authority and atomic Git checkpoints
+
+Use existing local operator authority for initial Netlify-key fencing and repository deployment selection, with sanitized expected-blob Git checkpoints on a fixed nonexecuted operational branch. Keep CI GitHub App Checks for its existing role; do not export Supabase Management authority to CI. Native transport-only storage proof passes, separately from an executable handover. Persist restored database metadata before recovering Worker versions. Provider execution still requires serialization and genuine private-parity/active-recovery proof. [ADR 0003](adr/0003-local-operator-handover-journal.md), [implementation/evidence](tech/CLOUDFLARE-EXECUTOR.md).
+
 ## 4 November 2026 — pinned source runtime and artifact-only preparation
 
 Continue the authorized migration by promoting the existing hosted-tested enabled source version rather than rebuilding its container at switch time. Pin both source versions' provider script/runtime/binding metadata and the current container configuration, and include that pin in executable artifact identity. Current-binding verification protects the existing Durable Object namespace and its daily usage counter. Initial transfer stays paused; recovery stays Cloudflare-owned/fenced/paused and does not settle uncertain work. Add a manual CI artifact-preparation input with deployment skipped so a checked active artifact can exist before production selection. No new subscription, quota, automatic pipeline, reminder consent or live cutover is approved by this implementation checkpoint. [Exact scope and remaining integration](tech/CLOUDFLARE-RUNTIME-HANDOVER.md).

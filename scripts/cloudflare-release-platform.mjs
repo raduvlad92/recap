@@ -71,6 +71,10 @@ export class ReleasePlatform {
   async assertSource(plan, artifact) {
     const source = await this.source(artifact);
     requireState(source.verified && source.domain === 'recap.filternode.dev' && JSON.stringify(source.pin) === JSON.stringify(plan.sourcePin), 'release_source_drift');
+    if (artifact.configs?.sourceRuntime) {
+      const { readSourceRuntime } = await import('./cloudflare-source-runtime.mjs');
+      await readSourceRuntime(this,artifact);
+    }
   }
   async preflight(plan, artifact) {
     checkedArtifact(this.root); await this.assertSource(plan, artifact);

@@ -1,5 +1,7 @@
 # Cloudflare ownership and source runtime operations
 
+**Latest checkpoint:** PR #5 merged as `1f78d11`; checked active preparation and native operator Git storage now pass, separately from live cutover. Local executor composition/recovery is implemented; private parity, usable active recovery and serialized complete native verification remain. [Current scope and evidence](CLOUDFLARE-EXECUTOR.md) supersede historical next-action statements below.
+
 Current checkpoint: 4 November 2026. PR #4 is merged as `194c9cf`, with checked-main shadow deployment and independent hosted preservation/off-state proof. Runtime operations below are implemented and locally tested. Live validation is metadata-only: no ownership transfer, source activation or apply workflow has run.
 
 `scripts/cloudflare-handover-runtime.mjs` validates a ready plan and rehashes the original checked artifact before actions. Staging uploads exact jobs/web versions without serving them. Ownership transfer requires both exact staged active versions, the unchanged paused Netlify revision, empty hosting work, fresh external authorization/fence checks and acknowledged durable intent. It calls the already installed service-only `commit_hosting_handover_checked` function, which changes ownership to Cloudflare paused. No new database migration is introduced here.

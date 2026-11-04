@@ -1,10 +1,10 @@
-import { createHash } from 'node:crypto';
+import { runtimeDigest } from './cloudflare-source-runtime.mjs';
 import { assertHandoverPlan } from './cloudflare-handover-state.mjs';
 import { executionFlags, ReleaseError } from './cloudflare-release-state.mjs';
 const check = (value,code) => { if (!value) throw new ReleaseError(code); };
 const uuid = value => typeof value === 'string' && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(value);
 const equal = (a,b) => JSON.stringify(a) === JSON.stringify(b);
-const hash = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
+const hash = runtimeDigest;
 const queueName = 'therecap-jobs', deadLetter = 'therecap-jobs-dead';
 const targetPath = 'actions/variables/HOSTING_TARGET';
 const scheduledFlags = ['CONTENT_ANALYSIS_ENABLED','AUTOMATIC_CONTENT_ENABLED','SOCIAL_COLLECTION_ENABLED','SOCIAL_CONTENT_ENABLED','DAILY_BRIEFING_ENABLED','REMINDER_EMAIL_ENABLED'];
