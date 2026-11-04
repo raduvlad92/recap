@@ -1,0 +1,43 @@
+{
+  "recorded_at": "2026-11-04T14:59:55.176671+00:00",
+  "scope": "local-isolated-github-http-and-real-handover-recovery-coordinator",
+  "repository_base": "72380f5a7b0bc60ceb2bf10397c2ec26dc974f43",
+  "full_check": {
+    "test_files": 118,
+    "tests": 3804,
+    "typecheck": "passed",
+    "build": "passed",
+    "catalogue": "current"
+  },
+  "focused_check": {
+    "test_files": 6,
+    "tests": 93,
+    "new_journal_cases": 28
+  },
+  "verified_cases": [
+    "full-original-artifact-including-assets-configs-public-config",
+    "sanitized-closed-state-before-write",
+    "exact-app-head-id-name-action-plan-identity",
+    "readback-before-runtime-mutation",
+    "lost-create-and-update-replies-no-duplicate-write",
+    "intervening-edit-and-duplicate-record-rejection",
+    "saved-transfer-operation-id-recovery-with-one-commit",
+    "saved-pause-and-restore-operation-id-recovery-with-one-transition",
+    "rollback-retains-cloudflare-pause-and-old-host-fence",
+    "transport-only-probe-cannot-restore-as-executable-checkpoint"
+  ],
+  "serialization_requirement": "all-production-writers-share-therecap-hosting-production-concurrency",
+  "independent_atomic_storage_lock_claimed": false,
+  "native_github_app_handover_probe": "awaiting-new-PR-CI",
+  "native_end_to_end_handover_verified": false,
+  "live_apply_entrypoint_available": false,
+  "executable_fake_remote_plan_created": false,
+  "production_database_writes_by_tests": 0,
+  "provider_runs_started": 0,
+  "model_calls": 0,
+  "emails": 0,
+  "old_key_revoked": false,
+  "runtime_ownership_transferred": false,
+  "netlify_deleted": false,
+  "hosting_usage_cost": "unmeasured"
+}

@@ -140,9 +140,11 @@ jobs:
         run: |
           node --input-type=module <<'JS'
           import { ReleaseGitHub } from './scripts/cloudflare-release-github.mjs';
+          import { probeHandoverJournal } from './scripts/cloudflare-handover-github.mjs';
           const github = new ReleaseGitHub({ token: process.env.GITHUB_TOKEN, runId: process.env.GITHUB_RUN_ID });
           await github.probeCheckpoint(process.env.CHECKPOINT_SHA);
-          console.log('GitHub checkpoint write/read/update verified; no runtime credentials or processing.');
+          await probeHandoverJournal(github,process.env.CHECKPOINT_SHA);
+          console.log('Release and handover checkpoint write/read/update verified; no runtime credentials, executable handover plan or processing.');
           JS
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'

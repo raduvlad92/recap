@@ -57,7 +57,45 @@ export function planHandover(artifact, snapshot, options = {}) {
 function checkedPlan(plan) {
   const { digest: stored, ...body } = plan || {};
   check(stored === digest(body) && body.schema === 1 && body.action === 'initial-cloudflare-handover' && body.oldSite === oldSite, 'handover_plan_changed');
-  check(Array.isArray(plan.blockers) && plan.blockers.length === 0 && plan.expected.owner === 'netlify' && plan.expected.paused === true, 'handover_gates_blocked');
+  check(Array.isArray(plan.blockers) && plan.blockers.length === 0 && plan.expected?.owner === 'netlify' && plan.expected?.paused === true, 'handover_gates_blocked');
+}
+
+/** Restore only an exact, ready plan for the entire checked artifact, including
+ * configuration and assets. Live evidence is rechecked by the execution ports. */
+export function assertHandoverPlan(plan, artifact) {
+  checkedPlan(plan);
+  check(plan.target === artifact?.release && plan.artifactDigest === digest(artifact), 'handover_artifact_changed');
+  check(typeof plan.sourcePin?.enabled === 'boolean', 'handover_plan_changed');
+  const snapshot = { control: plan.expected, revision: plan.expected.revision,
+    work: { queued: 0, running: 0, expired_running: 0, uncertain: 0 }, domain: 'recap.filternode.dev', sourceVerified: true, sourcePin: plan.sourcePin,
+    workers: Object.fromEntries(['web','jobs'].map(kind => [kind, { version: plan.priorVersions?.[kind], bindingsHash: plan.bindings?.[kind], mode: 'shadow', flags: Object.fromEntries(executionFlags.map(flag => [flag,'false'])) }])),
+    evidence: Object.fromEntries(evidenceNames.map(name => [name, { verified: true, release: plan.target, digest: plan.receipts?.[name] }])), rollback: plan.rollback };
+  const expected = planHandover(artifact, snapshot, { policy: plan.policy, resumeProcessing: plan.resumeProcessing });
+  check(expected.blockers.length === 0 && digest(expected) === digest(plan), 'handover_plan_changed');
+}
+const keysAre = (value, names) => value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === names.length && names.every(name => Object.hasOwn(value,name));
+export function assertHandoverCheckpoint(plan, journal, action = 'handover') {
+  const recovery = action === 'rollback', code = recovery ? 'handover_rollback_checkpoint_changed' : 'handover_checkpoint_changed';
+  check(['handover','rollback'].includes(action), code);
+  const names = recovery ? ['schema','planDigest','phase','pending','error','expected','revision','intents'] : ['schema','planDigest','phase','pending','error','versions','fenceReceipt','revision','intents'];
+  check(keysAre(journal,names) && journal.schema === 1 && journal.planDigest === plan.digest && (journal.error === null || typeof journal.error === 'string' && /^[a-z0-9_]{1,96}$/.test(journal.error)), code);
+  const pending = recovery ? ['pause','restore','verify'] : ['stop-delivery','fence','stage','transfer','route','select-target','resume'];
+  check(journal.pending === null || pending.includes(journal.pending), code);
+  if (recovery) {
+    check(['prepared','paused','restored','complete'].includes(journal.phase) && keysAre(journal.intents,['pause','restore']) && uuid(journal.intents.pause) && uuid(journal.intents.restore), code);
+    if (journal.expected !== null) {
+      const e = journal.expected;
+      check(keysAre(e,['control','revision','work']) && keysAre(e.control,['owner','epoch','release','paused','old_host_fenced']) && e.control.owner === 'cloudflare' && e.control.epoch === plan.expected.epoch + 1 && e.control.release === plan.target && e.control.old_host_fenced === true && typeof e.control.paused === 'boolean' && uuid(e.revision), code);
+      check(keysAre(e.work,['queued','running','expired_running','uncertain']) && Object.values(e.work).every(value => Number.isSafeInteger(value) && value >= 0), code);
+    }
+    check(journal.phase === 'prepared' ? journal.revision === null : journal.expected && journal.revision === (journal.phase === 'paused' ? journal.intents.pause : journal.intents.restore), code);
+  } else {
+    check(phases.includes(journal.phase) && uuid(journal.revision) && journal.intents && typeof journal.intents === 'object' && !Array.isArray(journal.intents) && Object.entries(journal.intents).every(([key,value]) => ['transfer','resume'].includes(key) && uuid(value)), code);
+    const fenced = phases.indexOf(journal.phase) >= phases.indexOf('fenced'), staged = phases.indexOf(journal.phase) >= phases.indexOf('staged'), transferred = phases.indexOf(journal.phase) >= phases.indexOf('transferred');
+    check(fenced ? hash(journal.fenceReceipt) : journal.fenceReceipt === null, code);
+    check(staged ? keysAre(journal.versions,['web','jobs']) && ['web','jobs'].every(kind => uuid(journal.versions[kind])) : journal.versions === null, code);
+    check(journal.revision === (journal.phase === 'complete' && plan.resumeProcessing ? journal.intents.resume : transferred ? journal.intents.transfer : plan.expected.revision), code);
+  }
 }
 
 /** Rehearsed orchestration ports only. Fence/credentials/routing/CI operations
@@ -66,12 +104,7 @@ function checkedPlan(plan) {
 export async function runHandover(plan, api, save, prior = null) {
   checkedPlan(plan);
   let journal = prior ? structuredClone(prior) : { schema: 1, planDigest: plan.digest, phase: 'prepared', pending: null, error: null, versions: null, fenceReceipt: null, revision: plan.expected.revision, intents: {} };
-  check(journal.schema === 1 && journal.planDigest === plan.digest && phases.includes(journal.phase) && uuid(journal.revision) && journal.intents && Object.keys(journal).every(key => ['schema','planDigest','phase','pending','error','versions','fenceReceipt','revision','intents'].includes(key)), 'handover_checkpoint_changed');
-  check(Object.entries(journal.intents).every(([key,value]) => ['transfer','resume'].includes(key) && uuid(value)), 'handover_checkpoint_changed');
-  if (phases.indexOf(journal.phase) >= phases.indexOf('fenced')) check(hash(journal.fenceReceipt), 'handover_checkpoint_changed');
-  if (phases.indexOf(journal.phase) >= phases.indexOf('staged')) check(Object.keys(journal.versions || {}).length === 2 && ['web','jobs'].every(kind => uuid(journal.versions?.[kind])), 'handover_checkpoint_changed');
-  const transferred = phases.indexOf(journal.phase) >= phases.indexOf('transferred');
-  check(journal.revision === (journal.phase === 'complete' && plan.resumeProcessing ? journal.intents.resume : transferred ? journal.intents.transfer : plan.expected.revision), 'handover_checkpoint_changed');
+  assertHandoverCheckpoint(plan,journal);
   const old = { ...plan.expected }; delete old.revision;
   const fresh = async () => { await api.assertCheckedHandover(plan); check(await api.verifyEvidence(plan) === true, 'handover_evidence_changed'); };
   const before = async pending => { if (['transfer','resume'].includes(pending) && !journal.intents[pending]) journal.intents[pending] = randomUUID(); journal.pending = pending; journal.error = null; await save(structuredClone(journal)); await fresh(); };
@@ -140,9 +173,7 @@ export async function runHandoverRollback(plan, api, save, prior = null) {
   checkedPlan(plan);
   check(plan.rollback?.host === 'cloudflare' && plan.rollback.verified === true, 'handover_rollback_unavailable');
   let journal = prior ? structuredClone(prior) : { schema: 1, planDigest: plan.digest, phase: 'prepared', pending: null, error: null, expected: null, revision: null, intents: { pause: randomUUID(), restore: randomUUID() } };
-  check(journal.schema === 1 && journal.planDigest === plan.digest && ['prepared','paused','restored','complete'].includes(journal.phase) && Object.keys(journal).every(key => ['schema','planDigest','phase','pending','error','expected','revision','intents'].includes(key)) && uuid(journal.intents?.pause) && uuid(journal.intents?.restore), 'handover_rollback_checkpoint_changed');
-  check(Object.keys(journal.intents).length === 2 && (!journal.expected || (journal.expected.control?.owner === 'cloudflare' && journal.expected.control.epoch === plan.expected.epoch + 1 && journal.expected.control.release === plan.target && journal.expected.control.old_host_fenced === true && typeof journal.expected.control.paused === 'boolean' && uuid(journal.expected.revision))), 'handover_rollback_checkpoint_changed');
-  if (journal.phase !== 'prepared') check(journal.expected && journal.revision === (journal.phase === 'paused' ? journal.intents.pause : journal.intents.restore), 'handover_rollback_checkpoint_changed');
+  assertHandoverCheckpoint(plan,journal,'rollback');
   const before = async pending => { journal.pending = pending; journal.error = null; await save(structuredClone(journal)); await api.assertCheckedRecovery(plan); check(await api.verifyRollbackProof(plan.rollback) === true && await api.verifyRecoveryFence(plan) === true, 'handover_rollback_proof_changed'); };
   const after = async phase => { journal.phase = phase; journal.pending = null; await save(structuredClone(journal)); };
   const restored = () => ({ ...journal.expected.control, release: plan.rollback.release, epoch: journal.expected.control.epoch + (plan.rollback.release === plan.target ? 0 : 1), paused: true });

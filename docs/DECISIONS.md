@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — durable initial-switch checkpoint implementation
+
+Continue the already authorized migration: PR #2 merged as `72380f5`, followed by verified checked-main shadow deployment. Initial handover and recovery use separate sanitized GitHub App checkpoints, bound to the full original checked artifact. Every pending action/operation ID must be acknowledged remotely before its mutation; changed or intervening checkpoints require explicit restoration rather than overwrite. All production writers must share the existing `therecap-hosting-production` concurrency group; GitHub check storage is not an independent atomic lock. A transport-only CI probe never stores a fake ready plan or authorizes activation. This is implementation, not a new product/spending/consent decision. Native full-switch wiring, private parity, usable recovery, fencing and later acceptance remain required. [Details](tech/CLOUDFLARE-HANDOVER.md).
+
 ## 4 November 2026 — migration delivery and legacy-drain checkpoint
 
 Implementation under the existing autonomous hosting-migration instruction: PR #1 is merged as `14e1a81`, and actual checked-main shadow deployment is verified with the old hook skipped. This is not a production ownership switch. A read-only assessment separates bounded legacy execution drain (zero live leases, two terminal existing supplier runs, conservative quiet-window inference for old unreferenced rows) from unresolved financial settlement. No old hold or record is cleared. A changed old release or renewed activity blocks the assessment; durable key fencing remains independently required. No new supplier subscription, spending limit, publication/review policy or reminder consent is approved. Private parity, usable recovery, native final handover and later acceptance/retirement remain. [Exact evidence and boundaries](tech/CLOUDFLARE-HANDOVER.md).
