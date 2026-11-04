@@ -1,0 +1,66 @@
+{
+  "recorded_at": "2026-11-04T16:53:07.229528+00:00",
+  "scope": "local-runtime-adapters-isolated-http-rpc-provider-ports",
+  "repository_base": "194c9cfb3d62a871526dd1ce2c74eff3670357b9",
+  "full_check": {
+    "tests": 3856,
+    "files": 120,
+    "typecheck": "passed",
+    "build": "passed",
+    "catalogue": "current"
+  },
+  "focused_check": {
+    "tests": 78,
+    "files": 6,
+    "new_runtime_cases": 26
+  },
+  "cloudflare_local_check": {
+    "build_and_dry_run": "passed",
+    "web_workerd_cases": 21,
+    "jobs_workerd_cases": 5,
+    "disabled_source_gateway": "passed",
+    "live_provider_requests": 0
+  },
+  "verified_cases": [
+    "exact-staged-versions-before-paused-ownership-transfer",
+    "source-version-runtime-current-binding-and-container-pins",
+    "runtime-pin-bound-to-executable-artifact-and-tamper-rejected",
+    "pinned-source-then-jobs-before-web-promotion",
+    "saved-operation-id-reconciliation-after-lost-replies",
+    "operator-revision-artifact-work-and-intent-fail-closed",
+    "own-resume-reconciliation-allows-legitimate-new-queued-work",
+    "explicit-keep-paused-policy",
+    "paused-recovery-metadata-retains-cloudflare-owner-fence",
+    "source-disable-preserves-existing-container-and-counter-namespace"
+  ],
+  "active_artifact_preparation": {
+    "workflow_input": "prepare_handover_artifact",
+    "deployment_skipped": true,
+    "first_native_run": "pending-merge"
+  },
+  "live_runtime_mutations_exercised": false,
+  "native_end_to_end_handover_verified": false,
+  "durable_executor_composition_complete": false,
+  "usable_active_recovery_proven": false,
+  "live_apply_entrypoint_available": false,
+  "production_database_writes_by_tests": 0,
+  "source_requests": 0,
+  "container_rebuilds": 0,
+  "model_calls": 0,
+  "emails": 0,
+  "old_key_revoked": false,
+  "ownership_transferred": false,
+  "netlify_deleted": false,
+  "hosting_usage_cost": "unmeasured",
+  "local_active_artifact_build": {
+    "verified": true,
+    "artifact_release": "194c9cfb3d62a871526dd1ce2c74eff3670357b9",
+    "artifact_digest": "d38b12f06505a33991b079342a74f0dec2faee07e1e5cc44280dba4726552857",
+    "existing_ci_public_configuration_verified": true,
+    "source_runtime_pin_bound": true,
+    "all_server_runtime_flags_false": true,
+    "workerd_cases": 26,
+    "deployed": false,
+    "native_ci_attestation": false
+  }
+}

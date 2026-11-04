@@ -18,6 +18,9 @@ export function checkedArtifact(root) {
   const build = join(root, '.local/cloudflare-build'), artifact = JSON.parse(readFileSync(join(build, 'release.json'), 'utf8'));
   requireState(/^[a-f0-9]{40}$/.test(artifact.release || '') && ['shadow', 'active'].includes(artifact.mode), 'invalid_release_artifact');
   if (artifact.mode === 'active') requireState(JSON.stringify(artifact.publicConfig) === JSON.stringify(JSON.parse(readFileSync(join(root, 'cloudflare/verified-public-config.json'), 'utf8'))), 'release_public_configuration_changed');
+  // Historical shadow copies stay inspectable. Every executable artifact and
+  // every newly built shadow copy binds the reviewed source runtime settings.
+  if (artifact.mode === 'active' || artifact.configs?.sourceRuntime !== undefined) requireState(/^[a-f0-9]{64}$/.test(artifact.configs?.sourceRuntime || '') && fileHash(join(root,'cloudflare/verified-source-runtime.json')) === artifact.configs.sourceRuntime, 'release_source_runtime_changed');
   requireState(JSON.stringify(assetManifest(join(root, 'dist-cloudflare'))) === JSON.stringify(artifact.assets), 'release_assets_changed');
   for (const kind of ['web', 'jobs']) requireState(fileHash(join(build, kind, kind + '.js')) === artifact.hashes[kind], 'release_worker_changed');
   for (const kind of ['web', 'jobs', 'source']) requireState(fileHash(join(build, kind + '.json')) === artifact.configs[kind], 'release_configuration_changed');
@@ -39,7 +42,7 @@ export class ReleasePlatform {
     const data = await response.json(); requireState(response.ok && data.success !== false, 'cloudflare_release_request_failed'); return data.result;
   }
   async rpc(name, args = {}) {
-    requireState(this.databaseKey && ['read_hosting_release_status', 'quiesce_hosting_release_checked', 'advance_hosting_release_checked'].includes(name), 'release_database_unconfigured');
+    requireState(this.databaseKey && ['read_hosting_release_status', 'quiesce_hosting_release_checked', 'advance_hosting_release_checked', 'commit_hosting_handover_checked'].includes(name), 'release_database_unconfigured');
     const response = await this.fetcher('https://zlfdqzabsfndifxiqguo.supabase.co/rest/v1/rpc/' + name, { method: 'POST', headers: { apikey: this.databaseKey, authorization: 'Bearer ' + this.databaseKey, 'content-type': 'application/json' }, body: JSON.stringify(args), redirect: 'error', signal: AbortSignal.timeout(15000) });
     if (!response.ok) { await response.body?.cancel(); throw new ReleaseError('release_database_request_failed'); }
     return response.json();

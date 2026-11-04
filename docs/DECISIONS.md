@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — pinned source runtime and artifact-only preparation
+
+Continue the authorized migration by promoting the existing hosted-tested enabled source version rather than rebuilding its container at switch time. Pin both source versions' provider script/runtime/binding metadata and the current container configuration, and include that pin in executable artifact identity. Current-binding verification protects the existing Durable Object namespace and its daily usage counter. Initial transfer stays paused; recovery stays Cloudflare-owned/fenced/paused and does not settle uncertain work. Add a manual CI artifact-preparation input with deployment skipped so a checked active artifact can exist before production selection. No new subscription, quota, automatic pipeline, reminder consent or live cutover is approved by this implementation checkpoint. [Exact scope and remaining integration](tech/CLOUDFLARE-RUNTIME-HANDOVER.md).
+
 ## 4 November 2026 — bounded delivery implementation under migration scope
 
 Use one message per batch so long domain workers do not share a queue invocation deadline. Cap the existing jobs consumer at six concurrent batches, with three retries/60-second default delay and the existing dead-letter queue; domain leases/reservations and uncertain-outcome handling remain authoritative. Preserve the seven scheduled kinds through two cron expressions; private keyword learning receives no cron and reminders remain off. Recovery stops scheduled admissions and deployment selection while retaining the consumer for draining; it never purges messages or clears holds. GitHub variable selection uses existing operator authority with a saved witness, not an assumption that Actions' default token has variable-write permission. This is a bounded implementation choice, with live writes still deferred behind the handover gates. [Protocol and proof](tech/CLOUDFLARE-DELIVERY.md).

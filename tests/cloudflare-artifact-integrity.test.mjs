@@ -17,10 +17,11 @@ function fixture() {
   writeFileSync(join(root,'dist-cloudflare/index.html'),'public-html');
   const hashes={web:fileHash(join(build,'web/web.js')),jobs:fileHash(join(build,'jobs/jobs.js')),sourceWorker:fileHash(join(build,'source-worker/source.js')),sourceContainer:createHash('sha256').update('server').update('docker').digest('hex')};
   const artifact={release:'a'.repeat(40),mode:'active',publicConfig:{fixture:'pinned-public-config'},hashes,configs:Object.fromEntries(['web','jobs','source'].map(kind=>[kind,fileHash(join(build,kind+'.json'))])),assets:assetManifest(join(root,'dist-cloudflare'))};
+  writeFileSync(join(root,'cloudflare/verified-source-runtime.json'),'{}');artifact.configs.sourceRuntime=fileHash(join(root,'cloudflare/verified-source-runtime.json'));
   writeFileSync(join(root,'cloudflare/verified-public-config.json'),JSON.stringify(artifact.publicConfig));writeFileSync(join(build,'release.json'),JSON.stringify(artifact));
   return artifact;
 }
 it('accepts the complete checked artifact and rejects changed assets, bundles, config, source context or public pins',()=>{
-  const cases=[['dist-cloudflare/index.html','release_assets_changed'],['.local/cloudflare-build/web/web.js','release_worker_changed'],['.local/cloudflare-build/jobs.json','release_configuration_changed'],['.local/cloudflare-build/source-worker/source.js','release_source_changed'],['.local/cloudflare-build/source-container/Dockerfile','release_source_changed'],['cloudflare/verified-public-config.json','release_public_configuration_changed']];
+  const cases=[['dist-cloudflare/index.html','release_assets_changed'],['.local/cloudflare-build/web/web.js','release_worker_changed'],['.local/cloudflare-build/jobs.json','release_configuration_changed'],['.local/cloudflare-build/source-worker/source.js','release_source_changed'],['.local/cloudflare-build/source-container/Dockerfile','release_source_changed'],['cloudflare/verified-public-config.json','release_public_configuration_changed'],['cloudflare/verified-source-runtime.json','release_source_runtime_changed']];
   for(const [path,code] of cases){const artifact=fixture();expect(checkedArtifact(root)).toEqual(artifact);writeFileSync(join(root,path),path.endsWith('.json')?'{"tampered":true}':'changed');expect(()=>checkedArtifact(root)).toThrow(code);rmSync(root,{recursive:true,force:true});}
 });

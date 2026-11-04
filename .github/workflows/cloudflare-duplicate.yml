@@ -33,6 +33,11 @@ on:
       - '.github/workflows/cloudflare-duplicate.yml'
   workflow_dispatch:
     inputs:
+      prepare_handover_artifact:
+        description: 'Prepare an active handover artifact with deployment skipped'
+        required: false
+        default: false
+        type: boolean
       checkpoint_id:
         description: 'Existing normal-release checkpoint to resume (same checked main commit)'
         required: false
@@ -51,6 +56,13 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Validate artifact-only handover preparation
+        if: github.event_name == 'workflow_dispatch' && inputs.prepare_handover_artifact
+        env:
+          PREPARATION_CHECKPOINT_ID: ${{ inputs.checkpoint_id }}
+        run: |
+          test "$GITHUB_REF" = refs/heads/main
+          test -z "$PREPARATION_CHECKPOINT_ID"
       - name: Enable disposable PostgreSQL 17 checks
         run: |
           if [ ! -x /usr/lib/postgresql/17/bin/initdb ]; then
@@ -76,7 +88,7 @@ jobs:
           npm run build
       - run: npm run check:cloudflare
         env:
-          HOSTING_BUILD_MODE: ${{ github.event_name != 'pull_request' && vars.HOSTING_TARGET == 'cloudflare' && 'active' || 'shadow' }}
+          HOSTING_BUILD_MODE: ${{ github.event_name != 'pull_request' && (vars.HOSTING_TARGET == 'cloudflare' || (github.event_name == 'workflow_dispatch' && inputs.prepare_handover_artifact)) && 'active' || 'shadow' }}
           CLOUDFLARE_CLERK_PUBLISHABLE_KEY: ${{ vars.CLOUDFLARE_CLERK_PUBLISHABLE_KEY }}
           VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.CLOUDFLARE_CLERK_PUBLISHABLE_KEY }}
           VITE_SUPABASE_URL: ${{ vars.CLOUDFLARE_SUPABASE_URL }}
@@ -147,7 +159,7 @@ jobs:
           console.log('Release and handover checkpoint write/read/update verified; no runtime credentials, executable handover plan or processing.');
           JS
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && !(github.event_name == 'workflow_dispatch' && inputs.prepare_handover_artifact)
     needs: verify
     runs-on: ubuntu-latest
     permissions:

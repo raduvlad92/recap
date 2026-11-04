@@ -1,0 +1,30 @@
+{
+  "recorded_at": "2026-11-04T16:41:51.730Z",
+  "scope": "native-source-version-runtime-and-container-metadata-only",
+  "artifactRelease": "194c9cfb3d62a871526dd1ce2c74eff3670357b9",
+  "receipt": {
+    "verified": true,
+    "version": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+    "enabled": false,
+    "image": "bc1713f4ad97fe53e861777e27cdcc7b43d3ebe60d44d33a8d585b7450718352",
+    "disabledVersion": "af6e82f8-b985-478e-af12-53b2e6eb590f",
+    "enabledVersion": "ffed3cd5-addb-4240-adb8-42afe273615f",
+    "scriptEtag": "700a70a9944b5242659051b7f4cfacedc400309e154e91ef1a941554a457a9cf",
+    "runtimeHash": "73cad1d108943537644ebf99f2306020eada1e9b2fdc98a900df2fce646c141b",
+    "bindingsHash": "4c98e1d03221b8f3d1154d072920dff77119a5add141202e7a6390ba957cef01",
+    "configurationHash": "bae60331c7d8559a078e528fb0e3768d964cefa11ab1a6f20a9018851313728c",
+    "maximumInstances": 1,
+    "publicRoute": false,
+    "secretBindings": 0
+  },
+  "containerStates": [
+    "inactive"
+  ],
+  "getRequests": 12,
+  "allRequestsGet": true,
+  "providerWrites": 0,
+  "sourceRequests": 0,
+  "containerRebuilds": 0,
+  "runtimeOwnershipChanged": false,
+  "credentialsRecorded": false
+}

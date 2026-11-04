@@ -1,5 +1,9 @@
 # Cloudflare migration implementation
 
+## Ownership/source primitives and artifact preparation — current, 4 November 2026
+
+PR #4 merged as `194c9cf`; checked-main shadow deployment and independent original-data/72-asset/off-state checks pass. Native ownership/source/staging/promotion/resume/recovery primitives now pass isolated tests and bind source runtime settings to executable artifacts. Twelve actual source metadata GETs verify the disabled/inactive pinned component. Full 3,856 tests / 120 files, 78 focused and 26 workerd cases pass. A manual active-artifact preparation mode skips deployment; its first native run follows merge. Complete durable executor/private parity/usable active recovery remain before cutover. [Current scope and exact evidence](CLOUDFLARE-RUNTIME-HANDOVER.md). No live ownership/source activation, key revocation, paid job or retirement occurs. Earlier checkpoints below are historical.
+
 ## Fixed delivery controls — current, 4 November 2026
 
 PR #3 is merged as `63cf1be`, with native handover-storage proof and actual checked-main shadow deployment verified. The new delivery adapter implements guarded bounded consumer/cron setup, target selection and recovery admission stop without dropping admitted work. Full local check passes 3,830 tests / 119 files, including 37 focused cases; seven actual metadata GETs confirm target paused and schedules/consumers absent. Live delivery writes, complete native executor integration, private parity and usable active recovery remain gated. [Delivery contract/evidence](CLOUDFLARE-DELIVERY.md), [current main CI](evidence/cloudflare-delivery-main-ci-2026-11-04.json), [hosted proof](evidence/cloudflare-delivery-main-hosted-readback-2026-11-04.json). No activation or Netlify retirement occurs. Earlier checkpoints below are historical.
