@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — continue in reopened external Chrome
+
+Founder: **“Chrome is open; continue.”** Resume the existing account check with the already approved Paid account; no new billing, API key or administrator setup is requested. The native Chrome connection is restored. The real request passes the unchanged identity/admin checks and isolates a hosting-fetch compatibility error; the shared redirect fix is deployed in shadow mode. The final visible browser result, remaining private parity and migration gates are still required. This continuation does not change runtime ownership, existing holds/caps, review approval or reminder opt-out. [Exact account checkpoint](tech/evidence/cloudflare-account-hosted-readback-2026-11-04.json).
+
 ## 4 November 2026 — Workers Paid approved and activated; external Chrome required
 
 Founder explicitly answered **“Approve Workers Paid and continue verification”** for **US$5/account/month plus metered usage**. At the concrete checkout, the founder chose **“I’ll complete the checkout in Chrome”**, updated the card and reported **“done”**. Independent Containers API reads then changed from the explicit Paid-plan denial to HTTP 200; the private source application was created successfully. This supersedes the earlier subscription-approval gate for this migration. Invoice/payment settlement and actual metered charges are not independently measured. Existing source/model budgets, unknown holds, approval controls and reminder opt-out remain unchanged.

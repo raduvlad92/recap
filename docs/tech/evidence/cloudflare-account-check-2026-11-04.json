@@ -1,0 +1,52 @@
+{
+  "recorded_at": "2026-11-04T08:48:06.205085+00:00",
+  "url": "https://recap.filternode.dev/migration-check",
+  "release": "8fdfbae205992235950e7097719f6952ed326f76",
+  "prior_checked_head": "a6365c3760454f80fa0fda9cf5a0fcaab16ae225",
+  "prior_ci": {
+    "check": "success",
+    "duplicate": "success",
+    "netlify_deploy_step": "skipped",
+    "cloudflare_deploy_step": "skipped"
+  },
+  "chrome": {
+    "native_connection_restored": true,
+    "refreshed_signed_in_check_passed": false,
+    "observed_error": "collection_failed",
+    "further_automation_stopped_by_concurrent_changes": true,
+    "tab_specific_host_available": false,
+    "diagnostic_code": "verification_hosting_unavailable",
+    "identity_and_administrator_step_passed": true,
+    "final_visible_success_pending": true,
+    "current_blocker": "focus moved into separate sign-in window; tab-specific host unavailable"
+  },
+  "diagnostics": {
+    "known_auth_denials_preserved": true,
+    "anonymous_status": 401,
+    "unexpected_failures_have_fixed_phase_code": true,
+    "credentials_and_exception_messages_not_logged": true,
+    "focused_tests": 13,
+    "typecheck_passed": true,
+    "workerd_checks": 21,
+    "root_cause": "Workers rejects redirect:error before network I/O",
+    "fixed_call_sites": 11,
+    "full_application_tests": 3676,
+    "full_application_files": 108,
+    "protected_runtime_fixture_checks": 5,
+    "functional_ci": {
+      "check": "success",
+      "duplicate": "in_progress"
+    }
+  },
+  "controls": {
+    "mode": "shadow",
+    "processing_enabled": false,
+    "source_enabled": false,
+    "traffic_cutover": false,
+    "netlify_deleted": false,
+    "model_calls": 0,
+    "scraper_runs": 0,
+    "emails": 0
+  },
+  "diagnostic_release": "5c4f33f64f6c2e6c9b0c1e1036c14f7acf26d10e"
+}
