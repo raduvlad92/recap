@@ -1,0 +1,22 @@
+{
+  "recorded_at": "2026-11-04T15:25:33.246850+00:00",
+  "pr": 3,
+  "head": "ce84e90731ac2dae8faee227c2a0055b2449ab12",
+  "check_id": 126662359180,
+  "name": "cloudflare-handover-journal-probe",
+  "app": "github-actions",
+  "status": "completed",
+  "conclusion": "neutral",
+  "payload": {
+    "activatesProcessing": false,
+    "kind": "transport-only-handover-journal",
+    "restorableCheckpoint": false,
+    "schema": 1,
+    "step": "updated",
+    "target": "ce84e90731ac2dae8faee227c2a0055b2449ab12"
+  },
+  "native_storage_create_read_update_final_read_verified": true,
+  "executable_handover_plan_created": false,
+  "processing_activated": false,
+  "database_mutated": false
+}

@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — bounded delivery implementation under migration scope
+
+Use one message per batch so long domain workers do not share a queue invocation deadline. Cap the existing jobs consumer at six concurrent batches, with three retries/60-second default delay and the existing dead-letter queue; domain leases/reservations and uncertain-outcome handling remain authoritative. Preserve the seven scheduled kinds through two cron expressions; private keyword learning receives no cron and reminders remain off. Recovery stops scheduled admissions and deployment selection while retaining the consumer for draining; it never purges messages or clears holds. GitHub variable selection uses existing operator authority with a saved witness, not an assumption that Actions' default token has variable-write permission. This is a bounded implementation choice, with live writes still deferred behind the handover gates. [Protocol and proof](tech/CLOUDFLARE-DELIVERY.md).
+
 ## 4 November 2026 — durable initial-switch checkpoint implementation
 
 Continue the already authorized migration: PR #2 merged as `72380f5`, followed by verified checked-main shadow deployment. Initial handover and recovery use separate sanitized GitHub App checkpoints, bound to the full original checked artifact. Every pending action/operation ID must be acknowledged remotely before its mutation; changed or intervening checkpoints require explicit restoration rather than overwrite. All production writers must share the existing `therecap-hosting-production` concurrency group; GitHub check storage is not an independent atomic lock. A transport-only CI probe never stores a fake ready plan or authorizes activation. This is implementation, not a new product/spending/consent decision. Native full-switch wiring, private parity, usable recovery, fencing and later acceptance remain required. [Details](tech/CLOUDFLARE-HANDOVER.md).

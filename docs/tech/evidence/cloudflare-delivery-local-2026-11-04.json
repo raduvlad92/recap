@@ -1,0 +1,48 @@
+{
+  "recorded_at": "2026-11-04T15:34:32.811250+00:00",
+  "scope": "isolated-delivery-control-and-real-http-wrapper-contracts",
+  "repository_base": "63cf1be95b86372784e33d2c28f1f727bc6bd77a",
+  "full_check": {
+    "tests": 3830,
+    "files": 119,
+    "typecheck": "passed",
+    "build": "passed",
+    "catalogue": "current"
+  },
+  "focused_check": {
+    "tests": 37,
+    "files": 3,
+    "new_delivery_cases": 26
+  },
+  "verified_cases": [
+    "bounded-consumer-before-known-crons-while-paused",
+    "manual-keyword-learning-without-cron-and-reminders-off",
+    "github-variable-PATCH-204-and-readback",
+    "lost-consumer-schedule-target-replies-without-repeated-mutation",
+    "fresh-control-and-intent-acknowledgement-before-write",
+    "changed-operator-revision-and-target-witness-rejection",
+    "foreign-schedules-consumers-and-dead-letter-consumer-rejection",
+    "stop-new-scheduled-admission-preserves-consumer-and-queued-work"
+  ],
+  "consumer_bounds": {
+    "batch_size": 1,
+    "max_concurrency": 6,
+    "max_retries": 3,
+    "max_wait_time_ms": 1000,
+    "retry_delay_seconds": 60,
+    "dead_letter_queue": "therecap-jobs-dead"
+  },
+  "live_delivery_mutations_exercised": false,
+  "native_end_to_end_handover_verified": false,
+  "durable_executor_composition_complete": false,
+  "live_apply_entrypoint_available": false,
+  "production_database_writes_by_tests": 0,
+  "messages_sent_or_purged": 0,
+  "provider_runs_started": 0,
+  "model_calls": 0,
+  "emails": 0,
+  "old_key_revoked": false,
+  "ownership_transferred": false,
+  "netlify_deleted": false,
+  "hosting_usage_cost": "unmeasured"
+}

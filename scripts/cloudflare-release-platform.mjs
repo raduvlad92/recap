@@ -32,9 +32,9 @@ export class ReleasePlatform {
     Object.assign(this, { root, account, token, databaseKey, fetcher });
     this.runner = runner || (args => execFileSync('npx', args, { cwd: root, env: { ...process.env, CLOUDFLARE_API_TOKEN: token, CLOUDFLARE_ACCOUNT_ID: account, WRANGLER_SEND_METRICS: 'false' }, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }));
   }
-  async cf(path, body) {
+  async cf(path, body, method) {
     const response = await this.fetcher('https://api.cloudflare.com/client/v4/accounts/' + this.account + path, {
-      method: body ? 'POST' : 'GET', headers: { authorization: 'Bearer ' + this.token, ...(body ? { 'content-type': 'application/json' } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}), redirect: 'error', signal: AbortSignal.timeout(20000),
+      method: method || (body ? 'POST' : 'GET'), headers: { authorization: 'Bearer ' + this.token, ...(body ? { 'content-type': 'application/json' } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}), redirect: 'error', signal: AbortSignal.timeout(20000),
     });
     const data = await response.json(); requireState(response.ok && data.success !== false, 'cloudflare_release_request_failed'); return data.result;
   }
