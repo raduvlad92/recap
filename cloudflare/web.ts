@@ -33,7 +33,7 @@ export async function handleWeb(request: Request, bindings: Bindings): Promise<R
         const control = await readControl(bindings);
         if (!control.paused) throw new CollectionError(503, 'verification_unavailable', 'The isolated account check is unavailable.');
         const { count, error } = await database().from('reader_workspaces').select('user_id', { count: 'exact', head: true }).eq('user_id', userId);
-        if (error) throw new Error('Workspace verification failed');
+        if (error) throw new CollectionError(503, 'workspace_check_unavailable', 'The saved-workspace check could not finish.');
         return secureResponse(json({ authenticated: true, administrator: true, workspacePresent: count === 1, processingPaused: control.paused, release: bindings.RELEASE_SHA }), true);
       }
       if (url.pathname === '/robots.txt') return secureResponse(new Response('User-agent: *\nDisallow: /\nAllow: /creators\nAllow: /catalogue.css\nAllow: /fonts/\nAllow: /favicon.svg\nSitemap: ' + bindings.APP_URL + '/sitemap.xml\n', { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=300' } }));

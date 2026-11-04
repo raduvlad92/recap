@@ -16,8 +16,11 @@ function Verification() {
         const response = await fetch('/api/migration-verification', {
           headers: { authorization: 'Bearer ' + token }, signal: controller.signal,
         });
-        if (!response.ok) throw new Error(response.status === 403 ? 'This check is available to the existing administrator.' : 'Account verification could not finish.');
         const result = await response.json();
+        if (!response.ok) {
+          const code = typeof result.error?.code === 'string' && /^[a-z_]{1,80}$/.test(result.error.code) ? result.error.code : 'check_unavailable';
+          throw new Error(response.status === 403 ? 'This check is available to the existing administrator.' : 'Account verification could not finish (' + code + ').');
+        }
         if (result.authenticated !== true || result.administrator !== true || result.processingPaused !== true) throw new Error('Account verification could not finish.');
         if (!controller.signal.aborted) setStatus(result.workspacePresent
           ? 'Account and administrator access verified. Your saved workspace is present. Processing remains paused.'
