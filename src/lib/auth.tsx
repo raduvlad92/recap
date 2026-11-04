@@ -7,7 +7,7 @@ export interface RecapAuth {
   isLoaded: boolean;
   isConfigured: boolean;
   displayName: string;
-  getToken: () => Promise<string | null>;
+  getToken: (options?: { skipCache?: boolean }) => Promise<string | null>;
   signIn: () => void;
   signOut: () => Promise<void>;
 }
@@ -19,7 +19,7 @@ function ClerkBridge({ children }: { children: ReactNode }) {
   const { userId, isSignedIn, isLoaded, getToken } = useAuth();
   const { user } = useUser();
   const clerk = useClerk();
-  const token = useCallback(async () => getToken(), [getToken]);
+  const token = useCallback(async (options?: { skipCache?: boolean }) => getToken(options), [getToken]);
   const signIn = useCallback(() => { void clerk.openSignIn({ fallbackRedirectUrl: window.location.origin + window.location.pathname + window.location.search }); }, [clerk]);
   const signOut = useCallback(async () => { await clerk.signOut(); }, [clerk]);
   const value = useMemo<RecapAuth>(() => ({ userId: userId ?? null, isSignedIn: Boolean(isSignedIn), isLoaded, isConfigured: true, displayName: user?.firstName || user?.username || 'Your workspace', getToken: token, signIn, signOut }), [userId, isSignedIn, isLoaded, user?.firstName, user?.username, token, signIn, signOut]);

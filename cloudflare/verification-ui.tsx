@@ -11,7 +11,7 @@ function Verification() {
     void (async () => {
       setStatus('Checking account access…');
       try {
-        const token = await auth.getToken();
+        const token = await auth.getToken({ skipCache: true });
         if (!token) throw new Error('Please sign in again.');
         const response = await fetch('/api/migration-verification', {
           headers: { authorization: 'Bearer ' + token }, signal: controller.signal,
@@ -35,7 +35,7 @@ function Verification() {
     <a href="/creators/">recap /</a>
     <h1>Check your account</h1>
     <p>This checks access at the new address. It does not change your saved workspace or start processing.</p>
-    <p role="status">{status}</p>
+    <p role="status">{auth.isSignedIn ? status : 'Sign in to check your account on the new address.'}</p>
     {!auth.isSignedIn && <button disabled={!auth.isLoaded || !auth.isConfigured} onClick={auth.signIn}>Sign in</button>}
     {auth.isSignedIn && <button onClick={() => { void auth.signOut(); }}>Sign out</button>}
   </main>;
