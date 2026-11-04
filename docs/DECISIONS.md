@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 4 November 2026 — committed cutover and explicit acceptance maintenance
+
+The authorized initial switch is now committed, with the old database key rejected, Cloudflare ownership and deployment target selected, and the deployment workflow restored. An actual native 204 void reply exposes a Worker compatibility defect during active acceptance. Retain an acknowledged maintenance pause, preserve it across the checked normal-release fix, and require an independently acknowledged restoration plus successful live private-API readback before starting the 72-hour/two-cutoff window. A brief unpaused interval is not acceptance. Native consumer aliases may normalize `script`/`script_name` only while rejecting conflicting identities and retaining every existing delivery bound. No spending, approval, reminder or broader product decision changes. [Evidence and next action](tech/CLOUDFLARE-CUTOVER.md).
+
 ## 4 November 2026 — serving-version authority and isolated active preparation
 
 Use the immutable 100%-serving Worker version for policy, secret inventory, bounds and upload inheritance: native recovery staging proves that `/settings` can instead describe an unserved upload. Keep recovery candidates unserved while testing their exact active assets/private workspace paths. Bind later targets through explicit component comparison; retain the actual tested release in every receipt. A separate public-only, ten-minute main job prepares the active archive after the same successful verification, without publishing it or repeating the database suite. Workflow suspension has a distinct acknowledged Git checkpoint and explicit restoration; failures retain suspension. These are implementation choices within the authorized migration. Source/model spending, review approval and reminder consent are unchanged. [Evidence and remaining controlled operation](tech/CLOUDFLARE-WINDOW-AND-PARITY.md).

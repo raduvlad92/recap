@@ -1,0 +1,137 @@
+{
+  "recordedAt": "2026-11-04T21:29:29.627Z",
+  "scope": "committed-native-cloudflare-handover-followed-by-explicit-acceptance-maintenance",
+  "release": "22dbe516db3dfd02315063f62b7f38cc2c898ad0",
+  "origin": "https://recap.filternode.dev",
+  "handover": {
+    "completedAt": "2026-11-04T21:20:13.223Z",
+    "planDigest": "bca55ec825063ef158403b1c379b73c56992769edfc560887d194700b4f99bc6",
+    "versions": {
+      "jobs": "ab5d8060-ee22-4382-bc6d-8c8ab8082417",
+      "web": "f5b19198-f3af-46eb-a3a8-fafe0c0c1d2b"
+    },
+    "controlAtCompletion": {
+      "epoch": 2,
+      "owner": "cloudflare",
+      "paused": false,
+      "release": "22dbe516db3dfd02315063f62b7f38cc2c898ad0",
+      "old_host_fenced": true
+    },
+    "workAtCompletion": {
+      "queued": 0,
+      "running": 0,
+      "uncertain": 0,
+      "expired_running": 0
+    },
+    "policy": {
+      "APIFY_RUNTIME_ENABLED": "true",
+      "AUTOMATIC_CONTENT_ENABLED": "true",
+      "CONTENT_ANALYSIS_ENABLED": "false",
+      "DAILY_BRIEFING_ENABLED": "true",
+      "HOURLY_COLLECTION_ENABLED": "true",
+      "KEYWORD_LEARNING_ENABLED": "true",
+      "REMINDER_EMAIL_ENABLED": "false",
+      "SOCIAL_COLLECTION_ENABLED": "true",
+      "SOCIAL_CONTENT_ENABLED": "true"
+    },
+    "sourceEnabled": true,
+    "checkpoint": {
+      "branch": "ops/therecap-hosting-journal",
+      "path": ".hosting-journal/bca55ec825063ef158403b1c379b73c56992769edfc560887d194700b4f99bc6/handover.json",
+      "sha": "c35104f8c4a8bc0d6500f95dbc3ce755482164ed"
+    },
+    "window": {
+      "operation": "4c395a31-6df7-42ca-b8b5-1f2cc618f9b3",
+      "phase": "released",
+      "workflowState": "active"
+    }
+  },
+  "fence": {
+    "oldKeyStatus": 401,
+    "replacementKeyStatus": 200,
+    "oldKeyAbsent": true,
+    "legacyBuildsStopped": true
+  },
+  "delivery": {
+    "target": "cloudflare",
+    "crons": [
+      "*/5 * * * *",
+      "0 * * * *"
+    ],
+    "consumer": [
+      {
+        "type": "worker",
+        "script": "therecap-jobs",
+        "dead_letter_queue": "therecap-jobs-dead",
+        "settings": {
+          "batch_size": 1,
+          "max_retries": 3,
+          "max_wait_time_ms": 1000,
+          "max_concurrency": 6,
+          "retry_delay": 60
+        }
+      }
+    ],
+    "nativeScriptFieldAliasObserved": true,
+    "existingConsumerReusedAfterGuardStop": true
+  },
+  "originalPreservation": {
+    "verified": true,
+    "digest": "2ea414a390d138ead184ede1552ed57276197299a5c82385c2b367ffc4780602",
+    "project": "zlfdqzabsfndifxiqguo",
+    "baselineDigest": "d41fb58581a408106cd940332a6f0278ed1705f957db3826545d0890d8b29bfa",
+    "protectedTables": 56,
+    "protectedRows": 21115,
+    "protectedDefinitions": 296,
+    "allOriginalsPreserved": true
+  },
+  "maintenance": {
+    "reason": "postgrest-204-void-response",
+    "phase": "paused",
+    "journalPath": ".hosting-journal/maintenance/b0d222fb-e8e9-4caf-ae90-f3065b8d7ed8.json",
+    "operation": "b0d222fb-e8e9-4caf-ae90-f3065b8d7ed8",
+    "status": {
+      "work": {
+        "queued": 0,
+        "running": 0,
+        "uncertain": 0,
+        "expired_running": 0
+      },
+      "control": {
+        "epoch": 2,
+        "owner": "cloudflare",
+        "paused": true,
+        "release": "22dbe516db3dfd02315063f62b7f38cc2c898ad0",
+        "old_host_fenced": true
+      },
+      "revision": "2318339d-1001-4feb-832d-35842e8d7f2c"
+    }
+  },
+  "compatibilityFindings": [
+    {
+      "code": "legacy_key_fence_unverified",
+      "resolution": "Removed key remained accepted briefly; same acknowledged operation resumed only after native 401; removed key not recreated."
+    },
+    {
+      "code": "delivery_consumer_changed",
+      "resolution": "Native script alias normalized only after exact worker and bounded-settings comparison; no second consumer created."
+    },
+    {
+      "code": "empty_void_rpc_response",
+      "nativeFinishStatus": 204,
+      "bodyBytes": 0,
+      "fixDeployed": false
+    }
+  ],
+  "acceptance": {
+    "started": false,
+    "requiredHours": 72,
+    "requiredNormalDailyCutoffs": 2,
+    "reason": "Wait for checked void-response fix, owned pause restoration and successful live private-API acceptance."
+  },
+  "nativeRecoveryPromotionPerformed": false,
+  "netlifyDeleted": false,
+  "manualSourceOrModelRuns": 0,
+  "reminderEmailsSent": 0,
+  "usageChargesMeasured": false
+}

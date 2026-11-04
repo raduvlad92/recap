@@ -32,6 +32,12 @@ export async function hostingRpc<T>(bindings: Bindings, name: string, args: Reco
     body: JSON.stringify(args), signal: AbortSignal.timeout(8000), redirect: 'manual',
   });
   if (!response.ok) { await response.body?.cancel(); throw new CollectionError(503, 'hosting_state_unavailable', 'Hosting execution could not be verified.'); }
+  // PostgREST returns 204 for the void lease-completion function. Its success
+  // must not replace a handler response or prevent queue acknowledgement.
+  if (response.status === 204) {
+    if (name !== 'finish_hosting_work') throw new CollectionError(503, 'hosting_state_unavailable', 'Hosting execution could not be verified.');
+    return undefined as T;
+  }
   return await response.json() as T;
 }
 export const readControl = (bindings: Bindings) => hostingRpc<RuntimeControl>(bindings, 'read_hosting_runtime');

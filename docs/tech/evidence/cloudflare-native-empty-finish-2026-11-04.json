@@ -1,0 +1,17 @@
+{
+  "recordedAt": "2026-11-04T21:23:38.286Z",
+  "scope": "disposable-hosting-http-frame-only",
+  "nativeFinishStatus": 204,
+  "bodyBytes": 0,
+  "httpFixtureRemovedByCompletion": true,
+  "domainRowsWritten": 0,
+  "sourceRuns": 0,
+  "modelCalls": 0,
+  "emails": 0,
+  "remainingHostingWork": {
+    "queued": 0,
+    "running": 0,
+    "uncertain": 0,
+    "expired_running": 0
+  }
+}

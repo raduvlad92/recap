@@ -1,0 +1,23 @@
+{
+  "recordedAt": "2026-11-04T21:31:47.611Z",
+  "scope": "actual-read-only-native-consumer-metadata",
+  "observedNativeWorkerField": "script",
+  "canonicalWorkerName": "therecap-jobs",
+  "type": "worker",
+  "deadLetterQueue": "therecap-jobs-dead",
+  "settings": {
+    "batch_size": 1,
+    "max_concurrency": 6,
+    "max_retries": 3,
+    "max_wait_time_ms": 1000,
+    "retry_delay": 60
+  },
+  "target": "cloudflare",
+  "crons": [
+    "*/5 * * * *",
+    "0 * * * *"
+  ],
+  "writeRequests": 0,
+  "executedLibrary": "local working tree; awaits PR CI",
+  "noSecondConsumerCreated": true
+}

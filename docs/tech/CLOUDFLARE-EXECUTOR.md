@@ -1,5 +1,7 @@
 # Durable initial handover composition
 
+**Current native state:** Cloudflare ownership and target selection are committed; the old key is fenced and the workflow restored. Active acceptance exposed an empty-completion response bug, so processing is under an acknowledged maintenance pause pending the checked fix. The 72-hour window and Netlify retirement have not started. [Exact proof and continuation](CLOUDFLARE-CUTOVER.md).
+
 **Latest:** PR #7 merged as `befa90d`. Native workflow suspension/restoration and real private workspace/ordinary-reader checks pass on an unserved active recovery candidate; current serving-version reads are corrected and isolated main active preparation is implemented. Fresh checked-target/component verification, controlled native switch/recovery and active acceptance remain before site-only retirement. [Current evidence and limits](CLOUDFLARE-WINDOW-AND-PARITY.md).
 
 **Latest:** PR #6 merged as `f6436ca`. The local executor now also requires the fixed deployment workflow disabled and drained; native reads correctly block while CI is active. This guard does not itself suspend/restore the workflow or prove private parity/recovery. [Current scope](CLOUDFLARE-QUIESCENCE.md).

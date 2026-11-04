@@ -4,7 +4,7 @@ import { runtimeEnv } from '../netlify/functions/_shared/security';
 import { handlers, routeName } from '../cloudflare/handlers';
 import { consumeJobs, scheduleJobs, workers } from '../cloudflare/jobs';
 import { handleWeb } from '../cloudflare/web';
-import { validMessage, type Bindings, type JobMessage } from '../cloudflare/runtime';
+import { hostingRpc, validMessage, type Bindings, type JobMessage } from '../cloudflare/runtime';
 import * as adminData from '../netlify/functions/_shared/admin-data';
 const release = 'a'.repeat(40);
 const bindings = (extra: Partial<Bindings> = {}): Bindings => ({ APP_URL: 'https://recap.filternode.dev', RELEASE_SHA: release, HOSTING_MODE: 'shadow', ...extra });
@@ -17,12 +17,29 @@ function mockRpc(overrides: Record<string, unknown> = {}) {
   const calls: Array<{ name: string; args: Record<string, unknown> }> = [];
   vi.stubGlobal('fetch', vi.fn(async (url: string, init: RequestInit) => {
     const name = new URL(url).pathname.split('/').pop()!; calls.push({ name, args: JSON.parse(String(init.body)) });
-    if (name === 'read_hosting_runtime') return Response.json(overrides[name] ?? control);
-    if (Object.hasOwn(overrides, name)) return Response.json(overrides[name]);
+    const reply = overrides[name];
+    if (reply instanceof Response) return reply.clone();
+    if (name === 'read_hosting_runtime') return Response.json(reply ?? control);
+    if (Object.hasOwn(overrides, name)) return Response.json(reply);
     throw new Error('Unexpected RPC ' + name);
   })); return calls;
 }
 describe('Cloudflare host boundaries', () => {
+  it('accepts the native empty 204 finish response without parsing JSON', async () => {
+    mockRpc({ finish_hosting_work: new Response(null, { status: 204 }) });
+    await expect(hostingRpc(active(), 'finish_hosting_work', {})).resolves.toBeUndefined();
+  });
+  it('rejects an empty response when hosting state is required', async () => {
+    mockRpc({ read_hosting_runtime: new Response(null, { status: 204 }) });
+    await expect(hostingRpc(active(), 'read_hosting_runtime')).rejects.toThrow('Hosting execution could not be verified.');
+  });
+  it.each([200,400])('preserves an HTTP %s handler response after native 204 lease completion', async status => {
+    const calls = mockRpc({ admit_hosting_work: true, begin_hosting_work: { token: 'fixture-lease' }, finish_hosting_work: new Response(null, { status: 204 }) });
+    vi.spyOn(handlers, 'reminder-events').mockResolvedValue(Response.json({ fixture: true }, { status }));
+    const result = await handleWeb(new Request('https://recap.filternode.dev/api/reminder-events', { method: 'POST' }), active());
+    expect(result.status).toBe(status); expect(await result.json()).toEqual({ fixture: true });
+    expect(calls.find(call => call.name === 'finish_hosting_work')?.args.p_completed).toBe(true);
+  });
   it('keeps concurrent request bindings separate and restores the outer context', async () => {
     const result = await Promise.all(['one', 'two'].map(value => withHostRuntime({ env: () => value }, async () => {
       await new Promise(resolve => setTimeout(resolve, value === 'one' ? 5 : 1)); return runtimeEnv('ANY');
@@ -84,6 +101,13 @@ describe('Cloudflare host boundaries', () => {
   });
 });
 describe('Cloudflare scheduling and durable queue replay', () => {
+  it('acknowledges completed work after a native 204 finish without repeating its worker', async () => {
+    const replies = { begin_hosting_work: { token: 'fixture-lease', payload: null } as unknown, finish_hosting_work: new Response(null, { status: 204 }) };
+    mockRpc(replies); const worker = vi.spyOn(workers, 'hourly-collection').mockResolvedValue(new Response(null, { status: 202 }));
+    const ack = vi.fn(), retry = vi.fn(), batch = { messages: [{ body: message, ack, retry }] };
+    await consumeJobs(batch, active()); replies.begin_hosting_work = null; await consumeJobs(batch, active());
+    expect(worker).toHaveBeenCalledTimes(1); expect(ack).toHaveBeenCalledTimes(2); expect(retry).not.toHaveBeenCalled();
+  });
   it('has no database or queue effects in shadow mode', async () => {
     await scheduleJobs({ cron: '*/5 * * * *', scheduledTime: 300000 }, bindings());
     expect(fetch).not.toHaveBeenCalled();
@@ -110,7 +134,7 @@ describe('Cloudflare scheduling and durable queue replay', () => {
     expect(retry).toHaveBeenCalledExactlyOnceWith({ delaySeconds: 60 }); expect(ack).not.toHaveBeenCalled();
   });
   it('records a failed batch as uncertain and acknowledges it without a paid retry', async () => {
-    const calls = mockRpc({ begin_hosting_work: { token: 'fixture-lease', payload: null }, finish_hosting_work: null });
+    const calls = mockRpc({ begin_hosting_work: { token: 'fixture-lease', payload: null }, finish_hosting_work: new Response(null, { status: 204 }) });
     const worker = vi.spyOn(workers, 'hourly-collection').mockRejectedValue(new Error('Provider outcome unknown'));
     const ack = vi.fn(), retry = vi.fn(); await consumeJobs({ messages: [{ body: message, ack, retry }] }, active());
     expect(worker).toHaveBeenCalledTimes(1); expect(ack).toHaveBeenCalledTimes(1); expect(retry).not.toHaveBeenCalled();

@@ -1,4 +1,4 @@
-import jobs from '../../cloudflare/jobs';
+import jobs, { workers } from '../../cloudflare/jobs';
 import { CollectionError } from '../../netlify/functions/_shared/security';
 import type { Bindings, JobMessage } from '../../cloudflare/runtime';
 
@@ -10,6 +10,7 @@ export default { async fetch(request: Request, env: Bindings) {
   try {
     if (path === '/cron') await jobs.scheduled({ cron: '*/5 * * * *', scheduledTime: 300000 }, env);
     else {
+      if (path === '/completed' || path === '/failed') workers['hourly-collection'] = async () => new Response(null, { status: path === '/completed' ? 202 : 503 });
       const body: JobMessage = { version: 1, kind: 'hourly-collection', epoch: path === '/stale' ? 1 : 2, release: env.RELEASE_SHA, key: 'fixture:hourly-collection:2' };
       await jobs.queue({ messages: [{ body, ack: () => { acknowledgements++; }, retry: options => { retries.push(options?.delaySeconds || 0); } }] }, env);
     }

@@ -1,0 +1,64 @@
+{
+  "recordedAt": "2026-11-04T20:54:10.646Z",
+  "pr": {
+    "number": 8,
+    "checkedHead": "8d285301f47ecdf6766d91d6ad3ecd5e3e676f4e",
+    "results": 8,
+    "comments": 0,
+    "reviews": 0,
+    "mergedAs": "22dbe516db3dfd02315063f62b7f38cc2c898ad0"
+  },
+  "mainApplication": {
+    "runId": 41908465431,
+    "conclusion": "success"
+  },
+  "mainCloudflare": {
+    "runId": 41908465675,
+    "head": "22dbe516db3dfd02315063f62b7f38cc2c898ad0",
+    "attempt": 1,
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "verify",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "prepare-active",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "deploy",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "artifact-integrity",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "checkpoint-storage",
+        "status": "completed",
+        "conclusion": "skipped"
+      }
+    ]
+  },
+  "shadow": {
+    "artifactId": 13361618634,
+    "archiveDigest": "sha256:ba306ee7e81b648c7fb57ac04dfdadfd41f4e107a03dfede1dac02c438e455f1",
+    "independentHostedReadback": "cloudflare-cutover-shadow-readback-2026-11-04.json"
+  },
+  "active": {
+    "verified": true,
+    "runId": 41908465675,
+    "artifactId": 13363135336,
+    "release": "22dbe516db3dfd02315063f62b7f38cc2c898ad0",
+    "archiveDigest": "sha256:65adf7aad6878467f0ebd4679986b9a1a82b623979a0ff74c19105ca3e4c5c16",
+    "artifactDigest": "1061f1046225562f3fe95c09355db19abd019b32b7162c8bd8f9b7bd130f5664",
+    "deploymentSkipped": true,
+    "preparationKind": "isolated-main-job",
+    "historicalReadOnly": false
+  }
+}

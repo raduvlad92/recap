@@ -84,15 +84,53 @@ try {
   assert(outbound.every(item => !item.origin.includes('must-not-receive-secrets'))); checks++;
   console.log(JSON.stringify({ runtime: 'workerd', protectedAccountChecks: 5, totalWebChecks: checks, liveProviderRequests: 0, redirectedCredentials: false }));
 } finally { await accountRuntime.dispose(); }
+// The real void RPC returns 204, rather than JSON null. Exercise both successful
+// and rejected HTTP handlers through actual admission and lease completion.
+let activeStateEmpty = false, finishFailure = false, activeFinishes = 0;
+const activeRuntime = new Miniflare(convertV4MiniflareOptions({
+  modules: true, scriptPath: '.local/cloudflare-build/web/web.js',
+  compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
+  bindings: { ...config.vars, HOSTING_MODE: 'active', SOURCE_TRANSPORT_VERIFIED: 'true', CLERK_ISSUER_URL: issuer, CLERK_SECRET_KEY: 'fixture-only-clerk-secret', ADMIN_USER_IDS: 'fixture-owner', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
+  outboundService: async request => {
+    const url = new URL(request.url);
+    if (url.href === issuer + '/.well-known/jwks.json') return Response.json({ keys: [jwk] });
+    if (url.href === 'https://api.clerk.com/v1/users/fixture-owner') return Response.json({ id: 'fixture-owner', email_addresses: [], primary_email_address_id: null, banned: false, locked: false });
+    assert.equal(url.origin, 'https://zlfdqzabsfndifxiqguo.supabase.co'); assert.equal(request.method, 'POST');
+    const name = url.pathname.split('/').at(-1);
+    if (name === 'read_hosting_runtime') return activeStateEmpty ? new Response(null, { status: 204 }) : Response.json({ owner: 'cloudflare', epoch: 2, paused: false, old_host_fenced: true, release });
+    if (name === 'admit_hosting_work') return Response.json(true);
+    if (name === 'begin_hosting_work') return Response.json({ token: 'fixture-http-lease' });
+    if (name === 'finish_hosting_work') {
+      assert.equal((await request.json()).p_completed, true); activeFinishes++;
+      return new Response(null, { status: finishFailure ? 503 : 204 });
+    }
+    throw new Error('Unexpected active HTTP/provider request');
+  },
+}));
+try {
+  const headers = { authorization: 'Bearer ' + await sign('fixture-owner'), origin };
+  const access = await activeRuntime.dispatchFetch(origin + '/api/admin?section=access', { headers });
+  assert.equal(access.status, 200); assert.deepEqual(await access.json(), { authorized: true }); checks++;
+  const method = await activeRuntime.dispatchFetch(origin + '/api/keyword-learning', { headers });
+  assert.equal(method.status, 405); assert.equal(activeFinishes, 2); checks++;
+  assert.equal((await activeRuntime.dispatchFetch(origin + '/api/admin')).status, 401); assert.equal(activeFinishes, 2); checks++;
+  activeStateEmpty = true;
+  const empty = await activeRuntime.dispatchFetch(origin + '/api/admin', { headers });
+  assert.equal(empty.status, 503); assert.equal((await empty.json()).error.code, 'hosting_state_unavailable'); checks++;
+  activeStateEmpty = false; finishFailure = true;
+  const unfinished = await activeRuntime.dispatchFetch(origin + '/api/admin?section=access', { headers });
+  assert.equal(unfinished.status, 503); assert.equal((await unfinished.json()).error.code, 'hosting_state_unavailable'); checks++;
+  console.log(JSON.stringify({ runtime: 'workerd', activeHttpCompletionChecks: 5, totalWebChecks: checks, liveProviderRequests: 0, nativeVoidStatus: 204 }));
+} finally { await activeRuntime.dispose(); }
 // Timer/queue handlers run without a browser request context. Exercise their
 // actual exports under workerd with fake RPCs and no provider/queue admission.
 await build({ entryPoints: ['tests/fixtures/cloudflare-jobs-runtime.ts'], bundle: true, platform: 'browser', format: 'esm', target: 'es2022', external: ['node:*'], outfile: '.local/cloudflare-build/jobs-fixture.js' });
-let jobsPaused = false, jobsRedirect = false;
+let jobsPaused = false, jobsRedirect = false, jobsClaim = false, jobsCompleted = true;
 const jobCalls = [];
 const jobRuntime = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/jobs-fixture.js',
   compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
-  bindings: { ...config.vars, HOSTING_MODE: 'active', SOURCE_TRANSPORT_VERIFIED: 'true', HOURLY_COLLECTION_ENABLED: 'true', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
+  bindings: { ...config.vars, HOSTING_MODE: 'active', SOURCE_TRANSPORT_VERIFIED: 'true', HOURLY_COLLECTION_ENABLED: 'true', HOURLY_COLLECTION_WORKER_SECRET: 'fixture-only-hourly-worker-secret-32-characters', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
   outboundService: async request => {
     const url = new URL(request.url), name = url.pathname.split('/').at(-1);
     assert.equal(url.origin, 'https://zlfdqzabsfndifxiqguo.supabase.co');
@@ -101,7 +139,11 @@ const jobRuntime = new Miniflare(convertV4MiniflareOptions({
       if (jobsRedirect) return new Response(null, { status: 302, headers: { location: 'https://must-not-receive-secrets.invalid/' } });
       return Response.json({ owner: 'cloudflare', epoch: 2, paused: jobsPaused, old_host_fenced: true, release });
     }
-    if (name === 'begin_hosting_work') return Response.json(null);
+    if (name === 'begin_hosting_work') return Response.json(jobsClaim ? { token: 'fixture-queue-lease', payload: null } : null);
+    if (name === 'finish_hosting_work') {
+      assert.equal((await request.json()).p_completed, jobsCompleted);
+      return new Response(null, { status: 204 });
+    }
     throw new Error('Unexpected job admission/provider request in runtime fixture');
   },
 }));
@@ -116,11 +158,19 @@ try {
   jobsPaused = false;
   const duplicate = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/queue');
   assert.deepEqual(await duplicate.json(), { completed: true, acknowledgements: 1, retries: [] }); assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime', 'begin_hosting_work']);
+  jobsClaim = true;
+  for (const path of ['/completed','/failed']) {
+    jobsCompleted = path === '/completed';
+    const finished = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid' + path);
+    assert.deepEqual(await finished.json(), { completed: true, acknowledgements: 1, retries: [] });
+    assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime','begin_hosting_work','read_hosting_runtime','finish_hosting_work']);
+  }
+  jobsClaim = false;
   jobsRedirect = true;
   const redirected = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/cron');
   assert.equal(redirected.status, 503); assert.equal((await redirected.json()).code, 'hosting_state_unavailable');
   assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime']);
-  console.log(JSON.stringify({ runtime: 'workerd', jobsChecks: 5, liveProviderRequests: 0, queueMessagesSent: 0, redirectedCredentials: false }));
+  console.log(JSON.stringify({ runtime: 'workerd', jobsChecks: 7, liveProviderRequests: 0, queueMessagesSent: 0, redirectedCredentials: false, nativeVoidStatus: 204 }));
 } finally { await jobRuntime.dispose(); }
 const source = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/source-worker/source.js',
