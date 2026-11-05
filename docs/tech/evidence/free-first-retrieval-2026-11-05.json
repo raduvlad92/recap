@@ -168,5 +168,13 @@
     "hostedLogVisibility": "pending",
     "paidFallbackContentProof": "pending",
     "generatedSpeechAndImageExtraction": "not implemented in this increment"
+  },
+  "repository": {
+    "pr": "https://github.com/raduvlad92/recap/pull/12",
+    "basePr": "https://github.com/raduvlad92/recap/pull/11",
+    "implementationCommit": "a9709a44c4eda46abad71c86c242717f7cfff6db",
+    "ciObservedAt": "2026-11-05T01:39:09Z",
+    "applicationCi": "IN_PROGRESS",
+    "cloudflareVerificationCi": "IN_PROGRESS"
   }
 }
