@@ -1,4 +1,5 @@
 import { fetchNoRedirect } from './fetch-no-redirect';
+import { DISCOVERY_ITEMS, DISCOVERY_MAX_USD } from './youtube-discovery';
 import { classifyProviderVideoFormat, videoFormatFields } from '../../../src/lib/video-format';
 import { createHash } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
@@ -104,6 +105,17 @@ export async function startApify(source: Source, userId: string, env: Env, fetch
   return { status: 'running', jobToken, providerRunId: runId, message: 'Collecting up to ' + config.maxItems + ' recent videos and available captions. Missing captions will remain metadata only.' };
 }
 
+/** Channel discovery is a separate paid scope, never a caption-job identity. */
+export async function startYouTubeDiscovery(source: Source, channelId: string, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<{ providerRunId: string }> {
+  const config = requireConfig(env, userId);
+  if (!/^UC[A-Za-z0-9_-]{22}$/.test(channelId)) throw new CollectionError(400, 'invalid_job', 'Stable channel identity required.');
+  const input = youtubeInput({ ...source, url: 'https://www.youtube.com/channel/' + channelId }, DISCOVERY_ITEMS);
+  const params = new URLSearchParams({ build: config.build, timeout: '120', maxItems: String(DISCOVERY_ITEMS), maxTotalChargeUsd: String(DISCOVERY_MAX_USD), restartOnError: 'false', waitForFinish: '0' });
+  const run = object(object(await apifyRequest('acts/' + YOUTUBE_ACTOR + '/runs?' + params, config, fetcher, { method: 'POST', body: JSON.stringify(input) })).data);
+  if (run.actId !== YOUTUBE_ACTOR_ID || run.buildId !== env('APIFY_YOUTUBE_BUILD_ID')) throw new CollectionError(502, 'provider_build_mismatch', 'The discovery run did not match its reviewed build.');
+  return { providerRunId: providerId(run.id) };
+}
+
 export function captionsText(value: unknown): string {
   if (!Array.isArray(value)) return '';
   for (const entry of value) {
@@ -150,13 +162,17 @@ export function normalizeYouTubeItems(items: unknown, source: Source, maxItems =
 }
 
 export interface ApifyPollResult { status: string; message?: string; result?: CollectionResult; contentError?: string; telemetry?: {ledgerId: string; providerRunId: string; cost: number | null} }
-export interface StoredApifyJob { providerRunId: string; actorId: string; source: Source; maxItems: number; ledgerId: string; feeOnly?: boolean }
+export interface StoredApifyJob { providerRunId: string; actorId: string; source: Source; maxItems: number; ledgerId: string; feeOnly?: boolean; discoveryChannelId?: string }
 
 /** Server-only recovery: input must come from the private provider-job table, never a browser body. */
 export async function pollStoredApify(job: StoredApifyJob, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<ApifyPollResult> {
   const config = requireConfig(env, userId);
-  if (!job || job.actorId !== YOUTUBE_ACTOR_ID || !/^[0-9a-f-]{36}$/i.test(job.ledgerId) || job.maxItems !== 1 || job.source?.platform !== 'YouTube') {
+  if (!job || job.actorId !== YOUTUBE_ACTOR_ID || !/^[0-9a-f-]{36}$/i.test(job.ledgerId) || job.maxItems !== (job.discoveryChannelId ? DISCOVERY_ITEMS : 1) || job.source?.platform !== 'YouTube') {
     throw new CollectionError(403, 'invalid_job', 'The stored collection job could not be verified.');
+  }
+  if (job.discoveryChannelId) {
+    if (!/^UC[A-Za-z0-9_-]{22}$/.test(job.discoveryChannelId) || job.source.url !== 'https://www.youtube.com/channel/' + job.discoveryChannelId) throw new CollectionError(403, 'invalid_job', 'Discovery channel identity changed.');
+    return readApifyRun(providerId(job.providerRunId), providerId(job.actorId), job.source, DISCOVERY_ITEMS, job.ledgerId, config, fetcher, env('APIFY_YOUTUBE_BUILD_ID'), true, job.feeOnly === true, job.discoveryChannelId);
   }
   const input = youtubeInput(job.source, 1);
   const target = new URL((input.startUrls as Array<{url: string}>)[0].url);
@@ -182,7 +198,7 @@ export async function pollApify(jobToken: string, userId: string, env: Env, fetc
   return readApifyRun(runId, actorId, source, maxItems, ledgerId, config, fetcher);
 }
 
-async function readApifyRun(runId: string, actorId: string, source: Source, maxItems: number, ledgerId: string | undefined, config: ApifyConfig, fetcher: Fetcher, expectedBuildId?: string, preserveTerminalTelemetry = false, feeOnly = false): Promise<ApifyPollResult> {
+async function readApifyRun(runId: string, actorId: string, source: Source, maxItems: number, ledgerId: string | undefined, config: ApifyConfig, fetcher: Fetcher, expectedBuildId?: string, preserveTerminalTelemetry = false, feeOnly = false, discoveryChannelId?: string): Promise<ApifyPollResult> {
   const response = object(await apifyRequest('actor-runs/' + runId, config, fetcher));
   const run = object(response.data);
   if (run.id !== runId || run.actId !== actorId) throw new CollectionError(403, 'invalid_job', 'The provider job does not match this request.');
@@ -195,7 +211,15 @@ async function readApifyRun(runId: string, actorId: string, source: Source, maxI
   try {
     const datasetId = providerId(run.defaultDatasetId);
     const items = await apifyRequest('datasets/' + datasetId + '/items?clean=true&format=json&limit=' + maxItems, config, fetcher);
+    if (discoveryChannelId) {
+      if (!Array.isArray(items) || items.some(value => {
+        const row = object(value), channelUrl = typeof row.channelUrl === 'string' ? row.channelUrl.replace(/\/$/, '') : '';
+        return row.channelId !== discoveryChannelId && channelUrl !== 'https://www.youtube.com/channel/' + discoveryChannelId
+          || row.channelId && row.channelId !== discoveryChannelId;
+      })) throw new CollectionError(502, 'provider_channel_unconfirmed', 'The returned uploads could not be attributed to the requested channel.');
+    }
     const updates = normalizeYouTubeItems(items, source, maxItems);
+    if (discoveryChannelId && updates.some(update => !update.publishedAt)) throw new CollectionError(502, 'provider_date_unconfirmed', 'The provider did not supply an exact publication date.');
     return { status: 'completed', telemetry, result: { source: { ...source, status: 'ready' }, updates, notice: 'Collected a bounded recent sample, not a complete channel history. Text is extracted source material, not an AI recap. Descriptions are not video-content coverage.' } };
   } catch (error) {
     if (!preserveTerminalTelemetry) throw error;

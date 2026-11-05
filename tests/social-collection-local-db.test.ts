@@ -50,7 +50,7 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
   await firstClaimed;
   expect(claim()).toBeNull();
   expect(JSON.parse(await firstFinished).id).toBeTruthy();
-  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('1');
+  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('0');
  });
  function addSources(count: number) {
   const customSources = Array.from({ length: count }, (_, index) => ({ ...source, id: 'capacity-' + index, url: 'https://x.com/capacity' + index }));
@@ -62,7 +62,7 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
   const first = claim(), second = claim(), third = claim();
   expect(first.id).toBeTruthy(); expect(second.id).toBeTruthy(); expect(third.id).toBeTruthy(); expect(claim()).toBeNull();
   expect(service("select count(*)from public.social_collection_jobs where state in('claimed','launch_claimed','running');")).toBe('3');
-  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('3');
+  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('0');
   // An explicitly unlaunched failed configuration releases its own admission.
   finish(first, [], null, false, 'configuration_failed');
   expect(claim().id).not.toBe(first.id); expect(claim()).toBeNull();
@@ -88,15 +88,15 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
   addSources(4); const first = claim(); claim(); claim(); launch(first); run(first);
   sql(`update public.social_collection_jobs set lease_until=clock_timestamp()-interval'1 minute',next_poll_at=clock_timestamp()-interval'1 minute'where id=${q(first.id)};`);
   const recovered = result('select public.claim_social_collection_job(false);');
-  expect(recovered.id).toBe(first.id); expect(recovered.provider_run_id).toBe('Run123456'); expect(recovered.reservation_id).toBe(first.reservation_id);
-  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('3');
+  expect(recovered.id).toBe(first.id); expect(recovered.provider_run_id).toBe('Run123456'); expect(recovered.reservation_id).toBeTruthy();
+  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('1');
  });
  it('recovers the same expired unlaunched reservation without adding capacity', () => {
   addSources(4); const first = claim(); claim(); claim();
   sql(`update public.social_collection_jobs set lease_until=clock_timestamp()-interval'1 minute'where id=${q(first.id)};`);
   const resumed = claim(); expect(resumed.id).toBe(first.id); expect(resumed.reservation_id).toBe(first.reservation_id); expect(resumed.lease_token).not.toBe(first.lease_token);
   expect(launch(first)).toBe(false); expect(launch(resumed)).toBe(true); expect(claim()).toBeNull();
-  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('3');
+  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('1');
  });
  it('isolates ambiguous proof ownership from normal source scheduling without releasing its hold', () => {
   result('select public.sync_social_collection_sources();');
@@ -117,7 +117,7 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
  it('applies the same capacity gate to newly requested operator proofs', () => {
   addSources(4); claim(); claim(); claim();
   expect(result("select public.claim_social_collection_proof('X','https://x.com/capacityproof','Proof','social-owner');")).toBeNull();
-  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('3');
+  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('0');
  });
  it('serializes a proof taking slot three against concurrent recurring admission', async () => {
   addSources(5); claim(); claim();
@@ -129,7 +129,7 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
    child.stdin!.end("begin;set role service_role;select public.claim_social_collection_proof('X','https://x.com/lastproof','Proof','social-owner');select pg_sleep(.3);commit;");
   });
   await proofClaimed; expect(claim()).toBeNull(); expect(JSON.parse(await heldProof).purpose).toBe('proof'); expect(claim()).toBeNull();
-  expect(service('select count(*)from public.social_collection_jobs;')).toBe('3'); expect(service('select count(*)from public.collection_budget_reservations;')).toBe('3');
+  expect(service('select count(*)from public.social_collection_jobs;')).toBe('3'); expect(service('select count(*)from public.collection_budget_reservations;')).toBe('1');
  });
  it('reconciles a known accepted proof without taking recurring source ownership', () => {
   result('select public.sync_social_collection_sources();');
@@ -144,8 +144,8 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
   expect(() => sql('set role authenticated;select public.sync_social_collection_sources();')).toThrow(); expect(() => sql('set role anon;select * from public.social_collection_items;')).toThrow();
  });
  it('retains the shared cash ceiling and platform daily envelope', () => {
-  result('select public.sync_social_collection_sources();'); sql('update public.social_collection_platforms set daily_limit_usd=.04 where platform=\'X\';'); expect(claim()).toBeNull();
-  sql(`update public.social_collection_platforms set daily_limit_usd=.5 where platform='X';select public.reserve_collection_budget('preexisting-proof',44.99,'envelope');`); expect(() => claim()).toThrow();
+  result('select public.sync_social_collection_sources();'); sql('update public.social_collection_platforms set daily_limit_usd=.04 where platform=\'X\';'); const free=claim();expect(free.id).toBeTruthy();expect(() => launch(free)).toThrow();finish(free,[],null,false,'budget_stopped');
+  sql(`update public.social_collection_platforms set daily_limit_usd=.5 where platform='X';select public.reserve_collection_budget('preexisting-proof',44.99,'envelope');`); sql("update public.social_collection_sources set next_check_at=clock_timestamp()-interval'1 minute';");const next=claim();expect(next.id).toBeTruthy();expect(() => launch(next)).toThrow();
  });
  it('keeps an ambiguous launch and its full reservation instead of re-posting', () => {
   result('select public.sync_social_collection_sources();'); const job = claim(); launch(job); finish(job, [], null, false, 'ambiguous_launch');
@@ -155,7 +155,7 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
   result('select public.sync_social_collection_sources();');const first=claim();
   sql("update public.social_collection_jobs set lease_until=clock_timestamp()-interval'1 minute';");
   const resumed=claim();expect(resumed.id).toBe(first.id);expect(resumed.reservation_id).toBe(first.reservation_id);expect(resumed.lease_token).not.toBe(first.lease_token);
-  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('1');
+  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('0');
   expect(launch(first)).toBe(false);expect(launch(resumed)).toBe(true);
   sql("update public.social_collection_jobs set lease_until=clock_timestamp()-interval'1 minute';");expect(claim()).toBeNull();
  });
@@ -172,7 +172,25 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
  });
  it('releases only a verified never-launched configuration failure', () => {
   result('select public.sync_social_collection_sources();'); const job = claim(); finish(job, [], null, false, 'configuration_failed');
-  expect(service('select state from public.collection_budget_reservations;')).toBe('released'); expect(service('select launch_attempted_at is null from public.collection_budget_reservations;')).toBe('t');
+  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('0'); expect(service("select status from public.collection_jobs;")).toBe('blocked');
+ });
+ it('imports native text with no reservation even when the paid account is exhausted',()=>{
+  result('select public.sync_social_collection_sources();');
+  sql("select public.reserve_collection_budget('exhausted-paid-envelope',45,'envelope');");
+  const job=claim();expect(job.reservation_id).toBeNull();expect(() => launch(job)).toThrow();
+  const coverage={status:'partial',complete:false,returned:1,accepted:1,rejected:{},retrieval:'native'};
+  const out=result(`select public.finish_social_collection_job(${q(job.id)},${q(job.lease_token)},${j([item(job)])},${j(coverage)},0,true,null);`);
+  expect(out.imported).toBe(1);expect(service("select provider||':'||cost_status||':'||observed_cost_usd from public.collection_jobs;")).toBe('feed:no_provider_charge:0.000000000000');
+  expect(service('select count(*)from public.collection_budget_reservations;')).toBe('1');
+ });
+ it('keeps method logs private, preserves their identity and refuses rewriting final outcomes',()=>{
+  result('select public.sync_social_collection_sources();');const job=claim();
+  const id=service(`insert into public.collection_retrieval_attempts(job_id,method,stage,provider)values(${q(job.collection_job_id)},'x_public_timeline','discovery','native')returning id;`);
+  expect(() => sql('set role authenticated;select * from public.collection_retrieval_attempts;')).toThrow();
+  expect(() => sql('set role anon;select * from public.collection_retrieval_attempts;')).toThrow();
+  expect(() => service(`update public.collection_retrieval_attempts set method='another_method'where id=${q(id)};`)).toThrow();
+  service(`update public.collection_retrieval_attempts set status='failed',error_code='source_unavailable',http_status=403,finished_at=clock_timestamp()where id=${q(id)};`);
+  expect(() => service(`update public.collection_retrieval_attempts set status='succeeded'where id=${q(id)};`)).toThrow();
  });
  it('imports accepted public items but never revives a reader deleted archive', () => {
   result('select public.sync_social_collection_sources();'); const job = claim(); launch(job); run(job); finish(job);

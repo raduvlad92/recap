@@ -1,3 +1,4 @@
+import { testRetrievalLog } from './helpers/retrieval-log';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createHourlyCollector, type HourlyClaim, type HourlyStore, type StoredProviderJob } from '../netlify/functions/_shared/hourly-collection';
 import { pollStoredApify, YOUTUBE_ACTOR_ID } from '../netlify/functions/_shared/apify';
@@ -17,7 +18,7 @@ function setup(tasks:unknown[]=[]) {
  const c=claim(source,tasks);
  const store: HourlyStore = { policies:vi.fn(async()=>[policy]), schedule:vi.fn(async()=>[{user_id:user,source_id:source.id}]), workspace:vi.fn(async()=>null), claim:vi.fn(async()=>c), seen:vi.fn(async()=>new Set<string>()), pending:vi.fn(async()=>[]), serviced:vi.fn(async()=>{}), providerClaimed:vi.fn(async()=>false), jobCost:vi.fn(async()=>null), finish:vi.fn(async()=>({retrievedCount:0,importAccepted:true})), reserve:vi.fn(async()=>{throw Error('RESERVATION_FORBIDDEN')}), providerPatch:vi.fn(async()=>{}) };
  const forbidden=vi.fn(async()=>{throw Error('PROVIDER_START_FORBIDDEN')});
- const deps={ env:(k:string)=>values[k],store, download:vi.fn(async()=>({text:'',url:source.url,status:304,contentType:'application/xml'})), captions:vi.fn(async()=>null), startApify:forbidden as never, preflight:forbidden, startJob:forbidden as never, finishJob:vi.fn<typeof finishJob>(async()=>{}), settleBudget:vi.fn(async()=>({}) as never), pollApify:vi.fn(async()=>({status:'running'})) as ReturnType<typeof vi.fn<typeof pollStoredApify>>, pause:vi.fn(async()=>{}), now:()=>Date.now() };
+ const deps={ log:testRetrievalLog(), env:(k:string)=>values[k],store, download:vi.fn(async()=>({text:'',url:source.url,status:304,contentType:'application/xml'})), captions:vi.fn(async()=>null), startApify:forbidden as never, preflight:forbidden, startJob:forbidden as never, finishJob:vi.fn<typeof finishJob>(async()=>{}), settleBudget:vi.fn(async()=>({}) as never), pollApify:vi.fn(async()=>({status:'running'})) as ReturnType<typeof vi.fn<typeof pollStoredApify>>, pause:vi.fn(async()=>{}), now:()=>Date.now() };
  return {store,deps,c,run:()=>createHourlyCollector(deps)(),patch:()=>vi.mocked(store.finish).mock.calls.at(-1)![1]};
 }
 afterEach(()=>vi.useRealTimers());

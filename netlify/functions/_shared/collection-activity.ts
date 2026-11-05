@@ -1,3 +1,4 @@
+import { readRetrievalAttempts } from './retrieval-log';
 import type { CollectionActivityEvent, CollectionActivityReport, CollectionCostGroup, CollectionCostTotals, ReaderCollectionPolicy } from '../../../src/lib/collection-activity-types';
 import type { CollectionJobRecord } from '../../../src/lib/admin-types';
 import { database, safeLink } from './admin-data';
@@ -74,7 +75,7 @@ function references(check: CollectionCheckRow): { ids: Set<string>; runs: Set<st
 function safeDetails(value: unknown): CollectionActivityEvent['details'] {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
   const input = value as Record<string, unknown>, result: CollectionActivityEvent['details'] = {};
-  if (typeof input.mode === 'string' && ['native_feed', 'youtube_rss', 'unsupported'].includes(input.mode)) result.mode = input.mode;
+  if (typeof input.mode === 'string' && ['native_feed', 'youtube_rss', 'youtube_public_uploads', 'unsupported'].includes(input.mode)) result.mode = input.mode;
   for (const key of ['captionStatus', 'coverage'] as const) if (typeof input[key] === 'string') result[key] = input[key].slice(0, 200);
   for (const key of ['gapPossible', 'httpNotModified'] as const) if (typeof input[key] === 'boolean') result[key] = input[key];
   for (const key of ['deferredCount', 'invalidCount'] as const) { const value = integer(input[key]); if (value !== null) result[key] = value; }
@@ -239,6 +240,8 @@ export async function readCollectionActivity(db: ReturnType<typeof database>, qu
   // serialization, because this server client has privileged credentials.
   if (ownUserId && [...checks, ...jobs, ...policies, ...commitmentRows].some(row => row.user_id !== ownUserId)) throw unavailable();
   const report = aggregateActivity(checks, jobs, { ...query, user: ownUserId || query.user }, policies, links);
+  const [checkAttempts, jobAttempts] = await Promise.all([readRetrievalAttempts(db, 'check_id', report.events.filter(event => event.kind === 'check').map(event => event.id)), readRetrievalAttempts(db, 'job_id', report.events.filter(event => event.kind === 'provider_job').map(event => event.id))]);
+  for (const event of report.events) event.details.attempts = (event.kind === 'check' ? checkAttempts.filter(attempt => attempt.check_id === event.id) : jobAttempts.filter(attempt => attempt.job_id === event.id));
   const commitments = collectionCommitments(commitmentRows, now), today = now.toISOString().slice(0, 10);
   report.policies = report.policies.map(policy => ({ ...policy, commitments: commitments.get(policy.userId) || { day: today, dailyUsd: 0, lifetimeUsd: 0, unfinalizedJobs: 0 } }));
   report.runtime = { hourlyEnabled: env('HOURLY_COLLECTION_ENABLED') === 'true', providerVerified: env('HOURLY_COLLECTION_PROVIDER_VERIFIED') === 'true' };

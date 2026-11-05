@@ -1,0 +1,609 @@
+{
+  "at": "2026-11-05T00:57:33.125Z",
+  "method": "Supabase REST SELECT-only; existing Apify runs/datasets/key-value records GET-only; no creator-source requests",
+  "social": [
+    {
+      "platform": "X",
+      "normalJobs": 432,
+      "completed": 431,
+      "emptyReturned": 426,
+      "nonemptyReturned": 5,
+      "acceptedEvents": 5,
+      "rejections": {},
+      "latestFinished": "2026-11-05T00:50:20.930664+00:00",
+      "activeSources": 10,
+      "states": {
+        "completed": 431,
+        "ambiguous": 1
+      }
+    },
+    {
+      "platform": "Instagram",
+      "normalJobs": 394,
+      "completed": 391,
+      "emptyReturned": 369,
+      "nonemptyReturned": 22,
+      "acceptedEvents": 1,
+      "rejections": {
+        "outside_window": 18,
+        "provider_error": 3
+      },
+      "latestFinished": "2026-11-05T00:50:20.950177+00:00",
+      "activeSources": 8,
+      "states": {
+        "running": 3,
+        "completed": 391
+      }
+    },
+    {
+      "platform": "LinkedIn",
+      "normalJobs": 0,
+      "completed": 0,
+      "emptyReturned": 0,
+      "nonemptyReturned": 0,
+      "acceptedEvents": 0,
+      "rejections": {},
+      "activeSources": 0,
+      "states": {}
+    }
+  ],
+  "platforms": [
+    {
+      "platform": "X",
+      "actor_ref": "xquik/x-tweet-scraper",
+      "build_id": "65fBHxPfE8VjunRL2",
+      "build_number": "1.12.411",
+      "max_items": 20,
+      "maximum_usd": 0.05,
+      "enabled": true
+    },
+    {
+      "platform": "LinkedIn",
+      "actor_ref": "harvestapi/linkedin-profile-posts",
+      "build_id": "ocTvwcnar4NgSvVu9",
+      "build_number": "0.0.86",
+      "max_items": 20,
+      "maximum_usd": 0.05,
+      "enabled": true
+    },
+    {
+      "platform": "Instagram",
+      "actor_ref": "yugenox/instagram-post-scraper",
+      "build_id": "HSW3HhS2U1JDYaXcJ",
+      "build_number": "0.1.4",
+      "max_items": 3,
+      "maximum_usd": 0.01,
+      "enabled": true
+    }
+  ],
+  "youtube": {
+    "latestSources": 21,
+    "latestChecks": {
+      "{\"status\":\"failed\",\"http\":404,\"error\":\"source_unavailable\",\"mode\":\"youtube_rss\"}": 7,
+      "{\"status\":\"failed\",\"http\":500,\"error\":\"source_unavailable\",\"mode\":\"youtube_rss\"}": 1,
+      "{\"status\":\"partial\",\"http\":200,\"error\":null,\"mode\":\"youtube_rss\"}": 5,
+      "{\"status\":\"failed\",\"http\":404,\"error\":\"source_unavailable\",\"mode\":\"youtube_rss\",\"captionStatus\":\"provider_pending\"}": 1,
+      "{\"status\":\"partial\",\"http\":200,\"error\":null,\"mode\":\"youtube_rss\",\"captionStatus\":\"provider_returned_no_captions\"}": 2,
+      "{\"status\":\"failed\",\"http\":404,\"error\":\"source_unavailable\",\"mode\":\"youtube_rss\",\"captionStatus\":\"provider_returned_no_captions\"}": 1,
+      "{\"status\":\"partial\",\"http\":200,\"error\":null,\"mode\":\"youtube_rss\",\"captionStatus\":\"provider_launch_ambiguous\"}": 1,
+      "{\"status\":\"failed\",\"http\":500,\"error\":\"source_unavailable\",\"mode\":\"youtube_rss\",\"captionStatus\":\"provider_launch_ambiguous\"}": 2,
+      "{\"status\":\"failed\",\"http\":404,\"error\":\"source_unavailable\",\"mode\":\"youtube_rss\",\"captionStatus\":\"provider_error\"}": 1
+    },
+    "pendingCaptions": 24,
+    "pendingReasons": {
+      "provider_already_attempted": 8,
+      "provider_launch_ambiguous": 11,
+      "video_format_unconfirmed": 2,
+      "provider_pending": 1,
+      "provider_error": 1,
+      "collection_budget_exhausted": 1
+    },
+    "latestCheckTimeRange": {
+      "oldest": "2026-11-05T00:00:29.765344+00:00",
+      "newest": "2026-11-05T00:00:45.439431+00:00"
+    },
+    "providerDatasetReplay": [
+      {
+        "runId": "YSJrqAZo84mhmKTdz",
+        "buildNumber": "0.0.319",
+        "status": "SUCCEEDED",
+        "statusMessage": "Finished! Total 2 requests: 2 succeeded, 0 failed.",
+        "finishedAt": "2026-11-05T00:01:55.938Z",
+        "rawRows": 1,
+        "transcriptionAndSubtitle": "ALWAYS_SUBTITLES",
+        "subtitleFormat": "srt",
+        "rows": [
+          {
+            "subtitlesType": "array",
+            "subtitles": [
+              {
+                "keys": [
+                  "srtUrl",
+                  "type",
+                  "language",
+                  "srt"
+                ],
+                "inlineSrtChars": 25183,
+                "hasSrtUrl": false
+              }
+            ],
+            "hasTranscriptionUrl": false,
+            "errorCode": null
+          }
+        ],
+        "normalized": [
+          {
+            "kind": "transcript",
+            "characters": 7767,
+            "segments": 190
+          }
+        ]
+      },
+      {
+        "runId": "QQIcUjIGFSIKIVUsT",
+        "buildNumber": "0.0.319",
+        "status": "SUCCEEDED",
+        "statusMessage": "Finished! Total 2 requests: 2 succeeded, 0 failed.",
+        "finishedAt": "2026-11-05T00:01:24.673Z",
+        "rawRows": 1,
+        "transcriptionAndSubtitle": "ALWAYS_SUBTITLES",
+        "subtitleFormat": "srt",
+        "rows": [
+          {
+            "subtitlesType": "array",
+            "subtitles": [
+              {
+                "keys": [
+                  "srtUrl",
+                  "type",
+                  "language",
+                  "srt"
+                ],
+                "inlineSrtChars": 38222,
+                "hasSrtUrl": false
+              }
+            ],
+            "hasTranscriptionUrl": false,
+            "errorCode": null
+          }
+        ],
+        "normalized": [
+          {
+            "kind": "transcript",
+            "characters": 12626,
+            "segments": 268
+          }
+        ]
+      },
+      {
+        "runId": "7EyPOh7dP2az8k8ca",
+        "buildNumber": "0.0.319",
+        "status": "SUCCEEDED",
+        "statusMessage": "Finished! Total 2 requests: 2 succeeded, 0 failed.",
+        "finishedAt": "2026-11-05T00:01:03.613Z",
+        "rawRows": 1,
+        "transcriptionAndSubtitle": "ALWAYS_SUBTITLES",
+        "subtitleFormat": "srt",
+        "rows": [
+          {
+            "subtitlesType": "array",
+            "subtitles": [
+              {
+                "keys": [
+                  "srtUrl",
+                  "type",
+                  "language",
+                  "srt"
+                ],
+                "inlineSrtChars": 13982,
+                "hasSrtUrl": false
+              }
+            ],
+            "hasTranscriptionUrl": false,
+            "errorCode": null
+          }
+        ],
+        "normalized": [
+          {
+            "kind": "transcript",
+            "characters": 4344,
+            "segments": 106
+          }
+        ]
+      },
+      {
+        "runId": "JDCykJSoOKkWlWdch",
+        "buildNumber": "0.0.319",
+        "status": "SUCCEEDED",
+        "statusMessage": "Finished! Total 2 requests: 2 succeeded, 0 failed.",
+        "finishedAt": "2026-11-04T23:02:46.077Z",
+        "rawRows": 1,
+        "transcriptionAndSubtitle": "ALWAYS_SUBTITLES",
+        "subtitleFormat": "srt",
+        "rows": [
+          {
+            "subtitlesType": "array",
+            "subtitles": [
+              {
+                "keys": [
+                  "srtUrl",
+                  "type",
+                  "language",
+                  "srt"
+                ],
+                "inlineSrtChars": 9163,
+                "hasSrtUrl": false
+              }
+            ],
+            "hasTranscriptionUrl": false,
+            "errorCode": null
+          }
+        ],
+        "normalized": [
+          {
+            "kind": "transcript",
+            "characters": 2973,
+            "segments": 63
+          }
+        ]
+      }
+    ]
+  },
+  "items": {
+    "LinkedIn": {
+      "unique": 2,
+      "textLengths": [
+        1261,
+        0
+      ]
+    },
+    "Instagram": {
+      "unique": 1,
+      "textLengths": [
+        47
+      ]
+    },
+    "X": {
+      "unique": 3,
+      "textLengths": [
+        107,
+        216,
+        15
+      ]
+    }
+  },
+  "providerReads": [
+    {
+      "platform": "X",
+      "runId": "cTQ9OQqrJsJIwNwFM",
+      "actorRef": "xquik/x-tweet-scraper",
+      "buildNumber": "1.12.411",
+      "status": "SUCCEEDED",
+      "statusMessage": "No tweets matched this search in the time window. The run charged no results. Widen the time window or remove filters for more tweets. Read 1 target.",
+      "finishedAt": "2026-11-05T00:40:26.655Z",
+      "storedReturned": 0,
+      "rawRows": 0,
+      "replayCoverage": {
+        "status": "unknown",
+        "complete": false,
+        "returned": 0,
+        "accepted": 0,
+        "rejected": {},
+        "reason": "empty_or_unusable_response"
+      },
+      "textLengths": [],
+      "timeInput": {
+        "sinceTime": "1793752823",
+        "untilTime": "1793839224"
+      },
+      "diagnosticsRead": 404,
+      "diagnosticKeys": [],
+      "reportRead": 404,
+      "reportKeys": [],
+      "reportOutcome": null,
+      "suppliedInputMatchesCurrent": true,
+      "existingRecordKeys": [
+        "INPUT"
+      ]
+    },
+    {
+      "platform": "X",
+      "runId": "13P3XwCwSJVxkdCaB",
+      "actorRef": "xquik/x-tweet-scraper",
+      "buildNumber": "1.12.411",
+      "status": "SUCCEEDED",
+      "statusMessage": "Finished. 1 tweet fetched. Collected every available result. Charged for 1 of 1 result. Read 1 target. Found this useful? A review helps others find it.",
+      "finishedAt": "2026-11-04T22:45:28.823Z",
+      "storedReturned": 1,
+      "rawRows": 1,
+      "replayCoverage": {
+        "status": "partial",
+        "complete": false,
+        "returned": 1,
+        "accepted": 1,
+        "rejected": {},
+        "reason": "provider_completeness_unverified"
+      },
+      "textLengths": [
+        15
+      ],
+      "timeInput": {
+        "sinceTime": "1793745926",
+        "untilTime": "1793832327"
+      },
+      "diagnosticsRead": 404,
+      "diagnosticKeys": [],
+      "reportRead": 404,
+      "reportKeys": [],
+      "reportOutcome": null,
+      "suppliedInputMatchesCurrent": true,
+      "existingRecordKeys": [
+        "INPUT"
+      ]
+    },
+    {
+      "platform": "Instagram",
+      "runId": "irqTv9N5WBhxtglPF",
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4",
+      "status": "SUCCEEDED",
+      "statusMessage": "Done \u2014 0 posts. Inputs: 1 empty \u2014 see RUN_REPORT.",
+      "finishedAt": "2026-11-05T00:40:27.866Z",
+      "storedReturned": 0,
+      "rawRows": 0,
+      "replayCoverage": {
+        "status": "unknown",
+        "complete": false,
+        "returned": 0,
+        "accepted": 0,
+        "rejected": {},
+        "reason": "empty_or_unusable_response"
+      },
+      "textLengths": [],
+      "timeInput": null,
+      "diagnosticsRead": 404,
+      "diagnosticKeys": [],
+      "reportRead": "present uppercase RUN_REPORT",
+      "reportKeys": [
+        "startedAt",
+        "finishedAt",
+        "totals",
+        "stopReason",
+        "drift",
+        "queries",
+        "door",
+        "skippedInputs",
+        "notes"
+      ],
+      "reportOutcome": null,
+      "suppliedInputMatchesCurrent": true,
+      "existingRecordKeys": [
+        "INPUT",
+        "RUN_REPORT"
+      ],
+      "reportSummary": {
+        "totals": {
+          "rows": 0,
+          "byType": {},
+          "bySource": {},
+          "filtered": 0,
+          "requests": 6,
+          "rotations": 2,
+          "escalations": 0,
+          "fallbackRequests": 0,
+          "requestsByQuery": {
+            "PolarisLoggedOutDesktopWWWProfileRootContentQuery": {
+              "requests": 1,
+              "ok": 1,
+              "blocked": 0,
+              "failed": 0,
+              "ms": 260
+            },
+            "PolarisProfilePostsQuery": {
+              "requests": 3,
+              "ok": 0,
+              "blocked": 3,
+              "failed": 0,
+              "ms": 1564,
+              "gated": true
+            },
+            "PolarisLoggedOutDesktopWWWProfileReelsTabContentQuery": {
+              "requests": 1,
+              "ok": 1,
+              "blocked": 0,
+              "failed": 0,
+              "ms": 875
+            },
+            "PolarisLoggedOutDesktopWWWProfilePostsTabContentQuery": {
+              "requests": 1,
+              "ok": 1,
+              "blocked": 0,
+              "failed": 0,
+              "ms": 484
+            }
+          },
+          "walledQueries": [
+            "PolarisProfilePostsQuery"
+          ]
+        },
+        "stopReason": null,
+        "drift": [],
+        "notes": [
+          "Datacenter proxies only on this run (a date window)"
+        ]
+      }
+    },
+    {
+      "platform": "Instagram",
+      "runId": "hVovzY33fno3ar2jG",
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4",
+      "status": "SUCCEEDED",
+      "statusMessage": "Done \u2014 1 post.",
+      "finishedAt": "2026-10-31T23:20:18.703Z",
+      "storedReturned": 1,
+      "rawRows": 1,
+      "replayCoverage": {
+        "status": "unknown",
+        "complete": false,
+        "returned": 1,
+        "accepted": 0,
+        "rejected": {
+          "outside_window": 1
+        },
+        "reason": "provider_returned_older_window"
+      },
+      "textLengths": [],
+      "timeInput": null,
+      "diagnosticsRead": 404,
+      "diagnosticKeys": [],
+      "reportRead": "present uppercase RUN_REPORT",
+      "reportKeys": [
+        "startedAt",
+        "finishedAt",
+        "totals",
+        "stopReason",
+        "drift",
+        "queries",
+        "door",
+        "skippedInputs",
+        "notes"
+      ],
+      "reportOutcome": null,
+      "suppliedInputMatchesCurrent": true,
+      "existingRecordKeys": [
+        "INPUT",
+        "RUN_REPORT"
+      ],
+      "reportSummary": {
+        "totals": {
+          "rows": 1,
+          "byType": {
+            "post": 1
+          },
+          "bySource": {
+            "user": 1
+          },
+          "filtered": 0,
+          "requests": 8,
+          "rotations": 2,
+          "escalations": 0,
+          "fallbackRequests": 0,
+          "requestsByQuery": {
+            "PolarisProfilePostsQuery": {
+              "requests": 3,
+              "ok": 0,
+              "blocked": 3,
+              "failed": 0,
+              "ms": 1065,
+              "gated": true
+            },
+            "PolarisLoggedOutDesktopWWWProfileRootContentQuery": {
+              "requests": 1,
+              "ok": 1,
+              "blocked": 0,
+              "failed": 0,
+              "ms": 334
+            },
+            "PolarisLoggedOutDesktopWWWProfileReelsTabContentQuery": {
+              "requests": 1,
+              "ok": 1,
+              "blocked": 0,
+              "failed": 0,
+              "ms": 471
+            },
+            "PolarisLoggedOutDesktopWWWProfilePostsTabContentQuery": {
+              "requests": 2,
+              "ok": 2,
+              "blocked": 0,
+              "failed": 0,
+              "ms": 871
+            },
+            "PolarisPostRootQuery": {
+              "requests": 1,
+              "ok": 1,
+              "blocked": 0,
+              "failed": 0,
+              "ms": 383
+            }
+          },
+          "walledQueries": [
+            "PolarisProfilePostsQuery"
+          ]
+        },
+        "stopReason": null,
+        "drift": [],
+        "notes": [
+          "Datacenter proxies only on this run (a date window)"
+        ]
+      }
+    }
+  ],
+  "boundaries": {
+    "databaseWrites": 0,
+    "newProviderRuns": 0,
+    "modelCalls": 0,
+    "creatorSourceRequests": 0,
+    "settingsChanges": 0,
+    "emails": 0
+  },
+  "instagramRejectionsByActor": [
+    {
+      "actor": "yugenox/instagram-post-scraper",
+      "jobs": 392,
+      "returned": 28,
+      "accepted": 1,
+      "rejected": {
+        "outside_window": 27
+      }
+    },
+    {
+      "actor": "apify/instagram-scraper",
+      "jobs": 7,
+      "returned": 7,
+      "accepted": 0,
+      "rejected": {
+        "provider_error": 7
+      }
+    }
+  ],
+  "readerDeliveries": {
+    "instagram": {
+      "deliveries": 1,
+      "active": 1
+    },
+    "x": {
+      "deliveries": 3,
+      "active": 3
+    }
+  },
+  "currentActorBuilds": [
+    {
+      "actor": "xquik/x-tweet-scraper",
+      "latestBuild": "1.12.417",
+      "latestBuildId": "KnODCkbH3FJHL92pe",
+      "readAt": "2026-11-05T01:00:25.402Z"
+    },
+    {
+      "actor": "streamers/youtube-scraper",
+      "latestBuild": "0.0.325",
+      "latestBuildId": "Sfw2VmHmmc6YAcahs",
+      "readAt": "2026-11-05T01:00:25.404Z"
+    },
+    {
+      "actor": "yugenox/instagram-post-scraper",
+      "latestBuild": "0.1.4",
+      "latestBuildId": "HSW3HhS2U1JDYaXcJ",
+      "readAt": "2026-11-05T01:00:25.404Z"
+    }
+  ],
+  "readOnlyEvidenceCompleteAt": "2026-11-05T01:00:25.404Z",
+  "samplingNotes": [
+    "Database source/job/item snapshots and provider reads have separate capture times; normal collection stayed active independently.",
+    "Actor build freshness is metadata evidence; newer builds were not run.",
+    "YouTube per-source latest checks selected from the latest 1000 YouTube checks and cover all 21 expected sources.",
+    "instagramRejectionsByActor includes proof jobs; social summary excludes proof jobs.",
+    "Reported text character counts do not prove substantive content or completeness."
+  ],
+  "checkout": "9e61b30ea58397f4cc5086161b8cc50c7c12b33f"
+}

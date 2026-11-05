@@ -55,6 +55,17 @@ describe.skipIf(!available)('D38 caption fairness on actual disposable PostgreSQ
   expect(sql(`select count(*)||':'||sum(maximum_usd)||':'||count(actual_cost_usd) from public.reader_collection_provider_jobs where user_id='migration-preservation';`)).toBe('8:0.040000:0');
   expect(sql(`select bool_and(content_pending) from public.reader_collection_provider_jobs where user_id='migration-preservation';`)).toBe('t');
  });
+ it('reserves once-per-day channel discovery under the same reader/global budget and rejects unbound keys',()=>{
+  const user=fixture(),c=claim(user);
+  const ledger=sql(`insert into public.collection_jobs(user_id,source_id,source_name,source_url,platform,provider,actor_id,status)values('${user}','source-0','Channel','https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv','YouTube','apify','h7sDV53CddomktSi5','requested')returning id;`);
+  const request=(key:string,maximum=.02)=>invoke(`select public.reserve_hourly_provider('${c.checkId}','${c.leaseToken}','${key}','${ledger}','h7sDV53CddomktSi5',${maximum});`);
+  const day=sql("select(clock_timestamp()at time zone'UTC')::date::text;");
+  expect(()=>request('youtube-discovery:UCxxxxxxxxxxxxxxxxxxxxxx:'+day)).toThrow();
+  expect(()=>request('unbound-key')).toThrow();
+  expect(()=>request('youtube-discovery:UCabcdefghijklmnopqrstuv:'+day,.03)).toThrow();
+  const reserved=JSON.parse(request('youtube-discovery:UCabcdefghijklmnopqrstuv:'+day));expect(reserved.claimed).toBe(true);
+  expect(JSON.parse(request('youtube-discovery:UCabcdefghijklmnopqrstuv:'+day)).claimed).toBe(false);
+ });
  it('F1 uses persisted least-served ordering beyond 100 ambiguous jobs, retaining holds and bounded pages',()=>{
   const user=fixture(),c=claim(user),ids=Array.from({length:101},(_,i)=>addJob(user,'source-0',c,i,i===100?'running':'ambiguous',i===100?'SyntheticKnownRun':null));
   const first=pending(c);expect(first).toHaveLength(100);expect(first.some(j=>j.provider_run_id)).toBe(false);

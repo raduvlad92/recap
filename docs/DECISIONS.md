@@ -1,5 +1,13 @@
 # Decisions and interview
 
+## 5 November 2026 — cheap/free first, paid fallback, method-level history
+
+Founder explicitly directed implementation in YouTube → Instagram → X order, always preferring cheap/free parsing and falling back to paid Actors after failure, with backend visibility of attempts, failures and successes. This authorizes the scoped collection repair and its review delivery under existing finite controls, not a supplier subscription, cap increase or automatic approval/email change. New social money admission occurs only at paid launch; source-provided text remains distinct from generated speech/media understanding. A bounded YouTube channel/day scope shares the existing reader/global ledger. Implementation, failed local public-endpoint probes and pending production migration/acceptance are recorded separately. [Implementation and remaining gates](tech/FREE-FIRST-RETRIEVAL-2026-11-05.md).
+
+## 5 November 2026 — retrieval investigation and recommendations
+
+Founder asked why original-content retrieval fails, whether Apify Actors are being parsed properly, and how to fix coverage. The investigation uses existing records/outputs and current supplier documentation; it does not start supplier/model jobs or alter production. Findings distinguish direct YouTube RSS discovery from Actor caption fallback, working parsing of inspected real Actor text, empty X responses, blocked Instagram requests hidden in ignored reports, and unimplemented speech/image/article extraction. The proposed repair order is diagnostics/recovery, discovery fallback, fixed supplier controls, then bounded enrichment. These are assistant recommendations, not a founder-approved supplier switch, budget increase or repair release. Existing normal-runtime authorization, financial uncertainty, review gates and reminder choice remain unchanged. [Evidence and proposed plan](tech/CONTENT-RETRIEVAL-REPAIR-2026-11-05.md).
+
 ## 5 November 2026 — immediate Therecap-only Netlify retirement
 
 Founder explicitly instructed **“just remove the netlify now, no need to wait”**. This supersedes the earlier 72-hour/two-cutoff prerequisite for deleting the old site. Delete only Therecap's verified Netlify site and its obsolete hook/secret/exclusive deploy keys, preserve all other sites/shared account resources, and verify Cloudflare availability afterward. Actual deletion and cleanup are complete; the observation interval is not claimed passed. Cancel the obsolete final retirement task and keep the two already-scheduled daily cutoff checks as read-only Cloudflare observations with updated instructions. No change to database/authentication, data, spending caps, review approval or reminder consent is implied. [Evidence and limits](tech/NETLIFY-RETIREMENT.md).

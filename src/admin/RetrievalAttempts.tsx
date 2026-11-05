@@ -1,0 +1,5 @@
+import type { RetrievalAttempt } from '../lib/retrieval-types';
+export function RetrievalAttempts({ attempts }: { attempts?: RetrievalAttempt[] }) {
+  if (!attempts?.length) return null;
+  return <><dt>Retrieval attempts</dt><dd><ol>{attempts.map(attempt => <li key={attempt.id}><strong>{attempt.method.replaceAll('_', ' ')}</strong>: {attempt.status}<small>{attempt.provider === 'native' ? 'No supplier fee' : 'Apify'} · {new Date(attempt.started_at).toISOString()}{attempt.finished_at ? ` · ${Math.max(0, Date.parse(attempt.finished_at) - Date.parse(attempt.started_at))} ms` : ' · No completion recorded'}{attempt.http_status ? ` · HTTP ${attempt.http_status}` : ''}{attempt.error_code ? ` · ${attempt.error_code}` : ''}{attempt.result_count !== null ? ` · ${attempt.result_count} results` : ''}</small>{attempt.item_key && <small>Original: {attempt.item_key}</small>}{Object.entries(attempt.diagnostics).map(([key, value]) => <small key={key}>{key.replaceAll('_', ' ')}: {String(value)}</small>)}{attempt.provider_run_id && <small>Run: {attempt.provider_run_id}</small>}</li>)}</ol></dd></>;
+}
