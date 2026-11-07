@@ -7,6 +7,19 @@ const object = (v: unknown): Record<string, any> => v && typeof v === 'object' &
 export const DISCOVERY_ITEMS = 3;
 export const DISCOVERY_MAX_USD = .02;
 export interface YouTubeDiscovery { updates: SourceUpdate[]; gapPossible: boolean }
+/** Preserve an exact supplied instant; reject local dates and calendar rollover. */
+export function exactPublicationTimestamp(value: unknown): string | undefined {
+  if (typeof value !== 'string') return;
+  const parts = /^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(?:\.\d{1,9})?(Z|[+-](\d\d):(\d\d))$/.exec(value);
+  if (!parts) return;
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText, , offsetHour = '0', offsetMinute = '0'] = parts;
+  const year = Number(yearText), month = Number(monthText), day = Number(dayText);
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (month < 1 || month > 12 || day < 1 || day > days[month - 1] || Number(hourText) > 23 || Number(minuteText) > 59 || Number(secondText) > 59 || Number(offsetHour) > 23 || Number(offsetMinute) > 59) return;
+  const timestamp = Date.parse(value);
+  if (Number.isFinite(timestamp)) return new Date(timestamp).toISOString();
+}
 /** Parse one JSON assignment without evaluating any page script. */
 export function pageJson(html: string, name: string): Record<string, any> {
   const re = new RegExp('(?:\\b' + name + '\\s*=\\s*|<script[^>]*id=["\\\']' + name + '["\\\'][^>]*>)', 'g');
@@ -58,9 +71,9 @@ export async function nativeYouTubeDiscovery(source: Source, channelId: string, 
     if (seen.has('youtube:' + id)) continue;
     const watch = await download('https://www.youtube.com/watch?v=' + id), player = watchPagePlayer(watch.text);
     const details = object(player?.videoDetails), micro = object(object(player?.microformat).playerMicroformatRenderer);
-    const date = micro.publishDate || micro.uploadDate;
-    if (details.videoId !== id || details.channelId !== channelId || typeof date !== 'string' || !/^\d{4}-\d\d-\d\dT.*(?:Z|[+-]\d\d:\d\d)$/.test(date) || !Number.isFinite(Date.parse(date))) throw new CollectionError(422, 'youtube_upload_unconfirmed', 'Upload identity and exact publication time were not confirmed.');
-    updates.push({ id: 'native-youtube-' + id, sourceId: source.id, contributorIds: [], title: plainText(details.title, 240), summary: plainText(details.shortDescription, 700), url: 'https://www.youtube.com/watch?v=' + id, publishedAt: new Date(date).toISOString(), format: 'video', topics: [], brands: [], sponsors: [], references: [], insights: [], isSample: false, contentKind: 'metadata_only', ...(safeLink(details.thumbnail?.thumbnails?.at(-1)?.url, source.url) ? { image: safeLink(details.thumbnail.thumbnails.at(-1).url, source.url) } : {}), coverage: 'Bounded public Videos-tab discovery; Shorts, live streams and full history are not established.' });
+    const publishedAt = exactPublicationTimestamp(micro.publishDate || micro.uploadDate);
+    if (details.videoId !== id || details.channelId !== channelId || !publishedAt) throw new CollectionError(422, 'youtube_upload_unconfirmed', 'Upload identity and exact publication time were not confirmed.');
+    updates.push({ id: 'native-youtube-' + id, sourceId: source.id, contributorIds: [], title: plainText(details.title, 240), summary: plainText(details.shortDescription, 700), url: 'https://www.youtube.com/watch?v=' + id, publishedAt, format: 'video', topics: [], brands: [], sponsors: [], references: [], insights: [], isSample: false, contentKind: 'metadata_only', ...(safeLink(details.thumbnail?.thumbnails?.at(-1)?.url, source.url) ? { image: safeLink(details.thumbnail.thumbnails.at(-1).url, source.url) } : {}), coverage: 'Bounded public Videos-tab discovery; Shorts, live streams and full history are not established.' });
   }
   return { updates, gapPossible: true };
 }

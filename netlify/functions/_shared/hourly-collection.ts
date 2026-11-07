@@ -355,11 +355,11 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
       completedJobs.push({ id: job.id, patch: { state: result.status === 'completed' ? 'completed' : 'failed', actual_cost_usd: cost, content_pending: false, ...(!job.finished_at ? { finished_at: new Date(deps.now()).toISOString() } : {}) } });
       ref.observedCostUsd = cost; ref.costStatus = cost === null ? 'unknown' : 'provider_reported';
       if (!job.discard_result && job.source_fingerprint === claim.state.fingerprint) for (const update of result.result?.updates || []) {
-       if (discoveryChannelId && goodUpdate(update, source)) {
+       if (discoveryChannelId && goodUpdate(update, source) && youtubeVideoId(update.url)) {
         const key = hourlyItemKey(update.url); updates.set(key, archiveIdentity(update));
         if (!captionQueue.has(key)) captionQueue.set(key, { record: update, attempts: 0, nextAttemptAt: new Date(0).toISOString() });
         partial = true; details.gapPossible = true;
-       } else if (goodUpdate(update, source) && hourlyItemKey(update.url) === job.item_key) {
+       } else if (!discoveryChannelId && goodUpdate(update, source) && hourlyItemKey(update.url) === job.item_key) {
         const base = updates.get(job.item_key) || captionQueue.get(job.item_key)?.record || update;
         const merged = { ...base, ...mergeVideoFormatFields(base, update), ...(update.contentKind === 'transcript' && update.content ? { content: update.content, contentKind: 'transcript' as const, transcriptSegments: update.transcriptSegments, coverage: update.coverage } : {}) };
         updates.set(job.item_key, archiveIdentity(merged));
