@@ -4,9 +4,9 @@ import { createAccountDeletionHandler, createAccountLifecycleWorker, deleteClerk
 const now = Date.parse('2026-11-07T20:00:00Z');
 const env = (name: string) => ({ ACCOUNT_LIFECYCLE_ENABLED: 'true', ACCOUNT_LIFECYCLE_CLERK_DELETION_ENABLED: 'true', APP_URL: 'https://recap.example', CLERK_ISSUER_URL: 'https://fixture.clerk.accounts.dev', CLERK_SECRET_KEY: 'fixture-not-a-secret' })[name as 'APP_URL'];
 const identity = { iss: 'https://fixture.clerk.accounts.dev', sub: 'user_fixtureOwner', sid: 'sess_fixtureSession', iat: now / 1000, fva: [0, -1], azp: 'https://recap.example' };
-const claim: DeletionClaim = { id: '10000000-0000-4000-8000-000000000001', user_id: identity.sub, identity_issuer: identity.iss, identity_subject: identity.sub, lease_token: 'fixture-lease', identity_deleted_at: null };
+const claim: DeletionClaim = { id: '10000000-0000-4000-8000-000000000001', user_id: identity.sub, identity_issuer: identity.iss, identity_subject: identity.sub, lease_token: 'fixture-lease', identity_deleted_at: null, identities: [{ issuer: identity.iss, subject: identity.sub, deleted: false }] };
 function store(): LifecycleStore {
-  return { read: vi.fn(async () => null), request: vi.fn(async () => ({ state: 'requested' })), claim: vi.fn(async () => claim), confirm: vi.fn(async () => {}), erase: vi.fn(async () => ({})), advance: vi.fn(async () => ({})) };
+  return { resolve: vi.fn(async () => identity.sub), identityStep: vi.fn(async () => {}), read: vi.fn(async () => null), request: vi.fn(async () => ({ state: 'requested' })), claim: vi.fn(async () => claim), confirm: vi.fn(async () => {}), erase: vi.fn(async () => ({})), advance: vi.fn(async () => ({})) };
 }
 function request(extra: Record<string, string> = {}, body: unknown = { confirmation: 'DELETE_ACCOUNT', requestId: claim.id }) {
   return new Request('https://recap.example/api/account-deletion', { method: 'POST', headers: { origin: 'https://recap.example', 'content-type': 'application/json', 'x-recap-account-action': 'delete-account', ...extra }, body: JSON.stringify(body) });
@@ -90,7 +90,7 @@ describe('durable account deletion worker', () => {
     const fetcher = vi.fn(async (url: string | URL | Request, options?: RequestInit) => { calls.push({ url: String(url), method: options?.method || 'GET' }); expect(options?.redirect).toBe('manual'); return replies.shift()!; });
     await deleteClerkAccount(claim, db, env, fetcher);
     expect(calls.map(x => [new URL(x.url).pathname, x.method])).toEqual([['/v1/users/' + identity.sub, 'GET'], ['/v1/users/' + identity.sub + '/ban', 'POST'], ['/v1/users/' + identity.sub, 'DELETE'], ['/v1/users/' + identity.sub, 'GET']]);
-    expect(db.advance).toHaveBeenNthCalledWith(1, claim, 'identity_revoked'); expect(db.advance).toHaveBeenLastCalledWith(claim, 'identity_deleted');
+    expect(db.identityStep).toHaveBeenNthCalledWith(1, claim, claim.identities[0], 'revoked'); expect(db.identityStep).toHaveBeenLastCalledWith(claim, claim.identities[0], 'deleted'); expect(db.advance).toHaveBeenLastCalledWith(claim, 'identity_deleted');
   });
   it('recovers after a lost successful deletion response by accepting confirmed 404', async () => {
     const db = store(), fetcher = vi.fn(async () => new Response(null, { status: 404 }));
@@ -105,7 +105,45 @@ describe('durable account deletion worker', () => {
     const db = store(), fetcher = vi.fn(async (_url: string | URL | Request, _options?: RequestInit) => new Response(null, { status: 404 }));
     await deleteClerkAccount({ ...claim, user_id: 'stable-application-key' }, db, env, fetcher);
     expect(String(fetcher.mock.calls[0][0])).toBe('https://api.clerk.com/v1/users/' + identity.sub);
-    const wrongIssuer = { ...claim, identity_issuer: 'https://different.clerk.accounts.dev' };
+    const wrongIssuer = { ...claim, identities: [{ issuer: 'https://different.clerk.accounts.dev', subject: identity.sub, deleted: false }] };
     await expect(deleteClerkAccount(wrongIssuer, db, env, fetcher)).rejects.toThrow();expect(fetcher).toHaveBeenCalledTimes(1);
   });
+});
+
+describe('linked-owner deletion integration', () => {
+ it('uses the stable owner for the tombstone but the provider subject for native session ownership', async () => {
+  const db=store(),native=clerk();vi.mocked(db.resolve).mockResolvedValue('stable-reader-owner');
+  const response=await createAccountDeletionHandler({env,store:db,identity:async()=>identity,clerk:native,now:()=>now})(request());
+  expect(response.status).toBe(202);expect(db.request).toHaveBeenCalledWith('stable-reader-owner',claim.id,identity.iss,identity.sub);
+ });
+ it('reads and replays only the resolved own tombstone despite expired verification and banned native session',async()=>{
+  const db=store(),native=clerk();vi.mocked(db.resolve).mockResolvedValue('stable-deleted-owner');vi.mocked(db.read).mockResolvedValue({requestId:claim.id,state:'blocked'});
+  const handler=createAccountDeletionHandler({env,store:db,identity:async()=>({...identity,fva:[99,-1]}),clerk:native});
+  expect((await handler(new Request('https://recap.example/api/account-deletion'))).status).toBe(200);expect((await handler(request())).status).toBe(202);
+  expect(db.read).toHaveBeenCalledWith('stable-deleted-owner');expect(native).not.toHaveBeenCalled();expect(db.request).not.toHaveBeenCalled();
+ });
+ it('exposes no status and initiates no work for an unbound provider subject',async()=>{
+  const db=store();vi.mocked(db.resolve).mockResolvedValue(null);
+  expect((await createAccountDeletionHandler({env,store:db,identity:async()=>identity})(request())).status).toBe(403);expect(db.read).not.toHaveBeenCalled();
+ });
+ it('emits the SDK reverification hint without starting deletion',async()=>{
+  const db=store();const response=await createAccountDeletionHandler({env,store:db,identity:async()=>({...identity,fva:[99,-1]}),now:()=>now})(request());
+  expect(response.status).toBe(401);expect((await response.json()).clerk_error.metadata.reverification).toEqual({level:'multi_factor',afterMinutes:5});expect(db.request).not.toHaveBeenCalled();
+ });
+ it('bounds each lease to one alias and refuses overall identity completion while another remains',async()=>{
+  const db=store(),multi={...claim,identities:[...claim.identities,{issuer:identity.iss,subject:'user_secondAlias',deleted:false}]};
+  const fetcher=vi.fn(async(_url:unknown)=>new Response(null,{status:404}));expect(await deleteClerkAccount(multi,db,env,fetcher)).toBe(false);
+  expect(fetcher).toHaveBeenCalledTimes(1);expect(db.identityStep).toHaveBeenCalledWith(multi,multi.identities[0],'deleted');expect(db.advance).toHaveBeenCalledWith(multi,'identity_cleanup_pending');expect(db.advance).not.toHaveBeenCalledWith(multi,'identity_deleted');
+  const next={...multi,identities:[{...multi.identities[0],deleted:true},multi.identities[1]]};expect(await deleteClerkAccount(next,db,env,fetcher)).toBe(true);expect(String(fetcher.mock.calls[1][0])).toContain('/user_secondAlias');
+ });
+ it('uses a reviewed server-only credential pair for an old issuer and never substitutes the active issuer key',async()=>{
+  const oldIssuer='https://old.synthetic.example',old={...claim,identities:[{issuer:oldIssuer,subject:'user_oldAlias',deleted:false}]};
+  const config=(name:string)=>name==='ACCOUNT_LIFECYCLE_CLERK_ISSUERS'?JSON.stringify([{issuer:oldIssuer,secretEnv:'ACCOUNT_LIFECYCLE_CLERK_SECRET_OLD',reviewRef:'synthetic-native-authority-review'}]):name==='ACCOUNT_LIFECYCLE_CLERK_SECRET_OLD'?'sk_test_syntheticOldSecret':env(name);
+  const fetcher=vi.fn(async(_url:any,options?:RequestInit)=>{expect(options?.headers).toEqual({authorization:'Bearer sk_test_syntheticOldSecret'});return new Response(null,{status:404});});
+  await deleteClerkAccount(old,store(),config,fetcher);expect(fetcher).toHaveBeenCalledTimes(1);
+  await expect(deleteClerkAccount(old,store(),env,fetcher)).rejects.toMatchObject({status:503});expect(fetcher).toHaveBeenCalledTimes(1);
+ });
+ it('does not certify an empty or unrecognized identity snapshot',async()=>{
+  const fetcher=vi.fn();await expect(deleteClerkAccount({...claim,identities:[]},store(),env,fetcher)).rejects.toMatchObject({status:503});expect(fetcher).not.toHaveBeenCalled();
+ });
 });

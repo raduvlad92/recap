@@ -1,3 +1,4 @@
+import { DELETION_EVENT, deletionMarkerKey, readDeletionMarker } from './account-deletion';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useRecapAuth } from './auth';
@@ -18,6 +19,7 @@ const cacheKey = (owner: string) => `${CACHE_PREFIX}${encodeURIComponent(owner)}
 const blankWorkspace = (): WorkspaceState => ({ ...createDefaultWorkspace(), followedSourceIds: [], followScopes: [], savedUpdateIds: [], readLaterIds: [], customSources: [], importedUpdates: [] });
 
 export function readWorkspaceCache(owner: string): LoadedCache | null {
+  if (readDeletionMarker(owner)) return null;
   try {
     const raw = localStorage.getItem(cacheKey(owner));
     if (!raw) return null;
@@ -32,6 +34,7 @@ export function readWorkspaceCache(owner: string): LoadedCache | null {
   } catch { return null; }
 }
 function writeCache(owner: string, cache: Cache): boolean {
+  if (readDeletionMarker(owner)) return false;
   try { localStorage.setItem(cacheKey(owner), JSON.stringify(cache)); return true; } catch { return false; }
 }
 const messageFor = (error: unknown) => error instanceof Error ? error.message : 'The workspace could not be saved. Please try again.';
@@ -100,15 +103,23 @@ export async function readArchiveRecords(readPage: (offset: number, signal: Abor
 
 export function useWorkspace() {
   const auth = useRecapAuth();
-  const owner = auth.isSignedIn && auth.userId ? auth.userId : 'guest';
+  const [, setDeletionEpoch] = useState(0);
+  const suppressed = !!auth.ownerId && !!readDeletionMarker(auth.ownerId);
+  const identityReady = !suppressed && auth.isLoaded && (!auth.isSignedIn || auth.identityStatus === 'ready' && !!auth.ownerId);
+  const owner = auth.isSignedIn ? auth.ownerId ?? '' : 'guest';
+  const boundary = JSON.stringify([auth.identityKey, owner, suppressed]);
+  const boundaryRef = useRef(boundary);
+  const generation = useRef(0);
+  if (boundaryRef.current !== boundary) { boundaryRef.current = boundary; generation.current++; }
+  const viewBoundary = useRef('');
   const authRef = useRef(auth); authRef.current = auth;
-  const ownerRef = useRef(owner); ownerRef.current = owner;
+  const ownerRef = useRef(owner); ownerRef.current = identityReady ? owner : '';
   const [view, setView] = useState<View>(() => ({ owner: '', state: createDefaultWorkspace(), loaded: false }));
   const viewRef = useRef(view);
   const persistedState = useRef(view.state);
   const [archive, setArchive] = useState<Archive>({ owner: '', updates: [], error: null });
   const archiveRef = useRef(archive); archiveRef.current = archive;
-  const archivedUpdates = archive.owner === owner ? archive.updates : EMPTY_UPDATES;
+  const archivedUpdates = identityReady && viewBoundary.current === boundary && archive.owner === owner ? archive.updates : EMPTY_UPDATES;
   const archiveError = archive.owner === owner ? archive.error : null;
   const archiveRetryAbort = useRef<AbortController | null>(null);
   const archiveRequest = useRef(0);
@@ -117,7 +128,6 @@ export function useWorkspace() {
   const [loadRequest, setLoadRequest] = useState(0);
   const [archiveRefreshEpoch, setArchiveRefreshEpoch] = useState(0);
   const [saveRequest, setSaveRequest] = useState(0);
-  const generation = useRef(0);
   const dirty = useRef(false);
   const revision = useRef(0);
   const remoteTimestamp = useRef<string | null>(null);
@@ -130,25 +140,29 @@ export function useWorkspace() {
   const attemptedSourceImages = useRef(new Set<string>());
   const [sourceImageTick, setSourceImageTick] = useState(0);
   const [sourceImageErrors, setSourceImageErrors] = useState<Record<string, boolean>>({});
-  const isLoaded = auth.isLoaded && view.owner === owner && view.loaded;
-  const state = view.owner === owner ? view.state : createDefaultWorkspace();
+  const isLoaded = identityReady && viewBoundary.current === boundary && view.owner === owner && view.loaded;
+  const state = identityReady && viewBoundary.current === boundary && view.owner === owner ? view.state : createDefaultWorkspace();
   const sources = state.customSources;
   const creators = useMemo(() => state.customCreators ?? [], [state.customCreators]);
   const updates = useMemo(() => mergeWorkspaceUpdates(state.importedUpdates, archivedUpdates), [state.importedUpdates, archivedUpdates]);
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
   const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
   const client = useMemo(() => {
-    if (!supabaseUrl || !supabaseKey || owner === 'guest') return null;
+    if (!supabaseUrl || !supabaseKey || !identityReady || owner === 'guest') return null;
     return createClient(supabaseUrl, supabaseKey, {
-      accessToken: async () => ownerRef.current === owner ? authRef.current.getToken() : null,
+      accessToken: async () => {
+        if (ownerRef.current !== owner || boundaryRef.current !== boundary) return null;
+        const token = await authRef.current.getToken();
+        return ownerRef.current === owner && boundaryRef.current === boundary ? token : null;
+      },
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
     });
-  }, [supabaseUrl, supabaseKey, owner]);
+  }, [supabaseUrl, supabaseKey, owner, boundary, identityReady]);
 
-  const install = useCallback((next: View, storedState = next.state) => { viewRef.current = next; persistedState.current = storedState; setView(next); }, []);
+  const install = useCallback((next: View, storedState = next.state) => { viewBoundary.current = boundaryRef.current; viewRef.current = next; persistedState.current = storedState; setView(next); }, []);
 
   useEffect(() => {
-    if (!auth.isLoaded) return;
+    if (!identityReady) return;
     const current = ++generation.current;
     sourceImageRequests.current.forEach((controller, key) => { controller.abort(); attemptedSourceImages.current.delete(key); });
     sourceImageRequests.current.clear();
@@ -178,7 +192,7 @@ export function useWorkspace() {
       try {
         const { data, error: loadError } = await client.from('reader_workspaces').select('state,updated_at').eq('user_id', owner).abortSignal(abort.signal).maybeSingle();
         if (loadError) throw new Error(`Could not load your cloud workspace: ${loadError.message}`);
-        if (generation.current !== current || ownerRef.current !== owner) return;
+        if (generation.current !== current || (ownerRef.current !== owner || boundaryRef.current !== boundary)) return;
         const loaded = prepareWorkspaceLoad(data, cache);
         remoteTimestamp.current = loaded.updatedAt;
         remoteReady.current = true;
@@ -191,14 +205,14 @@ export function useWorkspace() {
               if (result.error) throw new Error(result.error.message);
               return (result.data ?? []).map(row => row.record);
             }, next.customSources.map(source => source.id), abort.signal);
-            if (generation.current !== current || ownerRef.current !== owner || abort.signal.aborted) return;
+            if (generation.current !== current || (ownerRef.current !== owner || boundaryRef.current !== boundary) || abort.signal.aborted) return;
             setArchive({ owner, updates, error: rejected ? `${rejected} archived updates could not be displayed because their source or record is invalid. Your collection and other history are preserved.` : null });
           } catch (archiveLoadError) {
-            if (generation.current !== current || ownerRef.current !== owner || abort.signal.aborted) return;
+            if (generation.current !== current || (ownerRef.current !== owner || boundaryRef.current !== boundary) || abort.signal.aborted) return;
             setArchive({ owner, updates: [], error: `Collected history could not be loaded: ${messageFor(archiveLoadError)} Your sources and collection are preserved. Retry to refresh history only.` });
           }
         }
-        if (generation.current !== current || ownerRef.current !== owner || abort.signal.aborted) return;
+        if (generation.current !== current || (ownerRef.current !== owner || boundaryRef.current !== boundary) || abort.signal.aborted) return;
         install({ owner, state: next, loaded: true }, storedNext);
         if (conflict) {
           // Keep the local draft's original base revision. Editing a conflicted
@@ -212,20 +226,20 @@ export function useWorkspace() {
           if (dirty.current) setSaveRequest(value => value + 1);
         }
       } catch (loadError) {
-        if (generation.current !== current || ownerRef.current !== owner || abort.signal.aborted) return;
+        if (generation.current !== current || (ownerRef.current !== owner || boundaryRef.current !== boundary) || abort.signal.aborted) return;
         install({ owner, state: cache?.state ?? createDefaultWorkspace(), loaded: true }, cache?.storedState);
         setSaveStatus('error'); setError(messageFor(loadError));
       } finally { finish(); }
     })();
-    return () => { abort.abort(); };
-  }, [owner, auth.isLoaded, client, loadRequest, install]);
+    return () => { abort.abort(); if (generation.current === current) generation.current++; };
+  }, [owner, boundary, identityReady, client, loadRequest, install]);
 
   // A serialized conditional update prevents stale tabs from silently winning.
   useEffect(() => {
     if (!isLoaded || owner === 'guest' || !client || !dirty.current || !remoteReady.current || saving.current || deleting.current) return;
     const current = generation.current;
     const timer = setTimeout(() => {
-      if (current !== generation.current || ownerRef.current !== owner || saving.current || deleting.current || !dirty.current) return;
+      if (current !== generation.current || (ownerRef.current !== owner || boundaryRef.current !== boundary) || saving.current || deleting.current || !dirty.current) return;
       const snapshot = persistedState.current;
       const snapshotRevision = revision.current;
       const expected = remoteTimestamp.current;
@@ -235,7 +249,7 @@ export function useWorkspace() {
           const result = expected
             ? await client.from('reader_workspaces').update({ state: snapshot }).eq('user_id', owner).eq('updated_at', expected).select('updated_at').maybeSingle()
             : await client.from('reader_workspaces').insert({ user_id: owner, state: snapshot }).select('updated_at').single();
-          if (generation.current !== current || ownerRef.current !== owner) return;
+          if (generation.current !== current || (ownerRef.current !== owner || boundaryRef.current !== boundary)) return;
           if (result.error) {
             if (result.error.code === '23505') {
               remoteReady.current = false; setSaveStatus('conflict'); setError('Another tab created a cloud workspace first. Export this browser’s changes, then load the cloud version.'); return;
@@ -251,7 +265,7 @@ export function useWorkspace() {
           setError(cached ? null : 'Saved to your account. Browser backup is unavailable on this device.');
           setSaveStatus(dirty.current ? 'saving' : 'saved');
         } catch (saveError) {
-          if (generation.current !== current || ownerRef.current !== owner) return;
+          if (generation.current !== current || (ownerRef.current !== owner || boundaryRef.current !== boundary)) return;
           setSaveStatus('error'); setError(messageFor(saveError));
         } finally {
           if (generation.current === current) {
@@ -263,10 +277,10 @@ export function useWorkspace() {
       })();
     }, 450);
     return () => clearTimeout(timer);
-  }, [view, isLoaded, owner, client, saveRequest]);
+  }, [view, isLoaded, owner, client, saveRequest, boundary]);
 
   const mutate = useCallback((change: (previous: WorkspaceState) => WorkspaceState, mode: 'edit' | 'replace' = 'edit'): boolean => {
-    if (ownerRef.current !== owner || !authRef.current.isLoaded || !viewRef.current.loaded || viewRef.current.owner !== ownerRef.current || deleting.current) return false;
+    if ((ownerRef.current !== owner || boundaryRef.current !== boundary) || !authRef.current.isLoaded || !viewRef.current.loaded || viewRef.current.owner !== ownerRef.current || deleting.current) return false;
     try {
       const next = change(viewRef.current.state);
       const storedNext = workspaceForPersistence(persistedState.current, viewRef.current.state, next, mode);
@@ -283,7 +297,7 @@ export function useWorkspace() {
       else { setError(previous => previous ?? 'Changes are kept in this browser; cloud saving is unavailable.'); }
       return true;
     } catch (mutationError) { setError(messageFor(mutationError)); return false; }
-  }, [install, owner]);
+  }, [install, owner, boundary]);
 
   // Identity metadata is fetched once per missing channel, serially, without collecting updates.
   useEffect(() => {
@@ -294,26 +308,26 @@ export function useWorkspace() {
     const key = keyFor(source), controller = new AbortController(), current = generation.current;
     attemptedSourceImages.current.add(key); sourceImageRequests.current.set(key, controller);
     void fetchSourceMetadata(source, controller.signal).then(metadata => {
-      if (controller.signal.aborted || generation.current !== current || ownerRef.current !== owner) return;
+      if (controller.signal.aborted || generation.current !== current || (ownerRef.current !== owner || boundaryRef.current !== boundary)) return;
       if (withSourceMetadata(viewRef.current.state, source, metadata) !== viewRef.current.state) mutate(previous => withSourceMetadata(previous, source, metadata));
       setSourceImageErrors(previous => ({ ...previous, [source.id]: false }));
     }).catch(() => {
-      if (!controller.signal.aborted && generation.current === current && ownerRef.current === owner) setSourceImageErrors(previous => ({ ...previous, [source.id]: true }));
+      if (!controller.signal.aborted && generation.current === current && (ownerRef.current === owner && boundaryRef.current === boundary)) setSourceImageErrors(previous => ({ ...previous, [source.id]: true }));
     }).finally(() => {
       if (sourceImageRequests.current.get(key) === controller) sourceImageRequests.current.delete(key);
-      if (!controller.signal.aborted && generation.current === current && ownerRef.current === owner) setSourceImageTick(value => value + 1);
+      if (!controller.signal.aborted && generation.current === current && (ownerRef.current === owner && boundaryRef.current === boundary)) setSourceImageTick(value => value + 1);
     });
-  }, [isLoaded, owner, state.customSources, sourceImageTick, mutate]);
+  }, [isLoaded, owner, state.customSources, sourceImageTick, mutate, boundary]);
   useEffect(() => {
     setSourceImageErrors({});
     attemptedSourceImages.current.clear();
     return () => { sourceImageRequests.current.forEach((controller, key) => { controller.abort(); attemptedSourceImages.current.delete(key); }); sourceImageRequests.current.clear(); };
-  }, [owner]);
+  }, [owner, boundary]);
   const retrySourceImage = useCallback((source: Source) => {
     attemptedSourceImages.current.delete(JSON.stringify([owner, source.id, source.url]));
     setSourceImageErrors(previous => ({ ...previous, [source.id]: false }));
     setSourceImageTick(value => value + 1);
-  }, [owner]);
+  }, [owner, boundary]);
   const toggleSource = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'source', id }, previous.customCreators ?? [], previous.customSources)); }, [mutate]);
   const toggleCreator = useCallback((id: string) => { mutate(previous => applyFollowToggle(previous, { kind: 'creator', id }, previous.customCreators ?? [], previous.customSources)); }, [mutate]);
   const toggleSaved = useCallback((id: string) => { mutate(previous => ({ ...previous, savedUpdateIds: previous.savedUpdateIds.includes(id) ? previous.savedUpdateIds.filter(saved => saved !== id) : [...previous.savedUpdateIds, id] })); }, [mutate]);
@@ -361,7 +375,7 @@ export function useWorkspace() {
   const setSourceStatus = useCallback((id: string, status: Source['status']) => { mutate(previous => ({ ...previous, customSources: previous.customSources.map(source => source.id === id ? { ...source, status } : source) })); }, [mutate]);
   // One server transaction checks the expected workspace revision before changing either store.
   const clearStoredWorkspace = useCallback(async (next: WorkspaceState | null): Promise<boolean> => {
-    if (ownerRef.current !== owner || !viewRef.current.loaded || viewRef.current.owner !== owner) return false;
+    if ((ownerRef.current !== owner || boundaryRef.current !== boundary) || !viewRef.current.loaded || viewRef.current.owner !== owner) return false;
     if (owner === 'guest') {
       const state = next ?? blankWorkspace();
       const ok = mutate(() => state, 'replace');
@@ -375,7 +389,7 @@ export function useWorkspace() {
     saving.current = true; deleting.current = true; setSaveStatus('saving');
     try {
       const result = await client.rpc('clear_reader_workspace', { p_expected_updated_at: expected, p_next_state: next });
-      if (generation.current !== current || ownerRef.current !== owner) return false;
+      if (generation.current !== current || (ownerRef.current !== owner || boundaryRef.current !== boundary)) return false;
       if (result.error) {
         if (result.error.code === 'PT409') { remoteReady.current = false; setSaveStatus('conflict'); setError('Your cloud workspace changed elsewhere. Nothing was cleared. Export your changes, then load the saved version.'); return false; }
         throw new Error(`Could not clear your workspace: ${result.error.message}`);
@@ -392,11 +406,11 @@ export function useWorkspace() {
       setSaveStatus('saved'); setError(null); return true;
     } catch (clearError) { if (generation.current === current) { setSaveStatus('error'); setError(messageFor(clearError)); } return false; }
     finally { if (generation.current === current) { saving.current = false; deleting.current = false; } }
-  }, [client, install, mutate, owner]);
+  }, [client, install, mutate, owner, boundary]);
   const resetWorkspace = useCallback(() => clearStoredWorkspace({ ...createDefaultWorkspace(), sourceCollections: [] }), [clearStoredWorkspace]);
   const deleteWorkspace = useCallback(() => clearStoredWorkspace(null), [clearStoredWorkspace]);
   const exportWorkspace = useCallback(() => {
-    if (!viewRef.current.loaded || viewRef.current.owner !== ownerRef.current) return JSON.stringify({ notice: 'Wait for your current workspace to finish loading before exporting.' });
+    if (!viewRef.current.loaded || viewBoundary.current !== boundaryRef.current || viewRef.current.owner !== ownerRef.current) return JSON.stringify({ notice: 'Wait for your current workspace to finish loading before exporting.' });
     return JSON.stringify({ ...persistedState.current, archivedUpdates: archiveRef.current.owner === ownerRef.current ? archiveRef.current.updates : [], ...(archiveRef.current.owner === ownerRef.current && archiveRef.current.error ? { archiveNotice: archiveRef.current.error } : {}), exportedAt: new Date().toISOString(), notice: 'Contains your private workspace and collected source material. Collection does not establish complete coverage or AI analysis.' }, null, 2);
   }, []);
   const reloadWorkspace = useCallback((): Promise<void> => {
@@ -404,16 +418,17 @@ export function useWorkspace() {
     return new Promise(resolve => { loadResolvers.current.push(resolve); setLoadRequest(value => value + 1); });
   }, []);
   const retrySave = useCallback(() => {
+    if (!authRef.current.ownerId && authRef.current.isSignedIn) { authRef.current.retryIdentity(); return; }
     if (!remoteReady.current && ownerRef.current !== 'guest') { setLoadRequest(value => value + 1); return; }
     setSaveRequest(value => value + 1);
   }, []);
 
   const retryArchive = useCallback(async (): Promise<void> => {
-    if (!client || ownerRef.current !== owner || !viewRef.current.loaded || viewRef.current.owner !== owner || deleting.current) return;
+    if (!client || (ownerRef.current !== owner || boundaryRef.current !== boundary) || !viewRef.current.loaded || viewRef.current.owner !== owner || deleting.current) return;
     archiveRetryAbort.current?.abort();
     const abort = new AbortController(); archiveRetryAbort.current = abort;
     const current = generation.current, request = ++archiveRequest.current;
-    const stillCurrent = () => !abort.signal.aborted && ownerRef.current === owner && generation.current === current && archiveRequest.current === request;
+    const stillCurrent = () => !abort.signal.aborted && (ownerRef.current === owner && boundaryRef.current === boundary) && generation.current === current && archiveRequest.current === request;
     setArchive(previous => previous.owner === owner ? { ...previous, loading: true } : { owner, updates: [], error: null, loading: true });
     try {
       const { updates, rejected } = await readArchiveRecords(async (offset, signal) => {
@@ -425,7 +440,7 @@ export function useWorkspace() {
     } catch (archiveLoadError) {
       if (stillCurrent()) setArchive(previous => ({ owner, updates: previous.owner === owner ? previous.updates : [], error: `Collected history could not be loaded: ${messageFor(archiveLoadError)} Your sources, local changes and collection are preserved. Retry to refresh history only.` }));
     } finally { if (archiveRetryAbort.current === abort) archiveRetryAbort.current = null; }
-  }, [client, owner]);
+  }, [client, owner, boundary]);
   useEffect(() => () => { archiveRetryAbort.current?.abort(); }, []);
 
   // Poll a small private archive-change projection while visible, then read only changed
@@ -438,7 +453,7 @@ export function useWorkspace() {
     let busy = false;
     let since = '1970-01-01T00:00:00.000Z';
     let completedPolls = 0;
-    const stillCurrent = () => !abort.signal.aborted && generation.current === current && ownerRef.current === owner && !deleting.current;
+    const stillCurrent = () => !abort.signal.aborted && generation.current === current && (ownerRef.current === owner && boundaryRef.current === boundary) && !deleting.current;
     const refresh = async () => {
       if (busy || archiveRetryAbort.current || document.visibilityState === 'hidden' || !stillCurrent()) return;
       busy = true;
@@ -478,7 +493,27 @@ export function useWorkspace() {
     const onVisible = () => { if (document.visibilityState !== 'hidden') void refresh(); };
     document.addEventListener('visibilitychange', onVisible);
     return () => { abort.abort(); window.clearInterval(timer); document.removeEventListener('visibilitychange', onVisible); };
-  }, [client, isLoaded, owner, loadRequest, archiveRefreshEpoch]);
+  }, [client, isLoaded, owner, loadRequest, archiveRefreshEpoch, boundary]);
+
+  // A same-tab request or another tab's marker fences callbacks synchronously,
+  // before React renders. A lost POST reply keeps the original pending identity;
+  // only a definitive pre-write refusal can lift provisional suppression.
+  useEffect(() => {
+    const onDeletion = (event: Event) => {
+      if (event.type === 'storage' && (event as StorageEvent).key !== deletionMarkerKey(owner)) return;
+      if (readDeletionMarker(owner)) {
+        ownerRef.current = ''; generation.current++; remoteReady.current = false;
+        dirty.current = false; deleting.current = true;
+        archiveRetryAbort.current?.abort(); archiveRequest.current++;
+        sourceImageRequests.current.forEach(controller => controller.abort());
+        sourceImageRequests.current.clear();
+      }
+      setDeletionEpoch(value => value + 1);
+    };
+    window.addEventListener(DELETION_EVENT, onDeletion);
+    window.addEventListener('storage', onDeletion);
+    return () => { window.removeEventListener(DELETION_EVENT, onDeletion); window.removeEventListener('storage', onDeletion); };
+  }, [owner]);
 
   // A changed tab is deliberately surfaced rather than merged without a user's knowledge.
   useEffect(() => {
@@ -489,12 +524,12 @@ export function useWorkspace() {
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
-  }, [owner, isLoaded]);
+  }, [owner, isLoaded, boundary]);
 
   // Normalize the derived inventory whenever legacy state did not carry scope intent.
   const followed = unique(resolveFollowedSources(scopesFor(state), creators, sources));
   const exposedState = followed.join('|') === state.followedSourceIds.join('|') ? state : { ...state, followedSourceIds: followed };
-  return { state: exposedState, sources, updates, creators, isLoaded, saveStatus: isLoaded ? saveStatus : 'loading' as SaveStatus, error: [error, archiveError].filter(Boolean).join(' ') || null, archiveError, archiveLoading: archive.owner === owner && archive.loading === true,
+  return { state: exposedState, sources, updates, creators, isLoaded, accountSuppressed: suppressed, saveStatus: isLoaded ? saveStatus : 'loading' as SaveStatus, error: [auth.identityError, error, archiveError].filter(Boolean).join(' ') || null, archiveError, archiveLoading: archive.owner === owner && archive.loading === true,
     sourceCounts: countSources(exposedState, sources, updates), toggleSource, toggleCreator, sourceImageErrors, retrySourceImage,
     isCreatorFollowed: (id: string) => scopesFor(state).some(scope => scope.kind === 'creator' && scope.id === id),
     followReasons: (id: string) => reasonsFor(state, id, creators),

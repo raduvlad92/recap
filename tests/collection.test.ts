@@ -4,7 +4,7 @@ import type { Source } from '../src/lib/types';
 import { apifyConfig, normalizeYouTubeItems, pollApify, startApify, youtubeInput } from '../netlify/functions/_shared/apify';
 import { collectionHealth, createCollectHandler, validateSource } from '../netlify/functions/_shared/collect-handler';
 import { collectFeed, normalizeFeed, plainText } from '../netlify/functions/_shared/feed';
-import { authenticate, isPublicAddress, publicHttpsUrl, validateClerkClaims, type Env } from '../netlify/functions/_shared/security';
+import { authenticateProviderSubject, isPublicAddress, publicHttpsUrl, validateClerkClaims, type Env } from '../netlify/functions/_shared/security';
 
 const feedSource: Source = { id: 'my-feed', name: 'A public blog', url: 'https://example.com', platform: 'Blog', creatorIds: [], status: 'pending' };
 const youtubeSource: Source = { ...feedSource, id: 'my-channel', platform: 'YouTube', url: 'https://www.youtube.com/@example' };
@@ -30,11 +30,11 @@ describe('collection authentication and configuration', () => {
     const settings = env({ CLERK_ISSUER_URL: 'https://collection-test.clerk.accounts.dev', APP_URL: 'https://recap.example', CONTEXT: 'production', VITE_SUPABASE_URL: 'https://database.example', SUPABASE_SECRET_KEY: 'fixture-only' });
     const token = await new SignJWT({ azp: 'https://recap.example' }).setProtectedHeader({ alg: 'RS256', kid: key.kid })
       .setIssuer('https://collection-test.clerk.accounts.dev').setSubject('user_operator').setIssuedAt().setExpirationTime('1m').sign(privateKey);
-    expect(await authenticate(new Request('https://recap.example/api/collect', { headers: { authorization: 'Bearer ' + token } }), settings)).toBe('user_operator');
+    expect(await authenticateProviderSubject(new Request('https://recap.example/api/collect', { headers: { authorization: 'Bearer ' + token } }), settings)).toBe('user_operator');
     expect(() => validateClerkClaims({ sub: 'user_operator', azp: 'https://unrelated.example' }, ['https://recap.example'])).toThrow();
     const expired = await new SignJWT({ azp: 'https://recap.example' }).setProtectedHeader({ alg: 'RS256', kid: key.kid })
       .setIssuer('https://collection-test.clerk.accounts.dev').setSubject('user_operator').setIssuedAt().setExpirationTime(Math.floor(Date.now() / 1000) - 60).sign(privateKey);
-    await expect(authenticate(new Request('https://recap.example/api/collect', { headers: { authorization: 'Bearer ' + expired } }), settings)).rejects.toMatchObject({ status: 401 });
+    await expect(authenticateProviderSubject(new Request('https://recap.example/api/collect', { headers: { authorization: 'Bearer ' + expired } }), settings)).rejects.toMatchObject({ status: 401 });
   });
 
   it('keeps paid collection disabled unless every gate is configured', async () => {

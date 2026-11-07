@@ -1,3 +1,4 @@
+import { resolveReaderOwner, type ProviderIdentity } from './reader-identity';
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 import { isIP } from 'node:net';
 import { hostRuntime } from './host-runtime';
@@ -72,13 +73,29 @@ export async function authenticateIdentity(request: Request, env: Env): Promise<
   }
 }
 
-export async function authenticate(request: Request, env: Env): Promise<string> {
-  const payload = await authenticateIdentity(request, env), userId = payload.sub!;
+/** Provider operations retain the verified Clerk subject. */
+export async function authenticateProvider(request: Request, env: Env): Promise<ProviderIdentity> {
+  const payload = await authenticateIdentity(request, env);
+  return { issuer: env('CLERK_ISSUER_URL')!, subject: payload.sub! };
+}
+export async function authenticateProviderSubject(request: Request, env: Env): Promise<string> {
+  return (await authenticateProvider(request, env)).subject;
+}
+async function requireActiveOwner(identity: ProviderIdentity, env: Env): Promise<string> {
+  const ownerId = await resolveReaderOwner(identity, env);
   let allowed: boolean;
-  try { allowed = await accountAccessAllowed(userId, env); }
+  try { allowed = await accountAccessAllowed(ownerId, env); }
   catch { throw new CollectionError(503, 'account_access_unavailable', 'Account access could not be checked.'); }
   if (!allowed) throw new CollectionError(403, 'account_deletion_requested', 'This account is being deleted.');
-  return userId;
+  return ownerId;
+}
+export async function authenticateAdminSubject(request: Request, env: Env): Promise<string> {
+  const identity = await authenticateProvider(request, env);
+  await requireActiveOwner(identity, env);
+  return identity.subject;
+}
+export async function authenticate(request: Request, env: Env): Promise<string> {
+  return requireActiveOwner(await authenticateProvider(request, env), env);
 }
 
 export function isPublicAddress(address: string): boolean {

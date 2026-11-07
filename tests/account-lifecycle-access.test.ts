@@ -11,6 +11,7 @@ it('denies a still-valid Clerk JWT immediately, without a permission cache or fe
   let allowed = true, unavailable = false, accessReads = 0;
   vi.stubGlobal('fetch', vi.fn(async (url: string | URL | Request) => {
     if (String(url).startsWith(issuer)) return Response.json({ keys: [jwk] });
+    if (String(url).endsWith('/resolve_reader_owners')) return Response.json([{ provider_subject: 'user_fixture', owner_id: 'user_fixture' }]);
     expect(String(url)).toBe('https://database.example/rest/v1/rpc/account_access_allowed');accessReads++;
     return unavailable ? Response.json({ code: 'fixture_unavailable' }, { status: 503 }) : Response.json(allowed);
   }));

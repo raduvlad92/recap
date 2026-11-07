@@ -1,3 +1,4 @@
+import { resolveReaderOwners } from './reader-identity';
 import { readRetrievalAttempts } from './retrieval-log';
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
 import { clerkRequest, database, requireAdmin, userSummary, type ClerkUser, type WorkspaceRow } from './admin-data';
@@ -8,7 +9,7 @@ import { listContentReviews, readContentReview, decideContentReview } from './co
 import { activityQuery, readCollectionActivity } from './collection-activity';
 import { readAnalysisSettings, saveAnalysisModel } from './analysis-settings-admin';
 import { checkOpenRouterConnection } from './content-analysis-runtime';
-interface Dependencies { env: Env; authorize: typeof requireAdmin; db: typeof database; clerk: typeof clerkRequest; checkConnection: typeof checkOpenRouterConnection }
+interface Dependencies { env: Env; authorize: typeof requireAdmin; db: typeof database; clerk: typeof clerkRequest; checkConnection: typeof checkOpenRouterConnection; owners: typeof resolveReaderOwners }
 const success = (value: unknown) => { const response=json(value);response.headers.set('x-robots-tag','noindex, nofollow');return response; };
 const unwrap = <T>(result: { data: T; error: {message: string; code?: string} | null }): T => {
  if(result.error) {
@@ -22,7 +23,7 @@ const queryOf = (url: URL) => (url.searchParams.get('q')||'').trim().slice(0,120
 const exactText = (value: unknown,max:number) => typeof value==='string'&&value.length<=max ? value.trim() : null;
 
 export function createAdminHandler(overrides: Partial<Dependencies>={}) {
- const deps:Dependencies={env:runtimeEnv,authorize:requireAdmin,db:database,clerk:clerkRequest,checkConnection:checkOpenRouterConnection,...overrides};
+ const deps:Dependencies={env:runtimeEnv,authorize:requireAdmin,db:database,clerk:clerkRequest,checkConnection:checkOpenRouterConnection,owners:resolveReaderOwners,...overrides};
  return async(request:Request):Promise<Response>=>{
   try {
    if(!['GET','PATCH','POST'].includes(request.method)) return json({error:{code:'method_not_allowed',message:'Use GET, PATCH or POST.'}},405);
@@ -81,14 +82,15 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
     const requestedId=url.searchParams.get('id')||'';
     if(section==='user'&&!/^user_[a-zA-Z0-9]{1,100}$/.test(requestedId))throw new CollectionError(400,'invalid_user','Choose a reader.');
     const users:ClerkUser[]=section==='user'?[await deps.clerk('/users/'+encodeURIComponent(requestedId),deps.env) as ClerkUser]:await deps.clerk('/users?'+new URLSearchParams({limit:'50',offset:String(page*50),order_by:'-created_at',...(q?{query:q}:{})}),deps.env) as ClerkUser[];
-    const ids=users.map(u=>u.id);
+    const owners=await deps.owners(deps.env('CLERK_ISSUER_URL')||'',users.map(u=>u.id),deps.env,db);
+    const ids=[...new Set(owners.values())];
     const [workspaces,channels,usage,total]=await Promise.all([
      ids.length?db.rpc('admin_workspace_summaries',{p_user_ids:ids}):Promise.resolve({data:[],error:null}),
      db.from('catalogue_channels').select('id,creator_id,name,url,platform,catalogue_creators!catalogue_channels_creator_id_fkey(name)').limit(1000).overrideTypes<AdminChannelIdentity[],{merge:false}>(),
      ids.length?db.rpc('admin_user_job_usage',{p_user_ids:ids}):Promise.resolve({data:[],error:null}),
      section==='users'?deps.clerk('/users/count'+(q?'?'+new URLSearchParams({query:q}):''),deps.env):Promise.resolve({total_count:1})]);
     const rows=unwrap(workspaces) as WorkspaceRow[],allChannels=unwrap(channels) || [],usageRows=unwrap(usage) as Array<{user_id:string;job_count:number;actors:string[];observed_cost_usd:number;unknown_cost_jobs:number}>;
-    const summaries=users.map(u=>{const item=userSummary(u,rows.find(w=>w.user_id===u.id),allChannels,[]);const usage=usageRows.find(j=>j.user_id===u.id);return usage?{...item,jobCount:Number(usage.job_count),actorsUsed:usage.actors,observedCostUsd:Number(usage.observed_cost_usd),unknownCostJobs:Number(usage.unknown_cost_jobs)}:item;});
+    const summaries=users.map(u=>{const ownerId=owners.get(u.id)??null;const item=userSummary(u,rows.find(w=>w.user_id===ownerId),allChannels,[],ownerId);const usage=usageRows.find(j=>j.user_id===ownerId);return usage?{...item,jobCount:Number(usage.job_count),actorsUsed:usage.actors,observedCostUsd:Number(usage.observed_cost_usd),unknownCostJobs:Number(usage.unknown_cost_jobs)}:item;});
     // Access logging stores record IDs only; no email, follows or copied content.
     const audit=await db.from('admin_audit_events').insert({admin_id:adminId,action:section==='user'?'reader.viewed':'readers.listed',target_id:section==='user'?requestedId:null});
     if(audit.error)throw new CollectionError(503,'audit_unavailable','Private reader data was withheld because access logging is unavailable.');
