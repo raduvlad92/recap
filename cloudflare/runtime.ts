@@ -12,7 +12,7 @@ export interface Bindings {
   JOBS?: { send(message: JobMessage): Promise<void> };
   SOURCE_DOWNLOADER?: { fetch(request: Request): Promise<Response> };
 }
-export const jobKinds = ['hourly-collection', 'content-analysis', 'automatic-content', 'social-collection', 'social-content', 'daily-briefing', 'recap-reminders', 'keyword-learning'] as const;
+export const jobKinds = ['hourly-collection', 'content-analysis', 'automatic-content', 'social-collection', 'social-content', 'daily-briefing', 'recap-reminders', 'keyword-learning', 'account-lifecycle'] as const;
 export type JobKind = typeof jobKinds[number];
 export interface JobMessage { version: 1; kind: JobKind; epoch: number; release: string; key: string }
 export interface RuntimeControl { owner: 'netlify' | 'cloudflare'; epoch: number; paused: boolean; release: string; old_host_fenced: boolean }
@@ -35,7 +35,7 @@ export async function hostingRpc<T>(bindings: Bindings, name: string, args: Reco
   // PostgREST returns 204 for the void lease-completion function. Its success
   // must not replace a handler response or prevent queue acknowledgement.
   if (response.status === 204) {
-    if (name !== 'finish_hosting_work') throw new CollectionError(503, 'hosting_state_unavailable', 'Hosting execution could not be verified.');
+    if (!['finish_hosting_work', 'finish_automatic_hosting_queue_work'].includes(name)) throw new CollectionError(503, 'hosting_state_unavailable', 'Hosting execution could not be verified.');
     return undefined as T;
   }
   return await response.json() as T;

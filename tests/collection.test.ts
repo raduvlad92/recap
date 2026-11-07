@@ -25,9 +25,9 @@ describe('collection authentication and configuration', () => {
   it('verifies a signed Clerk JWT and rejects a different authorized party', async () => {
     const { publicKey, privateKey } = await generateKeyPair('RS256');
     const key = { ...await exportJWK(publicKey), kid: 'collection-test', alg: 'RS256', use: 'sig' };
-    const mockFetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({ keys: [key] }), { headers: { 'content-type': 'application/json' } }));
+    const mockFetch = vi.fn(async (url: string | URL | Request) => String(url).includes('/rest/v1/rpc/account_access_allowed') ? Response.json(true) : Response.json({ keys: [key] }));
     vi.stubGlobal('fetch', mockFetch);
-    const settings = env({ CLERK_ISSUER_URL: 'https://collection-test.clerk.accounts.dev', APP_URL: 'https://recap.example', CONTEXT: 'production' });
+    const settings = env({ CLERK_ISSUER_URL: 'https://collection-test.clerk.accounts.dev', APP_URL: 'https://recap.example', CONTEXT: 'production', VITE_SUPABASE_URL: 'https://database.example', SUPABASE_SECRET_KEY: 'fixture-only' });
     const token = await new SignJWT({ azp: 'https://recap.example' }).setProtectedHeader({ alg: 'RS256', kid: key.kid })
       .setIssuer('https://collection-test.clerk.accounts.dev').setSubject('user_operator').setIssuedAt().setExpirationTime('1m').sign(privateKey);
     expect(await authenticate(new Request('https://recap.example/api/collect', { headers: { authorization: 'Bearer ' + token } }), settings)).toBe('user_operator');

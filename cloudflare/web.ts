@@ -85,7 +85,7 @@ export async function handleWeb(request: Request, bindings: Bindings): Promise<R
             await enqueue(bindings, { version: 1, key, kind: 'keyword-learning', epoch: control.epoch, release: bindings.RELEASE_SHA }, body);
             return secureResponse(json({ accepted: true }, 202), true);
           }
-          if (!['reminder-events', 'reminder-unsubscribe'].includes(name) && !analysisWorkerAuthorized(request)) await authenticate(request, runtimeEnv);
+          if (!['reminder-events', 'reminder-unsubscribe', 'account-deletion'].includes(name) && !analysisWorkerAuthorized(request)) await authenticate(request, runtimeEnv);
           const key = 'http:' + randomUUID();
           await hostingRpc(bindings, 'admit_hosting_work', { p_key: key, p_kind: 'http', p_epoch: control.epoch, p_release: bindings.RELEASE_SHA, p_payload: null });
           const claim = await hostingRpc<{ token: string } | null>(bindings, 'begin_hosting_work', { p_key: key, p_kind: 'http', p_epoch: control.epoch, p_release: bindings.RELEASE_SHA });
