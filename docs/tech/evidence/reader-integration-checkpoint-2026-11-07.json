@@ -73,7 +73,9 @@
       "applicationWorkflow": 42423728069,
       "applicationConclusion": "success",
       "cloudflareWorkflow": 42423728021,
-      "cloudflareStatus": "in_progress"
+      "cloudflareStatus": "completed",
+      "cloudflareConclusion": "success",
+      "reportedChecksPassed": 8
     },
     "activation": "all flags, linked mode and lifecycle readiness remain off",
     "remaining": [

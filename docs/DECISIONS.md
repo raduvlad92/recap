@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 8 November Berlin — transport acceptance does not approve content or spending
+
+Five ordinary native ticks satisfy the scheduling acceptance hold. Their zero-content results do not approve publication, broaden source identities/windows, certify free retrieval or release unknown charges. Existing USD45 source/USD10 model limits, review gates and reminder opt-out remain unchanged. Continue guarded reader release preparation and evidence-based source diagnosis without a new supplier subscription or manual provider/model launch. [Exact observed outcomes](tech/evidence/restored-core-readonly-acceptance-2026-11-07.md).
+
 ## 8 November Berlin — native completion under unchanged decisions
 
 The exact reviewed core release, one authenticated late-fee correction and original delivery restoration are completed within existing authorization. Original 19 source reservations, seven unknown model records, workspaces, caps, review gates and reminder opt-out remain preserved. The USD 0.004 correction is explicit additive financial evidence with immutable original history and replay proof, not a hold expiry or spending increase. Reader deletion/linking/retention activation and customer launch remain unapproved by inference. [Native evidence](tech/evidence/core-native-release-2026-11-07.json).
