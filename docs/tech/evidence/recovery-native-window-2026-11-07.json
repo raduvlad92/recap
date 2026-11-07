@@ -1,21 +1,23 @@
 {
   "schemaVersion": 1,
-  "recordedAt": "2026-11-07T22:44:12Z",
+  "recordedAt": "2026-11-07T22:58:35Z",
   "targetCommit": "182457410f7f8e979348d10347fe50b1e94b295b",
   "servingRelease": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
   "activeArtifact": {
     "workflowRun": 42415988917,
     "artifactId": 13591956310,
     "zipSha256": "1a4934a2c995b628a7c6ef368424ac8a50ae580e93406f67480794e9cdf01e1b",
-    "nativeArtifactDigest": "2f71107cc23b7972578aa96c21c750135d3dc94f58ee9d40308e4a9175fcd32a",
     "allManifestFilesVerified": true,
-    "deploymentSkipped": true
+    "deploymentSkipped": true,
+    "artifactManifestDigest": "2f71107cc23b7972578aa96c21c750135d3dc94f58ee9d40308e4a9175fcd32a",
+    "nativeArchiveDigest": "sha256:1a4934a2c995b628a7c6ef368424ac8a50ae580e93406f67480794e9cdf01e1b"
   },
   "window": {
     "operation": "35a3fc0f-1df5-4741-a56c-a74fe9870bf4",
-    "phase": "drained",
-    "workflowDisabled": true,
-    "targetUnchanged": true
+    "phase": "released",
+    "workflowDisabled": false,
+    "targetUnchanged": true,
+    "releasedAtObservation": "2026-11-07T22:58:35Z"
   },
   "nativeStop": {
     "originalSchedulesAcknowledgedAt": "2026-11-07T21:58:04.287878Z",
@@ -45,17 +47,24 @@
     "sourceSha256": "b51120f226e4ef542e7a5b92d8b8bf4c49323c6dcc7bbbece8f656aa1d0028e1",
     "originalPublicRowsAndSecurityPreserved": true,
     "newTablesPrivate": true,
-    "otherCoreMigrationsApplied": false
+    "otherCoreMigrationsApplied": true
   },
   "automaticRecovery": {
     "operation": "bc313984-67d2-4416-bfc4-a366f2e6ef9b",
     "originalFrames": 96,
     "expiredRunning": 1,
     "unstartedQueued": 95,
-    "phase": "applying",
+    "phase": "complete",
     "dispositions": "uncertain: expired_outcome_unknown or superseded_unstarted; original frame and lease evidence retained",
     "businessReplay": false,
-    "nativeMessageIdentity": "not_observed for legacy frames; no ID invented"
+    "nativeMessageIdentity": "not_observed for legacy frames; no ID invented",
+    "applied": 96,
+    "postWork": {
+      "queued": 0,
+      "running": 0,
+      "uncertain": 96,
+      "expired_running": 0
+    }
   },
   "preservation": {
     "originalSourceReservationRows": 19,
@@ -81,9 +90,120 @@
     "capsAndFlagsUnchanged": true
   },
   "limits": [
-    "This receipt predates completion of automatic dispositions.",
-    "The typed PostgreSQL preservation check, not a string timestamp comparison, confirms original source reservations.",
+    "All 96 legacy frames are uncertain with immutable audit evidence; no business success is inferred.",
+    "The typed PostgreSQL preservation check confirms original source reservations; all seven model rows and three workspaces are exact after all core migrations.",
+    "The 20 unknown source reservations comprise 19 launched jobs and one envelope; all remain held.",
     "Dead-letter messages are retained; their count is not a frame identity mapping.",
-    "No new code deployment, retrieval/fee migration, fee correction or useful-content proof is claimed."
-  ]
+    "New code deployment, fee correction and useful-content acceptance remain pending at this checkpoint."
+  ],
+  "coreMigrations": [
+    {
+      "operation": "21b9f2be-cfcb-4e0b-9557-f27b9d1a756a",
+      "migrationVersion": "20261107200416",
+      "migrationName": "hosting_transport_recovery",
+      "mode": "rehearse",
+      "phase": "rehearsed",
+      "sourceSha256": "b51120f226e4ef542e7a5b92d8b8bf4c49323c6dcc7bbbece8f656aa1d0028e1",
+      "bodySha256": "2c796c1c96be910ff0ea33ea3e268a1a173f38e2dcc27c5cea29fd90df10e414",
+      "transactionSha256": "aa37263ab593877fc2c073e1c266f74309fdfd7ac114419234fbcf9ec52119b8",
+      "completedAt": "2026-11-07T22:06:44.440Z",
+      "originalRowsAndSecurityVerifiedInsideTransaction": true,
+      "newTablesPrivate": true,
+      "hostingControlUnchanged": true
+    },
+    {
+      "operation": "e268fde2-0c4b-4fe2-8e82-240fbc169b52",
+      "migrationVersion": "20261107200416",
+      "migrationName": "hosting_transport_recovery",
+      "mode": "apply",
+      "phase": "applied",
+      "sourceSha256": "b51120f226e4ef542e7a5b92d8b8bf4c49323c6dcc7bbbece8f656aa1d0028e1",
+      "bodySha256": "2c796c1c96be910ff0ea33ea3e268a1a173f38e2dcc27c5cea29fd90df10e414",
+      "transactionSha256": "13d7bfb898253c4097d3e893cb3319a3608d5bf1b0d5d8a1bba4b1eb02a0700b",
+      "completedAt": "2026-11-07T22:08:20.205Z",
+      "originalRowsAndSecurityVerifiedInsideTransaction": true,
+      "newTablesPrivate": true,
+      "hostingControlUnchanged": true
+    },
+    {
+      "operation": "66e07f69-6fd6-4788-9bd8-cd9447ca6029",
+      "migrationVersion": "20261105011050",
+      "migrationName": "free_first_content_retrieval",
+      "mode": "rehearse",
+      "phase": "rehearsed",
+      "sourceSha256": "24f145d6d66ca4847f5689914f24995323dbbce263281eb50b339295bb080dc4",
+      "bodySha256": "17004190ed0bae2aa3b7aea8016dbcd3800dacbb7d575cc646632ba4eec0fd30",
+      "transactionSha256": "f59e72815b3b8da32fc32139af526af8ff953beb3b963e0de03294ab7d6fd0e8",
+      "completedAt": "2026-11-07T22:55:50.112Z",
+      "originalRowsAndSecurityVerifiedInsideTransaction": true,
+      "newTablesPrivate": true,
+      "hostingControlUnchanged": true
+    },
+    {
+      "operation": "32b34178-b369-4442-8397-0d1d0fb88140",
+      "migrationVersion": "20261105011050",
+      "migrationName": "free_first_content_retrieval",
+      "mode": "apply",
+      "phase": "applied",
+      "sourceSha256": "24f145d6d66ca4847f5689914f24995323dbbce263281eb50b339295bb080dc4",
+      "bodySha256": "17004190ed0bae2aa3b7aea8016dbcd3800dacbb7d575cc646632ba4eec0fd30",
+      "transactionSha256": "edb357840f938b215501a06273637d60acdfc30ec2224b5efaff6624771489e5",
+      "completedAt": "2026-11-07T22:56:21.260Z",
+      "originalRowsAndSecurityVerifiedInsideTransaction": true,
+      "newTablesPrivate": true,
+      "hostingControlUnchanged": true
+    },
+    {
+      "operation": "950ac830-1435-42b6-9c05-a84a65c1670a",
+      "migrationVersion": "20261107194452",
+      "migrationName": "late_provider_fee_receipts",
+      "mode": "rehearse",
+      "phase": "rehearsed",
+      "sourceSha256": "8408368f78d1be8a5b42409cb4cde1e6d1d57d45478e2d330db483aeb36071ca",
+      "bodySha256": "cb545645f78cb2b90a6106adb8345b2aef34697eab8842112e2bdbc15c396704",
+      "transactionSha256": "c60f08da70862138233f4e973afa1036aee620889decc6353e6c43214810ac6d",
+      "completedAt": "2026-11-07T22:56:50.339Z",
+      "originalRowsAndSecurityVerifiedInsideTransaction": true,
+      "newTablesPrivate": true,
+      "hostingControlUnchanged": true
+    },
+    {
+      "operation": "a0437a20-87bc-4775-8591-f0ff147b2169",
+      "migrationVersion": "20261107194452",
+      "migrationName": "late_provider_fee_receipts",
+      "mode": "apply",
+      "phase": "applied",
+      "sourceSha256": "8408368f78d1be8a5b42409cb4cde1e6d1d57d45478e2d330db483aeb36071ca",
+      "bodySha256": "cb545645f78cb2b90a6106adb8345b2aef34697eab8842112e2bdbc15c396704",
+      "transactionSha256": "21d633506ed76eb39c3abb7f17b0e6195324c98143fd3be23baa7148319a425a",
+      "completedAt": "2026-11-07T22:57:22.995Z",
+      "originalRowsAndSecurityVerifiedInsideTransaction": true,
+      "newTablesPrivate": true,
+      "hostingControlUnchanged": true
+    }
+  ],
+  "postCoreBaseline": {
+    "recordedAt": "2026-11-07 22:57:55.756879+00",
+    "sha256": "d94ea49622268d56c1484be63469b4f98f43f816a9364f1c02605722c6f8fd93",
+    "tables": 62,
+    "rows": 32252,
+    "definitions": 333,
+    "migrations": 53,
+    "originalHandoverPinUnchanged": true
+  },
+  "postMigrationSecurityAdvisors": {
+    "recordedAt": "2026-11-07T22:58:11.754Z",
+    "count": 51,
+    "levels": {
+      "INFO": 51
+    },
+    "names": [
+      "rls_enabled_no_policy"
+    ],
+    "interpretation": "Private server tables intentionally have RLS and no ordinary-reader policy; exact ACL checks passed inside migration transactions. No warning/error returned."
+  },
+  "deploymentSelection": "cloudflare",
+  "normalReleaseOperation": "5f315c48-0650-4159-9f5b-404143c97f8d",
+  "normalReleasePhase": "run-identified",
+  "normalReleaseRun": 42423118103
 }
