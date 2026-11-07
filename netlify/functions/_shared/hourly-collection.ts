@@ -325,7 +325,10 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      const highWater = observed.length ? Math.max(...observed) : null;
      // A terminal missing charge remains unknown; known prior usage is retained
      // as a lower bound, never substituted for the missing final charge.
-     const cost = job.actual_cost_usd !== null ? Number(job.actual_cost_usd) : terminal && reported === null ? null : highWater;
+     // A terminal zero can precede the provider's charge accounting. Keep the
+     // hold; age or content completion does not certify a free run. Existing
+     // settlements require the separate audited late-fee receipt path.
+     const cost = job.actual_cost_usd !== null ? Number(job.actual_cost_usd) : terminal && (reported === null || reported === 0) ? null : highWater;
      if (job.actual_cost_usd !== null && highWater !== null && highWater > Number(job.actual_cost_usd)) throw new CollectionError(409, 'provider_final_fee_changed', 'The final provider fee changed and needs review.');
      if (highWater !== null) {
       await deps.store.providerPatch(job.id, { observed_cost_usd: highWater });
