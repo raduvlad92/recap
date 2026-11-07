@@ -2,7 +2,7 @@
 
 A working v0 of a reader-controlled creator workspace. Follow studios, presenters and channels; explore dated updates and topic views; save a personal reading library.
 
-- Review URL: https://recap-v0-radu.netlify.app
+- Review URL: https://recap.filternode.dev
 - Owner checklist: [docs/v0/MORNING.md](docs/v0/MORNING.md)
 - Active v0 plan: [docs/v0/PLAN.md](docs/v0/PLAN.md)
 - Progress and verification: [STATUS.md](STATUS.md), [docs/DEMO-LOG.md](docs/DEMO-LOG.md)
@@ -10,7 +10,7 @@ A working v0 of a reader-controlled creator workspace. Follow studios, presenter
 
 ## Administration and researched creators — D21
 
-The next authorized increment adds [Administration](https://recap-v0-radu.netlify.app/admin/) and the [public creator directory](https://recap-v0-radu.netlify.app/creators/). Deployment evidence remains separate in [STATUS.md](STATUS.md). The [plain-language admin guide](docs/admin/README.md) explains readers, followed channels, provider plans, actual Actor/run usage, observed versus unknown costs and the access log. Sign in using the configured owner email; no owner token or database setup is needed to review it.
+The next authorized increment adds [Administration](https://recap.filternode.dev/admin/) and the [public creator directory](https://recap.filternode.dev/creators/). Deployment evidence remains separate in [STATUS.md](STATUS.md). The [plain-language admin guide](docs/admin/README.md) explains readers, followed channels, provider plans, actual Actor/run usage, observed versus unknown costs and the access log. Sign in using the configured owner email; no owner token or database setup is needed to review it.
 
 The existing recap Supabase project now contains **600 researched channels—120 each on YouTube, Instagram, X, Substack and LinkedIn—across 560 canonical creator records**. Thirty-three creators/groups have multiple evidenced channels. Every catalogue channel is collection-planned, and all seven provider plans remain disabled. [Live import evidence](docs/catalogue/LIVE-IMPORT.md), [identity/import manifest](docs/catalogue/IMPORT-REPORT.md) and [supplier-cost comparison](docs/catalogue/COLLECTION-COSTS.md) preserve the exact scope and unresolved identity caveat.
 
@@ -43,12 +43,14 @@ Fill only this app's public configuration in `.env.local`; use the selected Cler
 npm run check
 ```
 
-This runs the meaningful domain/collection tests, TypeScript and production build. Netlify functions are emulated by the Vite plugin. No Edge Functions, Netlify Database/Blobs or Cloudflare resources are required.
+This runs the domain/collection tests, TypeScript and production build. The local Vite plugin still emulates the shared handlers in `netlify/functions/`; production runs on Cloudflare.
 
 ## Deploy and maintain
 
-A passing GitHub main-branch check triggers a Netlify build through a project-scoped GitHub Actions secret. Netlify clones the private repository with a read-only deploy key; no account-wide Netlify token is shared.
+A checked main release is delivered by [.github/workflows/cloudflare-duplicate.yml](.github/workflows/cloudflare-duplicate.yml) to Cloudflare Workers at **https://recap.filternode.dev**, retaining the existing Supabase database and Clerk app. The deployment target is `cloudflare`.
 
-Netlify settings and functions are in `netlify.toml` and `netlify/functions/`; publish only `dist`, not the repository root. `.local/`, `.env*`, `.netlify/`, `supabase/.temp/`, build outputs and test credentials are ignored. Database files are in `supabase/migrations/`; the v0 schema was applied only after an empty-schema preflight on the founder's recap project, with recorded live authorization checks.
+The old Netlify site, build hook, repository hook secret and exclusive deploy keys were removed at the founder's request. [Native retirement evidence](docs/tech/NETLIFY-RETIREMENT.md) distinguishes actual deletion from the waived observation period. The shared handlers and historical routing inventory remain in `netlify/functions/` and `netlify.toml`; they do not require a live Netlify project.
+
+`.local/`, `.env*`, `.netlify/`, `supabase/.temp/`, build outputs and test credentials are ignored. Database files are in `supabase/migrations/`; preserve the existing project and migration history.
 
 Read [AGENTS.md](AGENTS.md), STATUS, SPEC, PLAN and decisions before resuming. Full SPEC/PLAN v1.1 is a broader candidate; founder D20 separately authorizes the working v0 and D21 authorizes the admin/catalogue increment. Preserve the reference design and scope boundaries, save evidence and update the morning checklist. Font license is served at `/licenses/onest.txt`.
