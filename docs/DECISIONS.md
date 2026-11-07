@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 8 November Berlin — native completion under unchanged decisions
+
+The exact reviewed core release, one authenticated late-fee correction and original delivery restoration are completed within existing authorization. Original 19 source reservations, seven unknown model records, workspaces, caps, review gates and reminder opt-out remain preserved. The USD 0.004 correction is explicit additive financial evidence with immutable original history and replay proof, not a hold expiry or spending increase. Reader deletion/linking/retention activation and customer launch remain unapproved by inference. [Native evidence](tech/evidence/core-native-release-2026-11-07.json).
+
 ## 7 November 2026 — execution details preserve existing decisions
 
 The actual native recovery uses the existing bounded consumer to drain cron-propagated business ticks before pausing admission. No source/model cap, reminder preference or review gate changes. Normal admitted draining can settle fees and reserve new provider jobs; retain that evidence separately from manual execution and preserve every new unknown hold. Recovery records legacy frames as uncertain with immutable evidence, without inventing message IDs or replaying business work. These are implementation safeguards within the founder-authorized delivery, not a new spending/launch/retention decision. Identity/lifecycle activation and expiry remain off. [Native execution receipt](tech/evidence/recovery-native-window-2026-11-07.json).

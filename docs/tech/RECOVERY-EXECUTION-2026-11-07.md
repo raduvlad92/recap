@@ -1,6 +1,6 @@
 # Native recovery execution and continuation
 
-Checkpoint: **7 November 23:14 UTC / 8 November Berlin**. This records actual execution, not deployment acceptance. Current fixed core main is `182457410f7f8e979348d10347fe50b1e94b295b`. Keep main unchanged until the current normal release is accepted and original delivery is restored.
+Latest checkpoint: **7 November 23:21 UTC / 8 November Berlin**. Exact normal deployment/native acceptance, one fee correction and original delivery restoration are complete. [Native completion receipt](evidence/core-native-release-2026-11-07.json). The 23:14 checkpoint below remains historical. Current fixed core main is `182457410f7f8e979348d10347fe50b1e94b295b`. Keep main unchanged until the current normal release is accepted and original delivery is restored.
 
 ## Completed native gates
 
@@ -14,7 +14,11 @@ Checkpoint: **7 November 23:14 UTC / 8 November Berlin**. This records actual ex
 
 [Sanitized native receipts](evidence/recovery-native-window-2026-11-07.json) retain hashes and chronology. Raw rows, tokens, provider references and native replies stay in ignored private operator files.
 
-## Active release
+## Release chronology
+
+**Completed at 23:21 UTC:** normal run 42423118103 succeeds; native artifact 13595275488/checkpoint 128559404688/served workers/assets/source/flags pass. Fee operation 5a29fa5b-926c-4f1d-b517-1e97f12a986c applies USD 0.004 and verifies same-receipt replay. Restoration 71dc4bd5-754b-4f03-af0d-ec7fd6001c72 completes with resume revision 6dcf2afb-d4c7-4e3b-b546-532eb43d543a, one original-policy consumer and both original crons. Epoch 4 is unpaused. Do not rerun those writes. New ordinary invocation/useful-content acceptance is next; retain main until that proof.
+
+**Historical 23:14 checkpoint:**
 
 The deployment window is **released**. Fresh durable operation `5f315c48-0650-4159-9f5b-404143c97f8d` selected `HOSTING_TARGET=cloudflare` and dispatched **one** supported normal workflow, `prepare_handover_artifact=false`, no checkpoint ID. Native run **42423118103** is identified. At the checkpoint its application/PostgreSQL verification is running; no new deployed release is claimed.
 
@@ -24,7 +28,7 @@ The reviewed private operators live under `.local/retrieval-release-20261107/` i
 
 1. `download-normal-release.mjs plan` reads exact run/jobs. `prepare` requires successful verify/deploy, downloads only its exact native archive without forwarding the GitHub bearer to signed storage, enforces archive bounds and checks all files/source/config pins. It saves `normal-release-artifacts.json`.
 2. `verify-normal-release.mjs` binds that archive to the sole exact GitHub Actions normal checkpoint, completed journal, paused new control, 100%-serving workers, unchanged source/flags, all native asset hashes and public HTTP boundaries. It saves `normal-release-native-verification.json`. It performs no runtime mutation.
-3. `late-fee-operator.mjs plan` has only found the exact historical saved YouTube job (old provider USD 0.004, ledger zero, maximum 0.005). No provider request/correction has run. After exact native release acceptance, its reviewed `apply` obtains fresh authenticated exact-run/build/owner/cap evidence through the existing library and stable request key, while still paused. Unknown model/source holds and original limits are outside its authority. `reconcile` verifies a saved receipt without provider/RPC replay; `replay` verifies the same economic receipt without another debit. Unresolved results remain unresolved. Preserve original history and prove all three cash projections. The strict original-row preservation script will intentionally flag the explicitly corrected reservation afterward; qualify that single difference through its immutable original receipt and continue comparing every other original row exactly.
+3. `late-fee-operator.mjs plan` has only found the exact historical saved YouTube job (old provider USD 0.004, ledger zero, maximum 0.005). No provider request/correction has run. After exact native release acceptance, its reviewed `apply` obtains fresh authenticated exact-run/build/owner/cap evidence through the existing library and stable request key, while still paused. Unknown model/source holds and original limits are outside its authority. `reconcile` verifies a saved receipt without provider/RPC replay; `replay` verifies the same economic receipt without another debit. Unresolved results remain unresolved. Preserve original history and prove all three cash projections. This corrected reservation is outside the original 19; native comparison confirms all 19 remain exactly unchanged. Any future correction within that set must qualify only its exact projection through the immutable original receipt.
 4. `restore-normal-delivery.mjs plan` requires exact accepted native release. The reviewed sequence is `resume`, `consumer`, `crons`: separately journal checked resume nonce; restore only original bounded main consumer; restore only `*/5 * * * *` and `0 * * * *`. A saved unacknowledged intent requires `reconcile`, never a new identity or blind write. DLQ remains untouched, reminders off. Original settings are batch 1, concurrency 6, retries 3, maximum wait 1,000 ms, retry delay 60 seconds and existing DLQ.
 5. Prove a new ordinary automatic message ID → invocation/frame/current revision → truthful completion. Budget-blocked tasks prove transport only. Retained dead letters are not a recovery-completion count. Native isolated interruption proof and useful-content outcomes remain separate.
 
