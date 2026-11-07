@@ -1,3 +1,4 @@
+import { readerProviderSubject } from './reader-identity';
 import { fetchNoRedirect } from './fetch-no-redirect';
 import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { clerkRequest, database, type ClerkUser } from './admin-data';
@@ -162,9 +163,10 @@ export function buildReminderPayload(claim: ReminderClaim, recipient: string, en
   return { from: config.from, to: [recipient], subject, html, text, headers: { 'List-Unsubscribe': '<' + unsubscribe.href + '>', 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' }, tags: [{ name: 'recap_reminder', value: claim.outbox.id }] };
 }
 
-export async function verifiedReminderRecipient(readerId: string, env: Env, fetcher: typeof fetch = fetch): Promise<{ email: string; identity: string }> {
-  const result = await clerkRequest('/users/' + encodeURIComponent(readerId), env, fetcher);
-  if (!object(result) || result.id !== readerId || result.banned || result.locked || !Array.isArray(result.email_addresses)) return fail('reminder_recipient_unverified');
+export async function verifiedReminderRecipient(readerId: string, env: Env, fetcher: typeof fetch = fetch, resolveSubject = readerProviderSubject): Promise<{ email: string; identity: string }> {
+  const subject = await resolveSubject(readerId, env('CLERK_ISSUER_URL') || '', env);
+  const result = await clerkRequest('/users/' + encodeURIComponent(subject), env, fetcher);
+  if (!object(result) || result.id !== subject || result.banned || result.locked || !Array.isArray(result.email_addresses)) return fail('reminder_recipient_unverified');
   const user = result as unknown as ClerkUser, primary = user.email_addresses.find(address => address.id === user.primary_email_address_id);
   if (!primary || primary.verification?.status !== 'verified' || !email(primary.email_address)) return fail('reminder_recipient_unverified');
   return { email: primary.email_address.toLowerCase(), identity: primary.id };

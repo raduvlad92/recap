@@ -100,7 +100,7 @@ export default function App() {
   const [jobs, setJobs] = useState<Record<string, { running: boolean; message: string; error?: boolean }>>({});
   const [settingsDraft, setSettingsDraft] = useState<ReaderSettings>(state.settings);
   const [interestDraft, setInterestDraft] = useState(state.settings.interests.join(', '));
-  const owner = auth.isSignedIn ? auth.userId : 'guest';
+  const owner = JSON.stringify([auth.identityKey, auth.isSignedIn ? auth.ownerId : 'guest']);
   const currentOwner = useRef(owner);
   currentOwner.current = owner;
   const currentSources = useRef(sources.map((source) => source.id));
