@@ -1,6 +1,6 @@
 import { fetchNoRedirect } from './fetch-no-redirect';
-import { DISCOVERY_ITEMS, DISCOVERY_MAX_USD } from './youtube-discovery';
-import { classifyProviderVideoFormat, videoFormatFields } from '../../../src/lib/video-format';
+import { DISCOVERY_ITEMS, DISCOVERY_MAX_USD, exactPublicationTimestamp } from './youtube-discovery';
+import { classifyProviderVideoFormat, videoFormatFields, youtubeVideoId } from '../../../src/lib/video-format';
 import { createHash } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
 import type { CollectionResult, Source, SourceUpdate } from '../../../src/lib/types';
@@ -217,6 +217,11 @@ async function readApifyRun(runId: string, actorId: string, source: Source, maxI
         return row.channelId !== discoveryChannelId && channelUrl !== 'https://www.youtube.com/channel/' + discoveryChannelId
           || row.channelId && row.channelId !== discoveryChannelId;
       })) throw new CollectionError(502, 'provider_channel_unconfirmed', 'The returned uploads could not be attributed to the requested channel.');
+      if (items.some(value => !exactPublicationTimestamp(object(value).date))) throw new CollectionError(502, 'provider_date_unconfirmed', 'The provider did not supply an exact publication date.');
+      if (items.some(value => {
+        const row = object(value), videoId = youtubeVideoId(row.url);
+        return !videoId || [row.id, row.videoId].some(id => id !== undefined && id !== videoId);
+      })) throw new CollectionError(502, 'provider_video_unconfirmed', 'The returned upload did not identify one matching video.');
     }
     const updates = normalizeYouTubeItems(items, source, maxItems);
     if (discoveryChannelId && updates.some(update => !update.publishedAt)) throw new CollectionError(502, 'provider_date_unconfirmed', 'The provider did not supply an exact publication date.');

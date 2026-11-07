@@ -1,0 +1,46 @@
+# Delivery plan — 7 November 2026
+
+The founder requested implementation of the status report's next steps, prioritizing parallel agents and microservices where useful. This authorizes engineering and review delivery of these increments. It does not create a new supplier subscription, raise existing source/model ceilings, enable reminders, waive source-grounding/review requirements or start a customer trial. SPEC/PLAN v1.1 is not approved as a whole by inference. Existing reader identities, private workspaces, historical snapshots and uncertain financial records must survive every release.
+
+## Current evidence and critical path
+
+The live site still serves Cloudflare `80c3d6c`; the retrieval migration is absent. PR #11 is the unmerged Netlify cleanup; PR #12 is the stacked retrieval implementation. Its previously successful CI does not include the new review fixes. The independent review found two discovery defects: date-only values could become midnight timestamps, and non-video YouTube URLs could become upload records. The fixes require exact zoned, valid calendar timestamps and matching video identities; terminal fee evidence remains available after content rejection. Workerd acceptance is isolated fixture evidence, not proof of useful public retrieval.
+
+A fresh **7 November 19:54 UTC** read exposes a new release blocker: automatic-content has one expired hosting frame from **14:10 UTC** and **68 queued frames**; native queues earlier show one main-queue message and **67 dead-letter messages**. Other hosting pipelines continued. There are no running automatic domain tasks; 54 are budget-blocked, three keyword tasks are call-limit-blocked, and existing review/failed proposals remain separate. Model commitment is still **USD 9.918486404 / 10**, with seven unknown records and no model call after 4 November 23:12 UTC. Recheck these moving values before any recovery. The health endpoint alone did not expose this stall.
+
+Do not bypass the checked release's drain gate. Recover transport only after checking exact frame/message identity, actual invocation bounds and domain/provider/model state. Preserve the expired frame as uncertain if its result is unproved; never relabel it completed or blindly rerun its business work. Keep dead-letter evidence and the original queued identities until acknowledged recovery succeeds.
+
+## Parallel delivery streams
+
+| Stream | Work | Acceptance and dependency |
+| --- | --- | --- |
+| Parent integration | Fix discovery validation; finish PR #11/#12 review; recover the blocked transport; apply/verify the retrieval migration and deploy the checked artifact | Full local/CI checks, atomic preservation/ACL checks, exact native release/checkpoint and hosted method logs. Recovery/drain precedes release. |
+| Financial repair | Handle authenticated late provider fees as additive, idempotent evidence against the exact original run/reservation | Preserve original settlements/unknown holds; exact money, receipt identity, concurrency, over-cap and unauthorized cases; production reconciliation is separately evidenced. |
+| Reader languages | Complete the six existing interface choices and daily-briefing strings | Key parity plus keyboard/touch and 320/360px layouts; no claim that selecting a language translates a recap. |
+| Lifecycle | Implement durable account erasure and work suppression, with replay/interruption and delayed-worker/provider races | Revoke account access and delete private payloads; retain only necessary financial uncertainty; prove restore suppression. Raw/backup retention execution needs an explicit production policy. |
+| Original content | Add complete public article extraction/feed-to-analysis handoff, publisher podcast transcripts, then bounded media enrichment | Exact source/date/format provenance, safe downloader, explicit partial/error outcomes, no title/description-as-full-content claims. Generated speech/OCR must have reviewed cost bounds before execution. |
+
+Each independent code stream uses its own branch/checkout and draft PR. The parent integrates dependency order, applies production migrations, merges, deploys and performs native verification. Shared STATUS/PLAN/DECISIONS/DEMO documents remain parent-owned; streams maintain their own scoped evidence documents.
+
+## Architecture
+
+Keep the existing **therecap-web** public API/UI, **therecap-jobs** queued execution and private **therecap-source** native downloader. Continue platform-specific collector modules and durable job identities; reuse source acquisition/analysis across followers while keeping private reader views isolated. Financial reconciliation, authentication, language strings and account lifecycle fit these existing boundaries.
+
+A separate media-processing service is justified only if measured audio/OCR requirements exceed current runtime limits or require different binaries/permissions. Asynchronous submission/polling of a bounded provider job alone does not require another service. Do not introduce a new database or split transactional financial/identity guarantees across services for organizational convenience.
+
+## Ordered product proof
+
+1. Repair/recover the hosting stall without changing financial history or weakening admission controls.
+2. Apply and verify migration `20261105011050_free_first_content_retrieval.sql`, preserving old rows/ACLs and recording the new schema. Merge the cleanup/retrieval stack only after current checks; deploy the exact checked main artifact.
+3. Verify hosted attempt history, then bounded recent controls on YouTube, Instagram and X. Count useful original text/captions independently from discovery, empty output, partial coverage and charges. Reuse retained paid results before paying for replacements.
+4. Reconcile attributable financial uncertainty. Prepare the smallest concrete model allowance needed for a defined proof if the existing ceiling cannot admit it; do not raise the ceiling from this plan or silently use another provider/model.
+5. Validate source-grounded proposals and preserve human review. The existing daily composer can already group approved points into up to five cited topics: prove this supported mode on a new ordinary scheduled cutoff. Never rewrite an old snapshot to manufacture a successful day.
+6. Complete production-auth identity preservation, reader locales and lifecycle/extraction increments. Clerk production cutover must map existing user-keyed data, policies and admin authorization, with rollback and owner/ordinary-reader isolation proof. Do not swap keys and assume identities transfer.
+7. Add separately versioned translated-recap/correction/availability contracts. Existing recap composition copies approved original wording; translating it needs source quotes and names/numbers/negation/citation checks, language review and its own spending admission.
+8. Assess readiness from actual useful content, recurring delivery, language quality, lifecycle/backup verification and measured shared-source costs before proposing a customer trial. No outreach, charging or paid launch is started by this plan.
+
+## Decisions to make concrete before requesting owner input
+
+Prepare exact incremental model cost/call limits, the final advertised language set, production retention/backup behavior and production-auth identity mapping. Request only missing credentials or actual remaining decisions after the code/configuration and evidence are reviewable. Existing Supabase/Clerk/admin resources must be reused; no repeated signup/token-setup checklist.
+
+Evidence sources: [retrieval implementation](FREE-FIRST-RETRIEVAL-2026-11-05.md), [original-content investigation](CONTENT-RETRIEVAL-REPAIR-2026-11-05.md), [7 November live delivery readback](evidence/delivery-readback-2026-11-07.json), [earlier status audit](evidence/project-status-2026-11-07.json). Live recovery, migrations, deployment, useful yield, semantic review, published briefing and customer readiness remain separate claims.
