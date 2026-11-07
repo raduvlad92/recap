@@ -1,0 +1,124 @@
+{
+  "recordedAt": "2026-11-07T19:57:53.848604+00:00",
+  "scope": "Read-only fixed-project management inspection",
+  "hosting": {
+    "work": {
+      "queued": 69,
+      "running": 1,
+      "uncertain": 0,
+      "expired_running": 1
+    },
+    "control": {
+      "epoch": 3,
+      "owner": "cloudflare",
+      "paused": false,
+      "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+      "old_host_fenced": true
+    },
+    "revision": "2b7f630e-2f78-4223-9c35-5f207c460add"
+  },
+  "automaticTasks": [
+    {
+      "task": "keywords",
+      "count": 27,
+      "state": "blocked",
+      "latest": "2026-11-07T10:05:18.350411+00:00",
+      "expired": 0,
+      "error_code": "analysis_budget_exhausted"
+    },
+    {
+      "task": "keywords",
+      "count": 3,
+      "state": "blocked",
+      "latest": "2026-11-04T23:08:53.977659+00:00",
+      "expired": 0,
+      "error_code": "analysis_call_limit"
+    },
+    {
+      "task": "keywords",
+      "count": 6,
+      "state": "review",
+      "latest": "2026-11-04T23:10:47.042447+00:00",
+      "expired": 0,
+      "error_code": null
+    },
+    {
+      "task": "recap",
+      "count": 27,
+      "state": "blocked",
+      "latest": "2026-11-07T10:10:17.88949+00:00",
+      "expired": 0,
+      "error_code": "analysis_budget_exhausted"
+    },
+    {
+      "task": "recap",
+      "count": 2,
+      "state": "blocked",
+      "latest": "2026-11-04T23:09:04.144623+00:00",
+      "expired": 0,
+      "error_code": "automatic_recap_invalid_check"
+    },
+    {
+      "task": "recap",
+      "count": 1,
+      "state": "blocked",
+      "latest": "2026-11-04T23:08:44.651142+00:00",
+      "expired": 0,
+      "error_code": "automatic_recap_reduction_failed"
+    },
+    {
+      "task": "recap",
+      "count": 1,
+      "state": "blocked",
+      "latest": "2026-10-29T13:06:43.339265+00:00",
+      "expired": 0,
+      "error_code": "automatic_recap_unsupported_draft"
+    },
+    {
+      "task": "recap",
+      "count": 5,
+      "state": "review",
+      "latest": "2026-11-04T23:11:13.657707+00:00",
+      "expired": 0,
+      "error_code": null
+    }
+  ],
+  "model": {
+    "calls": 967,
+    "unknown": 7,
+    "latestCall": "2026-11-04T23:12:33.481899+00:00",
+    "committedUsd": "9.918486404000"
+  },
+  "retrievalMigrationInstalled": false,
+  "earlierNativeQueueSample": {
+    "observedOn": "2026-11-07",
+    "mainBacklog": 1,
+    "deadLetterBacklog": 67,
+    "refreshedAtAggregateTime": false
+  },
+  "localVerification": {
+    "focusedTestsPassed": 147,
+    "workerdRetrievalFixturePassed": true,
+    "productionBuildPassed": true,
+    "initialFullSuite": {
+      "passed": 3995,
+      "failed": 1,
+      "reason": "Existing cached-prefix PostgreSQL case exceeded 30000ms"
+    },
+    "isolatedTimedOutCase": {
+      "passed": true,
+      "durationSeconds": 21.49
+    },
+    "boundedFullSuite": "in progress"
+  },
+  "externalMutations": {
+    "database": 0,
+    "runtime": 0,
+    "providerJobs": 0,
+    "modelCalls": 0,
+    "reviewApprovals": 0,
+    "emails": 0,
+    "schedules": 0
+  },
+  "limits": "No recovery, production migration, deployment, useful public retrieval or new published briefing is proved by this receipt."
+}

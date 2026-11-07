@@ -151,7 +151,7 @@ describe('authenticated own-user collection activity', () => {
     const stub = dbStub({ reader_collection_checks: [check({ job_id: 'foreign-job', provider: 'apify' }), check({ id: 'other-check', user_id: 'user_b' })], collection_jobs: [job(), job({ id: 'foreign-job', user_id: 'user_b', provider_run_id: 'private-other-run', observed_cost_usd: 20 })], reader_collection_policies: [policy, { ...policy, user_id: 'user_b' }] });
     const response = await own(stub)(ownRequest()); const result = await response.json();
     expect(response.status).toBe(200); expect(result.summary.supplierCostUsd).toBe(.005); expect(result.policies).toHaveLength(1);
-    expect(stub.calls.every(call => call.filters.some(filter => filter[0] === 'eq' && filter[1] === 'user_id' && filter[2] === 'user_a'))).toBe(true);
+    expect(stub.calls.every(call => call.table === 'collection_retrieval_attempts' ? call.filters.some(filter => filter[0] === 'in' && ['check_id','job_id'].includes(String(filter[1]))) : call.filters.some(filter => filter[0] === 'eq' && filter[1] === 'user_id' && filter[2] === 'user_a'))).toBe(true);
     expect(JSON.stringify(result)).not.toContain('private-other-run'); expect(JSON.stringify(result)).not.toContain('user_b');
     expect(stub.calls.filter(call => call.table === 'reader_collection_provider_jobs').every(call => ['user_id,check_id,job_id', 'user_id,job_id,created_at,maximum_usd,actual_cost_usd,observed_cost_usd'].includes(call.columns))).toBe(true);
     expect(JSON.stringify(result)).not.toContain('job_token'); expect(stub.insert).not.toHaveBeenCalled();
@@ -163,7 +163,7 @@ describe('authenticated own-user collection activity', () => {
     expect(response.status).toBe(200); expect(result.summary.supplierCostUsd).toBe(.005);
     expect(result.sources[0].label).toBe('Example channel'); expect(result.summary.checks).toBe(0);
     expect(JSON.stringify(result)).not.toMatch(/secret-token-sentinel|foreign-check|user_b/);
-    expect(stub.calls.every(call => call.filters.some(filter => filter[0] === 'eq' && filter[1] === 'user_id' && filter[2] === 'user_a'))).toBe(true);
+    expect(stub.calls.every(call => call.table === 'collection_retrieval_attempts' ? call.filters.some(filter => filter[0] === 'in' && ['check_id','job_id'].includes(String(filter[1]))) : call.filters.some(filter => filter[0] === 'eq' && filter[1] === 'user_id' && filter[2] === 'user_a'))).toBe(true);
     expect(stub.calls.some(call => call.table === 'reader_collection_provider_jobs' && call.columns === 'user_id,check_id,job_id')).toBe(true);
   });
   it('keeps current policy commitments independent of the report source and date filters without leaking private rows', async () => {

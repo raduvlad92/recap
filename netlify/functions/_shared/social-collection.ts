@@ -1,3 +1,5 @@
+import { nativeSocialRows } from './native-social';
+import { createRetrievalLog, retrievalAttempt, type RetrievalLog } from './retrieval-log';
 import { fetchNoRedirect } from './fetch-no-redirect';
 import { createHash } from 'node:crypto';
 import type { SourceUpdate, SourceMedia } from '../../../src/lib/types';
@@ -18,11 +20,12 @@ export interface SocialConfiguration {
 }
 export interface SocialJob {
  purpose?:'collection'|'proof';
+ collection_job_id: string;
  id: string; source_key: string; platform: SocialPlatform; source_url: string; source_name: string; window_from: string; window_to: string;
- state: 'claimed' | 'launch_claimed' | 'running' | 'ambiguous' | 'completed' | 'failed'; lease_token: string; reservation_id: string;
+ state: 'claimed' | 'launch_claimed' | 'running' | 'ambiguous' | 'completed' | 'failed'; lease_token: string; reservation_id: string | null;
  provider_run_id: string | null; dataset_id: string | null; config: SocialConfiguration;
 }
-export interface SocialCoverage { status: 'collected' | 'partial' | 'unknown' | 'blocked' | 'failed'; complete: boolean; returned: number; accepted: number; rejected: Record<string, number>; reason?: string }
+export interface SocialCoverage { status: 'collected' | 'partial' | 'unknown' | 'blocked' | 'failed'; complete: boolean; returned: number; accepted: number; rejected: Record<string, number>; reason?: string; retrieval?: 'native' | 'apify'; diagnostics?: Record<string, number | boolean | string> }
 export interface SocialItem { itemKey: string; revision: string; record: SourceUpdate }
 export interface SocialStore {
  sync(): Promise<number>; claim(allowLaunch: boolean): Promise<SocialJob | null>; launch(job: SocialJob): Promise<boolean>;
@@ -59,8 +62,10 @@ export function socialItemKey(platform: SocialPlatform, value: string): string {
 export function socialActorInput(job: Pick<SocialJob, 'platform' | 'source_key' | 'source_url' | 'window_from' | 'window_to' | 'config' | 'purpose'>): Record<string, unknown> {
  const count = job.config.max_items;
  if (!Number.isInteger(count) || count < 1 || count > 100 || !(Date.parse(job.window_from) < Date.parse(job.window_to))) throw new CollectionError(503, 'social_config_invalid', 'The social collector requires a bounded reviewed configuration.');
- if (job.platform === 'X') return { mode: 'search', searchTerms: [`from:${job.source_key.split('/')[1]}`], time:{sinceTime:String(Math.floor(Date.parse(job.window_from)/1000)),untilTime:String(Math.ceil(Date.parse(job.window_to)/1000))}, queryType: 'Latest', maxItems: count, maxItemsPerTarget: count, outputVariant: 'rich', fieldStyle: 'camelCase', includeSearchTerms: true };
- if(job.platform==='Instagram'&&job.config.actor_ref===INSTAGRAM_BACKUP)return{urls:[job.source_url],maxPosts:count,maxPostsPerProfile:count,...(job.purpose==='proof'?{}:{newerThan:new Date(job.window_from).toISOString().slice(0,10)}),skipPinnedPosts:true,monitor:false};
+ if (job.platform === 'X') return { mode: 'profileTweets', twitterHandles: [job.source_key.split('/')[1]], time:{sinceTime:String(Math.floor(Date.parse(job.window_from)/1000)),untilTime:String(Math.ceil(Date.parse(job.window_to)/1000))}, queryType: 'Latest', maxItems: count, maxItemsPerTarget: count, outputVariant: 'rich', fieldStyle: 'camelCase', includeSearchTerms: true };
+ // The reviewed backup's date-window route is datacenter-only and was blocked.
+ // Read only the capped newest posts, then enforce the immutable UTC window locally.
+ if(job.platform==='Instagram'&&job.config.actor_ref===INSTAGRAM_BACKUP)return{urls:[job.source_url],maxPosts:count,maxPostsPerProfile:count,skipPinnedPosts:true,monitor:false};
  if (job.platform === 'Instagram') return { directUrls: [job.source_url], resultsType: 'posts', resultsLimit: count, onlyPostsNewerThan: new Date(job.window_from).toISOString(), addParentData: true };
  return { targetUrls: [job.source_url], maxPosts: count, postedLimitDate: job.window_from, includeQuotePosts: true, includeReposts: true, scrapeComments: false, scrapeReactions: false };
 }
@@ -78,7 +83,7 @@ function extractedMedia(raw: Record<string, unknown>, platform: SocialPlatform):
 }
 
 /** One immutable source version per item; empty/blocked rows never prove quiet coverage. */
-export function normalizeSocialDataset(job: SocialJob, rows: unknown[]): { items: SocialItem[]; coverage: SocialCoverage } {
+export function normalizeSocialDataset(job: SocialJob, rows: unknown[], native = false): { items: SocialItem[]; coverage: SocialCoverage } {
  const rejected: Record<string, number> = {}, items = new Map<string, SocialItem>();
  let beforeWindow = 0;
  const reject = (reason: string) => { rejected[reason] = (rejected[reason] || 0) + 1; };
@@ -114,10 +119,10 @@ export function normalizeSocialDataset(job: SocialJob, rows: unknown[]): { items
  // This adapter accepts day precision. A capped response entirely before the
  // exact window is still unknown coverage, but must not freeze a quiet source.
  const olderWindow = job.config.actor_ref === INSTAGRAM_BACKUP && rows.length > 0 && beforeWindow === rows.length;
- const capped = rows.length >= job.config.max_items && !olderWindow;
+ const capped = (native ? items.size >= job.config.max_items : rows.length >= job.config.max_items) && !olderWindow;
  // A successful run with fewer rows is not evidence that the platform returned
  // an exhaustive timeline. Retain the gap instead of blessing provider success.
- return { items: [...items.values()], coverage: { status: items.size ? 'partial' : 'unknown', complete: false, returned: rows.length, accepted: items.size, rejected, reason: capped ? 'result_limit_reached' : olderWindow ? 'provider_returned_older_window' : items.size ? 'provider_completeness_unverified' : 'empty_or_unusable_response' } };
+ return { items: [...items.values()].slice(0, job.config.max_items), coverage: { status: items.size ? 'partial' : 'unknown', complete: false, returned: rows.length, accepted: Math.min(items.size, job.config.max_items), rejected, reason: capped ? 'result_limit_reached' : olderWindow ? 'provider_returned_older_window' : items.size ? 'provider_completeness_unverified' : 'empty_or_unusable_response' } };
 }
 
 async function apify(path: string, env: Env, fetcher: typeof fetch, init: RequestInit = {}): Promise<unknown> {
@@ -126,6 +131,31 @@ async function apify(path: string, env: Env, fetcher: typeof fetch, init: Reques
  if (!response.ok) { await response.body?.cancel(); throw new CollectionError(502, 'social_provider_error', 'The social provider request could not finish.'); }
  try { return JSON.parse(await readTextLimited(response, 4 * 1024 * 1024)); } catch (error) { if (error instanceof CollectionError) throw error; throw new CollectionError(502, 'social_provider_invalid', 'The social provider returned unreadable data.'); }
 }
+export async function socialDiagnostics(job: SocialJob, run: Record<string, unknown>, env: Env, fetcher: typeof fetch = fetch): Promise<Record<string, number | boolean | string>> {
+ const store = run.defaultKeyValueStoreId;
+ if (typeof store !== 'string') return { report_present: false };
+ const keys = job.platform === 'Instagram' && job.config.actor_ref === INSTAGRAM_BACKUP ? ['RUN_REPORT'] : job.platform === 'X' ? ['diagnostics', 'run-report'] : [];
+ const summary: Record<string, number | boolean | string> = { report_present: false };
+ for (const key of keys) {
+  const response = await fetchNoRedirect('https://api.apify.com/v2/key-value-stores/' + providerId(store) + '/records/' + key, { headers: { authorization: 'Bearer ' + env('APIFY_API_TOKEN') }, signal: AbortSignal.timeout(8_000) }, fetcher);
+  if (response.status === 404) { await response.body?.cancel(); continue; }
+  if (!response.ok) { await response.body?.cancel(); throw new CollectionError(502, 'provider_report_unavailable', 'The provider diagnostic report was unavailable.'); }
+  let value: unknown; try { value = JSON.parse(await readTextLimited(response, 256 * 1024)); } catch { throw new CollectionError(502, 'provider_report_invalid', 'The provider report was unreadable.'); }
+  const reports = Array.isArray(value) ? value.slice(0, 100).map(object) : [object(value)];
+  summary.report_present = true;
+  for (const report of reports) {
+   const totals = object(report.totals), queries = object(totals.requestsByQuery), filtering = object(report.filtering);
+   const blocked = Object.values(queries).reduce<number>((sum, value) => sum + (typeof object(value).blocked === 'number' ? Math.max(0, Math.min(10000, Number(object(value).blocked))) : 0), 0);
+   summary.blocked_requests = Math.max(Number(summary.blocked_requests || 0), blocked);
+   for (const [output, input] of [['failed_targets','failedSubtargets'],['unavailable_targets','unavailableTargets'],['stop_causes','stopCauses']] as const) if (Array.isArray(report[input])) summary[output] = Math.max(Number(summary[output] || 0), (report[input] as unknown[]).length);
+   if (typeof filtering.actorFilteredRows === 'number') summary.filtered_rows = Math.max(Number(summary.filtered_rows || 0), Math.min(100000, Math.max(0, filtering.actorFilteredRows)));
+   if (typeof totals.requests === 'number') summary.requests = Math.min(10000, Math.max(0, totals.requests));
+   if (Array.isArray(report.queries)) summary.empty_targets = report.queries.filter(q => object(q).status === 'empty').length;
+  }
+ }
+ return summary;
+}
+
 export async function verifySocialConfiguration(config: SocialConfiguration, env: Env, fetcher: typeof fetch = fetch, now = Date.now()): Promise<void> {
  if (!config.enabled || ![SOCIAL_ACTORS[config.platform],...(config.platform==='Instagram'?[INSTAGRAM_BACKUP]:[])].includes(config.actor_ref) || !config.reviewed_at || !/^[a-f0-9]{64}$/.test(config.pricing_fingerprint || '') || !/^\d+\.\d+\.\d+$/.test(config.build_number) || !Number.isFinite(config.maximum_usd) || config.maximum_usd <= 0 || config.maximum_usd > 1 || config.timeout_seconds < 30 || config.timeout_seconds > 600 || ![128, 256, 512, 1024].includes(config.memory_mb)) throw new CollectionError(503, 'social_review_required', 'This platform requires a reviewed bounded Actor configuration.');
  const [actorResult, buildResult, accountResult] = await Promise.all([apify('acts/' + providerId(config.actor_id), env, fetcher), apify('actor-builds/' + providerId(config.build_id), env, fetcher), apify('users/me', env, fetcher)]);
@@ -138,12 +168,12 @@ export function createSocialStore(env: Env = runtimeEnv): SocialStore {
  async function rpc<T>(name: string, args: Record<string, unknown> = {}): Promise<T> { const result = await db.rpc(name, args); if (result.error) throw new CollectionError(result.error.code === 'PT402' ? 402 : result.error.code === 'PT409' ? 409 : 503, result.error.code === 'PT402' ? 'social_budget_exhausted' : 'social_state_changed', 'Social collection could not safely continue.'); return result.data as T; }
  return { sync: () => rpc('sync_social_collection_sources'), claim: allowLaunch => rpc('claim_social_collection_job', { p_allow_launch: allowLaunch }), launch: job => rpc('mark_social_collection_launch', { p_id: job.id, p_lease: job.lease_token }), run: (job, runId, datasetId) => rpc('record_social_collection_run', { p_id: job.id, p_lease: job.lease_token, p_run_id: runId, p_dataset_id: datasetId }), finish: (job, items, coverage, actualUsd, terminal, error) => rpc('finish_social_collection_job', { p_id: job.id, p_lease: job.lease_token, p_items: items, p_coverage: coverage, p_actual_usd: actualUsd, p_terminal: terminal, p_error: error || null }) };
 }
-export function createSocialCollector(options: { env?: Env; store?: SocialStore; fetcher?: typeof fetch; now?: () => number } = {}) {
+export function createSocialCollector(options: { env?: Env; store?: SocialStore; fetcher?: typeof fetch; now?: () => number; log?: RetrievalLog; native?: typeof nativeSocialRows } = {}) {
  const env = options.env || runtimeEnv, fetcher = options.fetcher || fetch, now = options.now || Date.now;
  return async () => {
   // Private database platform policies are the positive enabling authority.
   // An explicit environment false is an additional emergency launch stop.
-  const store = options.store || createSocialStore(env), allowLaunch = env('SOCIAL_COLLECTION_ENABLED') !== 'false';
+  const store = options.store || createSocialStore(env), log = options.log || createRetrievalLog(env), native = options.native || nativeSocialRows, allowLaunch = env('SOCIAL_COLLECTION_ENABLED') !== 'false';
   let synchronized = 0, checked = 0, failed = 0;
   if (allowLaunch) synchronized = await store.sync();
   const deadline = now() + 10 * 60_000;
@@ -156,29 +186,38 @@ export function createSocialCollector(options: { env?: Env; store?: SocialStore;
    try {
     if (!runId) {
      if (launched) { await store.finish(job, [], { status: 'blocked', complete: false, returned: 0, accepted: 0, rejected: {}, reason: 'ambiguous_launch' }, null, false, 'ambiguous_launch'); failed++; continue; }
+     if (job.purpose !== 'proof' && ['Instagram', 'X'].includes(job.platform)) {
+      try {
+       const rows = await native(job, log, fetcher), normalized = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_native_validation', 'native', 'discovery', async () => normalizeSocialDataset(job, rows, true), value => ({ status: value.items.some(item => item.record.content?.trim()) ? 'partial' : 'empty', result_count: value.items.length, diagnostics: { rejected_rows: Object.values(value.coverage.rejected).reduce((sum, n) => sum + n, 0) } }));
+       if (normalized.items.some(item => item.record.content?.trim())) {
+        await store.finish(job, normalized.items, { ...normalized.coverage, retrieval: 'native' }, 0, true); checked++; continue;
+       }
+      } catch (error) { if (error instanceof CollectionError && error.code === 'retrieval_log_unavailable') throw error; }
+     }
      const configurationKey=stableJson(job.config);
-     let review=reviewedConfigurations.get(configurationKey);
-     if(!review){review=verifySocialConfiguration(job.config,env,fetcher,now());reviewedConfigurations.set(configurationKey,review);}
-     await review;
+     await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_preflight', 'apify', 'discovery', () => { let review = reviewedConfigurations.get(configurationKey); if (!review) { review = verifySocialConfiguration(job.config, env, fetcher, now()); reviewedConfigurations.set(configurationKey, review); } return review; }, () => ({ status: 'succeeded' }));
      if (!await store.launch(job)) continue;
      launched = true;
      const params = new URLSearchParams({ build: job.config.build_number, memory: String(job.config.memory_mb), timeout: String(job.config.timeout_seconds), maxTotalChargeUsd: String(job.config.maximum_usd), restartOnError: 'false' });
-     const run = object(object(await apify('acts/' + providerId(job.config.actor_id) + '/runs?' + params, env, fetcher, { method: 'POST', body: JSON.stringify(socialActorInput(job)) })).data);
+     const run = object(object(await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_launch', 'apify', 'discovery', async () => { const response = await apify('acts/' + providerId(job.config.actor_id) + '/runs?' + params, env, fetcher, { method: 'POST', body: JSON.stringify(socialActorInput(job)) }); const started = object(object(response).data); if (started.actId !== job.config.actor_id || started.userId !== job.config.apify_user_id || started.buildId !== job.config.build_id) throw new CollectionError(502, 'social_run_mismatch', 'The provider run does not match its reviewed identity.'); await store.run(job, providerId(started.id), started.defaultDatasetId ? providerId(started.defaultDatasetId) : null); return response; }, value => ({ status: 'partial', provider_run_id: providerId(object(object(value).data).id) }))).data);
      runId = providerId(run.id);
      if (run.actId !== job.config.actor_id || run.userId !== job.config.apify_user_id || run.buildId !== job.config.build_id) throw new CollectionError(502, 'social_run_mismatch', 'The provider run does not match its reviewed identity.');
-     await store.run(job, runId, run.defaultDatasetId ? providerId(run.defaultDatasetId) : null);
     }
-    const run = object(object(await apify('actor-runs/' + providerId(runId), env, fetcher)).data);
+    const run = object(object(await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_poll', 'apify', 'discovery', () => apify('actor-runs/' + providerId(runId), env, fetcher), value => ({ status: object(object(value).data).status === 'SUCCEEDED' ? 'succeeded' : ['FAILED','ABORTED','TIMED-OUT'].includes(String(object(object(value).data).status)) ? 'failed' : 'partial', provider_run_id: runId }))).data);
     if (run.id !== runId || run.actId !== job.config.actor_id || run.userId !== job.config.apify_user_id || run.buildId !== job.config.build_id || job.dataset_id && run.defaultDatasetId !== job.dataset_id) throw new CollectionError(502, 'social_run_mismatch', 'The stored provider run identity changed.');
     const terminal = ['SUCCEEDED', 'FAILED', 'ABORTED', 'TIMED-OUT'].includes(String(run.status));
     if (!terminal) { await store.finish(job, [], { status: 'partial', complete: false, returned: 0, accepted: 0, rejected: {}, reason: 'provider_running' }, null, false); continue; }
     const fee = typeof run.usageTotalUsd === 'number' && Number.isFinite(run.usageTotalUsd) && run.usageTotalUsd >= 0 ? Math.ceil(run.usageTotalUsd * 1e12) / 1e12 : null;
     if (run.status !== 'SUCCEEDED') { await store.finish(job, [], { status: 'failed', complete: false, returned: 0, accepted: 0, rejected: {}, reason: 'provider_failed' }, fee, true, 'provider_failed'); failed++; continue; }
     const datasetId = providerId(run.defaultDatasetId);
-    const rows = await apify('datasets/' + datasetId + '/items?clean=true&limit=' + (job.config.max_items + 1), env, fetcher);
+    const rows = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_dataset', 'apify', 'discovery', () => apify('datasets/' + datasetId + '/items?clean=true&limit=' + (job.config.max_items + 1), env, fetcher), value => ({ status: Array.isArray(value) && value.length ? 'partial' : 'empty', result_count: Array.isArray(value) ? value.length : null, provider_run_id: runId }));
     if (!Array.isArray(rows) || rows.length > job.config.max_items) throw new CollectionError(502, 'social_result_limit_exceeded', 'The source provider exceeded its reviewed result bound.');
-    const normalized = normalizeSocialDataset(job, rows);
-    await store.finish(job, normalized.items, normalized.coverage, fee, true); checked++;
+    const normalized = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_validation', 'apify', 'discovery', async () => normalizeSocialDataset(job, rows), value => ({ status: value.items.length ? 'partial' : 'empty', result_count: value.items.length, provider_run_id: runId, diagnostics: { rejected_rows: Object.values(value.coverage.rejected).reduce((sum, n) => sum + n, 0) } }));
+    const diagnostics = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_diagnostics', 'apify', 'discovery', () => socialDiagnostics(job, run, env, fetcher), value => ({ status: value.blocked_requests || value.failed_targets ? 'blocked' : 'succeeded', provider_run_id: runId, diagnostics: value })).catch(error => { if (error instanceof CollectionError && error.code === 'retrieval_log_unavailable') throw error; return { report_unavailable: true } as Record<string, number | boolean | string>; });
+    const blocked = !!(diagnostics.blocked_requests || diagnostics.failed_targets);
+    const coverage: SocialCoverage = { ...normalized.coverage, retrieval: 'apify', diagnostics, ...(blocked ? { status: normalized.items.length ? 'partial' : 'blocked', reason: 'provider_blocked' } : {}) };
+    if (blocked && !normalized.items.length) await store.finish(job, normalized.items, coverage, fee, true, 'provider_blocked');
+    else await store.finish(job, normalized.items, coverage, fee, true); checked++;
    } catch (error) {
     await store.finish(job, [], { status: launched ? 'blocked' : 'failed', complete: false, returned: 0, accepted: 0, rejected: {}, reason: launched ? 'reconciliation_required' : 'configuration_failed' }, null, false, error instanceof CollectionError ? error.code : 'social_collection_failed'); failed++;
    }

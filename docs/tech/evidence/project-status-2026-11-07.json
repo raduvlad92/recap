@@ -1,0 +1,72 @@
+{
+  "observed_on": "2026-11-07",
+  "purpose": "Read-only project status, blockers and next steps",
+  "fresh_public_http": {
+    "origin": "https://recap.filternode.dev",
+    "routes": {"/": 200, "/creators/": 200, "/api/health": 200, "/api/admin": 401},
+    "health_hosting": {
+      "provider": "cloudflare",
+      "mode": "active",
+      "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+      "jobsConfigured": true
+    },
+    "limits": "HTTP health/configuration only; not a fresh queue, cron, source-content or private-workspace check"
+  },
+  "fresh_github": {
+    "cleanup": {
+      "url": "https://github.com/raduvlad92/recap/pull/11",
+      "state": "OPEN",
+      "draft": false,
+      "merged": false,
+      "head": "9e61b30",
+      "application_ci_run": "41934833970",
+      "application_ci_result": "success"
+    },
+    "retrieval": {
+      "url": "https://github.com/raduvlad92/recap/pull/12",
+      "state": "OPEN",
+      "draft": true,
+      "merged": false,
+      "stacked_on": 11,
+      "head": "2cfbc8fdb3cd128dae079aec6a2f3fffd6847dcc",
+      "application_ci_run": "41950101899",
+      "application_ci_result": "success",
+      "cloudflare_verification_run": "41950101814",
+      "cloudflare_verification_result": "success",
+      "deployment": "skipped",
+      "submitted_reviews": 0
+    }
+  },
+  "latest_detailed_product_observation": {
+    "observed_on": "2026-11-06",
+    "refreshed_this_session": false,
+    "source": "../CLOUDFLARE-OBSERVATION-2026-11-06.md",
+    "snapshot": {"status": "awaiting_review", "updates": 15, "pending_review": 8, "missing_content": 7, "topics": 0, "citations": 0},
+    "latest_youtube_checks": {"failed": 20, "partial": 1},
+    "model_commitment_usd": "9.918486404",
+    "model_lifetime_ceiling_usd": "10",
+    "unknown_model_financial_records": 7,
+    "original_source_reservations_still_held": 17,
+    "sampled_provider_fee_discrepancy_usd": "0.004",
+    "reminders": "off"
+  },
+  "recommended_sequence": [
+    "Complete production migration 20261105011050, preservation/baseline verification, review/merge and checked retrieval deployment",
+    "Verify hosted attempt logs and fresh usable source output for YouTube, Instagram and X within existing controls",
+    "Reconcile financial uncertainty and resolve AI budget and source-grounded review gates",
+    "Prove one useful cited scheduled daily recap",
+    "Complete wider extraction, production authentication, languages, privacy and commercial readiness before a customer trial"
+  ],
+  "actions_started_by_this_audit": {
+    "production_database_writes": 0,
+    "provider_or_model_jobs": 0,
+    "creator_source_requests": 0,
+    "migrations": 0,
+    "deployments": 0,
+    "review_decisions": 0,
+    "emails": 0,
+    "schedule_changes": 0,
+    "application_test_or_ci_runs": 0,
+    "local_document_updates": true
+  }
+}

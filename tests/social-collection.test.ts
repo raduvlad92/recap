@@ -1,7 +1,8 @@
+import { testRetrievalLog } from './helpers/retrieval-log';
 import { describe, expect, it, vi } from 'vitest';
 import { socialSourceKey, socialItemKey, socialActorInput, normalizeSocialDataset, createSocialCollector, verifySocialConfiguration, socialPricingFingerprint, type SocialJob, type SocialStore } from '../netlify/functions/_shared/social-collection';
 const configuration = { platform: 'X' as const, enabled: true, actor_ref: 'xquik/x-tweet-scraper', actor_id: 'Actor12345', build_id: 'Build12345', build_number: '1.2.3', apify_user_id: 'User12345', pricing_fingerprint: 'a'.repeat(64), max_items: 20, maximum_usd: .05, memory_mb: 256, timeout_seconds: 120, reviewed_at: '2026-10-30T00:00:00Z' };
-const job: SocialJob = { id: 'one-job', source_key: 'x.com/source', platform: 'X', source_url: 'https://x.com/source', source_name: 'Source', window_from: '2026-10-30T00:00:00Z', window_to: '2026-10-31T00:00:00Z', state: 'claimed', lease_token: 'lease', reservation_id: 'reservation', provider_run_id: null, dataset_id: null, config: configuration };
+const job: SocialJob = { collection_job_id: 'ledger-job', id: 'one-job', source_key: 'x.com/source', platform: 'X', source_url: 'https://x.com/source', source_name: 'Source', window_from: '2026-10-30T00:00:00Z', window_to: '2026-10-31T00:00:00Z', state: 'claimed', lease_token: 'lease', reservation_id: 'reservation', provider_run_id: null, dataset_id: null, config: configuration };
 const row = { id: '123456789', url: 'https://x.com/source/status/123456789', author: { userName: 'source' }, createdAt: '2026-10-30T12:00:00Z', text: 'AeroBox has announced a quiet focus mode.' };
 function store(value: SocialJob | null = job): SocialStore { let claimed = false; return { sync: vi.fn(async () => 1), claim: vi.fn(async () => { if (claimed) return null; claimed = true; return value; }), launch: vi.fn(async () => true), run: vi.fn(async () => {}), finish: vi.fn(async () => {}) }; }
 describe('shared platform discovery contracts', () => {
@@ -9,7 +10,7 @@ describe('shared platform discovery contracts', () => {
   const queue=Array.from({length:7800},(_,index)=>({...job,id:'job-'+index,source_key:'x.com/source'+(index%3900),source_url:'https://x.com/source'+(index%3900),state:'running' as const,provider_run_id:'Run'+String(index).padStart(8,'0')}));
   const seen=new Set<string>();const fakeStore:SocialStore={sync:async()=>3900,claim:async()=>queue.shift()??null,launch:async()=>{throw Error('No external launch in synthetic capacity proof');},run:async()=>{},finish:async row=>{seen.add(row.id);}};
   const fetcher=vi.fn(async (url:RequestInfo|URL)=>new Response(JSON.stringify({data:{id:String(url).split('/').at(-1),actId:configuration.actor_id,userId:configuration.apify_user_id,buildId:configuration.build_id,status:'RUNNING'}})));
-  for(let tick=0;tick<12&&queue.length;tick++)await createSocialCollector({env:name=>name==='APIFY_API_TOKEN'?'fixture-token':undefined,store:fakeStore,fetcher,now:()=>0})();
+  for(let tick=0;tick<12&&queue.length;tick++)await createSocialCollector({ log: testRetrievalLog(), native: async () => [],env:name=>name==='APIFY_API_TOKEN'?'fixture-token':undefined,store:fakeStore,fetcher,now:()=>0})();
   expect(queue).toHaveLength(0);expect(seen.size).toBe(7800);expect(fetcher).toHaveBeenCalledTimes(7800);
  });
  it('canonicalizes source identities without merging names or account kinds', () => {
@@ -24,13 +25,14 @@ describe('shared platform discovery contracts', () => {
   expect(socialItemKey('LinkedIn', 'https://www.linkedin.com/posts/source_launch-activity-123456789-xyz')).toBe('linkedin:123456789');
  });
  it('bounds each Actor and disables expensive unrelated results', () => {
-  expect(socialActorInput(job)).toMatchObject({ mode: 'search', maxItems: 20, queryType: 'Latest' });
-  expect(socialActorInput(job)).toMatchObject({searchTerms:['from:source'],time:{sinceTime:String(Date.parse(job.window_from)/1000),untilTime:String(Date.parse(job.window_to)/1000)}});
+  expect(socialActorInput(job)).toMatchObject({ mode: 'profileTweets', maxItems: 20, queryType: 'Latest' });
+  expect(socialActorInput(job)).toMatchObject({twitterHandles:['source'],time:{sinceTime:String(Date.parse(job.window_from)/1000),untilTime:String(Date.parse(job.window_to)/1000)}});
   expect(socialActorInput({ ...job, platform: 'Instagram' })).toMatchObject({ resultsType: 'posts', resultsLimit: 20, onlyPostsNewerThan: new Date(job.window_from).toISOString() });
   expect(socialActorInput({...job,platform:'Instagram',window_from:'2026-10-30T00:00:00.000+00:00'})).toMatchObject({onlyPostsNewerThan:'2026-10-30T00:00:00.000Z'});
   expect(socialActorInput({ ...job, platform: 'LinkedIn' })).toMatchObject({ maxPosts: 20, scrapeComments: false, scrapeReactions: false });
   expect(() => socialActorInput({ ...job, config: { ...configuration, max_items: 0 } })).toThrow();
-  expect(socialActorInput({...job,platform:'Instagram',config:{...configuration,actor_ref:'yugenox/instagram-post-scraper'}})).toMatchObject({urls:[job.source_url],maxPosts:20,maxPostsPerProfile:20,newerThan:'2026-10-30',skipPinnedPosts:true,monitor:false});
+  expect(socialActorInput({...job,platform:'Instagram',config:{...configuration,actor_ref:'yugenox/instagram-post-scraper'}})).toMatchObject({urls:[job.source_url],maxPosts:20,maxPostsPerProfile:20,skipPinnedPosts:true,monitor:false});
+  expect(socialActorInput({...job,platform:'Instagram',config:{...configuration,actor_ref:'yugenox/instagram-post-scraper'}})).not.toHaveProperty('newerThan');
  });
  it('rejects demo, foreign author, missing date and out-of-window results', () => {
   const out = normalizeSocialDataset(job, [row, { ...row, demo: true }, { ...row, author: { userName: 'foreign' } }, { ...row, createdAt: null }, { ...row, createdAt: job.window_to }]);
@@ -59,18 +61,18 @@ describe('shared platform discovery contracts', () => {
   expect(normalizeSocialDataset(linkedin, [{ ...item, author: { linkedinUrl: 'https://www.linkedin.com/company/source/' } }]).items).toHaveLength(0);
  });
  it('keeps new launch stopped explicitly while allowing stored-run recovery', async () => {
-  const storage = store(null), fetcher = vi.fn(); await createSocialCollector({ store: storage, fetcher, env: () => 'false' })();
+  const storage = store(null), fetcher = vi.fn(); await createSocialCollector({ log: testRetrievalLog(), native: async () => [], store: storage, fetcher, env: () => 'false' })();
   expect(storage.sync).not.toHaveBeenCalled(); expect(storage.claim).toHaveBeenCalledWith(false); expect(fetcher).not.toHaveBeenCalled();
  });
  it('rounds real provider usage upward to the ledger precision before settling an existing run',async()=>{
   const storage=store({...job,state:'running',provider_run_id:'Run12345'});
-  const fetcher=vi.fn(async(input:RequestInfo|URL)=>String(input).includes('/datasets/')?Response.json([]):Response.json({data:{id:'Run12345',actId:configuration.actor_id,userId:configuration.apify_user_id,buildId:configuration.build_id,status:'SUCCEEDED',defaultDatasetId:'Dataset12345',usageTotalUsd:.00007906879155834517}}));
-  await createSocialCollector({store:storage,fetcher,env:()=> 'fixture-token'})();
+  const fetcher=vi.fn(async(input:RequestInfo|URL,_init?:RequestInit)=>String(input).includes('/datasets/')?Response.json([]):Response.json({data:{id:'Run12345',actId:configuration.actor_id,userId:configuration.apify_user_id,buildId:configuration.build_id,status:'SUCCEEDED',defaultDatasetId:'Dataset12345',usageTotalUsd:.00007906879155834517}}));
+  await createSocialCollector({ log: testRetrievalLog(), native: async () => [],store:storage,fetcher,env:()=> 'fixture-token'})();
   expect(storage.finish).toHaveBeenCalledWith(expect.anything(),[],expect.anything(),.000079068792,true);
  });
  it('reconciles an ambiguous start without ever issuing a second POST', async () => {
   const storage = store({ ...job, state: 'ambiguous' }), fetcher = vi.fn();
-  await createSocialCollector({ store: storage, fetcher, env: () => undefined })();
+  await createSocialCollector({ log: testRetrievalLog(), native: async () => [], store: storage, fetcher, env: () => undefined })();
   expect(fetcher).not.toHaveBeenCalled(); expect(storage.finish).toHaveBeenCalledWith(expect.anything(), [], expect.objectContaining({ reason: 'ambiguous_launch' }), null, false, 'ambiguous_launch');
  });
  it('fails closed before launch when reviewed account or price differs', async () => {
@@ -78,5 +80,52 @@ describe('shared platform discovery contracts', () => {
   const config = { ...configuration, pricing_fingerprint: socialPricingFingerprint(pricing) };
   const fetcher = vi.fn(async (input: string | URL | Request) => Response.json({ data: String(input).includes('users/me') ? { id: 'Wrong12345' } : String(input).includes('actor-builds') ? { id: config.build_id, actId: config.actor_id, buildNumber: config.build_number, status: 'SUCCEEDED' } : { id: config.actor_id, pricingInfos: [pricing] } }));
   await expect(verifySocialConfiguration(config, () => 'token', fetcher)).rejects.toMatchObject({ code: 'social_review_changed' });
+ });
+});
+
+describe('free-first social retrieval',()=>{
+ it('imports free attributable text without a provider preflight or paid launch',async()=>{
+  const storage=store(),log=testRetrievalLog(),fetcher=vi.fn();
+  await createSocialCollector({store:storage,log,fetcher,native:async()=>[row],env:()=>undefined})();
+  expect(fetcher).not.toHaveBeenCalled();expect(storage.launch).not.toHaveBeenCalled();
+  expect(storage.finish).toHaveBeenCalledWith(job,expect.arrayContaining([expect.objectContaining({itemKey:'x:123456789'})]),expect.objectContaining({retrieval:'native',accepted:1}),0,true);
+ });
+ it('retains known-run recovery without trying a free route or another POST',async()=>{
+  const native=vi.fn(),storage=store({...job,state:'running',provider_run_id:'Run12345'});
+  const fetcher=vi.fn(async(input:RequestInfo|URL,_init?:RequestInit)=>String(input).includes('/datasets/')?Response.json([row]):Response.json({data:{id:'Run12345',actId:configuration.actor_id,userId:configuration.apify_user_id,buildId:configuration.build_id,status:'SUCCEEDED',defaultDatasetId:'Dataset12345',usageTotalUsd:.001}}));
+  await createSocialCollector({store:storage,log:testRetrievalLog(),native,fetcher,env:()=> 'fixture-token'})();
+  expect(native).not.toHaveBeenCalled();expect(fetcher.mock.calls.every(call=>!(call[1]as RequestInit|undefined)?.method)).toBe(true);
+ });
+ it('reads and sanitizes Instagram blocked-route diagnostics',async()=>{
+  const {socialDiagnostics}=await import('../netlify/functions/_shared/social-collection');
+  const report={totals:{requests:6,requestsByQuery:{privateSource:{blocked:3,gated:true}}},queries:[{status:'empty',username:'private-follow-sentinel'}],notes:['private-cookie-sentinel']};
+  const output=await socialDiagnostics({...job,platform:'Instagram',config:{...configuration,actor_ref:'yugenox/instagram-post-scraper'}},{defaultKeyValueStoreId:'Store12345'},()=> 'token',async()=>Response.json(report));
+  expect(output).toMatchObject({report_present:true,blocked_requests:3,requests:6,empty_targets:1});
+  expect(JSON.stringify(output)).not.toContain('private-');
+ });
+});
+
+describe('paid fallback after free output is unusable',()=>{
+ it('runs one reviewed capped profile pull and saves its run reference before the launch log completes',async()=>{
+  const pricing={startedAt:'2026-01-01T00:00:00Z',pricingModel:'PAY_PER_EVENT'};
+  const config={...configuration,pricing_fingerprint:socialPricingFingerprint(pricing)};
+  const target={...job,config},storage=store(target),log=testRetrievalLog();
+  const run={id:'RunFallback123',actId:config.actor_id,userId:config.apify_user_id,buildId:config.build_id,status:'SUCCEEDED',defaultDatasetId:'Dataset12345',usageTotalUsd:.002};
+  const fetcher=vi.fn(async(input:RequestInfo|URL,init?:RequestInit)=>{
+   const url=String(input);
+   if(url.includes('/datasets/'))return Response.json([row]);
+   if(url.includes('/actor-runs/')||init?.method==='POST')return Response.json({data:run});
+   if(url.includes('/actor-builds/'))return Response.json({data:{id:config.build_id,actId:config.actor_id,buildNumber:config.build_number,status:'SUCCEEDED'}});
+   if(url.includes('/users/me'))return Response.json({data:{id:config.apify_user_id}});
+   return Response.json({data:{id:config.actor_id,username:'xquik',name:'x-tweet-scraper',pricingInfos:[pricing]}});
+  });
+  await createSocialCollector({store:storage,log,native:async()=>[],fetcher,env:()=> 'fixture-token'})();
+  const posts=fetcher.mock.calls.filter(call=>call[1]?.method==='POST');expect(posts).toHaveLength(1);
+  expect(new URL(String(posts[0][0])).searchParams.get('maxTotalChargeUsd')).toBe('0.05');
+  expect(JSON.parse(String(posts[0][1]?.body))).toMatchObject({mode:'profileTweets',twitterHandles:['source'],maxItems:20});
+  expect(storage.run).toHaveBeenCalledWith(target,run.id,run.defaultDatasetId);
+  const completedLaunch=vi.mocked(log.finish).mock.calls.findIndex(call=>call[1].provider_run_id===run.id);
+  expect(vi.mocked(storage.run).mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(log.finish).mock.invocationCallOrder[completedLaunch]);
+  expect(storage.finish).toHaveBeenCalledWith(target,expect.anything(),expect.objectContaining({retrieval:'apify',accepted:1}),.002,true);
  });
 });

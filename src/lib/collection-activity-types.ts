@@ -1,3 +1,4 @@
+import type { RetrievalAttempt } from './retrieval-types';
 export interface CollectionCostTotals {
   supplierCostUsd: number | null;
   knownCostCount: number;
@@ -48,7 +49,7 @@ export interface CollectionActivityEvent {
   linkedJobs: Array<{ id: string; providerRunId: string | null; status: string; supplierCostUsd: number | null }>;
   countsAsPull: boolean;
   unattributed: boolean;
-  details: { mode?: string; captionStatus?: string; gapPossible?: boolean; deferredCount?: number; invalidCount?: number; coverage?: string; httpNotModified?: boolean; reservedMaximumUsd?: number };
+  details: { attempts?: RetrievalAttempt[]; mode?: string; captionStatus?: string; gapPossible?: boolean; deferredCount?: number; invalidCount?: number; coverage?: string; httpNotModified?: boolean; reservedMaximumUsd?: number };
 }
 export interface ReaderCollectionPolicy {
   userId: string;

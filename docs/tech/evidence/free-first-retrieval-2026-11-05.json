@@ -1,0 +1,180 @@
+{
+  "kind": "local-implementation-and-verification",
+  "date": "2026-11-05",
+  "baseCommit": "9e61b30ea58397f4cc5086161b8cc50c7c12b33f",
+  "authorization": "YouTube then Instagram then X; free first, paid fallback under existing limits; backend attempt visibility",
+  "fullCheck": {
+    "passed": 3966,
+    "files": 127,
+    "localLog": ".local/retrieval-investigation-20261105/release-check.log"
+  },
+  "finalTargetedChecks": {
+    "passed": 168,
+    "files": 5,
+    "localLog": ".local/retrieval-investigation-20261105/targeted-final.log"
+  },
+  "finalSocialFallbackChecks": {
+    "passed": 16,
+    "files": 1,
+    "localLog": ".local/retrieval-investigation-20261105/fallback-integration-check.log"
+  },
+  "finalDiscoveryBudgetInputChecks": {
+    "passed": 26,
+    "files": 1,
+    "localLog": ".local/retrieval-investigation-20261105/discovery-budget-input-check.log"
+  },
+  "typecheck": "passed",
+  "cloudflareBuildAndWorkerd": [
+    {
+      "runtime": "workerd",
+      "checks": 16,
+      "passed": true,
+      "outboundNetwork": "blocked",
+      "productionCredentials": false
+    },
+    {
+      "runtime": "workerd",
+      "protectedAccountChecks": 5,
+      "totalWebChecks": 21,
+      "liveProviderRequests": 0,
+      "redirectedCredentials": false
+    },
+    {
+      "runtime": "workerd",
+      "activeHttpCompletionChecks": 5,
+      "totalWebChecks": 26,
+      "liveProviderRequests": 0,
+      "nativeVoidStatus": 204
+    },
+    {
+      "runtime": "workerd",
+      "jobsChecks": 7,
+      "liveProviderRequests": 0,
+      "queueMessagesSent": 0,
+      "redirectedCredentials": false,
+      "nativeVoidStatus": 204
+    },
+    {
+      "runtime": "workerd",
+      "sourceGatewayDisabled": true,
+      "containerStarted": false
+    }
+  ],
+  "sourceHashes": {
+    "netlify/functions/_shared/admin-handler.ts": "26bb431bdd5cf5814104d8f18534597890a1718a62ae080a806e777fd62c977a",
+    "netlify/functions/_shared/apify.ts": "ccb3c6c2e92007b06a5147437e10df9cb361e8c79222712745e1bfb3f7aa31eb",
+    "netlify/functions/_shared/collection-activity.ts": "8cc1c906787f3bb77521882f1b0b18bdb18c2a5c31e13d3f70b1b55be5b841bd",
+    "netlify/functions/_shared/hourly-collection.ts": "aec580c0a76930312236b3d624c0af8e272be2f7f84a7db8f96a38fa4aca4d1e",
+    "netlify/functions/_shared/native-social.ts": "c39b99934bfd6194c32e7f65dc75340a7598e43e5150e8f3cc6922445795d642",
+    "netlify/functions/_shared/retrieval-log.ts": "ad07211682e624ad6d3631fb39a338bf19ebc9fc8e475766a5690bc05e49945e",
+    "netlify/functions/_shared/social-collection.ts": "82afaad1e942ae6a873d62d2710c9654570e9e99e7ef71bc3cdab7dbf38b6a8c",
+    "netlify/functions/_shared/youtube-discovery.ts": "36c13b44a7cfac5b3e40c5a6e826ecc03bcd2c80331b57fc6f7935ae12c15a54",
+    "src/admin/AdminApp.tsx": "b4a8a4d0e14f3c0599b9b60e67b7c5f3c75637565acd173b42105a4d1298711a",
+    "src/admin/CollectionCosts.tsx": "f785823fd2625360b0c5079c21be58f698c6f926aec1bbd3013546741564ae63",
+    "src/admin/RetrievalAttempts.tsx": "2636254de7697d24425ce22b48f67322d932563d3acdcc8590041b3ebf102edb",
+    "src/lib/admin-types.ts": "b030b7f9a6ef1a9684f4a13f85adab76120a720f6e6d09e1ea43289b94da4c0c",
+    "src/lib/collection-activity-types.ts": "de829efd16b15782759d9fce6214edd14ac645a60b1bccdc3f17463b6e236928",
+    "src/lib/retrieval-types.ts": "e64057886267f1344b16c5eade2a1d3c74c13245ea4d1636deb032ce1f5b35dc",
+    "supabase/migrations/20261105011050_free_first_content_retrieval.sql": "24f145d6d66ca4847f5689914f24995323dbbce263281eb50b339295bb080dc4",
+    "tests/collection-activity.test.ts": "7aa8df611139e629e34664526b15a677c37284090608c3bb934a9ac93d7a4d82",
+    "tests/helpers/retrieval-log.ts": "fc562174af65428fd6673bd66dba51f2908ee7b50c84878aa2c412f1525c57c4",
+    "tests/hourly-caption-recovery-local-db.test.ts": "0cb807c8fc2ba6cb46eaa7560982e34e21fc3e8979b4f27aed2e2399e633d242",
+    "tests/hourly-caption-recovery.test.ts": "7dc970c39f33b13861e466baa306b00071e3dc4a45ec8c0992b2f193d48e42e0",
+    "tests/hourly-collection.test.ts": "0f99210fa81f218cc2f1b4c05361eae7abcfb55e5e83afdff708ef73f25529af",
+    "tests/hourly-provider-guards.test.ts": "14cd24162e1c86286203830825054c5f7dbf104518cfa4f4dc812208c9a0c2de",
+    "tests/native-social.test.ts": "9f92845db1c0b72856499e9c19c16d58c016dc1f90574a56178f127339413c88",
+    "tests/social-collection-local-db.test.ts": "ccedc740ee24692fbaba08117c6a642851c4e076f908b108d994ae418f76f538",
+    "tests/social-collection.test.ts": "5159c16c2d76f0380256020ab03cec5394f4e0531ad8144afe428ea4022fed39",
+    "tests/youtube-discovery.test.ts": "8cc9586ec4f5d47b143f2975ab759ac987befef08b544cac57f53e64eff7f16b"
+  },
+  "verificationNotes": [
+    "The full suite/build preceded the final item-target log field and additional fixed-input/integration case; final targeted checks, typecheck and Cloudflare build cover shipping changes.",
+    "Disposable database migrations applied only to newly created local clusters; no production migration.",
+    "Public free endpoint probes failed; no reliable free-content yield or paid-fallback improvement is claimed."
+  ],
+  "publicLocalProbe": {
+    "at": "2026-11-05T01:25:53.684Z",
+    "method": "direct local free-method probe of public NASA targets; no reader follows or production jobs",
+    "results": [
+      {
+        "platform": "YouTube",
+        "error": "source_transport_failed",
+        "http": null
+      },
+      {
+        "platform": "Instagram",
+        "error": "instagram_profile_unconfirmed",
+        "http": null
+      },
+      {
+        "platform": "X",
+        "error": "source_unavailable",
+        "http": 429
+      }
+    ],
+    "events": [
+      {
+        "id": "0",
+        "method": "instagram_public_profile",
+        "provider": "native",
+        "stage": "discovery",
+        "startedAt": "2026-11-05T01:25:52.721Z",
+        "status": "failed",
+        "error_code": "source_unavailable",
+        "http_status": 404,
+        "finishedAt": "2026-11-05T01:25:52.839Z"
+      },
+      {
+        "id": "1",
+        "method": "instagram_public_page",
+        "provider": "native",
+        "stage": "discovery",
+        "startedAt": "2026-11-05T01:25:52.839Z",
+        "status": "failed",
+        "error_code": "instagram_profile_unconfirmed",
+        "finishedAt": "2026-11-05T01:25:53.464Z"
+      },
+      {
+        "id": "2",
+        "method": "x_public_timeline",
+        "provider": "native",
+        "stage": "discovery",
+        "startedAt": "2026-11-05T01:25:53.464Z",
+        "status": "failed",
+        "error_code": "source_unavailable",
+        "http_status": 429,
+        "finishedAt": "2026-11-05T01:25:53.684Z"
+      }
+    ],
+    "paidLaunches": 0,
+    "databaseWrites": 0,
+    "modelCalls": 0,
+    "rawSourceBodiesStored": false,
+    "errorClassificationNote": "The observed generic YouTube fetch failure is now normalized to source_transport_failed in the shipping implementation; the probe preceded that normalization."
+  },
+  "runtimeChanges": {
+    "productionDatabaseWrites": 0,
+    "paidActorLaunches": 0,
+    "modelCalls": 0,
+    "productionWorkerInvocations": 0,
+    "emails": 0,
+    "supplierSubscriptions": 0
+  },
+  "newMeteredExecutionCostUsd": 0,
+  "readAndInfrastructureCost": "unmeasured",
+  "release": {
+    "productionMigration": "pending",
+    "deployment": "pending",
+    "hostedLogVisibility": "pending",
+    "paidFallbackContentProof": "pending",
+    "generatedSpeechAndImageExtraction": "not implemented in this increment"
+  },
+  "repository": {
+    "pr": "https://github.com/raduvlad92/recap/pull/12",
+    "basePr": "https://github.com/raduvlad92/recap/pull/11",
+    "implementationCommit": "a9709a44c4eda46abad71c86c242717f7cfff6db",
+    "ciObservedAt": "2026-11-05T01:39:09Z",
+    "applicationCi": "IN_PROGRESS",
+    "cloudflareVerificationCi": "IN_PROGRESS"
+  }
+}

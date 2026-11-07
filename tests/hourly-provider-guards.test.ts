@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it, vi } from 'vitest';
 import type { Source } from '../src/lib/types';
-import { normalizeYouTubeItems, pollStoredApify, verifyHourlyApifyConfiguration, YOUTUBE_ACTOR_ID } from '../netlify/functions/_shared/apify';
+import { normalizeYouTubeItems, startYouTubeDiscovery, pollStoredApify, verifyHourlyApifyConfiguration, YOUTUBE_ACTOR_ID } from '../netlify/functions/_shared/apify';
 import { conditionalFeedHeaders } from '../netlify/functions/_shared/feed';
 import { createCollectHandler } from '../netlify/functions/_shared/collect-handler';
 const source: Source = { id: 'real-channel', name: 'A channel', platform: 'YouTube', url: 'https://www.youtube.com/watch?v=abcdefghijk', creatorIds: [], status: 'ready' };
@@ -142,5 +142,34 @@ describe('terminal fee telemetry survives bounded original-result failures', () 
  it('keeps the current 200000-character output cap and explicit clipped coverage',()=>{
   const [update]=normalizeYouTubeItems([{url:source.url,title:'Synthetic',date:'2026-10-22T12:00:00Z',subtitles:[{srt:'1\n00:00:00,000 --> 00:00:02,000\n'+'x'.repeat(200001)}]}],source,1);
   expect(update.content).toHaveLength(200000);expect(update.coverage).toContain('clipped');
+ });
+});
+
+
+describe('bounded paid channel fallback',()=>{
+ it('retrieves at most three uploads with available captions under the existing build and a fixed cash cap',async()=>{
+  const fetcher=vi.fn(async(_url:RequestInfo|URL,_init?:RequestInit)=>body({data:{id:'RunDiscovery123',actId:YOUTUBE_ACTOR_ID,buildId:values.APIFY_YOUTUBE_BUILD_ID}}));
+  await startYouTubeDiscovery(source,'UCabcdefghijklmnopqrstuv','user_operator',env,fetcher);
+  const [url,init]=fetcher.mock.calls[0];const options=new URL(String(url)).searchParams;
+  expect(options.get('maxTotalChargeUsd')).toBe('0.02');expect(options.get('maxItems')).toBe('3');expect(options.get('restartOnError')).toBe('false');
+  expect(JSON.parse(String(init?.body))).toMatchObject({startUrls:[{url:'https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv'}],maxResults:3,transcriptionAndSubtitle:'ALWAYS_SUBTITLES',aiVideoDescription:false,aiVideoSummary:false});
+ });
+ const channelId = 'UCabcdefghijklmnopqrstuv';
+ const discoveryJob = { providerRunId: 'RunDiscovery123', actorId: YOUTUBE_ACTOR_ID, source: { ...source, url: 'https://www.youtube.com/channel/' + channelId }, maxItems: 3, ledgerId: 'a9a43a2a-c01a-40eb-ae1e-a1d41b52b901', discoveryChannelId: channelId };
+ const upload = { channelId, id: 'abcdefghijk', url: source.url, date: '2026-11-04T12:34:56Z', title: 'An attributable upload' };
+ const discoveryFetch = (row: unknown) => vi.fn(async (url: RequestInfo | URL) => String(url).includes('actor-runs/') ? body({ data: { id: discoveryJob.providerRunId, actId: YOUTUBE_ACTOR_ID, buildId: values.APIFY_YOUTUBE_BUILD_ID, status: 'SUCCEEDED', defaultDatasetId: 'Dataset1234567', usageTotalUsd: .004 } }) : body([row]));
+ it.each(['2026-11-04', '2026-11-04T12:34:56', '2026-02-30T12:34:56Z', undefined])('rejects an imprecise discovery date %s while preserving terminal fees', async date => {
+  const result = await pollStoredApify(discoveryJob, 'user_operator', env, discoveryFetch({ ...upload, date }));
+  expect(result).toMatchObject({ status: 'completed', contentError: 'provider_date_unconfirmed', telemetry: { cost: .004 } });
+  expect(result.result).toBeUndefined();
+ });
+ it.each([{ url: 'https://www.youtube.com/channel/' + channelId }, { url: 'https://www.youtube.com/playlist?list=PLabc' }, { url: 'https://www.youtube.com/watch?v=short' }, { url: source.url + '&v=lmnopqrstuv' }, { id: 'lmnopqrstuv' }, { videoId: 'lmnopqrstuv' }])('rejects a non-video or mismatched discovery identity %j', async patch => {
+  const result = await pollStoredApify(discoveryJob, 'user_operator', env, discoveryFetch({ ...upload, ...patch }));
+  expect(result).toMatchObject({ status: 'completed', contentError: 'provider_video_unconfirmed', telemetry: { cost: .004 } });
+  expect(result.result).toBeUndefined();
+ });
+ it.each([source.url, 'https://youtu.be/abcdefghijk', 'https://www.youtube.com/shorts/abcdefghijk'])('accepts matching upload identity and a zoned timestamp for %s', async url => {
+  const result = await pollStoredApify(discoveryJob, 'user_operator', env, discoveryFetch({ ...upload, url, date: '2026-11-04T12:34:56+02:30' }));
+  expect(result).toMatchObject({ status: 'completed', telemetry: { cost: .004 }, result: { updates: [{ url, publishedAt: '2026-11-04T10:04:56.000Z' }] } });
  });
 });

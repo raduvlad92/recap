@@ -1,3 +1,4 @@
+import { testRetrievalLog } from './helpers/retrieval-log';
 import { describe, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
 import { createHourlyCollector, dispatchHourly, followedHourlySources, hourlyItemKey, hourlyWorkerAuthorized, nativeHourlyCaptions, parseHourlyYouTubeFeed, resolveHourlyYouTubeChannel, type HourlyClaim, type HourlyPolicy, type HourlyStore, type StoredProviderJob } from '../netlify/functions/_shared/hourly-collection';
@@ -35,7 +36,7 @@ function setup(options: { policy?: HourlyPolicy; source?: Source; seen?: string[
  const savedSource = options.source || source;
  const currentClaim = { ...claim, source: savedSource, state: { ...claim.state, ...options.state } };
  const store: HourlyStore = { schedule: vi.fn(async () => [{ user_id: policy.user_id, source_id: savedSource.id }]), serviced: vi.fn(async () => {}), policies: vi.fn(async () => [options.policy || policy]), workspace: vi.fn(async () => workspace([savedSource])), claim: vi.fn(async () => currentClaim), seen: vi.fn(async () => new Set(options.seen || [])), pending: vi.fn(async () => options.pending || []), finish: vi.fn(async () => ({ retrievedCount: 1, importAccepted: true })), reserve: vi.fn(async () => ({ claimed: true, id: 'private-job-id', reservationId: '33333333-3333-4333-8333-333333333333' })), providerClaimed: vi.fn(async () => false), jobCost: vi.fn(async () => null), providerPatch: vi.fn(async () => {}) };
- const deps = { store, env: (key: string) => envValues[key], download: vi.fn(async () => ({ text: options.body ?? xml(), url: feedUrl, status: options.status ?? 200, contentType: 'application/atom+xml', etag: '"new"' })), captions: vi.fn(async () => null as Awaited<ReturnType<typeof nativeHourlyCaptions>>), preflight: vi.fn(async () => {}), startApify: vi.fn(async () => ({ status: 'running' as const, jobToken: 'never-public-token', providerRunId: 'providerRun123', message: 'pending' })), pollApify: vi.fn(async () => ({ status: 'completed', result: { source, updates: [{ ...update, contentKind: 'transcript' as const, content: 'Real source captions', videoFormat: { kind: 'regular' as const, basis: 'provider' as const } } as SourceUpdate], notice: 'Source captions' }, telemetry: { ledgerId: claim.checkId, providerRunId: 'providerRun123', cost: 0.004 } })), startJob: vi.fn(async () => '44444444-4444-4444-8444-444444444444'), finishJob: vi.fn(async () => {}), settleBudget: vi.fn(async () => ({} as never)), pause: vi.fn(async () => {}), now: () => 1000 };
+ const deps = { log: testRetrievalLog(), discover: vi.fn(async (): Promise<{updates:SourceUpdate[];gapPossible:boolean}> => { throw new CollectionError(422, 'youtube_discovery_unavailable', 'Fixture discovery failure'); }), startDiscovery: vi.fn(async () => ({ providerRunId: 'Discovery12345' })), store, env: (key: string) => envValues[key], download: vi.fn(async () => ({ text: options.body ?? xml(), url: feedUrl, status: options.status ?? 200, contentType: 'application/atom+xml', etag: '"new"' })), captions: vi.fn(async () => null as Awaited<ReturnType<typeof nativeHourlyCaptions>>), preflight: vi.fn(async () => {}), startApify: vi.fn(async () => ({ status: 'running' as const, jobToken: 'never-public-token', providerRunId: 'providerRun123', message: 'pending' })), pollApify: vi.fn(async () => ({ status: 'completed', result: { source, updates: [{ ...update, contentKind: 'transcript' as const, content: 'Real source captions', videoFormat: { kind: 'regular' as const, basis: 'provider' as const } } as SourceUpdate], notice: 'Source captions' }, telemetry: { ledgerId: claim.checkId, providerRunId: 'providerRun123', cost: 0.004 } })), startJob: vi.fn(async () => '44444444-4444-4444-8444-444444444444'), finishJob: vi.fn(async () => {}), settleBudget: vi.fn(async () => ({} as never)), pause: vi.fn(async () => {}), now: () => 1000 };
  return { deps, store, run: () => createHourlyCollector(deps)(), patch: () => vi.mocked(store.finish).mock.calls.at(-1)![1], updates: () => vi.mocked(store.finish).mock.calls.at(-1)![2] };
 }
 const pending = (patch: Partial<StoredProviderJob> = {}): StoredProviderJob => ({ id: 'private-job', user_id: policy.user_id, source_id: source.id, item_key: 'youtube:' + videoId, check_id: claim.checkId, job_id: '44444444-4444-4444-8444-444444444444', reservation_id: '33333333-3333-4333-8333-333333333333', actor_id: 'h7sDV53CddomktSi5', maximum_usd: 0.005, provider_run_id: 'providerRun123', job_token: 'private-only-token', state: 'running', actual_cost_usd: null, source_fingerprint: claim.state.fingerprint, discard_result: false, ...patch });
@@ -46,7 +47,7 @@ describe('hourly native freshness and exact original identity', () => {
   const w = workspace([source, { ...source, id: 'sample', status: 'sample' }, { ...source, id: 'unfollowed' }]); w.followedSourceIds = [source.id, 'sample', 'catalogue-only'];
   expect(followedHourlySources(w).map(s => s.id)).toEqual([source.id]);
  });
- it('disabled work requires no database configuration or provider request', async () => expect(await createHourlyCollector({ env: () => undefined })()).toMatchObject({ enabled: false, checked: 0 }));
+ it('disabled work requires no database configuration or provider request', async () => expect(await createHourlyCollector({ log: testRetrievalLog(), env: () => undefined })()).toMatchObject({ enabled: false, checked: 0 }));
  it('a leased/due source is skipped before any network call', async () => { const t = setup(); vi.mocked(t.store.claim).mockResolvedValue(null); expect(await t.run()).toMatchObject({ skipped: 1 }); expect(t.deps.download).not.toHaveBeenCalled(); });
  it('sends persisted exact feed validators and skips all caption/provider requests on 304', async () => { const t = setup({ status: 304 }); await t.run(); expect(t.deps.download).toHaveBeenCalledWith(feedUrl, 0, { etag: '"old"', lastModified: claim.state.last_modified }); expect(t.patch()).toMatchObject({ status: 'unchanged', http_status: 304 }); expect(t.deps.captions).not.toHaveBeenCalled(); expect(t.deps.startApify).not.toHaveBeenCalled(); });
  it('skips all downstream requests for an unchanged response body hash', async () => { const t = setup({ state: { content_hash: createHash('sha256').update(xml()).digest('hex') } }); await t.run(); expect(t.patch().status).toBe('unchanged'); expect(t.deps.captions).not.toHaveBeenCalled(); });
@@ -195,4 +196,32 @@ describe('native existing captions and authenticated background dispatch', () =>
  it('disabled schedule dispatch does not contact a worker', async () => { const fetcher = vi.fn(); expect(await dispatchHourly(() => undefined, fetcher)).toEqual({ dispatched: false }); expect(fetcher).not.toHaveBeenCalled(); });
  it('requires the server secret and POST; no browser identity can authorize work', () => { const env = (key: string) => key === 'HOURLY_COLLECTION_WORKER_SECRET' ? 's'.repeat(40) : undefined; expect(hourlyWorkerAuthorized(new Request('https://app.org', { method: 'POST', headers: { 'x-hourly-collection-secret': 's'.repeat(40) } }), env)).toBe(true); expect(hourlyWorkerAuthorized(new Request('https://app.org', { method: 'POST', headers: { 'x-hourly-collection-secret': 'é'.repeat(40) } }), env)).toBe(false); expect(hourlyWorkerAuthorized(new Request('https://app.org'), env)).toBe(false); });
  it('dispatches only to the fixed app-owned background path and expects 202', async () => { const fetcher = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(null, { status: 202 })); const env = (key: string) => ({ HOURLY_COLLECTION_ENABLED: 'true', APP_URL: 'https://recap.example.org/', HOURLY_COLLECTION_WORKER_SECRET: 's'.repeat(40) })[key]; expect(await dispatchHourly(env, fetcher)).toEqual({ dispatched: true }); expect(fetcher.mock.calls[0]?.[0]).toBe('https://recap.example.org/.netlify/functions/hourly-collection-worker'); });
+});
+
+describe('free-first discovery fallbacks and audit trail', () => {
+ it('uses free uploads after RSS fails and skips paid discovery when it succeeds', async () => {
+  const t=setup({policy:{...policy,provider_enabled:true}});
+  t.deps.download.mockRejectedValue(new CollectionError(422,'source_unavailable','Restricted feed',404));
+  t.deps.discover.mockImplementation(async()=>({updates:[update],gapPossible:true}));
+  t.deps.captions.mockResolvedValue({content:'Free public captions',coverage:'Existing captions',videoFormat:{kind:'regular',basis:'watch_page'}});
+  await t.run();
+  expect(t.patch()).toMatchObject({status:'partial',details:{mode:'youtube_public_uploads'}});
+  expect(t.updates()[0].content).toBe('Free public captions');
+  expect(t.deps.startDiscovery).not.toHaveBeenCalled();expect(t.store.reserve).not.toHaveBeenCalled();
+  expect(vi.mocked(t.deps.log.start).mock.calls.map(call=>call[1])).toEqual(['youtube_channel_identity','youtube_rss','youtube_public_uploads','youtube_native_captions']);
+  expect(t.deps.log.finish).toHaveBeenCalledWith(expect.any(String),expect.objectContaining({status:'failed',http_status:404}));
+ });
+ it('reserves paid channel discovery only after both free routes fail and keeps the RSS failure visible',async()=>{
+  const t=setup({policy:{...policy,provider_enabled:true}});
+  t.deps.download.mockRejectedValue(new CollectionError(422,'source_unavailable','Restricted feed',500));
+  await t.run();
+  expect(t.deps.startDiscovery).toHaveBeenCalledTimes(1);
+  expect(t.store.reserve).toHaveBeenCalledWith(expect.anything(),expect.stringMatching(/^youtube-discovery:UC/),expect.any(String),.02);
+  expect(t.patch()).toMatchObject({status:'failed',http_status:500,cost_status:'unknown',details:{providerJobs:[{providerRunId:'Discovery12345'}]}});
+ });
+ it('makes no fallback request when the failed free attempt cannot be logged',async()=>{
+  const t=setup({policy:{...policy,provider_enabled:true}});
+  vi.mocked(t.deps.log.start).mockRejectedValue(new CollectionError(503,'retrieval_log_unavailable','No log'));
+  await t.run();expect(t.deps.download).not.toHaveBeenCalled();expect(t.deps.discover).not.toHaveBeenCalled();expect(t.deps.startDiscovery).not.toHaveBeenCalled();
+ });
 });

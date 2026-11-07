@@ -1,3 +1,4 @@
+import { readRetrievalAttempts } from './retrieval-log';
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
 import { clerkRequest, database, requireAdmin, userSummary, type ClerkUser, type WorkspaceRow } from './admin-data';
 import { collectionHealth } from './collect-handler';
@@ -105,7 +106,7 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
     if(user)query=query.eq('user_id',user.slice(0,160));
     if(status)query=query.eq('status',status.slice(0,30));
     if(provider)query=query.eq('provider',provider.slice(0,30));
-    const result=await query;return success({jobs:unwrap(result) as CollectionJobRecord[],total:result.count,page,pageSize:50});
+    const result=await query, jobs=unwrap(result) as CollectionJobRecord[]; const attempts=await readRetrievalAttempts(db,'job_id',jobs.map(job=>job.id)); return success({jobs:jobs.map(job=>({...job,attempts:attempts.filter(attempt=>attempt.job_id===job.id)})),total:result.count,page,pageSize:50});
    }
    if(section==='audit') {const result=await db.from('admin_audit_events').select('id,admin_id,action,target_id,created_at',{count:'exact'}).order('created_at',{ascending:false}).range(page*50,page*50+49);return success({events:unwrap(result),total:result.count,page,pageSize:50});}
    throw new CollectionError(404,'unknown_section','This admin section does not exist.');
