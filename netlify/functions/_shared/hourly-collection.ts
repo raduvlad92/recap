@@ -318,7 +318,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      ...(references.length === 1 ? { job_id: references[0].jobId, provider_run_id: references[0].providerRunId } : {}) };
     details = { ...details, providerJobs: references, reservedUsd: references.reduce((sum, ref) => sum + ref.reservedUsd, 0) };
    }
-   for (const [key, update] of updates) if (update.contentKind === 'transcript' && update.content) {
+   for (const [key, update] of updates) if (source.platform === 'YouTube' && update.format === 'video' && update.contentKind === 'transcript' && update.content) {
     if (videoFormatKind(update) !== 'unknown') captionQueue.delete(key);
     else {
      // Captions and Shorts classification are independent. Keep a free format

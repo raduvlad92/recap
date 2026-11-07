@@ -72,6 +72,31 @@ describe('bounded hourly public originals', () => {
    await createHourlyCollector({ ...t.deps, download })(); expect(download).toHaveBeenCalledTimes(1); expect(t.updates()).toHaveLength(0); expect(t.patch().status).toBe('partial');
   }
  });
+ it('keeps publisher podcast speech out of YouTube classification retries on collection and later checks', async () => {
+  const podcast = { ...publication, platform: 'Podcast' as const };
+  const episodeUrl = 'https://publication.example/episode/one';
+  const transcriptUrl = episodeUrl + '.vtt';
+  const transcript = `WEBVTT\n\n00:00:00.000 --> 00:10:00.000\n${prose.repeat(100)}`;
+  const body = `<rss xmlns:podcast="https://podcastindex.org/namespace/1.0"><channel><item><title>Publisher episode</title><link>${episodeUrl}</link><pubDate>Sat, 07 Nov 2026 12:00:00 GMT</pubDate><description>Episode show notes</description><enclosure url="https://publication.example/episode/one.mp3" type="audio/mpeg"/><podcast:transcript url="${transcriptUrl}" type="text/vtt"/></item></channel></rss>`;
+  const first = setup({ source: podcast, state: { feed_url: feed } });
+  const download = vi.fn(async (url: string) => ({ text: url === feed ? body : transcript, url, status: 200, contentType: url === feed ? 'application/rss+xml' : 'text/vtt' }));
+  await createHourlyCollector({ ...first.deps, download })();
+  expect(download).toHaveBeenCalledTimes(2);
+  expect(first.updates()).toHaveLength(1);
+  expect(first.updates()[0]).toMatchObject({ format: 'podcast', contentKind: 'transcript', originalContent: { status: 'usable' } });
+  expect(first.patch().status).toBe('collected');
+  expect(first.patch()).toMatchObject({ pending_captions: [], cursor: { pendingOriginals: [] } });
+  const second = setup({ source: podcast, seen: [hourlyItemKey(episodeUrl)], status: 304, state: { feed_url: feed, cursor: first.patch().cursor as Record<string, unknown>, pending_captions: [] } });
+  const unchanged = vi.fn(async (url: string) => ({ text: '', url, status: 304, contentType: 'application/rss+xml' }));
+  await createHourlyCollector({ ...second.deps, download: unchanged })();
+  expect(unchanged).toHaveBeenCalledExactlyOnceWith(feed, 0, expect.any(Object));
+  expect(second.patch()).toMatchObject({ status: 'unchanged', pending_captions: [] });
+  expect(second.updates()).toHaveLength(0);
+  expect(first.deps.captions).not.toHaveBeenCalled();
+  expect(second.deps.captions).not.toHaveBeenCalled();
+  expect(first.deps.startApify).not.toHaveBeenCalled();
+  expect(second.deps.startApify).not.toHaveBeenCalled();
+ });
  it('does not repeat an uncertain durable attempt or invent usable content after parent import rejection', async () => {
   const t = setup({ source: publication, state: { feed_url: feed } });
   vi.mocked(t.deps.log.start).mockImplementation(async (_parent, method) => { if (method === 'public_article') throw new CollectionError(409, 'original_already_attempted', 'Retained attempt'); return 'fixture'; });

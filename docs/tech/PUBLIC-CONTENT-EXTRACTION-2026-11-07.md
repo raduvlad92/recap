@@ -71,6 +71,12 @@ Focused files: public-content, hourly-collection, social-content-local-db, hourl
 
  Intermediate regressions were corrected: date-changing database fixtures now respect archive date constraints, and the archive sanitizer retains the existing `contentKind` while preserving new provenance.
 
+## Parent review correction
+
+Independent read-only review of `b958337` found one P2 integration defect: the existing caption-independent video-format retry path also retained newly imported podcast transcripts. Podcast sources cannot service that YouTube queue; retaining whole episodes could eventually exhaust its existing 2 MB bound. The parent restricts that path to YouTube video updates. No second material blocker was found in the bounded review; SQL/ACL, current-source/hash/revision admission, financial holds and parser/downloader bounds were inspected separately from live acceptance.
+
+A collector regression failed before the fix with a usable 24k-character podcast transcript marked partial and retained under `video_format_unconfirmed`. After the fix, collection is successful with no pending captions; a later 304 makes no transcript refetch, caption request or paid call. Under supported Node 22, **130 tests / five files pass**, including hourly collection, public parsers/workerd, disposable PostgreSQL caption recovery and video classification. Typecheck passes. The original parser/workerd repeat also passed 41 tests / two files before this correction; counts overlap and are not added. The earlier 460-test run belongs to the implementation head; exact updated-head CI remains required. No live source/provider/model/database operation occurred.
+
 ## Native acceptance left to the parent
 
 1. Integrate with financial/transport/locale/lifecycle streams, preserve the explicit account-deletion guards, pass current CI and apply/verify the retrieval prerequisite plus this generated migration using the parent’s controlled migration process. No live schema was contacted here.
