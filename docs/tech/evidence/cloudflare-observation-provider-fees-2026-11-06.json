@@ -1,0 +1,158 @@
+{
+  "recordedAt": "2026-11-06T07:21:50.791Z",
+  "scope": "same-five-existing-runs-as-first-observation",
+  "metadataGetRequests": 8,
+  "providerRunsStarted": 0,
+  "manualFinancialWrites": 0,
+  "feesProvisionalNotInvoices": true,
+  "receipts": [
+    {
+      "family": "original-hold",
+      "platform": null,
+      "status": "SUCCEEDED",
+      "startedAt": "2026-11-02T09:05:13.265Z",
+      "finishedAt": "2026-11-02T09:05:14.623Z",
+      "providerReportedUsd": 0.0000734989750650194,
+      "ledgerReportedUsd": "0.000073498976",
+      "ledgerState": "settled",
+      "feeMatchesLedger": true,
+      "feeDifferenceUsd": "0.000000000000",
+      "providerMaximumUsd": 0.05,
+      "reservedMaximumUsd": "0.050000",
+      "providerCapWithinReservation": true,
+      "previousProviderReportedUsd": 0.0000734989750650194,
+      "previousLedgerReportedUsd": "0.000073498976"
+    },
+    {
+      "family": "original-hold",
+      "platform": null,
+      "status": "SUCCEEDED",
+      "startedAt": "2026-11-02T09:05:12.007Z",
+      "finishedAt": "2026-11-02T09:05:13.934Z",
+      "providerReportedUsd": 0.00008321147666871547,
+      "ledgerReportedUsd": "0.000083211477",
+      "ledgerState": "settled",
+      "feeMatchesLedger": true,
+      "feeDifferenceUsd": "0.000000000000",
+      "providerMaximumUsd": 0.05,
+      "reservedMaximumUsd": "0.050000",
+      "providerCapWithinReservation": true,
+      "previousProviderReportedUsd": 0.00008321147666871547,
+      "previousLedgerReportedUsd": "0.000083211477"
+    },
+    {
+      "family": "social",
+      "platform": "Instagram",
+      "status": "SUCCEEDED",
+      "startedAt": "2026-11-05T07:00:49.261Z",
+      "finishedAt": "2026-11-05T07:00:56.118Z",
+      "providerReportedUsd": 0.001,
+      "ledgerReportedUsd": "0.001000000000",
+      "ledgerState": "settled",
+      "feeMatchesLedger": true,
+      "feeDifferenceUsd": "0.000000000000",
+      "providerMaximumUsd": 0.01,
+      "reservedMaximumUsd": "0.010000",
+      "providerCapWithinReservation": true,
+      "previousProviderReportedUsd": 0.001,
+      "previousLedgerReportedUsd": "0.001000000000"
+    },
+    {
+      "family": "social",
+      "platform": "X",
+      "status": "SUCCEEDED",
+      "startedAt": "2026-11-05T07:15:24.392Z",
+      "finishedAt": "2026-11-05T07:15:25.549Z",
+      "providerReportedUsd": 0.00007068191767566734,
+      "ledgerReportedUsd": "0.000070681918",
+      "ledgerState": "settled",
+      "feeMatchesLedger": true,
+      "feeDifferenceUsd": "0.000000000000",
+      "providerMaximumUsd": 0.05,
+      "reservedMaximumUsd": "0.050000",
+      "providerCapWithinReservation": true,
+      "previousProviderReportedUsd": 0.00007068191767566734,
+      "previousLedgerReportedUsd": "0.000070681918"
+    },
+    {
+      "family": "hourly",
+      "platform": "YouTube",
+      "status": "SUCCEEDED",
+      "startedAt": "2026-11-05T04:00:41.377Z",
+      "finishedAt": "2026-11-05T04:00:57.379Z",
+      "providerReportedUsd": 0.004,
+      "ledgerReportedUsd": "0.000000000000",
+      "ledgerState": "settled",
+      "feeMatchesLedger": false,
+      "feeDifferenceUsd": "0.004000000000",
+      "providerMaximumUsd": 0.005,
+      "reservedMaximumUsd": "0.005000",
+      "providerCapWithinReservation": true,
+      "previousProviderReportedUsd": 0.004,
+      "previousLedgerReportedUsd": "0.000000000000"
+    }
+  ],
+  "currentPollingProviderReceipts": [
+    {
+      "providerStatus": "SUCCEEDED",
+      "providerFinishedAt": "2026-11-06T07:15:29.109Z",
+      "providerReportedUsd": 0.001,
+      "providerMaximumUsd": 0.01,
+      "reservedMaximumUsd": "0.010000",
+      "databaseState": "running",
+      "databaseCreatedAt": "2026-11-06 07:15:19.730903+00",
+      "nextPollAt": "2026-11-06 07:20:21.208597+00",
+      "leaseUntil": "2026-11-06 07:15:21.208597+00"
+    },
+    {
+      "providerStatus": "SUCCEEDED",
+      "providerFinishedAt": "2026-11-06T07:15:33.001Z",
+      "providerReportedUsd": 0.001,
+      "providerMaximumUsd": 0.01,
+      "reservedMaximumUsd": "0.010000",
+      "databaseState": "running",
+      "databaseCreatedAt": "2026-11-06 07:15:21.412081+00",
+      "nextPollAt": "2026-11-06 07:20:22.530444+00",
+      "leaseUntil": "2026-11-06 07:15:22.530444+00"
+    },
+    {
+      "providerStatus": "SUCCEEDED",
+      "providerFinishedAt": "2026-11-06T07:15:43.427Z",
+      "providerReportedUsd": 0.0021999999999999997,
+      "providerMaximumUsd": 0.01,
+      "reservedMaximumUsd": "0.010000",
+      "databaseState": "running",
+      "databaseCreatedAt": "2026-11-06 07:15:23.007149+00",
+      "nextPollAt": "2026-11-06 07:20:23.94957+00",
+      "leaseUntil": "2026-11-06 07:15:23.94957+00"
+    }
+  ],
+  "normalReconciliationReadback": {
+    "at": "2026-11-06T07:27:51.441598+00:00",
+    "socialFrames": [
+      {
+        "state": "completed",
+        "created_at": "2026-11-06T07:20:14.626729+00:00",
+        "updated_at": "2026-11-06T07:20:18.637377+00:00"
+      },
+      {
+        "state": "completed",
+        "created_at": "2026-11-06T07:25:15.445363+00:00",
+        "updated_at": "2026-11-06T07:25:22.416705+00:00"
+      }
+    ],
+    "observedPollingJobs": [
+      {
+        "jobs": 3,
+        "state": "completed",
+        "settled": 3,
+        "still_held": 0,
+        "finished_at": "2026-11-06T07:25:20.099712+00:00",
+        "reported_usd": "0.004200000000"
+      }
+    ],
+    "activeOlderThan15Minutes": 0
+  },
+  "unresolvedFeeDifferenceUsd": "0.004000000000",
+  "fullHistoricalFeeAuditPerformed": false
+}

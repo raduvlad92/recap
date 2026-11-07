@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-11-07T21:22:35.820291+00:00",
+  "pullRequest": "https://github.com/raduvlad92/recap/pull/17",
+  "implementationHead": "40786591d0edfceaf078e3656c1f2bdec4e37f3e",
+  "integratedHead": "a7bbd8a0e04fb28b9f2caef2e08caa8f30383951",
+  "integratedMain": "182457410f7f8e979348d10347fe50b1e94b295b",
+  "base": "main",
+  "independentReview": "GO for scoped inactive backend integration; no material blocker",
+  "mergeConflict": "jobs import block; kept lifecycle worker and recovery RuntimeControl type",
+  "parentChecks": {
+    "testsPassed": 153,
+    "testFiles": 7,
+    "node": "22.22.3",
+    "typecheckBuildAndCloudflareChecksPassed": true,
+    "workerdWeb": 26,
+    "workerdJobs": 11,
+    "disabledSourceGuardPassed": true,
+    "liveNetworkingBlocked": true
+  },
+  "implementationReportedChecks": {
+    "regressionTestsPassed": 4045,
+    "files": 131,
+    "focusedPostgresCases": 49,
+    "countsOverlap": true
+  },
+  "currentHeadCI": "required after push; not refreshed at checkpoint",
+  "activationFlags": "unconfigured/off",
+  "pending": [
+    "confirmation/reverification/cache cleanup",
+    "joint identity-alias and extraction deletion integration",
+    "migration/ACL/row preservation before auth deployment",
+    "native disposable identity and retention/external-erasure/quarantined-restore proof",
+    "independent tombstone custody"
+  ],
+  "productionMigrationPerformed": false,
+  "realReaderDeletionPerformed": false,
+  "productionDeploymentPerformed": false,
+  "automaticRetentionExpiryActivated": false,
+  "financialHoldsReleased": false
+}

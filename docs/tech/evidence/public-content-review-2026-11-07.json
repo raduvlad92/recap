@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-11-07T21:09:55.918651+00:00",
+  "pullRequest": "https://github.com/raduvlad92/recap/pull/16",
+  "implementationHead": "b9583376cd82e04683b4297da7d75afbee3eb567",
+  "currentHead": "7bb597a3d2a21ce9884bd621dba05eed370c26ce",
+  "implementationLocalEvidence": {
+    "testsPassed": 460,
+    "files": 18,
+    "logsInspectedByParent": true,
+    "cloudflareRuntimePassed": true
+  },
+  "independentReview": {
+    "originalHeadResult": "NO-GO until podcast video-retry queue fix",
+    "finding": "P2: podcast transcripts retained in unserviceable YouTube format queue",
+    "otherMaterialBlockersFound": false,
+    "liveCalls": false
+  },
+  "parentCorrection": {
+    "failingRegressionReproduced": true,
+    "change": "Only YouTube video transcripts enter video-format retries",
+    "affectedTestsPassed": 130,
+    "files": 5,
+    "node": "22.22.3",
+    "typecheckPassed": true,
+    "finalSingleRegressionRepeatPassed": true,
+    "countsOverlap": true
+  },
+  "currentHeadCI": "required after push; not refreshed at checkpoint",
+  "mergeState": "draft; integration behind controlled backend recovery and joint lifecycle checks",
+  "nativeCoverage": "unverified; synthetic/local checks only",
+  "productionMigrationPerformed": false,
+  "productionDeploymentPerformed": false,
+  "sourceProviderOrModelExecutionPerformed": false,
+  "newServiceOrSubscription": false,
+  "financialCapsOrHoldsChanged": false,
+  "remindersEnabled": false
+}

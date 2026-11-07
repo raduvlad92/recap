@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-11-07T20:33:42.516Z",
+  "pullRequest": "https://github.com/raduvlad92/recap/pull/12",
+  "head": "748216ab9e75375612fb9a608e8b333d7e511d6d",
+  "merge": "d1d4914f620227c80ed0387384c6b2c2bcda1f96",
+  "reportedChecksPassed": 8,
+  "merged": true,
+  "automaticDeploymentSelection": "paused",
+  "postMergeHealth": {
+    "http": 200,
+    "hosting": {
+      "provider": "cloudflare",
+      "mode": "active",
+      "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+      "jobsConfigured": true
+    }
+  },
+  "productionMigrationPerformed": false,
+  "productionRecoveryPerformed": false,
+  "productionDeploymentPerformed": false,
+  "childPullRequestsRetargetedToMain": [
+    13,
+    14,
+    15
+  ]
+}
