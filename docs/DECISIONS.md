@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 7 November 2026 — execution details preserve existing decisions
+
+The actual native recovery uses the existing bounded consumer to drain cron-propagated business ticks before pausing admission. No source/model cap, reminder preference or review gate changes. Normal admitted draining can settle fees and reserve new provider jobs; retain that evidence separately from manual execution and preserve every new unknown hold. Recovery records legacy frames as uncertain with immutable evidence, without inventing message IDs or replaying business work. These are implementation safeguards within the founder-authorized delivery, not a new spending/launch/retention decision. Identity/lifecycle activation and expiry remain off. [Native execution receipt](tech/evidence/recovery-native-window-2026-11-07.json).
+
 ## 7 November 2026 — retain archive provenance after safe paused refusal
 
 Automatic main preparation produces verified builds but its existing deploy wrapper deliberately refuses a shadow candidate over active hosting when selection is paused. Retain this safety refusal. Obtain ready provenance through the already-supported manual artifact-only workflow instead of accepting a failed overall run or altering checks. Persist/acknowledge one dispatch intent, reconcile its exact native run, and leave runtime/delivery unchanged. [Refusal and acknowledged continuation](tech/evidence/recovery-artifact-only-dispatch-2026-11-07.json).

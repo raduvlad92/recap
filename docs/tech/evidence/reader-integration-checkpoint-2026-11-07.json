@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-07",
+  "originalContent": {
+    "pr": 16,
+    "head": "7bb597a3d2a21ce9884bd621dba05eed370c26ce",
+    "ready": true,
+    "reportedChecksPassed": 8,
+    "applicationWorkflow": 42414452848,
+    "cloudflareWorkflow": 42414452988,
+    "jointLifecycleLocalCommit": "db1a70cfb439ed1e41f4696be0a77661e5f752b9",
+    "jointTestsPassed": 275,
+    "jointFiles": 10,
+    "nodeVersion": "22.22.3",
+    "typecheckBuildAndWorkerdPassed": true,
+    "webCases": 26,
+    "jobsCases": 11,
+    "jointBranchPushed": false,
+    "publishedHeadUnchanged": true
+  },
+  "identity": {
+    "pr": 19,
+    "head": "c8dafc474fd4dad0254c0dffe48d5ffe8680c408",
+    "ready": true,
+    "review": "GO for inactive foundation",
+    "applicationWorkflow": {
+      "id": 42416226850,
+      "conclusion": "success"
+    },
+    "cloudflareWorkflow": {
+      "id": 42416227035,
+      "conclusion": "success"
+    },
+    "returnedComments": 0,
+    "parentFocusedTestsPassed": 141,
+    "parentFiles": 10,
+    "actualLifecycleCasesIncluded": 6,
+    "activation": "off: legacy mode, empty aliases and trust, lifecycle_ready=false",
+    "remaining": [
+      "Tombstone-aware status and replay resolution",
+      "Native deletion across all frozen aliases",
+      "Actual issuer/key/Supabase pairing and existing-reader ownership proofs"
+    ]
+  },
+  "scope": "Engineering/CI and local integration evidence. No migration, identity activation, reader deletion, merge or deployment of these increments.",
+  "integrationOrder": "Remain behind fixed core recovery/release; parent owns shared tracking documents."
+}

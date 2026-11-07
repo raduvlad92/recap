@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-07T22:44:12Z",
+  "targetCommit": "182457410f7f8e979348d10347fe50b1e94b295b",
+  "servingRelease": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+  "activeArtifact": {
+    "workflowRun": 42415988917,
+    "artifactId": 13591956310,
+    "zipSha256": "1a4934a2c995b628a7c6ef368424ac8a50ae580e93406f67480794e9cdf01e1b",
+    "nativeArtifactDigest": "2f71107cc23b7972578aa96c21c750135d3dc94f58ee9d40308e4a9175fcd32a",
+    "allManifestFilesVerified": true,
+    "deploymentSkipped": true
+  },
+  "window": {
+    "operation": "35a3fc0f-1df5-4741-a56c-a74fe9870bf4",
+    "phase": "drained",
+    "workflowDisabled": true,
+    "targetUnchanged": true
+  },
+  "nativeStop": {
+    "originalSchedulesAcknowledgedAt": "2026-11-07T21:58:04.287878Z",
+    "firstConsumerRemovedAt": "2026-11-07T22:03:40.772156Z",
+    "propagatedTickCreatedAt": "2026-11-07T22:05:15Z",
+    "bridgeOperation": "4ba2a239-73ea-4572-9226-0bfcd5ccd4a8",
+    "bridge": "Restored the same bounded consumer only; crons remained absent. Existing business frames drained normally before retrying the unchanged pause intent.",
+    "admissionPausedAt": "2026-11-07T22:20:39.525548Z",
+    "latestConsumerRemovedAt": "2026-11-07T22:22:55.049137Z",
+    "quietNotBefore": "2026-11-07T22:39:55.050Z",
+    "currentCronAndConsumersAbsent": true,
+    "queuePullPurgeOrReplay": false
+  },
+  "control": {
+    "owner": "cloudflare",
+    "epoch": 3,
+    "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+    "paused": true,
+    "oldHostFenced": true,
+    "revision": "434666c5-2596-43dc-9023-cb26f2a398c5"
+  },
+  "migration": {
+    "version": "20261107200416",
+    "name": "hosting_transport_recovery",
+    "rehearsed": true,
+    "applied": true,
+    "sourceSha256": "b51120f226e4ef542e7a5b92d8b8bf4c49323c6dcc7bbbece8f656aa1d0028e1",
+    "originalPublicRowsAndSecurityPreserved": true,
+    "newTablesPrivate": true,
+    "otherCoreMigrationsApplied": false
+  },
+  "automaticRecovery": {
+    "operation": "bc313984-67d2-4416-bfc4-a366f2e6ef9b",
+    "originalFrames": 96,
+    "expiredRunning": 1,
+    "unstartedQueued": 95,
+    "phase": "applying",
+    "dispositions": "uncertain: expired_outcome_unknown or superseded_unstarted; original frame and lease evidence retained",
+    "businessReplay": false,
+    "nativeMessageIdentity": "not_observed for legacy frames; no ID invented"
+  },
+  "preservation": {
+    "originalSourceReservationRows": 19,
+    "originalSourceReservationFieldsExact": true,
+    "originalUnknownModelRows": 7,
+    "originalUnknownModelFullRowsExact": true,
+    "workspaces": 3,
+    "workspaceFullRowsExact": true,
+    "modelCalls": 967,
+    "modelCommitmentUsd": "9.918486404",
+    "modelCapUsd": "10",
+    "unknownSourceReservations": 20,
+    "reminders": false
+  },
+  "normalBridgeActivity": {
+    "manualProviderOrModelStarts": 0,
+    "olderRecentReservationsSettled": 3,
+    "reportedFeesUsd": "0.003",
+    "newNormalSocialJobs": 3,
+    "newHoldsUsd": "0.070000",
+    "newFeeEvidence": null,
+    "newYoutubeOrModelJobs": 0,
+    "capsAndFlagsUnchanged": true
+  },
+  "limits": [
+    "This receipt predates completion of automatic dispositions.",
+    "The typed PostgreSQL preservation check, not a string timestamp comparison, confirms original source reservations.",
+    "Dead-letter messages are retained; their count is not a frame identity mapping.",
+    "No new code deployment, retrieval/fee migration, fee correction or useful-content proof is claimed."
+  ]
+}
