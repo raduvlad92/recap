@@ -28,7 +28,7 @@ describe.skipIf(!available)('reader identity on disposable socket-only PostgreSQ
    grant usage on schema public,auth to anon,authenticated,service_role; grant execute on function auth.jwt() to anon,authenticated,service_role;
    alter default privileges in schema public grant all on tables to service_role;`);
   const dir = new URL('../supabase/migrations/',import.meta.url);
-  for (const file of readdirSync(dir).filter(f=>f.endsWith('.sql')&&f!==migration).sort()) sql(readFileSync(new URL(file,dir),'utf8'));
+  for (const file of readdirSync(dir).filter(f=>f.endsWith('.sql')&&f<migration).sort()) sql(readFileSync(new URL(file,dir),'utf8'));
   const state = {...createDefaultWorkspace(), sourceCollections: []};
   for (const id of ['synthetic-owner-a','synthetic-owner-b','synthetic-provider-a']) {
    sql(`insert into reader_workspaces(user_id,state)values('${id}',${q(state)});
@@ -51,6 +51,7 @@ describe.skipIf(!available)('reader identity on disposable socket-only PostgreSQ
     end loop;return result;
    end$$;`);
   before = snapshot(); sql(readFileSync(new URL(migration,dir),'utf8'));
+  for (const file of readdirSync(dir).filter(f=>f.endsWith('.sql')&&f>migration).sort()) sql(readFileSync(new URL(file,dir),'utf8'));
   initialConfig=sql("select mode||':'||lifecycle_ready||':'||(select count(*)from recap_internal.reader_identity_issuers)||':'||(select count(*)from recap_internal.reader_identity_aliases) from recap_internal.reader_identity_settings;");
   originalGuard=sql("select pg_get_functiondef('recap_internal.reader_identity_allowed(text,text,text)'::regprocedure);");
   lifecycleInstalled=sql("select to_regclass('recap_internal.account_deletions') is not null;")==='t';

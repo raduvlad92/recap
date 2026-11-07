@@ -1,6 +1,8 @@
 # Account lifecycle backend — 7 November 2026
 
-Implementation-only increment in `t3/account-lifecycle-backend`, prepared from `748216a` on `feat/free-first-retrieval`. This document does not attest a hosted release. Shared STATUS/PLAN/DECISIONS/DEMO and frontend files are parent-owned and unchanged. No production database/API/Clerk/provider/model requests, credentials, runtime/cap changes, email, account deletion, hosted migration application or deployment were performed. All identities, native replies and retention attestations exercised below are synthetic local fixtures.
+The final inactive PR17/PR19 integration and completed confirmation/cache/all-alias implementation are documented in [the combined flow handoff](ACCOUNT-DELETION-FLOW-2026-11-07.md). Earlier implementation checkpoints and their test counts below remain historical.
+
+Implementation-only increment in `t3/account-lifecycle-backend`, prepared from `748216a` on `feat/free-first-retrieval`. This document does not attest a hosted release. Shared STATUS/PLAN/DECISIONS/DEMO remain parent-owned. The original backend checkpoint left frontend work to the parent; the subsequent delegated integration now implements it as recorded in the combined handoff. No production database/API/Clerk/provider/model requests, credentials, runtime/cap changes, email, account deletion, hosted migration application or deployment were performed. All identities, native replies and retention attestations exercised below are synthetic local fixtures.
 
 ## Request and access contract
 

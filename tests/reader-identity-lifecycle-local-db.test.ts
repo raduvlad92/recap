@@ -52,11 +52,11 @@ describe.skipIf(!available||!lifecycleAvailable)('identity against the actual PR
   expect(sql(`select count(*)from recap_internal.reader_identity_aliases where owner_id='${ownerA}';`)).toBe('2');
  });
  it('denies a tombstoned frozen provider identity even when the proposed stable target remains active',()=>{
-  configure();service(deletion(ownerB,'user_frozenProvider'));
+  configure();service(bind('user_frozenProvider',ownerB));service(deletion(ownerB,'user_frozenProvider'));
   expect(service(`select account_access_allowed('${ownerA}');`)).toBe('t');expect(()=>service(bind('user_frozenProvider'))).toThrow(/PT403/);
  });
  it('uses stable ownership in PR17 restrictive RLS, avoiding a same-subject different-issuer collision',()=>{
-  configure();service(bind());service(deletion(subject,'user_otherOriginal',issuerB));
+  configure();service(bind());service(bind('user_otherOriginal',subject,issuerB));service(deletion(subject,'user_otherOriginal',issuerB));
   expect(service(`select account_access_allowed('${subject}');`)).toBe('f');
   expect(own('select current_reader_owner();')).toBe(ownerA);expect(own('select user_id from reader_workspaces;')).toBe(ownerA);
  });
@@ -67,11 +67,53 @@ describe.skipIf(!available||!lifecycleAvailable)('identity against the actual PR
   child.stdin.end(`begin;set local role service_role;${query}\n\\echo identity-held\nselect pg_sleep(0.6);commit;`);await ready;return {done};
  }
  it('uses the real nonblocking owner barrier when deletion already holds its exclusive side',async()=>{
-  configure();const {done}=await heldTransaction(deletion());
+  configure();service(bind());const {done}=await heldTransaction(deletion());
   expect(()=>service(bind())).toThrow(/PT409/);await done;expect(()=>service(bind())).toThrow(/PT403/);
  });
  it('prevents accepting deletion while alias binding holds the shared writer barrier',async()=>{
   configure();const {done}=await heldTransaction(bind());
   expect(()=>service(deletion())).toThrow(/PT409/);await done;service(deletion());expect(own('select current_reader_owner();')).toBe('');
  });
+ it('freezes revoked and disabled aliases, resolves only their own tombstone, and requires native proof for every alias',()=>{
+  configure();service(bind());service(bind('user_revokedAlias',ownerA,issuerB));
+  service(`select revoke_reader_identity_alias('${issuerB}','user_revokedAlias','synthetic-operator','synthetic-revocation');`);
+  service(deletion());
+  expect(sql(`select count(*)from recap_internal.account_deletion_identities;`)).toBe('2');
+  expect(service(`select resolve_account_deletion_owner('${issuerB}','user_revokedAlias');`)).toBe(ownerA);
+  expect(service(`select resolve_account_deletion_owner('${issuerB}','user_unknown');`)).toBe('');
+  expect(own('select current_reader_owner();','user_revokedAlias',issuerB)).toBe('');
+  expect(()=>own(`select resolve_account_deletion_owner('${issuerB}','user_revokedAlias');`)).toThrow(/42501/);
+  expect(()=>own('select *from recap_internal.account_deletion_identities;')).toThrow(/42501/);
+  expect(()=>sql('delete from recap_internal.account_deletion_identities;')).toThrow(/PT409/);
+  const c=JSON.parse(service('select claim_account_deletion();'));
+  const advance=`select advance_account_deletion('${c.id}','${c.lease_token}','identity_deleted');`;
+  expect(()=>service(advance)).toThrow(/PT409/);
+  const proof=(sub:string,iss:string)=>`select record_account_deletion_identity_step('${c.id}','${c.lease_token}','${iss}','${sub}','deleted');`;
+  expect(()=>service(proof('user_wrongAlias',issuerA))).toThrow(/PT400/);
+  service(proof(subject,issuerA));expect(()=>service(advance)).toThrow(/PT409/);
+  service(proof('user_revokedAlias',issuerB));service(advance);
+  expect(sql('select identity_deleted_at is not null from recap_internal.account_deletions;')).toBe('t');
+  service(`select requeue_account_deletion_after_restore('${c.id}');`);
+  const next=JSON.parse(service('select claim_account_deletion();'));
+  expect(next.restore_generation).toBe(1);expect(next.identities.every((i:any)=>i.deleted===false)).toBe(true);
+  expect(()=>service(`select advance_account_deletion('${next.id}','${next.lease_token}','identity_deleted');`)).toThrow(/PT409/);
+  expect(sql('select count(*)from recap_internal.account_deletion_identity_steps where step=\'deleted\';')).toBe('2');
+ });
+ it('rejects a mismatched stable owner and cannot link any frozen alias to a new active owner',()=>{
+  configure();service(bind());service(bind('user_oldAlias',ownerA,issuerB));
+  expect(()=>service(deletion(ownerB))).toThrow(/PT403/);service(deletion());
+  expect(()=>service(bind('user_oldAlias',ownerB,issuerB))).toThrow(/PT403/);
+  expect(service(`select account_access_allowed('${ownerB}');`)).toBe('t');
+ });
+
+ it('fails closed on conflicting restored alias custody rather than silently dropping a locator from the deletion snapshot',()=>{
+  configure();service(bind());service(bind('user_otherAlias',ownerB,issuerB));service(deletion());
+  // Deliberately corrupt a restored alias with the owner-only test connection;
+  // ordinary readers and service-role callers cannot directly make this edit.
+  sql(`update recap_internal.reader_identity_aliases set owner_id='${ownerB}'where issuer='${issuerA}'and subject='${subject}';`);
+  expect(()=>service(deletion(ownerB,'user_otherAlias',issuerB,'10000000-0000-4000-8000-000000000002'))).toThrow(/23505/);
+  expect(service(`select account_access_allowed('${ownerB}');`)).toBe('t');
+  expect(sql(`select count(*)from recap_internal.account_deletions;`)).toBe('1');
+ });
+
 });

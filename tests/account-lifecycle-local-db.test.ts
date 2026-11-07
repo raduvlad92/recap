@@ -18,7 +18,10 @@ describe.skipIf(!available)('account lifecycle, disposable PostgreSQL only', () 
   const request = () => data(`select request_account_deletion(${deletionArgs()});`);
   const claim = () => data('select claim_account_deletion();');
   const erase = (c: any) => data(`select erase_account_payloads(${q(c.id)},${q(c.lease_token)});`);
-  const step = (c: any, name: string) => data(`select advance_account_deletion(${q(c.id)},${q(c.lease_token)},${q(name)});`);
+  const step = (c: any, name: string) => {
+    if (name === 'identity_deleted') for (const identity of c.identities) service(`select record_account_deletion_identity_step(${q(c.id)},${q(c.lease_token)},${q(identity.issuer)},${q(identity.subject)},'deleted');`);
+    return data(`select advance_account_deletion(${q(c.id)},${q(c.lease_token)},${q(name)});`);
+  };
   const call = (job: string | null = null, settled = false) => service(`insert into reader_content_analysis_calls(job_id,user_id,call_key,lease_token,model,source_revision,maximum_usd,state,actual_usd,observed_usd,result,usage,provider_id)
     values(${job ? q(job) : 'null'},${q(owner)},'fixture-call',gen_random_uuid(),'deepseek/deepseek-v4.1-flash-1017',repeat('a',64),.012345678901,${q(settled ? 'settled' : 'unknown')},${settled ? '.004000000001' : 'null'},.003,${j({ value: 'Private model result sentinel' })},${j({ prompt_tokens: 17, private_raw: 'Private prompt sentinel' })},'gen-fixture') returning id;`);
   async function heldTransaction(query: string) {

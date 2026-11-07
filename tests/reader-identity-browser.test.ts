@@ -13,6 +13,7 @@ vi.mock('../src/lib/auth',()=>({useRecapAuth:()=>h.auth}));
 import { useReaderOwner } from '../src/lib/reader-identity';
 import { useWorkspace } from '../src/lib/workspace';
 import { createDefaultWorkspace } from '../src/lib/fixtures';
+import { clearUnacceptedDeletion, suppressDeletedWorkspace } from '../src/lib/account-deletion';
 function deferred<T>() { let resolve!:(v:T)=>void; const promise=new Promise<T>(r=>resolve=r);return{promise,resolve}; }
 function render<T>(fn:()=>T):T { h.index=0;const result=fn();h.effects.splice(0).forEach(f=>f());return result; }
 async function tick() { for(let n=0;n<3;n++)await new Promise(r=>setImmediate(r)); }
@@ -63,4 +64,24 @@ it('touches no cache or remote workspace before resolution; reads/writes stable 
  const before=JSON.stringify([...storage.entries()]);oldSave.resolve({data:{updated_at:'2026-11-02T00:00:00Z'},error:null});await tick();workspace=read();
  expect(JSON.stringify([...storage.entries()])).toBe(before);expect(workspace.state.settings.deliveryTime).toBe('09:15');
  expect(persisted).not.toContain('synthetic-provider-subject');expect(fetch).not.toHaveBeenCalled();
+});
+
+it('fences current and late browser mutations before rendering when deletion dispatch becomes uncertain, and never restores erased cache from a late save',async()=>{
+ const storage=new Map<string,string>(),target=new EventTarget();
+ vi.stubGlobal('localStorage',{getItem:(k:string)=>storage.get(k)??null,setItem:(k:string,v:string)=>storage.set(k,v),removeItem:(k:string)=>storage.delete(k)});
+ vi.stubGlobal('document',{visibilityState:'hidden',addEventListener:vi.fn(),removeEventListener:vi.fn()});
+ vi.stubGlobal('window',{setInterval:vi.fn(()=>1),clearInterval:vi.fn(),addEventListener:target.addEventListener.bind(target),removeEventListener:target.removeEventListener.bind(target),dispatchEvent:target.dispatchEvent.bind(target)});
+ vi.stubGlobal('fetch',vi.fn(()=>{throw new Error('No provider call allowed');}));
+ const owner='synthetic-deletion-race-owner';clearUnacceptedDeletion(owner);
+ h.auth={isLoaded:true,isSignedIn:true,userId:'synthetic-provider',ownerId:owner,identityKey:'synthetic-delete-session',identityStatus:'ready',identityError:null,getToken:async()=> 'synthetic-token'};
+ const state={...createDefaultWorkspace(),sourceCollections:[]},pending=deferred<any>();
+ h.client={from:(table:string)=>{const query:any={saving:false,select:()=>query,eq:()=>query,order:()=>query,range:()=>query,update:()=>{query.saving=true;return query;},insert:()=>{query.saving=true;return query;},maybeSingle:()=>query.saving?pending.promise:Promise.resolve({data:{state,updated_at:'2026-11-01T00:00:00Z'},error:null}),single:()=>pending.promise,abortSignal:()=>table==='reader_workspaces'?query:Promise.resolve({data:[],error:null})};return query;}};
+ const read=()=>render(()=>useWorkspace());let workspace=read();await tick();workspace=read();expect(workspace.isLoaded).toBe(true);
+ vi.useFakeTimers({toFake:['setTimeout','clearTimeout']});expect(workspace.updateSettings({deliveryTime:'13:15'})).toBe(true);workspace=read();await vi.advanceTimersByTimeAsync(500);
+ const staleMutation=workspace.updateSettings,client=h.clients.at(-1);
+ suppressDeletedWorkspace(owner,{requestId:'10000000-0000-4000-8000-000000000001',state:'pending'});
+ expect(staleMutation({deliveryTime:'22:00'})).toBe(false);expect(await client.accessToken()).toBeNull();
+ workspace=read();expect(workspace.isLoaded).toBe(false);expect(workspace.updates).toHaveLength(0);expect(storage.has('therecap.workspace.v1.'+owner)).toBe(false);
+ pending.resolve({data:{updated_at:'2026-11-02T00:00:00Z'},error:null});await tick();workspace=read();expect(workspace.isLoaded).toBe(false);expect(storage.has('therecap.workspace.v1.'+owner)).toBe(false);
+ clearUnacceptedDeletion(owner);
 });

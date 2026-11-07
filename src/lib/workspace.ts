@@ -1,3 +1,4 @@
+import { DELETION_EVENT, deletionMarkerKey, readDeletionMarker } from './account-deletion';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useRecapAuth } from './auth';
@@ -18,6 +19,7 @@ const cacheKey = (owner: string) => `${CACHE_PREFIX}${encodeURIComponent(owner)}
 const blankWorkspace = (): WorkspaceState => ({ ...createDefaultWorkspace(), followedSourceIds: [], followScopes: [], savedUpdateIds: [], readLaterIds: [], customSources: [], importedUpdates: [] });
 
 export function readWorkspaceCache(owner: string): LoadedCache | null {
+  if (readDeletionMarker(owner)) return null;
   try {
     const raw = localStorage.getItem(cacheKey(owner));
     if (!raw) return null;
@@ -32,6 +34,7 @@ export function readWorkspaceCache(owner: string): LoadedCache | null {
   } catch { return null; }
 }
 function writeCache(owner: string, cache: Cache): boolean {
+  if (readDeletionMarker(owner)) return false;
   try { localStorage.setItem(cacheKey(owner), JSON.stringify(cache)); return true; } catch { return false; }
 }
 const messageFor = (error: unknown) => error instanceof Error ? error.message : 'The workspace could not be saved. Please try again.';
@@ -100,9 +103,11 @@ export async function readArchiveRecords(readPage: (offset: number, signal: Abor
 
 export function useWorkspace() {
   const auth = useRecapAuth();
-  const identityReady = auth.isLoaded && (!auth.isSignedIn || auth.identityStatus === 'ready' && !!auth.ownerId);
+  const [, setDeletionEpoch] = useState(0);
+  const suppressed = !!auth.ownerId && !!readDeletionMarker(auth.ownerId);
+  const identityReady = !suppressed && auth.isLoaded && (!auth.isSignedIn || auth.identityStatus === 'ready' && !!auth.ownerId);
   const owner = auth.isSignedIn ? auth.ownerId ?? '' : 'guest';
-  const boundary = JSON.stringify([auth.identityKey, owner]);
+  const boundary = JSON.stringify([auth.identityKey, owner, suppressed]);
   const boundaryRef = useRef(boundary);
   const generation = useRef(0);
   if (boundaryRef.current !== boundary) { boundaryRef.current = boundary; generation.current++; }
@@ -490,6 +495,26 @@ export function useWorkspace() {
     return () => { abort.abort(); window.clearInterval(timer); document.removeEventListener('visibilitychange', onVisible); };
   }, [client, isLoaded, owner, loadRequest, archiveRefreshEpoch, boundary]);
 
+  // A same-tab request or another tab's marker fences callbacks synchronously,
+  // before React renders. A lost POST reply keeps the original pending identity;
+  // only a definitive pre-write refusal can lift provisional suppression.
+  useEffect(() => {
+    const onDeletion = (event: Event) => {
+      if (event.type === 'storage' && (event as StorageEvent).key !== deletionMarkerKey(owner)) return;
+      if (readDeletionMarker(owner)) {
+        ownerRef.current = ''; generation.current++; remoteReady.current = false;
+        dirty.current = false; deleting.current = true;
+        archiveRetryAbort.current?.abort(); archiveRequest.current++;
+        sourceImageRequests.current.forEach(controller => controller.abort());
+        sourceImageRequests.current.clear();
+      }
+      setDeletionEpoch(value => value + 1);
+    };
+    window.addEventListener(DELETION_EVENT, onDeletion);
+    window.addEventListener('storage', onDeletion);
+    return () => { window.removeEventListener(DELETION_EVENT, onDeletion); window.removeEventListener('storage', onDeletion); };
+  }, [owner]);
+
   // A changed tab is deliberately surfaced rather than merged without a user's knowledge.
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
@@ -504,7 +529,7 @@ export function useWorkspace() {
   // Normalize the derived inventory whenever legacy state did not carry scope intent.
   const followed = unique(resolveFollowedSources(scopesFor(state), creators, sources));
   const exposedState = followed.join('|') === state.followedSourceIds.join('|') ? state : { ...state, followedSourceIds: followed };
-  return { state: exposedState, sources, updates, creators, isLoaded, saveStatus: isLoaded ? saveStatus : 'loading' as SaveStatus, error: [auth.identityError, error, archiveError].filter(Boolean).join(' ') || null, archiveError, archiveLoading: archive.owner === owner && archive.loading === true,
+  return { state: exposedState, sources, updates, creators, isLoaded, accountSuppressed: suppressed, saveStatus: isLoaded ? saveStatus : 'loading' as SaveStatus, error: [auth.identityError, error, archiveError].filter(Boolean).join(' ') || null, archiveError, archiveLoading: archive.owner === owner && archive.loading === true,
     sourceCounts: countSources(exposedState, sources, updates), toggleSource, toggleCreator, sourceImageErrors, retrySourceImage,
     isCreatorFollowed: (id: string) => scopesFor(state).some(scope => scope.kind === 'creator' && scope.id === id),
     followReasons: (id: string) => reasonsFor(state, id, creators),

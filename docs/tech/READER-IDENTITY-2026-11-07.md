@@ -1,5 +1,7 @@
 # Stable reader identity foundation — 7 November 2026
 
+The subsequent inactive PR17 integration completes the explicit access-check merge, own-tombstone status/replay, alias-wide native cleanup and confirmation/cache implementation in [the combined flow handoff](ACCOUNT-DELETION-FLOW-2026-11-07.md). Original foundation claims and test counts below are historical; activation/native proof remains off and pending.
+
 This is an inactive foundation based on `e1f081a7af959da8bc6313acee691a6ac7e343d7`. It does not switch Clerk instances, domains, keys, Supabase third-party integrations, deployed code or hosting ownership. Parent-reported production remains `80c3d6c` with `HOSTING_TARGET` paused pending controlled recovery; this task did not independently read or change that operational state. No live account was linked and no live database/provider/model/source API was used.
 
 ## Ownership boundary
