@@ -1,3 +1,4 @@
+import { resolveReaderOwner, type ProviderIdentity } from './reader-identity';
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 import { isIP } from 'node:net';
 import { hostRuntime } from './host-runtime';
@@ -38,7 +39,7 @@ export function validateClerkClaims(payload: JWTPayload, origins: string[]): str
 
 const jwks = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
-export async function authenticate(request: Request, env: Env): Promise<string> {
+export async function authenticateIdentity(request: Request, env: Env): Promise<JWTPayload> {
   const authorization = request.headers.get('authorization');
   if (!authorization?.startsWith('Bearer ') || authorization.length > 12_000) {
     throw new CollectionError(401, 'sign_in_required', 'Sign in to collect a source.');
@@ -63,11 +64,38 @@ export async function authenticate(request: Request, env: Env): Promise<string> 
     const { payload } = await jwtVerify(authorization.slice(7), keys, {
       issuer, algorithms: ['RS256'], requiredClaims: ['sub', 'exp', 'iat'], clockTolerance: 5,
     });
-    return validateClerkClaims(payload, origins);
+    validateClerkClaims(payload, origins);
+    return payload;
   } catch (error) {
     if (error instanceof CollectionError) throw error;
     throw new CollectionError(401, 'invalid_session', 'Your session could not be verified. Sign in again.');
   }
+}
+
+/** Keep PR17's signed claims available for native-session/reverification checks. */
+export async function authenticateProvider(request: Request, env: Env): Promise<ProviderIdentity> {
+  const payload = await authenticateIdentity(request, env);
+  return { issuer: env('CLERK_ISSUER_URL')!, subject: payload.sub! };
+}
+
+/** Administrative Clerk operations always use the actual verified provider subject. */
+export async function authenticateProviderSubject(request: Request, env: Env): Promise<string> {
+  return (await authenticateProvider(request, env)).subject;
+}
+
+/** The owner fence cannot be bypassed through an administrative reader session.
+ * Privileges and Clerk lookups still use the actual provider subject. */
+export async function authenticateAdminSubject(request: Request, env: Env): Promise<string> {
+  const identity = await authenticateProvider(request, env);
+  await resolveReaderOwner(identity, env);
+  return identity.subject;
+}
+
+/** Reader APIs use the same stable data owner as browser persistence and RLS. */
+export async function authenticate(request: Request, env: Env): Promise<string> {
+  // When combining PR17, retain its mandatory accountAccessAllowed check AFTER
+  // resolution, passing this stable owner. Never replace it with a feature flag.
+  return resolveReaderOwner(await authenticateProvider(request, env), env);
 }
 
 export function isPublicAddress(address: string): boolean {

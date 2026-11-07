@@ -1,3 +1,4 @@
+import * as readerIdentity from '../netlify/functions/_shared/reader-identity';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { hostRuntime, withHostRuntime } from '../netlify/functions/_shared/host-runtime';
 import { runtimeEnv } from '../netlify/functions/_shared/security';
@@ -76,6 +77,7 @@ describe('Cloudflare host boundaries', () => {
   });
   it('checks the existing administrator and returns only workspace existence without admitting work', async () => {
     vi.spyOn(adminData, 'requireAdmin').mockResolvedValue('private-owner-fixture');
+    vi.spyOn(readerIdentity, 'resolveReaderOwners').mockResolvedValue(new Map([['private-owner-fixture','stable-owner-fixture']]));
     const eq = vi.fn().mockResolvedValue({ count: 1, error: null }), select = vi.fn(() => ({ eq })), from = vi.fn(() => ({ select }));
     vi.spyOn(adminData, 'database').mockReturnValue({ from } as unknown as ReturnType<typeof adminData.database>);
     const calls = mockRpc({ read_hosting_runtime: { ...control, owner: 'netlify', paused: true } });
@@ -83,7 +85,7 @@ describe('Cloudflare host boundaries', () => {
     expect(result.status).toBe(200); expect(await result.json()).toEqual({ authenticated: true, administrator: true, workspacePresent: true, processingPaused: true, release });
     expect(from).toHaveBeenCalledExactlyOnceWith('reader_workspaces');
     expect(select).toHaveBeenCalledExactlyOnceWith('user_id', { count: 'exact', head: true });
-    expect(eq).toHaveBeenCalledExactlyOnceWith('user_id', 'private-owner-fixture');
+    expect(eq).toHaveBeenCalledExactlyOnceWith('user_id', 'stable-owner-fixture');
     expect(calls.map(call => call.name)).toEqual(['read_hosting_runtime']);
   });
   it('bounds unexpected verification failures without exposing exception details or admitting work', async () => {

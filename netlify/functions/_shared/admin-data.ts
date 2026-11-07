@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { AdminChannelIdentity, AdminFollow, AdminUser, CollectionJobRecord } from '../../../src/lib/admin-types';
 import { isFictionalSource, LEGACY_SAMPLE_SOURCE_IDS, removeFictionalWorkspaceContent } from '../../../src/lib/fixtures';
 import { normalizeSourceUrl } from '../../../src/lib/domain';
-import { authenticate, CollectionError, publicHttpsUrl, type Env, runtimeEnv } from './security';
+import { authenticateAdminSubject, CollectionError, publicHttpsUrl, type Env, runtimeEnv } from './security';
 
 export function database(env: Env = runtimeEnv, privileged = true) {
   const url = env('VITE_SUPABASE_URL');
@@ -26,7 +26,7 @@ export function isAllowedAdmin(user: ClerkUser, env: Env): boolean {
   const primary = user.email_addresses.find(e => e.id === user.primary_email_address_id);
   return !!primary && primary.verification?.status === 'verified' && emails.includes(primary.email_address.toLowerCase());
 }
-export async function requireAdmin(request: Request, env: Env = runtimeEnv, verify = authenticate, getUser = clerkRequest): Promise<string> {
+export async function requireAdmin(request: Request, env: Env = runtimeEnv, verify = authenticateAdminSubject, getUser = clerkRequest): Promise<string> {
   const userId = await verify(request, env);
   const user = await getUser('/users/' + encodeURIComponent(userId), env) as ClerkUser;
   if (user.id !== userId || !isAllowedAdmin(user, env)) throw new CollectionError(403, 'admin_required', 'This account does not have administrator access.');
@@ -36,7 +36,7 @@ const safeArray = (value: unknown): unknown[] => Array.isArray(value) ? value : 
 const text = (value: unknown, max = 200) => typeof value === 'string' ? value.slice(0,max) : '';
 export const safeLink = (value: unknown) => { try { return publicHttpsUrl(text(value,2048)).href; } catch { return ''; } };
 export interface WorkspaceRow { user_id: string; state: Record<string, unknown>; updated_at: string }
-export function userSummary(user: ClerkUser, workspace: WorkspaceRow | undefined, channels: AdminChannelIdentity[], jobs: CollectionJobRecord[]): AdminUser {
+export function userSummary(user: ClerkUser, workspace: WorkspaceRow | undefined, channels: AdminChannelIdentity[], jobs: CollectionJobRecord[], ownerId: string | null = user.id): AdminUser {
   const state = removeFictionalWorkspaceContent(workspace?.state || {});
   const canonical=(url:string)=>{try{return normalizeSourceUrl(url).url;}catch{return url.replace(/\/$/,'');}};
   const catalogueByUrl = new Map(channels.map(c => [canonical(c.url),c]));
@@ -53,7 +53,7 @@ export function userSummary(user: ClerkUser, workspace: WorkspaceRow | undefined
     return { id, name: channel?.name || (!url && source?.name === source?.url ? 'Private or unsupported source' : text(source?.name) || 'Unresolved saved source'), url, platform: channel?.platform || text(source?.platform) || 'Unknown', creatorNames: channel ? (catalogueCreatorName ? [catalogueCreatorName] : []) : creatorNames, ...(channel ? {catalogueCreatorId:channel.creator_id} : {}), sample: false, status: text(source?.status) || 'unknown' };
   });
   const primary = user.email_addresses.find(e => e.id === user.primary_email_address_id);
-  const ownJobs = jobs.filter(j => j.user_id === user.id);
+  const ownJobs = jobs.filter(j => j.user_id === ownerId);
   const settings = state.settings && typeof state.settings === 'object' ? state.settings as Record<string,unknown> : {};
-  return { id:user.id, name:[user.first_name,user.last_name].filter(Boolean).join(' ') || user.username || 'Reader', email:primary?.email_address || '', createdAt:user.created_at, lastSignInAt:user.last_sign_in_at, banned:user.banned,locked:user.locked,isTest:!!primary?.email_address.includes('+clerk_test@'), hasWorkspace:!!workspace,workspaceUpdatedAt:workspace?.updated_at || null, follows, savedCount:typeof state.savedCount === 'number' ? state.savedCount : safeArray(state.savedUpdateIds).length,readLaterCount:typeof state.readLaterCount === 'number' ? state.readLaterCount : safeArray(state.readLaterIds).length,importedCount:typeof state.importedCount === 'number' ? state.importedCount : safeArray(state.importedUpdates).length, interfaceLanguage:text(settings.interfaceLanguage,20)||null,recapLanguage:text(settings.recapLanguage,20)||null,jobCount:ownJobs.length,actorsUsed:[...new Set(ownJobs.filter(j => j.provider === 'apify' && j.provider_run_id).map(j => j.actor_id).filter((v):v is string=>!!v))],observedCostUsd:ownJobs.reduce((sum,j)=>sum+(j.observed_cost_usd ?? 0),0),unknownCostJobs:ownJobs.filter(j=>j.observed_cost_usd===null).length };
+  return { id:user.id, ownerId, name:[user.first_name,user.last_name].filter(Boolean).join(' ') || user.username || 'Reader', email:primary?.email_address || '', createdAt:user.created_at, lastSignInAt:user.last_sign_in_at, banned:user.banned,locked:user.locked,isTest:!!primary?.email_address.includes('+clerk_test@'), hasWorkspace:!!workspace,workspaceUpdatedAt:workspace?.updated_at || null, follows, savedCount:typeof state.savedCount === 'number' ? state.savedCount : safeArray(state.savedUpdateIds).length,readLaterCount:typeof state.readLaterCount === 'number' ? state.readLaterCount : safeArray(state.readLaterIds).length,importedCount:typeof state.importedCount === 'number' ? state.importedCount : safeArray(state.importedUpdates).length, interfaceLanguage:text(settings.interfaceLanguage,20)||null,recapLanguage:text(settings.recapLanguage,20)||null,jobCount:ownJobs.length,actorsUsed:[...new Set(ownJobs.filter(j => j.provider === 'apify' && j.provider_run_id).map(j => j.actor_id).filter((v):v is string=>!!v))],observedCostUsd:ownJobs.reduce((sum,j)=>sum+(j.observed_cost_usd ?? 0),0),unknownCostJobs:ownJobs.filter(j=>j.observed_cost_usd===null).length };
 }

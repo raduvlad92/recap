@@ -114,7 +114,7 @@ it('reads canonical creator names through the explicit catalogue foreign key for
  const select=vi.fn(()=>({limit:()=>({overrideTypes:async()=>({data:channels,error:null})})}));
  const insert=vi.fn().mockResolvedValue({error:null});
  const db={from:(table:string)=>table==='catalogue_channels'?{select}:{insert},rpc:async(name:string)=>({data:name==='admin_workspace_summaries'?[{user_id:user.id,updated_at:'2026-10-21',state:{followedSourceIds:['newsletter'],customSources:[{id:'newsletter',url:'https://example.substack.com'}]}}]:[],error:null})};
- const handler=createAdminHandler({authorize:async()=>user.id,db:(()=>db) as never,clerk:async path=>path.startsWith('/users/count')?{total_count:1}:[user]});
+ const handler=createAdminHandler({authorize:async()=>user.id,db:(()=>db) as never,owners:async()=>new Map([[user.id,user.id]]),clerk:async path=>path.startsWith('/users/count')?{total_count:1}:[user]});
  const response=await handler(new Request('https://app.example/api/admin?section=users'));
  expect(response.status).toBe(200);expect(select).toHaveBeenCalledWith('id,creator_id,name,url,platform,catalogue_creators!catalogue_channels_creator_id_fkey(name)');
  expect((await response.json()).users[0].follows[0]).toMatchObject({name:'A publication',creatorNames:['An author']});expect(insert).toHaveBeenCalledOnce();

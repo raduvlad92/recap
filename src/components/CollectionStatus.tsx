@@ -10,7 +10,7 @@ export function CollectionStatus() {
   const [value, setValue] = useState<{ owner: string; report?: CollectionActivityReport; error?: string }>({ owner: '' });
   const [retry, setRetry] = useState(0);
   useEffect(() => {
-    const owner = auth.userId;
+    const owner = auth.ownerId;
     if (!auth.isSignedIn || !owner) return;
     const controller = new AbortController();
     setValue({ owner });
@@ -29,10 +29,10 @@ export function CollectionStatus() {
       }
     })();
     return () => controller.abort();
-  }, [auth.userId, auth.isSignedIn, auth.getToken, retry]);
-  if (!auth.isSignedIn || !auth.userId) return <p className="muted-note">Sign in to see your collection status.</p>;
-  const result = value.owner === auth.userId ? value : undefined;
-  const report = result?.report, policy = report?.policies.find(item => item.userId === auth.userId);
+  }, [auth.ownerId, auth.identityKey, auth.isSignedIn, auth.getToken, retry]);
+  if (!auth.isSignedIn || !auth.ownerId) return <p className="muted-note">Sign in to see your collection status.</p>;
+  const result = value.owner === auth.ownerId ? value : undefined;
+  const report = result?.report, policy = report?.policies.find(item => item.userId === auth.ownerId);
   const enabled = !!report?.runtime.hourlyEnabled && !!policy?.enabled;
   const provider = enabled && !!report?.runtime.providerVerified && !!policy?.providerEnabled;
   return <section className="reader-collection-status" aria-label="Your collection activity">
