@@ -1,0 +1,1 @@
+{"schema":1,"kind":"bounded-native-drain","operation":"4ba2a239-73ea-4572-9226-0bfcd5ccd4a8","target":"182457410f7f8e979348d10347fe50b1e94b295b","originalStopOperation":"3ea55cca-cb51-4761-a0fe-f19f9f79c165","phase":"restore-consumer-intent","consumerId":null,"requestedAt":"2026-11-07 22:14:49.099744+00","consumerStoppedAt":null}
