@@ -41,7 +41,7 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
   const dir=new URL('../supabase/migrations/',import.meta.url);for(const name of readdirSync(dir).filter(x=>x.endsWith('.sql')).sort())sql(readFileSync(new URL(name,dir),'utf8'));
  },40000);
  beforeEach(()=>{
-  sql(`truncate public.keyword_learning_sessions cascade;truncate public.reader_workspaces cascade;truncate public.reader_source_updates cascade;truncate public.reader_content_analysis_calls cascade;truncate public.reader_content_analysis_policies;truncate public.content_analysis_provider_cooldowns;
+  sql(`truncate public.hosting_work cascade;truncate public.keyword_learning_sessions cascade;truncate public.reader_workspaces cascade;truncate public.reader_source_updates cascade;truncate public.reader_content_analysis_calls cascade;truncate public.reader_content_analysis_policies;truncate public.content_analysis_provider_cooldowns;
    insert into public.content_analysis_budget(id,enabled,daily_limit_usd,lifetime_limit_usd)values(true,true,5,10)on conflict(id)do update set enabled=true,daily_limit_usd=5,lifetime_limit_usd=10;
    insert into public.reader_workspaces(user_id,state)values(${q(owner)},${j(workspace)});
    insert into public.reader_content_analysis_policies(user_id,enabled,daily_limit_usd,lifetime_limit_usd,per_call_limit_usd,model)values(${q(owner)},true,5,10,.1,${q(model)});
@@ -49,6 +49,41 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
    insert into public.automatic_content_policies(user_id,enabled,starts_at)values(${q(owner)},true,clock_timestamp()-interval'1 hour');`);
  });
  afterAll(()=>{if(started)execFileSync('pg_ctl',['-D',join(root,'data'),'stop','-m','immediate'],{stdio:'ignore'});if(root)rmSync(root,{recursive:true,force:true});});
+ it('recovers transport after domain completion without replaying a paid call or publishing its held review',()=>{
+  const release='a'.repeat(40),first='cron:automatic-content:3:1',second='cron:automatic-content:3:2';
+  sql(`update hosting_runtime_control set owner='cloudflare',epoch=3,release=${q(release)},paused=false,old_host_fenced=true;`);
+  const admit=(key:string)=>service(`select admit_hosting_work(${q(key)},'automatic-content',3,${q(release)});`);
+  const hostingClaim=(key:string)=>json(`select begin_automatic_hosting_queue_work(${q(key)},3,${q(release)},'native-fixture');`);
+  admit(first);hostingClaim(first);
+  const t=task('keywords'),r=reserve(t);settle(t,r);finish(t,keyword([r.call.call_key]));
+  // Process dies before finish_hosting_work. Age only the native-bound fixture.
+  sql(`update hosting_work set updated_at=updated_at-interval '1 hour',lease_until=lease_until-interval '1 hour' where key=${q(first)};
+   alter table hosting_queue_invocations disable trigger hosting_invocation_immutable;
+   update hosting_queue_invocations set frame=(select to_jsonb(w) from hosting_work w where key=${q(first)}),recorded_at=recorded_at-interval '1 hour',not_after=not_after-interval '1 hour';
+   alter table hosting_queue_invocations enable trigger hosting_invocation_immutable;`);
+  const evidence=json('select read_automatic_hosting_domain_evidence();'),original=source();
+  admit(second);expect(hostingClaim(second).token).toBeTruthy();expect(hostingClaim(first)).toBeNull();
+  expect(json('select read_automatic_hosting_domain_evidence();')).toEqual(evidence);expect(source()).toEqual(original);
+  expect(service('select count(*)from reader_content_analysis_calls;')).toBe('1');expect(service('select count(*)from admin_analysis_reviews;')).toBe('1');
+  expect(service(`select state from automatic_content_tasks where id=${q(t.task.id)};`)).toBe('review');
+  expect(sql(`select state from hosting_work where key=${q(first)};`)).toBe('uncertain');
+ });
+ it('keeps even expired running domain tasks blocked during hosting recovery and preserves unknown call holds',()=>{
+  const release='a'.repeat(40),first='cron:automatic-content:3:1',second='cron:automatic-content:3:2';
+  sql(`update hosting_runtime_control set owner='cloudflare',epoch=3,release=${q(release)},paused=false,old_host_fenced=true;`);
+  service(`select admit_hosting_work(${q(first)},'automatic-content',3,${q(release)});select begin_automatic_hosting_queue_work(${q(first)},3,${q(release)},'native-1');`);
+  const t=task('keywords'),r=reserve(t);settle(t,r,null,'analysis_provider_timeout');
+  sql(`update automatic_content_tasks set lease_until=clock_timestamp()-interval '1 hour' where id=${q(t.task.id)};
+   update hosting_work set updated_at=updated_at-interval '1 hour',lease_until=lease_until-interval '1 hour' where key=${q(first)};
+   alter table hosting_queue_invocations disable trigger hosting_invocation_immutable;
+   update hosting_queue_invocations set frame=(select to_jsonb(w) from hosting_work w where key=${q(first)}),recorded_at=recorded_at-interval '1 hour',not_after=not_after-interval '1 hour';
+   alter table hosting_queue_invocations enable trigger hosting_invocation_immutable;`);
+  const evidence=json('select read_automatic_hosting_domain_evidence();');
+  service(`select admit_hosting_work(${q(second)},'automatic-content',3,${q(release)});`);
+  expect(json(`select begin_automatic_hosting_queue_work(${q(second)},3,${q(release)},'native-2');`)).toEqual({superseded:true,recovery_required:true});
+  expect(sql(`select state from hosting_work where key=${q(first)};`)).toBe('running');
+  expect(json('select read_automatic_hosting_domain_evidence();')).toEqual(evidence);expect(evidence.unknown_calls).toBe(1);
+ });
  it('syncs only explicit opted-in new followed usable sources and never touches originals or the old queue',()=>{
   const before=source(),jobs=service('select count(*)from public.reader_content_analysis_jobs;');
   expect(sync()).toEqual({synchronized:2});expect(sync()).toEqual({synchronized:0});expect(source()).toEqual(before);

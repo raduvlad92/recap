@@ -47,7 +47,7 @@ export function youtubeInput(source: Source, maxItems: number): Record<string, u
 }
 
 type Fetcher = typeof fetch;
-async function apifyRequest(path: string, config: ApifyConfig, fetcher: Fetcher, init: RequestInit = {}): Promise<unknown> {
+async function apifyRequest(path: string, config: Pick<ApifyConfig, 'token'>, fetcher: Fetcher, init: RequestInit = {}, capture?: (text: string) => void): Promise<unknown> {
   const response = await fetchNoRedirect('https://api.apify.com/v2/' + path, {
     ...init, signal: AbortSignal.timeout(12_000),
     headers: { authorization: 'Bearer ' + config.token, 'content-type': 'application/json', ...init.headers },
@@ -57,6 +57,7 @@ async function apifyRequest(path: string, config: ApifyConfig, fetcher: Fetcher,
     throw new CollectionError(502, 'provider_error', 'The collection provider did not accept this request. No automatic retry was started.');
   }
   const text = await readTextLimited(response, 2 * 1024 * 1024);
+  capture?.(text);
   try { return JSON.parse(text); } catch { throw new CollectionError(502, 'provider_response_invalid', 'The collection provider returned an unreadable response.'); }
 }
 
@@ -90,6 +91,49 @@ function object(value: unknown): Record<string, unknown> {
 function providerId(value: unknown): string {
   if (typeof value !== 'string' || !/^[A-Za-z0-9]{6,64}$/.test(value)) throw new CollectionError(502, 'provider_response_invalid', 'The collection provider returned an invalid job reference.');
   return value;
+}
+
+export interface ApifyFeeEvidence {
+  run_id: string; actor_id: string; build_id: string; status: string;
+  finished_at: string | null; observed_at: string; response_sha256: string;
+  usage_usd: string | null; maximum_usd: string; authenticated_owner: true;
+}
+
+// Preserve the original JSON decimal token. Never round through a JS number.
+// Duplicate/nested same-name fields are ambiguous and fail closed.
+function moneyToken(text: string, key: string, parsed: unknown): string | null {
+  const tokens = [...text.matchAll(new RegExp('"' + key + '"\\s*:\\s*(null|-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)(?=\\s*[,}])', 'g'))];
+  if (tokens.length !== 1) throw new CollectionError(502, 'provider_fee_invalid', 'Exact provider money is unavailable.');
+  const raw = tokens[0][1];
+  if (raw === 'null' && parsed === null) return null;
+  if (typeof parsed !== 'number' || !Number.isFinite(parsed) || parsed < 0 || Number(raw) !== parsed || raw.length > 80 || !/^(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d{1,2})?$/.test(raw)) {
+    throw new CollectionError(502, 'provider_fee_invalid', 'Exact provider money is unavailable.');
+  }
+  return raw;
+}
+
+/** GET-only, server-owned saved identity. No launch flag, dataset or source read. */
+export async function readApifyFeeEvidence(job: { userId: string; providerRunId: string; actorId: string }, env: Env, fetcher: Fetcher = fetch): Promise<ApifyFeeEvidence> {
+  const token = env('APIFY_API_TOKEN'), build = env('APIFY_YOUTUBE_BUILD_ID');
+  if (!token || !build || job.actorId !== YOUTUBE_ACTOR_ID || !(env('COLLECTION_ALLOWED_USER_IDS') || '').split(',').map(s => s.trim()).includes(job.userId)) {
+    throw new CollectionError(403, 'provider_fee_not_authorized', 'Provider fee inspection is restricted to the configured operator.');
+  }
+  const id = providerId(job.providerRunId); let raw = '';
+  const response = object(await apifyRequest('actor-runs/' + id, { token }, fetcher, {}, text => { raw = text; }));
+  const observedAt = new Date().toISOString();
+  const run = object(response.data), me = object(object(await apifyRequest('users/me', { token }, fetcher)).data);
+  if (run.id !== id || run.actId !== job.actorId || run.buildId !== build || typeof me.id !== 'string' || run.userId !== me.id) {
+    throw new CollectionError(409, 'provider_fee_identity_changed', 'Provider run, build or authenticated owner does not match.');
+  }
+  if (!['READY','RUNNING','TIMING-OUT','ABORTING','SUCCEEDED','FAILED','TIMED-OUT','ABORTED'].includes(String(run.status))) {
+    throw new CollectionError(502, 'provider_fee_invalid', 'Provider run status is unavailable.');
+  }
+  const maximum = moneyToken(raw, 'maxTotalChargeUsd', object(run.options).maxTotalChargeUsd);
+  if (maximum === null) throw new CollectionError(502, 'provider_fee_invalid', 'Provider run cap is unavailable.');
+  return { run_id: id, actor_id: job.actorId, build_id: build, status: String(run.status),
+    finished_at: typeof run.finishedAt === 'string' && Number.isFinite(Date.parse(run.finishedAt)) ? new Date(run.finishedAt).toISOString() : null,
+    usage_usd: run.usageTotalUsd === undefined ? null : moneyToken(raw, 'usageTotalUsd', run.usageTotalUsd), maximum_usd: maximum,
+    observed_at: observedAt, response_sha256: createHash('sha256').update(raw).digest('hex'), authenticated_owner: true };
 }
 
 export async function startApify(source: Source, userId: string, env: Env, fetcher: Fetcher = fetch, ledgerId?: string): Promise<{ status: 'running'; jobToken: string; message: string; providerRunId: string }> {

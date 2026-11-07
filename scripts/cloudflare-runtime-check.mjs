@@ -127,7 +127,7 @@ try {
 // Timer/queue handlers run without a browser request context. Exercise their
 // actual exports under workerd with fake RPCs and no provider/queue admission.
 await build({ entryPoints: ['tests/fixtures/cloudflare-jobs-runtime.ts'], bundle: true, platform: 'browser', format: 'esm', target: 'es2022', external: ['node:*'], outfile: '.local/cloudflare-build/jobs-fixture.js' });
-let jobsPaused = false, jobsRedirect = false, jobsClaim = false, jobsCompleted = true;
+let jobsPaused = false, jobsRedirect = false, jobsClaim = false, jobsCompleted = true, jobsSuperseded = false;
 const jobCalls = [];
 const jobRuntime = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/jobs-fixture.js',
@@ -137,13 +137,22 @@ const jobRuntime = new Miniflare(convertV4MiniflareOptions({
     const url = new URL(request.url), name = url.pathname.split('/').at(-1);
     assert.equal(url.origin, 'https://zlfdqzabsfndifxiqguo.supabase.co');
     assert.equal(request.method, 'POST'); jobCalls.push(name);
+    if (name === 'read_hosting_release_status') return Response.json({ control: { owner: 'cloudflare', epoch: 2, paused: jobsPaused, old_host_fenced: true, release }, revision: '11111111-1111-4111-8111-111111111111' });
     if (name === 'read_hosting_runtime') {
       if (jobsRedirect) return new Response(null, { status: 302, headers: { location: 'https://must-not-receive-secrets.invalid/' } });
       return Response.json({ owner: 'cloudflare', epoch: 2, paused: jobsPaused, old_host_fenced: true, release });
     }
     if (name === 'begin_hosting_work') return Response.json(jobsClaim ? { token: 'fixture-queue-lease', payload: null } : null);
-    if (name === 'finish_hosting_work') {
-      assert.equal((await request.json()).p_completed, jobsCompleted);
+    if (name === 'begin_automatic_hosting_queue_work') {
+      assert.deepEqual(await request.json(), { p_key: 'cron:automatic-content:2:1', p_epoch: 2, p_release: release, p_message_id: 'fixture-native-message' });
+      return Response.json(jobsSuperseded ? { superseded: true, recovery_required: true } : jobsClaim ? { token: 'fixture-queue-lease', payload: null, revision: '11111111-1111-4111-8111-111111111111' } : null);
+    }
+    if (name === 'finish_hosting_work' || name === 'finish_automatic_hosting_queue_work') {
+      const args = await request.json();
+      assert.equal(args.p_completed, jobsCompleted);
+      if (name === 'finish_automatic_hosting_queue_work') {
+        assert.equal(args.p_message_id, 'fixture-native-message'); assert.equal(args.p_release, release);
+      }
       return new Response(null, { status: 204 });
     }
     throw new Error('Unexpected job admission/provider request in runtime fixture');
@@ -167,12 +176,26 @@ try {
     assert.deepEqual(await finished.json(), { completed: true, acknowledgements: 1, retries: [] });
     assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime','begin_hosting_work','read_hosting_runtime','finish_hosting_work']);
   }
+  jobsCompleted = true;
+  const automatic = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/automatic');
+  assert.deepEqual(await automatic.json(), { completed: true, acknowledgements: 1, retries: [] });
+  assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime','begin_automatic_hosting_queue_work','read_hosting_release_status','finish_automatic_hosting_queue_work']);
+  jobsSuperseded = true;
+  const superseded = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/automatic-superseded');
+  assert.deepEqual(await superseded.json(), { completed: true, acknowledgements: 1, retries: [] });
+  assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime','begin_automatic_hosting_queue_work']);
+  const unidentified = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/automatic-missing-id');
+  assert.equal(unidentified.status, 503); assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime']);
+  jobsSuperseded = false; jobsClaim = false;
+  const automaticDuplicate = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/automatic-duplicate');
+  assert.deepEqual(await automaticDuplicate.json(), { completed: true, acknowledgements: 1, retries: [] });
+  assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime','begin_automatic_hosting_queue_work']);
   jobsClaim = false;
   jobsRedirect = true;
   const redirected = await jobRuntime.dispatchFetch('https://jobs.fixture.invalid/cron');
   assert.equal(redirected.status, 503); assert.equal((await redirected.json()).code, 'hosting_state_unavailable');
   assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime']);
-  console.log(JSON.stringify({ runtime: 'workerd', jobsChecks: 7, liveProviderRequests: 0, queueMessagesSent: 0, redirectedCredentials: false, nativeVoidStatus: 204 }));
+  console.log(JSON.stringify({ runtime: 'workerd', jobsChecks: 11, liveProviderRequests: 0, queueMessagesSent: 0, redirectedCredentials: false, nativeVoidStatus: 204 }));
 } finally { await jobRuntime.dispose(); }
 const source = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/source-worker/source.js',

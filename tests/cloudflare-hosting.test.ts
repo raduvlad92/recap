@@ -6,7 +6,7 @@ import { consumeJobs, scheduleJobs, workers } from '../cloudflare/jobs';
 import { handleWeb } from '../cloudflare/web';
 import { hostingRpc, validMessage, type Bindings, type JobMessage } from '../cloudflare/runtime';
 import * as adminData from '../netlify/functions/_shared/admin-data';
-const release = 'a'.repeat(40);
+const release = 'a'.repeat(40), revision = '11111111-1111-4111-8111-111111111111';
 const bindings = (extra: Partial<Bindings> = {}): Bindings => ({ APP_URL: 'https://recap.filternode.dev', RELEASE_SHA: release, HOSTING_MODE: 'shadow', ...extra });
 const control = { owner: 'cloudflare', epoch: 2, paused: false, old_host_fenced: true, release };
 const message: JobMessage = { version: 1, kind: 'hourly-collection', epoch: 2, release, key: 'cron:hourly-collection:2:1234' };
@@ -20,6 +20,7 @@ function mockRpc(overrides: Record<string, unknown> = {}) {
     const reply = overrides[name];
     if (reply instanceof Response) return reply.clone();
     if (name === 'read_hosting_runtime') return Response.json(reply ?? control);
+    if (name === 'read_hosting_release_status') return Response.json(reply ?? { control, revision });
     if (Object.hasOwn(overrides, name)) return Response.json(reply);
     throw new Error('Unexpected RPC ' + name);
   })); return calls;
@@ -101,6 +102,44 @@ describe('Cloudflare host boundaries', () => {
   });
 });
 describe('Cloudflare scheduling and durable queue replay', () => {
+  const autoMessage: JobMessage = { ...message, kind: 'automatic-content', key: 'cron:automatic-content:2:1234' };
+  const autoBindings = () => ({ ...active(), AUTOMATIC_CONTENT_ENABLED: 'true', CONTENT_ANALYSIS_WORKER_SECRET: 'fixture-analysis-worker-secret-32-characters' });
+  it('binds automatic claims to the native message ID and acknowledges an audited superseded tick without entering domain code', async () => {
+    const calls = mockRpc({ begin_automatic_hosting_queue_work: { superseded: true, recovery_required: true } });
+    const worker = vi.spyOn(workers, 'automatic-content'), ack = vi.fn(), retry = vi.fn();
+    await consumeJobs({ messages: [{ id: 'native-message-1', body: autoMessage, ack, retry }] }, autoBindings());
+    expect(calls.find(c => c.name === 'begin_automatic_hosting_queue_work')?.args).toEqual({ p_key: autoMessage.key, p_epoch: 2, p_release: release, p_message_id: 'native-message-1' });
+    expect(worker).not.toHaveBeenCalled(); expect(ack).toHaveBeenCalledOnce(); expect(retry).not.toHaveBeenCalled();
+  });
+  it('fails closed before automatic claim/acknowledgement when native message identity is missing', async () => {
+    const calls = mockRpc(), ack = vi.fn(), retry = vi.fn(), worker = vi.spyOn(workers, 'automatic-content');
+    await expect(consumeJobs({ messages: [{ body: autoMessage, ack, retry }] }, autoBindings())).rejects.toThrow('Native queue message identity');
+    expect(calls.map(c => c.name)).toEqual(['read_hosting_runtime']); expect(ack).not.toHaveBeenCalled(); expect(worker).not.toHaveBeenCalled();
+  });
+  it('does not repeat domain work after its success and a lost hosting-finish response', async () => {
+    const replies: Record<string, unknown> = { begin_automatic_hosting_queue_work: { token: 'fixture-lease', payload: null, revision } };
+    const calls = mockRpc(replies), worker = vi.spyOn(workers, 'automatic-content').mockResolvedValue(new Response(null, { status: 204 }));
+    const ack = vi.fn(), retry = vi.fn(), batch = { messages: [{ id: 'native-message-1', body: autoMessage, ack, retry }] };
+    await expect(consumeJobs(batch, autoBindings())).rejects.toThrow('Unexpected RPC finish_automatic_hosting_queue_work');
+    expect(ack).not.toHaveBeenCalled(); replies.begin_automatic_hosting_queue_work = null;
+    await consumeJobs(batch, autoBindings());
+    expect(worker).toHaveBeenCalledTimes(1); expect(ack).toHaveBeenCalledOnce(); expect(calls.filter(c => c.name === 'finish_automatic_hosting_queue_work')).toHaveLength(1);
+  });
+  it.each(['epoch','revision'])('refuses domain execution when the %s changes after claiming the same release', async changed => {
+    let reads = 0;
+    const worker = vi.spyOn(workers, 'automatic-content'), ack = vi.fn();
+    const finishes: unknown[] = [];
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init: RequestInit) => {
+      const name = new URL(url).pathname.split('/').pop();
+      if (name === 'read_hosting_runtime') return Response.json({ ...control, epoch: ++reads === 1 ? 2 : 3 });
+      if (name === 'read_hosting_release_status') return Response.json({ control: { ...control, epoch: changed === 'epoch' ? 3 : 2 }, revision: changed === 'revision' ? '22222222-2222-4222-8222-222222222222' : revision });
+      if (name === 'begin_automatic_hosting_queue_work') return Response.json({ token: 'fixture-lease', payload: null, revision });
+      if (name === 'finish_automatic_hosting_queue_work') { finishes.push(JSON.parse(String(init.body))); return new Response(null, { status: 204 }); }
+      throw new Error('Unexpected request');
+    }));
+    await consumeJobs({ messages: [{ id: 'native-1', body: autoMessage, ack, retry: vi.fn() }] }, autoBindings());
+    expect(worker).not.toHaveBeenCalled(); expect(finishes).toEqual([{ p_key: autoMessage.key, p_token: 'fixture-lease', p_epoch: 2, p_completed: false, p_release: release, p_message_id: 'native-1' }]);
+  });
   it('acknowledges completed work after a native 204 finish without repeating its worker', async () => {
     const replies = { begin_hosting_work: { token: 'fixture-lease', payload: null } as unknown, finish_hosting_work: new Response(null, { status: 204 }) };
     mockRpc(replies); const worker = vi.spyOn(workers, 'hourly-collection').mockResolvedValue(new Response(null, { status: 202 }));
