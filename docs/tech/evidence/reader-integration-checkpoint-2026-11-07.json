@@ -37,11 +37,51 @@
     "actualLifecycleCasesIncluded": 6,
     "activation": "off: legacy mode, empty aliases and trust, lifecycle_ready=false",
     "remaining": [
-      "Tombstone-aware status and replay resolution",
-      "Native deletion across all frozen aliases",
+      "All-alias deletion/status implementation is integrated into PR17 and independently reviewed; native activation remains pending",
       "Actual issuer/key/Supabase pairing and existing-reader ownership proofs"
     ]
   },
   "scope": "Engineering/CI and local integration evidence. No migration, identity activation, reader deletion, merge or deployment of these increments.",
-  "integrationOrder": "Remain behind fixed core recovery/release; parent owns shared tracking documents."
+  "integrationOrder": "Remain behind fixed core recovery/release; parent owns shared tracking documents.",
+  "finalDeletionFlow": {
+    "pr": 17,
+    "head": "590690511c2317271b3888a51e049c9556b71423",
+    "ready": true,
+    "independentReview": "GO for inactive release; no material blocker",
+    "regressionCheckpoint": {
+      "passed": 4175,
+      "files": 141,
+      "exactFinalHead": false
+    },
+    "finalFocused": {
+      "passed": 97,
+      "files": 9
+    },
+    "parentJointExtractionIdentityLifecycle": {
+      "localCommit": "aed58001165ca92f9884fa054b9ebc22d1df13cd",
+      "passed": 268,
+      "files": 14,
+      "publicOriginalsWorkerdCase": 1,
+      "typecheckBuild": true,
+      "webCases": 26,
+      "jobsCases": 11,
+      "disabledSourceGuard": true,
+      "pushed": false,
+      "publishedHeadsUnchanged": true
+    },
+    "ci": {
+      "applicationWorkflow": 42423728069,
+      "applicationConclusion": "success",
+      "cloudflareWorkflow": 42423728021,
+      "cloudflareStatus": "in_progress"
+    },
+    "activation": "all flags, linked mode and lifecycle readiness remain off",
+    "remaining": [
+      "Guarded migration and exact hosted release",
+      "Native disposable identity, every alias and issuer/key authority proof",
+      "Hosted phone/keyboard and native-language review",
+      "External erasure, chosen retention and quarantined restore",
+      "Independent tombstone custody"
+    ]
+  }
 }

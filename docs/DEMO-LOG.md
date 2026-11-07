@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 8 November Berlin / 7 November 23:14 UTC — final deletion flow and extraction integration
+
+An isolated implementation merges inactive identity into lifecycle and pushes `5906905`: typed confirmation and reverification, immutable alias freeze, own-tombstone status/replay, one-alias-per-lease native cleanup with restore generations, dedicated old-issuer credential bindings and browser uncertainty/session/cache fences. Independent read-only final review finds no material blocker and returns GO for inactive release. Implementation evidence distinguishes its 4,175-test regression checkpoint from the final 97-case matrix.
+
+Parent merges that exact head into the existing unpushed extraction/lifecycle review branch as `aed5800`; the clean merge passes 268 tests/14 files on Node 22, a separate actual public-originals workerd fixture, typecheck/build, 26 web/11 jobs checks and disabled-source protection. Restore the published extraction branch afterward; no app head is pushed or production schema touched by this joint check. Native PR metadata confirms exact application CI success, Cloudflare CI running and no returned comments; mark PR #17 ready and update its final review/testing description. No identity linking, deletion, retention activation or reader release occurs. [Sanitized final reader checkpoint](tech/evidence/reader-integration-checkpoint-2026-11-07.json).
+
 ## 7 November 23:00 UTC / 8 November Berlin — completed recovery and native core migration acceptance
 
 All 96 exact automatic-frame dispositions complete with audit/frame/domain/control readback: one expired outcome remains unknown, 95 unstarted ticks are superseded, and every original frame remains retained. Active hosting work reaches zero without business replay or a queue purge. Fresh typed native preservation again proves 19 original source reservations, seven complete unknown-model rows and three workspace rows exact; commitment remains USD 9.918486404/10. The 20 held source reservations include 19 launched jobs and one envelope.
