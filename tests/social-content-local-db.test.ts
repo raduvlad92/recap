@@ -24,7 +24,7 @@ describe.skipIf(!available)('social-text drafts, disposable PostgreSQL only',()=
  }
  function reserve(t:any,key='one'){
   const callKey='keyword-learning:v1:automatic-fixture-'+key;
-  return json(`select public.reserve_keyword_learning_call(${q(t.task.session_id)},${q(callKey)},1,${q(hash)},${q(model)},${j(identity)},repeat('a',64),.10,${j({request:{key:callKey,role:'extractor',system:'Fixture exact instructions',prompt:content,schema:{type:'object'},maxOutputTokens:100}})});`);
+  return json(`select public.reserve_keyword_learning_call(${q(t.task.session_id)},${q(callKey)},1,${q(t.task.content_hash)},${q(model)},${j(identity)},repeat('a',64),.10,${j({request:{key:callKey,role:'extractor',system:'Fixture exact instructions',prompt:content,schema:{type:'object'},maxOutputTokens:100}})});`);
  }
  function settle(t:any,r:any,result:unknown={value:{names:['AeroBox Plus']},actualUsd:.001,observedUsd:.001,providerId:'fixture-provider'},error:string|null=null){
   return json(`select public.record_keyword_learning_call(${q(t.task.session_id)},${q(r.call.call_key)},${q(r.call.id)},${q(r.call.lease_token)},${q(r.requestHash)},${result===null?'null':j(result)},${error===null?'null':q(error)});`);
@@ -41,7 +41,7 @@ describe.skipIf(!available)('social-text drafts, disposable PostgreSQL only',()=
   const dir=new URL('../supabase/migrations/',import.meta.url);for(const name of readdirSync(dir).filter(x=>x.endsWith('.sql')).sort())sql(readFileSync(new URL(name,dir),'utf8'));
  },40000);
  beforeEach(()=>{
-  sql(`truncate public.keyword_learning_sessions cascade;truncate public.reader_workspaces cascade;truncate public.reader_source_updates cascade;truncate public.reader_content_analysis_calls cascade;truncate public.reader_content_analysis_policies;truncate public.content_analysis_provider_cooldowns;
+  sql(`truncate public.reader_collection_policies cascade;truncate public.keyword_learning_sessions cascade;truncate public.reader_workspaces cascade;truncate public.reader_source_updates cascade;truncate public.reader_content_analysis_calls cascade;truncate public.reader_content_analysis_policies;truncate public.content_analysis_provider_cooldowns;
    insert into public.content_analysis_budget(id,enabled,daily_limit_usd,lifetime_limit_usd)values(true,true,5,10)on conflict(id)do update set enabled=true,daily_limit_usd=5,lifetime_limit_usd=10;
    insert into public.reader_workspaces(user_id,state)values(${q(owner)},${j(workspace)});
    insert into public.reader_content_analysis_policies(user_id,enabled,daily_limit_usd,lifetime_limit_usd,per_call_limit_usd,model)values(${q(owner)},true,5,10,.1,${q(model)});
@@ -170,4 +170,71 @@ describe.skipIf(!available)('social-text drafts, disposable PostgreSQL only',()=
   const run=()=>new Promise<any>((resolve,reject)=>{const child=execFile('psql',args,{encoding:'utf8'},(e,out)=>e?reject(e):resolve(JSON.parse(out.split('\n').find(x=>x.startsWith('{'))!)));child.stdin?.end('set role service_role;begin;select public.claim_social_content_task();select pg_sleep(.1);commit;');});
   const values=await Promise.all([run(),run()]);expect(values.filter(x=>x.claimed)).toHaveLength(1);expect(service('select count(*)from public.keyword_learning_sessions;')).toBe('1');
  });
+ describe('persisted public originals use the existing review-first queue',()=>{
+  const publicText=content+' '+content+' '+content;
+  const publicHash=createHash('sha256').update(publicText).digest('hex');
+  const publicSource={...workspace.customSources[0],platform:'Blog',url:'https://publication.example/'};
+  const publicRecord={...record,format:'article',url:'https://publication.example/one',content:publicText,
+   originalContent:{version:1,method:'public_article',status:'usable',reason:'usable_text',url:'https://publication.example/one',contentHash:publicHash}};
+  const prepare=()=>sql(`update public.reader_workspaces set state=jsonb_set(state,'{customSources}',${j([publicSource])});update public.reader_source_updates set record=${j(publicRecord)},published_at=${q(publicRecord.publishedAt)}::timestamptz;`);
+  it('admits exact usable originals idempotently and saves only human-review proposals',()=>{
+   prepare();expect(sync()).toEqual({synchronized:2});expect(sync()).toEqual({synchronized:0});
+   const t=task(),before=source(),r=reserve(t);settle(t,r);
+   expect(finish(t,recap([r.call.call_key]))).toEqual({state:'review',reviewCount:1});
+   expect(source()).toEqual(before);expect(service('select status from public.admin_analysis_reviews;')).toBe('pending');
+  });
+  it.each(['partial','failed','unavailable','deferred'])('rejects %s originals despite a nonempty saved prefix',status=>{
+   prepare();sql(`update public.reader_source_updates set record=jsonb_set(record,'{originalContent,status}',${j(status)});`);expect(sync().synchronized).toBe(0);
+  });
+  it('rejects metadata, mismatched hashes, missing dates and unmarked legacy feed text',()=>{
+   for(const patch of [{contentKind:'metadata_only'},{originalContent:{...publicRecord.originalContent,contentHash:'a'.repeat(64)}},{originalContent:null}]){
+    prepare();sql(`update public.reader_source_updates set record=record||${j(patch)};`);expect(sync().synchronized).toBe(0);
+   }
+  });
+  it('rejects missing dates at storage and eligibility',()=>{
+   prepare();expect(()=>sql(`update public.reader_source_updates set record=jsonb_set(record,'{publishedAt}','""');`)).toThrow();
+   expect(service(`select public.social_content_eligible(${j({...workspace,customSources:[publicSource]})},${j({...publicRecord,publishedAt:''})});`)).toBe('f');
+  });
+  it('detects changed date and provenance before claim',()=>{
+   for(const patch of [{publishedAt:'2026-10-30T00:00:00Z'},{originalContent:{...publicRecord.originalContent,url:'https://publication.example/changed'}}]){
+    sql('truncate public.keyword_learning_sessions cascade;truncate public.social_content_tasks;');prepare();sync();
+    sql(`update public.reader_source_updates set record=record||${j(patch)},published_at=coalesce((${j(patch)}->>'publishedAt')::timestamptz,published_at);`);expect(claim()).toMatchObject({claimed:false,reason:'automatic_source_changed'});
+   }
+  });
+  it('preserves financial holds while blocking late results after source removal or account deletion',()=>{
+   prepare();const t=task(),r=reserve(t);
+   sql(`update public.reader_workspaces set state=jsonb_set(state,'{followedSourceIds}','[]');`);
+   expect(finish(t,recap([r.call.call_key]))).toMatchObject({state:'blocked',errorCode:'automatic_source_changed'});
+   expect(service('select count(*)from public.admin_analysis_reviews;')).toBe('0');
+   expect(service('select count(*)from public.reader_content_analysis_calls where actual_usd is null and maximum_usd=.10;')).toBe('1');
+   sql(`delete from public.reader_workspaces where user_id=${q(owner)};`);
+   expect(()=>finish(t,recap([r.call.call_key]))).toThrow();
+   expect(service('select count(*)from public.reader_content_analysis_calls;')).toBe('1');
+  });
+  it('merges only missing source text, preserves identity/date and never resurrects a deleted archive',()=>{
+   prepare();const prior={...publicRecord,contentKind:'metadata_only',content:'short excerpt',originalContent:{...publicRecord.originalContent,status:'partial'}};
+   expect(json(`select public.merge_hourly_video_enrichment(${j(prior)},${j(publicRecord)});`)).toEqual({...prior,content:publicText,contentKind:'feed_text',originalContent:publicRecord.originalContent});
+   expect(json(`select public.merge_hourly_video_enrichment(${j(prior)},${j({...publicRecord,publishedAt:'2026-10-30T00:00:00Z'})});`)).toEqual(prior);
+   expect(json(`select public.merge_hourly_video_enrichment(${j(publicRecord)},${j({...prior,content:'different partial'})});`)).toEqual(publicRecord);
+   sql(`insert into public.reader_collection_policies(user_id,enabled,provider_enabled)values(${q(owner)},true,false);`);
+   const c=json(`select public.claim_hourly_source(${q(owner)},'automatic-source');`);
+   service(`update public.reader_collection_source_state set cursor=${j({pendingOriginals:[prior]})};`);
+   sql(`delete from public.reader_source_updates where user_id=${q(owner)};`);
+   expect(service(`select cursor ? 'pendingOriginals'from public.reader_collection_source_state;`)).toBe('f');
+   expect(()=>json(`select public.finish_hourly_source(${q(c.checkId)},${q(c.leaseToken)},'{"status":"collected"}',${j([{itemKey:publicRecord.url,record:publicRecord}])});`)).toThrow();
+   expect(service('select count(*)from public.reader_source_updates;')).toBe('0');
+  });
+  it('requires an active parent for private hashed attempt IDs and permanently suppresses repeat downloads',()=>{
+   prepare();sql(`insert into public.reader_collection_policies(user_id,enabled,provider_enabled)values(${q(owner)},true,false);`);
+   const c=json(`select public.claim_hourly_source(${q(owner)},'automatic-source');`);
+   const key='original:'+createHash('sha256').update('automatic-source\n'+publicRecord.url).digest('hex');
+   const add=`insert into public.collection_retrieval_attempts(check_id,item_key,method,provider,stage)values(${q(c.checkId)},${q(key)},'public_article','native','content');`;
+   service(add);expect(()=>service(add)).toThrow(/Original already attempted/);
+   expect(()=>service(`insert into public.collection_retrieval_attempts(check_id,item_key,method,provider,stage)values(${q(c.checkId)},'https://private.invalid/','public_article','native','content');`)).toThrow();
+   sql(`update public.reader_workspaces set state=jsonb_set(state,'{followedSourceIds}','[]');`);
+   expect(()=>service(add.replace(key,'original:'+'b'.repeat(64)))).toThrow(/Original source check changed/);
+   expect(service(`select has_table_privilege('anon','public.collection_retrieval_attempts','select')or has_table_privilege('authenticated','public.collection_retrieval_attempts','insert');`)).toBe('f');
+  });
+ });
+
 });

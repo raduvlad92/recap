@@ -13,6 +13,7 @@ export function createRetrievalLog(env: Env): RetrievalLog {
   return {
     async start(parent, method, provider, stage) {
       const { data, error } = await db.from('collection_retrieval_attempts').insert({ check_id: parent.checkId || null, job_id: parent.jobId || null, item_key: parent.itemKey || null, method, provider, stage }).select('id').single();
+      if (error?.code === 'PT429') throw new CollectionError(409, 'original_already_attempted', 'This original already has a retained attempt.');
       if (error || !data) throw unavailable();
       return data.id;
     },
