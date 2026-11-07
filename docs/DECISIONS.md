@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 7 November 2026 — retain archive provenance after safe paused refusal
+
+Automatic main preparation produces verified builds but its existing deploy wrapper deliberately refuses a shadow candidate over active hosting when selection is paused. Retain this safety refusal. Obtain ready provenance through the already-supported manual artifact-only workflow instead of accepting a failed overall run or altering checks. Persist/acknowledge one dispatch intent, reconcile its exact native run, and leave runtime/delivery unchanged. [Refusal and acknowledged continuation](tech/evidence/recovery-artifact-only-dispatch-2026-11-07.json).
+
 ## 7 November 2026 — merge recovery at the checked exact head
 
 After exact `09b73ac` application/Cloudflare workflows and all eight reported checks succeed, merge reviewed PR #14 as `1824574` with deployment selection still paused. Retain exact-main active archive/provenance and unchanged runtime stop/quiet/drain/migration gates before any activation; successful PR checks or an expired database lease do not supply native proof. Remove the merged PR watch, retain other queued integration work, and preserve all domain history, unknown financial holds, caps, review and reminder choices. [Exact merge/readback](tech/evidence/recovery-merge-2026-11-07.json).

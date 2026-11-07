@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 7 November 2026 — native artifact-only continuation after safe deploy refusal
+
+A fresh exact-main read finds run42414617918 complete: verify and prepare-active succeed, deploy fails. Native job128533012967 logs exact `refusing_shadow_over_active_release`; code inspection confirms the guard refuses a shadow build over active hosting with paused selection before deployment. Existing active provenance requires successful overall preparation, so do not use this failed run as ready proof. Prepare/syntax-check a fixed-project dispatcher, inspect its GET-only plan and acknowledge a sanitized remote operation intent on the existing hosting-journal branch before dispatching the existing `prepare_handover_artifact=true` input.
+
+Dispatch is acknowledged; a later GET identifies the sole new exact-main manual run42415988917 and durably binds it to original operation740a85bf-b242-4569-a92f-c1559aa7c847 without another launch. The workflow's supported manual path builds active and skips deployment; update the private archive verifier to require this exact reconciled manual run and its unchanged provenance validator. Control/revision remain exact. No delivery stop, migration, recovery, deployment, paid source/model execution, review or email occurs. Manual preparation remains pending. [Sanitized native continuation receipt](tech/evidence/recovery-artifact-only-dispatch-2026-11-07.json).
+
 ## 7 November 2026 — deletion backend reviewed and integrated with recovery
 
 Read the completed PR #17 handoff and native metadata/comments. Retarget the draft from the merged retrieval branch to current main. Independent read-only code review finds no material blocker in the tombstone, restrictive RLS/service-write, resumable Clerk, payload/financial-custody or restore boundaries. Parent merges main `1824574` into its finished worktree; only the jobs import block conflicts. Keep both the lifecycle worker and recovery RuntimeControl import; native message/revision/204 and lifecycle dispatch paths remain intact and are inspected by the ongoing review.
