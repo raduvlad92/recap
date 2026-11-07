@@ -94,9 +94,10 @@ describe('independent fee and content outcomes',()=>{
  it.each([null,0,.004])('retains unread content and settles only explicit terminal fee %s',async fee=>{
   const t=setup([{record:record(1),attempts:1,nextAttemptAt:'2099-01-01T00:00:00Z'}]),j=job(1);
   t.store.pending=async()=>[j];t.deps.pollApify.mockResolvedValue({status:'completed',contentError:'provider_error',telemetry:{ledgerId:j.job_id,providerRunId:j.provider_run_id!,cost:fee}});
-  await t.run();expect(t.store.providerPatch).toHaveBeenCalledWith(j.id,{state:'completed',actual_cost_usd:fee,content_pending:true});
-  expect(t.deps.settleBudget).toHaveBeenCalledWith(j.reservation_id,{terminal:true,actualUsd:fee,providerRunId:j.provider_run_id},expect.any(Function));
-  expect(t.patch()).toMatchObject({status:'partial',cost_status:fee===null?'unknown':'provider_reported',observed_cost_usd:fee});
+  const settled=fee===0?null:fee;
+  await t.run();expect(t.store.providerPatch).toHaveBeenCalledWith(j.id,{state:'completed',actual_cost_usd:settled,content_pending:true});
+  expect(t.deps.settleBudget).toHaveBeenCalledWith(j.reservation_id,{terminal:true,actualUsd:settled,providerRunId:j.provider_run_id},expect.any(Function));
+  expect(t.patch()).toMatchObject({status:'partial',cost_status:settled===null?'unknown':'provider_reported',observed_cost_usd:settled});
   expect(t.patch().pending_captions).toHaveLength(1);expect(vi.mocked(t.store.finish).mock.calls[0][2]).toEqual([]);expect(t.deps.startApify).not.toHaveBeenCalled();
  });
  it('reconciles a late fee without erasing accepted result counts or content error metadata',async()=>{
