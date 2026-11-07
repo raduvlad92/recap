@@ -56,6 +56,7 @@ const accountRuntime = new Miniflare(convertV4MiniflareOptions({
   outboundService: async request => {
     const url = new URL(request.url); outbound.push({ origin: url.origin, path: url.pathname });
     if (url.href === issuer + '/.well-known/jwks.json') return Response.json({ keys: [jwk] });
+    if (url.origin === 'https://zlfdqzabsfndifxiqguo.supabase.co' && url.pathname === '/rest/v1/rpc/account_access_allowed') return Response.json(true);
     if (url.origin === 'https://api.clerk.com' && ['/v1/users/fixture-owner', '/v1/users/fixture-reader'].includes(url.pathname)) return Response.json({ id: url.pathname.split('/').at(-1), email_addresses: [], primary_email_address_id: null, banned: false, locked: false });
     if (url.origin === 'https://zlfdqzabsfndifxiqguo.supabase.co' && url.pathname === '/rest/v1/rpc/read_hosting_runtime') {
       assert.equal(request.method, 'POST'); assert.equal(await request.text(), '{}');
@@ -97,6 +98,7 @@ const activeRuntime = new Miniflare(convertV4MiniflareOptions({
     if (url.href === 'https://api.clerk.com/v1/users/fixture-owner') return Response.json({ id: 'fixture-owner', email_addresses: [], primary_email_address_id: null, banned: false, locked: false });
     assert.equal(url.origin, 'https://zlfdqzabsfndifxiqguo.supabase.co'); assert.equal(request.method, 'POST');
     const name = url.pathname.split('/').at(-1);
+    if (name === 'account_access_allowed') return Response.json(true);
     if (name === 'read_hosting_runtime') return activeStateEmpty ? new Response(null, { status: 204 }) : Response.json({ owner: 'cloudflare', epoch: 2, paused: false, old_host_fenced: true, release });
     if (name === 'admit_hosting_work') return Response.json(true);
     if (name === 'begin_hosting_work') return Response.json({ token: 'fixture-http-lease' });

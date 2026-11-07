@@ -46,8 +46,8 @@ describe('Cloudflare host boundaries', () => {
     })));
     expect(result).toEqual(['one', 'two']); expect(hostRuntime()).toBeUndefined();
   });
-  it('maps all 14 HTTP handlers and keeps catalogue priority over SPA navigation', () => {
-    expect(Object.keys(handlers)).toHaveLength(14);
+  it('maps all 15 HTTP handlers and keeps catalogue priority over SPA navigation', () => {
+    expect(Object.keys(handlers)).toHaveLength(15);
     for (const name of Object.keys(handlers).filter(name => name !== 'catalogue')) expect(routeName('/api/' + name)).toBe(name);
     expect(routeName('/creators/example/')).toBe('catalogue'); expect(routeName('/sitemap.xml')).toBe('catalogue');
   });

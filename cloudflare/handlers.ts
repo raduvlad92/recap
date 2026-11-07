@@ -12,10 +12,11 @@ import recovery from '../netlify/functions/keyword-recovery.mts';
 import events from '../netlify/functions/reminder-events.mts';
 import unsubscribe from '../netlify/functions/reminder-unsubscribe.mts';
 import metadata from '../netlify/functions/source-metadata.mts';
+import accountDeletion from '../netlify/functions/account-deletion.mts';
 
 export type Handler = (request: Request) => Promise<Response>;
 export const handlers: Record<string, Handler> = {
-  admin, catalogue, collect, 'collection-activity': activity,
+  admin, catalogue, collect, 'collection-activity': activity, 'account-deletion': accountDeletion,
   'content-analysis-reconciliation': reconciliation, 'content-analysis-status': status,
   'daily-briefings': briefings, health, 'keyword-learning': learning,
   'keyword-production': production, 'keyword-recovery': recovery,

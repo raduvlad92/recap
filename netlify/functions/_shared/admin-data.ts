@@ -10,10 +10,11 @@ export function database(env: Env = runtimeEnv, privileged = true) {
   if (!url || !key) throw new CollectionError(503, 'database_unavailable', 'The catalogue service is not configured.');
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
 }
-export async function clerkRequest(path: string, env: Env, fetcher: typeof fetch = fetch): Promise<unknown> {
+export async function clerkRequest(path: string, env: Env, fetcher: typeof fetch = fetch, options: { method?: 'GET' | 'POST' | 'DELETE'; allowMissing?: boolean } = {}): Promise<unknown> {
   const key = env('CLERK_SECRET_KEY');
   if (!key) throw new CollectionError(503, 'admin_unavailable', 'Administration is not configured yet.');
-  const response = await fetcher('https://api.clerk.com/v1' + path, { headers: { authorization: 'Bearer ' + key }, signal: AbortSignal.timeout(8000) });
+  const response = await fetcher('https://api.clerk.com/v1' + path, { method: options.method || 'GET', headers: { authorization: 'Bearer ' + key }, signal: AbortSignal.timeout(8000), redirect: 'manual' });
+  if (options.allowMissing && response.status === 404) { await response.body?.cancel(); return null; }
   if (!response.ok) throw new CollectionError(502, 'identity_unavailable', 'The sign-up service could not be read. Try again.');
   return response.json();
 }
