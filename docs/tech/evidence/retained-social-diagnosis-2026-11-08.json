@@ -512,6 +512,17 @@
     "isolatedWorkerd": "passed",
     "typecheckAndBuild": "passed",
     "productFailingBeforePassingAfter": "not applicable; no product code defect demonstrated",
-    "nativeUsefulContentProof": "not obtained"
+    "nativeUsefulContentProof": "not obtained",
+    "initialPrCi": {
+      "head": "3401d59eea257a40ba5995ad0000b905a1b81423",
+      "checkRun": 42428445610,
+      "verifyRun": 42428445546,
+      "conclusion": "failure before job execution",
+      "runnerSteps": 0,
+      "nativeAnnotationReason": "Recent account payments failed or Actions spending limit needs attention",
+      "testFailureDemonstrated": false,
+      "billingChanged": false,
+      "manualRerun": false
+    }
   }
 }
