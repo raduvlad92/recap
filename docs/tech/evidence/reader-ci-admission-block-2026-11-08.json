@@ -1,0 +1,30 @@
+{
+  "kind": "native_github_ci_admission_refusal",
+  "recordedAtUtc": "2026-11-08T00:41:43Z",
+  "pullRequest": "https://github.com/raduvlad92/recap/pull/22",
+  "applicationHead": "feb9ba0b76c7b8b33efee39424367502e1275b6f",
+  "runs": [
+    {
+      "id": 42430770817,
+      "name": "Check recap",
+      "jobId": 128578954920,
+      "runnerSteps": 0,
+      "conclusion": "failure"
+    },
+    {
+      "id": 42430770846,
+      "name": "Verify and deploy Cloudflare",
+      "jobId": 128578955425,
+      "runnerSteps": 0,
+      "conclusion": "failure",
+      "subsequentReleaseJobs": "skipped"
+    }
+  ],
+  "exactFailureAnnotation": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+  "preciseBillingCause": "unknown",
+  "existingTokenBillingUsageRead": "scope_denied",
+  "paymentsPlansBudgetsCredentialsRunnersChanged": false,
+  "manualRerun": false,
+  "productionReaderChanges": false,
+  "nextAction": "Owner resolves GitHub account restriction; assistant reruns required checks on the final integrated head before the guarded native rollout."
+}
