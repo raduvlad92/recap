@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-11-07T20:54:51.260333+00:00",
+  "pullRequest": "https://github.com/raduvlad92/recap/pull/14",
+  "notificationHead": "fbf79cffe9ca441b1af797e196e3061d3b165f7b",
+  "notificationChecksPassed": 8,
+  "currentHead": "09b73ac3275542bc9339b3ca0f1c5996b2a68fa9",
+  "base": "e1f081a7af959da8bc6313acee691a6ac7e343d7",
+  "currentHeadApplicationCI": {
+    "runId": 42412732721,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "currentHeadCloudflareCI": {
+    "runId": 42412732714,
+    "status": "in_progress",
+    "conclusion": null
+  },
+  "ready": true,
+  "mergeable": true,
+  "commentsOrReviewsReturned": 0,
+  "merged": false,
+  "watchRetainedForCurrentHead": true,
+  "productionMigrationPerformed": false,
+  "productionRecoveryPerformed": false,
+  "productionDeploymentPerformed": false
+}

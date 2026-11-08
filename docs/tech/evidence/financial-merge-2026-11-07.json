@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-11-07T20:53:16.197682+00:00",
+  "pullRequest": "https://github.com/raduvlad92/recap/pull/13",
+  "head": "6ea1efc55589ea2f22558c71877cf2d295976c0c",
+  "merge": "e1f081a7af959da8bc6313acee691a6ac7e343d7",
+  "reportedChecksPassed": 8,
+  "merged": true,
+  "automaticDeploymentSelection": "paused",
+  "recoveryIntegration": {
+    "pullRequest": "https://github.com/raduvlad92/recap/pull/14",
+    "head": "09b73ac3275542bc9339b3ca0f1c5996b2a68fa9",
+    "includesFinancialMain": true,
+    "combinedTargetedTestsPassed": 238,
+    "testFiles": 9,
+    "supportedNode22RepeatPassed": true,
+    "typecheckPassed": true,
+    "currentHeadCI": "pending at checkpoint"
+  },
+  "productionMigrationPerformed": false,
+  "productionRecoveryPerformed": false,
+  "productionFeeCorrectionPerformed": false,
+  "productionDeploymentPerformed": false,
+  "modelCapIncreased": false,
+  "originalUnknownHoldsReleased": false,
+  "remindersEnabled": false
+}

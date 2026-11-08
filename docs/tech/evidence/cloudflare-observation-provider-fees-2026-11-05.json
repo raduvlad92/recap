@@ -1,0 +1,106 @@
+{
+  "recordedAt": "2026-11-05T07:27:20.808Z",
+  "scope": "existing-run-provider-metadata-only",
+  "providerMetadataGetRequestsAttempted": 10,
+  "verifiedMetadataReceipts": 5,
+  "providerRunsStarted": 0,
+  "feesAreProvisionalNotInvoices": true,
+  "receipts": [
+    {
+      "family": "original-hold",
+      "platform": null,
+      "status": "SUCCEEDED",
+      "providerReportedUsd": 0.0000734989750650194,
+      "ledgerReportedUsd": "0.000073498976",
+      "finishedAt": "2026-11-02T09:05:14.623Z",
+      "startedAt": "2026-11-02T09:05:13.265Z",
+      "feeMatchesLedger": true,
+      "feeDifferenceUsd": "0.000000000000",
+      "providerMaximumUsd": 0.05,
+      "reservedMaximumUsd": "0.050000",
+      "providerCapWithinReservation": true
+    },
+    {
+      "family": "original-hold",
+      "platform": null,
+      "status": "SUCCEEDED",
+      "providerReportedUsd": 0.00008321147666871547,
+      "ledgerReportedUsd": "0.000083211477",
+      "finishedAt": "2026-11-02T09:05:13.934Z",
+      "startedAt": "2026-11-02T09:05:12.007Z",
+      "feeMatchesLedger": true,
+      "feeDifferenceUsd": "0.000000000000",
+      "providerMaximumUsd": 0.05,
+      "reservedMaximumUsd": "0.050000",
+      "providerCapWithinReservation": true
+    },
+    {
+      "family": "social",
+      "platform": "Instagram",
+      "status": "SUCCEEDED",
+      "providerReportedUsd": 0.001,
+      "ledgerReportedUsd": "0.001000000000",
+      "finishedAt": "2026-11-05T07:00:56.118Z",
+      "startedAt": "2026-11-05T07:00:49.261Z",
+      "feeMatchesLedger": true,
+      "feeDifferenceUsd": "0.000000000000",
+      "providerMaximumUsd": 0.01,
+      "reservedMaximumUsd": "0.010000",
+      "providerCapWithinReservation": true
+    },
+    {
+      "family": "social",
+      "platform": "X",
+      "status": "SUCCEEDED",
+      "providerReportedUsd": 0.00007068191767566734,
+      "ledgerReportedUsd": "0.000070681918",
+      "finishedAt": "2026-11-05T07:15:25.549Z",
+      "startedAt": "2026-11-05T07:15:24.392Z",
+      "feeMatchesLedger": true,
+      "feeDifferenceUsd": "0.000000000000",
+      "providerMaximumUsd": 0.05,
+      "reservedMaximumUsd": "0.050000",
+      "providerCapWithinReservation": true
+    },
+    {
+      "family": "hourly",
+      "platform": "YouTube",
+      "status": "SUCCEEDED",
+      "providerReportedUsd": 0.004,
+      "ledgerReportedUsd": "0.000000000000",
+      "finishedAt": "2026-11-05T04:00:57.379Z",
+      "startedAt": "2026-11-05T04:00:41.377Z",
+      "feeMatchesLedger": false,
+      "feeDifferenceUsd": "0.004000000000",
+      "providerMaximumUsd": 0.005,
+      "reservedMaximumUsd": "0.005000",
+      "providerCapWithinReservation": true
+    }
+  ],
+  "discrepancy": {
+    "recordedAt": "2026-11-05T07:27:51.985Z",
+    "providerReportedUsd": 0.004,
+    "providerFinishedAt": "2026-11-05T04:00:57.379Z",
+    "records": [
+      {
+        "created_at": "2026-11-05 04:00:41.046843+00",
+        "finished_at": "2026-11-05 04:01:03.775+00",
+        "job_actual_usd": "0.000000000000",
+        "job_observed_usd": "0.000000000000",
+        "job_state": "completed",
+        "last_reconciled_at": "2026-11-05 04:01:02.43163+00",
+        "reservation_state": "settled",
+        "reservation_actual_usd": "0.000000000000",
+        "reservation_maximum_usd": "0.005000",
+        "reservation_completed_at": "2026-11-05 04:01:03.706039+00",
+        "reservation_updated_at": "2026-11-05 04:01:03.706039+00",
+        "activity_cost_status": "provider_reported",
+        "activity_observed_usd": "0.000000000000"
+      }
+    ],
+    "manualLedgerWrites": 0,
+    "allSampledProviderCapsWithinReservations": true,
+    "unresolved": true,
+    "fullHistoricalFeeAuditPerformed": false
+  }
+}

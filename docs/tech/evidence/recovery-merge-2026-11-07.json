@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-11-07T21:18:32.621404+00:00",
+  "pullRequest": "https://github.com/raduvlad92/recap/pull/14",
+  "head": "09b73ac3275542bc9339b3ca0f1c5996b2a68fa9",
+  "merge": "182457410f7f8e979348d10347fe50b1e94b295b",
+  "reportedChecksPassed": 8,
+  "merged": true,
+  "watchRemoved": true,
+  "applicationRun": 42412732721,
+  "cloudflareRun": 42412732714,
+  "bothWorkflowsSuccessful": true,
+  "commentsOrReviewsReturned": 0,
+  "deploymentSelection": "paused",
+  "preMergeHostingWork": {
+    "queued": 84,
+    "running": 1,
+    "expiredRunning": 1
+  },
+  "postMergeHealth": {
+    "recordedAt": "2026-11-07T21:15:33.204Z",
+    "http": 200,
+    "hosting": {
+      "provider": "cloudflare",
+      "mode": "active",
+      "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+      "jobsConfigured": true
+    }
+  },
+  "mainPreparationRun": 42414617918,
+  "mainPreparationAtCheckpoint": "verify in progress; active archive pending",
+  "productionMigrationPerformed": false,
+  "productionRecoveryPerformed": false,
+  "productionDeploymentPerformed": false,
+  "deliveryStopped": false,
+  "nativeQuietIntervalProved": false,
+  "originalHoldsReleased": false
+}

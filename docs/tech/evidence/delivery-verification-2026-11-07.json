@@ -1,0 +1,76 @@
+{
+  "recordedAt": "2026-11-07T20:15:58.144Z",
+  "retrievalHead": "748216ab9e75375612fb9a608e8b333d7e511d6d",
+  "localFullSuite": {
+    "testFiles": 128,
+    "tests": 3996,
+    "result": "passed",
+    "maxWorkers": 2,
+    "testTimeoutMs": 30000,
+    "durationSeconds": 306.61,
+    "logSha256": "0ce530fb4c7837b6cb808b9b26166cff629f41f960bc018d239e3c810dd4e09a"
+  },
+  "cloudflareShadowBuildAndRuntime": {
+    "result": "passed",
+    "checks": [
+      {
+        "runtime": "workerd",
+        "checks": 16,
+        "passed": true,
+        "outboundNetwork": "blocked",
+        "productionCredentials": false
+      },
+      {
+        "runtime": "workerd",
+        "protectedAccountChecks": 5,
+        "totalWebChecks": 21,
+        "liveProviderRequests": 0,
+        "redirectedCredentials": false
+      },
+      {
+        "runtime": "workerd",
+        "activeHttpCompletionChecks": 5,
+        "totalWebChecks": 26,
+        "liveProviderRequests": 0,
+        "nativeVoidStatus": 204
+      },
+      {
+        "runtime": "workerd",
+        "jobsChecks": 7,
+        "liveProviderRequests": 0,
+        "queueMessagesSent": 0,
+        "redirectedCredentials": false,
+        "nativeVoidStatus": 204
+      },
+      {
+        "runtime": "workerd",
+        "sourceGatewayDisabled": true,
+        "containerStarted": false
+      }
+    ],
+    "liveSourceOrProviderRequests": 0,
+    "logSha256": "662c9aebc0f002aad3ffd98b008915e9737cd81625353770d5f2c968dd576fab"
+  },
+  "financialIntegration": {
+    "head": "6ea1efc55589ea2f22558c71877cf2d295976c0c",
+    "targetedTestFiles": 11,
+    "targetedTests": 293,
+    "typecheckPassed": true,
+    "productionCorrection": false
+  },
+  "readOnlyMigrationPreflight": {
+    "recordedAt": "2026-11-07T20:11:18.05973+00:00",
+    "originalTables": 58,
+    "existingReplacedFunctions": 5,
+    "migrationInstalled": false,
+    "migrationSha256": "24f145d6d66ca4847f5689914f24995323dbbce263281eb50b339295bb080dc4",
+    "blockers": [
+      "acknowledged-maintenance-pause-required",
+      "hosting-transport-recovery-and-drain-required"
+    ]
+  },
+  "productionSchemaChanges": 0,
+  "productionRecoveryActions": 0,
+  "modelOrSupplierJobsStarted": 0,
+  "limits": "Local verification and read-only readiness; current-head CI, guarded recovery/drain, production migration and useful-content acceptance remain separate."
+}

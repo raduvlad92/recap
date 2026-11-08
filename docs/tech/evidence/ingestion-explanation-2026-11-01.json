@@ -1,0 +1,250 @@
+{
+  "at": "2026-11-01T01:58:33.489591+00:00",
+  "kind": "read-only-pipeline-explanation",
+  "latestSourceChecks": {
+    "at": "2026-11-01T01:58:33.489591+00:00",
+    "followedSources": [
+      {
+        "platform": "Instagram",
+        "sources": 8
+      },
+      {
+        "platform": "X",
+        "sources": 10
+      },
+      {
+        "platform": "YouTube",
+        "sources": 21
+      }
+    ],
+    "latestChecks": [
+      {
+        "error_code": "freshness_check_unavailable",
+        "http_status": null,
+        "platform": "Instagram",
+        "sources": 8,
+        "status": "unsupported"
+      },
+      {
+        "error_code": "freshness_check_unavailable",
+        "http_status": null,
+        "platform": "X",
+        "sources": 10,
+        "status": "unsupported"
+      },
+      {
+        "error_code": "source_unavailable",
+        "http_status": 404,
+        "platform": "YouTube",
+        "sources": 8,
+        "status": "failed"
+      },
+      {
+        "error_code": "source_unavailable",
+        "http_status": 500,
+        "platform": "YouTube",
+        "sources": 5,
+        "status": "failed"
+      },
+      {
+        "error_code": null,
+        "http_status": 200,
+        "platform": "YouTube",
+        "sources": 8,
+        "status": "partial"
+      }
+    ]
+  },
+  "currentSnapshot": {
+    "at": "2026-11-01T01:57:19.806889+00:00",
+    "briefings": [
+      {
+        "briefings": 1,
+        "local_date": "2026-10-31",
+        "published": 0,
+        "status": "awaiting_review",
+        "topics": 0
+      }
+    ],
+    "dailyControl": true,
+    "enabledReminderPolicies": 0,
+    "modelBudget": {
+      "committedUsd": 9.422509392,
+      "dailyLimitUsd": 5,
+      "enabled": true,
+      "lifetimeLimitUsd": 10,
+      "unknownCalls": 7
+    },
+    "readerDeliveries": 1,
+    "reminders": [],
+    "socialJobs": [
+      {
+        "accepted": 1,
+        "actual_usd": 0.1939,
+        "jobs": 166,
+        "latest_finish": "2026-11-01T01:50:11.001862+00:00",
+        "platform": "Instagram",
+        "purpose": "collection",
+        "referenced_runs": 166,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 2,
+        "latest_finish": null,
+        "platform": "Instagram",
+        "purpose": "collection",
+        "referenced_runs": 2,
+        "state": "running"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 1,
+        "latest_finish": null,
+        "platform": "Instagram",
+        "purpose": "proof",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.0256,
+        "jobs": 8,
+        "latest_finish": "2026-10-31T01:11:59.057146+00:00",
+        "platform": "Instagram",
+        "purpose": "proof",
+        "referenced_runs": 8,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 2,
+        "latest_finish": null,
+        "platform": "LinkedIn",
+        "purpose": "proof",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 2,
+        "actual_usd": 0.006150000002,
+        "jobs": 3,
+        "latest_finish": "2026-10-31T00:56:45.384572+00:00",
+        "platform": "LinkedIn",
+        "purpose": "proof",
+        "referenced_runs": 3,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 1,
+        "latest_finish": null,
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.01607932071,
+        "jobs": 180,
+        "latest_finish": "2026-11-01T01:25:11.318974+00:00",
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 180,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 1,
+        "latest_finish": null,
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 1,
+        "state": "running"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.000398390166,
+        "jobs": 5,
+        "latest_finish": "2026-10-31T00:56:44.746599+00:00",
+        "platform": "X",
+        "purpose": "proof",
+        "referenced_runs": 5,
+        "state": "completed"
+      }
+    ],
+    "socialSources": [
+      {
+        "ever_complete": 0,
+        "overdue": 0,
+        "paused": 0,
+        "platform": "Instagram",
+        "sources": 8
+      },
+      {
+        "ever_complete": 0,
+        "overdue": 1,
+        "paused": 0,
+        "platform": "X",
+        "sources": 10
+      }
+    ],
+    "socialTasks": [
+      {
+        "state": "blocked",
+        "tasks": 2
+      }
+    ],
+    "supplierBudget": {
+      "accountId": "source-proof",
+      "availableUsd": 42.757623965779,
+      "ceilingUsd": 45,
+      "committedUsd": 2.242376034221,
+      "currency": "USD",
+      "heldEnvelopes": 1,
+      "overCeiling": false,
+      "unknownCostJobs": 19
+    }
+  },
+  "recapCheckFailure": {
+    "exactSavedReplyInspected": true,
+    "readComplete": true,
+    "verdictCount": 1,
+    "supported": false,
+    "reasonCharacters": 243,
+    "reasonLimit": 240,
+    "validatorRejectsOverlongReason": true,
+    "noNewModelCall": true
+  },
+  "keywordFailure": {
+    "cause": "manual runner lacked OPENROUTER_API_KEY before client construction and HTTP dispatch",
+    "newReservationReconciledActualUsd": 0,
+    "failedTaskStillParked": true,
+    "historicalUnknownCalls": 7,
+    "historicalUnknownCallsAreNotBlanketBlock": true
+  },
+  "boundaries": {
+    "sourceOrProviderJobsStarted": 0,
+    "modelCalls": 0,
+    "workerInvocations": 0,
+    "approvals": 0,
+    "settingsOrBudgetChanges": 0,
+    "emails": 0
+  },
+  "missingConnections": [
+    "automatic AI bridge for Blog/Substack/Podcast RSS posts",
+    "linked-article and podcast-audio extraction",
+    "Instagram audio/image understanding/Stories"
+  ],
+  "productDistinctions": {
+    "LinkedIn": "actual limited proof exists; no active followed LinkedIn account",
+    "dailyBriefing": "saved correctly; requires current-source administrator-approved findings, of which none qualifies",
+    "email": "owner opt-out retained; live delivery remains unverified"
+  }
+}

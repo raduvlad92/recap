@@ -29,6 +29,10 @@ This verifies site deletion and bounded post-removal availability. It does not r
 
 ## Follow-up and repository cleanup
 
+Both existing cutoff observations are now complete. The **6 November** check confirms current Cloudflare delivery, retained private workspaces and both normal snapshot writes; review/content gaps and the existing fee discrepancy remain separate. Three transient provider-poll holds reconcile through the normal cron without an operator action. No Netlify resource is required or queried, and no new task/schedule is created. [Second observation and remaining work](CLOUDFLARE-OBSERVATION-2026-11-06.md). The following task descriptions retain their historical setup dates.
+
+The **5 November** read-only operational observation is complete: exact Cloudflare release/delivery and normal cutoff persistence verify, while the snapshot remains awaiting review and a sampled provider-fee discrepancy needs reconciliation. No deleted Netlify resource is required, recreated or queried. [First observation](CLOUDFLARE-OBSERVATION-2026-11-05.md). The remaining 6 November task retains its existing read-only scope; no schedule is added or changed by that observation.
+
 The obsolete **7 November final retirement task is deleted**. The existing **5 and 6 November, 07:15 UTC / 08:15 Berlin** cutoff checks remain enabled as read-only Cloudflare operational observations. Their instructions now acknowledge completed early retirement and must not require or recreate the deleted site or its credentials. No replacement task is created. [Task changes](evidence/netlify-retirement-schedules-2026-11-04.json).
 
 The accompanying PR removes the obsolete Netlify build-hook step from the application-check workflow and updates active reader/admin links to the permanent Cloudflare origin. Cloudflare automatic deployment remains in its existing workflow. Historical Netlify receipts, the old routing inventory and shared handler code under `netlify/` are retained; they do not indicate a live Netlify site. Broader package/handler reorganization is separate from this operational deletion.
