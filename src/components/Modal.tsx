@@ -1,7 +1,9 @@
+import { useReaderLanguage } from './ReaderLanguage';
 import { useEffect, useRef, useId, type ReactNode } from 'react';
 import { X } from 'lucide-react';
 
 export function Modal({ title, children, onClose, wide = false }: { title: string; children: ReactNode; onClose: () => void; wide?: boolean }) {
+  const { t } = useReaderLanguage();
   const ref = useRef<HTMLDialogElement>(null);
   const headingId = useId();
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -17,7 +19,7 @@ export function Modal({ title, children, onClose, wide = false }: { title: strin
       if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose();
     }
   }} aria-labelledby={headingId}>
-    <header className="modal-heading"><h2 id={headingId} ref={headingRef} tabIndex={-1}>{title}</h2><button className="icon-button" onClick={onClose} aria-label="Close"><X size={20} /></button></header>
+    <header className="modal-heading"><h2 id={headingId} ref={headingRef} tabIndex={-1}>{title}</h2><button className="icon-button" onClick={onClose} aria-label={t('close')}><X size={20} /></button></header>
     <div className="modal-body">{children}</div>
   </dialog>;
 }

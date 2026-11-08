@@ -1,3 +1,4 @@
+import { useReaderLanguage } from './ReaderLanguage';
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, ImageOff, Pause, Play } from 'lucide-react';
 import type { SourceMedia } from '../lib/types';
@@ -9,15 +10,17 @@ interface Props {
   playbackEnabled?: boolean;
 }
 
-function OriginalLink({ url, children = 'Open original post' }: { url: string; children?: ReactNode }) {
-  return <a href={url} target="_blank" rel="noopener noreferrer">{children}<ArrowUpRight size={14} aria-hidden="true" /></a>;
+function OriginalLink({ url, children }: { url: string; children?: ReactNode }) {
+  const { t } = useReaderLanguage();
+  return <a href={url} target="_blank" rel="noopener noreferrer">{children ?? t('openOriginalPost')}<ArrowUpRight size={14} aria-hidden="true" /></a>;
 }
 
 function Unavailable({ type, originalUrl, previewUrl }: { type: SourceMedia['type']; originalUrl: string; previewUrl?: string }) {
+  const { t } = useReaderLanguage();
   const [failedPreview, setFailedPreview] = useState(false);
   return <div className="post-media-unavailable">
-    {previewUrl && !failedPreview ? <img className="post-media-preview" src={previewUrl} alt={`${type === 'gif' ? 'GIF' : 'Video'} preview only`} referrerPolicy="no-referrer" onError={() => setFailedPreview(true)} /> : <ImageOff size={26} aria-hidden="true" />}
-    <p>{type === 'image' ? 'Image unavailable' : type === 'gif' ? 'GIF unavailable' : 'Video unavailable'}</p>
+    {previewUrl && !failedPreview ? <img className="post-media-preview" src={previewUrl} alt={t('mediaPreviewOnly', { type: t(type === 'gif' ? 'gif' : 'video') })} referrerPolicy="no-referrer" onError={() => setFailedPreview(true)} /> : <ImageOff size={26} aria-hidden="true" />}
+    <p>{t('mediaUnavailable', { type: t(type === 'image' ? 'image' : type === 'gif' ? 'gif' : 'video') })}</p>
     <OriginalLink url={originalUrl} />
   </div>;
 }
@@ -66,6 +69,7 @@ function ImageAsset({ media, originalUrl, label }: { media: SourceMedia; origina
 
 /** Native animated GIFs use a canvas still while paused, including before motion consent. */
 function RasterGif({ media, originalUrl, label, playbackEnabled }: { media: SourceMedia; originalUrl: string; label: string; playbackEnabled?: boolean }) {
+  const { t } = useReaderLanguage();
   const { ref, visible, reducedMotion } = usePlaybackVisibility(playbackEnabled);
   const [choice, setChoice] = useState<boolean | null>(null);
   const [failed, setFailed] = useState(false);
@@ -90,12 +94,13 @@ function RasterGif({ media, originalUrl, label, playbackEnabled }: { media: Sour
     {failed ? <Unavailable type="gif" originalUrl={originalUrl} previewUrl={media.previewUrl} /> : <>
       <canvas className={`post-media-visual post-gif-still ${playing ? 'post-media-hidden' : ''}`} ref={canvas} role="img" aria-label={media.alt || label} />
       {(playing || !hasFrame) && <img className={`post-media-visual ${playing ? '' : 'post-gif-loading'}`} ref={image} src={media.url} alt={playing ? media.alt || label : ''} aria-hidden={!playing} referrerPolicy="no-referrer" onLoad={captureFrame} onError={() => setFailed(true)} />}
-      <button className="post-gif-toggle" onClick={() => playing ? pause() : setChoice(true)} aria-label={playing ? 'Pause GIF' : 'Play GIF'}>{playing ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}{playing ? 'Pause GIF' : 'Play GIF'}</button>
+      <button className="post-gif-toggle" onClick={() => playing ? pause() : setChoice(true)} aria-label={playing ? t('pauseGif') : t('playGif')}>{playing ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}{playing ? t('pauseGif') : t('playGif')}</button>
     </>}
   </div>;
 }
 
 function VideoAsset({ media, originalUrl, label, playbackEnabled }: { media: SourceMedia; originalUrl: string; label: string; playbackEnabled?: boolean }) {
+  const { t } = useReaderLanguage();
   const { ref, visible, reducedMotion } = usePlaybackVisibility(playbackEnabled);
   const video = useRef<HTMLVideoElement>(null);
   const urls = playbackUrls(media);
@@ -132,20 +137,21 @@ function VideoAsset({ media, originalUrl, label, playbackEnabled }: { media: Sou
   return <div className="post-media-asset" ref={ref} data-media-failure={failed ? failureReason : undefined}>
     {failed || !urls.length ? <Unavailable type={media.type} originalUrl={originalUrl} previewUrl={media.previewUrl} /> : <>
       <video key={urls[sourceIndex]} ref={video} className="post-media-visual" src={urls[sourceIndex]} poster={media.previewUrl} controls={!gif} playsInline muted={gif} loop={gif} preload="metadata" aria-label={media.alt || label} onError={mediaError} onPlay={() => { setPlaying(true); if (!visible) video.current?.pause(); }} onPause={() => setPlaying(false)}>
-        Your browser cannot play this {gif ? 'GIF' : 'video'}. <a href={originalUrl} target="_blank" rel="noopener noreferrer">Open the original post</a>.
+        {t('browserCannotPlay', { type: gif ? t('gif') : t('videoInline') })} <a href={originalUrl} target="_blank" rel="noopener noreferrer">{t('openTheOriginalPost')}</a>.
       </video>
-      {gif && <button className="post-gif-toggle" onClick={() => setGifChoice(!playing)} aria-label={playing ? 'Pause GIF' : 'Play GIF'}>{playing ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}{playing ? 'Pause GIF' : 'Play GIF'}</button>}
+      {gif && <button className="post-gif-toggle" onClick={() => setGifChoice(!playing)} aria-label={playing ? t('pauseGif') : t('playGif')}>{playing ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}{playing ? t('pauseGif') : t('playGif')}</button>}
     </>}
   </div>;
 }
 
 function MediaCarousel({ media, originalUrl, size = 'feed', playbackEnabled = true }: Props) {
+  const { t } = useReaderLanguage();
   const [index, setIndex] = useState(0);
   const viewportId = useId();
   const pointer = useRef<{ x: number; y: number; id: number } | null>(null);
   const active = media[index];
   const multiple = media.length > 1;
-  const label = `${active.type === 'image' ? 'Image' : active.type === 'gif' ? 'GIF' : 'Video'} ${index + 1} of ${media.length}`;
+  const label = t('attachmentLabel', { type: t(active.type === 'image' ? 'image' : active.type === 'gif' ? 'gif' : 'video'), index: index + 1, total: media.length });
   function move(delta: number) { setIndex(current => (current + delta + media.length) % media.length); }
   function keyDown(event: KeyboardEvent<HTMLDivElement>) {
     // Video controls, links, and buttons own their own keys; never listen on the page.
@@ -165,13 +171,13 @@ function MediaCarousel({ media, originalUrl, size = 'feed', playbackEnabled = tr
     const dx = event.clientX - start.x; const dy = event.clientY - start.y;
     if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.4) move(dx < 0 ? 1 : -1);
   }
-  return <div className={`post-media post-media-${size}`} role="region" aria-roledescription={multiple ? 'carousel' : undefined} aria-label="Post media" tabIndex={multiple ? 0 : undefined} onKeyDown={keyDown} onPointerDown={pointerDown} onPointerUp={pointerUp} onPointerCancel={() => { pointer.current = null; }}>
-    <div className="post-media-stage" id={viewportId} role="group" aria-roledescription={multiple ? 'slide' : undefined} aria-label={label} key={`${index}:${active.url}`}>
+  return <div className={`post-media post-media-${size}`} role="region" aria-roledescription={multiple ? t('carousel') : undefined} aria-label={t('postMedia')} tabIndex={multiple ? 0 : undefined} onKeyDown={keyDown} onPointerDown={pointerDown} onPointerUp={pointerUp} onPointerCancel={() => { pointer.current = null; }}>
+    <div className="post-media-stage" id={viewportId} role="group" aria-roledescription={multiple ? t('slide') : undefined} aria-label={label} key={`${index}:${active.url}`}>
       {active.type === 'image' ? <ImageAsset media={active} originalUrl={originalUrl} label={label} /> : active.type === 'gif' && /\.gif(?:$|[?#])/i.test(active.url) ? <RasterGif media={active} originalUrl={originalUrl} label={label} playbackEnabled={playbackEnabled} /> : <VideoAsset media={active} originalUrl={originalUrl} label={label} playbackEnabled={playbackEnabled} />}
     </div>
     <div className="post-media-toolbar">
       <span className="post-media-count" aria-live="polite" aria-atomic="true">{label}</span>
-      {multiple && <div className="post-media-navigation"><button aria-label="Previous attachment" aria-controls={viewportId} onClick={() => move(-1)}><ChevronLeft size={19} aria-hidden="true" /></button><button aria-label="Next attachment" aria-controls={viewportId} onClick={() => move(1)}><ChevronRight size={19} aria-hidden="true" /></button></div>}
+      {multiple && <div className="post-media-navigation"><button aria-label={t('previousAttachment')} aria-controls={viewportId} onClick={() => move(-1)}><ChevronLeft size={19} aria-hidden="true" /></button><button aria-label={t('nextAttachment')} aria-controls={viewportId} onClick={() => move(1)}><ChevronRight size={19} aria-hidden="true" /></button></div>}
     </div>
   </div>;
 }

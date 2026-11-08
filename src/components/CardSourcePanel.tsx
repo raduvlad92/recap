@@ -1,3 +1,4 @@
+import { useReaderLanguage } from './ReaderLanguage';
 import { useState, type ReactNode } from 'react';
 import { Camera, FileText, Headphones, MessageSquare, Rss } from 'lucide-react';
 import type { Platform } from '../lib/types';
@@ -11,25 +12,28 @@ export function SourcePlatformIcon({ platform }: { platform?: Platform }) {
   return <Icon size={17} aria-hidden="true" />;
 }
 
-export function TextPostPreview({ label = 'Text post' }: { label?: string }) {
-  return <div className="card-text-preview"><MessageSquare size={23} strokeWidth={1.3} aria-hidden="true" /><span>{label}</span></div>;
+export function TextPostPreview({ label }: { label?: string }) {
+  const { t } = useReaderLanguage();
+  return <div className="card-text-preview"><MessageSquare size={23} strokeWidth={1.3} aria-hidden="true" /><span>{label ?? t('textPost')}</span></div>;
 }
 
 export function CardImagePreview({ image, duration, label, onOpen }: { image?: string; duration?: string; label: string; onOpen: () => void }) {
+  const { t } = useReaderLanguage();
   const [failedImage, setFailedImage] = useState<string>();
-  return <button className="card-thumbnail" aria-label={label} onClick={onOpen}>{image && failedImage !== image ? <img src={image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedImage(image)} /> : <TextPostPreview label={image ? 'Preview unavailable' : 'Read source'} />}{duration && <span className="duration-pill">{duration}</span>}</button>;
+  return <button className="card-thumbnail" aria-label={label} onClick={onOpen}>{image && failedImage !== image ? <img src={image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedImage(image)} /> : <TextPostPreview label={image ? t('previewUnavailable') : t('readSource')} />}{duration && <span className="duration-pill">{duration}</span>}</button>;
 }
 
 export function CardSourcePanel({ name, avatar, date, publishedAt, platform, preview, actions, onChannel, secondary }: {
   name: string; avatar: ReactNode; date: string; publishedAt: string; platform?: Platform;
   preview?: ReactNode; actions: ReactNode; onChannel: () => void; secondary?: ReactNode;
 }) {
+  const { t } = useReaderLanguage();
   return <div className="card-source-panel">
-    <div className="card-source-preview">{preview || <div className="card-text-preview"><FileText size={23} strokeWidth={1.3} aria-hidden="true" /><span>Source preview</span></div>}</div>
+    <div className="card-source-preview">{preview || <div className="card-text-preview"><FileText size={23} strokeWidth={1.3} aria-hidden="true" /><span>{t('sourcePreview')}</span></div>}</div>
     <div className="card-source-meta">
-      <button className="card-source-channel" aria-label={`View channel: ${name}`} onClick={onChannel}>{avatar}<strong>{name}</strong></button>
+      <button className="card-source-channel" aria-label={t('viewChannelNamed', { name })} onClick={onChannel}>{avatar}<strong>{name}</strong></button>
       {secondary}
-      <div className="card-source-date"><span className="card-platform-icon" role="img" aria-label={platform || 'Source'} title={platform || 'Source'}><SourcePlatformIcon platform={platform} /></span><time dateTime={publishedAt || undefined}>{date}</time></div>
+      <div className="card-source-date"><span className="card-platform-icon" role="img" aria-label={platform || t('sourceName')} title={platform || t('sourceName')}><SourcePlatformIcon platform={platform} /></span><time dateTime={publishedAt || undefined}>{date}</time></div>
       <div className="card-source-actions">{actions}</div>
     </div>
   </div>;
