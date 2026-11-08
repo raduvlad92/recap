@@ -1,0 +1,517 @@
+{
+  "scope": "Exact refs from completed 7 November observer; one database refresh and retained provider GETs; no new observation",
+  "databaseCheckedAt": "2026-11-08 00:02:32.056045+00",
+  "providerCheckedAt": "2026-11-08T00:03:07.623Z",
+  "baselineRelease": "182457410f7f8e979348d10347fe50b1e94b295b",
+  "servingReleaseRechecked": false,
+  "databaseSelectStatements": 1,
+  "cloudflareMetadataReads": 0,
+  "exactJobCount": 12,
+  "acceptedItemRows": 0,
+  "exactJobOutcomes": [
+    {
+      "jobSha256": "937ded55464fd44f88166490a95cfdc19dd3d54f545b53556ab0bd56e77bda45",
+      "sourceSha256": "59a4fc13625eb10c834b5d4600b15f0ecc8c3b7b2134e9dd66693da05af6de42",
+      "platform": "X",
+      "state": "completed",
+      "createdAt": "2026-11-07T23:51:01.54876+00:00",
+      "finishedAt": "2026-11-08T00:01:29.21886+00:00",
+      "windowFrom": "2026-11-06T23:51:01.52108+00:00",
+      "windowTo": "2026-11-07T23:51:01.52108+00:00",
+      "reportedUsd": "0.000093504564",
+      "error": null,
+      "coverage": {
+        "reason": "empty_or_unusable_response",
+        "status": "unknown",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {},
+        "returned": 0,
+        "retrieval": "apify",
+        "diagnostics": {
+          "report_present": false
+        }
+      },
+      "actorRef": "xquik/x-tweet-scraper",
+      "buildNumber": "1.12.411"
+    },
+    {
+      "jobSha256": "c806c7f6b0841149a2d7553645b35deb4bc6c6d23c236bb7fdb15f6b65040915",
+      "sourceSha256": "b184ddb3865c6b5d7e90684f1dd293f11174fbdea7b77ef4787477a2146d12b4",
+      "platform": "X",
+      "state": "completed",
+      "createdAt": "2026-11-07T22:15:00.327581+00:00",
+      "finishedAt": "2026-11-07T23:31:02.196497+00:00",
+      "windowFrom": "2026-11-07T15:15:25.82138+00:00",
+      "windowTo": "2026-11-07T22:15:00.313408+00:00",
+      "reportedUsd": "0.00008175482",
+      "error": null,
+      "coverage": {
+        "reason": "empty_or_unusable_response",
+        "status": "unknown",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {},
+        "returned": 0,
+        "retrieval": "apify",
+        "diagnostics": {
+          "report_present": false
+        }
+      },
+      "actorRef": "xquik/x-tweet-scraper",
+      "buildNumber": "1.12.411"
+    },
+    {
+      "jobSha256": "2a75026ad9a8fcedb2233e8f1c763a31030a3159ebc3167611828fe86ec0170e",
+      "sourceSha256": "162f542aed663f598a68827566fe12a9b755ece134d99c20d8566d465ef85ef0",
+      "platform": "Instagram",
+      "state": "failed",
+      "createdAt": "2026-11-07T22:15:00.147241+00:00",
+      "finishedAt": "2026-11-07T23:31:01.705529+00:00",
+      "windowFrom": "2026-11-06T22:15:00.11711+00:00",
+      "windowTo": "2026-11-07T22:15:00.11711+00:00",
+      "reportedUsd": "0.0022",
+      "error": "provider_blocked",
+      "coverage": {
+        "reason": "provider_blocked",
+        "status": "blocked",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {
+          "outside_window": 1
+        },
+        "returned": 1,
+        "retrieval": "apify",
+        "diagnostics": {
+          "requests": 9,
+          "empty_targets": 0,
+          "report_present": true,
+          "blocked_requests": 4
+        }
+      },
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4"
+    },
+    {
+      "jobSha256": "c01bd4d2501fadaeaf045bb513ea6b77502855513762a36856c2a47fe244c376",
+      "sourceSha256": "b56c42392df9ddb2ad0970eeeec8d05c595b9386ddba9726951a8a30c7e9be9e",
+      "platform": "Instagram",
+      "state": "failed",
+      "createdAt": "2026-11-07T23:31:01.962257+00:00",
+      "finishedAt": "2026-11-07T23:41:04.086932+00:00",
+      "windowFrom": "2026-11-06T23:31:01.956665+00:00",
+      "windowTo": "2026-11-07T23:31:01.956665+00:00",
+      "reportedUsd": "0.0046",
+      "error": "provider_blocked",
+      "coverage": {
+        "reason": "provider_blocked",
+        "status": "blocked",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {
+          "outside_window": 3
+        },
+        "returned": 3,
+        "retrieval": "apify",
+        "diagnostics": {
+          "requests": 9,
+          "empty_targets": 0,
+          "report_present": true,
+          "blocked_requests": 3
+        }
+      },
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4"
+    },
+    {
+      "jobSha256": "b409b58a2a100bc7b3da130b57d0dba4c052009dce17b85adaa6fc55305a4cc9",
+      "sourceSha256": "628a16c0fa3945a8c3043fa4deebe99c37466eef58f8fb07248e393248c90066",
+      "platform": "Instagram",
+      "state": "failed",
+      "createdAt": "2026-11-07T23:31:01.928246+00:00",
+      "finishedAt": "2026-11-07T23:41:03.574926+00:00",
+      "windowFrom": "2026-11-06T23:31:01.907999+00:00",
+      "windowTo": "2026-11-07T23:31:01.907999+00:00",
+      "reportedUsd": "0.0046",
+      "error": "provider_blocked",
+      "coverage": {
+        "reason": "provider_blocked",
+        "status": "blocked",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {
+          "outside_window": 3
+        },
+        "returned": 3,
+        "retrieval": "apify",
+        "diagnostics": {
+          "requests": 9,
+          "empty_targets": 0,
+          "report_present": true,
+          "blocked_requests": 3
+        }
+      },
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4"
+    },
+    {
+      "jobSha256": "088a1cfe58ea12acaaacd9baeb43e6850a594f7c25c7e2bedaf5136fa1858719",
+      "sourceSha256": "ed6e6388df6a7e941363d4236ab7a0ec1134edae7448fc20f87a0af5134a76b2",
+      "platform": "Instagram",
+      "state": "failed",
+      "createdAt": "2026-11-07T23:41:04.278666+00:00",
+      "finishedAt": "2026-11-07T23:51:01.554116+00:00",
+      "windowFrom": "2026-11-06T23:41:04.271769+00:00",
+      "windowTo": "2026-11-07T23:41:04.271769+00:00",
+      "reportedUsd": "0.0046",
+      "error": "provider_blocked",
+      "coverage": {
+        "reason": "provider_blocked",
+        "status": "blocked",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {
+          "outside_window": 3
+        },
+        "returned": 3,
+        "retrieval": "apify",
+        "diagnostics": {
+          "requests": 9,
+          "empty_targets": 0,
+          "report_present": true,
+          "blocked_requests": 3
+        }
+      },
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4"
+    },
+    {
+      "jobSha256": "dd0e7ec34008f9ffa8102a962db5198f3567099bba56e0420a71120c81708335",
+      "sourceSha256": "78d2e8fde711c2c5b06e593a2666825a84b4bfa70f57cc4b4b0858615c4aa463",
+      "platform": "Instagram",
+      "state": "failed",
+      "createdAt": "2026-11-07T23:41:04.097124+00:00",
+      "finishedAt": "2026-11-07T23:51:01.30112+00:00",
+      "windowFrom": "2026-11-06T23:41:04.090512+00:00",
+      "windowTo": "2026-11-07T23:41:04.090512+00:00",
+      "reportedUsd": "0.0046",
+      "error": "provider_blocked",
+      "coverage": {
+        "reason": "provider_blocked",
+        "status": "blocked",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {
+          "outside_window": 3
+        },
+        "returned": 3,
+        "retrieval": "apify",
+        "diagnostics": {
+          "requests": 9,
+          "empty_targets": 0,
+          "report_present": true,
+          "blocked_requests": 3
+        }
+      },
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4"
+    },
+    {
+      "jobSha256": "42947dddfbae5d8268d682a9d43e325567edacd0bc62ea9c79b7b3ac3e55dd03",
+      "sourceSha256": "8ef31c1d6dea679a5425ebb1c5c50500059d071f3f1c80f29474c5909aedcdc3",
+      "platform": "Instagram",
+      "state": "failed",
+      "createdAt": "2026-11-07T23:41:03.835306+00:00",
+      "finishedAt": "2026-11-07T23:51:01.580266+00:00",
+      "windowFrom": "2026-11-06T23:41:03.807977+00:00",
+      "windowTo": "2026-11-07T23:41:03.807977+00:00",
+      "reportedUsd": "0.0046",
+      "error": "provider_blocked",
+      "coverage": {
+        "reason": "provider_blocked",
+        "status": "blocked",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {
+          "outside_window": 3
+        },
+        "returned": 3,
+        "retrieval": "apify",
+        "diagnostics": {
+          "requests": 9,
+          "empty_targets": 0,
+          "report_present": true,
+          "blocked_requests": 3
+        }
+      },
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4"
+    },
+    {
+      "jobSha256": "415331738487923c8842b9b010b883a529535d462f509d93d9737dbd49045304",
+      "sourceSha256": "d6d902f521c1ac96a99e5c950216fb88a032109b4104626bf42037f013f30673",
+      "platform": "Instagram",
+      "state": "failed",
+      "createdAt": "2026-11-07T22:15:00.104869+00:00",
+      "finishedAt": "2026-11-07T23:31:01.777625+00:00",
+      "windowFrom": "2026-11-06T22:14:59.761888+00:00",
+      "windowTo": "2026-11-07T22:14:59.761888+00:00",
+      "reportedUsd": "0.001",
+      "error": "provider_blocked",
+      "coverage": {
+        "reason": "provider_blocked",
+        "status": "blocked",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {},
+        "returned": 0,
+        "retrieval": "apify",
+        "diagnostics": {
+          "requests": 6,
+          "empty_targets": 1,
+          "report_present": true,
+          "blocked_requests": 3
+        }
+      },
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4"
+    },
+    {
+      "jobSha256": "621f3c3d49e01a0801ba4cb9ad5fc9fdbcd5e6f1f1f1207f561af472ccb14c87",
+      "sourceSha256": "ad5d3fe13f5d01f792f183f3730217d1b11686d9bcfdaeda0fe187359b618456",
+      "platform": "Instagram",
+      "state": "failed",
+      "createdAt": "2026-11-07T23:31:02.402397+00:00",
+      "finishedAt": "2026-11-07T23:41:03.874539+00:00",
+      "windowFrom": "2026-11-06T23:31:02.396762+00:00",
+      "windowTo": "2026-11-07T23:31:02.396762+00:00",
+      "reportedUsd": "0.001",
+      "error": "provider_blocked",
+      "coverage": {
+        "reason": "provider_blocked",
+        "status": "blocked",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {},
+        "returned": 0,
+        "retrieval": "apify",
+        "diagnostics": {
+          "requests": 6,
+          "empty_targets": 1,
+          "report_present": true,
+          "blocked_requests": 3
+        }
+      },
+      "actorRef": "yugenox/instagram-post-scraper",
+      "buildNumber": "0.1.4"
+    },
+    {
+      "jobSha256": "5e878a086b54518e71c812dbbc3dad87cd0e48a29ce16205202b7a5670f54a15",
+      "sourceSha256": "a2b894aca150934c1cfe65f30fb1481dc8371206aa17cea8b2411acde2c0401c",
+      "platform": "X",
+      "state": "completed",
+      "createdAt": "2026-11-07T23:51:01.793016+00:00",
+      "finishedAt": "2026-11-08T00:01:29.72262+00:00",
+      "windowFrom": "2026-11-06T23:51:01.787792+00:00",
+      "windowTo": "2026-11-07T23:51:01.787792+00:00",
+      "reportedUsd": "0.000102736204",
+      "error": null,
+      "coverage": {
+        "reason": "empty_or_unusable_response",
+        "status": "unknown",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {},
+        "returned": 0,
+        "retrieval": "apify",
+        "diagnostics": {
+          "report_present": false
+        }
+      },
+      "actorRef": "xquik/x-tweet-scraper",
+      "buildNumber": "1.12.411"
+    },
+    {
+      "jobSha256": "e665e12b9cb6284659a6c98599ad99b4c9c786edc00f33f030afa9955349f53c",
+      "sourceSha256": "5c94a268e1844aba03611ebcb3aa51e5a35e638af670facf8d48d1be4b258068",
+      "platform": "X",
+      "state": "completed",
+      "createdAt": "2026-11-07T23:51:04.957455+00:00",
+      "finishedAt": "2026-11-08T00:01:29.826343+00:00",
+      "windowFrom": "2026-11-06T23:51:04.950858+00:00",
+      "windowTo": "2026-11-07T23:51:04.950858+00:00",
+      "reportedUsd": "0.000097554773",
+      "error": null,
+      "coverage": {
+        "reason": "empty_or_unusable_response",
+        "status": "unknown",
+        "accepted": 0,
+        "complete": false,
+        "rejected": {},
+        "returned": 0,
+        "retrieval": "apify",
+        "diagnostics": {
+          "report_present": false
+        }
+      },
+      "actorRef": "xquik/x-tweet-scraper",
+      "buildNumber": "1.12.411"
+    }
+  ],
+  "priorPendingX": [
+    {
+      "jobSha256": "937ded55464fd44f88166490a95cfdc19dd3d54f545b53556ab0bd56e77bda45",
+      "state": "completed",
+      "finishedAt": "2026-11-08T00:01:29.21886+00:00",
+      "returned": 0,
+      "accepted": 0,
+      "reportedUsd": "0.000093504564"
+    },
+    {
+      "jobSha256": "5e878a086b54518e71c812dbbc3dad87cd0e48a29ce16205202b7a5670f54a15",
+      "state": "completed",
+      "finishedAt": "2026-11-08T00:01:29.72262+00:00",
+      "returned": 0,
+      "accepted": 0,
+      "reportedUsd": "0.000102736204"
+    },
+    {
+      "jobSha256": "e665e12b9cb6284659a6c98599ad99b4c9c786edc00f33f030afa9955349f53c",
+      "state": "completed",
+      "finishedAt": "2026-11-08T00:01:29.826343+00:00",
+      "returned": 0,
+      "accepted": 0,
+      "reportedUsd": "0.000097554773"
+    }
+  ],
+  "attemptsAddedByNormalAutomation": 12,
+  "addedAttemptMethods": {
+    "x_apify_poll/succeeded": 3,
+    "x_apify_dataset/empty": 3,
+    "x_apify_validation/empty": 3,
+    "x_apify_diagnostics/succeeded": 3
+  },
+  "reportedJobFeesUsd": "0.027575550361",
+  "billingFinalityProven": false,
+  "providerReads": {
+    "metadata": 3,
+    "input": 3,
+    "diagnostics": 4,
+    "dataset": 3,
+    "datasetRows": 3,
+    "totalGets": 13,
+    "diagnosticHttp404": 2,
+    "allRunIdentitiesMatched": true,
+    "allSavedInputFieldsMatched": true,
+    "maxDatasetRowsPerRun": 3
+  },
+  "retainedSamples": [
+    {
+      "sample": 1,
+      "platform": "Instagram",
+      "jobSha256": "c01bd4d2501fadaeaf045bb513ea6b77502855513762a36856c2a47fe244c376",
+      "inputExactFields": true,
+      "coverage": {
+        "status": "unknown",
+        "complete": false,
+        "returned": 3,
+        "accepted": 0,
+        "rejected": {
+          "outside_window": 3
+        },
+        "reason": "provider_returned_older_window"
+      },
+      "diagnostics": {
+        "report_present": true,
+        "blocked_requests": 3,
+        "requests": 9,
+        "empty_targets": 0
+      },
+      "rowsWithExactOwnerAndCode": 3,
+      "rowsBeforeWindow": 3,
+      "rowsWithCaptionAndMedia": 3
+    },
+    {
+      "sample": 2,
+      "platform": "Instagram",
+      "jobSha256": "415331738487923c8842b9b010b883a529535d462f509d93d9737dbd49045304",
+      "inputExactFields": true,
+      "coverage": {
+        "status": "unknown",
+        "complete": false,
+        "returned": 0,
+        "accepted": 0,
+        "rejected": {},
+        "reason": "empty_or_unusable_response"
+      },
+      "diagnostics": {
+        "report_present": true,
+        "blocked_requests": 3,
+        "requests": 6,
+        "empty_targets": 1
+      },
+      "rowsWithExactOwnerAndCode": 0,
+      "rowsBeforeWindow": 0,
+      "rowsWithCaptionAndMedia": 0
+    },
+    {
+      "sample": 3,
+      "platform": "X",
+      "jobSha256": "937ded55464fd44f88166490a95cfdc19dd3d54f545b53556ab0bd56e77bda45",
+      "inputExactFields": true,
+      "coverage": {
+        "status": "unknown",
+        "complete": false,
+        "returned": 0,
+        "accepted": 0,
+        "rejected": {},
+        "reason": "empty_or_unusable_response"
+      },
+      "diagnostics": {
+        "report_present": false
+      },
+      "rowsWithExactOwnerAndCode": 0,
+      "rowsBeforeWindow": 0,
+      "rowsWithCaptionAndMedia": 0
+    }
+  ],
+  "cadence": {
+    "scope": "Only timestamps/launch-presence for the 12 exact sources, 7 November 00:00 UTC through the single database read",
+    "sources": 12,
+    "launchedJobs": 229,
+    "intervals": 217,
+    "minimumLaunchGapMinutes": 65.09511666666667,
+    "medianLaunchGapMinutes": 74.95335,
+    "maximumLaunchGapMinutes": 160.61561666666665,
+    "minimumFinishToNextClaimMinutes": 60.00541666666667,
+    "liveFinishDefinitionHasOneHourDelay": true
+  },
+  "applicationCodeChanged": false,
+  "parserOrInputDefectDemonstrated": false,
+  "quietCoverageProven": false,
+  "productionWrites": 0,
+  "newSupplierRuns": 0,
+  "creatorSourceRequests": 0,
+  "modelCalls": 0,
+  "manualPollOrSettle": 0,
+  "oldObserverExtended": false,
+  "validation": {
+    "node": "22.23.4",
+    "tests": 53,
+    "testFiles": 5,
+    "skippedTests": 0,
+    "skippedFiles": 0,
+    "files": [
+      "tests/retained-social-outcomes.test.ts",
+      "tests/social-collection.test.ts",
+      "tests/native-social.test.ts",
+      "tests/social-collection-local-db.test.ts",
+      "tests/cloudflare-native-retrieval-runtime.test.mjs"
+    ],
+    "realDisposablePostgreSQL": "passed",
+    "isolatedWorkerd": "passed",
+    "typecheckAndBuild": "passed",
+    "productFailingBeforePassingAfter": "not applicable; no product code defect demonstrated",
+    "nativeUsefulContentProof": "not obtained"
+  }
+}
