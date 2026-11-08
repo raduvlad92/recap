@@ -4,7 +4,9 @@ The founder requested implementation of the status report's next steps, prioriti
 
 ## Current evidence and critical path
 
-**Latest 23:21 UTC checkpoint / 8 November Berlin:** exact core normal release `1824574` is accepted natively, the authenticated USD 0.004 fee correction/replay is verified, epoch 4 is resumed and original bounded delivery restored. Original financial/workspace rows remain exact, reminders off. Next prove an ordinary new automatic invocation and useful content; prepare the reader migration/release plan in parallel with activation off. [Native release evidence](evidence/core-native-release-2026-11-07.json).
+**Latest 23:51 UTC / 8 November Berlin:** five ordinary native ticks pass exact invocation/finish comparisons, completing core transport acceptance. Useful content remains unproved after 78 Instagram/X attempts with no accepted rows; three X runs remain pending beyond the bounded observation. Guarded reader migration preparation and retained-result retrieval diagnosis proceed independently under unchanged caps and approval controls. [Native acceptance](evidence/restored-core-readonly-acceptance-2026-11-07.md).
+
+**Historical 23:21 UTC checkpoint / 8 November Berlin:** exact core normal release `1824574` is accepted natively, the authenticated USD 0.004 fee correction/replay is verified, epoch 4 is resumed and original bounded delivery restored. Original financial/workspace rows remain exact, reminders off. Next prove an ordinary new automatic invocation and useful content; prepare the reader migration/release plan in parallel with activation off. [Native release evidence](evidence/core-native-release-2026-11-07.json).
 
 **Historical 23:00 UTC checkpoint:** all 96 automatic dispositions and all three core migration rehearsal/apply gates pass. Original financial/workspace rows are exact, current baseline and security readback are saved, the deployment window is released and one normal CI release for fixed main `1824574` is dispatched. Processing remains paused until exact native acceptance and checked restoration. [Completed native gates](evidence/recovery-native-window-2026-11-07.json).
 

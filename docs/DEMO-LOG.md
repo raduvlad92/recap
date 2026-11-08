@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 8 November Berlin / 7 November 23:51 UTC — ordinary native transport and content outcome qualification
+
+Read the completed acceptance task and its retained sanitized note. The bounded observer starts 23:25:21 UTC, hard-stops by 23:55:21 UTC and finishes at 23:51:46.751 UTC. Five ordinary automatic invocations pass exact message/frame/token/current-revision and both-bound completion checks. No legacy uncertain frame counts as success. Accepted worker/source/policy/delivery and private ACL/native-denial checks remain exact. All 19 original source reservation full rows, seven unknown model full rows, three workspaces and six budget/policy hashes are preserved; the single USD 0.004 correction remains consistent.
+
+There are 78 new attempts and zero accepted source/archive rows or model calls. Instagram public profiles return six 404s, pages fail transport six times, eight settled jobs report blocking and 16 rows are rejected outside exact windows. X has three native 429s, one settled empty job and three pending jobs whose next polls lie beyond the observer deadline. Existing automation settles USD 0.02728175482; new pending holds total USD 0.15 with unknown fees. Do not extend that observer, fabricate content proof, force polling or claim a free run. Copy only its sanitized evidence to the parent branch; raw IDs/frames/content remain ignored/private in the original checkout. Core scheduling acceptance passes while useful-content, reader release, interruption and ready-recap proofs remain separate. [Native evidence note](tech/evidence/restored-core-readonly-acceptance-2026-11-07.md), [aggregate receipt](tech/evidence/ordinary-transport-acceptance-2026-11-07.json).
+
 ## 8 November Berlin / 7 November 23:21 UTC — exact native release, fee correction and original delivery restored
 
 Normal run 42423118103 passes verify/deploy. Download its own artifact 13595275488, rehash the native ZIP and full manifest/files/config/source pins, and bind the sole GitHub Actions checkpoint 128559404688 to completed journal and actual 100%-serving workers. All native assets/source/flags pass. Paused admin GET correctly returns 503 hosting_execution_paused; adjust the acceptance expectation to this inspected gate and separately prove 401 sign_in_required after resume. No authentication rule is weakened.

@@ -1,8 +1,10 @@
 # Native recovery execution and continuation
 
-Latest checkpoint: **7 November 23:21 UTC / 8 November Berlin**. Exact normal deployment/native acceptance, one fee correction and original delivery restoration are complete. [Native completion receipt](evidence/core-native-release-2026-11-07.json). The 23:14 checkpoint below remains historical. Current fixed core main is `182457410f7f8e979348d10347fe50b1e94b295b`. Keep main unchanged until the current normal release is accepted and original delivery is restored.
+Latest checkpoint: **7 November 23:51 UTC / 8 November Berlin**. Exact normal deployment, fee correction, delivery restoration and five ordinary native invocation/finish checks are complete. Useful-content acceptance remains unproved. [Native completion receipt](evidence/core-native-release-2026-11-07.json). The 23:14 checkpoint below remains historical. Current fixed core main is `182457410f7f8e979348d10347fe50b1e94b295b`. The fixed-head native release, restoration and ordinary scheduling acceptance are now complete; the next reviewed increment may advance main after its own migration/check gates.
 
 ## Completed native gates
+
+**Ordinary acceptance at 23:51 UTC:** five new automatic invocations pass exact native message/frame/token/revision and both-deadline checks. The 96 legacy uncertain frames are excluded. Source/flags/delivery/private data/caps are exact. The main acceptance hold is released; useful content is still unproved (78 attempts, zero accepted rows, three pending X jobs). [Bounded native readback](evidence/restored-core-readonly-acceptance-2026-11-07.md).
 
 - Successful artifact-only run `42415988917`: active ZIP/native SHA-256, manifest, all checked files and committed configuration/source pins verified. This is preparation, not the normal deployment checkpoint.
 - Owned deployment window `35a3fc0f-1df5-4741-a56c-a74fe9870bf4`: workflow disabled and all runs drained. Native schedules and consumer stopped. Cron propagation admitted later business ticks; original bounded consumer temporarily drained them. The unchanged pause intent then succeeded. Final consumer removal was acknowledged at **22:22:55.049137 UTC**; the full conservative quiet deadline was **22:39:55.050 UTC**.

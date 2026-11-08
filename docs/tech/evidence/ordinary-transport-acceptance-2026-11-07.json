@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-07T23:51:46.751Z",
+  "release": "182457410f7f8e979348d10347fe50b1e94b295b",
+  "transport": "pass",
+  "usefulContent": "not_proven",
+  "ordinaryTicksCompleted": 5,
+  "legacyUncertainFramesExcluded": 96,
+  "exactNativeMessageFrameTokenRevisionComparisons": true,
+  "finishesWithinBothBounds": true,
+  "nativeSourceFlagsDeliveryUnchanged": true,
+  "retrievalAttempts": {
+    "total": 78,
+    "Instagram": 62,
+    "X": 16,
+    "YouTube": 0
+  },
+  "acceptedReaderRows": 0,
+  "acceptedSocialItems": 0,
+  "newModelCalls": 0,
+  "instagram": {
+    "profileHttp404": 6,
+    "pageTransportFailures": 6,
+    "settledBlockedJobs": 8,
+    "outsideWindowRowsRejected": 16
+  },
+  "x": {
+    "nativeHttp429": 3,
+    "settledEmptyJobs": 1,
+    "pendingJobs": 3,
+    "nextPollDueOutsideObservation": true
+  },
+  "ordinaryAutomation": {
+    "settledReportedUsd": "0.02728175482",
+    "newReservationSettledUsd": "0.0240",
+    "pendingHoldUsd": "0.15",
+    "pendingFees": null,
+    "manualProviderRuns": 0
+  },
+  "preservation": {
+    "originalSourceRowsExact": 19,
+    "originalUnknownModelFullRowsExact": 7,
+    "workspacesExact": 3,
+    "budgetPolicyTablesExact": 6,
+    "sourceCeilingUsd": "45",
+    "modelLifetimeCeilingUsd": "10",
+    "modelDayCeilingUsd": "5",
+    "modelCallMaximumUsd": "0.10",
+    "modelCommitmentUsd": "9.918486404",
+    "reminders": false,
+    "singleLateFeeCorrectionUsd": "0.004000000000",
+    "singleLateFeeReceiptAndProjectionConsistency": true
+  },
+  "privacy": {
+    "attemptAndInvocationRls": true,
+    "ordinaryRoleSelectDenied": true,
+    "ordinaryBeginFinishExecuteDenied": true,
+    "nativeAnonymousDatabaseDenied": true,
+    "nativeAnonymousAdminStatus": 401,
+    "nativePublicWorkerStatus": 404
+  },
+  "work": {
+    "queued": 0,
+    "running": 0,
+    "expired_running": 0,
+    "uncertain": 96
+  },
+  "scope": "Bounded native/API read-only acceptance; normal existing automation continued. No manual retry, new collection, provider/model execution, review approval, source/runtime/cap change, queue pull/purge/replay or email.",
+  "pending": [
+    "Inspect the three existing X job outcomes through ordinary reconciliation",
+    "Diagnose retained Instagram/X evidence without loosening exact windows/source identity",
+    "Complete guarded reader migrations and release",
+    "Prove useful content and a supported scheduled recap under unchanged model/review gates"
+  ]
+}
