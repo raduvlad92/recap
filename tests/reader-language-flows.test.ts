@@ -1,5 +1,7 @@
 import { createElement, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { ClerkProvider } from '@clerk/react';
+import { Parser } from 'htmlparser2';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const hooks = vi.hoisted(() => ({ current: null as any }));
 const data = vi.hoisted(() => ({ auth: null as any, workspace: null as any }));
@@ -73,7 +75,15 @@ function harness<P>(component: (props: P) => ReactNode, props: P, locale: Reader
 function nodes(tree: any): any[] { return Array.isArray(tree) ? tree.flatMap(nodes) : tree?.props ? [tree, ...nodes(tree.props.children)] : []; }
 function text(tree: any): string { return Array.isArray(tree) ? tree.map(text).join('') : typeof tree === 'string' || typeof tree === 'number' ? String(tree) : tree?.props ? text(tree.props.children) : ''; }
 function button(tree: any, label: string) { const node = nodes(tree).find(node => node.type === 'button' && (text(node) === label || node.props['aria-label'] === label)); if (!node) throw Error('Missing button: ' + label); return node; }
-function markup(tree: ReactNode, locale: ReaderLocale = 'en') { return renderToStaticMarkup(createElement(ReaderLanguage.Provider, { value: locale }, tree)); }
+const syntheticClerkKey='pk_test_'+Buffer.from('synthetic.clerk.accounts.dev$').toString('base64').replace(/=+$/,'');
+function markup(tree: ReactNode, locale: ReaderLocale = 'en') {
+ const child=createElement(ReaderLanguage.Provider,{value:locale},tree);
+ return renderToStaticMarkup(data.auth.isConfigured?createElement(ClerkProvider,{publishableKey:syntheticClerkKey,children:child}):child);
+}
+function deletionControlsInForm(html: string) {
+ const stack:string[]=[];let controls=0,nested=false;
+ const parser=new Parser({onopentag(name,attributes){if(attributes.class?.split(/\s+/).includes('account-deletion-controls')){controls++;nested ||= stack.includes('form');}stack.push(name);},onclosetag(){stack.pop();}});parser.end(html);return{controls,nested};
+}
 const escaped = (value: string) => renderToStaticMarkup(createElement('span', null, value)).slice(6, -7);
 const tick = () => new Promise<void>(resolve => setImmediate(resolve));
 beforeEach(() => {
@@ -82,7 +92,7 @@ beforeEach(() => {
   vi.stubGlobal('window', { location: { href: 'https://example.org/' }, history: { replaceState: vi.fn() }, setTimeout: vi.fn(), clearTimeout: vi.fn(), setInterval: vi.fn(() => 1), clearInterval: vi.fn(), requestAnimationFrame: (fn: () => void) => fn() });
   vi.stubGlobal('document', { documentElement: { lang: '' }, visibilityState: 'visible' });
   vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Unexpected request in locale test'); }));
-  data.auth = { isLoaded: true, isSignedIn: true, userId: 'synthetic-reader', isConfigured: true, displayName: 'Synthetic reader', getToken: vi.fn(async () => 'synthetic-local-token'), signIn: vi.fn(), signOut: vi.fn() };
+  data.auth = { isLoaded: true, isSignedIn: true, userId: 'synthetic-provider-subject', ownerId: 'synthetic-reader', identityKey: 'synthetic-session', identityStatus: 'ready', isConfigured: true, displayName: 'Synthetic reader', getToken: vi.fn(async () => 'synthetic-local-token'), signIn: vi.fn(), signOut: vi.fn() };
   const state = { ...createDefaultWorkspace(), customSources: [source], followedSourceIds: [source.id], sourceCollections: [{ id: 'synthetic-collection', name: 'An original collection name', sourceIds: [source.id], createdAt: '2026-11-01T00:00:00Z' }], activeCollectionId: 'synthetic-collection' };
   data.workspace = { state, sources: [source], updates: [], creators: [], isLoaded: true, saveStatus: 'saved', sourceImageErrors: {}, updateSettings: vi.fn(() => true), saveCollection: vi.fn(() => true), selectSourceCollection: vi.fn(() => true), isCreatorFollowed: vi.fn(() => false), followReasons: vi.fn(() => []), addSource: vi.fn(() => ({ error: 'Paste a public YouTube channel link, rather than a video, playlist or account page.' })) };
 });
@@ -163,6 +173,11 @@ describe('reader and daily interface language flows', () => {
     downloadBriefing(item);
     expect(JSON.parse(await captured!.text())).toEqual(item); expect(JSON.stringify(item)).toBe(before); expect(click).toHaveBeenCalledOnce();
   });
+  it('renders unconfigured guest Settings without mounting a real Clerk-only hook', () => {
+    data.auth={...data.auth,isConfigured:false,isSignedIn:false,userId:null,ownerId:null,identityKey:'guest'};
+    const h=harness(App,{},'en');h.render(true);let tree=h.render();button(tree,translator('en')('settings')).props.onClick();tree=h.render();
+    const html=markup(tree);expect(html).toContain(escaped(translator('en')('settingsTitle')));expect(html).toContain('class="settings-form"');expect(deletionControlsInForm(html)).toEqual({controls:0,nested:false});expect(fetch).not.toHaveBeenCalled();
+  });
   it.each(languages)('keeps the compact feed and settings/collection rows in $id', ({ id }) => {
     const t = translator(id);
     data.workspace.state.settings = { ...data.workspace.state.settings, interfaceLanguage: id, recapLanguage: 'es', emailReminder: true };
@@ -175,6 +190,7 @@ describe('reader and daily interface language flows', () => {
     expect(html).toContain('An original collection name');
     button(tree, t('settings')).props.onClick(); tree = h.render(true); tree = h.render();
     html = markup(tree, id);
+    expect(deletionControlsInForm(html)).toEqual({controls:1,nested:false});
     expect(html).toContain(escaped(t('languageNote'))); expect(html).not.toContain('some helper text remains English');
     expect(html).toContain(escaped(t('reminderHelp'))); expect(html).toContain(escaped(t('sourceMaterialHelp')));
     const labels = nodes(tree).filter(node => node.type === 'label');
@@ -268,7 +284,7 @@ const activity = (): CollectionActivityReport => ({
 describe('localized own-account collection activity', () => {
   it.each(languages)('keeps unknown fees distinct from zero and preserves held amounts ($id)', ({ id }) => {
     const report = activity(), before = JSON.stringify(report), t = translator(id);
-    const h = harness(CollectionStatus, {}, id, [{ owner: data.auth.userId, report }]);
+    const h = harness(CollectionStatus, {}, id, [{ owner: data.auth.ownerId, report }]);
     const html = markup(h.render(), id);
     expect(html).toContain(escaped(t('activity'))); expect(html).toContain(escaped(t('unknown')));
     expect(html).toContain(escaped(t('nativeOnly'))); expect(html).toContain(escaped(t('plusUnknown')));

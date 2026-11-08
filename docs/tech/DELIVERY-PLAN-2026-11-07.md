@@ -4,6 +4,8 @@ The founder requested implementation of the status report's next steps, prioriti
 
 ## Current evidence and critical path
 
+**Latest 8 November:** combined reader release is prepared with guest Settings, form separation and actual locale-ID integration fixes. Guarded migration tests now run explicitly in CI and bind active files to exact reviewed bytes. GitHub account payment/spending restrictions prevent jobs starting, so keep core production running and defer native reader stop/migration/release until final-head CI is available. [Review candidate and exact continuation](READER-RELEASE-INTEGRATION-2026-11-08.md). Retained social diagnosis finds no parser/input defect and no accepted items; all previously pending X jobs are empty.
+
 **Latest 23:51 UTC / 8 November Berlin:** five ordinary native ticks pass exact invocation/finish comparisons, completing core transport acceptance. Useful content remains unproved after 78 Instagram/X attempts with no accepted rows; three X runs remain pending beyond the bounded observation. Guarded reader migration preparation and retained-result retrieval diagnosis proceed independently under unchanged caps and approval controls. [Native acceptance](evidence/restored-core-readonly-acceptance-2026-11-07.md).
 
 **Historical 23:21 UTC checkpoint / 8 November Berlin:** exact core normal release `1824574` is accepted natively, the authenticated USD 0.004 fee correction/replay is verified, epoch 4 is resumed and original bounded delivery restored. Original financial/workspace rows remain exact, reminders off. Next prove an ordinary new automatic invocation and useful content; prepare the reader migration/release plan in parallel with activation off. [Native release evidence](evidence/core-native-release-2026-11-07.json).
@@ -39,7 +41,7 @@ A separate media-processing service is justified only if measured audio/OCR requ
 ## Ordered product proof
 
 1. Repair/recover the hosting stall without changing financial history or weakening admission controls.
-2. Core migration and cleanup/retrieval/financial/recovery merges are complete with native preservation checks. Complete the normal checked deployment of `1824574`, verify its actual served artifact and restore the original bounded delivery through checked control.
+2. Core recovery/migrations and exact `1824574` release/restoration are complete, including five ordinary native invocation checks. Integrate the reader increments, resolve CI admission and use the fresh guarded migration/release sequence; do not replay the completed core operations.
 3. Verify hosted attempt history, then bounded recent controls on YouTube, Instagram and X. Count useful original text/captions independently from discovery, empty output, partial coverage and charges. Reuse retained paid results before paying for replacements.
 4. Reconcile attributable financial uncertainty. Prepare the smallest concrete model allowance needed for a defined proof if the existing ceiling cannot admit it; do not raise the ceiling from this plan or silently use another provider/model.
 5. Validate source-grounded proposals and preserve human review. The existing daily composer can already group approved points into up to five cited topics: prove this supported mode on a new ordinary scheduled cutoff. Never rewrite an old snapshot to manufacture a successful day.

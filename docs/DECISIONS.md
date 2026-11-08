@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 8 November — preserve release gates while CI cannot start
+
+Integrate the queued reader increments and their exact migration contract before requesting an owner action. GitHub reports failed account payments or an Actions spending restriction; the existing token cannot read billing usage. Resolve that account restriction without assuming permission to pay, raise budgets, refresh token scopes or bypass accepted CI/artifact provenance. Production stays on the accepted core until final integrated checks and native migration/release gates pass. Interface copy covers the six offered IDs; native-language qualification and translated recap generation are separate. Retained social emptiness and old rows do not authorize widened windows, supplier changes or hold releases. [Review candidate and continuation](tech/READER-RELEASE-INTEGRATION-2026-11-08.md).
+
 ## 8 November Berlin — transport acceptance does not approve content or spending
 
 Five ordinary native ticks satisfy the scheduling acceptance hold. Their zero-content results do not approve publication, broaden source identities/windows, certify free retrieval or release unknown charges. Existing USD45 source/USD10 model limits, review gates and reminder opt-out remain unchanged. Continue guarded reader release preparation and evidence-based source diagnosis without a new supplier subscription or manual provider/model launch. [Exact observed outcomes](tech/evidence/restored-core-readonly-acceptance-2026-11-07.md).

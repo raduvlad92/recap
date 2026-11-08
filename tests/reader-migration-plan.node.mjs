@@ -56,6 +56,14 @@ describe('pure bounded reader migration planner', () => {
   assert.throws(() => { sourcePins.reader[0].sourceSha256 = 'f'.repeat(64); }, TypeError);
   assert.throws(() => { reviewedContract.changes.length = 0; }, TypeError);
  });
+ it('binds the integrated active reader migrations to the exact reviewed fixture bytes', () => {
+  const sources=readerSources();
+  for(const [index,pin]of sourcePins.reader.entries()){
+   const actual=readFileSync(new URL('../supabase/migrations/'+pin.file,import.meta.url),'utf8');
+   assert.equal(actual,sources[index],'Active reader migration differs: '+pin.file);
+   assert.equal(sha256(actual),pin.sourceSha256);
+  }
+ });
  it('produces deterministic bounded independent rehearsal/apply hashes, with no effects or caller mutation', () => {
   const input = staticInput(), saved = structuredClone(input), originalFetch = globalThis.fetch;
   globalThis.fetch = () => { throw new Error('Network is forbidden'); };

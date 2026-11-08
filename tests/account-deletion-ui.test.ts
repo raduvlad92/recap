@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 const h=vi.hoisted(()=>({slots:[]as any[],index:0,effects:[]as Array<()=>void>,auth:{}as any,cancel:false}));
 const same=(a:any[],b:any[])=>a?.length===b.length&&a.every((v,i)=>Object.is(v,b[i]));
-vi.mock('react',()=>({
+vi.mock('react',async importOriginal=>({
+ ...await importOriginal<typeof import('react')>(),
  useRef:(value:any)=>{const n=h.index++;return h.slots[n]??={current:value};},
  useState:(value:any)=>{const n=h.index++,s=h.slots[n]??={value:typeof value==='function'?value():value};return[s.value,(v:any)=>s.value=typeof v==='function'?v(s.value):v];},
  useCallback:(fn:any,deps:any[])=>{const n=h.index++,s=h.slots[n];if(!s||!same(s.deps,deps))h.slots[n]={value:fn,deps};return h.slots[n].value;},
@@ -14,7 +15,7 @@ import { clearUnacceptedDeletion, readDeletionMarker } from '../src/lib/account-
 const owner='synthetic-delete-ui-owner',id='10000000-0000-4000-8000-000000000001';
 const accepted={requestId:id,state:'requested',reason:null};
 const signedOut=vi.fn();
-function render(){h.index=0;const tree=AccountDeletion({language:'en',onSignedOut:signedOut});h.effects.splice(0).forEach(fn=>fn());return tree;}
+function render(language='en'){h.index=0;const tree=AccountDeletion({language,onSignedOut:signedOut});h.effects.splice(0).forEach(fn=>fn());return tree;}
 function nodes(tree:any):any[]{return tree&&typeof tree==='object'?[tree,...[tree.props?.children].flat(Infinity).flatMap(nodes)]:[];}
 function button(tree:any,label:string){const found=nodes(tree).find(n=>n.type==='button'&&n.props.children===label);expect(found,'button '+label).toBeTruthy();return found;}
 async function tick(){for(let n=0;n<4;n++)await new Promise(r=>setImmediate(r));}
@@ -23,7 +24,7 @@ function confirm(tree:any,value='DELETE'){nodes(tree).find(n=>n.type==='input').
 beforeEach(()=>{
  h.slots=[];h.index=0;h.effects=[];h.cancel=false;signedOut.mockReset();
  const storage=new Map<string,string>();vi.stubGlobal('localStorage',{getItem:(k:string)=>storage.get(k)??null,setItem:(k:string,v:string)=>storage.set(k,v),removeItem:(k:string)=>storage.delete(k)});vi.stubGlobal('window',{dispatchEvent:vi.fn()});clearUnacceptedDeletion(owner);
- h.auth={identityKey:'synthetic-session',ownerId:owner,isSignedIn:true,getToken:vi.fn(async()=> 'synthetic-token'),signOut:vi.fn(async()=>{})};
+ h.auth={isConfigured:true,identityKey:'synthetic-session',ownerId:owner,isSignedIn:true,getToken:vi.fn(async()=> 'synthetic-token'),signOut:vi.fn(async()=>{})};
 });
 afterEach(()=>{h.slots.forEach(s=>s?.cleanup?.());clearUnacceptedDeletion(owner);vi.unstubAllGlobals();});
 it('requires exact typed confirmation, posts no owner identity, and signs out only after a recorded acknowledgement',async()=>{
@@ -50,4 +51,10 @@ it('does not dispatch or sign out a replacement session after a delayed token',a
 it('does not sign out another session or apply callbacks after an unmounted confirmation loses its reply',async()=>{
  const reply=deferred<Response>();vi.stubGlobal('fetch',vi.fn(async(_url:any,options:any)=>options.method==='POST'?reply.promise:Response.json({deletion:null})));
  let tree=render();await tick();tree=render();button(tree,'Delete account').props.onClick();tree=render();confirm(tree);await tick();h.slots.forEach(s=>s?.cleanup?.());reply.resolve(Response.json({deletion:accepted}));await tick();expect(h.auth.signOut).not.toHaveBeenCalled();expect(signedOut).not.toHaveBeenCalled();expect(readDeletionMarker(owner)?.state).toBe('pending');
+});
+
+it.each([
+ ['en','Delete account'],['de','Konto löschen'],['es','Eliminar cuenta'],['fr','Supprimer le compte'],['it','Elimina account'],['pt-BR','Excluir conta'],
+])('uses account-deletion copy for the offered %s interface locale',async(language,label)=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({deletion:null})));render(language);await tick();const tree=render(language);expect(button(tree,label).props.disabled).toBe(false);
 });
