@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 9 November — authorize a bounded CI trial on existing infrastructure
+
+The founder says “do it” following the proposed isolated test-only Hostinger/Dokploy trial, preferably with the official GitHub self-hosted runner. Preserve real GitHub job identity and existing production-release requirements; no `act` result or hand-written green status substitutes for them. Scope is one pinned job without production credentials, with resource containment and exact cleanup. No new paid server/plan, billing increase, production migration/release, supplier/model call, backup change or specification approval follows. Native access/capacity and containment qualification remain gates. [Implementation/evidence](tech/HOSTINGER-CI-TRIAL-2026-11-09.md).
+
 ## 8 November — preserve release gates while CI cannot start
 
 Integrate the queued reader increments and their exact migration contract before requesting an owner action. GitHub reports failed account payments or an Actions spending restriction; the existing token cannot read billing usage. Resolve that account restriction without assuming permission to pay, raise budgets, refresh token scopes or bypass accepted CI/artifact provenance. Production stays on the accepted core until final integrated checks and native migration/release gates pass. Interface copy covers the six offered IDs; native-language qualification and translated recap generation are separate. Retained social emptiness and old rows do not authorize widened windows, supplier changes or hold releases. [Review candidate and continuation](tech/READER-RELEASE-INTEGRATION-2026-11-08.md).

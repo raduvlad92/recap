@@ -1,0 +1,8 @@
+**
+!Dockerfile
+!policy.mjs
+!launcher.mjs
+!runtime.mjs
+!qualify.mjs
+!job-guard.mjs
+!job-started.sh

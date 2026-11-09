@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 9 November — test-only CI runner package and access discovery
+
+Create a dedicated worktree from exact PR #22 `3c93e91`. Inspect available access: remote linking tools unavailable, no SSH identity or op CLI, Dokploy preview signed out, native browser integration unavailable and active human Chrome rejects input. Close the owned preview and stop native Chrome interaction. Two secure API-key requests expire; no key is received. No Hostinger operation is performed.
+
+Prepare official pinned/checksummed GitHub runner, Node22/PostgreSQL17 environment, strict PR merge/run/attempt/event guards, one-job JIT intent, no-production-credential workflow and bounded nonroot Compose. Environment review confirms no host Docker socket needed. Safety review identifies readback/cleanup and timer/scratch boundaries; fix the former with operator regressions and prepare an external host deadline/private filesystem for native qualification. All 67 new tests and source/Compose checks pass. [Scoped note and build result](tech/HOSTINGER-CI-TRIAL-2026-11-09.md). No native trial, GitHub registration/route, production migration/release, source/model execution, financial hold or backup change occurs.
+
 **8 November release handoff:** [combined PR #22](https://github.com/raduvlad92/recap/pull/22) is published at tested application head `feb9ba0`. Both CI workflows are refused before runner steps; the [exact native admission receipt](tech/evidence/reader-ci-admission-block-2026-11-08.json) and [owner checklist](v0/MORNING.md) record the account-owner action. Production stays on accepted core; after billing admission is restored, rerun final-head checks and follow the guarded rollout. No reader production write or activation occurs.
 
 ## 8 November — combined reader integration and retained-result diagnosis

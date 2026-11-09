@@ -1,0 +1,29 @@
+name: Isolated test-only CI trial
+on:
+  pull_request:
+    branches: [review/full-reader-release-20261108]
+permissions:
+  contents: read
+concurrency:
+  group: therecap-test-only-trial
+  cancel-in-progress: false
+jobs:
+  trial:
+    name: Hostinger test-only trial
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.head_ref == 'ci/hostinger-test-trial-20261109' &&
+      vars.RECAP_CI_TRIAL_ENABLED == 'true'
+    runs-on: [self-hosted, linux, therecap-test-only-20261109]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check unprivileged offline prerequisites
+        run: node scripts/ci-trial/checks.mjs preflight
+      - run: npm ci --no-fund --no-audit
+      - name: Run all reader tests with zero skips and bounded workers
+        run: node scripts/ci-trial/checks.mjs verify
+        env:
+          HOSTING_BUILD_MODE: shadow
