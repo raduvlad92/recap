@@ -15,7 +15,11 @@ The candidate branch `ci/hostinger-test-trial-20261109` starts from exact reader
 
 The ARM64 image builds successfully at `sha256:ee5dcff3c2df92f314dbf983a512e0ba846865f5a8613e5764ef457cf75a7b77`. A credential-free, network-disabled local Docker probe verifies Node 22.23.4, runner 2.338.2, bundled action Node 24.22.1, UID10001, PostgreSQL17/pgcrypto via a private Unix socket, read-only root and actual one-CPU/four-GiB/no-swap/512-process cgroups. Three separate variants correctly refuse root, unbounded memory and writable root. All four probe containers and their volume are removed; fresh native Docker listings are empty for the qualification namespace. Six runtime source hashes match the actual image. Full reader/workerd-in-image and real GitHub job execution are not performed. These exact results are recorded in [the receipt](evidence/hostinger-ci-trial-2026-11-09.json). A local ARM64 Docker build is not a Hostinger build, Linux x64 proof, real GitHub job or accepted release artifact.
 
-## Access blocker
+## 11 November access and capacity update
+
+The founder completes external-Chrome sign-in and correct-account selection. Hostinger's existing root web console works; no additional key/token is needed. Native capacity shows only 2.00 GiB available RAM against the prepared six-GiB gate, so no runner is launched. [Current native observation and continuation](HOSTINGER-CAPACITY-2026-11-11.md). The access history and next-action description below record the earlier 9 November checkpoint; follow this update for current access.
+
+## 9 November access blocker (historical)
 
 The remote-environment link/list tools are not callable. No SSH configuration/identity or `op` CLI is available. The existing Dokploy site is reachable but the T3 preview is signed out. Native browser integration is unavailable; the existing Chrome session is in active human use and rejects input with “The user changed …”. Stop interacting with it. The owned preview tab is closed.
 

@@ -1,6 +1,6 @@
 # Isolated test-only CI trial
 
-The founder authorized this trial on 9 November 2026. It is a candidate for running Therecap's checks on the existing Hostinger/Dokploy server. **No Hostinger capacity, provisioning or execution is proven yet.** Dokploy authentication is unavailable in the current session. Do not substitute a local Docker run for that proof.
+The founder authorized this trial on 9 November 2026. It is a candidate for running Therecap's checks on the existing Hostinger/Dokploy server. **11 November: native console access works, but available RAM fails the launch gate (2.00 GiB versus six GiB required).** Do not launch on this host in its observed state. [Native capacity checkpoint](../../docs/tech/HOSTINGER-CAPACITY-2026-11-11.md). Local Docker probes remain separate from Hostinger runner qualification.
 
 The official GitHub runner preserves real GitHub job identity; `act` cannot supply the existing production release authority. This package does not change the existing release workflow, required checks, deployment journal, database migrations, runtime flags, caps or reminders. No production credentials belong in the runner. The private backup containers and their schedule are outside this operation.
 
@@ -59,4 +59,4 @@ The job requires Node 22 and PostgreSQL 17, fails on UID0/missing pgcrypto, runs
 
 ## Current result
 
-See [the scoped evidence note](../../docs/tech/HOSTINGER-CI-TRIAL-2026-11-09.md). No registration, GitHub routing change, remote container or production action has been made by the preparation stage. Hostinger execution is blocked by missing authenticated management access, not by a demonstrated test failure.
+See [the scoped preparation evidence](../../docs/tech/HOSTINGER-CI-TRIAL-2026-11-09.md) and [11 November native capacity observation](../../docs/tech/HOSTINGER-CAPACITY-2026-11-11.md). No registration, GitHub routing change, remote runner container or production change has been made. Access is established; native execution is blocked by insufficient available RAM. This is not a demonstrated test failure.

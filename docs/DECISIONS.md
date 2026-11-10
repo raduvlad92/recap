@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 11 November — use existing console access and honor the capacity gate
+
+The founder requests external Chrome and completes both sign-in and correction to the existing VPS-owning Hostinger account. The Hostinger web console supplies existing root access; do not request a new token or authorize Dokploy's separate SSH key merely to continue. Native available RAM is 2.00 GiB against the prepared six-GiB gate. Preserve the existing capacity policy and running workloads; this observation authorizes no paid upgrade, service stop, smaller unqualified runner profile or production change. Manual authentication setup is complete; native execution remains pending sufficient qualified capacity. [Evidence](tech/HOSTINGER-CAPACITY-2026-11-11.md).
+
 ## 9 November — authorize a bounded CI trial on existing infrastructure
 
 The founder says “do it” following the proposed isolated test-only Hostinger/Dokploy trial, preferably with the official GitHub self-hosted runner. Preserve real GitHub job identity and existing production-release requirements; no `act` result or hand-written green status substitutes for them. Scope is one pinned job without production credentials, with resource containment and exact cleanup. No new paid server/plan, billing increase, production migration/release, supplier/model call, backup change or specification approval follows. Native access/capacity and containment qualification remain gates. [Implementation/evidence](tech/HOSTINGER-CI-TRIAL-2026-11-09.md).
