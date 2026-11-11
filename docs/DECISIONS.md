@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 11 November 2026 — prioritize provider microservices and content quality; defer backups
+
+Founder directs focus on production-readiness points 2/3, asks whether better Apify Actors, restartable microservices and AI double checks solve them, and states: **“Always prefer microservices and better API actors. We don't want to rely on direct integrations with YouTube or Instagram.”** Prefer vendor/API collection and explicit service boundaries; the replacement path must not silently fall back to app-side platform scraping. Research the complete acquisition/quality chain and prepare concrete contracts, safe retry rules and acceptance criteria. Backup work is deferred from current priorities; it is not certified complete or an approved destructive/retention shortcut.
+
+This investigation changes no runtime, provider selection, source/model cap, unknown charge, credential, subscription or publication decision. The current four-point sample remains held; current delivery is not disabled before a replacement is accepted. Existing scoped finish-plan implementation authority remains, while new provider activation/live comparisons retain exact contract, identity and financial admission gates. [Focused investigation](tech/INGESTION-AND-QUALITY-REPAIR-2026-11-11.md).
+
 ## 11 November 2026 — investigate production readiness; preserve existing approvals
 
 The founder asks for the next steps to make the system production ready. Perform a read-only current-state investigation and recommend ordered completion criteria, distinguishing reliable daily use from customer release. This does not approve a named broader specification, customer launch, new subscription/allowance, identity cutover, retention policy or destructive activation. The prior explicit four-point publication hold remains binding and is not asked again. Proposed recovery targets remain recommendations, not recorded founder decisions. [Investigation and recommended plan](tech/PRODUCTION-READINESS-2026-11-11.md).

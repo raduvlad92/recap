@@ -1,5 +1,9 @@
 # Daily-use completion plan — 11 November 2026
 
+Current focus: founder defers backup work and prioritizes source acquisition/content quality, preferring microservices and better Apify/API Actors over direct YouTube/Instagram integration. The [focused investigation](INGESTION-AND-QUALITY-REPAIR-2026-11-11.md) defines metadata-only repair, typed Reel speech, restartable provider stages and independent quote-based verification. Existing queues, holds and review gates stay; no new paid proof or live switch occurs. At 20:28 model 9.998287986/12 and source day headroom USD 0.001 remain bounded. Saved operator Apify metadata reads401; deployed credential scope remains to be established. Original four-point hold and stopped 72-hour clock are unchanged.
+
+## Earlier production-readiness checkpoint
+
 Latest19:34 UTC investigation: five new archive items include two of today's transcripts, both excluded by existing unknown-format/hide-Shorts rules. Ordinary processing of a different older archived source adds five settled calls / USD  0.051079742 and 89 held reviews. A real new checker result now exists; it still fails quote-only semantic acceptance. Model commitment 9.998287986/12, source day headroom.001, original967 rows/seven unknowns and ownerhold preserved. Current serving1947636/epoch 6/delivery/flags still match acceptance. The immutable morning briefing remains empty and 72-hour clock stopped. A native backup inventory with 0 available and unaccepted production sign-in make customer readiness broader than this daily-use proof. [Full current production-readiness plan](PRODUCTION-READINESS-2026-11-11.md), [evidence](evidence/production-readiness-2026-11-11.json). This investigation changes no settings or spending authorization.
 
 ## Earlier daily-use checkpoint
