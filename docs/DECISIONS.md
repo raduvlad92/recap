@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 11 November 2026 — current-status audit and proposed daily-use completion
+
+Founder asks whether the system works, ingests and can be used daily, and requests the finish plan. Refresh public HTTP, GitHub and SELECT-only production evidence. Record partial useful ingestion, recurring source failures, generation budget stops, pending review and saved-but-unready daily briefings separately. Green CI on consolidated PR #23 supersedes the historical CI-admission blocker for that candidate; it does not establish a production reader release. Recommend the ordered [daily-use completion plan](tech/DAILY-USE-COMPLETION-2026-11-11.md). No named specification, new allowance, review approval, automatic-publication policy, production activation, supplier/model execution, customer trial or reminder sending is approved by this question. Existing authorization and caps remain. No manual supplier/model fee is incurred; ordinary automation continues and its provisional ledger totals are recorded in the evidence.
+
 ## 8 November Berlin — transport acceptance does not approve content or spending
 
 Five ordinary native ticks satisfy the scheduling acceptance hold. Their zero-content results do not approve publication, broaden source identities/windows, certify free retrieval or release unknown charges. Existing USD45 source/USD10 model limits, review gates and reminder opt-out remain unchanged. Continue guarded reader release preparation and evidence-based source diagnosis without a new supplier subscription or manual provider/model launch. [Exact observed outcomes](tech/evidence/restored-core-readonly-acceptance-2026-11-07.md).
