@@ -1,0 +1,77 @@
+{
+  "kind": "owner_authorized_repository_publication_before_hosted_ci_retry",
+  "recordedAtUtc": "2026-11-11T01:34:41Z",
+  "repository": "raduvlad92/recap",
+  "ownerReportsGitHubUpgrade": true,
+  "visibility": {
+    "before": "private",
+    "after": "public",
+    "nativeReadback": true,
+    "anonymousHttpStatus": 200
+  },
+  "pricing": {
+    "standardHostedPublicComputeFree": true,
+    "doesNotReduceIncludedCompute": true,
+    "largerRunnersBilled": true,
+    "storageSeparateAllowances": true,
+    "checkedSource": "https://docs.github.com/en/billing/concepts/product-billing/github-actions",
+    "standardRunnerSource": "https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job"
+  },
+  "publicationReview": {
+    "reachableCommits": 1266,
+    "historicalTextBlobs": 3279,
+    "nonFixtureScreenshotsOcr": 44,
+    "workflowLogArchives": 220,
+    "artifactArchives": 47,
+    "extractedArchiveTextMembers": 1818,
+    "metadataTextFiles": 4,
+    "issuesAndPrBodies": 23,
+    "issueComments": 0,
+    "reviewComments": 0,
+    "releases": 0,
+    "scanner": "official Gitleaks8.30.1 checksummed DarwinARM64",
+    "gitFindingsReviewed": 216,
+    "gitFindingCategories": {
+      "constructed_test_fixture_or_public_actor_reference": 171,
+      "integrity_or_secret_continuity_hash": 41,
+      "explicitly_publishable_client_configuration": 4
+    },
+    "surfaceFindingsReviewed": 238,
+    "surfaceFindingCategories": {
+      "explicitly_publishable_client_configuration": 219,
+      "public_configuration_integrity_hash": 18,
+      "source_map_identifier_sequence": 1
+    },
+    "unresolvedCredentialFindings": 0,
+    "concretePrivacyBlockersFound": 0,
+    "sourceAndWorkflowIndependentReview": "no concrete blocker found",
+    "scopeLimitation": "bounded review, not a guarantee of absence",
+    "nativeRulesetsBefore": 0,
+    "mainProtectionBefore": "not protected; unchanged",
+    "historyRewritten": false,
+    "githubLogsOrArtifactsDeleted": false,
+    "rawReportsCommitted": false,
+    "reviewedArchiveManifestSha256": "fce82fd4bd9031b093a6a297117b742d5dc67b56209f5d472f7b10a1b461311e"
+  },
+  "localTrial": {
+    "runId": "42937052997",
+    "conclusion": "cancelled_at_owner_direction",
+    "registrationAbsent": true,
+    "localJitRemoved": true,
+    "trialVariableAbsent": true,
+    "containerAndVolumesAndLoopRemoved": true,
+    "fullReaderResultProven": false,
+    "replacementLocalRunnerAdmitted": false
+  },
+  "hostedRetry": {
+    "mode": "fresh pull_request checks after publication",
+    "started": false,
+    "productionDeploymentAuthorized": false,
+    "mainPush": false
+  },
+  "costs": {
+    "newPaidPlanPurchasedByAssistant": false,
+    "sourceProviderModelStarts": 0,
+    "localAuditComputeStorageBandwidth": "unmeasured"
+  }
+}

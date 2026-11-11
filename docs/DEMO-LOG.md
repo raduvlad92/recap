@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 11 November — publication reviewed and repository made public
+
+The founder reports a GitHub upgrade and explicitly requests public visibility before a hosted retry. Confirm standard public compute is free from current GitHub documentation. Three bounded reviews plus scanner triage cover 1,266 commits/3,279 text blobs/44 OCR screenshots and 220 log archives/47 artifacts/23 issue-PR bodies. All 216 Git and 238 surface scanner findings resolve to fixtures/public references/publishable keys/hashes/source identifiers; no concrete privacy blocker is found. Preserve history/artifacts and keep raw audit data ignored. Cancel the local trial at owner direction and verify complete runner/JIT/route/local cleanup. Change repository visibility, verify native PUBLIC and anonymous HTTP200. Prepare a fresh PR-only hosted check; no production/provider/model/backup change or assistant purchase occurs. [Sanitized receipt](tech/GITHUB-PUBLICATION-2026-11-11.md).
+
+**11 November — corrected local trial running:** [run42937052997](https://github.com/raduvlad92/recap/actions/runs/42937052997) binds fresh head `497b52f` and its native merge to runner23/job130249596546. Setup/hook, checkout and prerequisites pass; dependency installation and full checks remain in progress. Old run42935243758 is terminal cancelled with exact registration/JIT/local/route cleanup complete. The corrected counter-based monitor and original resource caps are active; final tests and cleanup remain pending. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 **11 November — old trial cleanup complete; corrected retry ready:** GitHub confirms the interrupted local job cancelled and runner22 absent. Exact final readback/cleanup passes; its private JIT is deleted, alongside the already removed local resources and route. The 103-test/qualified-image counter fix is ready for a fresh pinned native trial. Full reader success remains unproved. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
 
 ## 11 November — false-positive scratch monitor repaired

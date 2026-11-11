@@ -1,5 +1,7 @@
 # Local test-only CI trial
 
+**Superseded by the owner's hosted retry:** the founder reports upgrading GitHub and requests public repository visibility before standard hosted Actions. Local run42937052997 is owner-cancelled with complete registration/JIT/route/container/volume/loop cleanup. No complete reader result is claimed. [Publication and hosted continuation](GITHUB-PUBLICATION-2026-11-11.md).
+
 The founder explicitly says **“ok, let's try with a local runner”** after native Hostinger capacity fails. This authorizes one bounded GitHub job on the existing Mac/Docker Desktop. It does not authorize a production release, reader migration, supplier/model call, paid upgrade, backup change or relaxed release provenance. Hostinger stays untouched.
 
 ## Qualified local controls
@@ -26,6 +28,12 @@ An initial Mac-mounted APFS image approach is discarded after Docker file-sharin
 Native run [42934793789](https://github.com/raduvlad92/recap/actions/runs/42934793789) queues for exact head `38b884a`. Its registered runner stops before contacting GitHub because `du` cannot traverse the new ext4 filesystem's root-owned `lost+found`. The automatic controller cancels the unassigned run and removes the registration, JIT, route, container, input/work/backing volumes and loop. Native terminal job readback shows cancelled, runner ID0 and zero steps; this is not an application test failure or executed CI pass.
 
 The trusted initializer now removes only that fresh empty recovery directory before handing the owned filesystem to UID10001. A fifth, network-disabled probe executes the actual image launcher with a constructed unusable JIT: its resource/scratch/copy/private-file preflight succeeds, the listener rejects the fixture, no job is admitted, and all local resources are removed. A new GitHub trial requires a fresh head/run/intent/JIT; the first intent is never reused.
+
+## Corrected native trial in progress
+
+Delayed notifications for older head `dd8d1c9` are also verified: hosted check130248575670 and verify130248576205 have runner ID0, zero steps and the same payment/spending admission annotation. No hosted/release workflow or billing change is made. Corrected local run42937052997 independently completes dependency installation and is executing full reader checks; final result remains pending.
+
+Fresh run [42937052997](https://github.com/raduvlad92/recap/actions/runs/42937052997), attempt1, binds head `497b52f543750670070dc95311d520c749d793ae` and its native merge to job130249596546/runner23. The actual setup/hook, checkout and nonroot prerequisites pass with corrected image `sha256:16ec1defe343ae98eee6f70368d7e3f083903bd13c10aa84ee8b86674f114438`. Dependency installation/full checks are running. Automatic cleanup retains exact native registration/JIT/volumes/loop/route custody. Final test result remains unproved; no production change occurs.
 
 ## Old native job and cleanup completed
 

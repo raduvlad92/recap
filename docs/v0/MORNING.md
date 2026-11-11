@@ -1,5 +1,7 @@
 # Your morning checklist
 
+**11 November — repository PUBLIC; no further manual setup required:** the founder requests publication and reports a GitHub upgrade. Bounded publication review and anonymous readback pass; the local runner is fully cleaned up. The assistant owns a fresh standard-hosted PR check and exact results. Standard public compute is free; storage/larger runners are separate. Production release remains outside this CI task. [Evidence](../tech/GITHUB-PUBLICATION-2026-11-11.md).
+
 **11 November — no new owner setup required:** the local runner monitor is repaired and qualified. Local resources and trial routing are removed. The assistant is waiting for terminal GitHub cancellation before removing the old busy registration/JIT and starting a fresh pinned trial. No billing/credential/service/production change is requested. [Current evidence](../tech/LOCAL-CI-TRIAL-2026-11-11.md).
 
 **11 November — local trial needs no additional owner setup:** the founder authorizes the existing Mac runner. Local resource/isolation qualification passes; the assistant owns one exact native GitHub job, terminal result and registration/JIT/volume/loop/route cleanup. No key/password, server upgrade, service stop or production release is requested. [Current local procedure](../tech/LOCAL-CI-TRIAL-2026-11-11.md).

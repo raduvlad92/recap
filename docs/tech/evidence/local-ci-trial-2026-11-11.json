@@ -1,5 +1,5 @@
 {
-  "kind": "local_runner_monitor_fix_qualified_native_retry_waits_on_cleanup",
+  "kind": "local_trial_cancelled_and_cleaned_on_owner_hosted_retry_request",
   "localDateEuropeBerlin": "2026-11-11",
   "imageId": "sha256:ee5dcff3c2df92f314dbf983a512e0ba846865f5a8613e5764ef457cf75a7b77",
   "architecture": "arm64",
@@ -105,25 +105,22 @@
     }
   ],
   "githubExecution": {
-    "runId": "42935243758",
+    "runId": "42937052997",
     "attempt": 1,
-    "headSha": "ff96969fc9a79a221b2e7ebd3a616b36fbeccec2",
-    "mergeSha": "78d4ee843d93f9288ad1429e5a33a0557f1d7142",
-    "jobId": "130243581696",
-    "runnerId": 22,
+    "headSha": "497b52f543750670070dc95311d520c749d793ae",
+    "mergeSha": "be329ceceeb57a28035906be1fcbe447c7144530",
+    "imageId": "sha256:16ec1defe343ae98eee6f70368d7e3f083903bd13c10aa84ee8b86674f114438",
+    "jobId": "130249596546",
+    "runnerId": 23,
     "status": "completed",
     "nativeHookCheckoutAndPreflight": "passed",
-    "fullReaderResults": "interrupted_before_complete_report",
-    "cleanup": "complete_after_native_cancellation",
     "dependencyInstall": "passed",
-    "scratchMonitorFailure": "du_temporary_file_disappearance",
-    "hostTimeout": false,
-    "oomKilled": false,
-    "normalCancelRequested": true,
-    "forceCancelAcknowledged": true,
+    "fullReaderResults": "not_proven",
+    "cleanup": "complete",
+    "conclusion": "cancelled",
     "registrationRemoved": true,
     "originalLocalJitRemoved": true,
-    "conclusion": "cancelled"
+    "ownerDirectedStopForPublicHostedRetry": true
   },
   "hostedChecksAtTrialHead": {
     "headSha": "ff96969fc9a79a221b2e7ebd3a616b36fbeccec2",
@@ -183,6 +180,53 @@
         "logSha256": "d367e4dc28b6209021a50657c8dedecf46d090836badef2551ecb42df3b1b2ce"
       }
     },
-    "nextNativeRunStarted": false
-  }
+    "nextNativeRunStarted": true
+  },
+  "githubPriorExecutions": [
+    {
+      "runId": "42935243758",
+      "attempt": 1,
+      "headSha": "ff96969fc9a79a221b2e7ebd3a616b36fbeccec2",
+      "mergeSha": "78d4ee843d93f9288ad1429e5a33a0557f1d7142",
+      "jobId": "130243581696",
+      "runnerId": 22,
+      "status": "completed",
+      "nativeHookCheckoutAndPreflight": "passed",
+      "fullReaderResults": "interrupted_before_complete_report",
+      "cleanup": "complete_after_native_cancellation",
+      "dependencyInstall": "passed",
+      "scratchMonitorFailure": "du_temporary_file_disappearance",
+      "hostTimeout": false,
+      "oomKilled": false,
+      "normalCancelRequested": true,
+      "forceCancelAcknowledged": true,
+      "registrationRemoved": true,
+      "originalLocalJitRemoved": true,
+      "conclusion": "cancelled"
+    }
+  ],
+  "laterHostedAdmissionRefusals": [
+    {
+      "headSha": "dd8d1c9efabce6d3280d0ec4fd6b2308191713db",
+      "jobs": [
+        {
+          "runId": "42936746743",
+          "jobId": "130248575670",
+          "name": "check",
+          "runnerId": 0,
+          "steps": 0
+        },
+        {
+          "runId": "42936746611",
+          "jobId": "130248576205",
+          "name": "verify",
+          "runnerId": 0,
+          "steps": 0
+        }
+      ],
+      "classification": "billing_admission_refused_before_steps",
+      "currentCorrectedLocalJobAffected": false
+    }
+  ],
+  "nextAction": "Use standard GitHub-hosted PR verification after owner-authorized public visibility; keep local routing disabled."
 }

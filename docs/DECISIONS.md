@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 11 November — public repository and hosted CI retry explicitly requested
+
+The founder reports upgrading GitHub and asks to make this repository public before retrying Actions, confirming free usage. Standard hosted public compute does not consume included compute; larger runners and storage remain separate. Review existing code/history/logs/artifacts before the authorized visibility change. Public source is authorized; a new license, main release, production deployment/migration, supplier/model execution, backup change or paid-plan purchase is not inferred. The local trial is cancelled/cleaned, with no replacement local runner. [Pricing, review and native public readback](tech/GITHUB-PUBLICATION-2026-11-11.md).
+
 ## 11 November — preserve hard limits and unresolved job custody
 
 Replace the supplemental recursive scratch scan with filesystem counters after an actual PostgreSQL teardown race. The hard eight-GiB filesystem, one-GiB free threshold and CPU/RAM/PID/time limits remain unchanged. An acknowledged GitHub cancellation is not terminal evidence: preserve the original offline/busy registration and private JIT until exact cleanup succeeds, and admit no replacement trial before then. This is a scoped CI repair, not a release/budget/capability expansion. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
