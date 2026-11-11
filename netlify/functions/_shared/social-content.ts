@@ -1,5 +1,5 @@
-import type { AutomaticContentClaim, AutomaticContentResult, AutomaticContentStore } from './automatic-content';
-import { generateAutomaticContent, createAutomaticLearningCaller } from './automatic-content';
+import type { AutomaticContentClaim, AutomaticContentResult, AutomaticContentStore, RecapCorrectionAdmission } from './automatic-content';
+import { generateAutomaticContent, createAutomaticLearningCaller, readRecapCorrectionAdmission } from './automatic-content';
 import { database } from './admin-data';
 import { analysisWorkerAuthorized } from './content-analysis';
 import { AnalysisError, type GenerationResult } from './content-analysis-model';
@@ -26,7 +26,7 @@ export function createSocialContentStore(db:DB):AutomaticContentStore {
   finish:(claim,result,code)=>rpc('finish_social_content_task',{p_task_id:claim.task.id,p_lease_token:claim.leaseToken,p_result:result,p_error_code:code??null})};
 }
 
-interface WorkerDependencies {env:Env;store:AutomaticContentStore;call:(input:KeywordLearningInput)=>Promise<GenerationResult>;now:()=>number}
+interface WorkerDependencies {env:Env;store:AutomaticContentStore;call:(input:KeywordLearningInput)=>Promise<GenerationResult>;now:()=>number;recapAdmission:(claim:AutomaticContentClaim)=>Promise<RecapCorrectionAdmission|null>}
 /** Database policies are the opt-in authority. The optional runtime variable
  * provides an emergency stop without requiring a second enabling switch. */
 export const socialContentRuntimeAllowed=(env:Env=runtimeEnv):boolean=>env('SOCIAL_CONTENT_ENABLED')!=='false';
@@ -47,7 +47,8 @@ export function createSocialContentWorker(overrides:Partial<WorkerDependencies>=
   for(let index=0;index<20&&now()<deadline-130_000;index++){
    const claim=await store.claim();if(!claim)break;
    try{
-    const result=await generateAutomaticContent(claim,call,()=>{if(now()>deadline-130_000)return fail('automatic_worker_yield');});
+    const admission=()=>overrides.recapAdmission?overrides.recapAdmission(claim):db?readRecapCorrectionAdmission(db,claim,now,'social_content_tasks'):Promise.resolve(null);
+    const result=await generateAutomaticContent(claim,call,()=>{if(now()>deadline-130_000)return fail('automatic_worker_yield');},{...(overrides.recapAdmission||db?{baseAdmission:admission}:{}),correctionAdmission:admission});
     await store.finish(claim,result);stats.queuedForReview++;
    }catch(error){
     const code=errorCode(error);

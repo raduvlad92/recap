@@ -2,6 +2,7 @@ import type { Env } from '../netlify/functions/_shared/security';
 import { CollectionError } from '../netlify/functions/_shared/security';
 import { withHostRuntime } from '../netlify/functions/_shared/host-runtime';
 import { downloadFromSourceService } from './source-service';
+import type { PipelineCapability, PipelineServices } from './pipeline-contract';
 
 export interface Bindings {
   [key: string]: unknown;
@@ -11,13 +12,19 @@ export interface Bindings {
   ASSETS?: { fetch(request: Request): Promise<Response> };
   JOBS?: { send(message: JobMessage): Promise<void> };
   SOURCE_DOWNLOADER?: { fetch(request: Request): Promise<Response> };
+  /** Request-local loopback stubs, never persisted as configuration/secrets. */
+  pipeline?: { services: PipelineServices; capability: PipelineCapability };
 }
 export const jobKinds = ['hourly-collection', 'content-analysis', 'automatic-content', 'social-collection', 'social-content', 'daily-briefing', 'recap-reminders', 'keyword-learning', 'account-lifecycle'] as const;
 export type JobKind = typeof jobKinds[number];
 export interface JobMessage { version: 1; kind: JobKind; epoch: number; release: string; key: string }
 export interface RuntimeControl { owner: 'netlify' | 'cloudflare'; epoch: number; paused: boolean; release: string; old_host_fenced: boolean }
 export const bindingEnv = (bindings: Bindings): Env => name => typeof bindings[name] === 'string' ? bindings[name] as string : undefined;
-export const runWithBindings = <T>(bindings: Bindings, action: () => T): T => withHostRuntime({ env: bindingEnv(bindings), download: (url, options) => {
+export const runWithBindings = <T>(bindings: Bindings, action: () => T): T => withHostRuntime({ env: bindingEnv(bindings),
+  ...(bindings.pipeline ? {
+    analysis: input => (input.request.role === 'checker' ? bindings.pipeline!.services.VerificationService : bindings.pipeline!.services.GenerationService).generate(bindings.pipeline!.capability, input),
+    enrichInstagram: (raw, actorRef) => bindings.pipeline!.services.EnrichmentService.instagram(bindings.pipeline!.capability, raw, actorRef),
+  } : {}), download: (url, options) => {
   if (bindings.SOURCE_TRANSPORT_VERIFIED !== 'true') throw new CollectionError(503, 'source_transport_unverified', 'Source transport is still being verified.');
   return downloadFromSourceService(bindings.SOURCE_DOWNLOADER, url, options);
 } }, action);

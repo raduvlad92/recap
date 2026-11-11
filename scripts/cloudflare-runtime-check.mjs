@@ -133,7 +133,7 @@ try {
 } finally { await activeRuntime.dispose(); }
 // Timer/queue handlers run without a browser request context. Exercise their
 // actual exports under workerd with fake RPCs and no provider/queue admission.
-await build({ entryPoints: ['tests/fixtures/cloudflare-jobs-runtime.ts'], bundle: true, platform: 'browser', format: 'esm', target: 'es2022', external: ['node:*'], outfile: '.local/cloudflare-build/jobs-fixture.js' });
+await build({ entryPoints: ['tests/fixtures/cloudflare-jobs-runtime.ts'], bundle: true, platform: 'browser', format: 'esm', target: 'es2022', external: ['node:*', 'cloudflare:*'], outfile: '.local/cloudflare-build/jobs-fixture.js' });
 let jobsPaused = false, jobsRedirect = false, jobsClaim = false, jobsCompleted = true, jobsSuperseded = false;
 const jobCalls = [];
 const jobRuntime = new Miniflare(convertV4MiniflareOptions({

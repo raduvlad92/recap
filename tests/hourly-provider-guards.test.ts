@@ -122,7 +122,7 @@ describe('terminal fee telemetry survives bounded original-result failures', () 
    return mode==='http'?new Response('',{status:503}):new Response('bad json');
   });
   const result=await pollStoredApify(job,'user_operator',env,fetcher);
-  expect(result).toMatchObject({status:'completed',telemetry:{cost:.004},contentError:mode==='http'?'provider_error':mode==='json'?'provider_response_invalid':'provider_result_unreadable'});
+  expect(result).toMatchObject({status:'completed',telemetry:{cost:.004},contentError:mode==='http'?'provider_unavailable':mode==='json'?'provider_response_invalid':'provider_result_unreadable'});
   expect(result.result).toBeUndefined();expect(JSON.stringify(result)).not.toContain('private upstream');
  });
  it.each(['FAILED','ABORTED','TIMED-OUT'])('retains fee for verified terminal %s without fetching any dataset',async status=>{
@@ -139,9 +139,10 @@ describe('terminal fee telemetry survives bounded original-result failures', () 
   const fetcher=vi.fn(async()=>body({data:{id:job.providerRunId,actId:job.actorId,buildId:values.APIFY_YOUTUBE_BUILD_ID,status:'SUCCEEDED',usageTotalUsd:.004}}));
   expect(await pollStoredApify({...job,feeOnly:true},'user_operator',env,fetcher)).toEqual({status:'completed',telemetry:{ledgerId:job.ledgerId,providerRunId:job.providerRunId,cost:.004}});expect(fetcher).toHaveBeenCalledTimes(1);
  });
- it('keeps the current 200000-character output cap and explicit clipped coverage',()=>{
-  const [update]=normalizeYouTubeItems([{url:source.url,title:'Synthetic',date:'2026-10-22T12:00:00Z',subtitles:[{srt:'1\n00:00:00,000 --> 00:00:02,000\n'+'x'.repeat(200001)}]}],source,1);
-  expect(update.content).toHaveLength(200000);expect(update.coverage).toContain('clipped');
+ it('preserves a complete track at the existing bound and rejects oversized text without clipping',()=>{
+  const row=(size:number)=>({url:source.url,title:'Synthetic',date:'2026-10-22T12:00:00Z',subtitles:[{srt:'1\n00:00:00,000 --> 00:00:02,000\n'+'x'.repeat(size)}]});
+  expect(normalizeYouTubeItems([row(200000)],source,1)[0].content).toHaveLength(200000);
+  expect(()=>normalizeYouTubeItems([row(200001)],source,1)).toThrow('complete caption track');
  });
 });
 

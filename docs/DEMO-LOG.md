@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 11 November 2026, 21:33 UTC — provider/quality implementation and adversarial review
+
+Three bounded agents implement private collection/enrichment/generation/verification RPC, provider-only routing, hash-bound metadata repair, typed Reel speech and independently checked atomic recaps. Root integrates provenance persistence, grouped review and expandable five-keyword display. Review discovers and fixes verifier capacity after draft spend, decimal-comma conflation and a stale metadata import race; a real two-session PostgreSQL test verifies the atomic hash guard while old fees stay exact. The combined4,455 tests/154files pass with zero skips; subsequent91 focused checks,127 guarded migration-plan cases and37 Cloudflare runtime checks pass. These are local/fixture checks, not live useful-content or semantic proof. [Implementation and gates](tech/PROVIDER-QUALITY-IMPLEMENTATION-2026-11-11.md).
+
+Read-only21:33 native preflight matches the accepted predecessor schema/history and existing workers/source/delivery/lifecycle/control; APP1947636 remains unpaused/epoch6. The new59→60 migration is not applied. The supplied token passes account metadata authentication;11Actor/build GETs succeed and old build/price pins match, but account pins differ and one oldrun GET returns403. Founder selects the original account; its subsequent token matches all saved account/build/price pins and can read that exact original run(200). The deployed credential is unchanged. No production write, paid supplier/model execution, account rebind, cap change, publication or clock start occurs. Current original costs/holds and genuine follow-up times remain in the linked record.
+
 ## 11 November 2026, 20:30 UTC — provider and quality architecture investigated
 
 Code trace confirms the metadata-only format gap for already-captioned videos, post-caption-only Instagram normalization, same extractor route for recap/check, existing independent keyword checking, durable reconciliation and caption backoff. Current SELECT confirms active Instagram fallbackyugenox0.1.4/3 items/.01 maximum; X and LinkedIn remain on their original reviewed configurations. Retained source/model evidence is not rerun or relabeled.

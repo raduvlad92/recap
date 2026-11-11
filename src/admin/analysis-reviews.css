@@ -93,3 +93,5 @@
   .recap-admin .ra-review-bulk-actions .ra-button { min-height: 44px; }
   .ra-review-row-result { padding-left: 11px; }
 }
+.ra-review-source-group{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:12px 14px 5px;color:var(--muted);font-size:12px}
+.ra-review-source-group>span:first-child{font-weight:600;overflow-wrap:anywhere;flex:1;min-width:0}

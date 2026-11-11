@@ -1,3 +1,6 @@
+import { retryKnownApifyRead } from './provider-read-retry';
+import { hostRuntime } from './host-runtime';
+import { INSTAGRAM_REELS_ACTOR, normalizeInstagramProviderContent, providerOnlyCollection, type InstagramProviderContent } from './provider-content';
 import { nativeSocialRows } from './native-social';
 import { createRetrievalLog, retrievalAttempt, type RetrievalLog } from './retrieval-log';
 import { fetchNoRedirect } from './fetch-no-redirect';
@@ -66,6 +69,7 @@ export function socialActorInput(job: Pick<SocialJob, 'platform' | 'source_key' 
  // The reviewed backup's date-window route is datacenter-only and was blocked.
  // Read only the capped newest posts, then enforce the immutable UTC window locally.
  if(job.platform==='Instagram'&&job.config.actor_ref===INSTAGRAM_BACKUP)return{urls:[job.source_url],maxPosts:count,maxPostsPerProfile:count,skipPinnedPosts:true,monitor:false};
+ if (job.platform === 'Instagram' && job.config.actor_ref === INSTAGRAM_REELS_ACTOR) return { username: [job.source_url], resultsLimit: count, onlyPostsNewerThan: new Date(job.window_from).toISOString(), skipPinnedPosts: true, includeTranscript: false, includeDownloadedVideo: false, includeSharesCount: false };
  if (job.platform === 'Instagram') return { directUrls: [job.source_url], resultsType: 'posts', resultsLimit: count, onlyPostsNewerThan: new Date(job.window_from).toISOString(), addParentData: true };
  return { targetUrls: [job.source_url], maxPosts: count, postedLimitDate: job.window_from, includeQuotePosts: true, includeReposts: true, scrapeComments: false, scrapeReactions: false };
 }
@@ -83,11 +87,11 @@ function extractedMedia(raw: Record<string, unknown>, platform: SocialPlatform):
 }
 
 /** One immutable source version per item; empty/blocked rows never prove quiet coverage. */
-export function normalizeSocialDataset(job: SocialJob, rows: unknown[], native = false): { items: SocialItem[]; coverage: SocialCoverage } {
+export function normalizeSocialDataset(job: SocialJob, rows: unknown[], native = false, enriched?: ReadonlyMap<number, InstagramProviderContent>): { items: SocialItem[]; coverage: SocialCoverage } {
  const rejected: Record<string, number> = {}, items = new Map<string, SocialItem>();
  let beforeWindow = 0;
  const reject = (reason: string) => { rejected[reason] = (rejected[reason] || 0) + 1; };
- for (const value of rows) {
+ for (const [rowIndex, value] of rows.entries()) {
   const raw = object(value); if (!Object.keys(raw).length || raw.demo === true || raw.error || raw.type === 'reaction' || raw.type === 'comment') { reject(raw.demo === true ? 'provider_demo_data' : 'provider_error'); continue; }
   try {
    const author = object(raw.author), owner = object(raw.owner), date = raw.createdAt || raw.timestamp || raw.date || object(raw.postedAt).date;
@@ -107,14 +111,16 @@ export function normalizeSocialDataset(job: SocialJob, rows: unknown[], native =
    original.search = ''; original.hash = '';
    if (job.platform === 'X') original.hostname = 'x.com';
    if (job.platform === 'Instagram') original.hostname = 'www.instagram.com';
-   const fullText = job.platform === 'LinkedIn' ? raw.content || raw.text : visiblePostText(raw, job.platform);
+   const instagramContent = job.platform === 'Instagram' ? enriched?.get(rowIndex) || normalizeInstagramProviderContent(raw, native ? 'native-caption' : job.config.actor_ref) : undefined;
+   const fullText = instagramContent ? instagramContent.content : job.platform === 'LinkedIn' ? raw.content || raw.text : visiblePostText(raw, job.platform);
    if (typeof fullText === 'string' && fullText.length > 200_000) { reject('content_too_large'); continue; }
    const content = text(fullText), media = extractedMedia(raw, job.platform), url = original.href;
    const context = job.platform === 'X' ? sanitizePostContext(extractPostContext(raw, 'X') || raw.postContext, url) : undefined;
-   const record: SourceUpdate = { id: 'social-' + digest(job.source_key + '\n' + itemKey).slice(0, 32), sourceId: job.source_key, contributorIds: [], title: content.slice(0, 120) || 'Update from ' + job.source_name, summary: content.slice(0, 700) || 'No usable post text returned. Open the original update.', url, publishedAt: new Date(publishedAtMs).toISOString(), format: 'post', topics: [], brands: [], sponsors: [], references: [{ title: 'Original update', url }], insights: [], isSample: false, contentKind: content ? 'feed_text' : 'metadata_only', ...(content ? { content } : {}), ...(media.length ? { media } : {}), ...(context ? { postContext: context } : {}), coverage: 'Public post/caption text only. Linked articles, image text and media audio are not collected.' };
-   const revision = digest(stableJson({ content, url, publishedAt: record.publishedAt, media, context: context || null }));
+   const record: SourceUpdate = { id: 'social-' + digest(job.source_key + '\n' + itemKey).slice(0, 32), sourceId: job.source_key, contributorIds: [], title: content.slice(0, 120) || 'Update from ' + job.source_name, summary: content.slice(0, 700) || 'No usable post text returned. Open the original update.', url, publishedAt: new Date(publishedAtMs).toISOString(), format: 'post', topics: [], brands: [], sponsors: [], references: [{ title: 'Original update', url }], insights: [], isSample: false, contentKind: content ? 'feed_text' : 'metadata_only', ...(content ? { content } : {}), ...(media.length ? { media } : {}), ...(context ? { postContext: context } : {}), coverage: 'Public post/caption text only. Linked articles, image text and media audio are not collected.', ...instagramContent };
+   if (Buffer.byteLength(JSON.stringify(record)) > 1024 * 1024) { reject('content_too_large'); continue; }
+   const revision = digest(stableJson({ content, url, publishedAt: record.publishedAt, media, context: context || null, ...(instagramContent?.contentProvenance ? { contentProvenance: instagramContent.contentProvenance } : {}) }));
    items.set(itemKey, { itemKey, revision, record });
-  } catch { reject('invalid_original'); }
+  } catch (error) { reject(error instanceof CollectionError && error.code.startsWith('provider_content_') ? error.code : 'invalid_original'); }
  }
  // This adapter accepts day precision. A capped response entirely before the
  // exact window is still unknown coverage, but must not freeze a quiet source.
@@ -127,9 +133,33 @@ export function normalizeSocialDataset(job: SocialJob, rows: unknown[], native =
 
 async function apify(path: string, env: Env, fetcher: typeof fetch, init: RequestInit = {}): Promise<unknown> {
  const token = env('APIFY_API_TOKEN'); if (!token) throw new CollectionError(503, 'social_provider_unconfigured', 'Social collection requires the existing provider connection.');
- const response = await fetchNoRedirect('https://api.apify.com/v2/' + path, { ...init, headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' }, signal: AbortSignal.timeout(15_000) }, fetcher);
- if (!response.ok) { await response.body?.cancel(); throw new CollectionError(502, 'social_provider_error', 'The social provider request could not finish.'); }
- try { return JSON.parse(await readTextLimited(response, 4 * 1024 * 1024)); } catch (error) { if (error instanceof CollectionError) throw error; throw new CollectionError(502, 'social_provider_invalid', 'The social provider returned unreadable data.'); }
+ const response = await fetchNoRedirect('https://api.apify.com/v2/' + path, { ...init, headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' }, signal: AbortSignal.timeout(15_000) }, (input, init) => retryKnownApifyRead(input, init, fetcher));
+ if (!response.ok) { await response.body?.cancel(); const code = response.status === 401 || response.status === 403 ? 'social_provider_authentication_failed' : response.status === 429 ? 'social_provider_rate_limited' : response.status >= 500 ? 'social_provider_unavailable' : 'social_provider_error'; throw new CollectionError(502, code, 'The social provider request could not finish.', response.status); }
+ try { return JSON.parse(await readTextLimited(response, 2 * 1024 * 1024)); } catch (error) { if (error instanceof CollectionError) throw error; throw new CollectionError(502, 'social_provider_invalid', 'The social provider returned unreadable data.'); }
+}
+/** Read the SAME accepted run. Oversized multi-item responses may be split
+ * into fixed complete records, never clipped/relaunched. Each page keeps the
+ * 2-MiB response bound, total work is <=8 MiB / 21 extra reads. */
+async function socialDataset(datasetId: string, maximum: number, env: Env, fetcher: typeof fetch): Promise<unknown[]> {
+ const path = 'datasets/' + datasetId + '/items?clean=true';
+ try {
+  const rows = await apify(path + '&limit=' + (maximum + 1), env, fetcher);
+  if (!Array.isArray(rows) || rows.length > maximum) throw new CollectionError(502, 'social_result_limit_exceeded', 'The source provider exceeded its reviewed result bound.');
+  return rows;
+ } catch (error) {
+  if (!(error instanceof CollectionError) || error.code !== 'response_too_large') throw error;
+  if (maximum > 20) throw new CollectionError(413, 'social_result_read_budget_exceeded', 'The complete dataset requires a separately reviewed read plan.');
+  const rows: unknown[] = []; let bytes = 0;
+  for (let offset = 0; offset <= maximum; offset++) {
+   const page = await apify(path + '&limit=1&offset=' + offset, env, fetcher);
+   if (!Array.isArray(page) || page.length > 1) throw new CollectionError(502, 'social_provider_invalid', 'The source provider returned an invalid page.');
+   bytes += Buffer.byteLength(JSON.stringify(page));
+   if (bytes > 8 * 1024 * 1024) throw new CollectionError(413, 'social_result_read_budget_exceeded', 'The complete dataset exceeds its reviewed read budget.');
+   rows.push(...page);
+  }
+  if (rows.length > maximum) throw new CollectionError(502, 'social_result_limit_exceeded', 'The source provider exceeded its reviewed result bound.');
+  return rows;
+ }
 }
 export async function socialDiagnostics(job: SocialJob, run: Record<string, unknown>, env: Env, fetcher: typeof fetch = fetch): Promise<Record<string, number | boolean | string>> {
  const store = run.defaultKeyValueStoreId;
@@ -157,7 +187,7 @@ export async function socialDiagnostics(job: SocialJob, run: Record<string, unkn
 }
 
 export async function verifySocialConfiguration(config: SocialConfiguration, env: Env, fetcher: typeof fetch = fetch, now = Date.now()): Promise<void> {
- if (!config.enabled || ![SOCIAL_ACTORS[config.platform],...(config.platform==='Instagram'?[INSTAGRAM_BACKUP]:[])].includes(config.actor_ref) || !config.reviewed_at || !/^[a-f0-9]{64}$/.test(config.pricing_fingerprint || '') || !/^\d+\.\d+\.\d+$/.test(config.build_number) || !Number.isFinite(config.maximum_usd) || config.maximum_usd <= 0 || config.maximum_usd > 1 || config.timeout_seconds < 30 || config.timeout_seconds > 600 || ![128, 256, 512, 1024].includes(config.memory_mb)) throw new CollectionError(503, 'social_review_required', 'This platform requires a reviewed bounded Actor configuration.');
+ if (!config.enabled || ![SOCIAL_ACTORS[config.platform],...(config.platform==='Instagram'?[INSTAGRAM_BACKUP,INSTAGRAM_REELS_ACTOR]:[])].includes(config.actor_ref) || !config.reviewed_at || !/^[a-f0-9]{64}$/.test(config.pricing_fingerprint || '') || !/^\d+\.\d+\.\d+$/.test(config.build_number) || !Number.isFinite(config.maximum_usd) || config.maximum_usd <= 0 || config.maximum_usd > 1 || config.timeout_seconds < 30 || config.timeout_seconds > 600 || ![128, 256, 512, 1024].includes(config.memory_mb)) throw new CollectionError(503, 'social_review_required', 'This platform requires a reviewed bounded Actor configuration.');
  const [actorResult, buildResult, accountResult] = await Promise.all([apify('acts/' + providerId(config.actor_id), env, fetcher), apify('actor-builds/' + providerId(config.build_id), env, fetcher), apify('users/me', env, fetcher)]);
  const actor = object(object(actorResult).data), build = object(object(buildResult).data), account = object(object(accountResult).data);
  const pricing = (Array.isArray(actor.pricingInfos) ? actor.pricingInfos.map(object) : []).filter(p => typeof p.startedAt === 'string' && Date.parse(p.startedAt) <= now).sort((a, b) => String(a.startedAt).localeCompare(String(b.startedAt))).at(-1);
@@ -186,7 +216,7 @@ export function createSocialCollector(options: { env?: Env; store?: SocialStore;
    try {
     if (!runId) {
      if (launched) { await store.finish(job, [], { status: 'blocked', complete: false, returned: 0, accepted: 0, rejected: {}, reason: 'ambiguous_launch' }, null, false, 'ambiguous_launch'); failed++; continue; }
-     if (job.purpose !== 'proof' && ['Instagram', 'X'].includes(job.platform)) {
+     if (job.purpose !== 'proof' && ['Instagram', 'X'].includes(job.platform) && !(job.platform === 'Instagram' && providerOnlyCollection(env))) {
       try {
        const rows = await native(job, log, fetcher), normalized = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_native_validation', 'native', 'discovery', async () => normalizeSocialDataset(job, rows, true), value => ({ status: value.items.some(item => item.record.content?.trim()) ? 'partial' : 'empty', result_count: value.items.length, diagnostics: { rejected_rows: Object.values(value.coverage.rejected).reduce((sum, n) => sum + n, 0) } }));
        if (normalized.items.some(item => item.record.content?.trim())) {
@@ -196,10 +226,11 @@ export function createSocialCollector(options: { env?: Env; store?: SocialStore;
      }
      const configurationKey=stableJson(job.config);
      await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_preflight', 'apify', 'discovery', () => { let review = reviewedConfigurations.get(configurationKey); if (!review) { review = verifySocialConfiguration(job.config, env, fetcher, now()); reviewedConfigurations.set(configurationKey, review); } return review; }, () => ({ status: 'succeeded' }));
+     const actorInput = { ...socialActorInput(job), ...(job.platform === 'Instagram' && job.config.actor_ref === INSTAGRAM_REELS_ACTOR && env('INSTAGRAM_REEL_SPEECH_ENABLED') === 'true' ? { includeTranscript: true } : {}) };
      if (!await store.launch(job)) continue;
      launched = true;
      const params = new URLSearchParams({ build: job.config.build_number, memory: String(job.config.memory_mb), timeout: String(job.config.timeout_seconds), maxTotalChargeUsd: String(job.config.maximum_usd), restartOnError: 'false' });
-     const run = object(object(await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_launch', 'apify', 'discovery', async () => { const response = await apify('acts/' + providerId(job.config.actor_id) + '/runs?' + params, env, fetcher, { method: 'POST', body: JSON.stringify(socialActorInput(job)) }); const started = object(object(response).data); if (started.actId !== job.config.actor_id || started.userId !== job.config.apify_user_id || started.buildId !== job.config.build_id) throw new CollectionError(502, 'social_run_mismatch', 'The provider run does not match its reviewed identity.'); await store.run(job, providerId(started.id), started.defaultDatasetId ? providerId(started.defaultDatasetId) : null); return response; }, value => ({ status: 'partial', provider_run_id: providerId(object(object(value).data).id) }))).data);
+     const run = object(object(await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_launch', 'apify', 'discovery', async () => { const response = await apify('acts/' + providerId(job.config.actor_id) + '/runs?' + params, env, fetcher, { method: 'POST', body: JSON.stringify(actorInput) }); const started = object(object(response).data); if (started.actId !== job.config.actor_id || started.userId !== job.config.apify_user_id || started.buildId !== job.config.build_id) throw new CollectionError(502, 'social_run_mismatch', 'The provider run does not match its reviewed identity.'); await store.run(job, providerId(started.id), started.defaultDatasetId ? providerId(started.defaultDatasetId) : null); return response; }, value => ({ status: 'partial', provider_run_id: providerId(object(object(value).data).id) }))).data);
      runId = providerId(run.id);
      if (run.actId !== job.config.actor_id || run.userId !== job.config.apify_user_id || run.buildId !== job.config.build_id) throw new CollectionError(502, 'social_run_mismatch', 'The provider run does not match its reviewed identity.');
     }
@@ -210,9 +241,11 @@ export function createSocialCollector(options: { env?: Env; store?: SocialStore;
     const fee = typeof run.usageTotalUsd === 'number' && Number.isFinite(run.usageTotalUsd) && run.usageTotalUsd >= 0 ? Math.ceil(run.usageTotalUsd * 1e12) / 1e12 : null;
     if (run.status !== 'SUCCEEDED') { await store.finish(job, [], { status: 'failed', complete: false, returned: 0, accepted: 0, rejected: {}, reason: 'provider_failed' }, fee, true, 'provider_failed'); failed++; continue; }
     const datasetId = providerId(run.defaultDatasetId);
-    const rows = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_dataset', 'apify', 'discovery', () => apify('datasets/' + datasetId + '/items?clean=true&limit=' + (job.config.max_items + 1), env, fetcher), value => ({ status: Array.isArray(value) && value.length ? 'partial' : 'empty', result_count: Array.isArray(value) ? value.length : null, provider_run_id: runId }));
+    const rows = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_dataset', 'apify', 'discovery', () => socialDataset(datasetId, job.config.max_items, env, fetcher), value => ({ status: Array.isArray(value) && value.length ? 'partial' : 'empty', result_count: Array.isArray(value) ? value.length : null, provider_run_id: runId }));
     if (!Array.isArray(rows) || rows.length > job.config.max_items) throw new CollectionError(502, 'social_result_limit_exceeded', 'The source provider exceeded its reviewed result bound.');
-    const normalized = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_validation', 'apify', 'discovery', async () => normalizeSocialDataset(job, rows), value => ({ status: value.items.length ? 'partial' : 'empty', result_count: value.items.length, provider_run_id: runId, diagnostics: { rejected_rows: Object.values(value.coverage.rejected).reduce((sum, n) => sum + n, 0) } }));
+    const enriched = new Map<number, InstagramProviderContent>();
+    if (job.platform === 'Instagram') for (const [index, value] of rows.entries()) enriched.set(index, await (hostRuntime()?.enrichInstagram?.(value, job.config.actor_ref) ?? normalizeInstagramProviderContent(value, job.config.actor_ref)));
+    const normalized = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_validation', 'apify', 'discovery', async () => normalizeSocialDataset(job, rows, false, enriched), value => ({ status: value.items.length ? 'partial' : 'empty', result_count: value.items.length, provider_run_id: runId, diagnostics: { rejected_rows: Object.values(value.coverage.rejected).reduce((sum, n) => sum + n, 0) } }));
     const diagnostics = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_apify_diagnostics', 'apify', 'discovery', () => socialDiagnostics(job, run, env, fetcher), value => ({ status: value.blocked_requests || value.failed_targets ? 'blocked' : 'succeeded', provider_run_id: runId, diagnostics: value })).catch(error => { if (error instanceof CollectionError && error.code === 'retrieval_log_unavailable') throw error; return { report_unavailable: true } as Record<string, number | boolean | string>; });
     const blocked = !!(diagnostics.blocked_requests || diagnostics.failed_targets);
     const coverage: SocialCoverage = { ...normalized.coverage, retrieval: 'apify', diagnostics, ...(blocked ? { status: normalized.items.length ? 'partial' : 'blocked', reason: 'provider_blocked' } : {}) };

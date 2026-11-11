@@ -291,3 +291,83 @@ describe('free-first discovery fallbacks and audit trail', () => {
   await t.run();expect(t.deps.download).not.toHaveBeenCalled();expect(t.deps.discover).not.toHaveBeenCalled();expect(t.deps.startDiscovery).not.toHaveBeenCalled();
  });
 });
+
+describe('provider-only collection and separate metadata repair', () => {
+ const modeEnv = (metadata = false) => (name: string) => name === 'SOURCE_COLLECTION_POLICY' ? 'provider-only-v1' : name === 'HOURLY_COLLECTION_METADATA_VERIFIED' ? String(metadata) : envValues[name];
+ it('dispatches only the admitted vendor discovery and never calls platform RSS, pages or captions', async () => {
+  const t = setup({ policy: { ...policy, provider_enabled: true } });
+  await createHourlyCollector({ ...t.deps, env: modeEnv() })();
+  expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.captions).not.toHaveBeenCalled(); expect(t.deps.discover).not.toHaveBeenCalled();
+  expect(t.deps.startDiscovery).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({id:source.id,url:source.url}), channelId, policy.user_id, expect.any(Function));
+  expect(t.store.reserve).toHaveBeenCalledWith(expect.any(Object), expect.stringMatching(/^youtube-discovery:/), expect.any(String), .02);
+  expect(t.patch()).toMatchObject({ status: 'partial', details: { mode: 'youtube_provider_only', gapPossible: true } });
+  expect(t.updates()).toEqual([]);
+ });
+ it('does not silently return to platform pages when a provider preflight fails', async () => {
+  const t = setup({ policy: { ...policy, provider_enabled: true } });
+  t.deps.preflight.mockRejectedValue(new CollectionError(502, 'provider_authentication_failed', 'Redacted', 401));
+  await createHourlyCollector({ ...t.deps, env: modeEnv() })();
+  expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.captions).not.toHaveBeenCalled(); expect(t.deps.discover).not.toHaveBeenCalled();
+  expect(t.store.reserve).not.toHaveBeenCalled(); expect(t.deps.startDiscovery).not.toHaveBeenCalled();
+  expect(t.patch()).toMatchObject({ error_code: 'provider_authentication_failed' });
+ });
+ it('leaves aliases without a checked channel identity blocked rather than fetching a YouTube page', async () => {
+  const t = setup({ source: { ...source, url: 'https://www.youtube.com/@example' }, state: { channel_id: null }, policy: { ...policy, provider_enabled: true } });
+  await createHourlyCollector({ ...t.deps, env: modeEnv() })();
+  expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.startDiscovery).not.toHaveBeenCalled();
+  expect(t.patch()).toMatchObject({ error_code: 'provider_channel_identity_required' });
+ });
+ it('repairs format under its own exact source hash without replacing or buying captions', async () => {
+  const saved = { ...update, contentKind: 'transcript' as const, content: 'Exact retained transcript.', videoHighlights: [{ text: 'Retained review.' }], videoFormat: { kind: 'unknown' as const, basis: 'provider' as const } };
+  const t = setup({ policy: { ...policy, provider_enabled: true }, state: { pending_captions: [{ record: saved, attempts: 0, nextAttemptAt: new Date(0).toISOString() }] } });
+  vi.mocked(t.store.providerClaimed).mockImplementation(async (_claim, key) => key.startsWith('youtube-discovery:'));
+  const startMetadata = vi.fn(async () => ({ status: 'running' as const, providerRunId: 'MetadataRun123', jobToken: 'private-token', message: 'pending' }));
+  t.deps.pollApify.mockResolvedValue({ status: 'completed', result: { source, updates: [{ ...update, contentKind: 'transcript', content: 'Unexpected replacement speech must not overwrite retained text.', videoFormat: { kind: 'regular', basis: 'provider' } }], notice: '' }, telemetry: { ledgerId: claim.checkId, providerRunId: 'MetadataRun123', cost: .004 } } as never);
+  await createHourlyCollector({ ...t.deps, env: modeEnv(true), startMetadata })();
+  const key = 'youtube-format:' + videoId + ':' + createHash('sha256').update(saved.content).digest('hex');
+  expect(t.store.reserve).toHaveBeenCalledWith(expect.any(Object), key, expect.any(String), .005);
+  expect(startMetadata).toHaveBeenCalledTimes(1); expect(t.deps.startApify).not.toHaveBeenCalled(); expect(t.deps.captions).not.toHaveBeenCalled(); expect(t.deps.download).not.toHaveBeenCalled();
+  expect(t.deps.pollApify).toHaveBeenCalledWith(expect.objectContaining({ metadataOnly: true, source: expect.objectContaining({ url: saved.url }) }), policy.user_id, expect.any(Function));
+  expect(t.updates()[0]).toMatchObject({ id: saved.id, content: saved.content, contentKind: 'transcript', videoHighlights: saved.videoHighlights, videoFormat: { kind: 'regular', basis: 'provider' }, metadataExpectedContentHash: createHash('sha256').update(saved.content).digest('hex') });
+  expect(t.patch().pending_captions).toEqual([]);
+ });
+ it('binds metadata import to the immutable job hash without leaking the CAS marker into pending source records', async () => {
+  const saved = { ...update, contentKind: 'transcript' as const, content: 'Retained original used only by the old metadata job.', videoFormat: { kind: 'unknown' as const, basis: 'provider' as const } };
+  const original = JSON.stringify(saved), hash = createHash('sha256').update(saved.content).digest('hex');
+  const t = setup({ pending: [pending({ item_key: 'youtube-format:' + videoId + ':' + hash })], state: { pending_captions: [{ record: saved, attempts: 0, nextAttemptAt: '2099-01-01T00:00:00Z' }] } });
+  t.deps.pollApify.mockResolvedValue({ status: 'completed', result: { source, updates: [{ ...update, videoFormat: { kind: 'unknown', basis: 'provider' } }], notice: '' }, telemetry: { ledgerId: claim.checkId, providerRunId: 'providerRun123', cost: .004 } } as never);
+  await createHourlyCollector({ ...t.deps, env: modeEnv() })();
+  // Only the write envelope gets the expected hash. The SQL guard must compare
+  // against CURRENT live content, not trust this still-matching queue snapshot.
+  expect(t.updates()[0]).toMatchObject({ id: saved.id, content: saved.content, metadataExpectedContentHash: hash });
+  const task = (t.patch().pending_captions as NonNullable<HourlyClaim['state']['pending_captions']>)[0];
+  expect(task.record).not.toHaveProperty('metadataExpectedContentHash');
+  expect(JSON.stringify(saved)).toBe(original);
+  expect(t.deps.startApify).not.toHaveBeenCalled(); expect(t.store.reserve).not.toHaveBeenCalled();
+  expect(t.deps.settleBudget).toHaveBeenCalledWith(expect.any(String), { providerRunId: 'providerRun123', terminal: true, actualUsd: .004 }, expect.any(Function));
+  expect(t.store.providerPatch).toHaveBeenCalledWith('private-job', expect.objectContaining({ state: 'completed', actual_cost_usd: .004, content_pending: false }));
+ });
+ it('keeps contradictory regular evidence unknown and preserves the original annotations and identity', async () => {
+  const saved = { ...update, contentKind: 'transcript' as const, content: 'Exact retained transcript.', isShort: true, videoHighlights: [{ text: 'Existing annotation.' }], videoFormat: { kind: 'unknown' as const, basis: 'provider' as const } };
+  const t = setup({ policy: { ...policy, provider_enabled: true }, state: { pending_captions: [{ record: saved, attempts: 0, nextAttemptAt: new Date(0).toISOString() }] } });
+  vi.mocked(t.store.providerClaimed).mockImplementation(async (_claim, key) => key.startsWith('youtube-discovery:'));
+  const startMetadata = vi.fn(async () => ({ status: 'running' as const, providerRunId: 'MetadataRun123', jobToken: 'private-token', message: 'pending' }));
+  t.deps.pollApify.mockResolvedValue({ status: 'completed', result: { source, updates: [{ ...update, videoFormat: { kind: 'regular', basis: 'provider' } }], notice: '' }, telemetry: { ledgerId: claim.checkId, providerRunId: 'MetadataRun123', cost: .004 } } as never);
+  await createHourlyCollector({ ...t.deps, env: modeEnv(true), startMetadata })();
+  expect(t.updates()[0]).toMatchObject({ id: saved.id, content: saved.content, isShort: true, videoHighlights: saved.videoHighlights, videoFormat: { kind: 'unknown' } });
+  expect(t.patch().pending_captions).toMatchObject([{ reason: 'video_format_unconfirmed', record: { content: saved.content } }]);
+ });
+ it('does not purchase a fallback when the configured replacement policy is invalid', async () => {
+  const t = setup({ policy: { ...policy, provider_enabled: true }, state: { pending_captions: [{ record: update, attempts: 0, nextAttemptAt: new Date(0).toISOString() }] } });
+  await createHourlyCollector({ ...t.deps, env: name => name === 'SOURCE_COLLECTION_POLICY' ? 'unreviewed-v2' : envValues[name] })();
+  expect(t.deps.captions).not.toHaveBeenCalled(); expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.startApify).not.toHaveBeenCalled(); expect(t.store.reserve).not.toHaveBeenCalled();
+  expect(t.patch()).toMatchObject({ error_code: 'collection_policy_invalid' });
+ });
+ it('reconciles fees only when the saved metadata job targets an obsolete transcript hash', async () => {
+  const saved = { ...update, contentKind: 'transcript' as const, content: 'Current retained revision.' };
+  const t = setup({ pending: [pending({ item_key: 'youtube-format:' + videoId + ':' + 'a'.repeat(64) })], state: { pending_captions: [{ record: saved, attempts: 0, nextAttemptAt: '2099-01-01T00:00:00Z' }] } });
+  await createHourlyCollector({ ...t.deps, env: modeEnv() })();
+  expect(t.deps.pollApify).toHaveBeenCalledWith(expect.objectContaining({ metadataOnly: true, feeOnly: true }), policy.user_id, expect.any(Function));
+  expect(t.updates()).toEqual([]); expect(t.deps.startApify).not.toHaveBeenCalled();
+ });
+});
