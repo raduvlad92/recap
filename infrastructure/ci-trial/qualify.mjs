@@ -1,10 +1,12 @@
 // Credential-free local image/environment probe, never GitHub/Hostinger release evidence.
 import assert from 'node:assert/strict';
-import { chmodSync,cpSync,mkdirSync,rmSync } from 'node:fs';
+import { chmodSync,cpSync,mkdirSync,rmSync,statfsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { inspectBounds } from './runtime.mjs';
+import { validateScratch } from './policy.mjs';
 const bounds=inspectBounds(),root='/r/qualification',bin='/usr/lib/postgresql/17/bin/';
+const scratch=validateScratch(statfsSync('/r',{bigint:true}));
 const run=(file,args)=>execFileSync(file,args,{encoding:'utf8',timeout:60000,maxBuffer:1048576});
 mkdirSync(root,{mode:0o700});mkdirSync(root+'/socket',{mode:0o700});
 cpSync('/opt/actions-runner',root+'/runner',{recursive:true,errorOnExist:true,force:false});chmodSync(root+'/runner',0o700);
@@ -22,7 +24,7 @@ try{
  console.log(JSON.stringify({kind:'credential-free-local-image-probe',node:process.versions.node,runner:version,actionNode,
   postgresql:17,pgcrypto:true,uid:process.getuid(),memoryMax:bounds.memory.trim(),swapMax:bounds.swap.trim(),
   cpuMax:bounds.cpu.trim(),pidsMax:bounds.pids.trim(),rootReadOnly:true,dockerSocket:false,
-  tcpDatabaseListener:false,productionCredentials:false,hostingerProven:false,githubJobProven:false}));
+  tcpDatabaseListener:false,productionCredentials:false,scratch,hostingerProven:false,githubJobProven:false}));
 }finally{
  if(started)run(bin+'pg_ctl',['-D',root+'/data','stop','-m','immediate','-w']);
  rmSync(root,{recursive:true,force:true});

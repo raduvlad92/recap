@@ -44,7 +44,7 @@ const vmQuery = `const fs=require('fs'),os=require('os'); const m=fs.readFileSyn
 
 export async function supervise(mode, directory, image) {
  assert.equal(process.platform,'darwin','This supervisor is only for local macOS Docker Desktop');
- assert(['qualify','deadline-probe','disk-probe','inputs-probe','launcher-probe','run'].includes(mode));
+ assert(['qualify','deadline-probe','disk-probe','inputs-probe','launcher-probe','scratch-churn-probe','run'].includes(mode));
  assert.match(image,/^sha256:[a-f0-9]{64}$/);
  const local = realpathSync(join(root,'.local'));
  const dir = resolve(directory);
@@ -109,6 +109,7 @@ export async function supervise(mode, directory, image) {
   if(!['run','launcher-probe'].includes(mode))args.push('--entrypoint','node');
   args.push(image);
   if(mode==='qualify')args.push('/opt/trial/qualify.mjs');
+  if(mode==='scratch-churn-probe')args.push('--input-type=module','-e',"import fs from 'node:fs';import {validateScratch} from '/opt/trial/policy.mjs';fs.mkdirSync('/r/churn');let checks=0,deleted=0;const timer=setInterval(()=>{validateScratch(fs.statfsSync('/r',{bigint:true}));checks++},20);const end=Date.now()+17000;while(Date.now()<end){await Promise.all(Array.from({length:32},async(_,i)=>{const p='/r/churn/'+i;await fs.promises.writeFile(p,'constructed temporary data');await fs.promises.unlink(p);deleted++}))}clearInterval(timer);validateScratch(fs.statfsSync('/r',{bigint:true}));if(checks<100||deleted<1000)throw Error('Incomplete churn probe');fs.rmdirSync('/r/churn');console.log(JSON.stringify({scratchChurnQualified:true,checks,deleted}));");
   if(mode==='inputs-probe')args.push('-e',"const fs=require('fs'),a=require('assert/strict');for(const p of ['/run/trial/intent.json','/run/secrets/runner-jit']){const s=fs.statSync(p);a.equal(s.uid,10001);a.equal(s.mode&511,384);a(fs.readFileSync(p,'utf8').length>32);a.throws(()=>fs.writeFileSync(p,'forbidden'),{code:'EROFS'})}console.log(JSON.stringify({privateInputProjectionQualified:true,uid:process.getuid(),readOnly:true}));");
   if(mode==='deadline-probe')args.push('-e',"process.on('SIGTERM',()=>{});setInterval(()=>{},1000)");
   if(mode==='disk-probe')args.push('-e',"const fs=require('fs');const f='/r/fill';let fd=fs.openSync(f,'wx'),written=0;try{while(true)written+=fs.writeSync(fd,Buffer.alloc(1048576))}catch(e){if(e.code!=='ENOSPC')throw e;console.log(JSON.stringify({kind:'disk-full-refused',written,errno:e.code}))}finally{fs.closeSync(fd);fs.unlinkSync(f)}");
@@ -137,6 +138,7 @@ export async function supervise(mode, directory, image) {
   else {
    assert(!timedOut&&!after.State.OOMKilled&&code===0&&after.State.ExitCode===0,'Container did not finish successfully');
    if(mode==='qualify')assert(readFileSync(join(dir,'runner.log'),'utf8').includes('"pgcrypto":true'),'Environment qualification missing');
+   if(mode==='scratch-churn-probe')assert(readFileSync(join(dir,'runner.log'),'utf8').includes('"scratchChurnQualified":true'),'Scratch churn qualification missing');
    if(mode==='inputs-probe')assert(readFileSync(join(dir,'runner.log'),'utf8').includes('"privateInputProjectionQualified":true'),'Private input qualification missing');
    if(mode==='disk-probe')assert(readFileSync(join(dir,'runner.log'),'utf8').includes('"errno":"ENOSPC"'),'Disk cap not exercised');
   }

@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 11 November — preserve hard limits and unresolved job custody
+
+Replace the supplemental recursive scratch scan with filesystem counters after an actual PostgreSQL teardown race. The hard eight-GiB filesystem, one-GiB free threshold and CPU/RAM/PID/time limits remain unchanged. An acknowledged GitHub cancellation is not terminal evidence: preserve the original offline/busy registration and private JIT until exact cleanup succeeds, and admit no replacement trial before then. This is a scoped CI repair, not a release/budget/capability expansion. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 ## 11 November — local test-only runner explicitly authorized
 
 The founder says “ok, let's try with a local runner.” Use the existing Mac and Docker Desktop for one exact ephemeral GitHub test job, preserving the original CPU/RAM/process/time/disk limits and all production-release gates. Hostinger remains unchanged. Native Mac disk sharing proves unreliable, so the selected local containment uses a bounded Linux filesystem and a trusted device/inode-checked setup helper outside the job. No paid upgrade, permanent runner, operator credential in the job or production change follows. [Scope and native controls](tech/LOCAL-CI-TRIAL-2026-11-11.md).

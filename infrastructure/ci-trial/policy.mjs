@@ -69,6 +69,16 @@ export function validateCgroup({ memory, swap, pids, cpu, status, rootReadOnly, 
  assert(rootReadOnly && !dockerSocket, 'Read-only root and no Docker socket required');
 }
 
+export function validateScratch(disk) {
+ for(const field of ['bsize','blocks','bfree','bavail'])
+  assert(typeof disk[field]==='bigint' && disk[field]>=0n,'Invalid filesystem counter: '+field);
+ assert(disk.bsize>0n && disk.blocks>0n && disk.bavail<=disk.bfree && disk.bfree<=disk.blocks,'Inconsistent filesystem counters');
+ const total=disk.blocks*disk.bsize,available=disk.bavail*disk.bsize;
+ assert(total<=BigInt(limits.scratch),'Scratch filesystem is not capped');
+ assert(available>=BigInt(limits.free),'Insufficient free scratch filesystem');
+ return {totalBytes:String(total),availableBytes:String(available)};
+}
+
 export function validateRegistration(registration,intent) {
  assert.deepEqual(Object.keys(registration).sort(),['id','name','operationId']);
  assert(Number.isSafeInteger(registration.id) && registration.id>0,'Invalid runner ID');

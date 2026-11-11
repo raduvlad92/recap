@@ -1,5 +1,7 @@
 # Your morning checklist
 
+**11 November — no new owner setup required:** the local runner monitor is repaired and qualified. Local resources and trial routing are removed. The assistant is waiting for terminal GitHub cancellation before removing the old busy registration/JIT and starting a fresh pinned trial. No billing/credential/service/production change is requested. [Current evidence](../tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 **11 November — local trial needs no additional owner setup:** the founder authorizes the existing Mac runner. Local resource/isolation qualification passes; the assistant owns one exact native GitHub job, terminal result and registration/JIT/volume/loop/route cleanup. No key/password, server upgrade, service stop or production release is requested. [Current local procedure](../tech/LOCAL-CI-TRIAL-2026-11-11.md).
 
 **11 November — manual CI-trial login/setup complete; capacity blocked:** external Chrome reaches the existing Hostinger root console. No additional API key, root password or SSH-key setup is needed now. The server has 2.00 GiB available RAM; the prepared trial requires six GiB including workload headroom. Keep services/backups running and the trial disabled. Assistant continuation requires qualified spare capacity before native image/containment qualification and one exact job; no paid upgrade or guard reduction is authorized by this observation. [Evidence and next action](../tech/HOSTINGER-CAPACITY-2026-11-11.md).

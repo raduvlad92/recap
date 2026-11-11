@@ -1,9 +1,9 @@
 {
-  "kind": "local_runner_containment_qualified_github_execution_pending",
+  "kind": "local_runner_monitor_fix_qualified_native_retry_waits_on_cleanup",
   "localDateEuropeBerlin": "2026-11-11",
   "imageId": "sha256:ee5dcff3c2df92f314dbf983a512e0ba846865f5a8613e5764ef457cf75a7b77",
   "architecture": "arm64",
-  "guardAndOperatorTests": 94,
+  "guardAndOperatorTests": 103,
   "failedTests": 0,
   "skippedTests": 0,
   "nativeProbes": {
@@ -76,15 +76,19 @@
     }
   },
   "sourceSha256": {
-    "infrastructure/ci-trial/local-supervise.mjs": "d048d89630585e8c00b8aae3d39382c92763d1c525ed8e4b5d06c7c28f947fe4",
+    "infrastructure/ci-trial/local-supervise.mjs": "b2576d1abb29208181f3f6aecf2562fbfff67f6de1c13a9a7f90cab1aa1b9779",
     "infrastructure/ci-trial/local-disk.py": "17491fa4c4a5e0bcdd6e21bb02775237d53fc6b6d18cdaa102a96772329d4d47",
     ".github/workflows/hostinger-ci-trial.yml": "71ba8baca11b5373be7531dcf208b96519b1d0c7493b6926be1866a7d23e1793",
     "scripts/ci-trial/operator.mjs": "6f3a5fd869867004f343c23b23a529c47198c31a031771b0c1fd9dc75ac57a65",
     "scripts/ci-trial/checks.mjs": "2ed89d4ab41d1bd0363080f56537b56692c53c72084de3195e297ed2a7dca97c",
-    "tests/ci-trial-local.node.mjs": "035d9f6891cdf13c397c9ff10a22b611cf6bc63319768db0e5ecd2d621acab4a"
+    "tests/ci-trial-local.node.mjs": "035d9f6891cdf13c397c9ff10a22b611cf6bc63319768db0e5ecd2d621acab4a",
+    "infrastructure/ci-trial/policy.mjs": "505992126646e6392aa00d830b1e7e067f18fd85902b1bfc5631447c17b911fc",
+    "infrastructure/ci-trial/launcher.mjs": "565148dd02a9f4cdb19fd2f7e0c6335d347cb083418b4f23941942dab23e9572",
+    "infrastructure/ci-trial/qualify.mjs": "ecd4990da0d244327315749fc6e38e0238bd56bc7e1d69400777649f8c35d9f4",
+    "tests/ci-trial.node.mjs": "3165dcf242c8539a6008482c5c84d528e2b38fe203e9aab6c9e21f83a9d98c93"
   },
   "allLocalProbeContainersVolumesLoopsAndMacImagesRemoved": true,
-  "githubJobExecuted": false,
+  "githubJobExecuted": true,
   "productionReleaseAccepted": false,
   "githubAdmissionAttempts": [
     {
@@ -99,5 +103,85 @@
       "routeRemoved": true,
       "localResourcesRemoved": true
     }
-  ]
+  ],
+  "githubExecution": {
+    "runId": "42935243758",
+    "attempt": 1,
+    "headSha": "ff96969fc9a79a221b2e7ebd3a616b36fbeccec2",
+    "mergeSha": "78d4ee843d93f9288ad1429e5a33a0557f1d7142",
+    "jobId": "130243581696",
+    "runnerId": 22,
+    "status": "cancellation_requested_runner_offline",
+    "nativeHookCheckoutAndPreflight": "passed",
+    "fullReaderResults": "interrupted_before_complete_report",
+    "cleanup": "local_and_route_removed_github_registration_busy_pending",
+    "dependencyInstall": "passed",
+    "scratchMonitorFailure": "du_temporary_file_disappearance",
+    "hostTimeout": false,
+    "oomKilled": false,
+    "normalCancelRequested": true,
+    "forceCancelAcknowledged": true,
+    "registrationRemoved": false,
+    "originalLocalJitRemoved": false
+  },
+  "hostedChecksAtTrialHead": {
+    "headSha": "ff96969fc9a79a221b2e7ebd3a616b36fbeccec2",
+    "jobs": [
+      {
+        "runId": "42935243893",
+        "jobId": "130243581728",
+        "name": "check",
+        "conclusion": "failure",
+        "runnerId": 0,
+        "steps": 0
+      },
+      {
+        "runId": "42935243831",
+        "jobId": "130243581848",
+        "name": "verify",
+        "conclusion": "failure",
+        "runnerId": 0,
+        "steps": 0
+      }
+    ],
+    "nativeAnnotation": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the Billing & plans section in your settings",
+    "classification": "hosted_admission_refusal_not_executed_test_failures",
+    "workflowOrBillingChangesMade": false
+  },
+  "correctedScratchMonitor": {
+    "imageId": "sha256:16ec1defe343ae98eee6f70368d7e3f083903bd13c10aa84ee8b86674f114438",
+    "runtimeSourcesMatchImage": true,
+    "countsOnly": true,
+    "maximumFilesystemBytes": 8589934592,
+    "minimumFreeBytes": 1073741824,
+    "churnChecks": 420,
+    "temporaryFilesDeleted": 223744,
+    "nativeProbes": {
+      "scratch-qualification": {
+        "exitCode": 0,
+        "expectedFixtureRefusal": false,
+        "timedOut": false,
+        "oomKilled": false,
+        "cleanupComplete": true,
+        "logSha256": "9afa17fa7acd3fd1dbdae4ac0087c13b2e86fa9d465e75e0052831310023bdbc"
+      },
+      "scratch-churn-probe": {
+        "exitCode": 0,
+        "expectedFixtureRefusal": false,
+        "timedOut": false,
+        "oomKilled": false,
+        "cleanupComplete": true,
+        "logSha256": "26571013a74f7562c82f4baca4aa89a882a19763294967fdf7602ac2b020c5a6"
+      },
+      "scratch-launcher-probe": {
+        "exitCode": 1,
+        "expectedFixtureRefusal": true,
+        "timedOut": false,
+        "oomKilled": false,
+        "cleanupComplete": true,
+        "logSha256": "d367e4dc28b6209021a50657c8dedecf46d090836badef2551ecb42df3b1b2ce"
+      }
+    },
+    "nextNativeRunStarted": false
+  }
 }

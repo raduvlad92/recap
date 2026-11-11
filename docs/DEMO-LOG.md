@@ -1,5 +1,11 @@
 # Demo and evidence log
 
+## 11 November — false-positive scratch monitor repaired
+
+The actual local job reaches full reader execution but stops after 198.115 seconds because concurrent PostgreSQL file deletion makes recursive du fail. Preserve this interrupted outcome; no complete test count or app pass is claimed. Automatic local/route cleanup succeeds, while GitHub remains offline/busy after normal cancellation. Journal and acknowledge exact-run force cancellation; registration/JIT cleanup stays pending. Replace traversal with capped-filesystem/free-space counters. All 103 tests and rebuilt-image source checks pass; actual environment/launcher/churn probes pass with 420 checks/223,744 deletions and complete local cleanup. No subsequent native trial or production change occurs. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
+**11 November — native local GitHub trial running:** [run 42935243758](https://github.com/raduvlad92/recap/actions/runs/42935243758) assigns runner22/job130243581696 to exact head `ff96969` and its bound synthetic merge. Job setup, exact hook, checkout and unprivileged environment checks pass; dependency installation/full reader checks are in progress. Mac-side supervision and final native readback/registration/JIT/volume/loop/route cleanup are automatic. No final CI or production-release pass is claimed. [Current evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 **11 November native admission checkpoint:** first native run `42934793789` is cancelled with no assigned runner/steps after the launcher refuses a root-owned scratch recovery folder. Exact registration/JIT/route/local cleanup passes. The corrected initializer and a real credential-free launcher probe pass; use a fresh native run and JIT. No application CI or production release pass is claimed. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
 
 ## 11 November — local runner containment qualified

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { chmodSync, copyFileSync, cpSync, existsSync, lstatSync, mkdirSync, readFileSync, statfsSync, writeFileSync } from 'node:fs';
-import { execFileSync, spawn } from 'node:child_process';
-import { limits, validateIntent } from './policy.mjs';
+import { spawn } from 'node:child_process';
+import { limits, validateIntent, validateScratch } from './policy.mjs';
 import { inspectBounds } from './runtime.mjs';
 
 let child, timer, monitor, stopping=false, boundFailure=false;
@@ -14,12 +14,8 @@ const stop = () => {
 try {
  inspectBounds();
  const intent=validateIntent(JSON.parse(readFileSync('/run/trial/intent.json','utf8')));
- const scratch=()=>{
-  const disk=statfsSync('/r',{bigint:true});
-  assert(disk.bavail*disk.bsize >= BigInt(limits.free),'Insufficient free scratch filesystem');
-  const used=execFileSync('du',['-sk','/r'],{encoding:'utf8',timeout:10000,maxBuffer:1024}).split(/\s/)[0];
-  assert(/^[0-9]+$/.test(used) && BigInt(used)*1024n <= BigInt(limits.scratch),'Scratch limit reached');
- };
+ // The separate filesystem is the hard quota. Kernel counters remain valid while temporary files disappear.
+ const scratch=()=>validateScratch(statfsSync('/r',{bigint:true}));
  scratch();
  writeFileSync('/r/used-once',intent.operationId,{flag:'wx',mode:0o600});
  for(const path of ['/r/control','/r/home','/r/t','/r/npm'])mkdirSync(path,{mode:0o700});

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe,it } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { validateIntent,validateJob,validateCgroup,validateRegistration,assertNoProductionEnvironment,assertVitestReport,assertTapReport,
- repository,branch,baseBranch,workflow } from '../infrastructure/ci-trial/policy.mjs';
+ repository,branch,baseBranch,workflow,validateScratch } from '../infrastructure/ci-trial/policy.mjs';
 
 const now=Date.parse('2026-11-09T01:00:00.000Z');
 const intent=()=>({schema:1,operationId:'10000000-0000-4000-8000-000000000001',repository,workflow,pullRequest:23,
@@ -17,6 +17,12 @@ function job(){
    base:{repo:{full_name:repository},ref:baseBranch,sha:i.baseSha}}}};
 }
 const cg=()=>({memory:'4294967296',swap:'0',pids:'512',cpu:'100000 100000',status:'CapEff:\t0000000000000000\nNoNewPrivs:\t1\n',rootReadOnly:true,dockerSocket:false});
+describe('filesystem counters remain independent of disappearing temporary paths',()=>{
+ const disk=()=>({bsize:4096n,blocks:2097152n,bfree:524288n,bavail:262144n});
+ it('accepts exact disk and reserved-free boundaries without traversing a path',()=>assert.deepEqual(validateScratch(disk()),{totalBytes:'8589934592',availableBytes:'1073741824'}));
+ for(const change of [{bavail:262143n},{blocks:2097153n},{bsize:0n},{blocks:0n},{bfree:2097153n},{bavail:524289n},{bavail:-1n},{bsize:4096}])
+  it('rejects uncapped, low-free or inconsistent filesystem '+String(Object.keys(change)[0])+' '+String(Object.values(change)[0]),()=>assert.throws(()=>validateScratch({...disk(),...change})));
+});
 describe('test-only runner identity and resource boundaries',()=>{
  it('admits exactly one bound synthetic PR merge identity, without changing its input',()=>{
   const {i,env,event}=job(),before=JSON.stringify({i,env,event});assert.equal(validateJob(i,env,event,now).mergeSha,i.mergeSha);
