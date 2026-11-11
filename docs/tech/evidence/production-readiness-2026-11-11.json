@@ -1,0 +1,265 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-11T19:42:06.668Z",
+  "observedAt": "2026-11-11 19:34:08.75817+00",
+  "scope": "Read-only investigation and recommended production-readiness gates; no new production activation or launch authorization",
+  "verdict": "Deployment and bounded automation operate; reliable useful daily output and customer-production gates remain incomplete",
+  "serving": {
+    "release": "1947636523f415461f0cee0f78ad758f77ed49f6",
+    "epoch": 6,
+    "paused": false,
+    "acceptedNativeParity": {
+      "web": true,
+      "jobs": true,
+      "source": true,
+      "surface": true,
+      "lifecycle": true
+    },
+    "publicHttp": [
+      {
+        "path": "/api/health",
+        "status": 200,
+        "expectedStatus": 200,
+        "release": "1947636523f415461f0cee0f78ad758f77ed49f6"
+      },
+      {
+        "path": "/api/admin",
+        "status": 401,
+        "expectedStatus": 401
+      },
+      {
+        "path": "/.netlify/functions/automatic-content-worker",
+        "status": 404,
+        "expectedStatus": 404
+      }
+    ],
+    "queued": 0,
+    "running": 0,
+    "legacyUncertainFrames": 96
+  },
+  "acquisition": {
+    "archiveTotal": 601,
+    "newArchiveRowsSinceAcceptedRelease": 5,
+    "newTranscripts": 2,
+    "newMetadataOnly": 3,
+    "newTranscriptSummaries": [
+      {
+        "publishedAt": "2026-11-11T15:00:18+00:00",
+        "collectedAt": "2026-11-11T16:01:41.037642+00:00",
+        "characters": 3841,
+        "savedCues": 102,
+        "videoFormat": "unknown"
+      },
+      {
+        "publishedAt": "2026-11-11T16:13:16+00:00",
+        "collectedAt": "2026-11-11T17:01:19.63424+00:00",
+        "characters": 1006,
+        "savedCues": 21,
+        "videoFormat": "unknown"
+      }
+    ],
+    "newTranscriptsExcludedByExistingShortsPreference": 2,
+    "sourcePreferencesChanged": false,
+    "captionCompletenessOrVisualContentVerified": false,
+    "eligibleUsefulDailyAcceptanceClaimed": false
+  },
+  "automaticAnalysis": {
+    "newSettledCalls": 5,
+    "newSettledUsd": "0.051079742",
+    "newFiniteSessions": [
+      {
+        "state": "closed",
+        "maximumUsd": "0.3",
+        "maxCalls": 100,
+        "sources": 1
+      },
+      {
+        "state": "closed",
+        "maximumUsd": "0.3",
+        "maxCalls": 100,
+        "sources": 1
+      }
+    ],
+    "sourceCharacters": 9305,
+    "sourcePublishedAt": "2026-11-10T01:14:13.000Z",
+    "sourceAlreadyArchivedBeforeAcceptedRelease": true,
+    "sourceDifferentFromOriginalHeldProof": true,
+    "newPendingKeywordReviews": 88,
+    "newPendingRecapReviews": 1,
+    "originalProofsRetriedByOperator": false,
+    "newManualModelCalls": 0
+  },
+  "quality": {
+    "actualNewOrdinaryRecapCheckerResponse": true,
+    "sourceContextsPresentInActualRequest": true,
+    "readComplete": true,
+    "verdictCount": 6,
+    "unsupportedVerdicts": 2,
+    "positiveVerdictAcknowledgesSupportOutsideItsQuote": true,
+    "assessment": "One positive verdict itself acknowledges that part of the claim comes from nearby context outside the cited quote. The required quote-only support rule is therefore not semantically qualified. No publication or broad checker-improvement claim follows.",
+    "qualifiedSemanticImprovement": false
+  },
+  "daily": [
+    {
+      "status": "awaiting_review",
+      "topics": 0,
+      "coverage": {
+        "checkedSources": 0,
+        "omittedUpdates": 0,
+        "updatedSources": 9,
+        "followedSources": 39,
+        "includedUpdates": 0,
+        "availableUpdates": 18,
+        "pendingReviewUpdates": 11,
+        "missingContentUpdates": 7
+      },
+      "cutoff_at": "2026-11-11T07:00:00+00:00",
+      "created_at": "2026-11-11T07:00:19.10524+00:00",
+      "local_date": "2026-11-11",
+      "published_at": null
+    },
+    {
+      "status": "awaiting_review",
+      "topics": 0,
+      "coverage": {
+        "checkedSources": 0,
+        "omittedUpdates": 0,
+        "updatedSources": 4,
+        "followedSources": 39,
+        "includedUpdates": 0,
+        "availableUpdates": 5,
+        "pendingReviewUpdates": 4,
+        "missingContentUpdates": 1
+      },
+      "cutoff_at": "2026-11-10T07:00:00+00:00",
+      "created_at": "2026-11-10T07:01:45.116453+00:00",
+      "local_date": "2026-11-10",
+      "published_at": null
+    }
+  ],
+  "originalOwnerReview": {
+    "decision": "Keep held for review",
+    "nativeStatus": "pending",
+    "originalProposalUnchanged": true,
+    "published": false,
+    "rejected": false,
+    "keywordApprovalOrFutureAutopublishInferred": false
+  },
+  "model": {
+    "calls": 977,
+    "last_call_at": "2026-11-11T12:05:45.661167+00:00",
+    "committed_usd": "9.998287986000",
+    "original_rows": 967,
+    "unknown_holds": 7,
+    "original967RowsHashPreserved": true,
+    "cumulativeCapUsd": "12",
+    "dailyCapUsd": "5",
+    "perCallCapUsd": "0.10",
+    "noCapsOrHistoryReset": true
+  },
+  "readerSourceBudget": {
+    "unknown_jobs": 12,
+    "daily_limit_usd": "0.100000",
+    "daily_headroom_usd": "0.001000000000",
+    "lifetime_limit_usd": "1.000000",
+    "daily_committed_usd": "0.099000000000",
+    "lifetime_committed_usd": "0.523000000000"
+  },
+  "ordinarySourceFinances": {
+    "held": 0,
+    "settled": 37,
+    "settled_usd": "0.030776536901",
+    "reservations": 37,
+    "held_maximum_usd": "0",
+    "scope": "Since original delivery restoration; separate from older reader-provider unknowns and not a final supplier invoice"
+  },
+  "authentication": {
+    "savedServerKeyMode": "development",
+    "savedIssuerUsesDevelopmentDomain": true,
+    "scope": "Saved configuration tied to unchanged accepted native deployment; no issuer/key switch or native Clerk account mutation",
+    "identityMode": "legacy",
+    "lifecycleReady": false,
+    "productionInstanceAbsenceClaimed": false,
+    "customerSignInContinuityAndEnrollmentAccepted": false
+  },
+  "recovery": {
+    "inventoryObservedAt": "2026-11-11T19:35:14.386Z",
+    "availableBackupsListed": 0,
+    "walgEnabled": true,
+    "pitrEnabled": false,
+    "physicalBackupDataPresent": false,
+    "restorePerformed": false,
+    "restoreProofAccepted": false,
+    "scope": "Native list API returned no available backups; this is not proof that every possible external/private backup is absent"
+  },
+  "outstandingCustomerGates": [
+    "Recoverable encrypted backup and quarantined restore",
+    "Reliable source identity, format and full-text acquisition within existing caps",
+    "Semantically grounded concise output and manageable review",
+    "Production sign-in/enrollment with existing ownership preserved",
+    "Disposable-account deletion, external custody and retention/restore proof",
+    "Hosted phone/keyboard/account-isolation and qualified language checks",
+    "Alerts for freshness, stalled work, budgets and missed/use-less cutoffs; measured operating cost"
+  ],
+  "qualification": {
+    "usefulDaily72HourClockStarted": false,
+    "minimumHoursAfterQualifiedUsefulFlow": 72,
+    "genuineFutureSourceCheckpoint": "2026-11-12T00:20:00.000Z",
+    "genuineFutureCutoffCheckpoint": "2026-11-12T07:05:00.000Z",
+    "manualProofsAndTransportDoNotQualify": true
+  },
+  "boundaries": {
+    "productionWritesByOperator": 0,
+    "newManualSourceOrModelRuns": 0,
+    "capChanges": 0,
+    "unknownHoldRelease": false,
+    "publication": false,
+    "remindersOff": true,
+    "bothDestructiveLifecycleFlagsOff": true,
+    "dlqAndLegacyUncertaintyUntouched": true,
+    "noNewOwnerSetupOrSubscriptionRequested": true,
+    "customerLaunchAuthorized": false
+  },
+  "primarySources": [
+    "https://clerk.com/docs/guides/development/deployment/production",
+    "https://supabase.com/docs/guides/platform/backups",
+    "https://supabase.com/docs/reference/api/v1-list-all-backups"
+  ],
+  "privateEvidence": [
+    {
+      "name": "production-readiness-20261111-1935-private.json",
+      "sha256": "3988aa304c4c5d899bd86a5ab27500d312297f56dd00caa44c44fbc0ff56a819"
+    },
+    {
+      "name": "production-readiness-new-flow-20261111-1935-private.json",
+      "sha256": "ac12af469e4437fc1d26e47a36598e69f1498a7f4f617854839b84ad5ee0686b"
+    },
+    {
+      "name": "production-readiness-ordinary-model-lineage-private.json",
+      "sha256": "5fdb1e24a8badefcd9eda236fee61868f83d385bb5188fa6980b3991cdb26cae"
+    },
+    {
+      "name": "production-readiness-new-recap-checker-private.json",
+      "sha256": "841dac33bf98ea25b5728c064fdcf9430041b12f026a08a9d2f9dd2ab0b6bfe3"
+    },
+    {
+      "name": "production-readiness-backups-20261111-private.json",
+      "sha256": "fd475267e2c8be5e974752d7b5ecc3ea8f924ae2d3d3fc9be814e57247246611"
+    },
+    {
+      "name": "production-readiness-new-transcript-eligibility-private.json",
+      "sha256": "e92e529c2cea0eb0d28856358fd79ae10a31fca852e6255da4fce78e18a7abd7"
+    }
+  ],
+  "documentationValidation": {
+    "checkedAt": "2026-11-11T19:44:28.336Z",
+    "documentationOnly": true,
+    "changedFiles": 8,
+    "changedLocalLinksValid": 12,
+    "knownPrivateValuesChecked": 154,
+    "newEvidenceJsonValid": true,
+    "scopeAndHoldChecksPassed": true,
+    "diffWhitespaceCheckPassed": true,
+    "applicationTestsRerun": false
+  }
+}

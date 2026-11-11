@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 11 November 2026 — investigate production readiness; preserve existing approvals
+
+The founder asks for the next steps to make the system production ready. Perform a read-only current-state investigation and recommend ordered completion criteria, distinguishing reliable daily use from customer release. This does not approve a named broader specification, customer launch, new subscription/allowance, identity cutover, retention policy or destructive activation. The prior explicit four-point publication hold remains binding and is not asked again. Proposed recovery targets remain recommendations, not recorded founder decisions. [Investigation and recommended plan](tech/PRODUCTION-READINESS-2026-11-11.md).
+
 ## 11 November 2026 — founder explicitly keeps the corrected recap held
 
 The founder selects **“Keep held for review”** for the presented edited four-point recap. This approves no publication and does not reject the original native review. Preserve all six original points, negative checker findings and held keyword proposals; publish none and infer no future automatic-publication policy. No production write is needed to maintain the existing pending state. Daily composition requires approved keywords as well as an approved recap; the four-point decision cannot supply that separate approval. Do not reask the same question without a substantive change.
