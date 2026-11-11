@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 11 November 2026 — native quality-repair release accepted under existing authorization
+
+PR27's exact green tree merges as1947636 and succeeds through its sole normal main push run42965161775. Actual archive13831696060, native GitHub-App checkpoint130343907015, workers/assets/source/control and original delivery/cap/reminder/lifecycle parity pass. The same saved operation is accepted and the exact-main fence released; documentation may now be committed/pushed without another application deployment. No new founder decision, migration, allowance, source-cap increase or publication approval is inferred. The genuine new-release05:35 transport passes native invocation/frame/revision/deadline checks; it does not establish useful daily content. Preserve the already archived retained transcript versions. Actual owner approval of the corrected sample, useful acquisition, changed-checker semantic verification and normal daily72-hour qualification remain open. [Accepted native evidence](tech/evidence/daily-use-quality-release-2026-11-11.json).
+
 ## 11 November 2026 — approved release complete; publication remains an actual owner decision
 
 The existing finish-plan approval and one-time USD2 renewal are executed through all six preservation-checked migrations and exact normal deployment of710b509. Existing global/eligible-owner cumulative AI controls are12, unchanged5/day/.10call; all967 original call rows and seven unknown holds are retained. Original bounded delivery is restored, with source caps/reminders/destructive flags unchanged. No new founder decision is inferred from migration, CI, native deployment, scheduler completion or a model result.
