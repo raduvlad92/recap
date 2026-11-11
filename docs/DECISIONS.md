@@ -1,5 +1,8 @@
 # Decisions and interview
 
+## 11 November 2026 — current-status audit and proposed daily-use completion
+
+Founder asks whether the system works, ingests and can be used daily, and requests the finish plan. Refresh public HTTP, GitHub and SELECT-only production evidence. Record partial useful ingestion, recurring source failures, generation budget stops, pending review and saved-but-unready daily briefings separately. Green CI on consolidated PR #23 supersedes the historical CI-admission blocker for that candidate; it does not establish a production reader release. Recommend the ordered [daily-use completion plan](tech/DAILY-USE-COMPLETION-2026-11-11.md). No named specification, new allowance, review approval, automatic-publication policy, production activation, supplier/model execution, customer trial or reminder sending is approved by this question. Existing authorization and caps remain. No manual supplier/model fee is incurred; ordinary automation continues and its provisional ledger totals are recorded in the evidence.
 ## 11 November — retain standard hosted CI after verified public admission
 
 The public hosted path passes complete PG-enabled verification and artifact/journal checks. Retain the standard hosted workflow and disabled local trial; no paid VPS upgrade or permanent runner follows. The source-publication/CI request is complete, while draft review, merge, production migration/deployment and useful-content acceptance stay separate. [Exact results](tech/GITHUB-PUBLICATION-2026-11-11.md).
