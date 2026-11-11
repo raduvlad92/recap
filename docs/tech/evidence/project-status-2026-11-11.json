@@ -1,0 +1,744 @@
+{
+  "observed_at": "2026-11-11T02:17:26.155553+00:00",
+  "detail_observed_at": "2026-11-11T02:18:11.823163+00:00",
+  "controls_observed_at": "2026-11-11T02:19:23.720045+00:00",
+  "http_github_observed_at": "2026-11-11T02:22:24.522Z",
+  "purpose": "Read-only current status and proposed daily-use completion; no production mutation or manual source/provider/model execution",
+  "public_http": {
+    "origin": "https://recap.filternode.dev",
+    "routes": [
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/creators/",
+        "status": 200
+      },
+      {
+        "path": "/api/health",
+        "status": 200
+      },
+      {
+        "path": "/api/admin",
+        "status": 401
+      }
+    ],
+    "health": {
+      "authConfigured": true,
+      "feedEnabled": true,
+      "apifyEnabled": true,
+      "automaticScheduling": true,
+      "platforms": {
+        "YouTube": {
+          "configured": true,
+          "mode": "apify"
+        },
+        "X": {
+          "configured": false,
+          "mode": "unavailable"
+        },
+        "Instagram": {
+          "configured": false,
+          "mode": "unavailable"
+        },
+        "LinkedIn": {
+          "configured": false,
+          "mode": "unavailable"
+        },
+        "Podcast": {
+          "configured": true,
+          "mode": "feed"
+        },
+        "Substack": {
+          "configured": true,
+          "mode": "feed"
+        },
+        "Blog": {
+          "configured": true,
+          "mode": "feed"
+        }
+      },
+      "hosting": {
+        "provider": "cloudflare",
+        "mode": "active",
+        "release": "182457410f7f8e979348d10347fe50b1e94b295b",
+        "jobsConfigured": true
+      }
+    },
+    "limits": "Public API configuration and availability; no new authenticated browser/UI proof"
+  },
+  "hosting": {
+    "control": {
+      "epoch": 4,
+      "owner": "cloudflare",
+      "paused": false,
+      "release": "182457410f7f8e979348d10347fe50b1e94b295b",
+      "singleton": true,
+      "updated_at": "2026-11-07T23:19:06.826359+00:00",
+      "old_host_fenced": true,
+      "release_revision": "6dcf2afb-d4c7-4e3b-b546-532eb43d543a"
+    },
+    "persisted_last24h": [
+      {
+        "kind": "automatic-content",
+        "state": "completed",
+        "frames": 288,
+        "expired": 0,
+        "latest_created": "2026-11-11T02:15:53.894828+00:00",
+        "latest_updated": "2026-11-11T02:16:03.192814+00:00"
+      },
+      {
+        "kind": "daily-briefing",
+        "state": "completed",
+        "frames": 288,
+        "expired": 0,
+        "latest_created": "2026-11-11T02:15:54.588857+00:00",
+        "latest_updated": "2026-11-11T02:16:08.587348+00:00"
+      },
+      {
+        "kind": "hourly-collection",
+        "state": "completed",
+        "frames": 24,
+        "expired": 0,
+        "latest_created": "2026-11-11T02:00:44.697594+00:00",
+        "latest_updated": "2026-11-11T02:01:46.164052+00:00"
+      },
+      {
+        "kind": "social-collection",
+        "state": "completed",
+        "frames": 288,
+        "expired": 0,
+        "latest_created": "2026-11-11T02:15:54.268061+00:00",
+        "latest_updated": "2026-11-11T02:16:05.221601+00:00"
+      },
+      {
+        "kind": "social-content",
+        "state": "completed",
+        "frames": 288,
+        "expired": 0,
+        "latest_created": "2026-11-11T02:15:54.431571+00:00",
+        "latest_updated": "2026-11-11T02:16:06.876021+00:00"
+      }
+    ],
+    "outstanding": [],
+    "limits": "Fresh persisted work/control SELECTs; native queue metrics, worker asset/version verification and exact invocation-token acceptance were not repeated"
+  },
+  "archive": {
+    "total_rows": 592,
+    "by_platform": [
+      {
+        "rows": 24,
+        "new_24h": 0,
+        "new_72h": 3,
+        "platform": "Instagram",
+        "latest_collected": "2026-11-10T02:11:02.667761+00:00",
+        "latest_published": "2026-11-10T01:13:46+00:00",
+        "content_kinds": [
+          {
+            "kind": "feed_text",
+            "rows": 23,
+            "new_24h": 0,
+            "new_72h": 3,
+            "nonempty_content": 23
+          },
+          {
+            "kind": "metadata_only",
+            "rows": 1,
+            "new_24h": 0,
+            "new_72h": 0,
+            "nonempty_content": 0
+          }
+        ]
+      },
+      {
+        "rows": 88,
+        "new_24h": 0,
+        "new_72h": 3,
+        "platform": "X",
+        "latest_collected": "2026-11-09T14:11:01.797916+00:00",
+        "latest_published": "2026-11-09T13:30:03+00:00",
+        "content_kinds": [
+          {
+            "kind": "feed_text",
+            "rows": 87,
+            "new_24h": 0,
+            "new_72h": 3,
+            "nonempty_content": 87
+          },
+          {
+            "kind": "metadata_only",
+            "rows": 1,
+            "new_24h": 0,
+            "new_72h": 0,
+            "nonempty_content": 0
+          }
+        ]
+      },
+      {
+        "rows": 480,
+        "new_24h": 5,
+        "new_72h": 12,
+        "platform": "YouTube",
+        "latest_collected": "2026-11-10T21:01:08.594943+00:00",
+        "latest_published": "2026-11-10T20:20:53+00:00",
+        "content_kinds": [
+          {
+            "kind": "metadata_only",
+            "rows": 32,
+            "new_24h": 1,
+            "new_72h": 1,
+            "nonempty_content": 9
+          },
+          {
+            "kind": "transcript",
+            "rows": 448,
+            "new_24h": 4,
+            "new_72h": 11,
+            "nonempty_content": 448
+          }
+        ]
+      }
+    ]
+  },
+  "hourly_checks_last24h": [
+    {
+      "checks": 192,
+      "status": "unsupported",
+      "platform": "Instagram",
+      "error_code": "freshness_check_unavailable",
+      "reported_new": 0,
+      "latest_finished": "2026-11-11T02:01:09.619274+00:00"
+    },
+    {
+      "checks": 240,
+      "status": "unsupported",
+      "platform": "X",
+      "error_code": "freshness_check_unavailable",
+      "reported_new": 0,
+      "latest_finished": "2026-11-11T02:01:07.109484+00:00"
+    },
+    {
+      "checks": 78,
+      "status": "failed",
+      "platform": "YouTube",
+      "error_code": "collection_budget_exhausted",
+      "reported_new": 0,
+      "latest_finished": "2026-11-11T01:01:20.094538+00:00"
+    },
+    {
+      "checks": 4,
+      "status": "failed",
+      "platform": "YouTube",
+      "error_code": "source_unavailable",
+      "reported_new": 0,
+      "latest_finished": "2026-11-10T07:01:01.961893+00:00"
+    },
+    {
+      "checks": 411,
+      "status": "partial",
+      "platform": "YouTube",
+      "error_code": null,
+      "reported_new": 5,
+      "latest_finished": "2026-11-11T02:01:45.779079+00:00"
+    },
+    {
+      "checks": 11,
+      "status": "unchanged",
+      "platform": "YouTube",
+      "error_code": null,
+      "reported_new": 0,
+      "latest_finished": "2026-11-11T02:01:20.304191+00:00"
+    }
+  ],
+  "social_jobs_last24h": [
+    {
+      "jobs": 2,
+      "state": "completed",
+      "platform": "Instagram",
+      "error_code": null,
+      "reported_usd": "0.009200000000",
+      "unknown_costs": 0,
+      "latest_created": "2026-11-10T04:26:04.816786+00:00",
+      "latest_finished": "2026-11-10T04:36:04.972389+00:00"
+    },
+    {
+      "jobs": 155,
+      "state": "failed",
+      "platform": "Instagram",
+      "error_code": "provider_blocked",
+      "reported_usd": "0.641000000000",
+      "unknown_costs": 0,
+      "latest_created": "2026-11-11T01:51:01.614156+00:00",
+      "latest_finished": "2026-11-11T02:01:53.420558+00:00"
+    },
+    {
+      "jobs": 175,
+      "state": "completed",
+      "platform": "X",
+      "error_code": null,
+      "reported_usd": "0.017325647292",
+      "unknown_costs": 0,
+      "latest_created": "2026-11-11T02:01:53.714828+00:00",
+      "latest_finished": "2026-11-11T02:11:06.464481+00:00"
+    }
+  ],
+  "social_provider_yield_last24h": [
+    {
+      "jobs": 2,
+      "state": "completed",
+      "accepted": 2,
+      "complete": "false",
+      "platform": "Instagram",
+      "returned": 6,
+      "coverage_status": "partial"
+    },
+    {
+      "jobs": 155,
+      "state": "failed",
+      "accepted": 0,
+      "complete": "false",
+      "platform": "Instagram",
+      "returned": 405,
+      "coverage_status": "blocked"
+    },
+    {
+      "jobs": 175,
+      "state": "completed",
+      "accepted": 0,
+      "complete": "false",
+      "platform": "X",
+      "returned": 0,
+      "coverage_status": "unknown"
+    }
+  ],
+  "social_yield_observed_at": "2026-11-11T02:20:06.296561+00:00",
+  "social_active_older_than30minutes": 0,
+  "social_platform_enabled_rows": [
+    {
+      "enabled": true,
+      "platform": "X"
+    },
+    {
+      "enabled": true,
+      "platform": "LinkedIn"
+    },
+    {
+      "enabled": true,
+      "platform": "Instagram"
+    }
+  ],
+  "platform_limit": "Enabled registry/configuration is not evidence of live coverage. No LinkedIn or feed-family reader ingestion is evidenced by these archives.",
+  "daily": {
+    "status_totals": [
+      {
+        "status": "awaiting_review",
+        "topics": 0,
+        "briefings": 10
+      }
+    ],
+    "latest_snapshots": [
+      {
+        "status": "awaiting_review",
+        "topics": 0,
+        "updates": 5,
+        "citations": 0,
+        "cutoff_at": "2026-11-10T07:00:00+00:00",
+        "created_at": "2026-11-10T07:01:45.116453+00:00",
+        "local_date": "2026-11-10",
+        "coverage": {
+          "checkedSources": 0,
+          "omittedUpdates": 0,
+          "updatedSources": 4,
+          "followedSources": 39,
+          "includedUpdates": 0,
+          "availableUpdates": 5,
+          "pendingReviewUpdates": 4,
+          "missingContentUpdates": 1
+        }
+      },
+      {
+        "status": "awaiting_review",
+        "topics": 0,
+        "updates": 5,
+        "citations": 0,
+        "cutoff_at": "2026-11-09T07:00:00+00:00",
+        "created_at": "2026-11-09T07:01:32.645932+00:00",
+        "local_date": "2026-11-09",
+        "coverage": {
+          "checkedSources": 0,
+          "omittedUpdates": 0,
+          "updatedSources": 3,
+          "followedSources": 39,
+          "includedUpdates": 0,
+          "availableUpdates": 5,
+          "pendingReviewUpdates": 5,
+          "missingContentUpdates": 0
+        }
+      },
+      {
+        "status": "awaiting_review",
+        "topics": 0,
+        "updates": 8,
+        "citations": 0,
+        "cutoff_at": "2026-11-08T07:00:00+00:00",
+        "created_at": "2026-11-08T07:01:33.399189+00:00",
+        "local_date": "2026-11-08",
+        "coverage": {
+          "checkedSources": 0,
+          "omittedUpdates": 0,
+          "updatedSources": 8,
+          "followedSources": 39,
+          "includedUpdates": 0,
+          "availableUpdates": 8,
+          "pendingReviewUpdates": 6,
+          "missingContentUpdates": 2
+        }
+      },
+      {
+        "status": "awaiting_review",
+        "topics": 0,
+        "updates": 6,
+        "citations": 0,
+        "cutoff_at": "2026-11-07T07:00:00+00:00",
+        "created_at": "2026-11-07T07:00:24.989701+00:00",
+        "local_date": "2026-11-07",
+        "coverage": {
+          "checkedSources": 0,
+          "omittedUpdates": 0,
+          "updatedSources": 5,
+          "followedSources": 39,
+          "includedUpdates": 0,
+          "availableUpdates": 6,
+          "pendingReviewUpdates": 5,
+          "missingContentUpdates": 1
+        }
+      },
+      {
+        "status": "awaiting_review",
+        "topics": 0,
+        "updates": 15,
+        "citations": 0,
+        "cutoff_at": "2026-11-06T07:00:00+00:00",
+        "created_at": "2026-11-06T07:00:37.512822+00:00",
+        "local_date": "2026-11-06",
+        "coverage": {
+          "checkedSources": 0,
+          "omittedUpdates": 0,
+          "updatedSources": 11,
+          "followedSources": 39,
+          "includedUpdates": 0,
+          "availableUpdates": 15,
+          "pendingReviewUpdates": 8,
+          "missingContentUpdates": 7
+        }
+      }
+    ],
+    "schedules": [
+      {
+        "enabled": true,
+        "last_cutoff_at": "2026-11-10T07:00:00+00:00",
+        "last_local_date": "2026-11-10"
+      }
+    ],
+    "jobs": [
+      {
+        "jobs": 10,
+        "state": "finished",
+        "latest": "2026-11-10T07:01:44.885068+00:00"
+      }
+    ],
+    "cutoff_note": "Observation precedes 11 November 08:00 Europe/Berlin; latest due scheduled day is 10 November."
+  },
+  "model": {
+    "budget": {
+      "enabled": true,
+      "daily_limit_usd": "5.000000000000",
+      "lifetime_limit_usd": "10.000000000000"
+    },
+    "calls": {
+      "calls": 967,
+      "new_24h": 0,
+      "held_usd": "0.125827191000",
+      "last_call": "2026-11-04T23:12:33.481899+00:00",
+      "settled_usd": "9.792659213000",
+      "committed_usd": "9.918486404000",
+      "unknown_calls": 7
+    },
+    "uncommitted_usd": "0.081513596000",
+    "policies": [
+      {
+        "model": "openai/gpt-6-luna-pro",
+        "enabled": true,
+        "daily_limit_usd": "5.000000000000",
+        "lifetime_limit_usd": "10.000000000000",
+        "per_call_limit_usd": "0.100000000000"
+      }
+    ],
+    "automatic_tasks": [
+      {
+        "task": "keywords",
+        "state": "blocked",
+        "tasks": 3,
+        "error_code": "analysis_call_limit"
+      },
+      {
+        "task": "keywords",
+        "state": "blocked",
+        "tasks": 34,
+        "error_code": "analysis_budget_exhausted"
+      },
+      {
+        "task": "recap",
+        "state": "blocked",
+        "tasks": 1,
+        "error_code": "automatic_recap_unsupported_draft"
+      },
+      {
+        "task": "recap",
+        "state": "blocked",
+        "tasks": 2,
+        "error_code": "automatic_recap_invalid_check"
+      },
+      {
+        "task": "recap",
+        "state": "blocked",
+        "tasks": 1,
+        "error_code": "automatic_recap_reduction_failed"
+      },
+      {
+        "task": "recap",
+        "state": "blocked",
+        "tasks": 34,
+        "error_code": "analysis_budget_exhausted"
+      },
+      {
+        "task": "keywords",
+        "state": "review",
+        "tasks": 6,
+        "error_code": null
+      },
+      {
+        "task": "recap",
+        "state": "review",
+        "tasks": 5,
+        "error_code": null
+      }
+    ],
+    "social_tasks": [
+      {
+        "task": "keywords",
+        "state": "blocked",
+        "tasks": 1,
+        "error_code": "analysis_unknown_charge_hold"
+      },
+      {
+        "task": "keywords",
+        "state": "blocked",
+        "tasks": 12,
+        "error_code": "analysis_budget_exhausted"
+      },
+      {
+        "task": "recap",
+        "state": "blocked",
+        "tasks": 12,
+        "error_code": "analysis_budget_exhausted"
+      },
+      {
+        "task": "recap",
+        "state": "blocked",
+        "tasks": 1,
+        "error_code": "automatic_recap_invalid_check"
+      },
+      {
+        "task": "keywords",
+        "state": "review",
+        "tasks": 3,
+        "error_code": null
+      },
+      {
+        "task": "recap",
+        "state": "review",
+        "tasks": 3,
+        "error_code": null
+      }
+    ],
+    "reviews": [
+      {
+        "kind": "keyword",
+        "status": "pending",
+        "reviews": 583,
+        "latest_change": "2026-11-04T23:10:47.035503+00:00"
+      },
+      {
+        "kind": "keyword",
+        "status": "rejected",
+        "reviews": 4,
+        "latest_change": "2026-10-29T01:08:00.796728+00:00"
+      },
+      {
+        "kind": "recap",
+        "status": "pending",
+        "reviews": 50,
+        "latest_change": "2026-11-04T23:11:13.638689+00:00"
+      }
+    ],
+    "financial_limit": "Unknown calls retain maximum/high-water holds; commitment is not settled spending or a final invoice."
+  },
+  "source": {
+    "global_budget": {
+      "ceiling_usd": "45.000000"
+    },
+    "job_reservations": {
+      "held": 18,
+      "held_usd": "0.360000",
+      "settled_usd": "4.852409310954",
+      "committed_usd": "5.212409310954"
+    },
+    "reader_policies": [
+      {
+        "enabled": true,
+        "daily_limit_usd": "0.100000",
+        "provider_enabled": true,
+        "lifetime_limit_usd": "1.000000"
+      }
+    ],
+    "caption_job_subset": [
+      {
+        "enabled": true,
+        "daily_limit_usd": "0.100000",
+        "caption_job_holds": 13,
+        "lifetime_limit_usd": "1.000000",
+        "caption_job_commitment_usd": "0.512000000000"
+      }
+    ],
+    "financial_limit": "Job-only reservations exclude the separate aggregate envelope; reader caption-job subset excludes discovery and other scopes. Some checks report budget rejection; the binding limit for each was not isolated. Provisional reported ledger values exclude hosting/CI/model costs and are not supplier invoices."
+  },
+  "reminders": {
+    "opted_in": 0,
+    "outbox_rows": 0,
+    "enabled_policies": 0
+  },
+  "github": {
+    "prs": [
+      {
+        "baseRefName": "main",
+        "headRefOid": "3c93e91a4516515ff4590fd059786207b5cec076",
+        "isDraft": true,
+        "number": 22,
+        "state": "OPEN",
+        "statusCheckRollup": [
+          {
+            "name": "check",
+            "status": "COMPLETED",
+            "conclusion": "FAILURE"
+          },
+          {
+            "name": "verify",
+            "status": "COMPLETED",
+            "conclusion": "FAILURE"
+          },
+          {
+            "name": "prepare-active",
+            "status": "COMPLETED",
+            "conclusion": "SKIPPED"
+          },
+          {
+            "name": "artifact-integrity",
+            "status": "COMPLETED",
+            "conclusion": "SKIPPED"
+          },
+          {
+            "name": "checkpoint-storage",
+            "status": "COMPLETED",
+            "conclusion": "SKIPPED"
+          },
+          {
+            "name": "deploy",
+            "status": "COMPLETED",
+            "conclusion": "SKIPPED"
+          }
+        ],
+        "url": "https://github.com/raduvlad92/recap/pull/22"
+      },
+      {
+        "baseRefName": "review/full-reader-release-20261108",
+        "headRefOid": "524314135002d858f9e21cb9d87ddbe511840130",
+        "isDraft": true,
+        "number": 23,
+        "state": "OPEN",
+        "statusCheckRollup": [
+          {
+            "name": "Isolated test-only trial",
+            "status": "COMPLETED",
+            "conclusion": "SKIPPED"
+          },
+          {
+            "name": "check",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+          },
+          {
+            "name": "verify",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+          },
+          {
+            "name": "prepare-active",
+            "status": "COMPLETED",
+            "conclusion": "SKIPPED"
+          },
+          {
+            "name": "artifact-integrity",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+          },
+          {
+            "name": "checkpoint-storage",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+          },
+          {
+            "name": "deploy",
+            "status": "COMPLETED",
+            "conclusion": "SKIPPED"
+          },
+          {
+            "name": "cloudflare-handover-journal-probe",
+            "status": "COMPLETED",
+            "conclusion": "NEUTRAL"
+          },
+          {
+            "name": "cloudflare-release-journal-probe",
+            "status": "COMPLETED",
+            "conclusion": "NEUTRAL"
+          }
+        ],
+        "url": "https://github.com/raduvlad92/recap/pull/23"
+      }
+    ],
+    "application_run": "https://github.com/raduvlad92/recap/actions/runs/42942020609",
+    "verification_run": "https://github.com/raduvlad92/recap/actions/runs/42942020585",
+    "native_verify_log": {
+      "application_tests_passed": 4321,
+      "application_files_passed": 146,
+      "guarded_migration_tests": 102,
+      "guarded_migration_passed": 102,
+      "guarded_migration_failed": 0,
+      "guarded_migration_skipped": 0
+    },
+    "provenance_limits": "PR verification only. Active preparation/deployment intentionally skipped; no main merge, production migration/release or independent artifact download in this audit. Older candidate refusal is historical."
+  },
+  "audit_limits": {
+    "connected_supabase_read_attempts": "Both configured account reads denied; existing fixed-project local Management credential succeeded with SELECT-only queries.",
+    "excluded_http_attempts": "Initial urllib HTTP403 and unavailable web fetch are not used as successful app HTTP evidence; curl rechecks supply route statuses.",
+    "raw_private_data": "Per-source snapshot records stay in ignored .local/status-20261111; exported snapshot coverage is numeric aggregates only.",
+    "manual_source_provider_model_launches": 0,
+    "production_writes": 0,
+    "review_decisions": 0,
+    "emails_sent": 0,
+    "new_schedules": 0,
+    "manual_metered_execution_cost_usd": "0",
+    "ordinary_automation": "Existing automation continued. Its costs are not attributed as zero or as manual audit executions."
+  }
+}

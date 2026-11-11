@@ -48,6 +48,22 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
   const call=vi.fn(),changed={...claim(),record:{...record,content:'Changed transcript'}};
   await expect(generateAutomaticContent(changed,call)).rejects.toThrow('automatic_content_source_changed');expect(call).not.toHaveBeenCalled();
  });
+ it.each([true,false])('retains a complete %s checker verdict with an overlong display explanation, still pending review',async supported=>{
+  const reason='The explanation preserves the original support verdict. '.repeat(7);
+  const response={readComplete:true,verdicts:[{index:0,supported,reason}]};
+  const before=JSON.stringify(response);
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful(response):recapCall(input));
+  const output=await generateAutomaticContent(claim('recap'),call);
+  expect(output.proposal?.highlights).toEqual([point]);expect(call).toHaveBeenCalledTimes(2);
+  expect(output.reason).toContain(supported?'requires your approval':'questioned this draft');
+  expect(output.reason).toContain('original responses remain saved');
+  if(!supported){expect(output.reason).toContain('Point 1:');expect(output.reason).toContain('…');}
+  expect(JSON.stringify(response)).toBe(before);
+ });
+ it.each(['',null,17])('still rejects an invalid checker explanation %s',async reason=>{
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful({readComplete:true,verdicts:[{index:0,supported:true,reason}]}):recapCall(input));
+  await expect(generateAutomaticContent(claim('recap'),call)).rejects.toThrow('automatic_recap_invalid_check');
+ });
  it('generates a source-quoted recap with a separate support check and keeps positive results pending',async()=>{
   const call=vi.fn(async(input:KeywordLearningInput)=>recapCall(input)),output=await generateAutomaticContent(claim('recap'),call);
   expect(call).toHaveBeenCalledTimes(2);expect(call.mock.calls.map(([input])=>input.model)).toEqual(['deepseek/deepseek-v4.1-flash-1017','deepseek/deepseek-v4.1-flash-1017']);

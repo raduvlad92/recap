@@ -1,0 +1,786 @@
+{
+  "recordedAt": "2026-11-05T07:35:20.022Z",
+  "scope": "first-normal-cutoff-read-only-observation-after-early-netlify-retirement",
+  "observation": {
+    "originalStartedAt": "2026-11-04T22:26:36.944Z",
+    "normalDailyCutoffsObserved": 1,
+    "seventyTwoHoursCompleted": false,
+    "retirementWaitWaivedByFounder": true,
+    "newSchedulesCreated": 0,
+    "existingSchedulesModified": 0
+  },
+  "retirement": {
+    "alreadyCompleted": true,
+    "completedAt": "2026-11-04T23:30:44.598Z",
+    "priorReceipt": "netlify-retirement-2026-11-04.json",
+    "repeatedOrRequired": false,
+    "netlifyQueriesToday": 0
+  },
+  "hosting": {
+    "checkedAt": "2026-11-05T07:19:32.531Z",
+    "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+    "control": {
+      "epoch": 3,
+      "owner": "cloudflare",
+      "paused": false,
+      "release": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+      "old_host_fenced": true
+    },
+    "work": {
+      "queued": 0,
+      "running": 0,
+      "uncertain": 0,
+      "expired_running": 0
+    },
+    "revision": "2b7f630e-2f78-4223-9c35-5f207c460add",
+    "checkpoint": {
+      "id": 126896081640,
+      "phase": "complete",
+      "planDigest": "371a7f4c5f36fb97798c2b9e65495840c3867b860e4a0a8e1de6424d538512ca"
+    },
+    "ci": {
+      "applicationRun": 41920092192,
+      "cloudflareRun": 41920092072,
+      "bothSucceeded": true,
+      "main": "48f750b438fe58cd5331bc57aa9c47fdc7107cc7",
+      "changesSinceServingRelease": [
+        "PLAN.md",
+        "STATUS.md",
+        "docs/DECISIONS.md",
+        "docs/DEMO-LOG.md",
+        "docs/tech/CLOUDFLARE-ACCEPTANCE.md",
+        "docs/tech/CLOUDFLARE-CUTOVER.md",
+        "docs/tech/evidence/cloudflare-acceptance-initial-cadence-2026-11-04.json",
+        "docs/tech/evidence/cloudflare-acceptance-schedules-2026-11-04.json",
+        "docs/tech/evidence/cloudflare-active-owner-browser-2026-11-04.json",
+        "docs/tech/evidence/cloudflare-actual-cipher-workerd-2026-11-04.json",
+        "docs/tech/evidence/cloudflare-maintenance-restored-2026-11-04.json",
+        "docs/tech/evidence/cloudflare-old-hold-reconciliation-2026-11-04.json",
+        "docs/tech/evidence/cloudflare-patched-active-acceptance-2026-11-04.json",
+        "docs/tech/evidence/cloudflare-patched-main-ci-2026-11-04.json",
+        "docs/tech/evidence/cloudflare-recovery-after-fence-2026-11-04.json",
+        "docs/tech/evidence/cloudflare-resend-callback-2026-11-04.json",
+        "docs/v0/MORNING.md"
+      ],
+      "comparisonComplete": true
+    },
+    "artifact": {
+      "id": 13367931126,
+      "archiveDigest": "sha256:d7c03751621413dcde23e857eb67786a2acbe9c2665b8ab7bee15719cb6aef9b",
+      "nativeDigestAndAllLocalFilesRehashed": true,
+      "allActiveAssetsMatched": true,
+      "assetCount": 70
+    },
+    "versions": {
+      "jobs": "9a795c99-a874-4c51-88b7-795a0c8721dc",
+      "web": "7dec3ee9-8f82-4c47-9cd3-bb8eb79801cf"
+    },
+    "source": {
+      "enabled": true,
+      "private": true,
+      "version": "ffed3cd5-addb-4240-adb8-42afe273615f",
+      "maximumInstances": 1
+    },
+    "policy": {
+      "APIFY_RUNTIME_ENABLED": "true",
+      "HOURLY_COLLECTION_ENABLED": "true",
+      "CONTENT_ANALYSIS_ENABLED": "false",
+      "AUTOMATIC_CONTENT_ENABLED": "true",
+      "SOCIAL_COLLECTION_ENABLED": "true",
+      "SOCIAL_CONTENT_ENABLED": "true",
+      "DAILY_BRIEFING_ENABLED": "true",
+      "REMINDER_EMAIL_ENABLED": "false",
+      "KEYWORD_LEARNING_ENABLED": "true"
+    },
+    "deploymentTarget": "cloudflare",
+    "deploymentWorkflowActive": true,
+    "crons": {
+      "web": [],
+      "jobs": [
+        "*/5 * * * *",
+        "0 * * * *"
+      ],
+      "source": []
+    },
+    "consumer": {
+      "count": 1,
+      "type": "worker",
+      "script_name": "therecap-jobs",
+      "dead_letter_queue": "therecap-jobs-dead",
+      "settings": {
+        "batch_size": 1,
+        "max_concurrency": 6,
+        "max_retries": 3,
+        "max_wait_time_ms": 1000,
+        "retry_delay": 60
+      }
+    },
+    "queues": [
+      {
+        "name": "therecap-jobs",
+        "backlog_count": 0,
+        "backlog_bytes": 0,
+        "oldest_message_timestamp_ms": 0
+      },
+      {
+        "name": "therecap-jobs-dead",
+        "backlog_count": 0,
+        "backlog_bytes": 0,
+        "oldest_message_timestamp_ms": 0
+      }
+    ],
+    "oldDatabaseKeyStatus": 401,
+    "replacementDatabaseKeyStatus": 200,
+    "publicHttp": [
+      {
+        "path": "/creators/",
+        "status": 200
+      },
+      {
+        "path": "/api/admin",
+        "status": 401
+      },
+      {
+        "path": "/.netlify/functions/hourly-collection",
+        "status": 404
+      }
+    ]
+  },
+  "scheduledCadence": {
+    "databaseSnapshotAt": "2026-11-05T07:21:39.580062+00:00",
+    "completionLagAllowanceMinutes": 2,
+    "cadence": [
+      {
+        "kind": "automatic-content",
+        "last_expected": "2026-11-05T07:15:00+00:00",
+        "missing_slots": 0,
+        "admitted_slots": 106,
+        "expected_slots": 106,
+        "first_expected": "2026-11-04T22:30:00+00:00",
+        "completed_slots": 106,
+        "unresolved_slots": 0,
+        "last_completed_at": "2026-11-05T07:15:20.03626+00:00"
+      },
+      {
+        "kind": "daily-briefing",
+        "last_expected": "2026-11-05T07:15:00+00:00",
+        "missing_slots": 0,
+        "admitted_slots": 106,
+        "expected_slots": 106,
+        "first_expected": "2026-11-04T22:30:00+00:00",
+        "completed_slots": 106,
+        "unresolved_slots": 0,
+        "last_completed_at": "2026-11-05T07:15:27.812541+00:00"
+      },
+      {
+        "kind": "hourly-collection",
+        "last_expected": "2026-11-05T07:00:00+00:00",
+        "missing_slots": 0,
+        "admitted_slots": 9,
+        "expected_slots": 9,
+        "first_expected": "2026-11-04T23:00:00+00:00",
+        "completed_slots": 9,
+        "unresolved_slots": 0,
+        "last_completed_at": "2026-11-05T07:00:50.608934+00:00"
+      },
+      {
+        "kind": "social-collection",
+        "last_expected": "2026-11-05T07:15:00+00:00",
+        "missing_slots": 0,
+        "admitted_slots": 106,
+        "expected_slots": 106,
+        "first_expected": "2026-11-04T22:30:00+00:00",
+        "completed_slots": 106,
+        "unresolved_slots": 0,
+        "last_completed_at": "2026-11-05T07:15:25.304584+00:00"
+      },
+      {
+        "kind": "social-content",
+        "last_expected": "2026-11-05T07:15:00+00:00",
+        "missing_slots": 0,
+        "admitted_slots": 106,
+        "expected_slots": 106,
+        "first_expected": "2026-11-04T22:30:00+00:00",
+        "completed_slots": 106,
+        "unresolved_slots": 0,
+        "last_completed_at": "2026-11-05T07:15:26.524108+00:00"
+      }
+    ],
+    "frameCompletionsDoNotProveUsefulContent": true,
+    "hostingStates": [
+      {
+        "kind": "automatic-content",
+        "count": 110,
+        "state": "completed",
+        "newest": "2026-11-05T07:20:23.954009+00:00",
+        "oldest": "2026-11-04T22:15:17.482348+00:00",
+        "expired_leases": 0
+      },
+      {
+        "kind": "daily-briefing",
+        "count": 110,
+        "state": "completed",
+        "newest": "2026-11-05T07:20:29.364523+00:00",
+        "oldest": "2026-11-04T22:15:21.660811+00:00",
+        "expired_leases": 0
+      },
+      {
+        "kind": "hourly-collection",
+        "count": 9,
+        "state": "completed",
+        "newest": "2026-11-05T07:00:50.608934+00:00",
+        "oldest": "2026-11-04T23:00:23.900883+00:00",
+        "expired_leases": 0
+      },
+      {
+        "kind": "social-collection",
+        "count": 110,
+        "state": "completed",
+        "newest": "2026-11-05T07:20:26.580439+00:00",
+        "oldest": "2026-11-04T22:15:19.393519+00:00",
+        "expired_leases": 0
+      },
+      {
+        "kind": "social-content",
+        "count": 110,
+        "state": "completed",
+        "newest": "2026-11-05T07:20:27.959005+00:00",
+        "oldest": "2026-11-04T22:15:20.513603+00:00",
+        "expired_leases": 0
+      }
+    ]
+  },
+  "daily": {
+    "checkedAt": "2026-11-05T07:27:22.017Z",
+    "originalScheduleCount": 1,
+    "currentScheduleCount": 1,
+    "originalReaderScheduleRetainedAndEnabled": true,
+    "privateReaderIdentityRecorded": false,
+    "schedules": [
+      {
+        "enabled": true,
+        "timezone": "Europe/Berlin",
+        "citations": 0,
+        "starts_at": "2026-10-31T00:57:32.360376+00:00",
+        "today_topics": 0,
+        "delivery_time": "08:00",
+        "today_updates": 35,
+        "email_reminder": false,
+        "last_cutoff_at": "2026-11-05T07:00:00+00:00",
+        "checked_sources": 0,
+        "last_local_date": "2026-11-05",
+        "today_job_state": "finished",
+        "followed_sources": 39,
+        "today_job_cutoff": "2026-11-05T07:00:00+00:00",
+        "today_job_created": "2026-11-05T07:00:53.115882+00:00",
+        "today_published_at": null,
+        "today_job_lease_until": null,
+        "today_snapshot_status": "awaiting_review",
+        "pending_review_updates": 23,
+        "today_snapshot_created": "2026-11-05T07:00:53.336921+00:00",
+        "missing_content_updates": 12
+      }
+    ],
+    "noUsefulPublishedBriefingClaimed": true
+  },
+  "sourceOutcomes": {
+    "hourly": [
+      {
+        "checks": 72,
+        "status": "unsupported",
+        "platform": "Instagram",
+        "new_items": 0,
+        "error_code": "freshness_check_unavailable",
+        "http_status": null,
+        "first_started": "2026-11-04T23:00:27.735577+00:00",
+        "last_finished": "2026-11-05T07:00:43.93194+00:00",
+        "retrieved_items": 0
+      },
+      {
+        "checks": 90,
+        "status": "unsupported",
+        "platform": "X",
+        "new_items": 0,
+        "error_code": "freshness_check_unavailable",
+        "http_status": null,
+        "first_started": "2026-11-04T23:00:27.74742+00:00",
+        "last_finished": "2026-11-05T07:00:44.300542+00:00",
+        "retrieved_items": 0
+      },
+      {
+        "checks": 127,
+        "status": "failed",
+        "platform": "YouTube",
+        "new_items": 0,
+        "error_code": "source_unavailable",
+        "http_status": 404,
+        "first_started": "2026-11-05T00:00:30.296688+00:00",
+        "last_finished": "2026-11-05T07:00:50.42221+00:00",
+        "retrieved_items": 8
+      },
+      {
+        "checks": 14,
+        "status": "failed",
+        "platform": "YouTube",
+        "new_items": 0,
+        "error_code": "source_unavailable",
+        "http_status": 500,
+        "first_started": "2026-11-05T00:00:29.765344+00:00",
+        "last_finished": "2026-11-05T07:00:40.222613+00:00",
+        "retrieved_items": 1
+      },
+      {
+        "checks": 48,
+        "status": "partial",
+        "platform": "YouTube",
+        "new_items": 19,
+        "error_code": null,
+        "http_status": 200,
+        "first_started": "2026-11-04T23:00:28.174082+00:00",
+        "last_finished": "2026-11-05T05:00:40.825718+00:00",
+        "retrieved_items": 53
+      }
+    ],
+    "latestHourly": [
+      {
+        "sources": 8,
+        "platform": "Instagram",
+        "newest_latest": "2026-11-05T07:00:43.742276+00:00",
+        "oldest_latest": "2026-11-05T07:00:35.40538+00:00",
+        "unsuccessful_sources": 0
+      },
+      {
+        "sources": 10,
+        "platform": "X",
+        "newest_latest": "2026-11-05T07:00:44.115075+00:00",
+        "oldest_latest": "2026-11-05T07:00:35.575058+00:00",
+        "unsuccessful_sources": 0
+      },
+      {
+        "sources": 21,
+        "platform": "YouTube",
+        "newest_latest": "2026-11-05T07:00:49.567488+00:00",
+        "oldest_latest": "2026-11-05T07:00:36.429382+00:00",
+        "unsuccessful_sources": 21
+      }
+    ],
+    "social": [
+      {
+        "jobs": 58,
+        "state": "completed",
+        "accepted": 0,
+        "platform": "Instagram",
+        "returned": 0,
+        "coverage_reason": "empty_or_unusable_response",
+        "coverage_status": "unknown"
+      },
+      {
+        "jobs": 1,
+        "state": "completed",
+        "accepted": 1,
+        "platform": "X",
+        "returned": 1,
+        "coverage_reason": "provider_completeness_unverified",
+        "coverage_status": "partial"
+      },
+      {
+        "jobs": 66,
+        "state": "completed",
+        "accepted": 0,
+        "platform": "X",
+        "returned": 0,
+        "coverage_reason": "empty_or_unusable_response",
+        "coverage_status": "unknown"
+      }
+    ],
+    "providerJobStates": [
+      {
+        "count": 11,
+        "state": "ambiguous",
+        "unknown_costs": 11,
+        "created_since_start": 0,
+        "latest_reconciliation": "2026-11-05T07:00:44.1815+00:00"
+      },
+      {
+        "count": 257,
+        "state": "completed",
+        "unknown_costs": 0,
+        "created_since_start": 19,
+        "latest_reconciliation": "2026-11-05T07:00:37.265918+00:00"
+      }
+    ],
+    "latestYouTubeFailureClassesPreviouslyObserved": [
+      {
+        "status": "failed",
+        "http_status": 404,
+        "latest_sources": 20,
+        "same_failure_before_midnight": 20,
+        "same_failure_before_cloudflare_switch": 20
+      },
+      {
+        "status": "failed",
+        "http_status": 500,
+        "latest_sources": 1,
+        "same_failure_before_midnight": 1,
+        "same_failure_before_cloudflare_switch": 1
+      }
+    ],
+    "sourceFailuresNotProvedToBeNewHostingDefects": true
+  },
+  "reviewAndBacklog": {
+    "automaticTasks": [
+      {
+        "task": "keywords",
+        "count": 16,
+        "state": "blocked",
+        "error_code": "analysis_budget_exhausted",
+        "latest_update": "2026-11-05T06:05:18.271412+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 16
+      },
+      {
+        "task": "keywords",
+        "count": 3,
+        "state": "blocked",
+        "error_code": "analysis_call_limit",
+        "latest_update": "2026-11-04T23:08:53.977659+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 3
+      },
+      {
+        "task": "keywords",
+        "count": 6,
+        "state": "review",
+        "error_code": null,
+        "latest_update": "2026-11-04T23:10:47.042447+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 3
+      },
+      {
+        "task": "recap",
+        "count": 16,
+        "state": "blocked",
+        "error_code": "analysis_budget_exhausted",
+        "latest_update": "2026-11-05T06:10:19.025785+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 16
+      },
+      {
+        "task": "recap",
+        "count": 2,
+        "state": "blocked",
+        "error_code": "automatic_recap_invalid_check",
+        "latest_update": "2026-11-04T23:09:04.144623+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 2
+      },
+      {
+        "task": "recap",
+        "count": 1,
+        "state": "blocked",
+        "error_code": "automatic_recap_reduction_failed",
+        "latest_update": "2026-11-04T23:08:44.651142+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 1
+      },
+      {
+        "task": "recap",
+        "count": 1,
+        "state": "blocked",
+        "error_code": "automatic_recap_unsupported_draft",
+        "latest_update": "2026-10-29T13:06:43.339265+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 0
+      },
+      {
+        "task": "recap",
+        "count": 5,
+        "state": "review",
+        "error_code": null,
+        "latest_update": "2026-11-04T23:11:13.657707+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 3
+      }
+    ],
+    "socialTasks": [
+      {
+        "task": "keywords",
+        "count": 1,
+        "state": "blocked",
+        "error_code": "analysis_unknown_charge_hold",
+        "latest_update": "2026-10-31T01:33:50.746955+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 0
+      },
+      {
+        "task": "keywords",
+        "count": 3,
+        "state": "review",
+        "error_code": null,
+        "latest_update": "2026-11-04T22:55:37.450384+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 1
+      },
+      {
+        "task": "recap",
+        "count": 1,
+        "state": "blocked",
+        "error_code": "automatic_recap_invalid_check",
+        "latest_update": "2026-10-31T01:35:17.382056+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 0
+      },
+      {
+        "task": "recap",
+        "count": 3,
+        "state": "review",
+        "error_code": null,
+        "latest_update": "2026-11-04T22:55:43.369811+00:00",
+        "expired_leases": 0,
+        "touched_since_start": 1
+      }
+    ],
+    "reviewStates": [
+      {
+        "status": "pending",
+        "reviews": 633
+      },
+      {
+        "status": "rejected",
+        "reviews": 4
+      }
+    ],
+    "sourceLeases": {
+      "future": 0,
+      "expiredRetained": 0
+    },
+    "analysisJobs": [
+      {
+        "jobs": 48,
+        "state": "blocked",
+        "oldest": "2026-10-24T00:57:55.927385+00:00",
+        "live_leases": 0,
+        "created_since_start": 0,
+        "expired_retained_leases": 0
+      },
+      {
+        "jobs": 4,
+        "state": "evaluated",
+        "oldest": "2026-10-27T03:46:10.718224+00:00",
+        "live_leases": 0,
+        "created_since_start": 0,
+        "expired_retained_leases": 0
+      },
+      {
+        "jobs": 46,
+        "state": "failed",
+        "oldest": "2026-10-24T00:57:55.903518+00:00",
+        "live_leases": 0,
+        "created_since_start": 0,
+        "expired_retained_leases": 0
+      },
+      {
+        "jobs": 4,
+        "state": "published",
+        "oldest": "2026-10-25T19:33:26.026944+00:00",
+        "live_leases": 0,
+        "created_since_start": 0,
+        "expired_retained_leases": 4
+      },
+      {
+        "jobs": 271,
+        "state": "queued",
+        "oldest": "2026-10-24T00:57:56.053283+00:00",
+        "live_leases": 0,
+        "created_since_start": 0,
+        "expired_retained_leases": 0
+      },
+      {
+        "jobs": 58,
+        "state": "skipped",
+        "oldest": "2026-10-24T00:57:55.956208+00:00",
+        "live_leases": 0,
+        "created_since_start": 0,
+        "expired_retained_leases": 0
+      }
+    ],
+    "primaryCollectionJobs": [
+      {
+        "jobs": 11,
+        "newest": "2026-10-26T21:01:56.596505+00:00",
+        "oldest": "2026-10-23T02:03:28.564473+00:00",
+        "status": "requested",
+        "no_run_reference": 11
+      },
+      {
+        "jobs": 7,
+        "newest": "2026-11-05T07:30:20.430729+00:00",
+        "oldest": "2026-10-31T00:48:21.360626+00:00",
+        "status": "running",
+        "no_run_reference": 4
+      }
+    ],
+    "oldDomainBacklogNotCloudflareQueueBacklog": true,
+    "manualReviewApprovals": 0
+  },
+  "finances": {
+    "checkedAt": "2026-11-05T07:23:31.993Z",
+    "originalUnknownModelFinancialFieldsExact": true,
+    "originalUnknownModelCalls": 7,
+    "originalSourceReservationRecordsRetained": 19,
+    "originalSourceReservationsStillHeld": 17,
+    "originalSourceReservationsPreviouslySettled": 2,
+    "originalMaximaLaunchAttemptsAndRunReferencesUnchanged": true,
+    "previousSettlementsAuthenticatedAgain": true,
+    "sourceBudget": {
+      "currency": "USD",
+      "accountId": "source-proof",
+      "ceilingUsd": 45,
+      "overCeiling": false,
+      "availableUsd": 42.490033875134,
+      "committedUsd": 2.509966124866,
+      "heldEnvelopes": 1,
+      "unknownCostJobs": 16
+    },
+    "readerSourcePolicies": [
+      {
+        "enabled": true,
+        "daily_limit_usd": "0.100000",
+        "provider_enabled": true,
+        "lifetime_limit_usd": "1.000000"
+      }
+    ],
+    "platformBudgets": [
+      {
+        "holds": 1,
+        "enabled": true,
+        "platform": "Instagram",
+        "maximum_usd": "0.010000",
+        "reported_usd": "0.489500000000",
+        "committed_usd": "0.539500000000",
+        "daily_limit_usd": "1.100000",
+        "lifetime_limit_usd": "3.300000"
+      },
+      {
+        "holds": 2,
+        "enabled": true,
+        "platform": "LinkedIn",
+        "maximum_usd": "0.050000",
+        "reported_usd": "0.006150000002",
+        "committed_usd": "0.106150000002",
+        "daily_limit_usd": "0.500000",
+        "lifetime_limit_usd": "0.500000"
+      },
+      {
+        "holds": 1,
+        "enabled": true,
+        "platform": "X",
+        "maximum_usd": "0.050000",
+        "reported_usd": "0.044067801521",
+        "committed_usd": "0.094067801521",
+        "daily_limit_usd": "0.400000",
+        "lifetime_limit_usd": "1.200000"
+      }
+    ],
+    "modelBudget": [
+      {
+        "enabled": true,
+        "daily_limit_usd": "5.000000000000",
+        "lifetime_limit_usd": "10.000000000000"
+      }
+    ],
+    "modelPolicies": [
+      {
+        "enabled": true,
+        "daily_limit_usd": "5.000000000000",
+        "lifetime_limit_usd": "10.000000000000",
+        "per_call_limit_usd": "0.100000000000"
+      }
+    ],
+    "automaticPolicies": [
+      {
+        "enabled": true,
+        "max_calls": 100,
+        "session_budget_usd": "0.300000000000"
+      }
+    ],
+    "socialPolicies": [
+      {
+        "enabled": true,
+        "max_calls": 5,
+        "session_budget_usd": "0.300000000000"
+      }
+    ],
+    "totalModelLedger": {
+      "total": 967,
+      "unknown": 7,
+      "reportedUsd": "9.792659213000",
+      "committedUsd": "9.918486404000",
+      "createdSinceStart": 68
+    },
+    "modelSinceObservationStart": {
+      "calls": 68,
+      "unknown": 0,
+      "reportedUsd": "0.467623067000",
+      "commitmentUsd": "0.467623067000"
+    },
+    "sourceSinceObservationStart": {
+      "held": 0,
+      "heldUsd": "0",
+      "reportedUsd": "0.104198574771",
+      "reservations": 144
+    },
+    "unresolvedSampledProviderFeeDifferenceUsd": "0.004000000000",
+    "providerFeeReceipt": "cloudflare-observation-provider-fees-2026-11-05.json",
+    "sourceTotalsAreLedgerObservationsNotConfirmedFinalFees": true,
+    "hostingApiAndCiCostMeasured": false,
+    "budgetChanges": 0,
+    "manualFinancialWrites": 0
+  },
+  "remindersAndCallback": {
+    "checkedAt": "2026-11-05T07:25:47.268Z",
+    "endpoint": "https://recap.filternode.dev/api/reminder-events",
+    "status": "enabled",
+    "events": [
+      "email.sent",
+      "email.delivered",
+      "email.bounced",
+      "email.complained"
+    ],
+    "signingSecretMatchesEncryptedRuntime": true,
+    "secretRecorded": false,
+    "providerMutations": 0,
+    "emailsSent": 0,
+    "actualCiphertextUnchanged": true,
+    "effectiveRuntimeReminderEnabled": false,
+    "outboxRows": 0,
+    "approvedReviews": 0,
+    "enabledPolicies": 0,
+    "workspaceOptIns": 0,
+    "liveSignedWebhookFixturesSentToday": 0
+  },
+  "limitations": {
+    "freshOwnerBrowserParityPerformed": false,
+    "priorBrowserEvidenceRelease": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+    "allHistoricalSupplierFeesAudited": false,
+    "sourceTransportIndependentlyReplayed": false,
+    "normalAutomationContinuedUnderExistingAuthorization": true
+  },
+  "mutations": {
+    "runtime": 0,
+    "provider": 0,
+    "databaseWrites": 0,
+    "manualSourceOrModelRuns": 0,
+    "reviewApprovals": 0,
+    "emailsSent": 0,
+    "newSchedules": 0
+  },
+  "verdict": {
+    "hostingDeliveryChecksPassed": true,
+    "dailyCutoffPersisted": true,
+    "dailyUsefulPublishedRecap": false,
+    "sourceContentAndReviewProblemsRemain": true,
+    "supplierFeeReconciliationIssueUnresolved": true,
+    "noSpecificCloudflareRuntimeDefectIdentified": true
+  }
+}

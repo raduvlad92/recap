@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-07 23:20:56.488372+00",
+  "localDate": "2026-11-08 Europe/Berlin",
+  "release": "182457410f7f8e979348d10347fe50b1e94b295b",
+  "ci": {
+    "runId": 42423118103,
+    "conclusion": "success",
+    "verify": "success",
+    "deploy": "success"
+  },
+  "artifact": {
+    "id": 13595275488,
+    "archiveDigest": "sha256:04745a371b17830d6c342bb9ae0f0c96f00058bd477970452a222418997ff99f",
+    "manifestDigest": "2f71107cc23b7972578aa96c21c750135d3dc94f58ee9d40308e4a9175fcd32a",
+    "nativeArchiveAndEveryFileVerified": true,
+    "nativeAssetsVerified": true
+  },
+  "checkpoint": {
+    "id": 128559404688,
+    "phase": "complete",
+    "planDigest": "23252dbee81bf0f01e9183e0868d434573403ad530543dde62874a27b41f3be8",
+    "pausedPreservedDuringDeployment": true
+  },
+  "workerVersions": {
+    "jobs": "64247673-7157-4a03-8241-fd8d36f68fa8",
+    "web": "c6703d8f-b409-48f3-a0d2-3ca86ba2f01c"
+  },
+  "source": {
+    "unchanged": true,
+    "private": true,
+    "version": "ffed3cd5-addb-4240-adb8-42afe273615f",
+    "enabled": true,
+    "maximumInstances": 1
+  },
+  "flagsUnchanged": true,
+  "policy": {
+    "APIFY_RUNTIME_ENABLED": "true",
+    "HOURLY_COLLECTION_ENABLED": "true",
+    "CONTENT_ANALYSIS_ENABLED": "false",
+    "AUTOMATIC_CONTENT_ENABLED": "true",
+    "SOCIAL_COLLECTION_ENABLED": "true",
+    "SOCIAL_CONTENT_ENABLED": "true",
+    "DAILY_BRIEFING_ENABLED": "true",
+    "REMINDER_EMAIL_ENABLED": "false",
+    "KEYWORD_LEARNING_ENABLED": "true"
+  },
+  "control": {
+    "epoch": 4,
+    "owner": "cloudflare",
+    "paused": false,
+    "release": "182457410f7f8e979348d10347fe50b1e94b295b",
+    "old_host_fenced": true
+  },
+  "revision": "6dcf2afb-d4c7-4e3b-b546-532eb43d543a",
+  "work": {
+    "queued": 0,
+    "running": 0,
+    "uncertain": 96,
+    "expired_running": 0
+  },
+  "restoration": {
+    "operation": "71dc4bd5-754b-4f03-af0d-ec7fd6001c72",
+    "phase": "complete",
+    "checkedResume": true,
+    "resumeRevision": "6dcf2afb-d4c7-4e3b-b546-532eb43d543a",
+    "mainConsumerCount": 1,
+    "consumerSettings": {
+      "batch_size": 1,
+      "max_concurrency": 6,
+      "max_retries": 3,
+      "max_wait_time_ms": 1000,
+      "retry_delay": 60
+    },
+    "crons": [
+      "*/5 * * * *",
+      "0 * * * *"
+    ],
+    "deadLetterConsumerCount": 0,
+    "deadLetterPulledPurgedOrReplayed": false,
+    "newSchedules": false
+  },
+  "lateFee": {
+    "operation": "5a29fa5b-926c-4f1d-b517-1e97f12a986c",
+    "receiptId": "83c70838-7588-4738-a6a7-f7b97458560a",
+    "outcome": "applied",
+    "previousUsd": "0.000000000000",
+    "reportedUsd": "0.004000000000",
+    "correctedUsd": "0.004000000000",
+    "deltaUsd": "0.004000000000",
+    "authenticatedRunBuildOwnerAndCap": true,
+    "oneImmutableReceipt": true,
+    "threeProjectionsVerified": true,
+    "sameReceiptReplayVerified": true,
+    "duplicateDebit": false,
+    "originalHistoryAndNonfinancialFieldsPreserved": true,
+    "correctedReservationIsOutsideOriginalNineteen": true,
+    "providerMetadataGets": 4,
+    "providerRunsStarted": 0,
+    "invoiceFinalityClaimed": false
+  },
+  "preservation": {
+    "original_source_rows": 19,
+    "retained_source_rows": 19,
+    "source_fields_exact": true,
+    "original_unknown_model_rows": 7,
+    "model_full_rows_exact": true,
+    "original_workspace_rows": 3,
+    "workspace_full_rows_exact": true,
+    "model_calls": 967,
+    "unknown_model_calls": 7,
+    "launched_unknown_source_jobs": 19,
+    "unknown_source_reservations": 20
+  },
+  "modelCommitmentUsd": "9.918486404",
+  "modelCapUsd": "10",
+  "publicHttp": {
+    "catalogue": 200,
+    "adminWhilePaused": {
+      "status": 503,
+      "errorCode": "hosting_execution_paused"
+    },
+    "adminAfterResume": {
+      "status": 401,
+      "errorCode": "sign_in_required"
+    },
+    "oldFunctionPath": 404
+  },
+  "limitations": [
+    "No new ordinary automatic invocation has yet been observed at this checkpoint.",
+    "96 uncertain legacy frames and retained DLQ evidence are preserved, not called successful business work.",
+    "Native interruption, useful-content coverage and a ready scheduled recap remain separate proofs.",
+    "Reader locale/extraction/lifecycle/identity increments are not yet merged/deployed; deletion and linking remain inactive.",
+    "The model cap, seven unknown model holds, source caps, review gates and reminder preference are unchanged."
+  ]
+}

@@ -137,13 +137,17 @@ async function recapProposals(claim:AutomaticContentClaim,run:(input:KeywordLear
  const input=recapCall(claim,'check',{task:'recap_check',instruction:'Check every draft finding only against its exact quoted transcript evidence. Is the complete statement supported, with the same qualifications, numbers and units? Preserve uncertainty. Give exactly one verdict per index. A negative is useful: a human will decide and no proposal is automatically published.',findings:points.map((point,index)=>({index,...point}))},schema);
  const checked=(await run(input)).value;
  if(!object(checked)||checked.readComplete!==true||!Array.isArray(checked.verdicts)||checked.verdicts.length!==points.length)return fail('automatic_recap_invalid_check');
- const seen=new Set<number>(),negative:string[]=[];
+ const seen=new Set<number>(),negative:string[]=[];let shortenedReasons=false;
  for(const raw of checked.verdicts){
-  if(!object(raw)||!Number.isSafeInteger(raw.index)||Number(raw.index)<0||Number(raw.index)>=points.length||seen.has(Number(raw.index))||typeof raw.supported!=='boolean'||typeof raw.reason!=='string'||!raw.reason.trim()||raw.reason.length>240)return fail('automatic_recap_invalid_check');
-  seen.add(Number(raw.index));if(!raw.supported)negative.push('Point '+(Number(raw.index)+1)+': '+raw.reason.trim());
+  if(!object(raw)||!Number.isSafeInteger(raw.index)||Number(raw.index)<0||Number(raw.index)>=points.length||seen.has(Number(raw.index))||typeof raw.supported!=='boolean'||typeof raw.reason!=='string'||!raw.reason.trim())return fail('automatic_recap_invalid_check');
+  // Keep every verdict and the exact saved response. A provider explanation
+  // exceeding its requested display length must not discard quoted findings
+  // or turn a negative verdict into approval.
+  const reason=raw.reason.trim();if(reason.length>240)shortenedReasons=true;
+  seen.add(Number(raw.index));if(!raw.supported)negative.push('Point '+(Number(raw.index)+1)+': '+(reason.length>240?reason.slice(0,239)+'…':reason));
  }
  const reviewReason=negative.length?'The AI checker questioned this draft. '+negative.join(' '):'The AI checker found support in the quoted text. Initial live processing requires your approval before publication.';
- return {highlights:points,reason:reviewReason+(withheld?' '+withheld+' draft '+(withheld===1?'point was':'points were')+' withheld because their source quotes or format did not pass. The remaining recap may be incomplete.':'')};
+ return {highlights:points,reason:reviewReason+(shortenedReasons?' Some checker explanations exceeded the requested length and were shortened for display; original responses remain saved.':'')+(withheld?' '+withheld+' draft '+(withheld===1?'point was':'points were')+' withheld because their source quotes or format did not pass. The remaining recap may be incomplete.':'')};
 }
 
 function legacyKind(kind:unknown):string{

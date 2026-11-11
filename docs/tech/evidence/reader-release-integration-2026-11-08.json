@@ -1,0 +1,116 @@
+{
+  "kind": "local_combined_reader_release_evidence_not_native_release",
+  "recordedAtUtc": "2026-11-08T00:38:15Z",
+  "branch": "review/full-reader-release-20261108",
+  "integrationBaseCommit": "11fcde0b0e027a004130fafdab56eef44e9665ff",
+  "acceptedProductionCoreCommit": "182457410f7f8e979348d10347fe50b1e94b295b",
+  "constituents": {
+    "15": "dd5ea12da58273dda6ec36cc6ff44e37561c8d26",
+    "16": "7bb597a3d2a21ce9884bd621dba05eed370c26ce",
+    "17": "590690511c2317271b3888a51e049c9556b71423",
+    "18": "9f0210b43cbc81588cafd268f47f834a5a67847a",
+    "20": "916d203b5d07242bfcb0cec18f595cbb8122c638",
+    "21": "ca619bc285655c5b3a260354dc732c525e5d1b42"
+  },
+  "toolchain": {
+    "node": "22.22.3",
+    "postgresql": "17.11"
+  },
+  "firstCombinedFullRun": {
+    "passed": 4296,
+    "failed": 13,
+    "failingFiles": 2,
+    "status": "failed_not_accepted"
+  },
+  "finalVitest": {
+    "command": "node node_modules/vitest/vitest.mjs run --maxWorkers=2 --testTimeout=30000",
+    "files": 146,
+    "passed": 4321,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 272.09,
+    "logSha256": "10ae3a3635b902d91af73358acc0ec249eb5f1d23f6d3b808e32301e7a474cbd"
+  },
+  "guardedMigrations": {
+    "command": "READER_TEST_PG_BIN=/opt/homebrew/opt/postgresql@17/bin node --test tests/reader-migration-plan.node.mjs",
+    "passed": 102,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 65220.324084,
+    "logSha256": "d22c087b90f1cf6ed67bf8a5abdcb3b151a3c597a947ae97335007d59f5d858f",
+    "activeReaderFilesMatchReviewedFixtures": true,
+    "productionSqlDispatched": false
+  },
+  "additionalValidation": {
+    "focusedAuthDeletionLocaleTestsPassed": 74,
+    "focusedLogSha256": "3ff1cc09eec052bdb83db8d78eb2e4801717da2b7b5ab3918da6f3f97dae7cdf",
+    "typecheck": "passed",
+    "viteBuild": "passed_existing_chunk_size_warning",
+    "catalogue": {
+      "creators": 560,
+      "channels": 600,
+      "collectionEnabled": false
+    },
+    "cloudflareDryRun": "passed_shadow_local_only",
+    "webWorkerdChecks": 26,
+    "jobsWorkerdChecks": 11,
+    "sourceGatewayDisabledGuard": "passed",
+    "runtimeLogSha256": "cc47be2237092fe49fa0db7ff218a5d9cfa8262d833617cca5ea348a5473d128",
+    "liveNetworkInRuntimeHarness": "blocked",
+    "productionCredentialsInRuntimeHarness": false
+  },
+  "failingBeforeRegressions": {
+    "unconfiguredGuestRealClerkHook": {
+      "failedBeforePassedAfter": true,
+      "logSha256": "2b207a55ab81598b0561b30e5e9ce72b79a6c708d8bf1c64d5bab0d5c8af4ea8"
+    },
+    "deletionControlsInsidePreferencesForm": {
+      "failedBeforePassedAfter": true,
+      "logSha256": "f4a97fb6c47ea9ba61043f1bb211dd585c23382f89d6cbafbb155b17e9f80bba"
+    }
+  },
+  "changedSourceSha256": {
+    ".github/workflows/cloudflare-duplicate.yml": "d6e78e68e39bc5127b289173d950797f471a85b97fc2e8623040ada81dcc1570",
+    "src/App.tsx": "171ef65afd581ae81399a556021127317859527e7361b66bea205e5fbfef4cfb",
+    "src/components/AccountDeletion.tsx": "ad06fb34cee9b696ab9de29a19d7b9cdd33d5be80adc9cd97eb0cf154c3bfc10",
+    "tests/account-deletion-ui.test.ts": "431074cba85e3775cda3198aae4defd401b38dd40e4bc7840901b3ef8080d1d4",
+    "tests/reader-language-flows.test.ts": "ca10d28bdde1a17d8f3591061de58678d52c3485464676815b3996911bccc52d",
+    "tests/reader-migration-plan.node.mjs": "7b184666d0faeae818c3128973e21199a9a4c73a51af19fa4c3217d7e48fe3eb"
+  },
+  "ciAdmissionBlock": {
+    "verifiedNativeAnnotation": true,
+    "cause": "failed_account_payments_or_actions_spending_restriction_exact_cause_unknown",
+    "observedRuns": [
+      42427272222,
+      42427272221,
+      42427697995
+    ],
+    "documentationCheckId": 128569443819,
+    "runnerStepsStarted": 0,
+    "billingUsageRead": "denied_existing_token_lacks_user_scope",
+    "billingSettingsChanged": false,
+    "rerunAttempted": false,
+    "requiredFinalHeadCi": "pending"
+  },
+  "sourceOutcomes": {
+    "diagnosedSocialJobs": 12,
+    "acceptedItems": 0,
+    "formerlyPendingXJobsFinishedEmpty": 3,
+    "parserOrInputDefectDemonstrated": false,
+    "youtubePayloadRepairDemonstrated": false
+  },
+  "productionChangesByThisIntegration": false,
+  "gates": {
+    "readerMigrationsApplied": false,
+    "readerArtifactDeployed": false,
+    "identityAliasesActivated": false,
+    "lifecycleActivated": false,
+    "retentionActivated": false,
+    "nativeLanguageQualification": "pending",
+    "hostedMobileQualification": "pending",
+    "disposableAliasDeletionProof": "pending",
+    "usefulContentAndReadyRecap": "unproved"
+  },
+  "manualProviderOrModelStarts": 0,
+  "newServices": 0
+}

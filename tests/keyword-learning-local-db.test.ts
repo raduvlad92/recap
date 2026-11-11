@@ -50,6 +50,28 @@ describe.skipIf(!available)('private keyword evaluation, disposable PostgreSQL o
   sql(`update public.reader_source_updates set record=jsonb_set(record,'{content}','"changed"'::jsonb) where id='kw-video';`);expect(()=>reserve()).toThrow();
  });
  it('enforces the hard per-call cap before any ledger insert',()=>{expect(()=>reserve('one',.100000001)).toThrow();expect(service('select count(*) from public.reader_content_analysis_calls;')).toBe('0');});
+ it('admits only the explicitly renewed global and reader allowance, preserving historical unknown money',()=>{
+  sql(`insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,actual_usd,state,created_at)
+   select ${q(owner)},'historical-'||i,gen_random_uuid(),${q(model)},repeat('c',64),.1,.1,'settled',clock_timestamp()-interval'2 days'from generate_series(1,99)i;
+   insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,state,created_at)
+   values(${q(owner)},'historical-unknown',gen_random_uuid(),${q(model)},repeat('c',64),.05,'unknown',clock_timestamp()-interval'2 days');`);
+  const unknown=service("select to_jsonb(c)from public.reader_content_analysis_calls c where call_key='historical-unknown';");
+  expect(()=>reserve('renewed',.1)).toThrow();
+  sql('update public.content_analysis_budget set lifetime_limit_usd=12;');
+  expect(()=>reserve('renewed',.1)).toThrow();
+  sql('update public.reader_content_analysis_policies set lifetime_limit_usd=12;');
+  expect(reserve('renewed',.1).claimed).toBe(true);
+  expect(service("select to_jsonb(c)from public.reader_content_analysis_calls c where call_key='historical-unknown';")).toBe(unknown);
+ });
+ it('retains the hard renewed USD12 total even if a setting is larger',()=>{
+  sql(`update public.content_analysis_budget set lifetime_limit_usd=45;update public.reader_content_analysis_policies set lifetime_limit_usd=45;
+   insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,actual_usd,state,created_at)
+   select ${q(owner)},'historical-'||i,gen_random_uuid(),${q(model)},repeat('c',64),.1,.1,'settled',clock_timestamp()-interval'2 days'from generate_series(1,119)i;
+   insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,state,created_at)
+   values(${q(owner)},'historical-unknown',gen_random_uuid(),${q(model)},repeat('c',64),.05,'unknown',clock_timestamp()-interval'2 days');`);
+  expect(()=>reserve('beyond-renewal',.1)).toThrow();
+  expect(service('select count(*)from public.keyword_learning_requests;')).toBe('0');
+ });
  it('retains a timeout hold and forbids both same-key resending and new spending in that session',()=>{
   const r=reserve(),saved=record(r,null,'analysis_provider_timeout');expect(saved.call.state).toBe('unknown');expect(saved.call.actual_usd).toBeNull();expect(reserve().claimed).toBe(false);expect(()=>reserve('two')).toThrow();
  });

@@ -6,17 +6,19 @@ import socialContent from '../netlify/functions/social-content-worker.mts';
 import briefing from '../netlify/functions/daily-briefing-worker.mts';
 import reminder from '../netlify/functions/recap-reminder-worker.mts';
 import learning from '../netlify/functions/keyword-learning-worker.mts';
+import accountLifecycle from '../netlify/functions/account-lifecycle-worker.mts';
 import { assertActive, hostingRpc, readControl, runWithBindings, validMessage, type Bindings, type JobKind, type JobMessage, type RuntimeControl } from './runtime';
 import { json } from '../netlify/functions/_shared/security';
 
 export const workers = { 'hourly-collection': hourly, 'content-analysis': analysis, 'automatic-content': automatic,
   'social-collection': social, 'social-content': socialContent, 'daily-briefing': briefing,
-  'recap-reminders': reminder, 'keyword-learning': learning };
+  'recap-reminders': reminder, 'keyword-learning': learning, 'account-lifecycle': accountLifecycle };
 const flags: Record<JobKind, string> = {
   'hourly-collection': 'HOURLY_COLLECTION_ENABLED', 'content-analysis': 'CONTENT_ANALYSIS_ENABLED',
   'automatic-content': 'AUTOMATIC_CONTENT_ENABLED', 'social-collection': 'SOCIAL_COLLECTION_ENABLED',
   'social-content': 'SOCIAL_CONTENT_ENABLED', 'daily-briefing': 'DAILY_BRIEFING_ENABLED',
   'recap-reminders': 'REMINDER_EMAIL_ENABLED', 'keyword-learning': 'KEYWORD_LEARNING_ENABLED',
+  'account-lifecycle': 'ACCOUNT_LIFECYCLE_ENABLED',
 };
 export interface QueueItem { id?: string; body: unknown; ack(): void; retry(options?: { delaySeconds?: number }): void }
 export async function enqueue(bindings: Bindings, message: JobMessage, payload: unknown = null): Promise<boolean> {
@@ -31,7 +33,7 @@ export async function scheduleJobs(event: { cron: string; scheduledTime: number 
   if (bindings.HOSTING_MODE !== 'active') return;
   const control = await readControl(bindings); assertActive(bindings, control);
   const kinds: JobKind[] = event.cron === '0 * * * *' ? ['hourly-collection']
-    : event.cron === '*/5 * * * *' ? ['content-analysis', 'automatic-content', 'social-collection', 'social-content', 'daily-briefing', 'recap-reminders'] : [];
+    : event.cron === '*/5 * * * *' ? ['content-analysis', 'automatic-content', 'social-collection', 'social-content', 'daily-briefing', 'recap-reminders', 'account-lifecycle'] : [];
   const slot = Math.floor(event.scheduledTime / 300000);
   for (const kind of kinds) {
     // Preserve positive runtime gates. Omission never enables a new pipeline.

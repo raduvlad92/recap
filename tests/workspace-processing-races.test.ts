@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest';
-const harness=vi.hoisted(()=>({slots:[] as any[],index:0,effects:[] as any[],client:null as any,auth:{isLoaded:true,isSignedIn:true,userId:'synthetic-race-owner',getToken:async()=> 'synthetic-token'}}));
+const harness=vi.hoisted(()=>({slots:[] as any[],index:0,effects:[] as any[],client:null as any,auth:{isLoaded:true,isSignedIn:true,userId:'synthetic-provider-subject',ownerId:'synthetic-race-owner',identityKey:'synthetic-session-a',identityStatus:'ready',identityError:null,retryIdentity:()=>{},getToken:async()=> 'synthetic-token'}}));
 const same=(a:any[],b:any[])=>a?.length===b?.length&&a.every((v,i)=>Object.is(v,b[i]));
 vi.mock('react',()=>({
  useRef:(initial:any)=>{const n=harness.index++;return harness.slots[n]??=( {current:initial});},
@@ -48,7 +48,7 @@ it('coordinates history retries with polling and fences older reads and other ow
   const oldOwnerRead=deferred<any>();changedRead=oldOwnerRead.promise;
   intervalFns[0]();await settle();
   intervalFns[0]();await settle();
-  harness.auth.userId='synthetic-second-owner';render();await settle();
+  harness.auth.ownerId='synthetic-second-owner';harness.auth.userId='synthetic-provider-b';harness.auth.identityKey='synthetic-session-b';render();await settle();
   expect(workspace!.updates).toEqual([]);
   oldOwnerRead.resolve({data:[{record:completed}],error:null});await settle();
   expect(workspace!.updates).toEqual([]);

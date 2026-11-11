@@ -41,6 +41,72 @@ function setup(options: { policy?: HourlyPolicy; source?: Source; seen?: string[
 }
 const pending = (patch: Partial<StoredProviderJob> = {}): StoredProviderJob => ({ id: 'private-job', user_id: policy.user_id, source_id: source.id, item_key: 'youtube:' + videoId, check_id: claim.checkId, job_id: '44444444-4444-4444-8444-444444444444', reservation_id: '33333333-3333-4333-8333-333333333333', actor_id: 'h7sDV53CddomktSi5', maximum_usd: 0.005, provider_run_id: 'providerRun123', job_token: 'private-only-token', state: 'running', actual_cost_usd: null, source_fingerprint: claim.state.fingerprint, discard_result: false, ...patch });
 
+describe('bounded hourly public originals', () => {
+ const publication = { ...source, platform: 'Blog' as const, url: 'https://publication.example/' };
+ const feed = 'https://publication.example/feed';
+ const prose = 'The publication measured a laboratory instrument for three weeks. Its new configuration lowered background noise while preserving the signal. The observed result applies to this specific test and should not be generalized to every configuration. ';
+ const articles = (date = 'Sat, 07 Nov 2026 12:00:00 GMT') => `<rss><channel>${Array.from({ length: 5 }, (_, index) => `<item><title>Fixture ${index}</title><link>https://publication.example/article/${index}</link><pubDate>${date}</pubDate><description>Excerpt only</description></item>`).join('')}</channel></rss>`;
+ it('caps downloads at three per source, resumes deferred items on 304, then never refetches seen originals', async () => {
+  const first = setup({ source: publication, state: { feed_url: feed } });
+  const download = vi.fn(async (url: string) => ({ text: url === feed ? articles() : `<article><p>${prose}</p></article>`, url, status: 200, contentType: url === feed ? 'application/rss+xml' : 'text/html' }));
+  await createHourlyCollector({ ...first.deps, download })();
+  expect(download).toHaveBeenCalledTimes(4); expect(first.updates()).toHaveLength(5);
+  expect(first.updates().filter(record => record.originalContent?.status === 'usable')).toHaveLength(3);
+  const cursor = first.patch().cursor as Record<string, unknown>;
+  expect(cursor.pendingOriginals).toHaveLength(2);
+  expect(JSON.stringify(cursor)).not.toContain(prose.trim());
+  const seen = first.updates().map(record => hourlyItemKey(record.url));
+  const second = setup({ source: publication, seen, state: { feed_url: feed, cursor } });
+  download.mockClear(); download.mockImplementation(async url => ({ text: url === feed ? '' : `<article><p>${prose}</p></article>`, url, status: url === feed ? 304 : 200, contentType: url === feed ? 'application/rss+xml' : 'text/html' }));
+  await createHourlyCollector({ ...second.deps, download })();
+  expect(download).toHaveBeenCalledTimes(3); expect(second.updates()).toHaveLength(2); expect(second.updates().every(record => record.originalContent?.status === 'usable')).toBe(true);
+  expect(second.patch().cursor).toMatchObject({ pendingOriginals: [] });
+  const third = setup({ source: publication, seen, state: { feed_url: feed, cursor: second.patch().cursor as Record<string, unknown> } });
+  download.mockClear(); await createHourlyCollector({ ...third.deps, download })(); expect(download).toHaveBeenCalledTimes(1); expect(third.updates()).toHaveLength(0);
+  expect(first.deps.startApify).not.toHaveBeenCalled(); expect(first.deps.startJob).not.toHaveBeenCalled();
+ });
+ it('rejects unknown, local and invalid calendar dates before any linked-body request', async () => {
+  for (const date of ['', '2026-11-07', '2026-02-30T12:00:00Z']) {
+   const t = setup({ source: publication, state: { feed_url: feed } });
+   const download = vi.fn(async (url: string) => ({ text: articles(date), url, contentType: 'application/rss+xml', status: 200 }));
+   await createHourlyCollector({ ...t.deps, download })(); expect(download).toHaveBeenCalledTimes(1); expect(t.updates()).toHaveLength(0); expect(t.patch().status).toBe('partial');
+  }
+ });
+ it('keeps publisher podcast speech out of YouTube classification retries on collection and later checks', async () => {
+  const podcast = { ...publication, platform: 'Podcast' as const };
+  const episodeUrl = 'https://publication.example/episode/one';
+  const transcriptUrl = episodeUrl + '.vtt';
+  const transcript = `WEBVTT\n\n00:00:00.000 --> 00:10:00.000\n${prose.repeat(100)}`;
+  const body = `<rss xmlns:podcast="https://podcastindex.org/namespace/1.0"><channel><item><title>Publisher episode</title><link>${episodeUrl}</link><pubDate>Sat, 07 Nov 2026 12:00:00 GMT</pubDate><description>Episode show notes</description><enclosure url="https://publication.example/episode/one.mp3" type="audio/mpeg"/><podcast:transcript url="${transcriptUrl}" type="text/vtt"/></item></channel></rss>`;
+  const first = setup({ source: podcast, state: { feed_url: feed } });
+  const download = vi.fn(async (url: string) => ({ text: url === feed ? body : transcript, url, status: 200, contentType: url === feed ? 'application/rss+xml' : 'text/vtt' }));
+  await createHourlyCollector({ ...first.deps, download })();
+  expect(download).toHaveBeenCalledTimes(2);
+  expect(first.updates()).toHaveLength(1);
+  expect(first.updates()[0]).toMatchObject({ format: 'podcast', contentKind: 'transcript', originalContent: { status: 'usable' } });
+  expect(first.patch().status).toBe('collected');
+  expect(first.patch()).toMatchObject({ pending_captions: [], cursor: { pendingOriginals: [] } });
+  const second = setup({ source: podcast, seen: [hourlyItemKey(episodeUrl)], status: 304, state: { feed_url: feed, cursor: first.patch().cursor as Record<string, unknown>, pending_captions: [] } });
+  const unchanged = vi.fn(async (url: string) => ({ text: '', url, status: 304, contentType: 'application/rss+xml' }));
+  await createHourlyCollector({ ...second.deps, download: unchanged })();
+  expect(unchanged).toHaveBeenCalledExactlyOnceWith(feed, 0, expect.any(Object));
+  expect(second.patch()).toMatchObject({ status: 'unchanged', pending_captions: [] });
+  expect(second.updates()).toHaveLength(0);
+  expect(first.deps.captions).not.toHaveBeenCalled();
+  expect(second.deps.captions).not.toHaveBeenCalled();
+  expect(first.deps.startApify).not.toHaveBeenCalled();
+  expect(second.deps.startApify).not.toHaveBeenCalled();
+ });
+ it('does not repeat an uncertain durable attempt or invent usable content after parent import rejection', async () => {
+  const t = setup({ source: publication, state: { feed_url: feed } });
+  vi.mocked(t.deps.log.start).mockImplementation(async (_parent, method) => { if (method === 'public_article') throw new CollectionError(409, 'original_already_attempted', 'Retained attempt'); return 'fixture'; });
+  vi.mocked(t.store.finish).mockResolvedValue({ retrievedCount: 0, importAccepted: false });
+  const download = vi.fn(async (url: string) => ({ text: articles(), url, contentType: 'application/rss+xml', status: 200 }));
+  expect(await createHourlyCollector({ ...t.deps, download })()).toMatchObject({ statuses: { blocked: 1 } });
+  expect(download).toHaveBeenCalledTimes(1); expect(t.updates().every(record => record.contentKind === 'metadata_only')).toBe(true);
+ });
+});
+
 describe('hourly native freshness and exact original identity', () => {
  it.each(['https://youtu.be/abcdefghijk?t=3','https://www.youtube.com/watch?x=1&v=abcdefghijk&feature=share','https://youtube.com/shorts/abcdefghijk','https://m.youtube.com/live/abcdefghijk'])('matches YouTube alias %s', url => expect(hourlyItemKey(url)).toBe('youtube:' + videoId));
  it('loads only currently followed real custom sources, never a catalogue or sample', () => {

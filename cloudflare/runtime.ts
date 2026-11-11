@@ -12,7 +12,7 @@ export interface Bindings {
   JOBS?: { send(message: JobMessage): Promise<void> };
   SOURCE_DOWNLOADER?: { fetch(request: Request): Promise<Response> };
 }
-export const jobKinds = ['hourly-collection', 'content-analysis', 'automatic-content', 'social-collection', 'social-content', 'daily-briefing', 'recap-reminders', 'keyword-learning'] as const;
+export const jobKinds = ['hourly-collection', 'content-analysis', 'automatic-content', 'social-collection', 'social-content', 'daily-briefing', 'recap-reminders', 'keyword-learning', 'account-lifecycle'] as const;
 export type JobKind = typeof jobKinds[number];
 export interface JobMessage { version: 1; kind: JobKind; epoch: number; release: string; key: string }
 export interface RuntimeControl { owner: 'netlify' | 'cloudflare'; epoch: number; paused: boolean; release: string; old_host_fenced: boolean }

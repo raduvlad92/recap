@@ -87,11 +87,11 @@ describe('optional recap reminders, fixtures only',()=>{
   expect((await handler(new Request(url+'x',{method:'POST'}))).status).toBe(400);
  });
  it('resolves only current verified Clerk primary email, with no browser destination',async()=>{
-  const user={id:'fixture-reader',primary_email_address_id:'primary',email_addresses:[{id:'other',email_address:'other@example.com',verification:{status:'verified'}},{id:'primary',email_address:'Owner@Example.com',verification:{status:'verified'}}]};
+  const user={id:'fixture-provider-subject',primary_email_address_id:'primary',email_addresses:[{id:'other',email_address:'other@example.com',verification:{status:'verified'}},{id:'primary',email_address:'Owner@Example.com',verification:{status:'verified'}}]};
   const fetcher=vi.fn(async()=>new Response(JSON.stringify(user)));
-  expect(await verifiedReminderRecipient('fixture-reader',name=>name==='CLERK_SECRET_KEY'?'fixture-clerk-key':env(name),fetcher)).toEqual({email:'owner@example.com',identity:'primary'});
-  expect(String((fetcher.mock.calls[0] as unknown as [string])[0])).toBe('https://api.clerk.com/v1/users/fixture-reader');
-  user.email_addresses[1].verification.status='unverified';await expect(verifiedReminderRecipient('fixture-reader',()=> 'fixture',fetcher)).rejects.toThrow();
+  expect(await verifiedReminderRecipient('fixture-owner',name=>name==='CLERK_SECRET_KEY'?'fixture-clerk-key':env(name),fetcher,async()=> 'fixture-provider-subject')).toEqual({email:'owner@example.com',identity:'primary'});
+  expect(String((fetcher.mock.calls[0] as unknown as [string])[0])).toBe('https://api.clerk.com/v1/users/fixture-provider-subject');
+  user.email_addresses[1].verification.status='unverified';await expect(verifiedReminderRecipient('fixture-owner',()=> 'fixture',fetcher,async()=> 'fixture-provider-subject')).rejects.toThrow();
  });
  it('linearizes the final consent check before provider POST and stores acceptance separately',async()=>{
   const db=store(),fetcher=vi.fn(async()=>accepted());const result=await createRecapReminderWorker({env,store:db,fetcher,recipient,now:()=>clock})();

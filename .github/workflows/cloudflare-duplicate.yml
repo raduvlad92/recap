@@ -118,6 +118,14 @@ jobs:
           npm run catalogue:check
           npx vitest run --testTimeout=30000
           npm run build
+      - name: Check guarded reader migration plans
+        env:
+          READER_TEST_PG_BIN: /usr/lib/postgresql/17/bin
+        run: node --test tests/reader-migration-plan.node.mjs
+      - name: Check guarded daily-use migrations
+        env:
+          READER_TEST_PG_BIN: /usr/lib/postgresql/17/bin
+        run: node --test tests/daily-use-migration-plan.node.mjs
       - run: npm run check:cloudflare
         env:
           HOSTING_BUILD_MODE: ${{ github.event_name != 'pull_request' && (vars.HOSTING_TARGET == 'cloudflare' || (github.event_name == 'workflow_dispatch' && inputs.prepare_handover_artifact)) && 'active' || 'shadow' }}

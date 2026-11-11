@@ -1,0 +1,21 @@
+{
+  "recordedAt": "2026-11-07T20:26:25.079Z",
+  "kind": "transport-recovery-selection",
+  "operation": "e0620e73-950e-4d08-a13a-46e4a601b118",
+  "journalPath": ".hosting-journal/transport-recovery/e0620e73-950e-4d08-a13a-46e4a601b118/selection.json",
+  "journalSha": "55180673e78caffb0a9e9b762ab71baae441c461",
+  "checkedMain": "6906406def33ef2680c38566cfdb2a80b0e53dc2",
+  "selection": {
+    "previous": "cloudflare",
+    "current": "paused",
+    "updatedAt": "2026-11-07T20:26:25Z"
+  },
+  "servingRelease": "80c3d6c34452137c9dfbeefaab0639625fc3f0d6",
+  "hostingControlUnchanged": true,
+  "processingPaused": false,
+  "executionFlagsChanged": false,
+  "queueOrScheduleChanges": 0,
+  "productionSchemaChanges": 0,
+  "sourceOrModelJobsStarted": 0,
+  "limits": "Deployment selection only; no native execution stop, migration, drain or recovery proof yet."
+}

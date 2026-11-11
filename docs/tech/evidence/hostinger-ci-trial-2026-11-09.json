@@ -1,0 +1,143 @@
+{
+  "kind": "prepared_ci_trial_local_engineering_evidence_only",
+  "recordedAtUtc": "2026-11-09T01:11:21Z",
+  "baseReaderCandidate": "3c93e91a4516515ff4590fd059786207b5cec076",
+  "branch": "ci/hostinger-test-trial-20261109",
+  "officialRunner": {
+    "version": "2.338.2",
+    "checksumVerifiedDuringBuild": true,
+    "arm64Sha256": "670adb2f268fe21dcbb58b3db0e0aa9d5b3bddfe2c651481336e561ff86de945",
+    "x64Sha256": "baebf204307bac6193480852732f0aba2ae97b6c5597c244f4d5558390147c40"
+  },
+  "localImage": {
+    "kind": "local-docker-engineering-qualification-only",
+    "imageId": "sha256:ee5dcff3c2df92f314dbf983a512e0ba846865f5a8613e5764ef457cf75a7b77",
+    "architecture": "arm64",
+    "results": [
+      {
+        "profile": "bounded",
+        "exitCode": 0,
+        "proof": {
+          "kind": "credential-free-local-image-probe",
+          "node": "22.23.4",
+          "runner": "2.338.2",
+          "actionNode": "v24.22.1",
+          "postgresql": 17,
+          "pgcrypto": true,
+          "uid": 10001,
+          "memoryMax": "4294967296",
+          "swapMax": "0",
+          "cpuMax": "100000 100000",
+          "pidsMax": "512",
+          "rootReadOnly": true,
+          "dockerSocket": false,
+          "tcpDatabaseListener": false,
+          "productionCredentials": false,
+          "hostingerProven": false,
+          "githubJobProven": false
+        }
+      },
+      {
+        "profile": "root-denied",
+        "refused": true,
+        "exitCode": 1
+      },
+      {
+        "profile": "unbounded-denied",
+        "refused": true,
+        "exitCode": 1
+      },
+      {
+        "profile": "writable-root-denied",
+        "refused": true,
+        "exitCode": 1
+      }
+    ],
+    "temporaryContainersAndVolumeRemoved": true,
+    "hostingerOperations": 0,
+    "githubRegistrations": 0
+  },
+  "sourceHashes": {
+    ".github/workflows/hostinger-ci-trial.yml": "42f7906ef9c51a9a0a10bdbb8920694f7c1ffcd6ecd5528a9d3a7ab64e25f35d",
+    "infrastructure/ci-trial/.dockerignore": "3b07cb10840ac24b594eaf7febbc40e1da27f48288b07c1fa853bdde26d6592f",
+    "infrastructure/ci-trial/Dockerfile": "13800fcb702ff8985c3cc7c164cf8161ae7e6b7710e9f92d5c777d20ddf425cd",
+    "infrastructure/ci-trial/README.md": "d104a6428698f9ef85a52f07d6053df13cd184ffc1747132b2f8711d8071d0e4",
+    "infrastructure/ci-trial/compose.yaml": "cf27a54f7e0b6639dca4a5cee72d49f8c2bbe9de01e52cef605629c45bfdf4fe",
+    "infrastructure/ci-trial/job-guard.mjs": "0e85046bccf36f9f2f8358ad6538e1ff870682afe2e166d380f323969668fb2c",
+    "infrastructure/ci-trial/job-started.sh": "8fe132ba3a0336762ad8662eac95b04521bdf64c5a48f8fafd0925bbb1bc7891",
+    "infrastructure/ci-trial/launcher.mjs": "774fdfd52d9b4d2634cc9ce3cb72f9b130d0ce38ad5074d620afc05b7094d184",
+    "infrastructure/ci-trial/policy.mjs": "553126220651a80e5c1784a9f61c4c60f2ffc33cde4867bbb75d69e166129215",
+    "infrastructure/ci-trial/qualify.mjs": "798e29ae5e48a481af0375b7b065b51dc44fdbff80200f7b7d568e1539ca33e0",
+    "infrastructure/ci-trial/runtime.mjs": "154f8fa4d4dd31ab1b5c726d1c4b5289101905dcb146056c3d94e8917be4ac53",
+    "infrastructure/ci-trial/supervise.sh": "3d1bf22c4646d043345a44d92f83e78b2c1e939f66580e803ec3c493672946ef",
+    "scripts/ci-trial/checks.mjs": "8019f3b55197a1a5655b7c290794187f23815102653e01114970fcdafd726369",
+    "scripts/ci-trial/operator.mjs": "e7d5347c78d333a3d3536adb9cfdf2f40ed4a7d98e234721d1548bda90058495",
+    "tests/ci-trial-operator.node.mjs": "7f971426ded1739f297e237a82e5595ef7283a38f0257bc4fc01a536903f7fc8",
+    "tests/ci-trial.node.mjs": "2bed8a30ca474f681d23ec1e9f258bc72017b8512ca4fa92db35c252da2f64c6"
+  },
+  "imageRuntimeFilesMatchSixSourceHashes": true,
+  "validation": {
+    "guardAndOperatorTests": 67,
+    "failed": 0,
+    "skipped": 0,
+    "unitNodeVersion": "22.22.3",
+    "unitTapSha256": "da94a1be383811196dab86c6e73bf9ae0756039eea4efde679da713b32272982",
+    "imageBuildLogSha256": "77db806758c14fbfbae3679167e9a6dbd22d5c719de2f4f829f30c7c54543dba",
+    "initialVendorBuildLogSha256": "9c7b39a0d432e6be605b32fd60cb8240f8785172b76449dc161f663ebf38f363",
+    "imageProbeSha256": "9f1024d880b658a245cd26f8b4ca2b6caa0cde7c2478b0b24e231d5312e5079f",
+    "composeResolvedControls": "verified",
+    "javascriptSyntax": "passed",
+    "hostSupervisorBashSyntax": "passed",
+    "fullReaderSuiteRerun": false,
+    "realGitHubJobExecuted": false,
+    "hostSupervisorLoopQuotaAndDeadlineExecuted": false,
+    "linuxX64ImageQualified": false,
+    "workerdInsideThisImageQualified": false
+  },
+  "review": {
+    "environment": "read_only_no_socket_or_production_credentials_needed",
+    "initialSafetyFindings": 4,
+    "parentFixes": [
+      "final-only readback",
+      "operation-bound cleanup",
+      "external host deadline",
+      "separate preallocated scratch filesystem"
+    ],
+    "nativeContainmentQualification": "pending",
+    "secondIndependentReview": false
+  },
+  "readOnlyGitHubState": {
+    "registeredRunners": 0,
+    "trialEnableVariablePresent": false
+  },
+  "access": {
+    "remoteLinkTools": "not_callable",
+    "sshIdentity": "absent",
+    "dokployPreview": "signed_out_closed",
+    "nativeChrome": "human_in_use_no_further_control",
+    "secureCredentialRequestsExpired": 2,
+    "credentialReceived": false
+  },
+  "hostinger": {
+    "capacityInspected": false,
+    "serverArchitectureVerified": false,
+    "provisioned": false,
+    "jobExecuted": false,
+    "cleanupProven": false
+  },
+  "nativeMutations": {
+    "githubRunnerRegistration": 0,
+    "githubRoutingVariableChange": 0,
+    "hostingerOperations": 0,
+    "productionDeployment": 0,
+    "productionSql": 0,
+    "providerOrModelStarts": 0,
+    "backupChanges": 0
+  },
+  "costs": {
+    "newPaidServicePurchased": false,
+    "localComputeAndBandwidth": "unmeasured",
+    "existingAccountBalance": "unknown"
+  },
+  "nextAction": "Obtain authenticated Dokploy/server access; qualify native capacity and containment before one pinned test-only job, then verify exact cleanup."
+}

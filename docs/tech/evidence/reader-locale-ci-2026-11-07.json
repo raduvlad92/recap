@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-11-07T20:56:05.781005+00:00",
+  "pullRequest": "https://github.com/raduvlad92/recap/pull/15",
+  "head": "dd5ea12da58273dda6ec36cc6ff44e37561c8d26",
+  "reportedChecksPassed": 8,
+  "applicationCI": {
+    "runId": 42411941756,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "cloudflareCI": {
+    "runId": 42411941642,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "ready": true,
+  "mergeable": true,
+  "commentsOrReviewsReturned": 0,
+  "engineeringReview": "GO at unchanged application content 93bf463; dd5ea12 changes documentation only",
+  "mergeState": "queued behind controlled backend recovery/release",
+  "qualifiedNativeLanguageReview": "pending",
+  "hosted320And360PixelVerification": "pending",
+  "merged": false,
+  "productionDeploymentPerformed": false,
+  "recapWordingTranslated": false,
+  "publicMultilingualReadinessClaimed": false
+}

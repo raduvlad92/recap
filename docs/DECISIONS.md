@@ -1,5 +1,102 @@
 # Decisions and interview
 
+## 11 November 2026 — implement daily-use completion and renew AI allowance once
+
+Founder explicitly instructs **“ok, implement your finish plan.”** Proceed with the prepared reader release, useful ingestion repairs, generation/review flow and bounded 72-hour normal-operation verification. This supersedes the preceding status-only boundary for that work; it does not authorize the wider specification, customer launch, new subscriptions, reminder sending, automatic publication or destructive lifecycle activation. The founder separately approves **“Approve additional $2; cumulative cap $12”**: one incremental USD2 allowance, USD12 total, retaining USD5/day, USD0.10/call and every existing settled charge/unknown hold. Migrations must support the renewed hard ceiling; live global and eligible reader controls will be changed separately with exact-state preservation evidence. No allowance reset or guessed settlement is permitted.
+
+The initial proof remains within four calls/USD0.40. Inspection shows the normal keyword path uses three calls (two inventories and a checker), so the first proof will run only the two-call recap (maximum USD0.20); keyword verification is separate and remains inside the same incremental USD2 total. Publication still requires an actual owner decision. [Execution record](tech/DAILY-USE-COMPLETION-2026-11-11.md).
+
+## 11 November 2026 — current-status audit and proposed daily-use completion
+
+Founder asks whether the system works, ingests and can be used daily, and requests the finish plan. Refresh public HTTP, GitHub and SELECT-only production evidence. Record partial useful ingestion, recurring source failures, generation budget stops, pending review and saved-but-unready daily briefings separately. Green CI on consolidated PR #23 supersedes the historical CI-admission blocker for that candidate; it does not establish a production reader release. Recommend the ordered [daily-use completion plan](tech/DAILY-USE-COMPLETION-2026-11-11.md). No named specification, new allowance, review approval, automatic-publication policy, production activation, supplier/model execution, customer trial or reminder sending is approved by this question. Existing authorization and caps remain. No manual supplier/model fee is incurred; ordinary automation continues and its provisional ledger totals are recorded in the evidence.
+## 11 November — retain standard hosted CI after verified public admission
+
+The public hosted path passes complete PG-enabled verification and artifact/journal checks. Retain the standard hosted workflow and disabled local trial; no paid VPS upgrade or permanent runner follows. The source-publication/CI request is complete, while draft review, merge, production migration/deployment and useful-content acceptance stay separate. [Exact results](tech/GITHUB-PUBLICATION-2026-11-11.md).
+
+## 11 November — public repository and hosted CI retry explicitly requested
+
+The founder reports upgrading GitHub and asks to make this repository public before retrying Actions, confirming free usage. Standard hosted public compute does not consume included compute; larger runners and storage remain separate. Review existing code/history/logs/artifacts before the authorized visibility change. Public source is authorized; a new license, main release, production deployment/migration, supplier/model execution, backup change or paid-plan purchase is not inferred. The local trial is cancelled/cleaned, with no replacement local runner. [Pricing, review and native public readback](tech/GITHUB-PUBLICATION-2026-11-11.md).
+
+## 11 November — preserve hard limits and unresolved job custody
+
+Replace the supplemental recursive scratch scan with filesystem counters after an actual PostgreSQL teardown race. The hard eight-GiB filesystem, one-GiB free threshold and CPU/RAM/PID/time limits remain unchanged. An acknowledged GitHub cancellation is not terminal evidence: preserve the original offline/busy registration and private JIT until exact cleanup succeeds, and admit no replacement trial before then. This is a scoped CI repair, not a release/budget/capability expansion. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
+## 11 November — local test-only runner explicitly authorized
+
+The founder says “ok, let's try with a local runner.” Use the existing Mac and Docker Desktop for one exact ephemeral GitHub test job, preserving the original CPU/RAM/process/time/disk limits and all production-release gates. Hostinger remains unchanged. Native Mac disk sharing proves unreliable, so the selected local containment uses a bounded Linux filesystem and a trusted device/inode-checked setup helper outside the job. No paid upgrade, permanent runner, operator credential in the job or production change follows. [Scope and native controls](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
+## 11 November — use existing console access and honor the capacity gate
+
+The founder requests external Chrome and completes both sign-in and correction to the existing VPS-owning Hostinger account. The Hostinger web console supplies existing root access; do not request a new token or authorize Dokploy's separate SSH key merely to continue. Native available RAM is 2.00 GiB against the prepared six-GiB gate. Preserve the existing capacity policy and running workloads; this observation authorizes no paid upgrade, service stop, smaller unqualified runner profile or production change. Manual authentication setup is complete; native execution remains pending sufficient qualified capacity. [Evidence](tech/HOSTINGER-CAPACITY-2026-11-11.md).
+
+## 9 November — authorize a bounded CI trial on existing infrastructure
+
+The founder says “do it” following the proposed isolated test-only Hostinger/Dokploy trial, preferably with the official GitHub self-hosted runner. Preserve real GitHub job identity and existing production-release requirements; no `act` result or hand-written green status substitutes for them. Scope is one pinned job without production credentials, with resource containment and exact cleanup. No new paid server/plan, billing increase, production migration/release, supplier/model call, backup change or specification approval follows. Native access/capacity and containment qualification remain gates. [Implementation/evidence](tech/HOSTINGER-CI-TRIAL-2026-11-09.md).
+
+## 8 November — preserve release gates while CI cannot start
+
+Integrate the queued reader increments and their exact migration contract before requesting an owner action. GitHub reports failed account payments or an Actions spending restriction; the existing token cannot read billing usage. Resolve that account restriction without assuming permission to pay, raise budgets, refresh token scopes or bypass accepted CI/artifact provenance. Production stays on the accepted core until final integrated checks and native migration/release gates pass. Interface copy covers the six offered IDs; native-language qualification and translated recap generation are separate. Retained social emptiness and old rows do not authorize widened windows, supplier changes or hold releases. [Review candidate and continuation](tech/READER-RELEASE-INTEGRATION-2026-11-08.md).
+
+## 8 November Berlin — transport acceptance does not approve content or spending
+
+Five ordinary native ticks satisfy the scheduling acceptance hold. Their zero-content results do not approve publication, broaden source identities/windows, certify free retrieval or release unknown charges. Existing USD45 source/USD10 model limits, review gates and reminder opt-out remain unchanged. Continue guarded reader release preparation and evidence-based source diagnosis without a new supplier subscription or manual provider/model launch. [Exact observed outcomes](tech/evidence/restored-core-readonly-acceptance-2026-11-07.md).
+
+## 8 November Berlin — native completion under unchanged decisions
+
+The exact reviewed core release, one authenticated late-fee correction and original delivery restoration are completed within existing authorization. Original 19 source reservations, seven unknown model records, workspaces, caps, review gates and reminder opt-out remain preserved. The USD 0.004 correction is explicit additive financial evidence with immutable original history and replay proof, not a hold expiry or spending increase. Reader deletion/linking/retention activation and customer launch remain unapproved by inference. [Native evidence](tech/evidence/core-native-release-2026-11-07.json).
+
+## 7 November 2026 — execution details preserve existing decisions
+
+The actual native recovery uses the existing bounded consumer to drain cron-propagated business ticks before pausing admission. No source/model cap, reminder preference or review gate changes. Normal admitted draining can settle fees and reserve new provider jobs; retain that evidence separately from manual execution and preserve every new unknown hold. Recovery records legacy frames as uncertain with immutable evidence, without inventing message IDs or replaying business work. These are implementation safeguards within the founder-authorized delivery, not a new spending/launch/retention decision. Identity/lifecycle activation and expiry remain off. [Native execution receipt](tech/evidence/recovery-native-window-2026-11-07.json).
+
+## 7 November 2026 — retain archive provenance after safe paused refusal
+
+Automatic main preparation produces verified builds but its existing deploy wrapper deliberately refuses a shadow candidate over active hosting when selection is paused. Retain this safety refusal. Obtain ready provenance through the already-supported manual artifact-only workflow instead of accepting a failed overall run or altering checks. Persist/acknowledge one dispatch intent, reconcile its exact native run, and leave runtime/delivery unchanged. [Refusal and acknowledged continuation](tech/evidence/recovery-artifact-only-dispatch-2026-11-07.json).
+
+## 7 November 2026 — merge recovery at the checked exact head
+
+After exact `09b73ac` application/Cloudflare workflows and all eight reported checks succeed, merge reviewed PR #14 as `1824574` with deployment selection still paused. Retain exact-main active archive/provenance and unchanged runtime stop/quiet/drain/migration gates before any activation; successful PR checks or an expired database lease do not supply native proof. Remove the merged PR watch, retain other queued integration work, and preserve all domain history, unknown financial holds, caps, review and reminder choices. [Exact merge/readback](tech/evidence/recovery-merge-2026-11-07.json).
+
+## 7 November 2026 — integrate exact financial repair; preserve owner identity
+
+Merge PR #13 only after all eight checks pass on reviewed head `6ea1efc`, producing `e1f081a`; remove its completed watch. Update recovery PR #14 to include that financial main before the final-head deployment window. Its 238 combined targeted passes and typecheck are local integration evidence; native transport recovery and fee correction remain separate. Keep deployment selection paused and all model/source unknown holds intact. Production auth preparation will preserve existing application owner keys through explicitly bound issuer/subject aliases rather than rekey immutable financial history or infer ownership from email/name. Implement with activation off; production issuer/key/domain activation requires independent proof of existing authority and safe linkage. [Integration receipt](tech/evidence/financial-merge-2026-11-07.json).
+
+## 7 November 2026 — qualify language implementation precisely
+
+Independent review finds no material locale behavior/security regression. Clarify the sole nonblocking documentation caveat directly: the plain-text translator enforces runtime placeholder checks, while rich React substitutions are typed and preserve sentence order. Mark PR #15 ready against main with current-head CI and qualified language/hosted phone checks still separate. Continue lifecycle/content/auth preparation in parallel within the founder's existing engineering authorization; no new paid or public-readiness claim follows.
+
+## 7 November 2026 — merge retrieval with production activation gated
+
+After the exact reviewed head's eight checks pass and paused deployment selection is reverified, mark retrieval PR #12 ready and merge as `d1d4914`. Retarget the financial, recovery and locale layers to main; their implementation/check/native acceptance boundaries remain intact. Post-merge health still identifies the original serving release. Do not infer production migration/deployment or content success from this merge. [Exact receipt](tech/evidence/retrieval-merge-2026-11-07.json).
+
+## 7 November 2026 — stage recovery with deployment selection paused
+
+Within the existing delivery authorization, durably record and acknowledge operation `e0620e73-950e-4d08-a13a-46e4a601b118`, then change only `HOSTING_TARGET` to `paused`. This prevents merge delivery ahead of the recovery/migration window; it does not pause current processing or prove a drain. Original serving release/flags/control and reminder opt-out are unchanged. Independent review approves PR #14 code integration, subject to actual native execution-stop evidence and drainage of other kinds before removing the consumer. Refresh three retained generation candidates through the read-only handler; missing receipts remain financially unknown. No cap increase or automatic approval is authorized by these results. [Selection](tech/evidence/recovery-deployment-selection-2026-11-07.json), [model evidence](tech/evidence/model-receipt-refresh-2026-11-07.json).
+
+## 7 November 2026 — verify integration without weakening financial uncertainty
+
+The full unchanged retrieval suite passes with two workers; no timeout/assertion change is required. Integrate the reviewed discovery guards into financial PR #13 and verify the combination before parent release. The existing migration operator requires actual Cloudflare pause/drain and compares original rows/functions/ACLs atomically; read-only readiness is not migration proof. Inspect the seven unknown model calls' retained exact references before proposing a budget change; neither an old unknown charge nor smaller guessed token cost is spendable headroom. No new founder decision or live processing action occurs at this checkpoint.
+
+## 7 November 2026 — merge cleanup; retain retrieval release gates
+
+Within the founder's delivery authorization, merge the already-verified Netlify cleanup as `6906406` and retarget retrieval PR #12 to main. Push the two reviewed discovery fixes and isolated workerd test as `748216a`. Keep retrieval in draft while current-head checks, guarded transport recovery/drain and production migration remain incomplete. The existing long cached-prefix PostgreSQL test timed out in the initial full run but passes alone; rerun the unchanged suite with bounded concurrency before claiming a full pass. No additional supplier, budget or publication decision is inferred.
+
+## 7 November 2026 — implement status next steps with parallel agents
+
+Founder explicitly instructed **“plan and do all of that, prioritize multiple agents and microservices where it makes sense.”** Implement the previously reported next steps under existing finite controls. Independent branches handle bounded work; retain the current web/jobs/private-source services unless measured runtime/permission needs justify another service. This does not approve all of SPEC/PLAN v1.1, a larger budget, automatic review approval, reminders, a supplier subscription or a customer trial. Fresh inspection exposes expired automatic-content transport and dead-letter backlog, so safe recovery now precedes the retrieval deployment. [Scope, evidence and ordered proof](tech/DELIVERY-PLAN-2026-11-07.md).
+
+## 7 November 2026 — read-only project status; no scope change
+
+Founder requested current status, blockers and next steps. Fresh public/GitHub reads confirm the serving Cloudflare release and successful verification of the still-unmerged retrieval increment. Detailed content, financial, queue and cutoff conclusions retain their **6 November** evidence date; a public health response does not refresh those private checks. Recommend releasing and verifying the existing retrieval repair, then financial/budget/review resolution and a useful cited daily recap before broader launch work. No new founder decision, owner setup, spending increase, supplier/model execution, database migration, deployment, publication, email or schedule change occurs. [Evidence](tech/evidence/project-status-2026-11-07.json).
+
+## 6 November 2026 — finish the two read-only cutoff observations
+
+Two real normal daily cutoffs are now observed and compared without manual generation or approval. This does not establish useful publication, final fee correctness or completion of the 72-hour interval, and does not revive the founder-waived Netlify retirement gate. Preserve original private/financial records, caps and reminder opt-out; retain the unresolved provider-fee discrepancy as a separate repair item. No new schedule, runtime/provider action or financial correction is authorized by this observation. [Native evidence and remaining limits](tech/CLOUDFLARE-OBSERVATION-2026-11-06.md).
+
+## 5 November 2026 — retain read-only observation after early retirement
+
+The first scheduled cutoff check follows the founder's completed immediate Netlify retirement; it does not reinstate the waived wait, require deleted resources or authorize another deletion. Preserve the original observation start and existing remaining read-only task without creating/changing schedules. A native provider fee above its settled ledger value is recorded as an unresolved reconciliation issue; this task does not change financial history, release holds, raise caps or start a run. Successful cron frames and an awaiting-review snapshot remain distinct from a useful published recap. [Evidence and next observation](tech/CLOUDFLARE-OBSERVATION-2026-11-05.md).
+
 ## 5 November 2026 — cheap/free first, paid fallback, method-level history
 
 Founder explicitly directed implementation in YouTube → Instagram → X order, always preferring cheap/free parsing and falling back to paid Actors after failure, with backend visibility of attempts, failures and successes. This authorizes the scoped collection repair and its review delivery under existing finite controls, not a supplier subscription, cap increase or automatic approval/email change. New social money admission occurs only at paid launch; source-provided text remains distinct from generated speech/media understanding. A bounded YouTube channel/day scope shares the existing reader/global ledger. Implementation, failed local public-endpoint probes and pending production migration/acceptance are recorded separately. [Implementation and remaining gates](tech/FREE-FIRST-RETRIEVAL-2026-11-05.md).

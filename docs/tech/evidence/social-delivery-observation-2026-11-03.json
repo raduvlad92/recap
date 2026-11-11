@@ -1,0 +1,730 @@
+{
+  "kind": "final-scheduled-read-only-observation",
+  "summary": {
+    "scheduledCheckpoint": 3,
+    "plannedCheckpoints": 3,
+    "at": "2026-11-03T01:21:17.414522+00:00",
+    "supplementAt": "2026-11-03T01:26:25.160Z",
+    "timeBerlin": "2026-11-03 02:21",
+    "observationDeadline": "2026-11-03T01:19:25.499Z",
+    "observedHoursSinceOriginalPublication": 72.031087645,
+    "full72HourWindowElapsed": true,
+    "verdict": "operational-acceptance-failed-late-social-stall-and-no-published-briefing",
+    "runtimeLiveness": "two scheduled daily cycles saved; continuous social collection/reconciliation fails late in window",
+    "usefulContent": "three unique text archives; completeness remains unverified",
+    "analysis": "eight keyword proposals and two recap drafts remain pending; two older tasks remain blocked",
+    "dailyPublication": "three awaiting-review snapshots, zero topics or published citations",
+    "email": "opt-out enforced; actual delivery/Inbox proof deferred",
+    "newMaterialFailures": [
+      "all18active-social-sources-overdue",
+      "two-referenced-X-jobs-left-unreconciled-with-long-expired-leases",
+      "no-matching-social-dispatcher-or-worker-request-observed-after-November2-0910UTC-in-covered-hosting-window"
+    ],
+    "lastObservedSocialWorkerAt": "2026-11-02T09:10:10.270381017Z",
+    "rootCause": "not established; no provider/account repair attempted",
+    "normalCompletedRuns": 783,
+    "normalCompletedRunsDeltaSinceCheckpoint2": 108,
+    "readerDeliveries": 3,
+    "newReaderDeliveriesSinceCheckpoint2": 0,
+    "longExpiredRecordedRunningJobs": 2,
+    "overdueActiveSources": 18,
+    "scheduledCyclesObserved": 2,
+    "scheduledCyclesFinished": true,
+    "scheduledSaveDelaySeconds": [
+      15.248823,
+      14.799046
+    ],
+    "manualCyclesObserved": 1,
+    "publishedTopics": 0,
+    "publishedSnapshotCitations": 0,
+    "pendingRecapPoints": 6,
+    "pendingRecapExactQuoteAndCurrentHashPoints": 6,
+    "budgetAlerts": [],
+    "historicalUnknownModelCallsPreserved": true,
+    "sameFourAmbiguousSocialJobs": true,
+    "todayNovember3Cycle": "not-yet-due-at-final-check",
+    "applicationControlsChanged": false,
+    "observationTaskStop": {
+      "required": true,
+      "status": "disabled",
+      "disabledAt": "2026-11-03T01:31:55.284Z",
+      "enabled": false,
+      "nextRunAt": null
+    }
+  },
+  "observation": {
+    "at": "2026-11-03T01:21:17.414522+00:00",
+    "briefings": [
+      {
+        "briefings": 1,
+        "local_date": "2026-10-31",
+        "published": 0,
+        "status": "awaiting_review",
+        "topics": 0
+      },
+      {
+        "briefings": 1,
+        "local_date": "2026-11-01",
+        "published": 0,
+        "status": "awaiting_review",
+        "topics": 0
+      },
+      {
+        "briefings": 1,
+        "local_date": "2026-11-02",
+        "published": 0,
+        "status": "awaiting_review",
+        "topics": 0
+      }
+    ],
+    "dailyControl": true,
+    "enabledReminderPolicies": 0,
+    "modelBudget": {
+      "committedUsd": 9.450863337,
+      "dailyLimitUsd": 5,
+      "enabled": true,
+      "lifetimeLimitUsd": 10,
+      "unknownCalls": 7
+    },
+    "readerDeliveries": 3,
+    "reminders": [],
+    "socialJobs": [
+      {
+        "accepted": 1,
+        "actual_usd": 0.3999,
+        "jobs": 372,
+        "latest_finish": "2026-11-02T09:00:14.301054+00:00",
+        "platform": "Instagram",
+        "purpose": "collection",
+        "referenced_runs": 372,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 1,
+        "latest_finish": null,
+        "platform": "Instagram",
+        "purpose": "proof",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.0256,
+        "jobs": 8,
+        "latest_finish": "2026-10-31T01:11:59.057146+00:00",
+        "platform": "Instagram",
+        "purpose": "proof",
+        "referenced_runs": 8,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 2,
+        "latest_finish": null,
+        "platform": "LinkedIn",
+        "purpose": "proof",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 2,
+        "actual_usd": 0.006150000002,
+        "jobs": 3,
+        "latest_finish": "2026-10-31T00:56:45.384572+00:00",
+        "platform": "LinkedIn",
+        "purpose": "proof",
+        "referenced_runs": 3,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 1,
+        "latest_finish": null,
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 4,
+        "actual_usd": 0.037314126131,
+        "jobs": 411,
+        "latest_finish": "2026-11-02T08:50:17.392777+00:00",
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 411,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 2,
+        "latest_finish": null,
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 2,
+        "state": "running"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.000398390166,
+        "jobs": 5,
+        "latest_finish": "2026-10-31T00:56:44.746599+00:00",
+        "platform": "X",
+        "purpose": "proof",
+        "referenced_runs": 5,
+        "state": "completed"
+      }
+    ],
+    "socialSources": [
+      {
+        "ever_complete": 0,
+        "overdue": 8,
+        "paused": 0,
+        "platform": "Instagram",
+        "sources": 8
+      },
+      {
+        "ever_complete": 0,
+        "overdue": 10,
+        "paused": 0,
+        "platform": "X",
+        "sources": 10
+      }
+    ],
+    "socialTasks": [
+      {
+        "state": "blocked",
+        "tasks": 2
+      },
+      {
+        "state": "review",
+        "tasks": 4
+      }
+    ],
+    "supplierBudget": {
+      "accountId": "source-proof",
+      "availableUsd": 42.500389160358,
+      "ceilingUsd": 45,
+      "committedUsd": 2.499610839642,
+      "currency": "USD",
+      "heldEnvelopes": 1,
+      "overCeiling": false,
+      "unknownCostJobs": 18
+    }
+  },
+  "supplement": {
+    "at": "2026-11-03T01:26:25.160Z",
+    "method": "read-only-paginated-database-selects-after-supplemental-CLI-read-stalled",
+    "platformBudgets": [
+      {
+        "platform": "Instagram",
+        "daily_limit_usd": 1.1,
+        "lifetime_limit_usd": 3.3,
+        "lifetime_committed": 0.4755,
+        "utc_day_committed": 0,
+        "ambiguous_holds": 1,
+        "ambiguous_held_usd": 0.05,
+        "active_jobs": 0,
+        "in_flight_held_usd": 0,
+        "long_expired_active_leases": 0
+      },
+      {
+        "platform": "LinkedIn",
+        "daily_limit_usd": 0.5,
+        "lifetime_limit_usd": 0.5,
+        "lifetime_committed": 0.106150000002,
+        "utc_day_committed": 0,
+        "ambiguous_holds": 2,
+        "ambiguous_held_usd": 0.1,
+        "active_jobs": 0,
+        "in_flight_held_usd": 0,
+        "long_expired_active_leases": 0
+      },
+      {
+        "platform": "X",
+        "daily_limit_usd": 0.4,
+        "lifetime_limit_usd": 1.2,
+        "lifetime_committed": 0.187712516297,
+        "utc_day_committed": 0,
+        "ambiguous_holds": 1,
+        "ambiguous_held_usd": 0.05,
+        "active_jobs": 2,
+        "in_flight_held_usd": 0.1,
+        "long_expired_active_leases": 2
+      }
+    ],
+    "modelUtcDayCommitted": 0.125827191,
+    "activeModelPolicies": [
+      {
+        "daily_limit_usd": 5,
+        "lifetime_limit_usd": 10,
+        "per_call_limit_usd": 0.1
+      }
+    ],
+    "historicalUnknownModelFinancialFieldsPreserved": true,
+    "historicalUnknownModelCalls": 7,
+    "historicalUnknownFinancialFingerprint": "f27583725dec48aebc5ed4251b4e08a01c41acc0f7ab67a4f9d6fa99a0c5e877",
+    "sameAmbiguousSocialJobIdentities": true,
+    "overdueSources": [
+      {
+        "platform": "Instagram",
+        "lastCheckedAt": "2026-11-02T09:00:14.182982+00:00",
+        "nextCheckAt": "2026-11-02T10:00:14.182982+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "Instagram",
+        "lastCheckedAt": "2026-11-02T08:30:13.653871+00:00",
+        "nextCheckAt": "2026-11-02T09:30:13.653871+00:00",
+        "has_known_pre_cycle_ambiguous_job": true
+      },
+      {
+        "platform": "Instagram",
+        "lastCheckedAt": "2026-11-02T08:50:13.030919+00:00",
+        "nextCheckAt": "2026-11-02T09:50:13.030919+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "Instagram",
+        "lastCheckedAt": "2026-11-02T08:20:11.601536+00:00",
+        "nextCheckAt": "2026-11-02T09:20:11.601536+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "Instagram",
+        "lastCheckedAt": "2026-11-02T08:20:11.499043+00:00",
+        "nextCheckAt": "2026-11-02T09:20:11.499043+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "Instagram",
+        "lastCheckedAt": "2026-11-02T09:00:14.301054+00:00",
+        "nextCheckAt": "2026-11-02T10:00:14.301054+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "Instagram",
+        "lastCheckedAt": "2026-11-02T09:00:14.273752+00:00",
+        "nextCheckAt": "2026-11-02T10:00:14.273752+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "Instagram",
+        "lastCheckedAt": "2026-11-02T08:20:11.679167+00:00",
+        "nextCheckAt": "2026-11-02T09:20:11.679167+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": "2026-11-02T08:30:13.663513+00:00",
+        "nextCheckAt": "2026-11-02T09:30:13.663513+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": null,
+        "nextCheckAt": "2026-10-31T00:54:21.824525+00:00",
+        "has_known_pre_cycle_ambiguous_job": true
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": "2026-11-02T08:40:12.738992+00:00",
+        "nextCheckAt": "2026-11-02T09:40:12.738992+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": "2026-11-02T08:40:12.588765+00:00",
+        "nextCheckAt": "2026-11-02T09:40:12.588765+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": "2026-11-02T08:30:13.683874+00:00",
+        "nextCheckAt": "2026-11-02T09:30:13.683874+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": "2026-11-02T08:50:17.392777+00:00",
+        "nextCheckAt": "2026-11-02T09:50:17.392777+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": "2026-11-02T08:50:15.147458+00:00",
+        "nextCheckAt": "2026-11-02T09:50:15.147458+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": "2026-11-02T08:40:12.773215+00:00",
+        "nextCheckAt": "2026-11-02T09:40:12.773215+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": "2026-11-02T08:00:16.451045+00:00",
+        "nextCheckAt": "2026-11-02T09:00:16.451045+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      },
+      {
+        "platform": "X",
+        "lastCheckedAt": "2026-11-02T08:00:16.638045+00:00",
+        "nextCheckAt": "2026-11-02T09:00:16.638045+00:00",
+        "has_known_pre_cycle_ambiguous_job": false
+      }
+    ],
+    "activeJobs": [
+      {
+        "platform": "X",
+        "state": "running",
+        "createdAt": "2026-11-02T09:05:11.424485+00:00",
+        "leaseUntil": "2026-11-02T09:05:12.484776+00:00",
+        "nextPollAt": "2026-11-02T09:10:12.484776+00:00",
+        "hasProviderReference": true,
+        "leaseExpiredHours": 16.353518055555554
+      },
+      {
+        "platform": "X",
+        "state": "running",
+        "createdAt": "2026-11-02T09:05:12.839425+00:00",
+        "leaseUntil": "2026-11-02T09:05:13.870351+00:00",
+        "nextPollAt": "2026-11-02T09:10:13.870351+00:00",
+        "hasProviderReference": true,
+        "leaseExpiredHours": 16.353133055555556
+      }
+    ],
+    "dailySchedules": [
+      {
+        "last_local_date": "2026-11-02",
+        "last_cutoff_at": "2026-11-02T07:00:00+00:00"
+      }
+    ]
+  },
+  "cyclesAndReviewEvidence": {
+    "at": "2026-11-03T01:22:52.915676+00:00",
+    "dailyCycles": [
+      {
+        "coverage": {
+          "availableUpdates": 1,
+          "checkedSources": 0,
+          "followedSources": 39,
+          "includedUpdates": 0,
+          "missingContentUpdates": 0,
+          "omittedUpdates": 0,
+          "pendingReviewUpdates": 1,
+          "updatedSources": 1
+        },
+        "created_at": "2026-10-31T01:41:52.286735+00:00",
+        "cutoff_at": "2026-10-31T01:41:51.587+00:00",
+        "job_state": "finished",
+        "local_date": "2026-10-31",
+        "period_start": "2026-10-30T01:41:51.587+00:00",
+        "published_at": null,
+        "published_snapshot_citations": 0,
+        "saved_seconds_after_cutoff": 0.699735,
+        "status": "awaiting_review",
+        "topics": 0,
+        "updates": 1
+      },
+      {
+        "coverage": {
+          "availableUpdates": 2,
+          "checkedSources": 0,
+          "followedSources": 39,
+          "includedUpdates": 0,
+          "missingContentUpdates": 0,
+          "omittedUpdates": 0,
+          "pendingReviewUpdates": 2,
+          "updatedSources": 2
+        },
+        "created_at": "2026-11-01T07:00:15.248823+00:00",
+        "cutoff_at": "2026-11-01T07:00:00+00:00",
+        "job_state": "finished",
+        "local_date": "2026-11-01",
+        "period_start": "2026-10-31T07:00:00+00:00",
+        "published_at": null,
+        "published_snapshot_citations": 0,
+        "saved_seconds_after_cutoff": 15.248823,
+        "status": "awaiting_review",
+        "topics": 0,
+        "updates": 2
+      },
+      {
+        "coverage": {
+          "availableUpdates": 0,
+          "checkedSources": 0,
+          "followedSources": 39,
+          "includedUpdates": 0,
+          "missingContentUpdates": 0,
+          "omittedUpdates": 0,
+          "pendingReviewUpdates": 0,
+          "updatedSources": 0
+        },
+        "created_at": "2026-11-02T07:00:14.799046+00:00",
+        "cutoff_at": "2026-11-02T07:00:00+00:00",
+        "job_state": "finished",
+        "local_date": "2026-11-02",
+        "period_start": "2026-11-01T07:00:00+00:00",
+        "published_at": null,
+        "published_snapshot_citations": 0,
+        "saved_seconds_after_cutoff": 14.799046,
+        "status": "awaiting_review",
+        "topics": 0,
+        "updates": 0
+      }
+    ],
+    "newSocialCallsSinceCheckpoint1": {
+      "calls": 10,
+      "reported_actual_usd": 0.028353945,
+      "settled": 10,
+      "unknown_calls": 0
+    },
+    "pendingRecapEvidence": {
+      "all_pending": true,
+      "current_source_hash_matches": 6,
+      "exact_source_quotes": 6,
+      "points": 6,
+      "review_rows": 2
+    },
+    "readerImportsByPlatform": [
+      {
+        "actual_text_archives": 1,
+        "current_archive_records": 1,
+        "deleted_delivery_records": 0,
+        "delivery_records": 1,
+        "distinct_item_keys": 1,
+        "first_imported": "2026-10-31T01:30:13.527831+00:00",
+        "last_imported": "2026-10-31T01:30:13.527831+00:00",
+        "max_text_characters": 47,
+        "min_text_characters": 47,
+        "platform": "Instagram"
+      },
+      {
+        "actual_text_archives": 2,
+        "current_archive_records": 2,
+        "deleted_delivery_records": 0,
+        "delivery_records": 2,
+        "distinct_item_keys": 2,
+        "first_imported": "2026-11-01T02:20:13.98919+00:00",
+        "last_imported": "2026-11-01T04:40:11.784721+00:00",
+        "max_text_characters": 216,
+        "min_text_characters": 107,
+        "platform": "X"
+      }
+    ],
+    "socialTaskDetails": [
+      {
+        "error_code": "analysis_unknown_charge_hold",
+        "first_created": "2026-10-31T01:33:49.880653+00:00",
+        "generated_review_rows": 1,
+        "latest_updated": "2026-10-31T01:33:50.746955+00:00",
+        "state": "blocked",
+        "task": "keywords",
+        "tasks": 1
+      },
+      {
+        "error_code": null,
+        "first_created": "2026-11-01T02:25:08.708522+00:00",
+        "generated_review_rows": 8,
+        "latest_updated": "2026-11-01T04:45:21.079103+00:00",
+        "state": "review",
+        "task": "keywords",
+        "tasks": 2
+      },
+      {
+        "error_code": "automatic_recap_invalid_check",
+        "first_created": "2026-10-31T01:33:49.894221+00:00",
+        "generated_review_rows": 1,
+        "latest_updated": "2026-10-31T01:35:17.382056+00:00",
+        "state": "blocked",
+        "task": "recap",
+        "tasks": 1
+      },
+      {
+        "error_code": null,
+        "first_created": "2026-11-01T02:25:08.711386+00:00",
+        "generated_review_rows": 2,
+        "latest_updated": "2026-11-01T04:45:26.816112+00:00",
+        "state": "review",
+        "task": "recap",
+        "tasks": 2
+      }
+    ]
+  },
+  "configuredPlatformCaps": [
+    {
+      "platform": "X",
+      "enabled": true,
+      "actor_ref": "xquik/x-tweet-scraper",
+      "build_number": "1.12.411",
+      "max_items": 20,
+      "maximum_usd": 0.05,
+      "daily_limit_usd": 0.4,
+      "lifetime_limit_usd": 1.2
+    },
+    {
+      "platform": "LinkedIn",
+      "enabled": true,
+      "actor_ref": "harvestapi/linkedin-profile-posts",
+      "build_number": "0.0.86",
+      "max_items": 20,
+      "maximum_usd": 0.05,
+      "daily_limit_usd": 0.5,
+      "lifetime_limit_usd": 0.5
+    },
+    {
+      "platform": "Instagram",
+      "enabled": true,
+      "actor_ref": "yugenox/instagram-post-scraper",
+      "build_number": "0.1.4",
+      "max_items": 3,
+      "maximum_usd": 0.01,
+      "daily_limit_usd": 1.1,
+      "lifetime_limit_usd": 3.3
+    }
+  ],
+  "ownerReminderPreference": false,
+  "hosting": {
+    "deployId": "6ae548a5b1de3ee251abb9bb",
+    "state": "ready",
+    "functionalCommit": "f955398088a9c911693c3e7e1ccd33d4a972c170",
+    "publishedAt": "2026-10-31T01:48:04.492Z"
+  },
+  "hostingTelemetry": {
+    "countsWindow": {
+      "from": 1793599200000,
+      "to": 1793669001235,
+      "type": "counts"
+    },
+    "statusCounts": [
+      {
+        "key": "202",
+        "count": 39
+      },
+      {
+        "key": "204",
+        "count": 39
+      }
+    ],
+    "logWindow": {
+      "from": 1793610000000,
+      "to": 1793669001235,
+      "page": 1,
+      "per_page": 20,
+      "has_next_page": false,
+      "type": "list"
+    },
+    "matchingRequests": [
+      {
+        "at": "2026-11-02T09:10:10.270381017Z",
+        "method": "POST",
+        "route": "/.netlify/functions/social-collection-worker",
+        "status": 202,
+        "events": [
+          {
+            "event": "social_collection_finished",
+            "enabled": true,
+            "synchronized": 18,
+            "checked": 0,
+            "failed": 0
+          }
+        ]
+      },
+      {
+        "at": "2026-11-02T09:10:09.891920054Z",
+        "method": "POST",
+        "route": "/.netlify/functions/social-collection",
+        "status": 204,
+        "events": [
+          {
+            "event": "social_collection_dispatch",
+            "dispatched": true
+          }
+        ]
+      },
+      {
+        "at": "2026-11-02T09:05:10.533389924Z",
+        "method": "POST",
+        "route": "/.netlify/functions/social-collection-worker",
+        "status": 202,
+        "events": [
+          {
+            "event": "social_collection_finished",
+            "enabled": true,
+            "synchronized": 18,
+            "checked": 0,
+            "failed": 0
+          }
+        ]
+      },
+      {
+        "at": "2026-11-02T09:05:10.394421262Z",
+        "method": "POST",
+        "route": "/.netlify/functions/social-collection",
+        "status": 204,
+        "events": [
+          {
+            "event": "social_collection_dispatch",
+            "dispatched": true
+          }
+        ]
+      },
+      {
+        "at": "2026-11-02T09:00:12.767719457Z",
+        "method": "POST",
+        "route": "/.netlify/functions/social-collection-worker",
+        "status": 202,
+        "events": [
+          {
+            "event": "social_collection_finished",
+            "enabled": true,
+            "synchronized": 18,
+            "checked": 3,
+            "failed": 0
+          }
+        ]
+      },
+      {
+        "at": "2026-11-02T09:00:12.646411879Z",
+        "method": "POST",
+        "route": "/.netlify/functions/social-collection",
+        "status": 204,
+        "events": [
+          {
+            "event": "social_collection_dispatch",
+            "dispatched": true
+          }
+        ]
+      }
+    ],
+    "latestMatchingRequestAt": "2026-11-02T09:10:10.270381017Z",
+    "interpretation": "No later matching social dispatcher/worker request was returned in the covered window; this does not identify the hosting/billing/scheduler root cause or provider completion."
+  },
+  "auditLimitations": [
+    "One auxiliary CLI query failed temporary cli_login_postgres authentication; read-only paginated database SELECT fallback succeeded. This does not establish an application credential fault.",
+    "Provider runtime was not contacted; running means the retained database job state, not confirmed ongoing provider execution.",
+    "Source quotes/current hashes are verified for pending drafts, not semantic quality or approval."
+  ],
+  "observerActions": {
+    "workerInvocations": 0,
+    "sourceContacts": 0,
+    "providerJobsOrRetries": 0,
+    "modelCalls": 0,
+    "reviewDecisions": 0,
+    "settingsLimitsOrCredentialsChanges": 0,
+    "holdsReleased": 0,
+    "deployments": 0,
+    "externalEmailsOrMessagesSent": 0,
+    "subagents": 0,
+    "newObservers": 0,
+    "onlyAuthorizedSchedulerChange": "disable this same observation task after saving this verdict",
+    "observationTaskDisabledAsExplicitlyAuthorized": true
+  }
+}

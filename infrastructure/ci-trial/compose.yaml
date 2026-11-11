@@ -1,0 +1,46 @@
+name: therecap-ci-trial-${CI_TRIAL_OPERATION_ID:?operation UUID required}
+services:
+  runner:
+    image: ${CI_TRIAL_IMAGE:?exact qualified image digest required}
+    pull_policy: never
+    user: '10001:10001'
+    init: true
+    read_only: true
+    restart: 'no'
+    cpus: 1.0
+    mem_limit: 4g
+    memswap_limit: 4g
+    pids_limit: 512
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 30s
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=67108864,uid=10001,gid=10001
+    volumes:
+      - work:/r
+      - type: bind
+        source: ${CI_TRIAL_INTENT_FILE:?private intent path required}
+        target: /run/trial/intent.json
+        read_only: true
+        bind:
+          create_host_path: false
+    secrets:
+      - source: jit
+        target: runner-jit
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '2'}
+    labels:
+      com.therecap.ci-trial: ${CI_TRIAL_OPERATION_ID}
+secrets:
+  jit:
+    file: ${CI_TRIAL_JIT_FILE:?private short-lived JIT file required}
+volumes:
+  work:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${CI_TRIAL_SCRATCH_DIR:?separate capped trial filesystem required}
+    labels:
+      com.therecap.ci-trial: ${CI_TRIAL_OPERATION_ID}

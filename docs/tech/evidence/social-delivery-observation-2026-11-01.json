@@ -1,0 +1,321 @@
+{
+  "kind": "scheduled-read-only-observation",
+  "summary": {
+    "scheduledCheckpoint": 1,
+    "plannedCheckpoints": 3,
+    "at": "2026-11-01T01:21:00.989683+00:00",
+    "timeBerlin": "2026-11-01 02:21",
+    "observationDeadline": "2026-11-03T01:19:25.499Z",
+    "nextPlannedCheck": "2026-11-02T01:20:34.271Z",
+    "previousEvidence": "social-delivery-status-20261101T010342Z.json",
+    "verdict": "collection-scheduling-active-useful-briefing-blocked-known-gaps",
+    "newMaterialFailureBlockingObservation": false,
+    "boundaryAlerts": [],
+    "normalCompletedRuns": 337,
+    "normalCumulativeAcceptedPosts": 1,
+    "newReaderDeliveriesSincePrevious": 0,
+    "activeReferencedJobs": 3,
+    "newAmbiguousHolds": 0,
+    "sourceGlobalCommitmentDeltaFromPrevious": "0.150000000000",
+    "deltaReason": "three referenced X jobs each reserve USD0.05; not reported charges",
+    "proofJobsAreSeparateFromReaderImports": true,
+    "citationVerification": "no published topics or ready briefing; no citation publication to certify",
+    "normalNovember1Cycle": "not-yet-due",
+    "normalNovember1DueAt": "2026-11-01T07:00:00.000Z",
+    "continueExistingObservation": true
+  },
+  "observation": {
+    "at": "2026-11-01T01:21:00.989683+00:00",
+    "briefings": [
+      {
+        "briefings": 1,
+        "local_date": "2026-10-31",
+        "published": 0,
+        "status": "awaiting_review",
+        "topics": 0
+      }
+    ],
+    "dailyControl": true,
+    "enabledReminderPolicies": 0,
+    "modelBudget": {
+      "committedUsd": 9.422509392,
+      "dailyLimitUsd": 5,
+      "enabled": true,
+      "lifetimeLimitUsd": 10,
+      "unknownCalls": 7
+    },
+    "readerDeliveries": 1,
+    "reminders": [],
+    "socialJobs": [
+      {
+        "accepted": 1,
+        "actual_usd": 0.1879,
+        "jobs": 160,
+        "latest_finish": "2026-11-01T00:40:13.150092+00:00",
+        "platform": "Instagram",
+        "purpose": "collection",
+        "referenced_runs": 160,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 1,
+        "latest_finish": null,
+        "platform": "Instagram",
+        "purpose": "proof",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.0256,
+        "jobs": 8,
+        "latest_finish": "2026-10-31T01:11:59.057146+00:00",
+        "platform": "Instagram",
+        "purpose": "proof",
+        "referenced_runs": 8,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 2,
+        "latest_finish": null,
+        "platform": "LinkedIn",
+        "purpose": "proof",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 2,
+        "actual_usd": 0.006150000002,
+        "jobs": 3,
+        "latest_finish": "2026-10-31T00:56:45.384572+00:00",
+        "platform": "LinkedIn",
+        "purpose": "proof",
+        "referenced_runs": 3,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 1,
+        "latest_finish": null,
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 0,
+        "state": "ambiguous"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.015825833192,
+        "jobs": 177,
+        "latest_finish": "2026-11-01T01:00:13.828185+00:00",
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 177,
+        "state": "completed"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": null,
+        "jobs": 3,
+        "latest_finish": null,
+        "platform": "X",
+        "purpose": "collection",
+        "referenced_runs": 3,
+        "state": "running"
+      },
+      {
+        "accepted": 0,
+        "actual_usd": 0.000398390166,
+        "jobs": 5,
+        "latest_finish": "2026-10-31T00:56:44.746599+00:00",
+        "platform": "X",
+        "purpose": "proof",
+        "referenced_runs": 5,
+        "state": "completed"
+      }
+    ],
+    "socialSources": [
+      {
+        "ever_complete": 0,
+        "overdue": 0,
+        "paused": 0,
+        "platform": "Instagram",
+        "sources": 8
+      },
+      {
+        "ever_complete": 0,
+        "overdue": 1,
+        "paused": 0,
+        "platform": "X",
+        "sources": 10
+      }
+    ],
+    "socialTasks": [
+      {
+        "state": "blocked",
+        "tasks": 2
+      }
+    ],
+    "supplierBudget": {
+      "accountId": "source-proof",
+      "availableUsd": 42.683877453297,
+      "ceilingUsd": 45,
+      "committedUsd": 2.316122546703,
+      "currency": "USD",
+      "heldEnvelopes": 1,
+      "overCeiling": false,
+      "unknownCostJobs": 19
+    }
+  },
+  "supplement": {
+    "activeModelPolicies": [
+      {
+        "daily_limit_usd": 5,
+        "lifetime_limit_usd": 10,
+        "per_call_limit_usd": 0.1
+      }
+    ],
+    "activeReaderReviewCounts": [
+      {
+        "kind": "recap",
+        "reviews": 41,
+        "status": "pending"
+      },
+      {
+        "kind": "keyword",
+        "reviews": 400,
+        "status": "pending"
+      },
+      {
+        "kind": "keyword",
+        "reviews": 4,
+        "status": "rejected"
+      }
+    ],
+    "at": "2026-11-01T01:21:44.844751+00:00",
+    "dailySchedules": [
+      {
+        "delivery_time": "08:00",
+        "email_reminder": false,
+        "last_cutoff_at": "2026-10-31T01:41:51.587+00:00",
+        "last_local_date": "2026-10-31",
+        "timezone": "Europe/Berlin"
+      }
+    ],
+    "modelUtcDayCommitted": 0.125827191,
+    "overdueSources": [
+      {
+        "has_known_pre_cycle_ambiguous_job": true,
+        "platform": "X"
+      }
+    ],
+    "platformBudgets": [
+      {
+        "active_jobs": 0,
+        "ambiguous_held_usd": 0.05,
+        "ambiguous_holds": 1,
+        "daily_limit_usd": 1.1,
+        "in_flight_held_usd": 0,
+        "lifetime_committed": 0.2635,
+        "lifetime_limit_usd": 3.3,
+        "long_expired_active_leases": 0,
+        "platform": "Instagram",
+        "utc_day_committed": 0.008
+      },
+      {
+        "active_jobs": 0,
+        "ambiguous_held_usd": 0.1,
+        "ambiguous_holds": 2,
+        "daily_limit_usd": 0.5,
+        "in_flight_held_usd": 0,
+        "lifetime_committed": 0.106150000002,
+        "lifetime_limit_usd": 0.5,
+        "long_expired_active_leases": 0,
+        "platform": "LinkedIn",
+        "utc_day_committed": 0
+      },
+      {
+        "active_jobs": 3,
+        "ambiguous_held_usd": 0.05,
+        "ambiguous_holds": 1,
+        "daily_limit_usd": 0.4,
+        "in_flight_held_usd": 0.15,
+        "lifetime_committed": 0.216224223358,
+        "lifetime_limit_usd": 1.2,
+        "long_expired_active_leases": 0,
+        "platform": "X",
+        "utc_day_committed": 0.150783408786
+      }
+    ],
+    "taskErrors": [
+      {
+        "error_code": "analysis_unknown_charge_hold",
+        "state": "blocked",
+        "task": "keywords",
+        "tasks": 1
+      },
+      {
+        "error_code": "automatic_recap_invalid_check",
+        "state": "blocked",
+        "task": "recap",
+        "tasks": 1
+      }
+    ]
+  },
+  "ownerReminderPreference": false,
+  "configuredPlatformCaps": [
+    {
+      "platform": "X",
+      "enabled": true,
+      "actor_ref": "xquik/x-tweet-scraper",
+      "build_number": "1.12.411",
+      "max_items": 20,
+      "maximum_usd": 0.05,
+      "daily_limit_usd": 0.4,
+      "lifetime_limit_usd": 1.2
+    },
+    {
+      "platform": "LinkedIn",
+      "enabled": true,
+      "actor_ref": "harvestapi/linkedin-profile-posts",
+      "build_number": "0.0.86",
+      "max_items": 20,
+      "maximum_usd": 0.05,
+      "daily_limit_usd": 0.5,
+      "lifetime_limit_usd": 0.5
+    },
+    {
+      "platform": "Instagram",
+      "enabled": true,
+      "actor_ref": "yugenox/instagram-post-scraper",
+      "build_number": "0.1.4",
+      "max_items": 3,
+      "maximum_usd": 0.01,
+      "daily_limit_usd": 1.1,
+      "lifetime_limit_usd": 3.3
+    }
+  ],
+  "hosting": {
+    "deployId": "6ae548a5b1de3ee251abb9bb",
+    "state": "ready",
+    "functionalCommit": "f955398088a9c911693c3e7e1ccd33d4a972c170",
+    "publishedAt": "2026-10-31T01:48:04.492Z"
+  },
+  "observerActions": {
+    "workerInvocations": 0,
+    "providerJobsOrRetries": 0,
+    "modelCalls": 0,
+    "sourceContacts": 0,
+    "reviewDecisions": 0,
+    "settingsOrLimitsChanges": 0,
+    "holdsReleased": 0,
+    "deployments": 0,
+    "subagents": 0,
+    "newObservers": 0,
+    "externalEmailsOrMessagesSent": 0
+  }
+}

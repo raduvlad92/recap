@@ -1,0 +1,67 @@
+{
+  "kind": "native_host_capacity_observation_no_runner_launch",
+  "sampledAtUtc": "2026-11-10T23:31:58.157400Z",
+  "localDateEuropeBerlin": "2026-11-11",
+  "evidenceMethod": "read_only_commands_in_authenticated_hostinger_web_console_visually_transcribed",
+  "hostIdentityComparedWithDokploy": true,
+  "access": {
+    "externalChromeRequested": true,
+    "ownerCorrectedHostingerAccount": true,
+    "hostingerRootConsoleConnected": true,
+    "dokployTerminal": "authentication_failed",
+    "newCredentialOrSshAuthorization": false
+  },
+  "capacity": {
+    "architecture": "x86_64",
+    "cpus": 2,
+    "totalMemoryBytes": 8326615040,
+    "availableMemoryBytes": 2144305152,
+    "freeDiskBytes": 69634740224,
+    "cgroupV2": true,
+    "swapTotalBytes": 0
+  },
+  "preparedProfile": {
+    "jobMemoryMaxBytes": 4294967296,
+    "minimumAvailableMemoryBytes": 6442450944,
+    "minimumCpus": 2,
+    "minimumFreeDiskBytes": 21474836480
+  },
+  "gateEvaluation": {
+    "method": "comparison_only_supervisor_not_executed",
+    "cpuCount": true,
+    "availableMemory": false,
+    "freeDisk": true,
+    "cgroupV2": true,
+    "availableMemoryShortfallBytes": 4298145792,
+    "launchAllowed": false
+  },
+  "existingWorkloads": {
+    "containerStatsReadOnly": true,
+    "protectedBackupContainerObservedRunning": true,
+    "stoppedRestartedOrReconfigured": false,
+    "credentialsInspected": false
+  },
+  "trialMutations": {
+    "runnerProvisioning": 0,
+    "jitRequests": 0,
+    "routingChanges": 0,
+    "hostImageImports": 0,
+    "scratchAllocations": 0,
+    "productionReleaseOrSql": 0,
+    "providerOrModelStarts": 0,
+    "backupChanges": 0
+  },
+  "unproved": [
+    "x64_image_qualification",
+    "native_host_supervisor_containment",
+    "real_github_job_execution",
+    "trial_cleanup"
+  ],
+  "githubChecksRefreshed": false,
+  "nextAction": "Retain existing workloads; require qualified spare capacity before any Hostinger runner launch. No further manual authentication setup is needed.",
+  "githubReadOnlyState": {
+    "registeredRunners": 0,
+    "trialEnableVariablePresent": false,
+    "observedAfterCapacityReadback": true
+  }
+}

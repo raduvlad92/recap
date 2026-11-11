@@ -1,3 +1,4 @@
+import { resolveReaderOwners } from '../netlify/functions/_shared/reader-identity';
 import { handlers, limits, routeName } from './handlers';
 import { assertActive, hostingRpc, readControl, runWithBindings, type Bindings } from './runtime';
 import { randomUUID, createHash } from 'node:crypto';
@@ -5,7 +6,7 @@ import { enqueue } from './jobs';
 import { database, requireAdmin } from '../netlify/functions/_shared/admin-data';
 import { analysisWorkerAuthorized } from '../netlify/functions/_shared/content-analysis';
 import { parseKeywordLearningInput } from '../netlify/functions/_shared/keyword-learning';
-import { authenticate, CollectionError, runtimeEnv, readTextLimited } from '../netlify/functions/_shared/security';
+import { authenticateProviderSubject, CollectionError, runtimeEnv, readTextLimited } from '../netlify/functions/_shared/security';
 import { errorResponse, json } from '../netlify/functions/_shared/security';
 
 const staticHeaders: Record<string, string> = {
@@ -37,7 +38,9 @@ export async function handleWeb(request: Request, bindings: Bindings): Promise<R
           const control = await readControl(bindings);
           if (!control.paused) throw new CollectionError(503, 'verification_unavailable', 'The isolated account check is unavailable.');
           phase = 'workspace';
-          const { count, error } = await database().from('reader_workspaces').select('user_id', { count: 'exact', head: true }).eq('user_id', userId);
+          const owners = await resolveReaderOwners(runtimeEnv('CLERK_ISSUER_URL') || '', [userId], runtimeEnv);
+          const ownerId = owners.get(userId);
+          const { count, error } = ownerId ? await database().from('reader_workspaces').select('user_id', { count: 'exact', head: true }).eq('user_id', ownerId) : { count: 0, error: null };
           if (error) throw new CollectionError(503, 'workspace_check_unavailable', 'The saved-workspace check could not finish.');
           return secureResponse(json({ authenticated: true, administrator: true, workspacePresent: count === 1, processingPaused: control.paused, release: bindings.RELEASE_SHA }), true);
         } catch (error) {
@@ -85,7 +88,7 @@ export async function handleWeb(request: Request, bindings: Bindings): Promise<R
             await enqueue(bindings, { version: 1, key, kind: 'keyword-learning', epoch: control.epoch, release: bindings.RELEASE_SHA }, body);
             return secureResponse(json({ accepted: true }, 202), true);
           }
-          if (!['reminder-events', 'reminder-unsubscribe'].includes(name) && !analysisWorkerAuthorized(request)) await authenticate(request, runtimeEnv);
+          if (!['reminder-events', 'reminder-unsubscribe', 'account-deletion'].includes(name) && !analysisWorkerAuthorized(request)) await authenticateProviderSubject(request, runtimeEnv);
           const key = 'http:' + randomUUID();
           await hostingRpc(bindings, 'admit_hosting_work', { p_key: key, p_kind: 'http', p_epoch: control.epoch, p_release: bindings.RELEASE_SHA, p_payload: null });
           const claim = await hostingRpc<{ token: string } | null>(bindings, 'begin_hosting_work', { p_key: key, p_kind: 'http', p_epoch: control.epoch, p_release: bindings.RELEASE_SHA });

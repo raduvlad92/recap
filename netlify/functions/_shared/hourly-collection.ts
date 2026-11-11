@@ -8,10 +8,12 @@ import { sanitizePostContext } from '../../../src/lib/post-context';
 import { database } from './admin-data';
 import { apifyConfig, startApify, startYouTubeDiscovery, pollStoredApify, verifyHourlyApifyConfiguration, YOUTUBE_ACTOR, YOUTUBE_ACTOR_ID } from './apify';
 import { createRetrievalLog, retrievalAttempt, type RetrievalLog } from './retrieval-log';
+import { normalizePublicFeed } from './public-feed';
+import { createPublicOriginalExtractor, needsPublicOriginal, ORIGINAL_REQUESTS_PER_SOURCE } from './public-content';
 import { nativeYouTubeDiscovery, DISCOVERY_ITEMS, DISCOVERY_MAX_USD } from './youtube-discovery';
 import { settleBudget } from './budget-ledger';
 import { startJob, finishJob } from './job-ledger';
-import { downloadPublic, downloadHourlySource, downloadYouTubeCaptions, youtubeCaptionUrl, normalizeFeed, plainText, safeLink, type Download } from './feed';
+import { downloadPublic, downloadHourlySource, downloadYouTubeCaptions, youtubeCaptionUrl, plainText, safeLink, type Download } from './feed';
 import { validateSource } from './collect-handler';
 import { CollectionError, runtimeEnv, publicHttpsUrl, readTextLimited, type Env } from './security';
 
@@ -175,7 +177,7 @@ function parseHourlyFeed(text: string, source: Source, url: string): { updates: 
  // limit while hourly collection processes the bounded whole current feed.
  for (const entry of entries.slice(0, 100)) {
   const xml = root.feed ? builder.build({ feed: { title: channel.title, entry } }) : builder.build({ rss: { channel: { title: channel.title, item: entry } } });
-  const normalized = normalizeFeed(xml, source, url).updates[0];
+  const normalized = normalizePublicFeed(xml, source, url).updates[0];
   if (!normalized || !goodUpdate(normalized, source)) { invalidCount++; continue; }
   updates.set(hourlyItemKey(normalized.url), archiveIdentity(normalized));
  }
@@ -261,6 +263,8 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
  if (env('HOURLY_COLLECTION_ENABLED') !== 'true') return async () => ({ enabled: false, checked: 0, failed: 0, skipped: 0, statuses: {} });
  const deps: Dependencies = { env, log: overrides.log || createRetrievalLog(env), discover: nativeYouTubeDiscovery, startDiscovery: startYouTubeDiscovery, store: overrides.store || createHourlyStore(env), download: downloadHourlySource, captions: nativeHourlyCaptions, startApify, pollApify: pollStoredApify, preflight: verifyHourlyApifyConfiguration, startJob, finishJob, settleBudget, now: Date.now, pause: ms => new Promise(resolve => setTimeout(resolve, ms)), ...overrides };
  const verified = new Set<string>();
+ // Request sharing is scoped to one bounded worker run, never an isolate lifetime.
+ let extractOriginal = createPublicOriginalExtractor(deps.download);
  async function processSource(policy: HourlyPolicy, sourceId: string, workerDeadline: number): Promise<string> {
   const claimed = await deps.store.claim(policy.user_id, sourceId); if (!claimed) return 'skipped';
   const claim: HourlyClaim = claimed;
@@ -283,6 +287,26 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
   const sourceDeadline = Math.min(workerDeadline, sourceStartedAt + 90_000);
   let patch: HourlyPatch = { status: 'unchanged', new_count: 0 }, partial = retainedTasks.length > 0;
   const completedJobs: Array<{ id: string; patch: Partial<StoredProviderJob> & { finished_at?: string } }> = [];
+  const originalQueue = new Map<string, SourceUpdate>();
+  for (const raw of Array.isArray(claim.state.cursor.pendingOriginals) ? claim.state.cursor.pendingOriginals.slice(0, 100) : []) {
+   if (raw && typeof raw === 'object' && goodUpdate(raw as SourceUpdate, claim.source) && needsPublicOriginal(raw as SourceUpdate)) originalQueue.set(hourlyItemKey((raw as SourceUpdate).url), raw as SourceUpdate);
+  }
+  let originalRequests = 0;
+  async function processOriginals(feedUrl: string) {
+   for (const [key, record] of originalQueue) {
+    if (originalRequests >= ORIGINAL_REQUESTS_PER_SOURCE || deps.now() > sourceDeadline - 45_000) break;
+    originalRequests++;
+    let enriched: SourceUpdate;
+    try { enriched = await extractOriginal(source, record, feedUrl, deps.log, { checkId: claim.checkId }); }
+    catch (error) {
+     if (error instanceof CollectionError && error.code === 'original_batch_limit') break;
+     if (error instanceof CollectionError && error.code === 'retrieval_log_unavailable') throw error;
+     enriched = { ...record, contentKind: 'metadata_only', originalContent: { ...record.originalContent!, status: 'failed', reason: error instanceof CollectionError ? error.code : 'original_retrieval_failed' }, coverage: 'Original text retrieval failed; only metadata or an incomplete extract is available. No automatic repeat is scheduled.' };
+    }
+    originalQueue.delete(key); updates.set(key, enriched);
+    if (enriched.originalContent?.status !== 'usable') partial = true;
+   }
+  }
   let details: Record<string, unknown> = { coverage: 'Checks cover only the current public feed; full history and source completeness remain unverified.' };
   async function save() {
    const deferred = [...captionQueue].filter(([key, task]) => !attemptedIdentities.has(key) && task.status !== 'provider_pending' && Date.parse(task.nextAttemptAt) <= deps.now()).length;
@@ -294,7 +318,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      ...(references.length === 1 ? { job_id: references[0].jobId, provider_run_id: references[0].providerRunId } : {}) };
     details = { ...details, providerJobs: references, reservedUsd: references.reduce((sum, ref) => sum + ref.reservedUsd, 0) };
    }
-   for (const [key, update] of updates) if (update.contentKind === 'transcript' && update.content) {
+   for (const [key, update] of updates) if (source.platform === 'YouTube' && update.format === 'video' && update.contentKind === 'transcript' && update.content) {
     if (videoFormatKind(update) !== 'unknown') captionQueue.delete(key);
     else {
      // Captions and Shorts classification are independent. Keep a free format
@@ -303,6 +327,12 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      captionQueue.set(key, { ...(prior || { attempts: 0, nextAttemptAt: new Date(deps.now() + 3600_000).toISOString() }), record: update, status: 'retry', reason: 'video_format_unconfirmed' });
      partial = true;
     }
+   }
+   if (['Blog','Substack','Podcast'].includes(source.platform)) {
+    if (originalQueue.size) partial = true;
+    details.originalDeferredCount = originalQueue.size;
+    details.originalAttempts = originalRequests;
+    patch.cursor = { ...(patch.cursor as Record<string, unknown> || claim.state.cursor), pendingOriginals: [...originalQueue.values()].map(({ content: _text, transcriptSegments: _segments, ...record }) => record) };
    }
    if (partial && ['collected','unchanged'].includes(patch.status)) patch.status = 'partial';
    const outcome = await deps.store.finish(claim, { ...patch, details, pending_captions: [...captionQueue.values(), ...retainedTasks] }, [...updates.values()]);
@@ -470,6 +500,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     feedUrl = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + channelId;
     details.mode = 'youtube_rss'; patch.channel_id = channelId;
    } else { feedUrl = claim.state.feed_url || source.feedUrl || source.url; details.mode = 'native_feed'; }
+   if (source.platform !== 'YouTube') await processOriginals(feedUrl);
    const validators = claim.state.feed_url === feedUrl ? { etag: claim.state.etag || undefined, lastModified: claim.state.last_modified || undefined } : {};
    let response: ConditionalDownload;
    try {
@@ -532,6 +563,13 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    for (const update of unseen) if (!updates.has(hourlyItemKey(update.url))) updates.set(hourlyItemKey(update.url), update);
    for (const update of channelId ? unseen : []) { const key = hourlyItemKey(update.url); if (!captionQueue.has(key)) captionQueue.set(key, { record: update, attempts: 0, nextAttemptAt: new Date(0).toISOString() }); }
    if (channelId) await processCaptionQueue();
+   else {
+    for (const update of unseen) if (needsPublicOriginal(update)) {
+     if (originalQueue.size < 100) originalQueue.set(hourlyItemKey(update.url), update);
+     else { partial = true; details.originalQueueLimit = true; }
+    }
+    await processOriginals(response.url);
+   }
    patch.content_hash = hash;
    const latestPublishedAt = parsed.updates.map(update => update.publishedAt).sort().at(-1);
    patch.cursor = { ...(latestPublishedAt ? { latestPublishedAt } : {}), checkedAt: new Date(deps.now()).toISOString() };
@@ -548,6 +586,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
  }
  return async function collectHourly(): Promise<{ enabled: boolean; checked: number; failed: number; skipped: number; statuses: Record<string, number> }> {
   if (deps.env('HOURLY_COLLECTION_ENABLED') !== 'true') return { enabled: false, checked: 0, failed: 0, skipped: 0, statuses: {} };
+  extractOriginal = createPublicOriginalExtractor(deps.download);
   const started = deps.now(), statuses: Record<string, number> = {};
   let checked = 0, failed = 0, skipped = 0;
   // A background run is bounded below Netlify's 15-minute maximum. Unprocessed

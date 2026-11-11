@@ -56,14 +56,21 @@ const accountRuntime = new Miniflare(convertV4MiniflareOptions({
   outboundService: async request => {
     const url = new URL(request.url); outbound.push({ origin: url.origin, path: url.pathname });
     if (url.href === issuer + '/.well-known/jwks.json') return Response.json({ keys: [jwk] });
+    if (url.origin === 'https://zlfdqzabsfndifxiqguo.supabase.co' && url.pathname === '/rest/v1/rpc/account_access_allowed') return Response.json(true);
     if (url.origin === 'https://api.clerk.com' && ['/v1/users/fixture-owner', '/v1/users/fixture-reader'].includes(url.pathname)) return Response.json({ id: url.pathname.split('/').at(-1), email_addresses: [], primary_email_address_id: null, banned: false, locked: false });
     if (url.origin === 'https://zlfdqzabsfndifxiqguo.supabase.co' && url.pathname === '/rest/v1/rpc/read_hosting_runtime') {
       assert.equal(request.method, 'POST'); assert.equal(await request.text(), '{}');
       if (redirectRpc) return new Response(null, { status: 302, headers: { location: 'https://must-not-receive-secrets.invalid/' } });
       return Response.json({ owner: 'netlify', epoch: 1, paused: fixturePaused, old_host_fenced: false, release: '0'.repeat(40) });
     }
+    if (url.origin === 'https://zlfdqzabsfndifxiqguo.supabase.co' && url.pathname === '/rest/v1/rpc/resolve_reader_owners') {
+      const identity = await request.json();
+      assert.equal(identity.p_issuer, issuer); assert.equal(identity.p_subjects.length, 1);
+      assert(['fixture-owner', 'fixture-reader'].includes(identity.p_subjects[0]));
+      return Response.json([{ provider_subject: identity.p_subjects[0], owner_id: identity.p_subjects[0] === 'fixture-owner' ? 'fixture-stable-owner' : 'fixture-stable-reader' }]);
+    }
     if (url.origin === 'https://zlfdqzabsfndifxiqguo.supabase.co' && url.pathname === '/rest/v1/reader_workspaces') {
-      assert.equal(request.method, 'HEAD'); assert.equal(url.searchParams.get('user_id'), 'eq.fixture-owner');
+      assert.equal(request.method, 'HEAD'); assert.equal(url.searchParams.get('user_id'), 'eq.fixture-stable-owner');
       return new Response(null, { headers: { 'content-range': '0-0/1' } });
     }
     throw new Error('Unexpected outbound destination in protected runtime check');
@@ -97,6 +104,8 @@ const activeRuntime = new Miniflare(convertV4MiniflareOptions({
     if (url.href === 'https://api.clerk.com/v1/users/fixture-owner') return Response.json({ id: 'fixture-owner', email_addresses: [], primary_email_address_id: null, banned: false, locked: false });
     assert.equal(url.origin, 'https://zlfdqzabsfndifxiqguo.supabase.co'); assert.equal(request.method, 'POST');
     const name = url.pathname.split('/').at(-1);
+    if (name === 'account_access_allowed') return Response.json(true);
+    if (name === 'resolve_reader_owners') return Response.json([{ provider_subject: 'fixture-owner', owner_id: 'fixture-stable-owner' }]);
     if (name === 'read_hosting_runtime') return activeStateEmpty ? new Response(null, { status: 204 }) : Response.json({ owner: 'cloudflare', epoch: 2, paused: false, old_host_fenced: true, release });
     if (name === 'admit_hosting_work') return Response.json(true);
     if (name === 'begin_hosting_work') return Response.json({ token: 'fixture-http-lease' });

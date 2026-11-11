@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-11-07T20:17:36.978Z",
+  "scope": "GET-only refresh of three exact retained model-generation candidates",
+  "candidates": 3,
+  "outcomes": [
+    {
+      "ordinal": 1,
+      "http": 200,
+      "status": "not_found",
+      "noChargeConfirmed": false
+    },
+    {
+      "ordinal": 2,
+      "http": 200,
+      "status": "not_found",
+      "noChargeConfirmed": false
+    },
+    {
+      "ordinal": 3,
+      "http": 200,
+      "status": "not_found",
+      "noChargeConfirmed": false
+    }
+  ],
+  "unknownModelCalls": 7,
+  "unknownHeldMaximumUsd": "0.125827191",
+  "modelCommitmentUsd": "9.918486404",
+  "lifetimeCeilingUsd": "10",
+  "availableAdmissionUsd": "0.081513596",
+  "modelCallsStarted": 0,
+  "ledgerMutations": 0,
+  "budgetChanges": 0,
+  "limits": "Missing provider receipts do not establish zero cost. No hold was released and no draft is admitted by these reads."
+}

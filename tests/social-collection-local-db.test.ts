@@ -220,6 +220,56 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
   expect(service('select state from public.collection_budget_reservations;')).toBe('held'); sql("update public.social_collection_jobs set lease_until=clock_timestamp()-interval'1 minute',next_poll_at=clock_timestamp()-interval'1 minute';update public.social_collection_platforms set enabled=false;");
   expect(result('select public.claim_social_collection_job(false);').id).toBe(job.id);
  });
+ it('backs off repeated empty acquisitions and resets after useful source text', () => {
+  result('select public.sync_social_collection_sources();');
+  const delay = () => Number(service('select extract(epoch from(s.next_check_at-j.finished_at))/3600 from public.social_collection_sources s join lateral(select finished_at from public.social_collection_jobs where source_key=s.source_key and purpose=\'collection\' order by finished_at desc limit 1)j on true;'));
+  let sequence = 0;
+  const cycle = (useful: boolean) => {
+   sql("update public.social_collection_sources set next_check_at=clock_timestamp()-interval'1 minute';");
+   const job = claim(); launch(job); run(job, 'EmptyRun' + String(++sequence).padStart(4, '0'));
+   finish(job, useful ? [item(job)] : []); return delay();
+  };
+  expect([cycle(false), cycle(false), cycle(false), cycle(false), cycle(false)]).toEqual([1, 2, 4, 6, 6]);
+  expect(cycle(true)).toBe(1); expect(cycle(false)).toBe(1);
+  expect(service("select count(*)from public.collection_budget_reservations where state='held';")).toBe('0');
+  expect(service('select count(*)from public.reader_source_updates;')).toBe('1');
+ });
+ it('caps persistent blocked-source retries at one day without marking coverage complete', () => {
+  result('select public.sync_social_collection_sources();');
+  const delays: number[] = [];
+  for (let i = 0; i < 6; i++) {
+   sql("update public.social_collection_sources set next_check_at=clock_timestamp()-interval'1 minute';");
+   const job = claim(); launch(job); run(job, 'BlockedRun' + String(i).padStart(4, '0'));
+   finish(job, [], .001, true, 'provider_blocked');
+   delays.push(Number(service(`select extract(epoch from(s.next_check_at-j.finished_at))/3600 from public.social_collection_sources s join public.social_collection_jobs j on j.id=${q(job.id)};`)));
+  }
+  expect(delays).toEqual([2, 4, 8, 16, 24, 24]);
+  expect(service('select last_complete_until is null and last_discovered_until is null from public.social_collection_sources;')).toBe('t');
+  expect(service('select count(*)from public.reader_source_updates;')).toBe('0');
+  expect(() => sql("set role anon;select public.social_collection_retry_delay('x.com/source',gen_random_uuid(),false,null);")).toThrow();
+  expect(() => sql("set role authenticated;select public.social_collection_retry_delay('x.com/source',gen_random_uuid(),false,null);")).toThrow();
+ });
+ it('keeps provider reconciliation prompt and unknown charges held during an empty run', () => {
+  result('select public.sync_social_collection_sources();');
+  const job = claim(); launch(job); run(job);
+  const before = service('select next_check_at from public.social_collection_sources;');
+  finish(job, [], null, false, 'provider_poll_failed');
+  expect(service('select next_check_at from public.social_collection_sources;')).toBe(before);
+  expect(Number(service('select extract(epoch from(next_poll_at-lease_until))/60 from public.social_collection_jobs;'))).toBe(5);
+  expect(service('select state from public.collection_budget_reservations;')).toBe('held');
+  sql("update public.social_collection_jobs set lease_until=clock_timestamp()-interval'1 minute',next_poll_at=clock_timestamp()-interval'1 minute';");
+  expect(result('select public.claim_social_collection_job(false);').id).toBe(job.id);
+ });
+ it('ignores isolated proof failures when scheduling a followed source', () => {
+  result('select public.sync_social_collection_sources();');
+  for (let i = 0; i < 3; i++) {
+   const proof = result("select public.claim_social_collection_proof('X','https://x.com/source','Proof Source','social-owner');");
+   launch(proof); run(proof, 'ProofRun' + String(i).padStart(4, '0'));
+   finish(proof, [], .001, true, 'provider_blocked');
+  }
+  const job = claim(); launch(job); run(job, 'NormalRun123'); finish(job, []);
+  expect(Number(service(`select extract(epoch from(s.next_check_at-j.finished_at))/3600 from public.social_collection_sources s join public.social_collection_jobs j on j.id=${q(job.id)};`))).toBe(1);
+ });
  it('does not qualify LinkedIn or another account by adding private follows', () => {
   const before = result("select state from public.reader_workspaces where user_id='social-owner';");
   const proof = result("select public.claim_social_collection_proof('X','https://x.com/proofsource','Proof Source','social-owner');");

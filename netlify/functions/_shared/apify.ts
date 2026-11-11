@@ -254,7 +254,20 @@ async function readApifyRun(runId: string, actorId: string, source: Source, maxI
   if (feeOnly) return { status: 'completed', telemetry };
   try {
     const datasetId = providerId(run.defaultDatasetId);
-    const items = await apifyRequest('datasets/' + datasetId + '/items?clean=true&format=json&limit=' + maxItems, config, fetcher);
+    // A three-upload discovery result can exceed the response limit while
+    // every complete record fits. Read those fixed offsets separately, keeping
+    // all fields and the same per-response byte limit. Empty cleaned rows do
+    // not hide later offsets; a failed page still rejects the whole import.
+    let items: unknown;
+    if (discoveryChannelId) {
+      const rows: unknown[] = [];
+      for (let offset = 0; offset < DISCOVERY_ITEMS; offset++) {
+        const page = await apifyRequest('datasets/' + datasetId + '/items?clean=true&format=json&limit=1&offset=' + offset, config, fetcher);
+        if (!Array.isArray(page) || page.length > 1) throw new CollectionError(502, 'provider_response_invalid', 'The provider returned an invalid discovery page.');
+        rows.push(...page);
+      }
+      items = rows;
+    } else items = await apifyRequest('datasets/' + datasetId + '/items?clean=true&format=json&limit=' + maxItems, config, fetcher);
     if (discoveryChannelId) {
       if (!Array.isArray(items) || items.some(value => {
         const row = object(value), channelUrl = typeof row.channelUrl === 'string' ? row.channelUrl.replace(/\/$/, '') : '';

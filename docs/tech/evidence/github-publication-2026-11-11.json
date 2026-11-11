@@ -1,0 +1,182 @@
+{
+  "kind": "public_repository_hosted_ci_success_and_local_cleanup_verified",
+  "recordedAtUtc": "2026-11-11T01:34:41Z",
+  "repository": "raduvlad92/recap",
+  "ownerReportsGitHubUpgrade": true,
+  "visibility": {
+    "before": "private",
+    "after": "public",
+    "nativeReadback": true,
+    "anonymousHttpStatus": 200
+  },
+  "pricing": {
+    "standardHostedPublicComputeFree": true,
+    "doesNotReduceIncludedCompute": true,
+    "largerRunnersBilled": true,
+    "storageSeparateAllowances": true,
+    "checkedSource": "https://docs.github.com/en/billing/concepts/product-billing/github-actions",
+    "standardRunnerSource": "https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job"
+  },
+  "publicationReview": {
+    "reachableCommits": 1266,
+    "historicalTextBlobs": 3279,
+    "nonFixtureScreenshotsOcr": 44,
+    "workflowLogArchives": 220,
+    "artifactArchives": 47,
+    "extractedArchiveTextMembers": 1818,
+    "metadataTextFiles": 4,
+    "issuesAndPrBodies": 23,
+    "issueComments": 0,
+    "reviewComments": 0,
+    "releases": 0,
+    "scanner": "official Gitleaks8.30.1 checksummed DarwinARM64",
+    "gitFindingsReviewed": 216,
+    "gitFindingCategories": {
+      "constructed_test_fixture_or_public_actor_reference": 171,
+      "integrity_or_secret_continuity_hash": 41,
+      "explicitly_publishable_client_configuration": 4
+    },
+    "surfaceFindingsReviewed": 238,
+    "surfaceFindingCategories": {
+      "explicitly_publishable_client_configuration": 219,
+      "public_configuration_integrity_hash": 18,
+      "source_map_identifier_sequence": 1
+    },
+    "unresolvedCredentialFindings": 0,
+    "concretePrivacyBlockersFound": 0,
+    "sourceAndWorkflowIndependentReview": "no concrete blocker found",
+    "scopeLimitation": "bounded review, not a guarantee of absence",
+    "nativeRulesetsBefore": 0,
+    "mainProtectionBefore": "not protected; unchanged",
+    "historyRewritten": false,
+    "githubLogsOrArtifactsDeleted": false,
+    "rawReportsCommitted": false,
+    "reviewedArchiveManifestSha256": "fce82fd4bd9031b093a6a297117b742d5dc67b56209f5d472f7b10a1b461311e"
+  },
+  "localTrial": {
+    "runId": "42937052997",
+    "conclusion": "cancelled_at_owner_direction",
+    "registrationAbsent": true,
+    "localJitRemoved": true,
+    "trialVariableAbsent": true,
+    "containerAndVolumesAndLoopRemoved": true,
+    "fullReaderResultProven": false,
+    "replacementLocalRunnerAdmitted": false,
+    "backgroundExitOneClassification": "expected_owner_requested_cancellation_not_new_failure"
+  },
+  "hostedRetry": {
+    "mode": "fresh pull_request checks after publication",
+    "started": true,
+    "productionDeploymentAuthorized": false,
+    "mainPush": false,
+    "headSha": "48e1da28921bb8620a374868a32df55caabe2c2e",
+    "event": "pull_request",
+    "runs": [
+      {
+        "runId": "42940219117",
+        "jobId": "130259968406",
+        "workflow": "Check recap",
+        "job": "check",
+        "status": "completed",
+        "runnerId": 1000000891,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "dependencyInstall": "passed",
+        "applicationChecks": "passed",
+        "conclusion": "success",
+        "vitestPassed": 3309,
+        "vitestSkipped": 1012,
+        "filesPassed": 115,
+        "filesSkipped": 31
+      },
+      {
+        "runId": "42940219114",
+        "jobId": "130259969085",
+        "workflow": "Verify and deploy Cloudflare",
+        "job": "verify",
+        "status": "completed",
+        "runnerId": 1000000892,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "postgres17Setup": "passed",
+        "dependencyInstall": "passed",
+        "applicationAndPostgresChecks": "passed",
+        "conclusion": "success",
+        "vitestPassed": 4321,
+        "vitestSkipped": 0,
+        "filesPassed": 146,
+        "guardedReaderMigrationTests": 102,
+        "guardedReaderMigrationSkipped": 0,
+        "buildAndTypecheck": "passed",
+        "offlineWorkerdChecks": 16,
+        "offlineWorkerdOutboundNetwork": "blocked"
+      }
+    ],
+    "isolatedLocalTrialRun": "42940219084",
+    "isolatedLocalTrialConclusion": "skipped_as_disabled",
+    "billingAdmissionForTheseChecks": "passed",
+    "finalResult": "success",
+    "sourceHead": "48e1da28921bb8620a374868a32df55caabe2c2e",
+    "syntheticMerge": "01c87d878842c576e8933be940a5be1704482737",
+    "additionalJobs": [
+      {
+        "name": "artifact-integrity",
+        "jobId": "130263622206",
+        "conclusion": "success"
+      },
+      {
+        "name": "checkpoint-storage",
+        "jobId": "130263622152",
+        "conclusion": "success"
+      },
+      {
+        "name": "prepare-active",
+        "jobId": "130263624110",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "deploy",
+        "jobId": "130263623624",
+        "conclusion": "skipped"
+      }
+    ],
+    "checkRollup": {
+      "total": 9,
+      "success": 4,
+      "neutral": 2,
+      "skipped": 3,
+      "failure": 0,
+      "interpretation": "all reported results acceptable; intentional skips/neutral probes are not executed test passes"
+    },
+    "artifact": {
+      "id": 13821465004,
+      "name": "therecap-cloudflare-01c87d878842c576e8933be940a5be1704482737",
+      "nativeDigest": "sha256:df6b692d1075e0c31cdd5c364b3c263c6a765e2d0658779a2bcfbbf389b7fe69",
+      "downloadedBytes": 5200985,
+      "downloadDigestVerified": true,
+      "manifestRelease": "01c87d878842c576e8933be940a5be1704482737",
+      "mode": "shadow",
+      "jobsEnabled": false,
+      "publicConfig": null,
+      "assetCount": 74,
+      "separateNativeIntegrityJobPassed": true
+    },
+    "logArchiveSha256": {
+      "check-logs.zip": "e53672322777eebba1efc6f5059168b96ec391762933c08937913391a35254a0",
+      "verify-logs.zip": "3a00905c98dd0a1fa00529dde592dcac01e9c6430da6298d4f0e4b94b6f7a2bb"
+    },
+    "prState": {
+      "open": true,
+      "draft": true,
+      "reviews": 0,
+      "mergeOrDeploymentPerformed": false
+    }
+  },
+  "costs": {
+    "newPaidPlanPurchasedByAssistant": false,
+    "sourceProviderModelStarts": 0,
+    "localAuditComputeStorageBandwidth": "unmeasured"
+  }
+}

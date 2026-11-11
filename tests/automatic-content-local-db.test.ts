@@ -49,6 +49,16 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
    insert into public.automatic_content_policies(user_id,enabled,starts_at)values(${q(owner)},true,clock_timestamp()-interval'1 hour');`);
  });
  afterAll(()=>{if(started)execFileSync('pg_ctl',['-D',join(root,'data'),'stop','-m','immediate'],{stdio:'ignore'});if(root)rmSync(root,{recursive:true,force:true});});
+ it('claims a new draft above the old trial total only within both renewed USD12 controls',()=>{
+  sql(`insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,actual_usd,state,created_at)
+   select ${q(owner)},'historical-'||i,gen_random_uuid(),${q(model)},repeat('c',64),.1,.1,'settled',clock_timestamp()-interval'2 days'from generate_series(1,99)i;
+   insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,state,created_at)
+   values(${q(owner)},'historical-unknown',gen_random_uuid(),${q(model)},repeat('c',64),.05,'unknown',clock_timestamp()-interval'2 days');
+   update public.content_analysis_budget set lifetime_limit_usd=12;update public.reader_content_analysis_policies set lifetime_limit_usd=12;`);
+  const previous=service("select to_jsonb(c)from public.reader_content_analysis_calls c where call_key='historical-unknown';");
+  const t=task();expect(t.claimed).toBe(true);expect(reserve(t).claimed).toBe(true);
+  expect(service("select to_jsonb(c)from public.reader_content_analysis_calls c where call_key='historical-unknown';")).toBe(previous);
+ });
  it('recovers transport after domain completion without replaying a paid call or publishing its held review',()=>{
   const release='a'.repeat(40),first='cron:automatic-content:3:1',second='cron:automatic-content:3:2';
   sql(`update hosting_runtime_control set owner='cloudflare',epoch=3,release=${q(release)},paused=false,old_host_fenced=true;`);
