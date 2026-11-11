@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-11T03:42:40.629709+00:00",
+  "scope": "PR26 merge, exact-main preparation, native stopped quiet window; deployment and migrations still pending",
+  "pullRequest": {
+    "url": "https://github.com/raduvlad92/recap/pull/26",
+    "head": "4c0ad6d83749853b7c0e27c3ab62aa816c465d14",
+    "mergeCommit": "710b509b8b833a9e065246cb4e73df9ab65a6c04",
+    "tree": "e8b5517f87f1ef37dacc66ee005268c363459cbb",
+    "conflictResolved": true,
+    "unwatchedAfterMerge": true
+  },
+  "ci": {
+    "pullRequestRun": 42950401285,
+    "requiredJobsPassed": [
+      "verify",
+      "artifact-integrity",
+      "checkpoint-storage"
+    ],
+    "applicationTests": 4338,
+    "applicationTestFiles": 146,
+    "originalGuardedMigrationCases": 102,
+    "newGuardedMigrationCases": 14,
+    "skipsInTestSuites": 0
+  },
+  "mainPreparation": {
+    "runId": 42952634015,
+    "artifactId": 13826390896,
+    "archiveDigest": "sha256:f64225b375a332e3810cb4e33e8f31cbb430fd5862ea5db7c27b3fb7b1ba04a2",
+    "archiveAndEveryFileVerified": true,
+    "provenance": {
+      "verified": true,
+      "runId": 42952634015,
+      "artifactId": 13826390896,
+      "release": "710b509b8b833a9e065246cb4e73df9ab65a6c04",
+      "archiveDigest": "sha256:f64225b375a332e3810cb4e33e8f31cbb430fd5862ea5db7c27b3fb7b1ba04a2",
+      "artifactDigest": "e444ec1c245b3492bd3dc87c9432d209a082033df48f333356e540678a29670c",
+      "deploymentSkipped": true,
+      "preparationKind": "manual-artifact-only",
+      "historicalReadOnly": false
+    },
+    "deploymentPerformed": false
+  },
+  "nativeWindow": {
+    "operation": "f7e8704c-c45c-4a53-8335-9d50d3337532",
+    "workflowOperation": "0813c84f-a850-47b7-b908-aad81733f5f2",
+    "serving": "182457410f7f8e979348d10347fe50b1e94b295b",
+    "phase": "quiet-window",
+    "schedulesStoppedAt": "2026-11-11 03:37:24.116178+00",
+    "pausedAt": "2026-11-11 03:37:42.97947+00",
+    "consumerStoppedAt": "2026-11-11 03:38:53.043867+00",
+    "quietNotBefore": "2026-11-11T03:55:53.044Z"
+  },
+  "lastQuietRead": {
+    "observedAt": "2026-11-11 03:39:23.948496+00",
+    "quietSatisfied": false,
+    "activeWork": 0,
+    "legacyUncertainFramesRetained": 96,
+    "jobsCronsAbsent": true,
+    "queueConsumersAbsent": true,
+    "sourceAndRuntimeFlagsUnchanged": true,
+    "bothDestructiveLifecycleFlagsInactive": true
+  },
+  "publicHttp": {
+    "recordedAt": "2026-11-11T03:41:14.319Z",
+    "requests": [
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/api/health",
+        "status": 200,
+        "release": "182457410f7f8e979348d10347fe50b1e94b295b",
+        "mode": "active"
+      },
+      {
+        "path": "/api/admin",
+        "status": 503,
+        "errorCode": "hosting_execution_paused"
+      }
+    ]
+  },
+  "notPerformed": {
+    "readerMigrations": true,
+    "dailyUseMigrations": true,
+    "budgetActivation": true,
+    "newReleaseDeployment": true,
+    "modelProof": true,
+    "publication": true,
+    "reminderSend": true
+  },
+  "controls": {
+    "approvedCumulativeAiUsd": 12,
+    "liveCumulativeAiUsd": 10,
+    "dailyAiUsd": 5,
+    "perCallAiUsd": 0.1,
+    "existingUnknownModelChargesHeld": 7,
+    "sourceCapsUnchanged": true,
+    "remindersOff": true
+  },
+  "costs": {
+    "operatorStartedSupplierRuns": 0,
+    "operatorStartedModelCalls": 0,
+    "originalChargesAndHoldsUntouched": true,
+    "hostingAndApiUsage": "unmeasured; routine pre-stop source activity is separate"
+  },
+  "continuation": {
+    "enabled": true,
+    "nextRunAt": "2026-11-11T03:57:00.000Z",
+    "nextRunBerlin": "2026-11-11 04:57 CET",
+    "kind": "once, same existing thread",
+    "nextAction": "Verify fresh actual quiet completion, then separate guarded rollback/apply transactions and existing normal CI deployment"
+  },
+  "readiness": "Not yet accepted for daily recap use. Production processing is temporarily paused for the controlled rollout; useful publication and72hour evidence remain pending."
+}
