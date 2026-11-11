@@ -4,13 +4,16 @@ on:
     paths:
       - 'src/**'
       - 'public/**'
+      - 'actors/**'
+      - 'assets/**'
+      - 'data/**'
       - 'index.html'
       - 'netlify/**'
       - 'cloudflare/**'
       - 'containers/**'
       - 'tests/**'
       - 'scripts/**'
-      - 'supabase/migrations/**'
+      - 'supabase/**'
       - 'package*.json'
       - 'tsconfig.json'
       - 'vite*.ts'
@@ -20,13 +23,16 @@ on:
     paths:
       - 'src/**'
       - 'public/**'
+      - 'actors/**'
+      - 'assets/**'
+      - 'data/**'
       - 'index.html'
       - 'netlify/**'
       - 'cloudflare/**'
       - 'containers/**'
       - 'tests/**'
       - 'scripts/**'
-      - 'supabase/migrations/**'
+      - 'supabase/**'
       - 'package*.json'
       - 'tsconfig.json'
       - 'vite*.ts'
@@ -46,10 +52,11 @@ permissions:
   contents: read
 concurrency:
   group: ${{ github.event_name == 'pull_request' && format('cloudflare-verify-{0}', github.ref) || 'therecap-hosting-production' }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -150,6 +157,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
       actions: read
@@ -174,6 +182,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
       checks: write
@@ -199,6 +208,7 @@ jobs:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && !(github.event_name == 'workflow_dispatch' && inputs.prepare_handover_artifact)
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       actions: read
