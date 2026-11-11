@@ -44,14 +44,14 @@ const vmQuery = `const fs=require('fs'),os=require('os'); const m=fs.readFileSyn
 
 export async function supervise(mode, directory, image) {
  assert.equal(process.platform,'darwin','This supervisor is only for local macOS Docker Desktop');
- assert(['qualify','deadline-probe','disk-probe','inputs-probe','run'].includes(mode));
+ assert(['qualify','deadline-probe','disk-probe','inputs-probe','launcher-probe','run'].includes(mode));
  assert.match(image,/^sha256:[a-f0-9]{64}$/);
  const local = realpathSync(join(root,'.local'));
  const dir = resolve(directory);
  assert(dir.startsWith(local+'/') && !existsSync(join(dir,'supervisor-started')));
- if (!['run','inputs-probe'].includes(mode)) mkdirSync(dir,{mode:0o700});
+ if (!['run','inputs-probe','launcher-probe'].includes(mode)) mkdirSync(dir,{mode:0o700});
  assert.equal(realpathSync(dir),dir); assert.equal(lstatSync(dir).mode & 0o077,0);
- const intent = ['run','inputs-probe'].includes(mode) ? validateIntent(JSON.parse(readFileSync(join(dir,'intent.json'),'utf8'))) : null;
+ const intent = ['run','inputs-probe','launcher-probe'].includes(mode) ? validateIntent(JSON.parse(readFileSync(join(dir,'intent.json'),'utf8'))) : null;
  if (intent) assert.equal(intent.location,'local-qualification');
  const operationId = intent?.operationId || randomUUID();
  const name = 'therecap-ci-local-'+operationId;
@@ -89,7 +89,7 @@ export async function supervise(mode, directory, image) {
   save(dir,'disk-custody.json',{operationId,loop,storage,work,maximumBytes:maximum});
   save(dir,'loop-attached.json',diskCommand('create'));
   workAttempted=true;docker(['volume','create','--label',label+'='+operationId,'--driver','local','--opt','type=ext4','--opt','device='+loop,'--opt','o=nodev,nosuid',work]);
-  docker(['run','--rm','--name',helper,'--label',label+'='+operationId,...helperBounds,'--cap-add','CHOWN','--user','0:0','--mount','type=volume,source='+work+',target=/work','--entrypoint','node',image,'-e',"const fs=require('fs');fs.chmodSync('/work',0o700);fs.chownSync('/work',10001,10001)"]);
+  docker(['run','--rm','--name',helper,'--label',label+'='+operationId,...helperBounds,'--cap-add','CHOWN','--user','0:0','--mount','type=volume,source='+work+',target=/work','--entrypoint','node',image,'-e',"const fs=require('fs');fs.rmdirSync('/work/lost+found');fs.chmodSync('/work',0o700);fs.chownSync('/work',10001,10001)"]);
   const query=`const fs=require('fs'),a=require('assert/strict');const s=fs.statfsSync('/probe',{bigint:true});a(s.blocks*s.bsize<=${maximum}n);console.log(JSON.stringify({operationId:${JSON.stringify(operationId)},filesystemBytes:String(s.blocks*s.bsize),freeBytes:String(s.bavail*s.bsize)}));`;
   const proof=JSON.parse(docker(['run','--rm',...helperBounds,'--user','10001:10001','--mount','type=volume,source='+work+',target=/probe,readonly','--entrypoint','node',image,'-e',query]));
   save(dir,'scratch-capacity.json',{...proof,hardMaximumBytes:maximum});
@@ -106,7 +106,7 @@ export async function supervise(mode, directory, image) {
   const args=['create','--name',name,'--label',label+'='+operationId,'--network',network,'--read-only','--init','--user','10001:10001','--cap-drop','ALL','--security-opt','no-new-privileges','--memory','4g','--memory-swap','4g','--cpus','1','--pids-limit','512','--restart','no','--log-driver','json-file','--log-opt','max-size=10m','--log-opt','max-file=2',
    '--tmpfs','/tmp:rw,noexec,nosuid,nodev,size=67108864,uid=10001,gid=10001','--mount','type=volume,source='+work+',target=/r'];
   if(inputs)for(const target of ['/run/trial','/run/secrets'])args.push('--mount','type=volume,source='+inputs+',target='+target+',readonly');
-  if(mode!=='run')args.push('--entrypoint','node');
+  if(!['run','launcher-probe'].includes(mode))args.push('--entrypoint','node');
   args.push(image);
   if(mode==='qualify')args.push('/opt/trial/qualify.mjs');
   if(mode==='inputs-probe')args.push('-e',"const fs=require('fs'),a=require('assert/strict');for(const p of ['/run/trial/intent.json','/run/secrets/runner-jit']){const s=fs.statSync(p);a.equal(s.uid,10001);a.equal(s.mode&511,384);a(fs.readFileSync(p,'utf8').length>32);a.throws(()=>fs.writeFileSync(p,'forbidden'),{code:'EROFS'})}console.log(JSON.stringify({privateInputProjectionQualified:true,uid:process.getuid(),readOnly:true}));");
@@ -130,6 +130,10 @@ export async function supervise(mode, directory, image) {
   const elapsedMilliseconds=Date.now()-started;
   save(dir,'runtime.json',{mode,code,exitCode:after.State.ExitCode,oomKilled:after.State.OOMKilled,timedOut,elapsedMilliseconds,deadlineSeconds:seconds,operationId,image});
   if(mode==='deadline-probe')assert(timedOut && !after.State.Running && elapsedMilliseconds<15000,'External deadline did not stop container');
+  else if(mode==='launcher-probe'){
+   const log=readFileSync(join(dir,'runner.log'),'utf8');
+   assert(!timedOut&&!after.State.OOMKilled&&code!==0&&log.includes('"event":"test-only-runner-start"')&&log.includes('"event":"test-only-runner-exit"')&&log.includes('"admitted":false'),'Launcher did not pass preflight or unexpectedly admitted the fixture');
+  }
   else {
    assert(!timedOut&&!after.State.OOMKilled&&code===0&&after.State.ExitCode===0,'Container did not finish successfully');
    if(mode==='qualify')assert(readFileSync(join(dir,'runner.log'),'utf8').includes('"pgcrypto":true'),'Environment qualification missing');

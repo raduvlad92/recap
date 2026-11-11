@@ -21,6 +21,12 @@ An initial Mac-mounted APFS image approach is discarded after Docker file-sharin
 
 [Sanitized probe receipt and source hashes](evidence/local-ci-trial-2026-11-11.json). These prove local containment/environment only. The full reader workload and actual native GitHub assignment remain pending at this checkpoint. No production or provider/model connection is introduced.
 
+## First native admission and corrected preflight
+
+Native run [42934793789](https://github.com/raduvlad92/recap/actions/runs/42934793789) queues for exact head `38b884a`. Its registered runner stops before contacting GitHub because `du` cannot traverse the new ext4 filesystem's root-owned `lost+found`. The automatic controller cancels the unassigned run and removes the registration, JIT, route, container, input/work/backing volumes and loop. Native terminal job readback shows cancelled, runner ID0 and zero steps; this is not an application test failure or executed CI pass.
+
+The trusted initializer now removes only that fresh empty recovery directory before handing the owned filesystem to UID10001. A fifth, network-disabled probe executes the actual image launcher with a constructed unusable JIT: its resource/scratch/copy/private-file preflight succeeds, the listener rejects the fixture, no job is admitted, and all local resources are removed. A new GitHub trial requires a fresh head/run/intent/JIT; the first intent is never reused.
+
 ## Exact GitHub trial
 
 Keep the existing workflow path and strict source/base/merge/run/attempt guards. Its visible job name is now **Isolated test-only trial**, so it makes no false Hostinger claim. Only `RECAP_CI_TRIAL_ENABLED` enables this PR-only workflow; existing release workflows and required checks are unchanged.

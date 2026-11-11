@@ -1,5 +1,7 @@
 # Demo and evidence log
 
+**11 November native admission checkpoint:** first native run `42934793789` is cancelled with no assigned runner/steps after the launcher refuses a root-owned scratch recovery folder. Exact registration/JIT/route/local cleanup passes. The corrected initializer and a real credential-free launcher probe pass; use a fresh native run and JIT. No application CI or production release pass is claimed. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 ## 11 November — local runner containment qualified
 
 The founder explicitly selects a local runner. Verify Mac/Docker capacity, reuse the exact ARM64 image and preserve all resource limits. Discard the unreliable Mac-mounted scratch implementation after failed setup probes; remove all owned images/mounts. Implement Linux scratch with narrow trusted setup helpers and device/inode custody checks. All 94 guard/operator tests pass; real nonroot runner/PostgreSQL, ENOSPC, external forced-deadline and read-only private-input probes pass. Every final probe container, input/work/backing volume and loop is removed. Full reader tests and native GitHub assignment remain pending; no production/provider/model/Hostinger change or purchase occurs. [Sanitized evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).

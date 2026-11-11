@@ -15,7 +15,7 @@ node scripts/ci-trial/operator.mjs readback .local/NEW_PRIVATE_OPERATION
 node scripts/ci-trial/operator.mjs cleanup .local/NEW_PRIVATE_OPERATION
 ```
 
-The trial variable must be deliberately enabled for one fresh PR run and removed/read back absent afterward. Preserve final job/report/cleanup receipts and remove the original local JIT only after container/input-volume/registration cleanup. Do not rerun the same operation directory; ambiguous JIT custody retains its original intent. `deadline-probe`, `disk-probe` and constructed `inputs-probe` modes qualify containment without contacting GitHub or creator/provider/model services.
+The trial variable must be deliberately enabled for one fresh PR run and removed/read back absent afterward. Preserve final job/report/cleanup receipts and remove the original local JIT only after container/input-volume/registration cleanup. Do not rerun the same operation directory; ambiguous JIT custody retains its original intent. `deadline-probe`, `disk-probe`, constructed `inputs-probe` and invalid-fixture `launcher-probe` modes qualify containment without contacting GitHub or creator/provider/model services.
 
 The founder authorized this trial on 9 November 2026. It is a candidate for running Therecap's checks on the existing Hostinger/Dokploy server. **11 November: native console access works, but available RAM fails the launch gate (2.00 GiB versus six GiB required).** Do not launch on this host in its observed state. [Native capacity checkpoint](../../docs/tech/HOSTINGER-CAPACITY-2026-11-11.md). Local Docker probes remain separate from Hostinger runner qualification.
 

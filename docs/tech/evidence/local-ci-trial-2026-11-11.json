@@ -62,10 +62,21 @@
       },
       "cleanupComplete": true,
       "logSha256": "34468750c5dfa0abebf825bdfbd4f27d8a21eac3551b87876a1fc3d8366b2243"
+    },
+    "linux-launcher-probe": {
+      "exitCode": 1,
+      "expectedFixtureRefusal": true,
+      "launcherPreflightPassed": true,
+      "jobAdmitted": false,
+      "network": "none",
+      "oomKilled": false,
+      "timedOut": false,
+      "cleanupComplete": true,
+      "logSha256": "0ec6b80b44980082b1445ee5b95325dc0cf8b3e2a449451c0a4ee55338c1b6ab"
     }
   },
   "sourceSha256": {
-    "infrastructure/ci-trial/local-supervise.mjs": "27077ccb110666ff16042da7196354b9ff9e1115643df87ce32ee9ebe280ae39",
+    "infrastructure/ci-trial/local-supervise.mjs": "d048d89630585e8c00b8aae3d39382c92763d1c525ed8e4b5d06c7c28f947fe4",
     "infrastructure/ci-trial/local-disk.py": "17491fa4c4a5e0bcdd6e21bb02775237d53fc6b6d18cdaa102a96772329d4d47",
     ".github/workflows/hostinger-ci-trial.yml": "71ba8baca11b5373be7531dcf208b96519b1d0c7493b6926be1866a7d23e1793",
     "scripts/ci-trial/operator.mjs": "6f3a5fd869867004f343c23b23a529c47198c31a031771b0c1fd9dc75ac57a65",
@@ -74,5 +85,19 @@
   },
   "allLocalProbeContainersVolumesLoopsAndMacImagesRemoved": true,
   "githubJobExecuted": false,
-  "productionReleaseAccepted": false
+  "productionReleaseAccepted": false,
+  "githubAdmissionAttempts": [
+    {
+      "runId": "42934793789",
+      "headSha": "38b884a72db19e8fe1f09b5850a0dffa8435ff30",
+      "conclusion": "cancelled",
+      "runnerAssigned": false,
+      "jobSteps": 0,
+      "cause": "launcher_scratch_scan_refused_root_owned_lost_found",
+      "registrationRemoved": true,
+      "localJitDeleted": true,
+      "routeRemoved": true,
+      "localResourcesRemoved": true
+    }
+  ]
 }

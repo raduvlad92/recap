@@ -1,5 +1,7 @@
 # Tracked implementation and validation plan
 
+**11 November local retry:** first native run `42934793789` is cancelled with no assigned runner/steps after the launcher refuses a root-owned scratch recovery folder. Exact registration/JIT/route/local cleanup passes. The corrected initializer and a real credential-free launcher probe pass; use a fresh native run and JIT. No application CI or production release pass is claimed. [Evidence](docs/tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 **11 November local CI trial:** publish the qualified local supervisor and neutral trial job name, deliberately enable only the inert PR test route, bind one fresh synthetic merge/run/attempt, create one JIT credential and execute under Mac supervision. Read back native GitHub identity/results and remove the exact registration/JIT/volumes/loop/route. Local 94-test and four-probe qualification is complete; full reader/native CI and production release remain separate. [Procedure and evidence](docs/tech/LOCAL-CI-TRIAL-2026-11-11.md).
 
 **11 November CI trial:** authenticated Hostinger console access is established. Native available RAM is 2.00 GiB, below the unchanged six-GiB launch prerequisite; keep the runner disabled and existing services/backups running. Require qualified spare capacity before native image/containment checks and one pinned GitHub job. A smaller profile needs separate workload/headroom qualification; do not substitute a lower guard or paid upgrade. No further manual credential setup is needed. [Exact observation](docs/tech/HOSTINGER-CAPACITY-2026-11-11.md).
