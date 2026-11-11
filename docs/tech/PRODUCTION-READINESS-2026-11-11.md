@@ -1,5 +1,9 @@
 # Production-readiness plan — 11 November 2026
 
+**Founder update,11 November:** defer backup work for now and focus on useful acquisition and grounded content quality (points 2/3). Prefer microservices and better Apify/API providers; do not depend on direct YouTube/Instagram integrations. The [focused investigation and proposed implementation sequence](INGESTION-AND-QUALITY-REPAIR-2026-11-11.md) supersede the immediate priority order below. Backup/recovery remains unproved, not passed or executed. No new supplier, cap, credential, publication or customer-launch activation is inferred.
+
+## Earlier readiness audit
+
 **Verdict: the deployed service operates, but it is not ready for a customer launch.** This investigation recommends the remaining work. It changes no live configuration, authorization or spending limit. The scoped daily-use finish plan remains authorized; production identity, destructive lifecycle activation, subscriptions and customer launch retain their separate gates.
 
 ## What the fresh investigation establishes

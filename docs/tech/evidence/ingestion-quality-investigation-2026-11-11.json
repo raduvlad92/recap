@@ -1,0 +1,318 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-11T20:35:52.211Z",
+  "scope": "Research and design for ingestion/content quality; backups deferred by founder, provider-first microservices preferred, no direct YouTube/Instagram integration dependency in proposed replacement",
+  "implementationState": "Not implemented or deployed by this investigation",
+  "founderDirection": {
+    "focus": [
+      "Useful source acquisition",
+      "Grounded content quality"
+    ],
+    "backupsDeferred": true,
+    "preferMicroservices": true,
+    "preferApifyAndApiProviders": true,
+    "directYouTubeInstagramDependencyRejected": true,
+    "publicationHoldUnchanged": true,
+    "noNewSpendingOrLaunchAuthorization": true
+  },
+  "codeFindings": [
+    {
+      "file": "netlify/functions/_shared/hourly-collection.ts",
+      "line": 424,
+      "finding": "Existing transcripts exit after native format recovery and have no separate provider-backed metadata-only route",
+      "repair": "Independent metadata enrichment without caption repurchase"
+    },
+    {
+      "file": "netlify/functions/_shared/social-collection.ts",
+      "line": 110,
+      "finding": "Only visible post/caption text is normalized; media speech is not analysis content",
+      "repair": "Typed transcript/ASR/OCR content adapter with separate provenance and coverage"
+    },
+    {
+      "file": "netlify/functions/_shared/automatic-content.ts",
+      "line": 114,
+      "finding": "recapCall uses extractor role/model for draft and check",
+      "repair": "Independent checker route and whole-claim evidence gates"
+    },
+    {
+      "file": "netlify/functions/_shared/automatic-content.ts",
+      "line": 192,
+      "finding": "Keyword path already has two inventories plus an independent checker and retains pending proposals",
+      "repair": "Preserve inventory; separate compact reviewed display selection"
+    },
+    {
+      "file": "netlify/functions/_shared/apify.ts",
+      "line": 270,
+      "finding": "One non-discovery result can exceed the existing per-response limit",
+      "repair": "Qualified compact single-track/paged provider representation, preserving original paid result and fee"
+    }
+  ],
+  "confirmedNativeContext": {
+    "configuredSocialActors": [
+      {
+        "platform": "Instagram",
+        "enabled": true,
+        "actorRef": "yugenox/instagram-post-scraper",
+        "buildNumber": "0.1.4",
+        "maxItems": 3,
+        "maximumUsd": "0.010000"
+      },
+      {
+        "platform": "LinkedIn",
+        "enabled": true,
+        "actorRef": "harvestapi/linkedin-profile-posts",
+        "buildNumber": "0.0.86",
+        "maxItems": 20,
+        "maximumUsd": "0.050000"
+      },
+      {
+        "platform": "X",
+        "enabled": true,
+        "actorRef": "xquik/x-tweet-scraper",
+        "buildNumber": "1.12.411",
+        "maxItems": 20,
+        "maximumUsd": "0.050000"
+      }
+    ],
+    "priorNewTranscriptsExcludedByExistingShortsPreference": 2,
+    "priorOrdinaryNewKeywordReviews": 88,
+    "priorNewRecapCheckerNegativeVerdicts": 2,
+    "priorPositiveVerdictAcknowledgesSupportOutsideQuote": true,
+    "sourcePreferencesOrReviewsChanged": false
+  },
+  "credentials": {
+    "observedAt": "2026-11-11T20:20:01.446Z",
+    "operatorMetadataReadAttempts": 5,
+    "allReturnedHttp401": true,
+    "errorType": "user-or-token-not-found",
+    "alternateExistingManagedCredentialFound": false,
+    "runtimeCredentialFailureProved": false,
+    "runtimeScope": "A recent native X job has generic social_provider_error; current upstream status/secret identity must be independently reconciled before assigning cause",
+    "tokenCreatedOrRotated": false,
+    "newOwnerAuthenticationRequest": false
+  },
+  "recentNativeOutcomes": {
+    "observed_at": "2026-11-11 20:22:10.55876+00",
+    "recent_reader_checks": [
+      {
+        "count": 20,
+        "status": "partial",
+        "error_code": null
+      },
+      {
+        "count": 1,
+        "status": "unchanged",
+        "error_code": null
+      },
+      {
+        "count": 18,
+        "status": "unsupported",
+        "error_code": "freshness_check_unavailable"
+      }
+    ],
+    "recent_social_jobs": [
+      {
+        "count": 1,
+        "state": "failed",
+        "platform": "X",
+        "error_code": "social_provider_error"
+      }
+    ]
+  },
+  "financialSnapshot": {
+    "observed_at": "2026-11-11 20:28:14.561348+00",
+    "model": {
+      "calls": 977,
+      "committed_usd": "9.998287986000",
+      "unknown_holds": 7
+    },
+    "model_budget": {
+      "id": true,
+      "enabled": true,
+      "updated_at": "2026-11-11T04:05:02.91079+00:00",
+      "daily_limit_usd": 5,
+      "lifetime_limit_usd": 12
+    },
+    "reader_source_budget": {
+      "unknown_jobs": 12,
+      "daily_limit_usd": "0.100000",
+      "daily_headroom_usd": "0.001000000000",
+      "lifetime_limit_usd": "1.000000",
+      "daily_committed_usd": "0.099000000000",
+      "lifetime_committed_usd": "0.523000000000"
+    }
+  },
+  "candidateProviders": [
+    {
+      "name": "Streamers YouTube Scraper",
+      "role": "Apify discovery/regular-Shorts-live route qualification",
+      "url": "https://apify.com/streamers/youtube-scraper",
+      "contract": "https://apify.com/streamers/youtube-scraper/input-schema",
+      "evidenceLevel": "Documented current contract; existing actor has historical real runs, new build/route not qualified",
+      "gap": "Generic video type/request filter alone does not prove regular format"
+    },
+    {
+      "name": "Karamelo YouTube Transcripts",
+      "role": "Focused timed-caption candidate",
+      "url": "https://apify.com/karamelo/youtube-transcripts",
+      "pricing": "https://apify.com/karamelo/youtube-transcripts/pricing",
+      "publishedFreeUsdPerTranscript": "0.007",
+      "evidenceLevel": "Documentation only; no Therecap run",
+      "gap": "Captions only, current .005 caption maximum insufficient"
+    },
+    {
+      "name": "Pinto YouTube Transcript",
+      "role": "Second timed-caption candidate",
+      "url": "https://apify.com/pintostudio/youtube-transcript-scraper",
+      "publishedUsdPerResult": "0.010",
+      "evidenceLevel": "Documentation only; no Therecap run",
+      "gap": "Current .005 caption maximum insufficient; no absent-caption ASR proof"
+    },
+    {
+      "name": "Apify Instagram Scraper and Reel Scraper",
+      "role": "Maintained post discovery and optional exact-Reel transcription",
+      "url": "https://apify.com/apify/instagram-reel-scraper",
+      "postUrl": "https://apify.com/apify/instagram-scraper",
+      "contract": "https://apify.com/apify/instagram-reel-scraper/input-schema",
+      "pricing": "https://apify.com/apify/instagram-reel-scraper/pricing",
+      "publishedFree": {
+        "perReelUsd": "0.0026",
+        "perStartUsd": "0.001",
+        "transcriptMinuteUsd": "0.048"
+      },
+      "evidenceLevel": "Documented replacement routes, not verified Therecap content proof",
+      "gap": "Transcript add-on and required adapter missing; one-minute example exceeds active .01 job cap"
+    },
+    {
+      "name": "Supadata",
+      "role": "Typed channel lists, transcript/ASR API alternative",
+      "contract": "https://docs.supadata.ai/youtube/channel-videos",
+      "transcriptContract": "https://docs.supadata.ai/get-transcript",
+      "evidenceLevel": "Documentation only",
+      "facts": {
+        "separateVideoShortLiveIds": true,
+        "nativeTranscriptCredits": 1,
+        "generatedMinuteCredits": 2,
+        "unavailable206MayCostCredit": true,
+        "generatedEmptySpeechMayBeCharged": true,
+        "async202Supported": true,
+        "resultExpiryAfterCompletionHours": 1
+      },
+      "gap": "New provider authority and real cost/coverage comparison not established"
+    },
+    {
+      "name": "ScrapeCreators",
+      "role": "Focused YouTube caption and Instagram ASR API alternative",
+      "contract": "https://docs.scrapecreators.com/v1/youtube/video/transcript/",
+      "instagramContract": "https://docs.scrapecreators.com/v2/instagram/media/transcript/",
+      "evidenceLevel": "Documentation only",
+      "facts": {
+        "youtubeCaptionCredits": 1,
+        "instagramShortAiCredits": 1,
+        "instagramPaidLongModeCreditsPerRoundedMinute": 10,
+        "aiTimingApproximate": true
+      },
+      "gap": "Actual account/credit pricing, long timeouts and source/format contract require qualification"
+    },
+    {
+      "name": "Bright Data",
+      "role": "Independent collection supplier candidate",
+      "contract": "https://docs.brightdata.com/scrapers/youtube.com.json",
+      "instagramContract": "https://docs.brightdata.com/scrapers/instagram.com.json",
+      "evidenceLevel": "Public schemas downloaded and inspected; no live collection",
+      "gap": "YouTube post_type is URL-inferred; inspected Instagram schemas do not establish speech transcript"
+    }
+  ],
+  "proposedServices": [
+    "Collection provider gateway",
+    "Independent content/metadata enrichment",
+    "Grounded generation",
+    "Independent verification"
+  ],
+  "reliability": {
+    "reuseExistingDurableQueuesLeasesAndBudgetLedger": true,
+    "deduplicateAtLeastOnceMessagesAndWebhooks": true,
+    "onlyKnownNonCreatingReadsAutomaticallyRetried": true,
+    "billableGetMayCreateJobOrCharge": true,
+    "ambiguousSubmissionsReconciledNotRetried": true,
+    "unknownFeesPreserved": true,
+    "proposedAdditionalExecutionRetries": 1,
+    "retryPolicyNotActivated": true,
+    "failedStageResumedInsteadOfWholeSource": true,
+    "noLegacyDlqReplayOrUncertainCleanup": true
+  },
+  "quality": {
+    "independentRecapCheckerRecommended": true,
+    "deterministicQuoteAndSourceVersionChecks": true,
+    "structuredAtomicClaimVerdictsRecommended": true,
+    "nearbyContextNotReplacementForQuotedEvidence": true,
+    "proposedCorrectionAttempts": 1,
+    "correctionMustBeReverified": true,
+    "fullLiteralKeywordInventoryPreserved": true,
+    "compactApprovedDisplaySubsetSeparate": true,
+    "modelAgreementNotTruthGuarantee": true,
+    "allOriginalNegativeVerdictsAndRequestsPreserved": true
+  },
+  "qualification": {
+    "vendorComparisonExecuted": false,
+    "newRealAiComparisonExecuted": false,
+    "providerOnlyNetworkContractTestPreparedAsRequirement": true,
+    "knownPositiveWindowsAndExactItemIdsRequired": true,
+    "scope": "Offline contracts/retained regressions first; actual bounded provider and model trials remain separate admitted operations",
+    "useful72HourClockStarted": false,
+    "ownerPublicationInferred": false
+  },
+  "operatorActions": {
+    "authenticatedApifyMetadataGets": 5,
+    "vendorDocumentationReads": true,
+    "providerJobStarts": 0,
+    "modelCalls": 0,
+    "directCreatorRequests": 0,
+    "productionWrites": 0,
+    "financialMutation": false,
+    "capChange": false,
+    "credentialRotation": false,
+    "subscriptionSignup": false,
+    "appDeployment": false
+  },
+  "privateEvidence": [
+    {
+      "name": "ingestion-provider-contracts-20261111-private.json",
+      "sha256": "6ca56689655bee0c77db4256a032afcc1711063fe7af24ed4cc9f01f2a6d4756"
+    },
+    {
+      "name": "ingestion-research-exact-actor-auth-read-private.json",
+      "sha256": "4c97bc3ee356ca349d2d4d1d13d6ac077215907c18f294c1bb629ca09b7719f8"
+    },
+    {
+      "name": "ingestion-research-existing-credential-authority-private.json",
+      "sha256": "5b21f1d9727ece1a50d876c56cc060ed5ff24c56992f22d81b97a4e70a4e82d8"
+    },
+    {
+      "name": "ingestion-quality-research-finances-20261111-private.json",
+      "sha256": "bfb4a90ea17d26684989f4195d54b1bd3362530c0b79a689c76025b6a941852e"
+    },
+    {
+      "name": "ingestion-research-recent-source-errors-private.json",
+      "sha256": "630b15bc6177e8d612746d7f802a9cdfb6399a46493a75eeba109039839893ab"
+    }
+  ],
+  "primaryOperationalSources": [
+    "https://docs.apify.com/integrations/webhooks/actions",
+    "https://docs.apify.com/api/v2/actors-runs-post",
+    "https://developers.cloudflare.com/queues/reference/delivery-guarantees/",
+    "https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/"
+  ],
+  "documentationValidation": {
+    "checkedAt": "2026-11-11T20:38:33.962Z",
+    "documentationOnly": true,
+    "changedFiles": 9,
+    "newJsonValid": true,
+    "changedLocalLinksValid": 16,
+    "knownPrivateValuesChecked": 154,
+    "diffWhitespacePassed": true,
+    "scopeAndEvidenceChecksPassed": true,
+    "mermaidBlockComplete": true,
+    "applicationTestsRerun": false
+  }
+}
