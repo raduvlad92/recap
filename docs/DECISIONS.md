@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 11 November 2026 — implement the provider/quality plan with parallel agents; retain the original account
+
+Founder explicitly says “ok, do ALL OF THIS, prioritize the use of multiple agents where it makes sense”. This authorizes implementation of the focused acquisition/quality repair, superseding research-only/no-agents wording while preserving every financial, publication, lifecycle and operational boundary. Three bounded agents implement provider enrichment, independent verification and service/runtime infrastructure; integration and native acceptance remain separate gates. Backups stay deferred.
+
+The supplied Apify token authenticates to a different account and cannot read a retained original run. Founder explicitly selects **the original account** and subsequently provides its token securely. Authentication, account/build/price pins and an exact old-run read pass; deployed renewal remains pending. Do not rebind future jobs or replace the deployed credential with the other-account token. Existing jobs, charges and unknown holds remain immutable. [Implementation and remaining gates](tech/PROVIDER-QUALITY-IMPLEMENTATION-2026-11-11.md).
+
 ## 11 November 2026 — prioritize provider microservices and content quality; defer backups
 
 Founder directs focus on production-readiness points 2/3, asks whether better Apify Actors, restartable microservices and AI double checks solve them, and states: **“Always prefer microservices and better API actors. We don't want to rely on direct integrations with YouTube or Instagram.”** Prefer vendor/API collection and explicit service boundaries; the replacement path must not silently fall back to app-side platform scraping. Research the complete acquisition/quality chain and prepare concrete contracts, safe retry rules and acceptance criteria. Backup work is deferred from current priorities; it is not certified complete or an approved destructive/retention shortcut.

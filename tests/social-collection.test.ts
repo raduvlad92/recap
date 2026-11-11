@@ -129,3 +129,73 @@ describe('paid fallback after free output is unusable',()=>{
   expect(storage.finish).toHaveBeenCalledWith(target,expect.anything(),expect.objectContaining({retrieval:'apify',accepted:1}),.002,true);
  });
 });
+
+describe('provider-only Instagram speech contract', () => {
+ const instagram: SocialJob = { ...job, platform: 'Instagram', source_key: 'instagram.com/source', source_url: 'https://www.instagram.com/source/', config: { ...configuration, platform: 'Instagram', actor_ref: 'apify/instagram-reel-scraper' } };
+ const reel = { url: 'https://www.instagram.com/reel/AbCd123/', shortCode: 'AbCd123', ownerUsername: 'source', timestamp: row.createdAt, caption: 'Brief caption.', transcript: 'The speech discusses a different important result.' };
+ it('normalizes speech from only the explicit reviewed Reel route, preserving the caption and coverage gap', () => {
+  const accepted = normalizeSocialDataset(instagram, [reel]);
+  expect(accepted.items[0].record).toMatchObject({ contentKind: 'feed_text', contentProvenance: { primaryKind: 'speech_transcript', complete: false, parts: [{ kind: 'post_caption', text: reel.caption }, { kind: 'speech_transcript', text: reel.transcript }] } });
+  expect(accepted.items[0].record.content).toContain(reel.transcript);
+  expect(accepted.items[0].record.coverage).toContain('visual content and completeness are not verified');
+  const legacy = normalizeSocialDataset({ ...instagram, config: { ...instagram.config, actor_ref: 'yugenox/instagram-post-scraper' } }, [reel]);
+  expect(legacy.items[0].record.content).toBe(reel.caption);
+  expect(legacy.items[0].revision).not.toBe(accepted.items[0].revision);
+ });
+ it('rejects malformed speech as a contract error without silently returning only the available caption', () => {
+  const output = normalizeSocialDataset(instagram, [{ ...reel, transcript: { text: 'Unexpected schema.' } }]);
+  expect(output.items).toEqual([]); expect(output.coverage).toMatchObject({ complete: false, rejected: { provider_content_schema_changed: 1 } });
+ });
+ it('makes transcription a separate opt-in and disables media downloads and share-count add-ons', () => {
+  expect(socialActorInput(instagram)).toMatchObject({ username: [instagram.source_url], resultsLimit: 20, includeTranscript: false, includeDownloadedVideo: false, includeSharesCount: false });
+ });
+ it('never uses native Instagram when the provider-only preflight returns an authentication failure', async () => {
+  const fakeStore = store(instagram), native = vi.fn(async () => [reel]);
+  const fetcher = vi.fn(async () => new Response(JSON.stringify({ error: { message: 'Secret upstream body must not escape.' } }), { status: 401 }));
+  await createSocialCollector({ log: testRetrievalLog(), store: fakeStore, native, fetcher, now: () => 0, env: name => name === 'SOURCE_COLLECTION_POLICY' ? 'provider-only-v1' : name === 'APIFY_API_TOKEN' ? 'fixture-token' : undefined })();
+  expect(native).not.toHaveBeenCalled(); expect(fakeStore.launch).not.toHaveBeenCalled();
+  expect(fakeStore.finish).toHaveBeenCalledWith(instagram, [], expect.objectContaining({ complete: false }), null, false, 'social_provider_authentication_failed');
+  expect(JSON.stringify(vi.mocked(fakeStore.finish).mock.calls)).not.toContain('Secret upstream');
+ });
+});
+
+describe('same-run bounded oversized dataset recovery', () => {
+ function scenario(individualOversize = false) {
+  const pricing = { startedAt: '2020-01-01T00:00:00Z', pricingModel: 'PAY_PER_EVENT' };
+  const config = { ...configuration, platform: 'Instagram' as const, actor_ref: 'apify/instagram-reel-scraper', max_items: 2, maximum_usd: .01, pricing_fingerprint: socialPricingFingerprint(pricing) };
+  const current: SocialJob = { ...job, platform: 'Instagram', source_key: 'instagram.com/source', source_url: 'https://www.instagram.com/source/', config };
+  const first = { url: 'https://www.instagram.com/reel/AbCd123/', shortCode: 'AbCd123', ownerUsername: 'source', timestamp: row.createdAt, caption: 'First complete caption.', transcript: 'First complete speech.', largeUnusedMetadata: 'x'.repeat(individualOversize ? 2 * 1024 * 1024 + 1 : 1150_000) };
+  const second = { ...first, url: 'https://www.instagram.com/reel/Other123/', shortCode: 'Other123', caption: 'Second complete caption.', transcript: 'Second complete speech.' };
+  const run = { id: 'Run12345', actId: config.actor_id, userId: config.apify_user_id, buildId: config.build_id, defaultDatasetId: 'Dataset12345', status: 'SUCCEEDED', usageTotalUsd: .006 };
+  const fetcher = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+   const url = new URL(String(input));
+   expect(url.hostname).toBe('api.apify.com');
+   if (url.pathname.endsWith('/users/me')) return new Response(JSON.stringify({ data: { id: config.apify_user_id } }));
+   if (url.pathname.includes('/actor-builds/')) return new Response(JSON.stringify({ data: { id: config.build_id, actId: config.actor_id, buildNumber: config.build_number, status: 'SUCCEEDED' } }));
+   if (url.pathname.endsWith('/acts/' + config.actor_id)) return new Response(JSON.stringify({ data: { id: config.actor_id, username: 'apify', name: 'instagram-reel-scraper', pricingInfos: [pricing] } }));
+   if (url.pathname.includes('/datasets/')) {
+    const offset = url.searchParams.get('offset');
+    return new Response(JSON.stringify(offset === null ? [first, second] : offset === '0' ? [first] : offset === '1' ? [second] : []));
+   }
+   if (init?.method === 'POST') expect(JSON.parse(String(init.body))).toMatchObject({ includeTranscript: true, includeDownloadedVideo: false });
+   return new Response(JSON.stringify({ data: run }));
+  });
+  const fakeStore = store(current), native = vi.fn(async () => []);
+  return { fetcher, fakeStore, native, current, run: () => createSocialCollector({ log: testRetrievalLog(), store: fakeStore, native, fetcher, now: () => Date.parse('2026-10-31T01:00:00Z'), env: name => name === 'SOURCE_COLLECTION_POLICY' ? 'provider-only-v1' : name === 'INSTAGRAM_REEL_SPEECH_ENABLED' ? 'true' : name === 'APIFY_API_TOKEN' ? 'fixture-token' : undefined })() };
+ }
+ it('reads complete fixed-offset records from the same accepted dataset without buying the source again', async () => {
+  const value = scenario(); await value.run();
+  expect(value.native).not.toHaveBeenCalled();
+  expect(value.fetcher.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(1);
+  const datasetReads = value.fetcher.mock.calls.filter(([url]) => String(url).includes('/datasets/')).map(([url]) => new URL(String(url)));
+  expect(datasetReads.map(url => url.searchParams.get('offset'))).toEqual([null, '0', '1', '2']);
+  const call = vi.mocked(value.fakeStore.finish).mock.calls.at(-1)!;
+  expect(call[1]).toHaveLength(2); expect(call[3]).toBe(.006); expect(call[4]).toBe(true);
+  expect(call[1][0].record.content).toContain('First complete speech.');
+ });
+ it('keeps an oversized single original pending and never truncates, retries its POST or imports partial text', async () => {
+  const value = scenario(true); await value.run();
+  expect(value.fetcher.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(1);
+  expect(value.fakeStore.finish).toHaveBeenLastCalledWith(value.current, [], expect.objectContaining({ complete: false, reason: 'reconciliation_required' }), null, false, 'response_too_large');
+ });
+});

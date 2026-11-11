@@ -10,6 +10,9 @@ export function VideoKeywordStrip({ keywords, timingBasis, onKeyword }: { keywor
   const [loopWidth, setLoopWidth] = useState(0);
   const [overflowing, setOverflowing] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const visible = expanded ? keywords : keywords.slice(0, 5);
+  useEffect(() => { setExpanded(false); }, [keywords]);
   useEffect(() => {
     const measure = () => {
       if (!strip.current || !group.current) return;
@@ -24,7 +27,7 @@ export function VideoKeywordStrip({ keywords, timingBasis, onKeyword }: { keywor
     if (strip.current) observer.observe(strip.current);
     if (group.current) observer.observe(group.current);
     return () => observer.disconnect();
-  }, [keywords]);
+  }, [keywords, expanded]);
   return <div ref={strip} className={`video-keyword-strip ${overflowing ? 'is-overflowing' : ''} ${paused ? 'is-paused' : ''}`} role="group" aria-label={t('keywordOrder')} style={{ '--keyword-loop-width': `${loopWidth}px`, '--keyword-loop-duration': `${Math.max(18, loopWidth / 28)}s` } as CSSProperties}>
     <div className="video-keyword-viewport" onFocusCapture={event => {
       if (event.target instanceof HTMLElement) event.target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -32,10 +35,11 @@ export function VideoKeywordStrip({ keywords, timingBasis, onKeyword }: { keywor
       if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.scrollLeft = 0;
     }}>
       <div className="video-keyword-track">
-        <div className="video-keyword-group" ref={group}>{keywords.map(keyword => <button key={keyword.label} className="video-keyword" onClick={() => onKeyword?.(keyword.label)} title={keyword.seconds === undefined ? t('discussionUnavailable') : t('discussionTime', { minutes: new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(keyword.seconds / 60), estimate: timingBasis === 'publisher-chapters' ? t('chapterEstimate') : '' })}>{keyword.label}</button>)}</div>
-        {overflowing && <div className="video-keyword-group video-keyword-copy" aria-hidden="true">{keywords.map(keyword => <span className="video-keyword" key={keyword.label} onClick={() => onKeyword?.(keyword.label)}>{keyword.label}</span>)}</div>}
+        <div className="video-keyword-group" ref={group}>{visible.map(keyword => <button key={keyword.label} className="video-keyword" onClick={() => onKeyword?.(keyword.label)} title={keyword.seconds === undefined ? t('discussionUnavailable') : t('discussionTime', { minutes: new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(keyword.seconds / 60), estimate: timingBasis === 'publisher-chapters' ? t('chapterEstimate') : '' })}>{keyword.label}</button>)}</div>
+        {overflowing && <div className="video-keyword-group video-keyword-copy" aria-hidden="true">{visible.map(keyword => <span className="video-keyword" key={keyword.label} onClick={() => onKeyword?.(keyword.label)}>{keyword.label}</span>)}</div>}
       </div>
     </div>
     {overflowing && <button className="keyword-motion-control" aria-pressed={paused} aria-label={t(paused ? 'resumeKeywords' : 'pauseKeywords')} onClick={() => setPaused(value => !value)}>{paused ? <Play size={11} aria-hidden="true" /> : <Pause size={11} aria-hidden="true" />}</button>}
+    {keywords.length > 5 && <button className="video-keyword-expand" type="button" aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? t('fewerKeywords') : t('moreKeywords', { count: keywords.length - 5 })}</button>}
   </div>;
 }

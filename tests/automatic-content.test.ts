@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { createHash } from 'node:crypto';
 import type { SourceUpdate } from '../src/lib/types';
 import { contentHash } from '../src/lib/content-processing';
 import { AnalysisError, type GenerationResult } from '../netlify/functions/_shared/content-analysis-model';
@@ -20,13 +21,34 @@ function keywordCall(input:KeywordLearningInput):GenerationResult{
  const prompt=JSON.parse(input.request.prompt.slice(input.request.prompt.lastIndexOf('\n')+1));
  return successful({readComplete:true,verdicts:prompt.candidates.map(({candidateIndex,name}:{candidateIndex:number;name:string})=>[candidateIndex,0,name==='NovaPay'?1:name==='AeroBox'?0:2]),missingNames:[]});
 }
+function checked(input:KeywordLearningInput,value:{readComplete:boolean;verdicts:Array<{index:number;supported:boolean;reason:unknown}>}):GenerationResult{
+ const prompt=JSON.parse(input.request.prompt);
+ return successful({sourceHash:prompt.sourceHash,readComplete:value.readComplete,verdicts:value.verdicts.map(raw=>{
+  const rawPoint=prompt.findings[raw.index],p={...rawPoint,evidenceQuote:prompt.sourceContext.text.slice(rawPoint.evidenceSpan.start,rawPoint.evidenceSpan.end)};
+  return {index:raw.index,quoteHash:createHash('sha256').update(p.evidenceQuote).digest('hex'),status:raw.supported?'entailed':'insufficient',wholeClaimSupported:raw.supported,contextConflict:false,reason:raw.reason,
+   atoms:[{start:0,end:p.text.length,text:p.text,status:raw.supported?'entailed':'insufficient',supportBasis:'quote',supportingSpans:raw.supported?[{start:0,end:p.evidenceQuote.length,text:p.evidenceQuote}]:[]}]};
+ })});
+}
+const simpleFindings=(prompt:any)=>prompt.findings.map(({evidenceSpan,...row}:any)=>({...row,evidenceQuote:prompt.sourceContext.text.slice(evidenceSpan.start,evidenceSpan.end)}));
 function recapCall(input:KeywordLearningInput):GenerationResult{
  const prompt=JSON.parse(input.request.prompt);
- if(prompt.task==='recap_check')return successful({readComplete:true,verdicts:prompt.findings.map(({index}:{index:number})=>({index,supported:true,reason:'The exact source quote supports the statement.'}))});
+ if(prompt.task==='recap_check')return checked(input,{readComplete:true,verdicts:prompt.findings.map(({index}:{index:number})=>({index,supported:true,reason:'The exact source quote supports the statement.'}))});
  return successful({readComplete:true,highlights:[point]});
 }
 
 describe('automatic content review bridge, isolated model fixtures only',()=>{
+ it('does not cite application provenance labels as original speech or caption evidence',async()=>{
+  const speech='The original spoken explanation describes a ten-hour test.';
+  const source:SourceUpdate={...record,format:'post',contentKind:'feed_text',content:'[Speech transcript]\n'+speech,
+   contentProvenance:{version:1,provider:'apify',contract:'instagram-reel-caption-speech-v1',primaryKind:'speech_transcript',complete:false,parts:[{kind:'speech_transcript',text:speech}]}};
+  const call=vi.fn(async()=>successful({readComplete:true,highlights:[{text:'The transcript contains a speech label.',evidenceQuote:'[Speech transcript]'}]}));
+  await expect(generateAutomaticContent(claim('recap',source),call)).rejects.toThrow('automatic_recap_empty_requires_review');
+  expect(call).toHaveBeenCalledOnce();
+ });
+ it('rejects changed provenance before buying a model call',async()=>{
+  const source:SourceUpdate={...record,contentProvenance:{version:1,provider:'apify',contract:'instagram-caption-v1',primaryKind:'post_caption',complete:false,parts:[{kind:'post_caption',text:'This unrelated text is absent from the source.'}]}};
+  const call=vi.fn();await expect(generateAutomaticContent(claim('recap',source),call)).rejects.toThrow('automatic_content_provenance_changed');expect(call).not.toHaveBeenCalled();
+ });
  it('uses both current inventories and Sol checker, holding accepted and uncertain names without flooding rejected suggestions',async()=>{
   const call=vi.fn(async(input:KeywordLearningInput)=>keywordCall(input));
   const output=await generateAutomaticContent(claim(),call);
@@ -52,7 +74,7 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
   const reason='The explanation preserves the original support verdict. '.repeat(7);
   const response={readComplete:true,verdicts:[{index:0,supported,reason}]};
   const before=JSON.stringify(response);
-  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful(response):recapCall(input));
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?checked(input,response):recapCall(input));
   const output=await generateAutomaticContent(claim('recap'),call);
   expect(output.proposal?.highlights).toEqual([point]);expect(call).toHaveBeenCalledTimes(2);
   expect(output.reason).toContain(supported?'requires your approval':'questioned this draft');
@@ -61,29 +83,29 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
   expect(JSON.stringify(response)).toBe(before);
  });
  it.each(['',null,17])('still rejects an invalid checker explanation %s',async reason=>{
-  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful({readComplete:true,verdicts:[{index:0,supported:true,reason}]}):recapCall(input));
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?checked(input,{readComplete:true,verdicts:[{index:0,supported:true,reason}]}):recapCall(input));
   await expect(generateAutomaticContent(claim('recap'),call)).rejects.toThrow('automatic_recap_invalid_check');
  });
  it('generates a source-quoted recap with a separate support check and keeps positive results pending',async()=>{
   const call=vi.fn(async(input:KeywordLearningInput)=>recapCall(input)),output=await generateAutomaticContent(claim('recap'),call);
-  expect(call).toHaveBeenCalledTimes(2);expect(call.mock.calls.map(([input])=>input.model)).toEqual(['deepseek/deepseek-v4.1-flash-1017','deepseek/deepseek-v4.1-flash-1017']);
+  expect(call).toHaveBeenCalledTimes(2);expect(call.mock.calls.map(([input])=>input.model)).toEqual(['deepseek/deepseek-v4.1-flash-1017','openai/gpt-6.1-sol-pro']);
   expect(output).toMatchObject({kind:'recap',proposal:{highlights:[point]},reason:expect.stringContaining('requires your approval')});
   expect(JSON.parse(call.mock.calls[0][0].request.prompt).content).toBe(content);
-  expect(JSON.parse(call.mock.calls[1][0].request.prompt).findings).toEqual([{index:0,...point}]);
+  expect(simpleFindings(JSON.parse(call.mock.calls[1][0].request.prompt))).toEqual([{index:0,...point}]);
   expect(output.callKeys[0]).not.toBe(output.callKeys[1]);
  });
  it('preserves a checker-negative recap as a questioned human proposal without retrying until agreement',async()=>{
-  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful({readComplete:true,verdicts:[{index:0,supported:false,reason:'The statement needs a qualification.'}]}):recapCall(input));
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?checked(input,{readComplete:true,verdicts:[{index:0,supported:false,reason:'The statement needs a qualification.'}]}):recapCall(input));
   const output=await generateAutomaticContent(claim('recap'),call);
   expect(call).toHaveBeenCalledTimes(2);expect(output.proposal?.highlights).toEqual([point]);expect(output.reason).toContain('Point 1: The statement needs a qualification.');
  });
  it('withholds an invented currency while retaining a supported finding without another draft call',async()=>{
   const source={...record,content:'The company reported 16 billion in revenue. Four advertising operations were sued.'};
   const kept={text:'Four advertising operations were sued.',evidenceQuote:'Four advertising operations were sued.'};
-  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful({readComplete:true,verdicts:[{index:0,supported:true,reason:'Supported.'}]}):successful({readComplete:true,highlights:[{text:'The company reported $16 billion in revenue.',evidenceQuote:'The company reported 16 billion in revenue.'},kept]}));
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?checked(input,{readComplete:true,verdicts:[{index:0,supported:true,reason:'Supported.'}]}):successful({readComplete:true,highlights:[{text:'The company reported $16 billion in revenue.',evidenceQuote:'The company reported 16 billion in revenue.'},kept]}));
   const output=await generateAutomaticContent(claim('recap',source),call);
   expect(output.proposal?.highlights).toEqual([kept]);expect(output.reason).toContain('1 draft point was withheld');expect(call).toHaveBeenCalledTimes(2);
-  expect(JSON.parse(call.mock.calls[1][0].request.prompt).findings).toEqual([{index:0,...kept}]);
+  expect(simpleFindings(JSON.parse(call.mock.calls[1][0].request.prompt))).toEqual([{index:0,...kept}]);
  });
  it.each([['$199','199 dollars'],['€199','199 euros'],['£199','199 pounds'],['199 USD','199 US dollars']])('accepts an explicit equivalent currency %s in a spoken quote', (amount,spoken)=>{
   const quote=`The final price was ${spoken}.`,p={text:`The final price was ${amount}.`,evidenceQuote:quote};
@@ -92,6 +114,11 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
  it.each(['$16 billion','16 billion USD','€16 billion','£16 billion','¥16 billion'])('rejects adding unsupported currency %s to a bare number',amount=>{
   const quote='The company reported 16 billion in revenue.';
   expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:`The company reported ${amount} in revenue.`,evidenceQuote:quote}]},quote)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it('preserves decimal and thousands separators instead of treating 1,5 as 15',()=>{
+  const quote='The reported source figure is 1,5.';
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'The reported figure is 15.',evidenceQuote:quote}]},quote)).toThrow('automatic_recap_unsupported_draft');
+  expect(validateAutomaticRecap({readComplete:true,highlights:[{text:'The reported figure is 1,5.',evidenceQuote:quote}]},quote)).toHaveLength(1);
  });
  it('does not infer a dollar country or mistake a weight paraphrase for currency',()=>{
   const price='The final price was 199 dollars.';
@@ -105,11 +132,11 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
   const quote='People asked whether the cure worked after seeing the advertisement.';
   const source={...record,content:'Ordinary opening. '.repeat(100)+'The creator does not sell that cure; scammers impersonated them. '+quote+' This was a fake advertisement. '+'Ordinary ending. '.repeat(100)};
   const draft={text:'The creator sold a cure advertised to viewers.',evidenceQuote:quote};
-  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful({readComplete:true,verdicts:[{index:0,supported:false,reason:'The surrounding source identifies a scam, not a genuine product.'}]}):successful({readComplete:true,highlights:[draft]}));
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?checked(input,{readComplete:true,verdicts:[{index:0,supported:false,reason:'The surrounding source identifies a scam, not a genuine product.'}]}):successful({readComplete:true,highlights:[draft]}));
   const output=await generateAutomaticContent(claim('recap',source),call),check=JSON.parse(call.mock.calls[1][0].request.prompt);
-  expect(check.findings).toEqual([{index:0,...draft}]);expect(check.sourceContexts[0].text).toContain('The creator does not sell that cure');
-  expect(source.content).toContain(check.sourceContexts[0].text);expect(check.sourceContexts[0].text.length).toBeLessThanOrEqual(quote.length+1202);
-  expect(check.instruction).toContain('Context cannot replace missing support');expect(check.sourceContexts[0].text).not.toContain('TitleOnlyBrand');
+  expect(simpleFindings(check)).toEqual([{index:0,...draft}]);expect(check.sourceContext.text).toContain('The creator does not sell that cure');
+  expect(check.sourceContext.text).toBe(source.content);expect(check).not.toHaveProperty('sourceContexts');
+  expect(check.instruction).toContain('Context cannot replace missing support');expect(check.sourceContext.text).not.toContain('TitleOnlyBrand');
   expect(output.reason).toContain('questioned this draft');expect(output.reason).toContain('not a genuine product');expect(call).toHaveBeenCalledTimes(2);
  });
  it('rejects an unsupported recap quote before checker inference',async()=>{
@@ -121,12 +148,12 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
   const second={text:'AeroBox supports C#.',evidenceQuote:'AeroBox supports C#.'};
   const call=vi.fn(async(input:KeywordLearningInput)=>{
    const prompt=JSON.parse(input.request.prompt);
-   if(prompt.task==='recap_check')return successful({readComplete:true,verdicts:prompt.findings.map(({index}:{index:number})=>({index,supported:true,reason:'Supported by the literal quote.'}))});
+   if(prompt.task==='recap_check')return checked(input,{readComplete:true,verdicts:prompt.findings.map(({index}:{index:number})=>({index,supported:true,reason:'Supported by the literal quote.'}))});
    return successful({readComplete:true,highlights:[point,{text:'Invented result.',evidenceQuote:'This quote never occurred in the source.'},second,point,{text:'Invalid quote length.',evidenceQuote:'tiny'}]});
   });
   const result=await generateAutomaticContent(claim('recap'),call);
   expect(call).toHaveBeenCalledTimes(2);expect(result.proposal?.highlights).toEqual([point,second]);expect(result.reason).toContain('2 draft points were withheld');expect(result.reason).toContain('may be incomplete');
-  expect(JSON.parse(call.mock.calls[1][0].request.prompt).findings).toEqual([{index:0,...point},{index:1,...second}]);
+  expect(simpleFindings(JSON.parse(call.mock.calls[1][0].request.prompt))).toEqual([{index:0,...point},{index:1,...second}]);
  });
  it.each([{readComplete:false,highlights:[point]},{readComplete:true,highlights:[point],extra:true},{readComplete:true,highlights:Array(7).fill(point)}])('does not salvage points from an incomplete or malformed source envelope',async value=>{
   const call=vi.fn(async()=>successful(value));
@@ -134,27 +161,16 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
  });
  it('requires distinct complete indexed checker verdicts',async()=>{
   const second={text:'AeroBox supports C#.',evidenceQuote:'AeroBox supports C#.'};
-  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful({readComplete:true,verdicts:[{index:0,supported:true,reason:'Supported'},{index:0,supported:true,reason:'Duplicate'}]}):successful({readComplete:true,highlights:[point,second]}));
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?checked(input,{readComplete:true,verdicts:[{index:0,supported:true,reason:'Supported'},{index:0,supported:true,reason:'Duplicate'}]}):successful({readComplete:true,highlights:[point,second]}));
   await expect(generateAutomaticContent(claim('recap'),call)).rejects.toThrow('automatic_recap_invalid_check');expect(call).toHaveBeenCalledTimes(2);
  });
  it('does not let reduction rewrite the selected finding or borrow a source-wide unrelated quote',()=>{
   expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{...point,text:'The final test lasted five whole hours.'}]},content,[point])).toThrow('automatic_recap_changed_finding');
  });
- it('reads every long-source chunk and selects from exact existing findings before a final independent check',async()=>{
-  const longContent=Array.from({length:9},(_,i)=>`The measured result for trial ${i+1} was accepted. `+'Ordinary source sentence. '.repeat(100)).join('\n')+'The measured result for trial 10 was accepted.';
-  const longRecord={...record,content:longContent},drafts:string[]=[],reductions:string[]=[];
-  const call=vi.fn(async(input:KeywordLearningInput)=>{
-   const prompt=JSON.parse(input.request.prompt);
-   if(prompt.task==='recap_draft'){
-    drafts.push(prompt.content);const quotes=prompt.content.match(/The measured result for trial \d+ was accepted\./g)||[];
-    return successful({readComplete:true,highlights:quotes.slice(0,6).map((quote:string)=>({text:quote,evidenceQuote:quote}))});
-   }
-   if(prompt.task==='recap_select'){reductions.push(input.request.key);return successful({readComplete:true,highlights:prompt.findings.slice(-6)});}
-   return successful({readComplete:true,verdicts:prompt.findings.map(({index}:{index:number})=>({index,supported:true,reason:'Supported.'}))});
-  });
-  const output=await generateAutomaticContent(claim('recap',longRecord),call);
-  expect(drafts.length).toBeGreaterThan(1);expect(drafts[0]).toContain('trial 1');expect(drafts.at(-1)).toContain('trial 10');
-  expect(reductions).toHaveLength(1);expect(output.proposal?.highlights).toHaveLength(6);expect(output.proposal?.highlights.at(-1)?.text).toContain('trial 10');
+ it('holds a long source before inference when complete independent verification cannot fit the per-call cap',async()=>{
+  const longContent='Ordinary source sentence. '.repeat(1500),call=vi.fn();
+  await expect(generateAutomaticContent(claim('recap',{...record,content:longContent}),call)).rejects.toThrow('automatic_recap_verifier_capacity');
+  expect(call).not.toHaveBeenCalled();
  });
  it('does no database work or inference when the new runtime is disabled, regardless of legacy settings',async()=>{
   const store={sync:vi.fn(),claim:vi.fn(),finish:vi.fn()},call=vi.fn();

@@ -134,6 +134,21 @@ const row = (id: string): ContentReviewSummary => ({ ...summary, id, label: id }
 const confirmed = (record: ContentReviewSummary, decision = 'approve') => ({ record: { ...record, status: decision === 'approve' ? 'approved' as const : 'rejected' as const, updatedAt: '2026-10-29T02:00:00Z' }, published: decision === 'approve' });
 
 describe('visible-page bulk review decisions', () => {
+  it('groups the loaded source inventory and selects only its keywords without publishing', () => {
+    const records = [row('name-a'), { ...row('recap'), kind: 'recap' as const }, { ...row('other-source'), sourceUrl: 'https://example.com/other', sourceTitle: 'Another source' }, row('name-b')];
+    const actions = props(), h = reviewHarness({ ...actions, data: page(records) });
+    let tree = h.render();
+    expect(nodeText(tree)).toContain('3 on this page');
+    button(tree, 'Select keywords').props.onClick(); tree = h.render();
+    expect(nodeText(tree)).toContain('2 selected');
+    expect(checkbox(tree, 'Select keyword name-a').props.checked).toBe(true);
+    expect(checkbox(tree, 'Select keyword name-b').props.checked).toBe(true);
+    expect(checkbox(tree, 'Select recap recap').props.checked).toBe(false);
+    expect(checkbox(tree, 'Select keyword other-source').props.checked).toBe(false);
+    expect(actions.decide).not.toHaveBeenCalled();
+    button(tree, 'Clear keywords').props.onClick(); tree = h.render();
+    expect(nodeText(tree)).toContain('0 selected');
+  });
   it('selects pending rows, reports mixed selection and clears it', () => {
     const records = [row('first'), row('second'), { ...row('decided'), status: 'approved' as const }], actions = props(), h = reviewHarness({ ...actions, data: page(records) });
     let tree = h.render(); const selectPage = checkbox(tree, 'Select this page'), input = { indeterminate: false }; selectPage.props.ref.current = input;

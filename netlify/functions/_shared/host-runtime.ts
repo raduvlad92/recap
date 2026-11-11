@@ -1,4 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
+import type { KeywordLearningInput } from './keyword-learning';
+import type { normalizeInstagramProviderContent } from './provider-content';
 
 export interface HostDownload {
   text: string; url: string; contentType: string; status?: number;
@@ -16,6 +18,10 @@ export interface HostSourceRequest {
 export interface HostRuntime {
   env: (name: string) => string | undefined;
   download?: (url: string, options: HostSourceRequest) => Promise<HostDownload>;
+  /** Private named Worker entrypoints. Admission and immutable receipts stay
+   * in their original domain stores; no transport retry may create new work. */
+  analysis?: (input: KeywordLearningInput) => Promise<Response>;
+  enrichInstagram?: (raw: unknown, actorRef: string) => Promise<ReturnType<typeof normalizeInstagramProviderContent>>;
 }
 
 // Request-local bindings: never mutate process.env or global fetch in an isolate

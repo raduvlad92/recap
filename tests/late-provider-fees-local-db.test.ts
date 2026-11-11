@@ -21,7 +21,9 @@ describe.skipIf(!available)('late provider fees on a disposable socket-only Post
    grant usage on schema public,auth to anon,authenticated,service_role;grant execute on function auth.jwt() to anon,authenticated,service_role;
    alter default privileges in schema public grant all on tables to service_role;`);
   const dir=new URL('../supabase/migrations/',import.meta.url);
-  for(const file of readdirSync(dir).filter(f=>f.endsWith('.sql')&&f!==migration).sort())sql(readFileSync(new URL(file,dir),'utf8'));
+  // Exercise this historical migration against its actual predecessor, not
+  // future migrations which intentionally replace its functions.
+  for(const file of readdirSync(dir).filter(f=>f.endsWith('.sql')&&f<migration).sort())sql(readFileSync(new URL(file,dir),'utf8'));
   // Deliberately ancient unknown source/model fixtures. No age-based clearing.
   sql(`insert into public.collection_budget_reservations(request_key,kind,maximum_usd,provider,actor_id,launch_attempted_at,created_at)
    select 'original-hold.'||n,'job',.005,'apify','h7sDV53CddomktSi5','2020-01-01','2020-01-01' from generate_series(1,17)n;

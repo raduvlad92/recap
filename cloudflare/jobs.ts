@@ -9,6 +9,8 @@ import learning from '../netlify/functions/keyword-learning-worker.mts';
 import accountLifecycle from '../netlify/functions/account-lifecycle-worker.mts';
 import { assertActive, hostingRpc, readControl, runWithBindings, validMessage, type Bindings, type JobKind, type JobMessage, type RuntimeControl } from './runtime';
 import { json } from '../netlify/functions/_shared/security';
+import { pipelineServices, type PipelineServices } from './pipeline-contract';
+export { CollectionService, EnrichmentService, GenerationService, VerificationService } from './pipeline-entrypoints';
 
 export const workers = { 'hourly-collection': hourly, 'content-analysis': analysis, 'automatic-content': automatic,
   'social-collection': social, 'social-content': socialContent, 'daily-briefing': briefing,
@@ -41,7 +43,7 @@ export async function scheduleJobs(event: { cron: string; scheduledTime: number 
     await enqueue(bindings, { version: 1, kind, epoch: control.epoch, release: bindings.RELEASE_SHA, key: 'cron:' + kind + ':' + control.epoch + ':' + slot });
   }
 }
-export async function consumeJobs(batch: { messages: QueueItem[] }, bindings: Bindings): Promise<void> {
+export async function consumeJobs(batch: { messages: QueueItem[] }, bindings: Bindings, services?: PipelineServices): Promise<void> {
   for (const message of batch.messages) {
     if (!validMessage(message.body)) { console.warn(JSON.stringify({ event: 'hosting_invalid_message' })); message.ack(); continue; }
     const item = message.body;
@@ -76,12 +78,18 @@ export async function consumeJobs(batch: { messages: QueueItem[] }, bindings: Bi
       assertActive(bindings, finalControl);
       if (finalControl.epoch !== item.epoch) throw new Error('Hosting epoch changed before domain work');
       if (automatic && (!claim.revision || finalStatus?.revision !== claim.revision)) throw new Error('Hosting revision changed before domain work');
+      // Named ctx.exports are actual private RPC loopback services from this
+      // exact artifact. No independently moving worker/configuration is added.
+      const revision = services ? (finalStatus?.revision || (await hostingRpc<{ revision: string }>(bindings, 'read_hosting_release_status')).revision) : undefined;
+      const capability = revision ? { key: item.key, token: claim.token, epoch: item.epoch, release: item.release, revision, messageId: message.id || null } : null;
+      const scopedBindings: Bindings = services && capability ? { ...bindings, pipeline: { services, capability } } : bindings;
       const hourlySecret = item.kind === 'hourly-collection' || item.kind === 'social-collection';
       const header = hourlySecret ? 'x-hourly-collection-secret' : 'x-content-analysis-secret';
       const secret = bindings[hourlySecret ? 'HOURLY_COLLECTION_WORKER_SECRET' : 'CONTENT_ANALYSIS_WORKER_SECRET'];
       if (typeof secret !== 'string' || secret.length < 32) throw new Error('Worker authentication is not configured');
       const body = item.kind === 'keyword-learning' ? JSON.stringify(claim.payload) : '{}';
-      const result = await runWithBindings(bindings, () => workers[item.kind](new Request(bindings.APP_URL + '/.netlify/functions/' + (item.kind === 'recap-reminders' ? 'recap-reminder' : item.kind) + '-worker', {
+      const collection = item.kind === 'hourly-collection' || item.kind === 'social-collection';
+      const result = services && capability && collection ? await services.CollectionService.run(capability, item.kind as 'hourly-collection' | 'social-collection') : await runWithBindings(scopedBindings, () => workers[item.kind](new Request(bindings.APP_URL + '/.netlify/functions/' + (item.kind === 'recap-reminders' ? 'recap-reminder' : item.kind) + '-worker', {
         method: 'POST', headers: { 'content-type': 'application/json', [header]: secret }, body,
       })));
       completed = result.status >= 200 && result.status < 300;
@@ -99,5 +107,8 @@ export async function consumeJobs(batch: { messages: QueueItem[] }, bindings: Bi
 export default {
   fetch: async () => json({ error: { code: 'not_found' } }, 404),
   scheduled: scheduleJobs,
-  queue: consumeJobs,
+  queue: async (batch: { messages: QueueItem[] }, bindings: Bindings, context: { exports: unknown }) => {
+    if (!pipelineServices(context.exports)) throw new Error('Private pipeline entrypoints are missing');
+    return consumeJobs(batch, bindings, context.exports);
+  },
 };

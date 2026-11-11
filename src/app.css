@@ -145,6 +145,7 @@ button.video-keyword:hover{text-decoration:underline;text-underline-offset:3px}
 .video-keyword-strip:hover .video-keyword-track,.video-keyword-viewport:focus-within .video-keyword-track,.video-keyword-strip.is-paused .video-keyword-track{animation-play-state:paused}
 .keyword-motion-control{display:grid;place-items:center;flex:none;width:24px;height:26px;color:#687163;border-radius:6px}
 .keyword-motion-control:hover{background:#edf1ea}
+.video-keyword-expand{flex:none;max-width:45%;padding:5px;color:#536c62;font-size:10px;overflow-wrap:anywhere}
 @keyframes video-keyword-loop{to{transform:translateX(calc(-1 * var(--keyword-loop-width)))}}
 .video-keyword-copy .video-keyword{cursor:pointer}
 .video-keyword-copy .video-keyword:hover{text-decoration:underline;text-underline-offset:3px}
