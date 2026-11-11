@@ -636,3 +636,5 @@ Founder explicitly corrected the sizing brief: assume 50 users, each following a
 ## 11 November 2026 — shared CI allowance
 
 Owner authorized implementing the infrastructure cost-control plan. Consolidate repeated verification, cancel superseded PR work and bound job runtimes while preserving release provenance and production holds. Repository visibility is already public; the separate Hostinger trial remains disabled because its spare-memory gate failed. See [CI controls](tech/CI-USAGE-CONTROLS-2026-11-11.md). Workflow validation and current-head CI precede merge. No provider collection, production activation, backup alteration or paid-overage change occurs.
+
+11 November CI follow-up: merged verification passes; existing release gates hold automatic delivery. Skip CI-only automatic delivery after an exact commit/path comparison, retaining explicit manual release and every runtime gate. This is workflow work, with no application activation or source collection.
