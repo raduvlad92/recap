@@ -1,5 +1,7 @@
 # Your morning checklist
 
+**11 November, 06:39 Berlin — repair live, service and original automatic delivery verified.** The exact normal release is accepted with your source limits, charges/holds and reminder opt-out preserved. The corrected four-point recap remains ready for your actual publication decision. Useful fresh ingestion and72-hour daily qualification remain open; the clock has not started. The assistant's next genuine daily-cutoff check is **08:05Berlin**. [Accepted release and remaining work](../tech/evidence/daily-use-quality-release-2026-11-11.json).
+
 **11 November, 05:58 Berlin — release and automatic delivery restored.** The reader/daily-use migrations and approved USD12 controls are applied, the normal release is verified and recurring scheduling is working. A real recap draft cost USD0.000355094; it remains held after quality review. A concrete corrected four-point version is ready for your publication decision; no new setup or spending extension is needed. The separate keyword test also finishes for USD0.028366746 and leaves16 held proposals. The assistant is delivering the quality repair, then must prove useful source/daily output over72hours. The next cutoff check is08:05Berlin. Your source caps, unknown charges and reminder opt-out remain intact. [Exact evidence](../tech/evidence/daily-use-native-release-proof-2026-11-11.json).
 
 ## Previous checkpoints — superseded by the current update

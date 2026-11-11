@@ -1,0 +1,305 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-11T05:41:25.613600+00:00",
+  "scope": "Actual successful exact normal main deployment, native acceptance and subsequent genuine scheduled transport; useful daily qualification remains open",
+  "pullRequest": {
+    "number": 27,
+    "head": "536233c76541a5440b968220d9c7a9f1fb237bc6",
+    "state": "merged",
+    "merge": "1947636523f415461f0cee0f78ad758f77ed49f6",
+    "testedTree": "b6d654130a84d7b6ed7ef32c53dd600555ba42ba",
+    "mergeTreeMatchesTestedTree": true,
+    "blockingReviews": 0,
+    "blockingReviewThreads": 0,
+    "unwatched": true
+  },
+  "prChecks": {
+    "runId": 42963669613,
+    "checks": [
+      {
+        "id": 130339301674,
+        "name": "cloudflare-handover-journal-probe",
+        "status": "completed",
+        "conclusion": "neutral",
+        "app": "github-actions"
+      },
+      {
+        "id": 130339295356,
+        "name": "cloudflare-release-journal-probe",
+        "status": "completed",
+        "conclusion": "neutral",
+        "app": "github-actions"
+      },
+      {
+        "id": 130339254475,
+        "name": "prepare-active",
+        "status": "completed",
+        "conclusion": "skipped",
+        "app": "github-actions"
+      },
+      {
+        "id": 130339254093,
+        "name": "deploy",
+        "status": "completed",
+        "conclusion": "skipped",
+        "app": "github-actions"
+      },
+      {
+        "id": 130339252854,
+        "name": "artifact-integrity",
+        "status": "completed",
+        "conclusion": "success",
+        "app": "github-actions"
+      },
+      {
+        "id": 130339252682,
+        "name": "checkpoint-storage",
+        "status": "completed",
+        "conclusion": "success",
+        "app": "github-actions"
+      },
+      {
+        "id": 130335900991,
+        "name": "verify",
+        "status": "completed",
+        "conclusion": "success",
+        "app": "github-actions"
+      }
+    ],
+    "applicationTests": 4350,
+    "testFiles": 146,
+    "guardedReaderCases": 102,
+    "guardedDailyUseCases": 14,
+    "guardedCasesSkipped": 0,
+    "catalogueTypecheckAndBuildPassed": true,
+    "offlineWorkerdChecks": 37,
+    "artifactIntegrityPassed": true,
+    "checkpointStoragePassed": true
+  },
+  "normalRelease": {
+    "operation": "5b50b5ae-f774-4c28-a9f1-064e9fb62c51",
+    "target": "1947636523f415461f0cee0f78ad758f77ed49f6",
+    "runId": 42965161775,
+    "event": "push",
+    "createdAt": "2026-11-11T05:20:52Z",
+    "operatorWorkflowDispatches": 0,
+    "phase": "native-accepted",
+    "latestReadback": {
+      "recordedAt": "2026-11-11T05:35:25.441Z",
+      "target": "1947636523f415461f0cee0f78ad758f77ed49f6",
+      "runId": 42965161775,
+      "runStatus": "completed",
+      "conclusion": "success",
+      "deploymentSelection": "cloudflare",
+      "jobs": [
+        {
+          "id": 130340564860,
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 130343744176,
+          "name": "deploy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 130343745582,
+          "name": "artifact-integrity",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 130343745735,
+          "name": "prepare-active",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 130343745751,
+          "name": "checkpoint-storage",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 130343907015,
+          "name": "cloudflare-release-checkpoint",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "externalWrites": 0
+    },
+    "exactMainFenceActive": false,
+    "nativeAcceptancePending": false,
+    "successfulNormalArchiveRequired": true,
+    "successfulNativeGitHubAppCheckpointRequired": true,
+    "acceptedAt": "2026-11-11T05:36:12.767Z",
+    "fenceReleasedAt": "2026-11-11T05:37:13.023Z",
+    "checkpointId": 130343907015,
+    "checkpointPhase": "complete",
+    "checkpointPending": null,
+    "checkpointError": null,
+    "artifactId": 13831696060,
+    "archiveDigest": "sha256:fe7d4ad76f7e32d1d0f28c851a2dc764c876fdb31fde6283680d860f83cc847d",
+    "archiveAndEveryNativeServingAssetVerified": true,
+    "workerVersions": {
+      "jobs": "b42fb337-f625-46d9-a12e-e4068ee30baa",
+      "web": "1d013a1b-413e-4fe4-82db-7e6ef43d8657"
+    },
+    "epoch": 6,
+    "paused": false,
+    "mainStayedFixedThroughAcceptance": true
+  },
+  "preservationBeforeMerge": {
+    "acceptedServingRelease": "710b509b8b833a9e065246cb4e73df9ab65a6c04",
+    "epoch": 5,
+    "paused": false,
+    "activeWork": 0,
+    "retainedLegacyUncertainFrames": 96,
+    "migrationCount": 59,
+    "originalModelRowsHashIdentical": 967,
+    "originalUnknownModelHolds": 7,
+    "modelRowsIncludingCompletedProofs": 972,
+    "modelCommittedUsd": "9.947208244000",
+    "cumulativeCapUsd": 12,
+    "dailyCapUsd": 5,
+    "perCallCapUsd": 0.1,
+    "sourceRuntimeAndOriginalDeliveryUnchanged": true,
+    "remindersOff": true,
+    "bothDestructiveLifecycleFlagsInactive": true,
+    "noMigrationOrAllowanceReset": true
+  },
+  "retainedSourceAssessment": {
+    "readOnly": true,
+    "cachedRowsNormalized": 3,
+    "realProviderRequestsDuringNormalization": 0,
+    "alreadyArchived": 3,
+    "exactTranscriptMatches": 2,
+    "differentHistoricalVersionsPreserved": 1,
+    "freshUsefulAcquisitionProved": false,
+    "archiveOverwrites": 0,
+    "newSupplierJobs": 0,
+    "newModelCalls": 0
+  },
+  "acceptanceStillOpen": [
+    "Semantic effect of the changed checker prompt has not been proved with another actual model call",
+    "Useful fresh acquisition",
+    "Actual owner publication approval",
+    "Genuine useful daily cutoff and72hour qualification"
+  ],
+  "continuations": [
+    {
+      "enabled": true,
+      "nextRunAt": "2026-11-11T07:05:00.000Z",
+      "localTime": "08:05 Europe/Berlin",
+      "scope": "Genuine source/daily-cutoff evidence; returned nextRunAt reconfirmed after native acceptance"
+    }
+  ],
+  "documentationCommit": "Prepared after acknowledged exact-main native fence release; documentation-only changes need no application deployment.",
+  "costs": {
+    "operatorStartedSupplierOrModelJobs": 0,
+    "hostingAndApiUsage": "unmeasured"
+  },
+  "nativeReadback": {
+    "publicHttp": [
+      {
+        "path": "/api/health",
+        "status": 200,
+        "release": "1947636523f415461f0cee0f78ad758f77ed49f6"
+      },
+      {
+        "path": "/creators/",
+        "status": 200
+      },
+      {
+        "path": "/api/admin",
+        "status": 401,
+        "errorCode": "sign_in_required"
+      },
+      {
+        "path": "/.netlify/functions/automatic-content-worker",
+        "status": 404
+      }
+    ],
+    "originalConsumerCronsSourcePolicyAndReminderOptOutUnchanged": true,
+    "sourceCapsUnchanged": true,
+    "bothDestructiveLifecycleFlagsInactive": true,
+    "oldUncertainFramesRetained": 96,
+    "deadLetterQueueUntouched": true,
+    "processingUnpaused": true,
+    "migrationCount": 59,
+    "originalModelCallRows": 967,
+    "originalModelCallSha256": "23d3057e8dd9f7e97177ce7ff3c3586d0e09d0ee9e1a1442076ca438ba9cbf11",
+    "allModelCallRowsAtReadback": 972,
+    "originalUnknownModelHoldsPreserved": 7,
+    "allUnknownModelHoldsAtReadback": 7,
+    "modelCommittedUsd": "9.947208244000",
+    "modelControlsUnchanged": {
+      "cumulativeUsd": 12,
+      "dailyUsd": 5,
+      "perCallUsd": 0.1
+    },
+    "originalPolicyAndReminderTablesUnchanged": {
+      "reader_collection_policies": {
+        "count": 1,
+        "unchanged": true
+      },
+      "automatic_content_policies": {
+        "count": 1,
+        "unchanged": true
+      },
+      "social_content_policies": {
+        "count": 1,
+        "unchanged": true
+      },
+      "recap_reminder_preferences": {
+        "count": 3,
+        "unchanged": true
+      },
+      "recap_reminder_policies": {
+        "count": 0,
+        "unchanged": true
+      }
+    }
+  },
+  "postReleaseOrdinaryTransport": {
+    "recordedAt": "2026-11-11T05:38:41.578Z",
+    "release": "1947636523f415461f0cee0f78ad758f77ed49f6",
+    "epoch": 6,
+    "newJobsVersion": "b42fb337-f625-46d9-a12e-e4068ee30baa",
+    "genuineScheduledInvocationObserved": true,
+    "nativeAutomaticMessageFrameControlRevisionMatched": true,
+    "bothCompletionBoundsPassed": true,
+    "completedKinds": [
+      "automatic-content",
+      "social-collection",
+      "social-content",
+      "daily-briefing"
+    ],
+    "newReaderArchiveRows": 0,
+    "usefulDailyAcceptance": false,
+    "manualQueueAdmissionOrPushes": 0
+  },
+  "currentSourceFinance": {
+    "observedAt": "2026-11-11 05:37:44.482279+00",
+    "readerBudget": {
+      "unknown_jobs": 12,
+      "daily_limit_usd": "0.100000",
+      "daily_headroom_usd": "0.009000000000",
+      "lifetime_limit_usd": "1.000000",
+      "daily_committed_usd": "0.091000000000",
+      "lifetime_headroom_usd": "0.485000000000",
+      "lifetime_committed_usd": "0.515000000000"
+    },
+    "ordinarySinceOriginalDeliveryRestoration": {
+      "held": 0,
+      "settled": 14,
+      "settled_usd": "0.020836037828",
+      "reservations": 14,
+      "held_maximum_usd": "0"
+    },
+    "scope": "Native persisted ledger, separate from the completed bounded AI proofs; no operator financial mutation and no final supplier invoice claim"
+  }
+}
