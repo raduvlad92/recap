@@ -346,3 +346,5 @@ The original bounded D22 jobs are finished; later D32 hourly collection is separ
 ## Collection planning at 50 readers — 24 October 2026
 
 Founder clarified that reliability recommendations must assume at least 50 users with at least 78 sources each: 3,900 follows at the minimum baseline. [Scale comparison and model](docs/tech/COLLECTION-50-USERS.md) recommend shared collection per unique public source, platform-specific discovery and selective managed retrieval. No-overlap baseline: 93,600 check opportunities/day; an illustrative doubled current platform mix requires 50,400 YouTube API units/day before extras, above the standard 10,000. Sharing, posting rates and full-content costs remain unmeasured. This is planning, not a 50-reader rollout or a new budget/provider approval.
+
+11 November CI follow-up: merged verification passes; existing release gates hold automatic delivery. Skip CI-only automatic delivery after an exact commit/path comparison, retaining explicit manual release and every runtime gate. This is workflow work, with no application activation or source collection.

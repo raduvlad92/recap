@@ -269,3 +269,5 @@ Resume by reading STATUS.md, SPEC.md, PLAN.md and docs/DECISIONS.md, then taking
 ## Planning baseline: at least 50 readers × 78 sources — 24 October 2026
 
 Replace one-reader sizing assumptions with at least 3,900 follows; model unknown source overlap and platform mix. [Architecture/cost options](docs/tech/COLLECTION-50-USERS.md) recommend a shared source/item inventory, durable queues, sufficient discovery quota, provider fallback, reusable source analysis and private reader views. Plan worst-case no reuse, measure empty-check/full-content costs, and aggregate cost reporting in the database. No application or supplier change is authorized merely by this planning scenario.
+
+11 November CI follow-up: merged verification passes; existing release gates hold automatic delivery. Skip CI-only automatic delivery after an exact commit/path comparison, retaining explicit manual release and every runtime gate. This is workflow work, with no application activation or source collection.
