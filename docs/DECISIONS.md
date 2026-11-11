@@ -1,5 +1,11 @@
 # Decisions and interview
 
+## 11 November 2026 — founder explicitly keeps the corrected recap held
+
+The founder selects **“Keep held for review”** for the presented edited four-point recap. This approves no publication and does not reject the original native review. Preserve all six original points, negative checker findings and held keyword proposals; publish none and infer no future automatic-publication policy. No production write is needed to maintain the existing pending state. Daily composition requires approved keywords as well as an approved recap; the four-point decision cannot supply that separate approval. Do not reask the same question without a substantive change.
+
+The genuine 07:00 UTC cutoff saves an immutable awaiting-review snapshot with zero topics/citations. Do not rewrite it or manufacture a later cutoff to claim success. Actual useful acquisition, genuinely approved publication and accepted ordinary useful output must precede 72-hour qualification; its clock remains stopped. Existing budgets, unknown holds and reminder/destructive opt-outs stay unchanged. Genuine source/day-rollover and daily checks are scheduled for 12 November 00:20 UTC / 07:05 UTC. [Actual cutoff and decision evidence](tech/evidence/daily-use-cutoff-2026-11-11.json).
+
 ## 11 November 2026 — native quality-repair release accepted under existing authorization
 
 PR27's exact green tree merges as1947636 and succeeds through its sole normal main push run42965161775. Actual archive13831696060, native GitHub-App checkpoint130343907015, workers/assets/source/control and original delivery/cap/reminder/lifecycle parity pass. The same saved operation is accepted and the exact-main fence released; documentation may now be committed/pushed without another application deployment. No new founder decision, migration, allowance, source-cap increase or publication approval is inferred. The genuine new-release05:35 transport passes native invocation/frame/revision/deadline checks; it does not establish useful daily content. Preserve the already archived retained transcript versions. Actual owner approval of the corrected sample, useful acquisition, changed-checker semantic verification and normal daily72-hour qualification remain open. [Accepted native evidence](tech/evidence/daily-use-quality-release-2026-11-11.json).

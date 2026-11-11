@@ -1,0 +1,410 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-11T07:24:02.544Z",
+  "scope": "Genuine scheduled 11 November daily cutoff, native ordinary transport/source/financial readback and explicit owner publication hold; no new useful daily qualification",
+  "observationTimes": {
+    "dailyAndTransport": "2026-11-11 07:08:17.586059+00",
+    "nativeAndFinances": "2026-11-11 07:11:18.325604+00",
+    "sourceMethods": "2026-11-11T07:16:26.205Z",
+    "budgetComponents": "2026-11-11 07:14:47.699848+00"
+  },
+  "serving": {
+    "application": "1947636523f415461f0cee0f78ad758f77ed49f6",
+    "epoch": 6,
+    "paused": false,
+    "nativeWorkersSourceDeliveryFlagsAndLifecycleMatchAcceptedRelease": true,
+    "completedReleaseFenceReleased": true,
+    "docsOnlyMainMayDiffer": true
+  },
+  "daily": {
+    "localDate": "2026-11-11",
+    "timezone": "Europe/Berlin",
+    "cutoffAt": "2026-11-11T07:00:00+00:00",
+    "createdAt": "2026-11-11T07:00:19.10524+00:00",
+    "jobState": "finished",
+    "jobCreatedAt": "2026-11-11T07:00:18.912365+00:00",
+    "status": "awaiting_review",
+    "publishedAt": null,
+    "topics": 0,
+    "points": 0,
+    "citations": 0,
+    "coverage": {
+      "checkedSources": 0,
+      "omittedUpdates": 0,
+      "updatedSources": 9,
+      "followedSources": 39,
+      "includedUpdates": 0,
+      "availableUpdates": 18,
+      "pendingReviewUpdates": 11,
+      "missingContentUpdates": 7
+    },
+    "scheduleEnabled": true,
+    "lastCutoffAt": "2026-11-11T07:00:00+00:00",
+    "immutableSnapshotRewritten": false
+  },
+  "ordinaryTransport": {
+    "since": "2026-11-11T06:00:00.000Z",
+    "frameCounts": {
+      "automatic-content:completed": 14,
+      "social-collection:completed": 14,
+      "social-content:completed": 14,
+      "daily-briefing:completed": 14,
+      "hourly-collection:completed": 2
+    },
+    "automaticInvocations": 14,
+    "completedAutomaticFramesWithinBothBounds": 14,
+    "immutableNativeMessageFrameEpochRevisionMatched": true,
+    "manualQueueAdmissions": 0,
+    "usefulContentQualification": false
+  },
+  "archive": {
+    "total": 596,
+    "changedRowsSinceAcceptedReleaseAtObservation": 0,
+    "newUsefulIngestionClaimed": false,
+    "threePreviouslyAssessedRetainedVideosAlreadyHistorical": true,
+    "differingHistoricalVersionsPreserved": true
+  },
+  "ownerDecision": {
+    "recordedAt": "2026-11-11T07:15:05.645Z",
+    "decision": "Keep held for review",
+    "scope": "Previously presented edited four-point recap only",
+    "publicationApproved": false,
+    "reviewRejected": false,
+    "originalNativeRecapReviewStatus": "pending",
+    "originalSixPointProposalAndAllVerdictsUnchanged": true,
+    "recapPublished": false,
+    "keywordsPublished": false,
+    "productionWriteRequired": false,
+    "futureAutomaticPublicationApproved": false
+  },
+  "publicationReadiness": {
+    "sourceVersionUnchanged": true,
+    "approvedKeywordLabels": 0,
+    "publishedVideoSummary": false,
+    "publishedVideoKeywords": false,
+    "publishedHighlights": 0,
+    "pendingKeywordProposals": 16,
+    "dailyComposerRequiresApprovedRecapAndKeywords": true,
+    "heldFourPointDecisionDoesNotApproveKeywords": true,
+    "lateApprovalWouldBeConsideredOnlyAtFutureGenuineCutoff": true
+  },
+  "modelFinances": {
+    "migrationCount": 59,
+    "originalRowsPreserved": 967,
+    "originalRowsHashMatches": true,
+    "totalCalls": 972,
+    "unknownHolds": 7,
+    "cumulativeCommittedUsd": "9.947208244000",
+    "cumulativeCapUsd": "12",
+    "dailyCapUsd": "5",
+    "perCallCapUsd": "0.10",
+    "newOperatorCallsThisCheckpoint": 0,
+    "completedSeparateProofsCombinedUsd": "0.028721840",
+    "completedProofsRetried": false,
+    "changedCheckerSemanticBenefitNewlyVerified": false
+  },
+  "readerSourceFinances": {
+    "unknown_jobs": 12,
+    "daily_limit_usd": "0.100000",
+    "daily_headroom_usd": "0.009000000000",
+    "lifetime_limit_usd": "1.000000",
+    "daily_committed_usd": "0.091000000000",
+    "lifetime_headroom_usd": "0.485000000000",
+    "lifetime_committed_usd": "0.515000000000",
+    "unknownCommitmentUsd": "0.075000",
+    "knownCurrentUtcDayCommitmentUsd": "0.016000000000",
+    "requiredDiscoveryReservationUsd": "0.02",
+    "discoveryFitsCurrentHeadroom": false,
+    "unknownHoldsReleased": false,
+    "capsChanged": false
+  },
+  "ordinarySourceFinances": {
+    "since": "Original delivery restoration; distinct from older unknown reader-provider jobs",
+    "held": 0,
+    "settled": 16,
+    "settled_usd": "0.021014253837",
+    "reservations": 16,
+    "held_maximum_usd": "0",
+    "finalSupplierInvoiceClaimed": false,
+    "hostingAndApiUsageMeasured": false
+  },
+  "ordinarySourceResults": {
+    "readerCheckOutcomesSinceAcceptedRelease": [
+      {
+        "count": 13,
+        "status": "failed",
+        "error_code": "collection_budget_exhausted"
+      },
+      {
+        "count": 29,
+        "status": "partial",
+        "error_code": null
+      },
+      {
+        "count": 36,
+        "status": "unsupported",
+        "error_code": "freshness_check_unavailable"
+      }
+    ],
+    "socialCollectionJobOutcomesSinceAcceptedRelease": [
+      {
+        "count": 2,
+        "state": "completed",
+        "platform": "X",
+        "error_code": null
+      }
+    ],
+    "methodTelemetry": [
+      {
+        "method": "x_apify_dataset",
+        "provider": "apify",
+        "stage": "discovery",
+        "status": "empty",
+        "http_status": null,
+        "error_code": null,
+        "attempts": 2
+      },
+      {
+        "method": "x_apify_diagnostics",
+        "provider": "apify",
+        "stage": "discovery",
+        "status": "succeeded",
+        "http_status": null,
+        "error_code": null,
+        "attempts": 2
+      },
+      {
+        "method": "x_apify_launch",
+        "provider": "apify",
+        "stage": "discovery",
+        "status": "partial",
+        "http_status": null,
+        "error_code": null,
+        "attempts": 2
+      },
+      {
+        "method": "x_apify_poll",
+        "provider": "apify",
+        "stage": "discovery",
+        "status": "partial",
+        "http_status": null,
+        "error_code": null,
+        "attempts": 2
+      },
+      {
+        "method": "x_apify_poll",
+        "provider": "apify",
+        "stage": "discovery",
+        "status": "succeeded",
+        "http_status": null,
+        "error_code": null,
+        "attempts": 2
+      },
+      {
+        "method": "x_apify_preflight",
+        "provider": "apify",
+        "stage": "discovery",
+        "status": "succeeded",
+        "http_status": null,
+        "error_code": null,
+        "attempts": 2
+      },
+      {
+        "method": "x_apify_validation",
+        "provider": "apify",
+        "stage": "discovery",
+        "status": "empty",
+        "http_status": null,
+        "error_code": null,
+        "attempts": 2
+      },
+      {
+        "method": "x_public_timeline",
+        "provider": "native",
+        "stage": "discovery",
+        "status": "failed",
+        "http_status": 429,
+        "error_code": "source_unavailable",
+        "attempts": 2
+      },
+      {
+        "method": "youtube_apify_caption_result",
+        "provider": "apify",
+        "stage": "content",
+        "status": "failed",
+        "http_status": null,
+        "error_code": "provider_error",
+        "attempts": 2
+      },
+      {
+        "method": "youtube_apify_caption_result",
+        "provider": "apify",
+        "stage": "content",
+        "status": "failed",
+        "http_status": null,
+        "error_code": "response_too_large",
+        "attempts": 2
+      },
+      {
+        "method": "youtube_apify_discovery_result",
+        "provider": "apify",
+        "stage": "discovery",
+        "status": "failed",
+        "http_status": null,
+        "error_code": null,
+        "attempts": 2
+      },
+      {
+        "method": "youtube_channel_identity",
+        "provider": "native",
+        "stage": "discovery",
+        "status": "succeeded",
+        "http_status": null,
+        "error_code": null,
+        "attempts": 42
+      },
+      {
+        "method": "youtube_native_captions",
+        "provider": "native",
+        "stage": "content",
+        "status": "failed",
+        "http_status": null,
+        "error_code": "retrieval_failed",
+        "attempts": 4
+      },
+      {
+        "method": "youtube_public_uploads",
+        "provider": "native",
+        "stage": "discovery",
+        "status": "failed",
+        "http_status": null,
+        "error_code": "youtube_channel_mismatch",
+        "attempts": 1
+      },
+      {
+        "method": "youtube_public_uploads",
+        "provider": "native",
+        "stage": "discovery",
+        "status": "failed",
+        "http_status": null,
+        "error_code": "youtube_discovery_empty",
+        "attempts": 12
+      },
+      {
+        "method": "youtube_rss",
+        "provider": "native",
+        "stage": "discovery",
+        "status": "failed",
+        "http_status": 404,
+        "error_code": "source_unavailable",
+        "attempts": 11
+      },
+      {
+        "method": "youtube_rss",
+        "provider": "native",
+        "stage": "discovery",
+        "status": "failed",
+        "http_status": 500,
+        "error_code": "source_unavailable",
+        "attempts": 2
+      },
+      {
+        "method": "youtube_rss",
+        "provider": "native",
+        "stage": "discovery",
+        "status": "succeeded",
+        "http_status": 200,
+        "error_code": null,
+        "attempts": 29
+      }
+    ],
+    "nullMethodResultCountsDoNotEstablishEmptyFeeds": true,
+    "methodResultsAreNotArchiveRows": true
+  },
+  "retainedCaptionAssessment": {
+    "completedRunCreatedAt": "2026-11-06T15:00:40.233387+00:00",
+    "originalKnownSettledUsd": "0.004",
+    "originalKnownFeeMatchedExactRunActorPinnedBuildAndAuthenticatedRunOwner": true,
+    "publishedAt": "2026-11-06T14:47:24.000Z",
+    "currentArchiveContentKind": "metadata_only",
+    "requiredTextProjectionResult": "response_too_large",
+    "subtitleMetadataProjectionResult": "response_too_large",
+    "perResponseByteBound": 2097152,
+    "readOnlyProviderGets": 5,
+    "actorStarts": 0,
+    "newProviderJob": false,
+    "contentImported": false,
+    "existingArchiveOverwritten": false,
+    "financeOrNativeJobReset": false,
+    "safeRecoveryEstablished": false,
+    "fieldsDocumentation": "https://docs.apify.com/api/v2/dataset-items-get"
+  },
+  "preservation": {
+    "originalDeliveryAndSettings": true,
+    "remindersOff": true,
+    "bothDestructiveLifecycleFlagsOff": true,
+    "legacyUncertainFramesRetained": 96,
+    "dlqUntouched": true,
+    "productionMutationsByOperatorThisCheckpoint": 0,
+    "manualPaidSourceRuns": 0,
+    "manualModelRuns": 0
+  },
+  "qualification": {
+    "clockStarted": false,
+    "requiredBeforeStart": [
+      "Useful fresh acquisition",
+      "Actual owner-approved publication",
+      "Useful accepted ordinary daily-cutoff output"
+    ],
+    "manualProofAndTransportExcluded": true
+  },
+  "futureCheckpoints": [
+    {
+      "purpose": "Actual ordinary source outcomes after genuine UTC budget-day rollover; no assumed admission or hold release",
+      "nextRunAt": "2026-11-12T00:20:00.000Z",
+      "berlin": "2026-11-12 01:20 CET",
+      "enabled": true
+    },
+    {
+      "purpose": "Actual next normal daily cutoff and fresh source/cost readback",
+      "nextRunAt": "2026-11-12T07:05:00.000Z",
+      "berlin": "2026-11-12 08:05 CET",
+      "enabled": true
+    }
+  ],
+  "privateEvidence": [
+    {
+      "name": "daily-cutoff-20261111-0705-private.json",
+      "sha256": "70d421bced71f481238b24feff5d68b1404e5eb340a7a215e5a66dadd646443e"
+    },
+    {
+      "name": "daily-cutoff-20261111-native-finance-private.json",
+      "sha256": "e011446f429c693d4038179f9f9b2dc98dfc500272bf114e40e38a7eef4a6cb1"
+    },
+    {
+      "name": "owner-publication-hold-decision-20261111-private.json",
+      "sha256": "5e545b7554d118c7f2b9f44d1e4bceff491cf6a84a1ea50ef4016a3988906973"
+    },
+    {
+      "name": "retained-caption-projection-read-private.json",
+      "sha256": "b9ced7516825a1cafafb4bf41ec01caf2b4cf48dcd4f4b5c5437b17bdbdbdcb0"
+    },
+    {
+      "name": "retained-caption-metadata-read-private.json",
+      "sha256": "d36f56a80db8f54f2aa89e56d607dc5d893e5c18a48e5470c5207dbddff00c5a"
+    },
+    {
+      "name": "retained-caption-subtitle-metadata-read-private.json",
+      "sha256": "1b1bc00fb5b496730829e15044fdef5faa147fa4c50e62b6c0afbdea73d05c36"
+    }
+  ],
+  "documentationValidation": {
+    "scope": "Documentation/evidence only; no application change or new production deployment",
+    "changedFiles": 7,
+    "newEvidenceJsonValid": true,
+    "changedLocalLinksValid": 8,
+    "knownPrivateValuesChecked": 53,
+    "diffWhitespaceCheckPassed": true,
+    "applicationTestsRerun": false
+  }
+}
