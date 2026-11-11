@@ -111,18 +111,19 @@
     "mergeSha": "78d4ee843d93f9288ad1429e5a33a0557f1d7142",
     "jobId": "130243581696",
     "runnerId": 22,
-    "status": "cancellation_requested_runner_offline",
+    "status": "completed",
     "nativeHookCheckoutAndPreflight": "passed",
     "fullReaderResults": "interrupted_before_complete_report",
-    "cleanup": "local_and_route_removed_github_registration_busy_pending",
+    "cleanup": "complete_after_native_cancellation",
     "dependencyInstall": "passed",
     "scratchMonitorFailure": "du_temporary_file_disappearance",
     "hostTimeout": false,
     "oomKilled": false,
     "normalCancelRequested": true,
     "forceCancelAcknowledged": true,
-    "registrationRemoved": false,
-    "originalLocalJitRemoved": false
+    "registrationRemoved": true,
+    "originalLocalJitRemoved": true,
+    "conclusion": "cancelled"
   },
   "hostedChecksAtTrialHead": {
     "headSha": "ff96969fc9a79a221b2e7ebd3a616b36fbeccec2",

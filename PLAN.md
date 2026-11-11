@@ -1,5 +1,7 @@
 # Tracked implementation and validation plan
 
+**11 November — old trial cleanup complete; corrected retry ready:** GitHub confirms the interrupted local job cancelled and runner22 absent. Exact final readback/cleanup passes; its private JIT is deleted, alongside the already removed local resources and route. The 103-test/qualified-image counter fix is ready for a fresh pinned native trial. Full reader success remains unproved. [Evidence](docs/tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 **11 November local CI continuation:** finish terminal GitHub readback and exact runner/JIT cleanup for run42935243758 after the acknowledged cancellation. The trial route and local resources are already removed. Publish the qualified counter-based monitor fix, then use a fresh run/intent/JIT only after the old busy registration clears. Keep all original resource limits and production gates. [Current evidence](docs/tech/LOCAL-CI-TRIAL-2026-11-11.md).
 
 **11 November — native local GitHub trial running:** [run 42935243758](https://github.com/raduvlad92/recap/actions/runs/42935243758) assigns runner22/job130243581696 to exact head `ff96969` and its bound synthetic merge. Job setup, exact hook, checkout and unprivileged environment checks pass; dependency installation/full reader checks are in progress. Mac-side supervision and final native readback/registration/JIT/volume/loop/route cleanup are automatic. No final CI or production-release pass is claimed. [Current evidence](docs/tech/LOCAL-CI-TRIAL-2026-11-11.md).

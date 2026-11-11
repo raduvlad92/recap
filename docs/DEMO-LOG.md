@@ -1,5 +1,7 @@
 # Demo and evidence log
 
+**11 November — old trial cleanup complete; corrected retry ready:** GitHub confirms the interrupted local job cancelled and runner22 absent. Exact final readback/cleanup passes; its private JIT is deleted, alongside the already removed local resources and route. The 103-test/qualified-image counter fix is ready for a fresh pinned native trial. Full reader success remains unproved. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 ## 11 November — false-positive scratch monitor repaired
 
 The actual local job reaches full reader execution but stops after 198.115 seconds because concurrent PostgreSQL file deletion makes recursive du fail. Preserve this interrupted outcome; no complete test count or app pass is claimed. Automatic local/route cleanup succeeds, while GitHub remains offline/busy after normal cancellation. Journal and acknowledge exact-run force cancellation; registration/JIT cleanup stays pending. Replace traversal with capped-filesystem/free-space counters. All 103 tests and rebuilt-image source checks pass; actual environment/launcher/churn probes pass with 420 checks/223,744 deletions and complete local cleanup. No subsequent native trial or production change occurs. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).

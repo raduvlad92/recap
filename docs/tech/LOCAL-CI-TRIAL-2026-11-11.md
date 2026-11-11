@@ -27,7 +27,11 @@ Native run [42934793789](https://github.com/raduvlad92/recap/actions/runs/429347
 
 The trusted initializer now removes only that fresh empty recovery directory before handing the owned filesystem to UID10001. A fifth, network-disabled probe executes the actual image launcher with a constructed unusable JIT: its resource/scratch/copy/private-file preflight succeeds, the listener rejects the fixture, no job is admitted, and all local resources are removed. A new GitHub trial requires a fresh head/run/intent/JIT; the first intent is never reused.
 
-## Monitor failure, corrected image and pending GitHub cleanup
+## Old native job and cleanup completed
+
+GitHub now reports run42935243758/job130243581696 terminal **cancelled**, bound to original runner22. The ephemeral runner is absent; exact operator cleanup and private JIT deletion now complete. The earlier local/route cleanup remains verified. The original interrupted outcome is preserved, and no complete application pass is inferred. A fresh head/run/intent/JIT can now test the qualified counter-based monitor.
+
+## Earlier monitor failure and pending-cleanup checkpoint (superseded)
 
 The actual local run below is interrupted after 198.115 seconds. Its launcher recursively scans scratch with `du`; normal PostgreSQL test teardown removes files during that scan, `du` returns nonzero, and the supplementary monitor incorrectly treats this as a disk-bound failure. The native container is not OOM-killed, the Mac deadline does not fire, and no complete reader report is available. This is a runner-monitor defect, not an application test result or proven capacity breach.
 
