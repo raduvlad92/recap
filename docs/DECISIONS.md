@@ -632,3 +632,7 @@ The assistant's researched, disabled provider plans favor Bright Data for compar
 ## 24 October 2026 — scale assumption for collection recommendations
 
 Founder explicitly corrected the sizing brief: assume 50 users, each following at least twice the current 39 sources. Use 78 sources/user and 3,900 follows as the minimum planning baseline; distinct source count and actual platform mix remain unknown. Assistant recommends a shared platform-specific collection service and compares managed-only and custom-crawler routes in [the scale assessment](tech/COLLECTION-50-USERS.md). This supersedes the one-reader quota/economics argument, but is not founder approval of a route, quota application, new provider subscription, reader activation or spending increase.
+
+## 11 November 2026 — shared CI allowance
+
+Owner authorized implementing the infrastructure cost-control plan. Consolidate repeated verification, cancel superseded PR work and bound job runtimes while preserving release provenance and production holds. Repository visibility is already public; the separate Hostinger trial remains disabled because its spare-memory gate failed. See [CI controls](tech/CI-USAGE-CONTROLS-2026-11-11.md). Workflow validation and current-head CI precede merge. No provider collection, production activation, backup alteration or paid-overage change occurs.
