@@ -1,0 +1,1 @@
+{"kind":"deployment-window-checkpoint","schema":1,"sequence":1,"state":{"kind":"operator-deployment-window","operation":"87025754-d1b3-4cef-9b25-d2f09c4ac2ca","phase":"prepared","planDigest":null,"purpose":"transport-only","schema":1,"target":"ea845e2ccf48a5125351fe21de79ade187a497ae","workflow":null}}
