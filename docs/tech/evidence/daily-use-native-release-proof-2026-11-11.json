@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "recordedAt": "2026-11-11T04:58:34.680189+00:00",
+  "recordedAt": "2026-11-11T05:07:13.313381+00:00",
   "target": "710b509b8b833a9e065246cb4e73df9ab65a6c04",
   "scope": "Actual normal main deployment, original delivery restoration and separately bounded real recap; quality and useful daily acceptance remain open",
   "normalRelease": {
@@ -206,5 +206,58 @@
     "nextRunAt": "2026-11-11T07:05:00.000Z",
     "localTime": "08:05 Europe/Berlin",
     "scope": "Genuine source and ordinary due-cutoff qualification, not PR polling"
+  },
+  "ordinaryHourlyObservation": {
+    "observedAt": "2026-11-11 05:02:02.325329+00",
+    "nativeCronOutcome": "ok",
+    "nativeTriggeredAt": "2026-11-11T05:00:54.583Z",
+    "frameCompletedAt": "2026-11-11T05:01:35.742383+00:00",
+    "manualInvocation": false,
+    "newReaderArchiveRows": 0,
+    "readerCheckOutcomes": [
+      {
+        "n": 12,
+        "status": "failed",
+        "error_code": "collection_budget_exhausted"
+      },
+      {
+        "n": 9,
+        "status": "partial",
+        "error_code": null
+      },
+      {
+        "n": 18,
+        "status": "unsupported",
+        "error_code": "freshness_check_unavailable"
+      }
+    ],
+    "useful72HourClockStarted": false
+  },
+  "ordinarySourceFinances": {
+    "observedAt": "2026-11-11 05:05:22.273076+00",
+    "existingRunReconciled": {
+      "count": 1,
+      "originalReservationMaximumUsd": "0.020000",
+      "providerReportedAndNativeSettledUsd": "0.012000000000",
+      "exactRunActorBuildAndAuthenticatedRunOwnerVerified": true,
+      "newSupplierRun": false,
+      "unknownHoldReleasedByAge": false
+    },
+    "newReservationsAfterRestoration": 9,
+    "knownSettledUsdAtCapture": "0.019813754171",
+    "heldUnknownActualMaximumUsdAtCapture": "0.150000",
+    "remainingReaderProviderJobsWithUnknownActual": 12,
+    "readerBudget": {
+      "daily_limit_usd": "0.100000",
+      "lifetime_limit_usd": "1.000000",
+      "daily_committed_usd": "0.091000000000",
+      "lifetime_committed_usd": "0.515000000000",
+      "daily_headroom_usd": "0.009000000000",
+      "lifetime_headroom_usd": "0.485000000000",
+      "unknown_jobs": 12,
+      "observed_at": "2026-11-11 05:06:03.95626+00"
+    },
+    "operatorFinancialMutations": 0,
+    "scope": "Ordinary automation under original source caps, separate from bounded AI proofs; unknown actual fees remain unknown. Actor author and authenticated run owner are distinct roles."
   }
 }
