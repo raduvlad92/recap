@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 11 November — local test-only runner explicitly authorized
+
+The founder says “ok, let's try with a local runner.” Use the existing Mac and Docker Desktop for one exact ephemeral GitHub test job, preserving the original CPU/RAM/process/time/disk limits and all production-release gates. Hostinger remains unchanged. Native Mac disk sharing proves unreliable, so the selected local containment uses a bounded Linux filesystem and a trusted device/inode-checked setup helper outside the job. No paid upgrade, permanent runner, operator credential in the job or production change follows. [Scope and native controls](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 ## 11 November — use existing console access and honor the capacity gate
 
 The founder requests external Chrome and completes both sign-in and correction to the existing VPS-owning Hostinger account. The Hostinger web console supplies existing root access; do not request a new token or authorize Dokploy's separate SSH key merely to continue. Native available RAM is 2.00 GiB against the prepared six-GiB gate. Preserve the existing capacity policy and running workloads; this observation authorizes no paid upgrade, service stop, smaller unqualified runner profile or production change. Manual authentication setup is complete; native execution remains pending sufficient qualified capacity. [Evidence](tech/HOSTINGER-CAPACITY-2026-11-11.md).

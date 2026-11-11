@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   trial:
-    name: Hostinger test-only trial
+    name: Isolated test-only trial
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.head_ref == 'ci/hostinger-test-trial-20261109' &&

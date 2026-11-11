@@ -20,7 +20,7 @@ function native(prNumber,runId){
  assert(['queued','in_progress'].includes(run.status) && run.conclusion===null,'Trial is not awaiting execution');
  assert(run.pull_requests.some(p=>p.number===prNumber),'Run belongs to another PR');
  const jobs=api(`actions/runs/${runId}/attempts/${run.run_attempt}/jobs?per_page=100`).jobs;
- const matches=jobs.filter(j=>j.name==='Hostinger test-only trial');assert.equal(matches.length,1);
+ const matches=jobs.filter(j=>j.name==='Isolated test-only trial');assert.equal(matches.length,1);
  const job=matches[0];assert.equal(job.status,'queued');assert.equal(job.conclusion,null);assert(!job.runner_id);
  return{pr,run,merge,job};
 }
@@ -64,7 +64,7 @@ try{
    const run=api('actions/runs/'+intent.runId);
    assert.equal(run.head_sha,intent.headSha);assert.equal(run.run_attempt,intent.runAttempt);
    const jobs=api(`actions/runs/${intent.runId}/attempts/${intent.runAttempt}/jobs?per_page=100`).jobs;
-   const job=jobs.find(j=>j.name==='Hostinger test-only trial');assert(job);
+   const job=jobs.find(j=>j.name==='Isolated test-only trial');assert(job);
    const registration=validateRegistration(JSON.parse(readFileSync(join(dir,'registration.json'),'utf8')),intent);
    assert.equal(job.runner_id,registration.id);assert.equal(job.runner_name,registration.name);
    assert.equal(job.status,'completed','Final evidence requires a terminal job');

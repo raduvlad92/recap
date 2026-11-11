@@ -1,0 +1,78 @@
+{
+  "kind": "local_runner_containment_qualified_github_execution_pending",
+  "localDateEuropeBerlin": "2026-11-11",
+  "imageId": "sha256:ee5dcff3c2df92f314dbf983a512e0ba846865f5a8613e5764ef457cf75a7b77",
+  "architecture": "arm64",
+  "guardAndOperatorTests": 94,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "nativeProbes": {
+    "linux-qualification": {
+      "exitCode": 0,
+      "oomKilled": false,
+      "timedOut": false,
+      "elapsedMilliseconds": 4163,
+      "deadlineSeconds": 300,
+      "scratch": {
+        "filesystemBytes": "8350298112",
+        "freeBytes": "7904002048",
+        "hardMaximumBytes": 8589934592
+      },
+      "cleanupComplete": true,
+      "logSha256": "5146311d8ee3b905b575736b1a32fe759bffe4cedffed91624364e470921a279"
+    },
+    "linux-disk-probe": {
+      "exitCode": 0,
+      "oomKilled": false,
+      "timedOut": false,
+      "elapsedMilliseconds": 924,
+      "deadlineSeconds": 300,
+      "scratch": {
+        "filesystemBytes": "241081344",
+        "freeBytes": "223451136",
+        "hardMaximumBytes": 268435456
+      },
+      "cleanupComplete": true,
+      "logSha256": "34e881a6daf1ce9dcd12a2c3a24e9bbef6dc2339b09e77d7b8ba3d996d280610"
+    },
+    "linux-deadline-probe": {
+      "exitCode": 137,
+      "oomKilled": false,
+      "timedOut": true,
+      "elapsedMilliseconds": 5156,
+      "deadlineSeconds": 2,
+      "scratch": {
+        "filesystemBytes": "8350298112",
+        "freeBytes": "7904002048",
+        "hardMaximumBytes": 8589934592
+      },
+      "cleanupComplete": true,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "linux-inputs-probe": {
+      "exitCode": 0,
+      "oomKilled": false,
+      "timedOut": false,
+      "elapsedMilliseconds": 185,
+      "deadlineSeconds": 300,
+      "scratch": {
+        "filesystemBytes": "8350298112",
+        "freeBytes": "7904002048",
+        "hardMaximumBytes": 8589934592
+      },
+      "cleanupComplete": true,
+      "logSha256": "34468750c5dfa0abebf825bdfbd4f27d8a21eac3551b87876a1fc3d8366b2243"
+    }
+  },
+  "sourceSha256": {
+    "infrastructure/ci-trial/local-supervise.mjs": "27077ccb110666ff16042da7196354b9ff9e1115643df87ce32ee9ebe280ae39",
+    "infrastructure/ci-trial/local-disk.py": "17491fa4c4a5e0bcdd6e21bb02775237d53fc6b6d18cdaa102a96772329d4d47",
+    ".github/workflows/hostinger-ci-trial.yml": "71ba8baca11b5373be7531dcf208b96519b1d0c7493b6926be1866a7d23e1793",
+    "scripts/ci-trial/operator.mjs": "6f3a5fd869867004f343c23b23a529c47198c31a031771b0c1fd9dc75ac57a65",
+    "scripts/ci-trial/checks.mjs": "2ed89d4ab41d1bd0363080f56537b56692c53c72084de3195e297ed2a7dca97c",
+    "tests/ci-trial-local.node.mjs": "035d9f6891cdf13c397c9ff10a22b611cf6bc63319768db0e5ecd2d621acab4a"
+  },
+  "allLocalProbeContainersVolumesLoopsAndMacImagesRemoved": true,
+  "githubJobExecuted": false,
+  "productionReleaseAccepted": false
+}

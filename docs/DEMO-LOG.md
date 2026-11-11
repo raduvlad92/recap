@@ -1,5 +1,9 @@
 # Demo and evidence log
 
+## 11 November — local runner containment qualified
+
+The founder explicitly selects a local runner. Verify Mac/Docker capacity, reuse the exact ARM64 image and preserve all resource limits. Discard the unreliable Mac-mounted scratch implementation after failed setup probes; remove all owned images/mounts. Implement Linux scratch with narrow trusted setup helpers and device/inode custody checks. All 94 guard/operator tests pass; real nonroot runner/PostgreSQL, ENOSPC, external forced-deadline and read-only private-input probes pass. Every final probe container, input/work/backing volume and loop is removed. Full reader tests and native GitHub assignment remain pending; no production/provider/model/Hostinger change or purchase occurs. [Sanitized evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
 ## 11 November — authenticated native console; capacity prevents launch
 
 The founder signs into external Chrome and corrects the Hostinger account. Verify the existing VPS matches Dokploy and open Hostinger's web console. Dokploy's terminal separately reports authentication failure; add no SSH key because the existing Hostinger root console works. Read `free -m`, exact Python capacity output and `docker stats --no-stream` without changing workloads. Native observation at 10 November 23:31:58.157400 UTC shows two x64 CPUs, cgroup v2, 64.85 GiB free disk and 2.00 GiB available RAM. The unchanged six-GiB RAM gate fails, so no supervisor or runner is launched. Preserve services and the running protected backup. No new credential, registration, route, image import, scratch, supplier/model call, production release/migration or purchase occurs. This is visually transcribed native capacity evidence, not runner/CI proof. [Note and sanitized receipt](tech/HOSTINGER-CAPACITY-2026-11-11.md).

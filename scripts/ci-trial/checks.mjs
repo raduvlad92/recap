@@ -20,7 +20,7 @@ if(process.argv[2]==='preflight'){
  run('npm',['run','catalogue:check']);
  run('node',['node_modules/vitest/vitest.mjs','run','--maxWorkers=1','--testTimeout=30000','--reporter=json','--outputFile='+dir+'/vitest.json']);
  assertVitestReport(JSON.parse(readFileSync(dir+'/vitest.json','utf8')));
- const tap=execFileSync('node',['--test','tests/ci-trial.node.mjs','tests/ci-trial-operator.node.mjs','tests/reader-migration-plan.node.mjs'],{encoding:'utf8',timeout:600000,maxBuffer:8*1024*1024});
+ const tap=execFileSync('node',['--test','tests/ci-trial.node.mjs','tests/ci-trial-operator.node.mjs','tests/ci-trial-local.node.mjs','tests/reader-migration-plan.node.mjs'],{encoding:'utf8',timeout:600000,maxBuffer:8*1024*1024});
  writeFileSync(dir+'/node-tests.tap',tap);assertTapReport(tap);console.log(tap.slice(-500));
  run('npm',['run','build']);run('npm',['run','check:cloudflare']);
  console.log(JSON.stringify({testOnly:true,skippedTests:0,productionReleaseAccepted:false,nativeGitHubReadbackRequired:true}));

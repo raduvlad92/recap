@@ -1,5 +1,22 @@
 # Isolated test-only CI trial
 
+**11 November: the founder selects the local Mac runner.** Local containment and environment probes pass; the real GitHub trial is next. [Current local evidence](../../docs/tech/LOCAL-CI-TRIAL-2026-11-11.md). Hostinger's RAM blocker below remains historical and unchanged.
+
+## Local Mac execution
+
+Use Node22 and the existing exact qualified ARM64 image. `local-supervise.mjs` runs outside the job and manages only its UUID-labeled Linux scratch/input volumes and one checked loop device. The trusted setup helper has SYS_ADMIN only for its selected loop; the job drops all capabilities and has no devices, Mac binds or Docker socket. The original limits and fresh native operator intent remain required.
+
+```sh
+node infrastructure/ci-trial/local-supervise.mjs qualify .local/NEW_QUALIFICATION_DIRECTORY sha256:QUALIFIED_IMAGE_ID
+node scripts/ci-trial/operator.mjs prepare PR_NUMBER RUN_ID local-qualification .local/NEW_PRIVATE_OPERATION
+node scripts/ci-trial/operator.mjs jit .local/NEW_PRIVATE_OPERATION
+node infrastructure/ci-trial/local-supervise.mjs run .local/NEW_PRIVATE_OPERATION sha256:QUALIFIED_IMAGE_ID
+node scripts/ci-trial/operator.mjs readback .local/NEW_PRIVATE_OPERATION
+node scripts/ci-trial/operator.mjs cleanup .local/NEW_PRIVATE_OPERATION
+```
+
+The trial variable must be deliberately enabled for one fresh PR run and removed/read back absent afterward. Preserve final job/report/cleanup receipts and remove the original local JIT only after container/input-volume/registration cleanup. Do not rerun the same operation directory; ambiguous JIT custody retains its original intent. `deadline-probe`, `disk-probe` and constructed `inputs-probe` modes qualify containment without contacting GitHub or creator/provider/model services.
+
 The founder authorized this trial on 9 November 2026. It is a candidate for running Therecap's checks on the existing Hostinger/Dokploy server. **11 November: native console access works, but available RAM fails the launch gate (2.00 GiB versus six GiB required).** Do not launch on this host in its observed state. [Native capacity checkpoint](../../docs/tech/HOSTINGER-CAPACITY-2026-11-11.md). Local Docker probes remain separate from Hostinger runner qualification.
 
 The official GitHub runner preserves real GitHub job identity; `act` cannot supply the existing production release authority. This package does not change the existing release workflow, required checks, deployment journal, database migrations, runtime flags, caps or reminders. No production credentials belong in the runner. The private backup containers and their schedule are outside this operation.

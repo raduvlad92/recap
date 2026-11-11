@@ -23,7 +23,7 @@ else if(method==='POST'){
  result={runner:{id:123,name:body.name},encoded_jit_config:Buffer.from('constructed-one-job-fixture-only-configuration').toString('base64')};
 }else if(path.endsWith('/pulls/23'))result={state:'open',merge_commit_sha:d.merge,head:{ref:'ci/hostinger-test-trial-20261109',sha:d.head,repo:{full_name:'raduvlad92/recap'}},base:{ref:'review/full-reader-release-20261108',sha:d.base,repo:{full_name:'raduvlad92/recap'}}};
 else if(path.endsWith('/git/ref/pull/23/merge'))result={object:{sha:d.merge}};
-else if(path.includes('/attempts/1/jobs'))result={jobs:[{id:999,name:'Hostinger test-only trial',status:d.jobStatus,conclusion:d.conclusion,runner_id:d.runnerId,runner_name:d.runnerName}]};
+else if(path.includes('/attempts/1/jobs'))result={jobs:[{id:999,name:'Isolated test-only trial',status:d.jobStatus,conclusion:d.conclusion,runner_id:d.runnerId,runner_name:d.runnerName}]};
 else if(path.endsWith('/actions/runs/12345'))result={event:'pull_request',head_sha:d.head,path:'.github/workflows/hostinger-ci-trial.yml',repository:{full_name:'raduvlad92/recap'},status:d.runStatus||'in_progress',conclusion:null,run_attempt:1,pull_requests:[{number:23}]};
 else if(path.includes('/actions/runners?'))result={total_count:d.runners.length,runners:d.runners.map(r=>({...r,busy:d.busy}))};
 else process.exit(2);
