@@ -1,6 +1,16 @@
 # Daily-use completion plan — 11 November 2026
 
-The app is partly working. It collects some useful content, but a dependable daily recap is unfinished. This is a status assessment and proposed continuation within existing engineering scope. It changes no spending, publication, runtime or reminder setting and does not approve SPEC/PLAN v1.1 or a customer launch. [Fresh production evidence](evidence/project-status-2026-11-11.json).
+The founder authorizes implementation of this finish plan and separately approves USD2 additional AI allowance, raising the cumulative cap from USD10 to USD12 while retaining USD5/day, USD0.10/call and all historical charges/unknown holds. The initial proof remains at most four calls/USD0.40; run the two-call recap first and the actual three-call keyword path separately within the same USD2 increment. Production application remains pending. Publication approvals, reminder opt-out, source caps and destructive lifecycle activation boundaries remain unchanged. SPEC/PLAN v1.1 and customer launch are not approved as a whole. [Status audit](evidence/project-status-2026-11-11.json), [implementation evidence](evidence/daily-use-implementation-2026-11-11.json).
+
+## Implementation checkpoint
+
+The combined completion branch includes the previous reader release and three demonstrated repairs: bounded source-failure backoff, full-row paginated YouTube discovery within the existing response limit, and preserved checker verdicts with shortened display explanations. Retained-data replays and local checks pass. No live migration, budget update or deployment is claimed yet.
+
+Next obtain final-head CI and review, then perform one controlled native window. Apply the original four reader migrations with their fixed contract first; apply the two daily-use migrations with their separate 15-object transition/metadata contract second. Each needs its own saved transaction identity/hash, rollback rehearsal, one apply and independent history/schema/row/ACL readback. Keep processing stopped until the exact native release is accepted. Apply the approved 12-dollar controls separately without changing ledger/history, then restore only the original bounded delivery. Do not repeat the historical recovery or clear unknown outcomes. Follow with the scoped recap/keyword proofs, genuine review, useful source controls and ordinary daily observation.
+
+## Status-audit baseline
+
+The figures below are the 11 November 02:17–02:20 UTC read-only checkpoint, preceding implementation and the separate budget approval.
 
 ## Current evidence
 
@@ -19,7 +29,7 @@ The app is partly working. It collects some useful content, but a dependable dai
 4. **Complete review through daily publication.** Prepare a small real sample for genuine review, verify approved findings reach the reader, and let the next normal cutoff compose the immutable cited briefing. Existing approval is still required. This plan does not fabricate owner decisions or enable automatic publication; unattended publication needs a separately explicit policy/quality decision. Preserve old snapshots and reminder opt-out.
 5. **Verify 72 hours of normal daily operation after fixes.** Observe useful reviewed topics/citations at genuine cutoffs, honest quiet/partial days, source freshness, bounded costs and absence of persistent stalls. Count new useful reader items separately from runs and duplicates. Preserve private data and financial uncertainty. Do not substitute manual collection or a forced future cutoff for normal scheduled proof.
 
-Engineering, review preparation, release and verification belong to the assistant. Genuine founder dependencies are a renewed finite allowance if needed and actual publication approvals under the current policy. Request those only with a concrete sample/envelope; no repeated infrastructure setup is needed.
+Engineering, review preparation, release and verification belong to the assistant. The USD2 renewal is now approved; do not ask again. Actual publication approvals remain a founder dependency under the current policy and should be requested with a concrete source-grounded sample. No repeated infrastructure setup is needed.
 
 ## Broader readiness still separate
 

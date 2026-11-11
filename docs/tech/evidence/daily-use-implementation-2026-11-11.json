@@ -1,0 +1,192 @@
+{
+  "recorded_at": "2026-11-11",
+  "kind": "local-implementation-and-retained-response-replay",
+  "authorization": {
+    "implement_finish_plan": true,
+    "additional_ai_usd": "2.00",
+    "cumulative_ai_limit_usd": "12.00",
+    "daily_ai_limit_usd": "5.00",
+    "per_call_usd": "0.10",
+    "initial_proof_max_calls": 4,
+    "initial_proof_maximum_usd": "0.40",
+    "initial_execution_scope": "Two recap calls / maximum USD0.20; three keyword calls are a separate proof in the same incremental USD2."
+  },
+  "replay_before": {
+    "mode": "before",
+    "sourceProviderModelWrites": 0,
+    "recap": [
+      {
+        "sourceChars": 9033,
+        "exactSavedRequestMatches": 2,
+        "error": "automatic_recap_invalid_check",
+        "proposedPoints": 0,
+        "checkerQuestioned": false,
+        "requiresOwnerApproval": false,
+        "rawReceiptsUnchanged": true
+      },
+      {
+        "sourceChars": 50912,
+        "exactSavedRequestMatches": 8,
+        "error": "automatic_recap_invalid_check",
+        "proposedPoints": 0,
+        "checkerQuestioned": false,
+        "requiresOwnerApproval": false,
+        "rawReceiptsUnchanged": true
+      }
+    ],
+    "discovery": {
+      "cachedMetadataAndFullRowsOnly": true,
+      "requests": 2,
+      "newJobs": 0,
+      "contentError": "response_too_large",
+      "updates": 0,
+      "contentKinds": [],
+      "fullRowBytes": [
+        1372546,
+        1335945,
+        1589248
+      ],
+      "responseLimitBytes": 2097152,
+      "sourceRunBuildOwnerPreviouslyVerified": true,
+      "exactSavedRowsSha256": [
+        "b30bd45929602dfedffe945ce75ffdd9f954889ea17d436bffef330773ad3d09",
+        "d19fc93d1e06948440d931024a907dcce552b1b77b2919ed4d71fd182ad2d9df",
+        "e700fad21c00e63172b509cb12cd86f6245fb973e8c6bf78fb310c60c0b06018"
+      ]
+    }
+  },
+  "replay_after": {
+    "mode": "after",
+    "sourceProviderModelWrites": 0,
+    "recap": [
+      {
+        "sourceChars": 9033,
+        "exactSavedRequestMatches": 2,
+        "error": null,
+        "proposedPoints": 6,
+        "checkerQuestioned": true,
+        "requiresOwnerApproval": true,
+        "rawReceiptsUnchanged": true
+      },
+      {
+        "sourceChars": 50912,
+        "exactSavedRequestMatches": 8,
+        "error": null,
+        "proposedPoints": 6,
+        "checkerQuestioned": false,
+        "requiresOwnerApproval": true,
+        "rawReceiptsUnchanged": true
+      }
+    ],
+    "discovery": {
+      "cachedMetadataAndFullRowsOnly": true,
+      "requests": 4,
+      "newJobs": 0,
+      "contentError": null,
+      "updates": 3,
+      "contentKinds": [
+        "transcript",
+        "transcript",
+        "transcript"
+      ],
+      "fullRowBytes": [
+        1372546,
+        1335945,
+        1589248
+      ],
+      "responseLimitBytes": 2097152,
+      "sourceRunBuildOwnerPreviouslyVerified": true,
+      "exactSavedRowsSha256": [
+        "b30bd45929602dfedffe945ce75ffdd9f954889ea17d436bffef330773ad3d09",
+        "d19fc93d1e06948440d931024a907dcce552b1b77b2919ed4d71fd182ad2d9df",
+        "e700fad21c00e63172b509cb12cd86f6245fb973e8c6bf78fb310c60c0b06018"
+      ]
+    }
+  },
+  "local_checks": {
+    "vitest_tests": 4338,
+    "vitest_files": 146,
+    "vitest_failed": 0,
+    "vitest_skipped": 0,
+    "typecheck": true,
+    "build": true,
+    "catalogue": true,
+    "cloudflare_shadow_and_runtime": true,
+    "web_workerd_checks": 26,
+    "jobs_workerd_checks": 11,
+    "source_gateway_disabled": true,
+    "reader_migration_tests": 102,
+    "daily_patch_migration_tests": 14,
+    "migration_test_skips": 0,
+    "initial_daily_planner_runs": "Disposable positive tests caught SQL-generation spacing and record-alias issues; corrected final14-case suite passes before native dispatch."
+  },
+  "schema_changes": {
+    "reader_migrations_pending": 4,
+    "daily_use_migrations_pending": [
+      "20261111023125",
+      "20261111023748"
+    ],
+    "reviewed_patch_transitions": 11,
+    "unchanged_function_metadata_pins": 4,
+    "project_rows_preserved_in_disposable_apply": true,
+    "live_control_updates_in_migrations": false
+  },
+  "source_backoff": {
+    "empty_hours": [
+      1,
+      2,
+      4,
+      6,
+      6
+    ],
+    "error_hours": [
+      2,
+      4,
+      8,
+      16,
+      24,
+      24
+    ],
+    "useful_result_reset_hours": 1,
+    "unknown_provider_reconciliation_minutes": 5,
+    "proof_jobs_affect_cadence": false,
+    "red_control": "Before migration, repeated empty source checks all remained one hour apart."
+  },
+  "source_budget_diagnosis": {
+    "reader_hourly_lifetime_committed_usd": "0.512000000000",
+    "reader_utc_day_including_old_unknowns_usd": "0.088000000000",
+    "unknown_hourly_jobs": 13,
+    "reader_daily_cap_usd": "0.100000",
+    "discovery_maximum_usd": "0.020000",
+    "binding_limit": "At capture, a USD0.02 discovery cannot fit USD0.012 daily headroom. Source caps were not raised; old unknowns were not released."
+  },
+  "production_state": {
+    "serving_release": "182457410f7f8e979348d10347fe50b1e94b295b",
+    "live_reader_migrations_applied": false,
+    "live_daily_patch_migrations_applied": false,
+    "live_ai_cap_updated": false,
+    "new_manual_provider_jobs": 0,
+    "new_manual_model_calls": 0,
+    "actual_review_decisions": 0,
+    "emails_sent": 0,
+    "source_caps_changed": false,
+    "native_deployment_verified": false
+  },
+  "security_advisors_before": {
+    "info": 51,
+    "warning": 0,
+    "error": 0,
+    "only_code": "rls_enabled_no_policy"
+  },
+  "limits": [
+    "Retained response replay is offline evidence, not live collection/import or source completeness.",
+    "New recap proposals in replay remain unpublished; actual historical failed tasks are not rewritten.",
+    "Native controlled migration, exact artifact deployment, actual model proof, genuine publication and72-hour useful operation remain pending.",
+    "Existing ordinary automation continues; provider data reads and hosting/CI costs are not asserted free.",
+    "Raw sources, saved follows, owner identities, provider references, requests and responses remain private and ignored."
+  ],
+  "verification_limits": {
+    "application_suite": "Run after all application and migration changes; later standalone planner changes were verified by their own14-case PostgreSQL suite.",
+    "native_state": "No processing stop, migration, budget update or deployment has been performed yet."
+  }
+}
