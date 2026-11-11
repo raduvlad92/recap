@@ -966,3 +966,9 @@ Independent planning review passes after correcting the inline store code refere
 ### 26 October 2026 — authorized reliability implementation and preserved migration
 
 Founder authorized points 1–3 and clarified US$0.10 per call within the existing US$5 evaluation total. [Execution record](tech/RELIABILITY-EXECUTION-2026-10-26.md) distinguishes local engine/worker/publication proof, fresh hosted off-state, actual database application and future model-quality evidence. All 2,606 local tests/75 files, typecheck/build/catalogue pass; independent engine, SQL and operator review pass. Migration `20261026223029` passed actual rollback, separate schema absence, committed application and separate complete readback preserving 21 groups/494 archive rows/three workspaces/400 prior jobs/46 calls. No admission, inference or activation was created; all historical charges/holds remain. This is database/local proof, not useful hosted output, twenty-video acceptance or backfill.
+
+## 11 November 2026 — shared CI allowance
+
+Owner authorized implementing the infrastructure cost-control plan. Consolidate repeated verification, cancel superseded PR work and bound job runtimes while preserving release provenance and production holds. Repository visibility is already public; the separate Hostinger trial remains disabled because its spare-memory gate failed. See [CI controls](tech/CI-USAGE-CONTROLS-2026-11-11.md). Workflow validation and current-head CI precede merge. No provider collection, production activation, backup alteration or paid-overage change occurs.
+
+11 November CI follow-up: merged verification passes; existing release gates hold automatic delivery. Skip CI-only automatic delivery after an exact commit/path comparison, retaining explicit manual release and every runtime gate. This is workflow work, with no application activation or source collection.

@@ -4,13 +4,16 @@ on:
     paths:
       - 'src/**'
       - 'public/**'
+      - 'actors/**'
+      - 'assets/**'
+      - 'data/**'
       - 'index.html'
       - 'netlify/**'
       - 'cloudflare/**'
       - 'containers/**'
       - 'tests/**'
       - 'scripts/**'
-      - 'supabase/migrations/**'
+      - 'supabase/**'
       - 'package*.json'
       - 'tsconfig.json'
       - 'vite*.ts'
@@ -20,13 +23,16 @@ on:
     paths:
       - 'src/**'
       - 'public/**'
+      - 'actors/**'
+      - 'assets/**'
+      - 'data/**'
       - 'index.html'
       - 'netlify/**'
       - 'cloudflare/**'
       - 'containers/**'
       - 'tests/**'
       - 'scripts/**'
-      - 'supabase/migrations/**'
+      - 'supabase/**'
       - 'package*.json'
       - 'tsconfig.json'
       - 'vite*.ts'
@@ -46,12 +52,38 @@ permissions:
   contents: read
 concurrency:
   group: ${{ github.event_name == 'pull_request' && format('cloudflare-verify-{0}', github.ref) || 'therecap-hosting-production' }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      runtime_changed: ${{ steps.runtime.outputs.changed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - name: Identify application changes before automatic delivery
+        id: runtime
+        env:
+          BEFORE_COMMIT: ${{ github.event.before }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != push ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            [[ "$BEFORE_COMMIT" =~ ^[a-f0-9]{40}$ ]] || exit 1
+            if [ "$BEFORE_COMMIT" = 0000000000000000000000000000000000000000 ]; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+            else
+              git cat-file -e "$BEFORE_COMMIT^{commit}" || git fetch --depth=1 origin "$BEFORE_COMMIT"
+              git diff --name-only "$BEFORE_COMMIT" "$GITHUB_SHA" -- src public actors assets data index.html netlify cloudflare containers tests scripts supabase 'package*.json' tsconfig.json 'vite*.ts' > "$RUNNER_TEMP/runtime-paths"
+              if [ -s "$RUNNER_TEMP/runtime-paths" ]; then
+                echo "changed=true" >> "$GITHUB_OUTPUT"
+              else
+                echo "changed=false" >> "$GITHUB_OUTPUT"
+              fi
+            fi
+          fi
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '22'
@@ -118,7 +150,7 @@ jobs:
             .local/cloudflare-build/source-worker/**
             .local/cloudflare-build/source-container/**
   prepare-active:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.HOSTING_TARGET == 'paused'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.HOSTING_TARGET == 'paused' && needs.verify.outputs.runtime_changed == 'true'
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -158,6 +190,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
       actions: read
@@ -182,6 +215,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
       checks: write
@@ -204,9 +238,10 @@ jobs:
           console.log('Release and handover checkpoint write/read/update verified; no runtime credentials, executable handover plan or processing.');
           JS
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && !(github.event_name == 'workflow_dispatch' && inputs.prepare_handover_artifact)
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && !(github.event_name == 'workflow_dispatch' && inputs.prepare_handover_artifact) && needs.verify.outputs.runtime_changed == 'true'
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       actions: read
