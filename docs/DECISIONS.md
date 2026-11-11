@@ -1,5 +1,29 @@
 # Decisions and interview
 
+## 11 November — retain standard hosted CI after verified public admission
+
+The public hosted path passes complete PG-enabled verification and artifact/journal checks. Retain the standard hosted workflow and disabled local trial; no paid VPS upgrade or permanent runner follows. The source-publication/CI request is complete, while draft review, merge, production migration/deployment and useful-content acceptance stay separate. [Exact results](tech/GITHUB-PUBLICATION-2026-11-11.md).
+
+## 11 November — public repository and hosted CI retry explicitly requested
+
+The founder reports upgrading GitHub and asks to make this repository public before retrying Actions, confirming free usage. Standard hosted public compute does not consume included compute; larger runners and storage remain separate. Review existing code/history/logs/artifacts before the authorized visibility change. Public source is authorized; a new license, main release, production deployment/migration, supplier/model execution, backup change or paid-plan purchase is not inferred. The local trial is cancelled/cleaned, with no replacement local runner. [Pricing, review and native public readback](tech/GITHUB-PUBLICATION-2026-11-11.md).
+
+## 11 November — preserve hard limits and unresolved job custody
+
+Replace the supplemental recursive scratch scan with filesystem counters after an actual PostgreSQL teardown race. The hard eight-GiB filesystem, one-GiB free threshold and CPU/RAM/PID/time limits remain unchanged. An acknowledged GitHub cancellation is not terminal evidence: preserve the original offline/busy registration and private JIT until exact cleanup succeeds, and admit no replacement trial before then. This is a scoped CI repair, not a release/budget/capability expansion. [Evidence](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
+## 11 November — local test-only runner explicitly authorized
+
+The founder says “ok, let's try with a local runner.” Use the existing Mac and Docker Desktop for one exact ephemeral GitHub test job, preserving the original CPU/RAM/process/time/disk limits and all production-release gates. Hostinger remains unchanged. Native Mac disk sharing proves unreliable, so the selected local containment uses a bounded Linux filesystem and a trusted device/inode-checked setup helper outside the job. No paid upgrade, permanent runner, operator credential in the job or production change follows. [Scope and native controls](tech/LOCAL-CI-TRIAL-2026-11-11.md).
+
+## 11 November — use existing console access and honor the capacity gate
+
+The founder requests external Chrome and completes both sign-in and correction to the existing VPS-owning Hostinger account. The Hostinger web console supplies existing root access; do not request a new token or authorize Dokploy's separate SSH key merely to continue. Native available RAM is 2.00 GiB against the prepared six-GiB gate. Preserve the existing capacity policy and running workloads; this observation authorizes no paid upgrade, service stop, smaller unqualified runner profile or production change. Manual authentication setup is complete; native execution remains pending sufficient qualified capacity. [Evidence](tech/HOSTINGER-CAPACITY-2026-11-11.md).
+
+## 9 November — authorize a bounded CI trial on existing infrastructure
+
+The founder says “do it” following the proposed isolated test-only Hostinger/Dokploy trial, preferably with the official GitHub self-hosted runner. Preserve real GitHub job identity and existing production-release requirements; no `act` result or hand-written green status substitutes for them. Scope is one pinned job without production credentials, with resource containment and exact cleanup. No new paid server/plan, billing increase, production migration/release, supplier/model call, backup change or specification approval follows. Native access/capacity and containment qualification remain gates. [Implementation/evidence](tech/HOSTINGER-CI-TRIAL-2026-11-09.md).
+
 ## 8 November — preserve release gates while CI cannot start
 
 Integrate the queued reader increments and their exact migration contract before requesting an owner action. GitHub reports failed account payments or an Actions spending restriction; the existing token cannot read billing usage. Resolve that account restriction without assuming permission to pay, raise budgets, refresh token scopes or bypass accepted CI/artifact provenance. Production stays on the accepted core until final integrated checks and native migration/release gates pass. Interface copy covers the six offered IDs; native-language qualification and translated recap generation are separate. Retained social emptiness and old rows do not authorize widened windows, supplier changes or hold releases. [Review candidate and continuation](tech/READER-RELEASE-INTEGRATION-2026-11-08.md).

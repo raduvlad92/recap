@@ -1,0 +1,232 @@
+{
+  "kind": "local_trial_cancelled_and_cleaned_on_owner_hosted_retry_request",
+  "localDateEuropeBerlin": "2026-11-11",
+  "imageId": "sha256:ee5dcff3c2df92f314dbf983a512e0ba846865f5a8613e5764ef457cf75a7b77",
+  "architecture": "arm64",
+  "guardAndOperatorTests": 103,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "nativeProbes": {
+    "linux-qualification": {
+      "exitCode": 0,
+      "oomKilled": false,
+      "timedOut": false,
+      "elapsedMilliseconds": 4163,
+      "deadlineSeconds": 300,
+      "scratch": {
+        "filesystemBytes": "8350298112",
+        "freeBytes": "7904002048",
+        "hardMaximumBytes": 8589934592
+      },
+      "cleanupComplete": true,
+      "logSha256": "5146311d8ee3b905b575736b1a32fe759bffe4cedffed91624364e470921a279"
+    },
+    "linux-disk-probe": {
+      "exitCode": 0,
+      "oomKilled": false,
+      "timedOut": false,
+      "elapsedMilliseconds": 924,
+      "deadlineSeconds": 300,
+      "scratch": {
+        "filesystemBytes": "241081344",
+        "freeBytes": "223451136",
+        "hardMaximumBytes": 268435456
+      },
+      "cleanupComplete": true,
+      "logSha256": "34e881a6daf1ce9dcd12a2c3a24e9bbef6dc2339b09e77d7b8ba3d996d280610"
+    },
+    "linux-deadline-probe": {
+      "exitCode": 137,
+      "oomKilled": false,
+      "timedOut": true,
+      "elapsedMilliseconds": 5156,
+      "deadlineSeconds": 2,
+      "scratch": {
+        "filesystemBytes": "8350298112",
+        "freeBytes": "7904002048",
+        "hardMaximumBytes": 8589934592
+      },
+      "cleanupComplete": true,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "linux-inputs-probe": {
+      "exitCode": 0,
+      "oomKilled": false,
+      "timedOut": false,
+      "elapsedMilliseconds": 185,
+      "deadlineSeconds": 300,
+      "scratch": {
+        "filesystemBytes": "8350298112",
+        "freeBytes": "7904002048",
+        "hardMaximumBytes": 8589934592
+      },
+      "cleanupComplete": true,
+      "logSha256": "34468750c5dfa0abebf825bdfbd4f27d8a21eac3551b87876a1fc3d8366b2243"
+    },
+    "linux-launcher-probe": {
+      "exitCode": 1,
+      "expectedFixtureRefusal": true,
+      "launcherPreflightPassed": true,
+      "jobAdmitted": false,
+      "network": "none",
+      "oomKilled": false,
+      "timedOut": false,
+      "cleanupComplete": true,
+      "logSha256": "0ec6b80b44980082b1445ee5b95325dc0cf8b3e2a449451c0a4ee55338c1b6ab"
+    }
+  },
+  "sourceSha256": {
+    "infrastructure/ci-trial/local-supervise.mjs": "b2576d1abb29208181f3f6aecf2562fbfff67f6de1c13a9a7f90cab1aa1b9779",
+    "infrastructure/ci-trial/local-disk.py": "17491fa4c4a5e0bcdd6e21bb02775237d53fc6b6d18cdaa102a96772329d4d47",
+    ".github/workflows/hostinger-ci-trial.yml": "71ba8baca11b5373be7531dcf208b96519b1d0c7493b6926be1866a7d23e1793",
+    "scripts/ci-trial/operator.mjs": "6f3a5fd869867004f343c23b23a529c47198c31a031771b0c1fd9dc75ac57a65",
+    "scripts/ci-trial/checks.mjs": "2ed89d4ab41d1bd0363080f56537b56692c53c72084de3195e297ed2a7dca97c",
+    "tests/ci-trial-local.node.mjs": "035d9f6891cdf13c397c9ff10a22b611cf6bc63319768db0e5ecd2d621acab4a",
+    "infrastructure/ci-trial/policy.mjs": "505992126646e6392aa00d830b1e7e067f18fd85902b1bfc5631447c17b911fc",
+    "infrastructure/ci-trial/launcher.mjs": "565148dd02a9f4cdb19fd2f7e0c6335d347cb083418b4f23941942dab23e9572",
+    "infrastructure/ci-trial/qualify.mjs": "ecd4990da0d244327315749fc6e38e0238bd56bc7e1d69400777649f8c35d9f4",
+    "tests/ci-trial.node.mjs": "3165dcf242c8539a6008482c5c84d528e2b38fe203e9aab6c9e21f83a9d98c93"
+  },
+  "allLocalProbeContainersVolumesLoopsAndMacImagesRemoved": true,
+  "githubJobExecuted": true,
+  "productionReleaseAccepted": false,
+  "githubAdmissionAttempts": [
+    {
+      "runId": "42934793789",
+      "headSha": "38b884a72db19e8fe1f09b5850a0dffa8435ff30",
+      "conclusion": "cancelled",
+      "runnerAssigned": false,
+      "jobSteps": 0,
+      "cause": "launcher_scratch_scan_refused_root_owned_lost_found",
+      "registrationRemoved": true,
+      "localJitDeleted": true,
+      "routeRemoved": true,
+      "localResourcesRemoved": true
+    }
+  ],
+  "githubExecution": {
+    "runId": "42937052997",
+    "attempt": 1,
+    "headSha": "497b52f543750670070dc95311d520c749d793ae",
+    "mergeSha": "be329ceceeb57a28035906be1fcbe447c7144530",
+    "imageId": "sha256:16ec1defe343ae98eee6f70368d7e3f083903bd13c10aa84ee8b86674f114438",
+    "jobId": "130249596546",
+    "runnerId": 23,
+    "status": "completed",
+    "nativeHookCheckoutAndPreflight": "passed",
+    "dependencyInstall": "passed",
+    "fullReaderResults": "not_proven",
+    "cleanup": "complete",
+    "conclusion": "cancelled",
+    "registrationRemoved": true,
+    "originalLocalJitRemoved": true,
+    "ownerDirectedStopForPublicHostedRetry": true
+  },
+  "hostedChecksAtTrialHead": {
+    "headSha": "ff96969fc9a79a221b2e7ebd3a616b36fbeccec2",
+    "jobs": [
+      {
+        "runId": "42935243893",
+        "jobId": "130243581728",
+        "name": "check",
+        "conclusion": "failure",
+        "runnerId": 0,
+        "steps": 0
+      },
+      {
+        "runId": "42935243831",
+        "jobId": "130243581848",
+        "name": "verify",
+        "conclusion": "failure",
+        "runnerId": 0,
+        "steps": 0
+      }
+    ],
+    "nativeAnnotation": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the Billing & plans section in your settings",
+    "classification": "hosted_admission_refusal_not_executed_test_failures",
+    "workflowOrBillingChangesMade": false
+  },
+  "correctedScratchMonitor": {
+    "imageId": "sha256:16ec1defe343ae98eee6f70368d7e3f083903bd13c10aa84ee8b86674f114438",
+    "runtimeSourcesMatchImage": true,
+    "countsOnly": true,
+    "maximumFilesystemBytes": 8589934592,
+    "minimumFreeBytes": 1073741824,
+    "churnChecks": 420,
+    "temporaryFilesDeleted": 223744,
+    "nativeProbes": {
+      "scratch-qualification": {
+        "exitCode": 0,
+        "expectedFixtureRefusal": false,
+        "timedOut": false,
+        "oomKilled": false,
+        "cleanupComplete": true,
+        "logSha256": "9afa17fa7acd3fd1dbdae4ac0087c13b2e86fa9d465e75e0052831310023bdbc"
+      },
+      "scratch-churn-probe": {
+        "exitCode": 0,
+        "expectedFixtureRefusal": false,
+        "timedOut": false,
+        "oomKilled": false,
+        "cleanupComplete": true,
+        "logSha256": "26571013a74f7562c82f4baca4aa89a882a19763294967fdf7602ac2b020c5a6"
+      },
+      "scratch-launcher-probe": {
+        "exitCode": 1,
+        "expectedFixtureRefusal": true,
+        "timedOut": false,
+        "oomKilled": false,
+        "cleanupComplete": true,
+        "logSha256": "d367e4dc28b6209021a50657c8dedecf46d090836badef2551ecb42df3b1b2ce"
+      }
+    },
+    "nextNativeRunStarted": true
+  },
+  "githubPriorExecutions": [
+    {
+      "runId": "42935243758",
+      "attempt": 1,
+      "headSha": "ff96969fc9a79a221b2e7ebd3a616b36fbeccec2",
+      "mergeSha": "78d4ee843d93f9288ad1429e5a33a0557f1d7142",
+      "jobId": "130243581696",
+      "runnerId": 22,
+      "status": "completed",
+      "nativeHookCheckoutAndPreflight": "passed",
+      "fullReaderResults": "interrupted_before_complete_report",
+      "cleanup": "complete_after_native_cancellation",
+      "dependencyInstall": "passed",
+      "scratchMonitorFailure": "du_temporary_file_disappearance",
+      "hostTimeout": false,
+      "oomKilled": false,
+      "normalCancelRequested": true,
+      "forceCancelAcknowledged": true,
+      "registrationRemoved": true,
+      "originalLocalJitRemoved": true,
+      "conclusion": "cancelled"
+    }
+  ],
+  "laterHostedAdmissionRefusals": [
+    {
+      "headSha": "dd8d1c9efabce6d3280d0ec4fd6b2308191713db",
+      "jobs": [
+        {
+          "runId": "42936746743",
+          "jobId": "130248575670",
+          "name": "check",
+          "runnerId": 0,
+          "steps": 0
+        },
+        {
+          "runId": "42936746611",
+          "jobId": "130248576205",
+          "name": "verify",
+          "runnerId": 0,
+          "steps": 0
+        }
+      ],
+      "classification": "billing_admission_refused_before_steps",
+      "currentCorrectedLocalJobAffected": false
+    }
+  ],
+  "nextAction": "Use standard GitHub-hosted PR verification after owner-authorized public visibility; keep local routing disabled."
+}
