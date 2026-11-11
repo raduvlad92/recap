@@ -1,0 +1,196 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-11T04:06:16.981Z",
+  "target": "710b509b8b833a9e065246cb4e73df9ab65a6c04",
+  "scope": "Actual production rollback/apply and preservation checks; new application deployment still pending",
+  "quietWindow": {
+    "operation": "f7e8704c-c45c-4a53-8335-9d50d3337532",
+    "notBefore": "2026-11-11T03:55:53.044Z",
+    "freshObservedSatisfiedAt": "2026-11-11 03:57:20.393745+00"
+  },
+  "transactions": [
+    {
+      "step": "reader-rehearse",
+      "operation": "0023f621-1d16-4806-8043-586c60344130",
+      "phase": "rehearsed",
+      "transactionSha256": "a33199758dddb8bdab053960ac53b44634e871d58d0e664b1ee307e68b5dc0f7",
+      "completedAt": "2026-11-11 03:59:54.150053+00",
+      "historyCount": 53
+    },
+    {
+      "step": "reader-apply",
+      "operation": "8201b629-f2cf-406c-8c1f-ca013ec644c6",
+      "phase": "applied",
+      "transactionSha256": "62462c9a4ddfa5eb5f7f94b3247272ccf5a6131649dedd233b73ac64d8ed0750",
+      "completedAt": "2026-11-11 04:00:41.065423+00",
+      "historyCount": 57
+    },
+    {
+      "step": "daily-rehearse",
+      "operation": "b7339749-2132-406a-a3dd-3dfe204c3649",
+      "phase": "rehearsed",
+      "transactionSha256": "131239ad48ac38b2d93723f244fb11f275ecdf88b610a6aafda263629bbb37c1",
+      "completedAt": "2026-11-11 04:02:47.153681+00",
+      "historyCount": 57
+    },
+    {
+      "step": "daily-apply",
+      "operation": "8c1ecf29-66f9-459a-a46d-65efdb885bf7",
+      "phase": "applied",
+      "transactionSha256": "758822c020d730cbdef58d642692f9db8c56fb1cc138ec7e30d3843cba42cbb0",
+      "completedAt": "2026-11-11 04:04:07.910881+00",
+      "historyCount": 59
+    },
+    {
+      "step": "budget-rehearse",
+      "operation": "3e3d6e37-404d-4973-ade0-bb18f5c31810",
+      "phase": "rehearsed",
+      "transactionSha256": "e07236f64724d9148265cb6e17d196eb74a6753b04a86adb5d05be24597b1fa7",
+      "completedAt": "2026-11-11T04:04:34.095Z",
+      "historyCount": null
+    },
+    {
+      "step": "budget-apply",
+      "operation": "cd826bdc-d170-48ab-b125-7fedd885ee70",
+      "phase": "applied",
+      "transactionSha256": "a1cdc5caf7b768ef81a008193927b5b0b12cfc3f248befaaf8d26a7a8ea6b39c",
+      "completedAt": "2026-11-11T04:05:09.153Z",
+      "historyCount": null
+    }
+  ],
+  "migrationCount": 59,
+  "originalTablePreservation": {
+    "reader_workspaces": {
+      "count": 3,
+      "originalRowsPreserved": true,
+      "sha256": "8b266bf1b0246e47986cf052a8224ba098c6540b2bbe71c1f9b9772f70f175ad"
+    },
+    "reader_source_updates": {
+      "count": 596,
+      "originalRowsPreserved": true,
+      "sha256": "13279d29db7f202fb342e97d9f6c8f11baa0582c00bb00346714e4f53d4a9cf0"
+    },
+    "content_analysis_budget": {
+      "count": 1,
+      "originalRowsPreserved": true,
+      "onlyApprovedLimitAndTimestampChanged": true
+    },
+    "reader_content_analysis_policies": {
+      "count": 1,
+      "originalRowsPreserved": true,
+      "onlyApprovedLimitAndTimestampChanged": true
+    },
+    "reader_content_analysis_calls": {
+      "count": 967,
+      "originalRowsPreserved": true,
+      "sha256": "23d3057e8dd9f7e97177ce7ff3c3586d0e09d0ee9e1a1442076ca438ba9cbf11"
+    },
+    "reader_collection_policies": {
+      "count": 1,
+      "originalRowsPreserved": true,
+      "sha256": "33f5ac29662d35bf8f5ca13c1560b48677cbd06c29e8af9eb43140f1e78a22ca"
+    },
+    "reader_collection_provider_jobs": {
+      "count": 300,
+      "originalRowsPreserved": true,
+      "sha256": "2d1ec6a35eef4dd4f36a58cd42cc1654f6d94156bc720a9d6f59ba13095c69e3"
+    },
+    "collection_budget_reservations": {
+      "count": 3227,
+      "originalRowsPreserved": true,
+      "sha256": "ca199814a3071207a1376ed6de610454d08d4c871dcbf3eb7f57962455ba5fc9"
+    },
+    "collection_provider_fee_receipts": {
+      "count": 1,
+      "originalRowsPreserved": true,
+      "sha256": "5af3d3014cb655038455f0b28e24d6ae8156d7c02f38707eefd53e84b10b44b5"
+    },
+    "automatic_content_policies": {
+      "count": 1,
+      "originalRowsPreserved": true,
+      "sha256": "16a5a42a21381de955d06f22b013441f87a4ebeddfbff3f5cc86d434671204b2"
+    },
+    "social_content_policies": {
+      "count": 1,
+      "originalRowsPreserved": true,
+      "sha256": "b30a7397d1ea20278f7abbf557cc49b73a764fc6983f4a833c4cb3b8ef460ed6"
+    },
+    "recap_reminder_preferences": {
+      "count": 3,
+      "originalRowsPreserved": true,
+      "sha256": "096c838b2befce293cd745f5385eb4b2274cc6ec9af37757ab40712f0faa367d"
+    },
+    "recap_reminder_policies": {
+      "count": 0,
+      "originalRowsPreserved": true,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "sqlAccess": {
+    "ownWorkspaceArchivePassed": true,
+    "otherAccountRowsVisible": 0,
+    "anonymousDenied": true,
+    "privateIdentityDenied": true,
+    "scope": "Production SQL role and synthetic JWT-claim tests; not a real Clerk browser login"
+  },
+  "lifecycle": {
+    "mode": "legacy",
+    "ready": false,
+    "bothDestructiveFlagsInactive": true
+  },
+  "financialControls": {
+    "cumulativeLimitUsd": 12,
+    "dailyLimitUsd": 5,
+    "perCallLimitUsd": 0.1,
+    "committedUsd": "9.918486404000",
+    "unknownModelCallsHeld": 7,
+    "originalModelCallRowsPreserved": 967,
+    "sourceCapsUnchanged": true
+  },
+  "securityAdvisors": {
+    "info": 33,
+    "warnings": 0,
+    "errors": 0,
+    "names": [
+      "rls_enabled_no_policy"
+    ]
+  },
+  "runtime": {
+    "servingRelease": "182457410f7f8e979348d10347fe50b1e94b295b",
+    "epoch": 4,
+    "paused": true,
+    "activeHostingWork": 0,
+    "retainedLegacyUncertainFrames": 96,
+    "deliveryAbsent": true,
+    "remindersOff": true
+  },
+  "notClaimed": [
+    "new application deployed",
+    "real Clerk browser login",
+    "new model result",
+    "useful source acquisition proof",
+    "owner publication approval",
+    "normal72hour acceptance"
+  ],
+  "costs": {
+    "operatorStartedSupplierRuns": 0,
+    "operatorStartedModelCalls": 0,
+    "hostingAndApiUsage": "unmeasured"
+  },
+  "nextAction": "Use existing normal CI release controller once; verify its own successful archive/native checkpoint while processing remains paused, then restore original bounded delivery and run the limited real recap proof.",
+  "normalRelease": {
+    "operation": "fd7a089c-dff9-42f1-82c8-cd47e352a9c1",
+    "runId": 42957113757,
+    "createdAt": "2026-11-11T04:07:04Z",
+    "head": "710b509b8b833a9e065246cb4e73df9ab65a6c04",
+    "stateAtRead": "in_progress",
+    "dispatchedOnce": true,
+    "deploymentAcceptancePending": true
+  },
+  "continuation": {
+    "enabled": true,
+    "nextRunAt": "2026-11-11T04:20:00.000Z",
+    "localTime": "05:20Berlin",
+    "sameThread": true
+  }
+}

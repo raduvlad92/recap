@@ -77,6 +77,41 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
   const output=await generateAutomaticContent(claim('recap'),call);
   expect(call).toHaveBeenCalledTimes(2);expect(output.proposal?.highlights).toEqual([point]);expect(output.reason).toContain('Point 1: The statement needs a qualification.');
  });
+ it('withholds an invented currency while retaining a supported finding without another draft call',async()=>{
+  const source={...record,content:'The company reported 16 billion in revenue. Four advertising operations were sued.'};
+  const kept={text:'Four advertising operations were sued.',evidenceQuote:'Four advertising operations were sued.'};
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful({readComplete:true,verdicts:[{index:0,supported:true,reason:'Supported.'}]}):successful({readComplete:true,highlights:[{text:'The company reported $16 billion in revenue.',evidenceQuote:'The company reported 16 billion in revenue.'},kept]}));
+  const output=await generateAutomaticContent(claim('recap',source),call);
+  expect(output.proposal?.highlights).toEqual([kept]);expect(output.reason).toContain('1 draft point was withheld');expect(call).toHaveBeenCalledTimes(2);
+  expect(JSON.parse(call.mock.calls[1][0].request.prompt).findings).toEqual([{index:0,...kept}]);
+ });
+ it.each([['$199','199 dollars'],['€199','199 euros'],['£199','199 pounds'],['199 USD','199 US dollars']])('accepts an explicit equivalent currency %s in a spoken quote', (amount,spoken)=>{
+  const quote=`The final price was ${spoken}.`,p={text:`The final price was ${amount}.`,evidenceQuote:quote};
+  expect(validateAutomaticRecap({readComplete:true,highlights:[p]},quote)).toEqual([p]);
+ });
+ it.each(['$16 billion','16 billion USD','€16 billion','£16 billion','¥16 billion'])('rejects adding unsupported currency %s to a bare number',amount=>{
+  const quote='The company reported 16 billion in revenue.';
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:`The company reported ${amount} in revenue.`,evidenceQuote:quote}]},quote)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it('does not infer a dollar country or mistake a weight paraphrase for currency',()=>{
+  const price='The final price was 199 dollars.';
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'The final price was 199 USD.',evidenceQuote:price}]},price)).toThrow('automatic_recap_unsupported_draft');
+  const pronoun='They asked viewers to send us dollars.';
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'They asked viewers to send USD.',evidenceQuote:pronoun}]},pronoun)).toThrow('automatic_recap_unsupported_draft');
+  const weight='The device weighed three lbs.',p={text:'The device weighed three pounds.',evidenceQuote:weight};
+  expect(validateAutomaticRecap({readComplete:true,highlights:[p]},weight)).toEqual([p]);
+ });
+ it('gives the checker bounded literal context for a victim/product attribution while retaining its negative verdict',async()=>{
+  const quote='People asked whether the cure worked after seeing the advertisement.';
+  const source={...record,content:'Ordinary opening. '.repeat(100)+'The creator does not sell that cure; scammers impersonated them. '+quote+' This was a fake advertisement. '+'Ordinary ending. '.repeat(100)};
+  const draft={text:'The creator sold a cure advertised to viewers.',evidenceQuote:quote};
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?successful({readComplete:true,verdicts:[{index:0,supported:false,reason:'The surrounding source identifies a scam, not a genuine product.'}]}):successful({readComplete:true,highlights:[draft]}));
+  const output=await generateAutomaticContent(claim('recap',source),call),check=JSON.parse(call.mock.calls[1][0].request.prompt);
+  expect(check.findings).toEqual([{index:0,...draft}]);expect(check.sourceContexts[0].text).toContain('The creator does not sell that cure');
+  expect(source.content).toContain(check.sourceContexts[0].text);expect(check.sourceContexts[0].text.length).toBeLessThanOrEqual(quote.length+1202);
+  expect(check.instruction).toContain('Context cannot replace missing support');expect(check.sourceContexts[0].text).not.toContain('TitleOnlyBrand');
+  expect(output.reason).toContain('questioned this draft');expect(output.reason).toContain('not a genuine product');expect(call).toHaveBeenCalledTimes(2);
+ });
  it('rejects an unsupported recap quote before checker inference',async()=>{
   const call=vi.fn(async()=>successful({readComplete:true,highlights:[{text:'Invented result.',evidenceQuote:'This quote never occurred in the source.'}]}));
   await expect(generateAutomaticContent(claim('recap'),call)).rejects.toThrow('automatic_recap_empty_requires_review');expect(call).toHaveBeenCalledTimes(1);

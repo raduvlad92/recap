@@ -1,0 +1,210 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-11T04:58:34.680189+00:00",
+  "target": "710b509b8b833a9e065246cb4e73df9ab65a6c04",
+  "scope": "Actual normal main deployment, original delivery restoration and separately bounded real recap; quality and useful daily acceptance remain open",
+  "normalRelease": {
+    "runId": 42957113757,
+    "checkpointId": 130317634874,
+    "artifactId": 13827872482,
+    "archiveDigest": "sha256:324eb4ba9574b47994e6bbd1258b8364650bc96bb3aeada41b1bd358f8d59f33",
+    "artifactDigest": "e444ec1c245b3492bd3dc87c9432d209a082033df48f333356e540678a29670c",
+    "nativeAcceptedAt": "2026-11-11T04:21:03.900Z",
+    "archiveAndAllNativeAssetsVerified": true,
+    "checkpointPhase": "complete",
+    "checkpointPending": null,
+    "checkpointError": null,
+    "epoch": 5,
+    "workerVersions": {
+      "web": "9641f7cd-4b3e-45ee-9362-4f3ff2af8836",
+      "jobs": "f53d8ac1-56e4-4c0e-abce-665a509b80b8"
+    },
+    "processingPausedThroughAcceptance": true,
+    "artifactOnlyPreparationNotUsedAsNormalCheckpoint": true
+  },
+  "restoration": {
+    "operation": "04445aff-f9e1-44b0-a405-fffa5195c23b",
+    "phase": "fully-restored",
+    "resumedAt": "2026-11-11T04:30:21.946Z",
+    "originalDeliveryRestoredAt": "2026-11-11T04:36:33.566Z",
+    "completedAt": "2026-11-11T04:40:00.177Z",
+    "exactMainFenceReleased": true,
+    "paused": false,
+    "originalConsumerAndSettings": true,
+    "jobCrons": [
+      "*/5 * * * *",
+      "0 * * * *"
+    ],
+    "otherWorkerCronsAbsent": true,
+    "sourceRuntimeUnchanged": true,
+    "sourceCapsUnchanged": true,
+    "remindersOff": true,
+    "bothDestructiveLifecycleFlagsInactive": true,
+    "legacyUncertainFramesRetained": 96,
+    "deadLetterQueueUntouched": true
+  },
+  "recapProof": {
+    "operation": "662e5b87-6be8-4249-bdd5-aada732b13c2",
+    "origin": "manual bounded native queue invocation, not ordinary scheduled acceptance",
+    "sourceChars": 6810,
+    "sourceSha256": "b2d2944de8a673ddf73822ac2790ed5241d4097c9d90bd0fa407b07ef808b256",
+    "maximumCalls": 2,
+    "maximumUsd": 0.2,
+    "actualCalls": 2,
+    "actualUsd": "0.000355094000",
+    "cumulativeCommittedUsd": "9.918841498000",
+    "models": [
+      "deepseek/deepseek-v4.1-flash-1017"
+    ],
+    "nativeQueueMessageAndInvocationVerified": true,
+    "nativeFrameCompleted": true,
+    "finishedWithinNativeBound": true,
+    "sessionNaturallyClosed": true,
+    "heldReviews": 1,
+    "points": 6,
+    "negativeCheckerIndexes": [
+      2,
+      5
+    ],
+    "originalRequestsResponsesAndVerdictsRetained": true,
+    "publicationPerformed": false,
+    "ownerReviewPrepared": {
+      "editedPoints": 4,
+      "negativePointsOmitted": 2,
+      "approvalReceived": false,
+      "originalReviewUnchanged": true
+    },
+    "additionalSourceReviewFindings": [
+      "Unsupported currency added to a bare number",
+      "Misleading attribution of a scam product to its impersonated victim"
+    ],
+    "quality": "Execution succeeded; semantic quality is not accepted for unattended publication"
+  },
+  "financialPreservation": {
+    "originalModelCallRows": 967,
+    "allOriginalRowsHashIdentical": true,
+    "unknownModelCallsHeld": 7,
+    "cumulativeLimitUsd": 12,
+    "dailyLimitUsd": 5,
+    "perCallLimitUsd": 0.1,
+    "existingSourceCapsPreserved": true,
+    "noHistoricalChargeOrHoldReleased": true,
+    "cumulativeCommittedUsdAfterBothProofs": "9.947208244000"
+  },
+  "postRestoreOrdinaryCycle": {
+    "observedAt": "2026-11-11 04:50:46.751544+00",
+    "completedKinds": [
+      "automatic-content",
+      "social-collection",
+      "social-content",
+      "daily-briefing"
+    ],
+    "newReaderArchiveRows": 0,
+    "additionalModelCalls": 0,
+    "manualRecapFrameExcluded": true,
+    "clockForUseful72HourQualificationStarted": false,
+    "claim": "Native completion records show ordinary scheduling restored; no useful content or daily acceptance inferred"
+  },
+  "publicHttp": {
+    "recordedAt": "2026-11-11T04:31:10.520Z",
+    "checks": [
+      {
+        "path": "/api/health",
+        "status": 200,
+        "release": "710b509b8b833a9e065246cb4e73df9ab65a6c04"
+      },
+      {
+        "path": "/api/admin",
+        "status": 401,
+        "errorCode": "sign_in_required"
+      },
+      {
+        "path": "/.netlify/functions/automatic-content-worker",
+        "status": 404
+      },
+      {
+        "path": "/creators/",
+        "status": 200
+      }
+    ]
+  },
+  "localQualityRepair": {
+    "branch": "fix/recap-evidence-context-20261111",
+    "changes": [
+      "Withhold a recap point if it introduces currency absent from its exact quote",
+      "Give checker bounded literal source context to constrain speaker attribution and qualifications",
+      "Retain original evidence and all negative verdicts; no automatic publication"
+    ],
+    "tests": 4350,
+    "testFiles": 146,
+    "typecheckBuildCataloguePassed": true,
+    "workerdChecks": 37,
+    "outboundProviderCalls": 0,
+    "nativeSemanticBenefit": "Not yet proved by another real model run",
+    "deployment": "Not yet deployed",
+    "retainedDraftLiteralValidation": {
+      "actualRetainedPoints": 6,
+      "introducedCurrencyPointWithheld": 1,
+      "otherPointsRetainedOnlyForSemanticReview": 5,
+      "noNewModelCall": true,
+      "originalVerdictsUnchanged": true
+    }
+  },
+  "keywordProof": {
+    "state": "verified-held-proposals",
+    "target": "710b509b8b833a9e065246cb4e73df9ab65a6c04",
+    "operation": "f37cf2d9-79fe-4774-ac48-6a19f276f81e",
+    "proofOrigin": "Separate finite keyword session executed by a genuine scheduled five-minute native tick; scoped proof, not useful-source72hour acceptance",
+    "sourceHash": "b2d2944de8a673ddf73822ac2790ed5241d4097c9d90bd0fa407b07ef808b256",
+    "sourceChars": 6810,
+    "calls": 3,
+    "maximumCalls": 3,
+    "maximumUsd": 0.3,
+    "models": [
+      "deepseek/deepseek-v4.1-flash-1017",
+      "deepseek/deepseek-v4.1-flash-1017",
+      "openai/gpt-6.1-sol-pro"
+    ],
+    "callCostsUsd": [
+      "0.000058822000",
+      "0.000067624000",
+      "0.028240300000"
+    ],
+    "actualUsd": "0.028366746000",
+    "cumulativeCommittedUsd": "9.947208244000",
+    "originalModelCallRowsPreserved": 967,
+    "allOriginalModelRowsHashIdentical": true,
+    "originalUnknownCallsHeld": 7,
+    "sessionNaturallyClosed": true,
+    "nativeScheduledFrameCompleted": true,
+    "nativeInvocationMessageAndControlVerified": true,
+    "finishedWithinNativeBound": true,
+    "heldProposals": 16,
+    "uncertainProposals": 1,
+    "originalRequestsResponsesAndVerdictsRetained": true,
+    "sourceRecordUnchanged": true,
+    "publicationPerformed": false,
+    "ownerApprovalReceived": false,
+    "observedAt": "2026-11-11 04:57:39.876269+00"
+  },
+  "remaining": [
+    "Checked release of the recap quality repair",
+    "Source-grounded owner review of held keyword proposals",
+    "Actual owner approval of the concrete edited recap",
+    "Useful source acquisition and ordinary due-cutoff acceptance",
+    "72 hours of useful ordinary daily operation"
+  ],
+  "costs": {
+    "newRecapModelUsd": "0.000355094000",
+    "newManualSupplierRuns": 0,
+    "hostingAndApiUsage": "unmeasured",
+    "newKeywordModelUsd": "0.028366746000",
+    "combinedNewProofModelUsd": "0.028721840000"
+  },
+  "continuation": {
+    "enabled": true,
+    "nextRunAt": "2026-11-11T07:05:00.000Z",
+    "localTime": "08:05 Europe/Berlin",
+    "scope": "Genuine source and ordinary due-cutoff qualification, not PR polling"
+  }
+}
