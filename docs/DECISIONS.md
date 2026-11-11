@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 11 November — retain standard hosted CI after verified public admission
+
+The public hosted path passes complete PG-enabled verification and artifact/journal checks. Retain the standard hosted workflow and disabled local trial; no paid VPS upgrade or permanent runner follows. The source-publication/CI request is complete, while draft review, merge, production migration/deployment and useful-content acceptance stay separate. [Exact results](tech/GITHUB-PUBLICATION-2026-11-11.md).
+
 ## 11 November — public repository and hosted CI retry explicitly requested
 
 The founder reports upgrading GitHub and asks to make this repository public before retrying Actions, confirming free usage. Standard hosted public compute does not consume included compute; larger runners and storage remain separate. Review existing code/history/logs/artifacts before the authorized visibility change. Public source is authorized; a new license, main release, production deployment/migration, supplier/model execution, backup change or paid-plan purchase is not inferred. The local trial is cancelled/cleaned, with no replacement local runner. [Pricing, review and native public readback](tech/GITHUB-PUBLICATION-2026-11-11.md).

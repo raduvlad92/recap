@@ -1,5 +1,5 @@
 {
-  "kind": "owner_authorized_repository_publication_before_hosted_ci_retry",
+  "kind": "public_repository_hosted_ci_success_and_local_cleanup_verified",
   "recordedAtUtc": "2026-11-11T01:34:41Z",
   "repository": "raduvlad92/recap",
   "ownerReportsGitHubUpgrade": true,
@@ -61,13 +61,118 @@
     "trialVariableAbsent": true,
     "containerAndVolumesAndLoopRemoved": true,
     "fullReaderResultProven": false,
-    "replacementLocalRunnerAdmitted": false
+    "replacementLocalRunnerAdmitted": false,
+    "backgroundExitOneClassification": "expected_owner_requested_cancellation_not_new_failure"
   },
   "hostedRetry": {
     "mode": "fresh pull_request checks after publication",
-    "started": false,
+    "started": true,
     "productionDeploymentAuthorized": false,
-    "mainPush": false
+    "mainPush": false,
+    "headSha": "48e1da28921bb8620a374868a32df55caabe2c2e",
+    "event": "pull_request",
+    "runs": [
+      {
+        "runId": "42940219117",
+        "jobId": "130259968406",
+        "workflow": "Check recap",
+        "job": "check",
+        "status": "completed",
+        "runnerId": 1000000891,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "dependencyInstall": "passed",
+        "applicationChecks": "passed",
+        "conclusion": "success",
+        "vitestPassed": 3309,
+        "vitestSkipped": 1012,
+        "filesPassed": 115,
+        "filesSkipped": 31
+      },
+      {
+        "runId": "42940219114",
+        "jobId": "130259969085",
+        "workflow": "Verify and deploy Cloudflare",
+        "job": "verify",
+        "status": "completed",
+        "runnerId": 1000000892,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "postgres17Setup": "passed",
+        "dependencyInstall": "passed",
+        "applicationAndPostgresChecks": "passed",
+        "conclusion": "success",
+        "vitestPassed": 4321,
+        "vitestSkipped": 0,
+        "filesPassed": 146,
+        "guardedReaderMigrationTests": 102,
+        "guardedReaderMigrationSkipped": 0,
+        "buildAndTypecheck": "passed",
+        "offlineWorkerdChecks": 16,
+        "offlineWorkerdOutboundNetwork": "blocked"
+      }
+    ],
+    "isolatedLocalTrialRun": "42940219084",
+    "isolatedLocalTrialConclusion": "skipped_as_disabled",
+    "billingAdmissionForTheseChecks": "passed",
+    "finalResult": "success",
+    "sourceHead": "48e1da28921bb8620a374868a32df55caabe2c2e",
+    "syntheticMerge": "01c87d878842c576e8933be940a5be1704482737",
+    "additionalJobs": [
+      {
+        "name": "artifact-integrity",
+        "jobId": "130263622206",
+        "conclusion": "success"
+      },
+      {
+        "name": "checkpoint-storage",
+        "jobId": "130263622152",
+        "conclusion": "success"
+      },
+      {
+        "name": "prepare-active",
+        "jobId": "130263624110",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "deploy",
+        "jobId": "130263623624",
+        "conclusion": "skipped"
+      }
+    ],
+    "checkRollup": {
+      "total": 9,
+      "success": 4,
+      "neutral": 2,
+      "skipped": 3,
+      "failure": 0,
+      "interpretation": "all reported results acceptable; intentional skips/neutral probes are not executed test passes"
+    },
+    "artifact": {
+      "id": 13821465004,
+      "name": "therecap-cloudflare-01c87d878842c576e8933be940a5be1704482737",
+      "nativeDigest": "sha256:df6b692d1075e0c31cdd5c364b3c263c6a765e2d0658779a2bcfbbf389b7fe69",
+      "downloadedBytes": 5200985,
+      "downloadDigestVerified": true,
+      "manifestRelease": "01c87d878842c576e8933be940a5be1704482737",
+      "mode": "shadow",
+      "jobsEnabled": false,
+      "publicConfig": null,
+      "assetCount": 74,
+      "separateNativeIntegrityJobPassed": true
+    },
+    "logArchiveSha256": {
+      "check-logs.zip": "e53672322777eebba1efc6f5059168b96ec391762933c08937913391a35254a0",
+      "verify-logs.zip": "3a00905c98dd0a1fa00529dde592dcac01e9c6430da6298d4f0e4b94b6f7a2bb"
+    },
+    "prState": {
+      "open": true,
+      "draft": true,
+      "reviews": 0,
+      "mergeOrDeploymentPerformed": false
+    }
   },
   "costs": {
     "newPaidPlanPurchasedByAssistant": false,

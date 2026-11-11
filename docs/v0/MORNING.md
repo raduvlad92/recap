@@ -1,5 +1,7 @@
 # Your morning checklist
 
+**11 November — no owner action remains for CI:** the repository is PUBLIC and both standard-hosted workflows pass; PG17 verification covers all4,321 tests plus102 guarded migration cases without skips. Artifact and isolated checkpoint checks pass, local-runner cleanup is complete, and production deployment is skipped. Standard public compute is free; larger runners/storage have separate allowances. PR23 remains draft/unmerged. Broader reader release has its existing independent gates. [Final evidence](../tech/GITHUB-PUBLICATION-2026-11-11.md).
+
 **11 November — repository PUBLIC; no further manual setup required:** the founder requests publication and reports a GitHub upgrade. Bounded publication review and anonymous readback pass; the local runner is fully cleaned up. The assistant owns a fresh standard-hosted PR check and exact results. Standard public compute is free; storage/larger runners are separate. Production release remains outside this CI task. [Evidence](../tech/GITHUB-PUBLICATION-2026-11-11.md).
 
 **11 November — no new owner setup required:** the local runner monitor is repaired and qualified. Local resources and trial routing are removed. The assistant is waiting for terminal GitHub cancellation before removing the old busy registration/JIT and starting a fresh pinned trial. No billing/credential/service/production change is requested. [Current evidence](../tech/LOCAL-CI-TRIAL-2026-11-11.md).
