@@ -1,3 +1,4 @@
+import {offlineProviderMetadata} from './helpers/provider-metadata';
 import {describe,it,expect,vi} from 'vitest';
 import {contentHash} from '../src/lib/content-processing';
 import type {SourceUpdate} from '../src/lib/types';
@@ -45,7 +46,7 @@ describe('content-v3 worker trust and persisted repair replay',()=>{
   });
   store.cachedCalls=createAnalysisStore(env).cachedCalls;
   const generate=vi.fn<AnalysisGenerator>(async request=>valid(request));
-  expect((await createAnalysisWorker({env,limits,store,generate})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,limits,store,generate})()).completed).toBe(1);
   const windows=markerTransport.rpc.mock.calls.map(([,args])=>args.p_call_keys);
   expect(windows).toContainEqual(['summary:v3:verify:0']);
   expect(windows.flat()).not.toContain('summary:v3:verify:0:repair:1');
@@ -70,14 +71,14 @@ describe('content-v3 worker trust and persisted repair replay',()=>{
   store.markInvalid=createAnalysisStore(env).markInvalid;
   const reserve=store.reserve;store.reserve=vi.fn<AnalysisStore['reserve']>(async(...args)=>{if(args[1].correction)expect(markerTransport.rpc).toHaveBeenCalledTimes(1);return reserve(...args);});
   const generate=vi.fn<AnalysisGenerator>(async request=>request.key==='summary:v3:chunk:0'?{actualUsd:.0001,observedUsd:.0001,value:{readComplete:false,lastPassageId:JSON.parse(request.prompt).requiredLastPassageId,highlights:[]}}:valid(request));
-  expect((await createAnalysisWorker({env,limits,store,generate})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,limits,store,generate})()).completed).toBe(1);
   expect(markerTransport.rpc).toHaveBeenCalledTimes(1);expect(generate).toHaveBeenCalledTimes(3);expect(calls.size).toBe(3);expect(store.publish).toHaveBeenCalledTimes(1);
  });
  it('resumes a nested multi-field repaired summary after JSONB reordering without changing either paid request hash',async()=>{
   const {queue,calls,store}=fixture([claim()]);let clock=0,saved=0;
   const save=store.saveCall;store.saveCall=vi.fn<AnalysisStore['saveCall']>(async(...args)=>{const row=await save(...args);if(++saved===2)clock=551000;return row;});
   const generate=vi.fn<AnalysisGenerator>(async request=>request.key==='summary:v3:chunk:0'?{actualUsd:.0001,observedUsd:.0001,value:{readComplete:false,lastPassageId:JSON.parse(request.prompt).requiredLastPassageId,highlights:[]}}:valid(request));
-  const worker=createAnalysisWorker({store,env,limits,generate,now:()=>clock});
+  const worker=createAnalysisWorker({providerMetadata:offlineProviderMetadata,store,env,limits,generate,now:()=>clock});
   expect((await worker()).yielded).toBe(1);expect(calls.size).toBe(2);expect(store.publish).not.toHaveBeenCalled();
   const old=new Map([...calls].map(([key,row])=>[key,JSON.stringify(row)]));queue.push(claim());
   expect((await worker()).completed).toBe(1);expect(calls.size).toBe(3);expect(generate).toHaveBeenCalledTimes(3);expect(store.markInvalid).toHaveBeenCalledTimes(1);
@@ -92,14 +93,14 @@ describe('content-v3 worker trust and persisted repair replay',()=>{
   if(variant==='wrong-predecessor')c.generationContext!.predecessorJobId='another-predecessor';
   if(variant==='bad-disposition')c.generationContext!.emptyDisposition='self-approved' as never;
   const {store}=fixture([c]),generate=vi.fn<AnalysisGenerator>();
-  expect((await createAnalysisWorker({store,env,limits,generate})()).blocked).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,store,env,limits,generate})()).blocked).toBe(1);
   for(const fn of [store.cachedCalls,store.reserve,store.prepare,store.publish,generate])expect(fn).not.toHaveBeenCalled();
   expect(store.fail).toHaveBeenCalledWith(c,'analysis_generation_contract_changed',false,false);
  });
  it('reports an unreviewed or substantive-source empty as failed without publishing a no-finding conclusion',async()=>{
   const c=claim(),{store}=fixture([c]);
   const generate=vi.fn<AnalysisGenerator>(async request=>({actualUsd:.0001,observedUsd:.0001,value:{readComplete:true,lastPassageId:JSON.parse(request.prompt).requiredLastPassageId,highlights:[]}}));
-  expect((await createAnalysisWorker({store,env,limits,generate})()).failed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,store,env,limits,generate})()).failed).toBe(1);
   expect(store.prepare).not.toHaveBeenCalled();expect(store.publish).not.toHaveBeenCalled();expect(store.fail).toHaveBeenCalledWith(c,'analysis_summary_omission',false,false);
  });
 });

@@ -3,6 +3,7 @@ import { createKeywordLearningHandler, parseKeywordLearningInput } from '../netl
 import { database } from '../netlify/functions/_shared/admin-data';
 import { CollectionError } from '../netlify/functions/_shared/security';
 import { normalizeInstagramProviderContent } from '../netlify/functions/_shared/provider-content';
+import { normalizeMetadataObservation, type JoinedMetadataIntent } from '../netlify/functions/_shared/youtube-format-provider';
 import hourly from '../netlify/functions/hourly-collection-worker.mts';
 import social from '../netlify/functions/social-collection-worker.mts';
 import { assertActive, bindingEnv, hostingRpc, readControl, runWithBindings, type Bindings } from './runtime';
@@ -40,6 +41,15 @@ export async function runEnrichmentStage(bindings: Bindings, capability: Pipelin
   if (typeof actorRef !== 'string' || actorRef.length > 160 || JSON.stringify(raw)?.length > 2 * 1024 * 1024) denied();
   return normalizeInstagramProviderContent(raw, actorRef);
 }
+export async function runYouTubeFormatStage(bindings: Bindings, capability: PipelineCapability, intentId: string, run: unknown, rows: unknown) {
+  await assertPipelineCapability(bindings, capability, 'enrichment');
+  let bytes: number;
+  try { bytes = new TextEncoder().encode(JSON.stringify({ run, rows })).byteLength; } catch { return denied(); }
+  if (!uuid(intentId) || bytes > 2 * 1024 * 1024) denied();
+  const result = await database(bindingEnv(bindings)).rpc('read_hourly_metadata_intent', { p_intent_id: intentId, p_capability: capability });
+  if (result.error || !result.data || result.data.id !== intentId) denied();
+  return normalizeMetadataObservation(result.data as JoinedMetadataIntent, run, rows);
+}
 export async function runAnalysisStage(bindings: Bindings, capability: PipelineCapability, input: KeywordLearningInput, stage: 'generation' | 'verification'): Promise<Response> {
   await assertPipelineCapability(bindings, capability, stage);
   const parsed = parseKeywordLearningInput(input);
@@ -49,7 +59,7 @@ export async function runAnalysisStage(bindings: Bindings, capability: PipelineC
   // The unchanged finite-session handler stores/reserves the SAME exact
   // request before inference. A lost RPC response must resume its stored key,
   // not purchase another call. It never invokes HostRuntime.analysis.
-  return runWithBindings(bindings, () => createKeywordLearningHandler({ env, db: () => database(env) }, { generateOnly: true, generationTimeoutMs: 120000 })(new Request(bindings.APP_URL + '/.netlify/functions/keyword-learning-worker', {
+  return runWithBindings(bindings, () => createKeywordLearningHandler({ env, db: () => database(env) }, { generateOnly: true, generationTimeoutMs: 120000, assertBeforeReservation: () => assertPipelineCapability(bindings, capability, stage) })(new Request(bindings.APP_URL + '/.netlify/functions/keyword-learning-worker', {
     method: 'POST', headers: { 'content-type': 'application/json', 'x-content-analysis-secret': secret! }, body: JSON.stringify(parsed),
   })));
 }

@@ -1,3 +1,4 @@
+import {offlineProviderMetadata} from './helpers/provider-metadata';
 import {describe,it,expect,vi} from 'vitest';
 import {contentHash} from '../src/lib/content-processing';
 import type {SourceUpdate} from '../src/lib/types';
@@ -39,14 +40,14 @@ describe('content-v2 worker and durable correction integration',()=>{
   const queue=[c],{store,calls}=setup(queue);let clock=0,seed=true,saved=0;
   const save=store.saveCall;store.saveCall=vi.fn<AnalysisStore['saveCall']>(async(...args)=>{const row=await save(...args);if(++saved===1599&&seed)clock=551000;else if(!seed)clock+=500;return row;});
   const generate=vi.fn<AnalysisGenerator>(async r=>{if(!seed)clock+=8000;const p=JSON.parse(r.prompt);return {value:{readComplete:true,lastPassageId:p.requiredLastPassageId,candidates:p.interval.start===0?[{label:'Nvidia',kind:'brand',confidence:90,reason:'Literal synthetic brand.',mention:'Nvidia',passageIds:[p.passages[0].id]}]:[]},actualUsd:.0001,observedUsd:.0001};});
-  expect((await createAnalysisWorker({env,store,limits:lim,generate,now:()=>clock})()).yielded).toBe(1);expect(saved).toBe(1599);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits:lim,generate,now:()=>clock})()).yielded).toBe(1);expect(saved).toBe(1599);
   const cached=bulkCache(store,calls),read=cached.getMockImplementation()!;
   cached.mockImplementation(async(...args)=>{clock+=500;return read(...args);});
   store.policies=vi.fn(async()=>Array.from({length:10},(_,i)=>({user_id:i?'idle-'+i:'owner',enabled:true,model:lim.model})));
   const reserve=store.reserve;store.reserve=vi.fn<AnalysisStore['reserve']>(async(...args)=>{clock+=500;return reserve(...args);});
   const before=new Map([...calls].map(([key,row])=>[key,JSON.stringify(row)])),oldReservations=vi.mocked(reserve).mock.calls.length;
   seed=false;queue.push(c);
-  expect((await createAnalysisWorker({env,store,limits:lim,generate,now:()=>clock})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits:lim,generate,now:()=>clock})()).completed).toBe(1);
   expect(cached).toHaveBeenCalledTimes(50);expect(store.reserve).toHaveBeenCalledTimes(1);expect(oldReservations).toBe(1599);
   expect(generate).toHaveBeenCalledTimes(1600);expect(saved).toBe(1600);expect(calls.size).toBe(1600);
   expect(cached.mock.calls.every(([,keys])=>keys.length<=64)).toBe(true);
@@ -62,7 +63,7 @@ describe('content-v2 worker and durable correction integration',()=>{
   const save=store.saveCall;store.saveCall=vi.fn<AnalysisStore['saveCall']>(async(...args)=>{if(!seed)clock+=500;const row=await save(...args);if(++saved===1599&&seed)clock=551000;return row;});
   const mark=store.markInvalid!;store.markInvalid=vi.fn<NonNullable<AnalysisStore['markInvalid']>>(async(...args)=>{if(!seed)clock+=500;return mark(...args);});
   const generate=vi.fn<AnalysisGenerator>(async r=>{let p=JSON.parse(r.prompt);if(r.correction)p=p.originalRequest;return {value:r.correction?{readComplete:true,lastPassageId:p.requiredLastPassageId,candidates:p.interval.start===0?[{label:'Nvidia',kind:'brand',confidence:90,reason:'Literal synthetic brand.',mention:'Nvidia',passageIds:[p.passages[0].id]}]:[]}:{readComplete:false},actualUsd:.0001,observedUsd:.0001};});
-  expect((await createAnalysisWorker({env,store,limits:lim,generate,now:()=>clock})()).yielded).toBe(1);expect(saved).toBe(1599);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits:lim,generate,now:()=>clock})()).yielded).toBe(1);expect(saved).toBe(1599);
   const cached=bulkCache(store,calls),read=cached.getMockImplementation()!;cached.mockImplementation(async(...args)=>{clock+=500;return read(...args);});
   store.policies=vi.fn(async()=>Array.from({length:10},(_,i)=>({user_id:i?'idle-'+i:'owner',enabled:true,model:lim.model})));
   const reserve=store.reserve;store.reserve=vi.fn<AnalysisStore['reserve']>(async(...args)=>{clock+=500;return reserve(...args);});
@@ -71,7 +72,7 @@ describe('content-v2 worker and durable correction integration',()=>{
   seed=false;const markers=vi.mocked(store.markInvalid!).mock.calls.length;let completed=false,lastSaved=saved;
   store.fail=vi.fn(async(_c,_code,_retry,yielded)=>{if(yielded){stalls=saved>lastSaved?0:stalls+1;lastSaved=saved;}return {state:stalls>=3?'failed':'queued'};});
   for(let turn=0;turn<64&&!completed;turn++){
-   const prior=saved;queue.push(c);const stats=await createAnalysisWorker({env,store,limits:lim,generate,now:()=>clock})();
+   const prior=saved;queue.push(c);const stats=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits:lim,generate,now:()=>clock})();
    expect(stats.failed).toBe(0);expect(saved).toBeGreaterThan(prior);completed=stats.completed===1;
   }
   expect(completed).toBe(true);expect(saved).toBe(3200);expect(generate).toHaveBeenCalledTimes(3200);expect(calls.size).toBe(3200);
@@ -91,69 +92,69 @@ describe('content-v2 worker and durable correction integration',()=>{
   store.saveCall=vi.fn(async(row,_claim,result)=>({...row,result,state:'settled',actual_usd:.0001}));
   store.publish=vi.fn(async c=>{published.add(c.job.user_id);return true;});
   const generate:AnalysisGenerator=async r=>{clock+=70000;return valid(r);};
-  const run=createAnalysisWorker({env,store,limits,generate,now:()=>clock});
+  const run=createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>clock});
   await run();expect(published.size).toBeLessThan(10);expect(published.size).toBeGreaterThan(0);
   await run();await run();expect(published.size).toBe(10);expect(claimed).toEqual(owners);expect(store.fail).not.toHaveBeenCalled();
  });
  it('reconstructs through bounded optional cache pages and never re-reserves or changes saved raw outputs',async()=>{
   const queue=[makeClaim()],{store,calls}=setup(queue),generate=vi.fn<AnalysisGenerator>(async r=>valid(r));
-  await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   const before=JSON.stringify([...calls]),cached=bulkCache(store,calls,1),reservations=vi.mocked(store.reserve).mock.calls.length;
-  queue.push(makeClaim());expect((await createAnalysisWorker({env,store,limits,generate,now:()=>0})()).completed).toBe(1);
+  queue.push(makeClaim());expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})()).completed).toBe(1);
   expect(cached).toHaveBeenCalledTimes(2);expect(cached.mock.calls.every(([,keys])=>keys.length<=64)).toBe(true);
   expect(store.reserve).toHaveBeenCalledTimes(reservations);expect(generate).toHaveBeenCalledTimes(2);expect(JSON.stringify([...calls])).toBe(before);
  });
  it('replays an original invalid response and its one settled correction from bulk cache without a new charge',async()=>{
   const queue=[makeClaim()],{store,calls}=setup(queue);
   const generate=vi.fn<AnalysisGenerator>(async r=>r.key==='summary:v2:chunk:0'?{...valid(r),value:{readComplete:false}}:valid(r));
-  expect((await createAnalysisWorker({env,store,limits,generate,now:()=>0})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})()).completed).toBe(1);
   const before=JSON.stringify([...calls]),reservations=vi.mocked(store.reserve).mock.calls.length;
   bulkCache(store,calls,1);queue.push(makeClaim());
-  expect((await createAnalysisWorker({env,store,limits,generate,now:()=>0})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})()).completed).toBe(1);
   expect(generate).toHaveBeenCalledTimes(3);expect(store.reserve).toHaveBeenCalledTimes(reservations);expect(calls.size).toBe(3);
   expect(JSON.stringify([...calls])).toBe(before);expect(store.markInvalid).toHaveBeenCalledTimes(1);
  });
  it.each(['pre-call hash','result hash','call identity','result identity','model'])('blocks bulk cached %s mismatch before reuse',async kind=>{
   const queue=[makeClaim()],{store,calls}=setup(queue),generate=vi.fn<AnalysisGenerator>(async r=>valid(r));
-  await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   const key='summary:v2:chunk:0',base=calls.get(key)!;
   calls.set(key,kind==='pre-call hash'?{...base,request_hash:null}:kind==='result hash'?{...base,result:{...base.result!,requestHash:'0'.repeat(64)}}:kind==='model'?{...base,model:'other'}:kind==='call identity'?{...base,execution_identity:null}:{...base,result:{...base.result!,executionIdentity:{...base.execution_identity!,provider:'other'}}});
   bulkCache(store,calls);queue.push(makeClaim());const prepared=vi.mocked(store.prepare).mock.calls.length;
-  expect((await createAnalysisWorker({env,store,limits,generate,now:()=>0})()).blocked).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})()).blocked).toBe(1);
   expect(store.fail).toHaveBeenLastCalledWith(expect.anything(),'analysis_cached_input_changed',false,false);
   expect(generate).toHaveBeenCalledTimes(2);expect(store.prepare).toHaveBeenCalledTimes(prepared);
  });
  it('bulk replay never promotes a raw cost assertion over an unknown durable charge',async()=>{
   const queue=[makeClaim()],{store,calls}=setup(queue),generate=vi.fn<AnalysisGenerator>(async r=>valid(r));
-  await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   const base=calls.get('summary:v2:chunk:0')!;calls.set(base.call_key!,{...base,state:'unknown',actual_usd:null});
   bulkCache(store,calls);queue.push(makeClaim());const reservations=vi.mocked(store.reserve).mock.calls.length;
-  expect((await createAnalysisWorker({env,store,limits,generate,now:()=>0})()).blocked).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})()).blocked).toBe(1);
   expect(store.fail).toHaveBeenLastCalledWith(expect.anything(),'analysis_unknown_charge_hold',false,false);
   expect(store.reserve).toHaveBeenCalledTimes(reservations);expect(generate).toHaveBeenCalledTimes(2);
  });
  it.each(['analysis_source_changed','analysis_runtime_disabled'])('a denied cache fence %s prevents generation and publication',async code=>{
   const {store}=setup([makeClaim()]),generate=vi.fn<AnalysisGenerator>(async r=>valid(r));
   store.cachedCalls=vi.fn(async()=>{throw new AnalysisError(code);});
-  await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   expect(generate).not.toHaveBeenCalled();expect(store.reserve).not.toHaveBeenCalled();expect(store.publish).not.toHaveBeenCalled();
  });
  it.each(['oversized','nonadvancing','outside-window'])('rejects %s cache pages with bounded requests and no provider call',async kind=>{
   const {store}=setup([makeClaim()]),generate=vi.fn<AnalysisGenerator>(async r=>valid(r));
   store.cachedCalls=vi.fn(async(_claim,keys,after)=>kind==='oversized'?{calls:[{id:'oversized',call_key:keys[0],result:{value:'x'.repeat(ANALYSIS_CACHE_PAGE_BYTES),observedUsd:0}}],nextAfterKey:null}:kind==='outside-window'?{calls:[{id:'other',call_key:'outside'}],nextAfterKey:null}:{calls:[{id:'repeat',call_key:keys[0]}],nextAfterKey:after||keys[0]});
-  await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   expect(vi.mocked(store.cachedCalls).mock.calls.length).toBeLessThanOrEqual(2);expect(generate).not.toHaveBeenCalled();expect(store.publish).not.toHaveBeenCalled();
  });
  it('routes the v2 job through reconstruction and semantic checking, then reuses both paid calls on duplicate delivery',async()=>{
   const {store}=setup([makeClaim(),makeClaim()]),generate=vi.fn<AnalysisGenerator>(async r=>valid(r));
-  const result=await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   expect(result.completed).toBe(2);expect(generate).toHaveBeenCalledTimes(2);expect(store.saveCall).toHaveBeenCalledTimes(2);expect(store.markInvalid).not.toHaveBeenCalled();
   expect(vi.mocked(store.prepare).mock.calls[0][1].patch.videoHighlights).toEqual([{text:'The GPU benchmark improved from 30 to 45 frames per second.',startSeconds:17}]);
  });
  it('persists invalid evidence and marks its exact base hash before reserving one correction',async()=>{
   const {store,calls}=setup([makeClaim()]);
   const generate=vi.fn<AnalysisGenerator>(async r=>r.key==='summary:v2:chunk:0'?{...valid(r),value:{readComplete:true,lastPassageId:'untrusted',highlights:[]}}:valid(r));
-  const result=await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   expect(result.completed).toBe(1);expect(generate).toHaveBeenCalledTimes(3);expect(store.markInvalid).toHaveBeenCalledTimes(1);
   expect(calls.get('summary:v2:chunk:0')?.result?.value).toMatchObject({lastPassageId:'untrusted'});
   const marker=vi.mocked(store.markInvalid!).mock.calls[0];expect(marker[1].call_key).toBe('summary:v2:chunk:0');expect(marker[2]).toMatch(/^[a-f0-9]{64}$/);expect(marker[3]).toBe('analysis_incomplete_coverage');
@@ -162,25 +163,25 @@ describe('content-v2 worker and durable correction integration',()=>{
  });
  it('does not authorize correction from materialized output with unknown durable cost',async()=>{
   const {store}=setup([makeClaim()]),generate=vi.fn<AnalysisGenerator>(async()=>({value:{readComplete:false},actualUsd:null,observedUsd:0}));
-  const result=await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   expect(result.blocked).toBe(1);expect(generate).toHaveBeenCalledTimes(1);expect(store.markInvalid).not.toHaveBeenCalled();expect(store.publish).not.toHaveBeenCalled();
   expect(store.fail).toHaveBeenCalledWith(expect.anything(),'analysis_correction_charge_unknown',false,false);
  });
  it('blocks the next separately charged key when usable saved output has an unknown durable bill, then replays it after settlement',async()=>{
   const claims=[makeClaim()],{store,calls}=setup(claims);
   const generate=vi.fn<AnalysisGenerator>(async r=>r.key==='summary:v2:chunk:0'?{...valid(r),actualUsd:null}:valid(r));
-  const result=await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   expect(result.blocked).toBe(1);expect(generate).toHaveBeenCalledTimes(1);expect(store.reserve).toHaveBeenCalledTimes(1);
   expect(store.fail).toHaveBeenCalledWith(expect.anything(),'analysis_unknown_charge_hold',false,false);expect(store.publish).not.toHaveBeenCalled();
   const base=calls.get('summary:v2:chunk:0')!;calls.set(base.call_key!,{...base,state:'settled',actual_usd:.0001});claims.push(makeClaim());
-  const resumed=await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  const resumed=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   expect(resumed.completed).toBe(1);expect(generate).toHaveBeenCalledTimes(2);expect(calls.size).toBe(2);
  });
  it('does not promote a raw cached cost assertion or a missing pre-call hash in a content-v2 job',async()=>{
   const queue=[makeClaim()],{store,calls}=setup(queue),generate=vi.fn<AnalysisGenerator>(async r=>valid(r));
-  await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   const base=calls.get('summary:v2:chunk:0')!;calls.set(base.call_key!,{...base,request_hash:null});queue.push(makeClaim());
-  const result=await createAnalysisWorker({env,store,limits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0})();
   expect(result.blocked).toBe(1);expect(generate).toHaveBeenCalledTimes(2);expect(store.fail).toHaveBeenCalledWith(expect.anything(),'analysis_cached_input_changed',false,false);
   expect(durableGenerationResult({id:'x',state:'unknown',actual_usd:null},{value:{},actualUsd:0,observedUsd:0}).actualUsd).toBeNull();
  });

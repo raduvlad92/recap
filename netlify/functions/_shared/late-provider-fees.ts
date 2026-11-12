@@ -1,10 +1,12 @@
 import { database } from './admin-data';
 import { readApifyFeeEvidence } from './apify';
+import { readMetadataFeeEvidence } from './youtube-format-provider';
 import { CollectionError, runtimeEnv, type Env } from './security';
 
 export interface LateFeeSnapshot {
   provider_job_id: string; reservation_id: string; user_id: string;
   provider_run_id: string; actor_id: string; revision: string;
+  metadata_contract_digest?: string; build_id?: string; original_account_id?: string; max_usd?: string;
 }
 export interface LateFeeReceipt {
   id: string; request_key: string; outcome: string; previous_usd: string;
@@ -29,6 +31,8 @@ export async function reconcileLateProviderFee(providerJobId: string, requestKey
   if (expected.provider_job_id !== providerJobId || !expected.reservation_id || !expected.revision) {
     throw new CollectionError(503, 'provider_fee_store_unavailable', 'Saved provider fee identity is unavailable.');
   }
-  const evidence = await readApifyFeeEvidence({ userId: expected.user_id, providerRunId: expected.provider_run_id, actorId: expected.actor_id }, env, fetcher);
+  const evidence = expected.metadata_contract_digest
+    ? await readMetadataFeeEvidence({ userId: expected.user_id, providerRunId: expected.provider_run_id, actorId: expected.actor_id, buildId: expected.build_id || '', originalAccountId: expected.original_account_id || '', contractDigest: expected.metadata_contract_digest, maximumUsd: expected.max_usd || '' }, env, fetcher)
+    : await readApifyFeeEvidence({ userId: expected.user_id, providerRunId: expected.provider_run_id, actorId: expected.actor_id }, env, fetcher);
   return rpc<LateFeeReceipt>('record_late_provider_fee', { p_job_id: providerJobId, p_request_key: requestKey, p_expected: expected, p_evidence: evidence });
 }

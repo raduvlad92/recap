@@ -1,6 +1,11 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import type { KeywordLearningInput } from './keyword-learning';
 import type { normalizeInstagramProviderContent } from './provider-content';
+import type { ObservedFormatEvidence } from './youtube-format-provider';
+
+export interface HostPipelineCapability {
+  key: string; token: string; epoch: number; release: string; revision: string; messageId: string | null;
+}
 
 export interface HostDownload {
   text: string; url: string; contentType: string; status?: number;
@@ -22,6 +27,8 @@ export interface HostRuntime {
    * in their original domain stores; no transport retry may create new work. */
   analysis?: (input: KeywordLearningInput) => Promise<Response>;
   enrichInstagram?: (raw: unknown, actorRef: string) => Promise<ReturnType<typeof normalizeInstagramProviderContent>>;
+  pipelineCapability?: HostPipelineCapability;
+  enrichYouTubeFormat?: (intentId: string, run: unknown, rows: unknown) => Promise<ObservedFormatEvidence>;
 }
 
 // Request-local bindings: never mutate process.env or global fetch in an isolate

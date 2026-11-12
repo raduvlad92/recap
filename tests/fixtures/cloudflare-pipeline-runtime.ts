@@ -4,6 +4,7 @@ import { pipelineServices, type PipelineCapability } from '../../cloudflare/pipe
 import { hostRuntime } from '../../netlify/functions/_shared/host-runtime';
 import type { KeywordLearningInput } from '../../netlify/functions/_shared/keyword-learning';
 import jobs from '../../cloudflare/jobs';
+import { metadataFixture } from '../helpers/metadata-provider';
 export { CollectionService, EnrichmentService, GenerationService, VerificationService } from '../../cloudflare/pipeline-entrypoints';
 const fixtureContent = 'A source transcript for the offline private pipeline runtime test.';
 export default {
@@ -23,6 +24,11 @@ export default {
         return Response.json({acknowledgements,retries});
       }
       if (path === '/enrichment') return Response.json(await runWithBindings(scoped,()=>hostRuntime()!.enrichInstagram!({caption:'An exact fixture caption.',transcript:'Different speech content.'},'apify/instagram-reel-scraper')));
+      if (path.startsWith('/youtube-format')) {
+        const fixture = metadataFixture();
+        const metadataScope = {...scoped,pipeline:{services,capability:{...capability,key:'cron:hourly-collection:2:123',messageId:null}}};
+        return Response.json(await runWithBindings(metadataScope,()=>hostRuntime()!.enrichYouTubeFormat!(fixture.intent.id,path.endsWith('forged')?{...fixture.run,buildId:'WrongBuild123'}:fixture.run,[fixture.row])));
+      }
       if (path === '/collection') return await services.CollectionService.run({...capability,key:'cron:hourly-collection:2:123',messageId:null},'hourly-collection');
       if (path === '/wrong-role') return await services.VerificationService.generate(capability,input);
       if (path === '/stale-release') return await services.GenerationService.generate({...capability,release:'b'.repeat(40)},input);

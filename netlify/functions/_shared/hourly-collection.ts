@@ -13,6 +13,8 @@ import { normalizePublicFeed } from './public-feed';
 import { createPublicOriginalExtractor, needsPublicOriginal, ORIGINAL_REQUESTS_PER_SOURCE } from './public-content';
 import { nativeYouTubeDiscovery, DISCOVERY_ITEMS, DISCOVERY_MAX_USD } from './youtube-discovery';
 import { settleBudget } from './budget-ledger';
+import { hostRuntime } from './host-runtime';
+import { assertPreparedMetadataScope, preflightMetadataProvider, startMetadataProvider, pollMetadataProvider, type PreparedMetadataScope, type JoinedMetadataIntent, type MetadataPreflight, type ObservedFormatEvidence } from './youtube-format-provider';
 import { startJob, finishJob } from './job-ledger';
 import { downloadPublic, downloadHourlySource, downloadYouTubeCaptions, youtubeCaptionUrl, plainText, safeLink, type Download } from './feed';
 import { validateSource } from './collect-handler';
@@ -49,6 +51,13 @@ export interface HourlyStore {
  finish(claim: HourlyClaim, patch: HourlyPatch, updates: SourceUpdate[]): Promise<{ retrievedCount: number; importAccepted: boolean }>;
  reserve(claim: HourlyClaim, itemKey: string, jobId: string, maximumUsd: number): Promise<{ claimed: boolean; id: string; reservationId?: string }>;
  providerPatch(id: string, patch: Partial<StoredProviderJob> & { finished_at?: string }): Promise<void>;
+ currentArchive?(claim: HourlyClaim, itemKey: string): Promise<SourceUpdate | null>;
+ prepareMetadata?(claim: HourlyClaim): Promise<PreparedMetadataScope[]>;
+ pendingMetadata?(claim: HourlyClaim): Promise<JoinedMetadataIntent[]>;
+ reserveMetadata?(claim: HourlyClaim, scope: PreparedMetadataScope, jobId: string, preflight: MetadataPreflight): Promise<{ claimed: boolean; id: string; reservationId: string; intent: JoinedMetadataIntent }>;
+ assertMetadataDispatch?(claim: HourlyClaim, intent: JoinedMetadataIntent): Promise<void>;
+ recordMetadata?(claim: HourlyClaim, intent: JoinedMetadataIntent, evidence: Record<string, unknown>): Promise<{ observationId: string; status: string; fee?: unknown; classification?: unknown }>;
+ finishMetadata?(claim: HourlyClaim, intent: JoinedMetadataIntent, observationId: string): Promise<{ applied: boolean; reason?: string }>;
 }
 const object = (v: unknown): Record<string, unknown> => v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {};
 const list = (v: unknown): Record<string, unknown>[] => (Array.isArray(v) ? v : v ? [v] : []).map(object);
@@ -113,8 +122,27 @@ export function createHourlyStore(env: Env = runtimeEnv): HourlyStore {
   async providerClaimed(claim, itemKey) { const r = await db.from('reader_collection_provider_jobs').select('id').eq('user_id', claim.state.user_id).eq('source_id', claim.source.id).eq('item_key', itemKey).maybeSingle(); if (r.error) throw unavailable(); return !!r.data; },
   async jobCost(jobId, userId) { const r = await db.from('collection_jobs').select('observed_cost_usd').eq('id', jobId).eq('user_id', userId).single(); if (r.error) throw unavailable(); return r.data.observed_cost_usd === null ? null : Number(r.data.observed_cost_usd); },
   finish: (claim, patch, updates) => rpc('finish_hourly_source', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_patch: patch, p_items: updates.map(record => ({ itemKey: hourlyItemKey(record.url), record })) }),
-  reserve: (claim, itemKey, jobId, maximumUsd) => rpc('reserve_hourly_provider', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_item_key: itemKey, p_job_id: jobId, p_actor_id: YOUTUBE_ACTOR_ID, p_maximum_usd: maximumUsd, p_parent_reservation_id: env('HOURLY_COLLECTION_BUDGET_PARENT_ID') || null }),
+  reserve: (claim, itemKey, jobId, maximumUsd) => rpc(itemKey.startsWith('youtube:') ? 'reserve_hourly_caption_provider' : 'reserve_hourly_provider', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_item_key: itemKey, p_job_id: jobId, p_actor_id: YOUTUBE_ACTOR_ID, p_maximum_usd: maximumUsd, p_parent_reservation_id: env('HOURLY_COLLECTION_BUDGET_PARENT_ID') || null }),
   async providerPatch(id, patch) { const r = await db.from('reader_collection_provider_jobs').update(patch).eq('id', id).select('id').single(); if (r.error || !r.data) throw unavailable(); },
+  async currentArchive(claim, itemKey) {
+   const seen = await db.from('reader_collection_seen_items').select('archive_id').eq('user_id', claim.state.user_id).eq('source_id', claim.source.id).eq('item_key', itemKey).maybeSingle();
+   if (seen.error) throw unavailable(); if (!seen.data) return null;
+   const result = await db.from('reader_source_updates').select('record').eq('user_id', claim.state.user_id).eq('source_id', claim.source.id).eq('id', seen.data.archive_id).maybeSingle();
+   if (result.error) throw unavailable(); const record = result.data?.record as SourceUpdate | undefined;
+   if (record && (!goodUpdate(record, claim.source) || hourlyItemKey(record.url) !== itemKey)) throw unavailable();
+   return record || null;
+  },
+  prepareMetadata: claim => hostRuntime()?.pipelineCapability ? rpc('prepare_hourly_metadata_provider', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_scope_id: null, p_capability: hostRuntime()!.pipelineCapability }) : Promise.resolve([]),
+  pendingMetadata: claim => hostRuntime()?.pipelineCapability ? rpc('pending_hourly_metadata_providers', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_capability: hostRuntime()!.pipelineCapability }) : Promise.resolve([]),
+  reserveMetadata: (claim, scope, jobId, preflight) => rpc('reserve_hourly_metadata_provider', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_scope_id: scope.scopeId, p_job_id: jobId, p_prepared_digest: scope.preparedDigest, p_preflight: preflight, p_capability: hostRuntime()?.pipelineCapability || null }),
+  async assertMetadataDispatch(claim, intent) {
+   if (await rpc('assert_hourly_metadata_dispatch', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_intent_id: intent.id, p_capability: hostRuntime()?.pipelineCapability || null }) !== true) throw new CollectionError(409, 'metadata_dispatch_changed', 'Metadata admission changed before dispatch.');
+  },
+  // Each fresh provider read is a distinct immutable observation. Its time is
+  // material: a terminal fee can become final only after the native quiet age.
+  // Replaying the same captured payload still produces the same receipt key.
+  recordMetadata: (claim, intent, evidence) => rpc('record_hourly_metadata_observation', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_intent_id: intent.id, p_observation_key: 'metadata.' + intent.id + '.' + digest(JSON.stringify(evidence)), p_evidence: evidence, p_capability: hostRuntime()?.pipelineCapability || null }),
+  finishMetadata: (claim, intent, observationId) => rpc('finish_hourly_metadata_provider', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_intent_id: intent.id, p_observation_id: observationId, p_capability: hostRuntime()?.pipelineCapability || null }),
  };
 }
 
@@ -254,6 +282,8 @@ interface Dependencies {
  env: Env; store: HourlyStore; log: RetrievalLog; discover: typeof nativeYouTubeDiscovery; startDiscovery: typeof startYouTubeDiscovery; download: HourlyDownload; captions: (videoId: string) => Promise<CaptionResult | null>;
  startApify: typeof startApify; startMetadata: typeof startYouTubeMetadata; pollApify: typeof pollStoredApify; preflight: typeof verifyHourlyApifyConfiguration;
  startJob: typeof startJob; finishJob: typeof finishJob; settleBudget: typeof settleBudget; now: () => number; pause: (ms: number) => Promise<void>;
+ metadataPreflight: typeof preflightMetadataProvider; metadataStart: typeof startMetadataProvider; metadataPoll: typeof pollMetadataProvider;
+ enrichMetadata: (intentId: string, run: unknown, rows: unknown) => Promise<ObservedFormatEvidence>;
 }
 function providerReference(job: StoredProviderJob): ProviderReference {
  return { jobId: job.job_id, providerRunId: job.provider_run_id, actorId: job.actor_id, itemKey: job.item_key, reservedUsd: Number(job.maximum_usd), observedCostUsd: job.actual_cost_usd === null ? null : Number(job.actual_cost_usd), costStatus: job.actual_cost_usd === null ? 'unknown' : 'provider_reported' };
@@ -262,7 +292,8 @@ function providerReference(job: StoredProviderJob): ProviderReference {
 export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
  const env = overrides.env || runtimeEnv;
  if (env('HOURLY_COLLECTION_ENABLED') !== 'true') return async () => ({ enabled: false, checked: 0, failed: 0, skipped: 0, statuses: {} });
- const deps: Dependencies = { env, log: overrides.log || createRetrievalLog(env), discover: nativeYouTubeDiscovery, startDiscovery: startYouTubeDiscovery, store: overrides.store || createHourlyStore(env), download: downloadHourlySource, captions: nativeHourlyCaptions, startApify, startMetadata: startYouTubeMetadata, pollApify: pollStoredApify, preflight: verifyHourlyApifyConfiguration, startJob, finishJob, settleBudget, now: Date.now, pause: ms => new Promise(resolve => setTimeout(resolve, ms)), ...overrides };
+ const deps: Dependencies = { env, log: overrides.log || createRetrievalLog(env), discover: nativeYouTubeDiscovery, startDiscovery: startYouTubeDiscovery, store: overrides.store || createHourlyStore(env), download: downloadHourlySource, captions: nativeHourlyCaptions, startApify, startMetadata: startYouTubeMetadata, pollApify: pollStoredApify, preflight: verifyHourlyApifyConfiguration, startJob, finishJob, settleBudget, now: Date.now, pause: ms => new Promise(resolve => setTimeout(resolve, ms)), metadataPreflight: preflightMetadataProvider, metadataStart: startMetadataProvider, metadataPoll: pollMetadataProvider,
+ enrichMetadata: async (id, run, rows) => { const stage = hostRuntime()?.enrichYouTubeFormat; if (!stage) throw new CollectionError(503, 'metadata_service_unavailable', 'The private metadata service is unavailable.'); return stage(id, run, rows); }, ...overrides };
  const verified = new Set<string>();
  // Request sharing is scoped to one bounded worker run, never an isolate lifetime.
  let extractOriginal = createPublicOriginalExtractor(deps.download);
@@ -295,6 +326,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
   const sourceStartedAt = deps.now();
   const sourceDeadline = Math.min(workerDeadline, sourceStartedAt + 90_000);
   let patch: HourlyPatch = { status: 'unchanged', new_count: 0 }, partial = retainedTasks.length > 0;
+  let metadataCheck = false;
   const completedJobs: Array<{ id: string; patch: Partial<StoredProviderJob> & { finished_at?: string } }> = [];
   const originalQueue = new Map<string, SourceUpdate>();
   for (const raw of Array.isArray(claim.state.cursor.pendingOriginals) ? claim.state.cursor.pendingOriginals.slice(0, 100) : []) {
@@ -318,6 +350,14 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
   }
   let details: Record<string, unknown> = { coverage: 'Checks cover only the current public feed; full history and source completeness remain unverified.' };
   async function save() {
+   if (metadataCheck) {
+    const known = references.length > 0 && references.every(ref => ref.observedCostUsd !== null);
+    const outcome = await deps.store.finish(claim, { status: patch.status, new_count: 0, provider: 'apify',
+     cost_status: known ? 'provider_reported' : 'unknown', observed_cost_usd: known ? references.reduce((sum, ref) => sum + ref.observedCostUsd!, 0) : null,
+     ...(patch.error_code ? { error_code: patch.error_code } : {}), details: { ...details, mode: 'metadata_only_provider', coverage: 'Bounded provider format evidence only; no source publication, caption acquisition or ordinary feed import.', providerJobs: references } }, []);
+    if (!outcome.importAccepted) { patch.status = 'blocked'; patch.error_code = 'hourly_state_changed'; }
+    return;
+   }
    const deferred = [...captionQueue].filter(([key, task]) => !attemptedIdentities.has(key) && task.status !== 'provider_pending' && Date.parse(task.nextAttemptAt) <= deps.now()).length;
    if (deferred) { partial = true; details.deferredCount = deferred; }
    if (retainedTasks.length) details.invalidCaptionTasks = retainedTasks.length;
@@ -347,6 +387,73 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    const outcome = await deps.store.finish(claim, { ...patch, details, pending_captions: [...captionQueue.values(), ...retainedTasks] }, [...updates].map(([key, record]) => metadataExpectedHashes.has(key) ? { ...record, metadataExpectedContentHash: metadataExpectedHashes.get(key)! } : record));
    if (!outcome.importAccepted) { patch.status = 'blocked'; patch.error_code = 'hourly_state_changed'; return; }
    for (const completed of completedJobs) await deps.store.providerPatch(completed.id, completed.patch);
+  }
+  async function reconcileMetadata(intent: JoinedMetadataIntent): Promise<void> {
+   assertPreparedMetadataScope(intent);
+   const ref: ProviderReference = { jobId: intent.jobId, providerRunId: intent.providerRunId, actorId: intent.contract.actorId, itemKey: intent.itemKey, reservedUsd: 0.005, observedCostUsd: intent.actualCostUsd === null ? null : Number(intent.actualCostUsd), costStatus: intent.actualCostUsd === null ? 'unknown' : 'provider_reported' };
+   references.push(ref); partial = true;
+   if (!intent.providerRunId) { details.metadataStatus = 'metadata_launch_ambiguous'; return; }
+   if (!deps.store.recordMetadata || !deps.store.finishMetadata) throw unavailable();
+   const polled = await retrievalAttempt(deps.log, { checkId: claim.checkId, itemKey: intent.itemKey }, 'youtube_metadata_candidate_result', 'apify', 'content', () => deps.metadataPoll(intent, policy.user_id, deps.env), result => ({ status: result.status === 'running' ? 'partial' : result.contentError || result.status === 'failed' ? 'failed' : 'succeeded', provider_run_id: intent.providerRunId, error_code: result.contentError || null }));
+   // Fee/status evidence survives missing fields, invalid classification and
+   // oversized datasets. Only native numeric accounting can settle it.
+   const statusReceipt = await deps.store.recordMetadata(claim, intent, { kind: 'status', ...polled.fee });
+   const finalFee = object(statusReceipt.fee).actualUsd;
+   if (typeof finalFee === 'string' && Number.isFinite(Number(finalFee)) && Number(finalFee) >= 0) { ref.observedCostUsd = Number(finalFee); ref.costStatus = 'provider_reported'; }
+   if (object(statusReceipt.fee).lateCorrectionRequired === true) { details.metadataStatus = 'provider_final_fee_changed'; return; }
+   if (polled.contentError) {
+    await deps.store.recordMetadata(claim, intent, { kind: 'result', ...polled.fee, datasetSha256: polled.datasetSha256 || null, channelId: intent.target.channelId, classification: null, contentError: polled.contentError });
+    details.metadataStatus = polled.contentError; return;
+   }
+   if (!polled.rows || polled.status !== 'completed') { details.metadataStatus = polled.status === 'running' ? 'provider_pending' : 'provider_failed'; return; }
+   let classification: ObservedFormatEvidence;
+   try { classification = await deps.enrichMetadata(intent.id, polled.run, polled.rows); }
+   catch (error) {
+    const reason = error instanceof CollectionError ? error.code : '';
+    if (!['metadata_explicit_format_missing','metadata_result_identity_changed','metadata_result_incomplete'].includes(reason)) throw error;
+    await deps.store.recordMetadata(claim, intent, { kind: 'result', ...polled.fee, datasetSha256: polled.datasetSha256 || null, channelId: intent.target.channelId, classification: null, contentError: reason });
+    details.metadataStatus = reason; return;
+   }
+   const receipt = await deps.store.recordMetadata(claim, intent, { kind: 'result', ...polled.fee, datasetSha256: polled.datasetSha256, channelId: intent.target.channelId, classification });
+   if (intent.purpose === 'qualification') { details.metadataStatus = 'qualification_observed_not_imported'; return; }
+   if (deps.env('HOURLY_COLLECTION_METADATA_VERIFIED') !== 'true') { details.metadataStatus = 'metadata_repair_disabled'; return; }
+   if (typeof finalFee !== 'string' || !Number.isFinite(Number(finalFee)) || Number(finalFee) <= 0) { details.metadataStatus = 'metadata_fee_pending'; return; }
+   const outcome = await deps.store.finishMetadata(claim, intent, receipt.observationId);
+   details.metadataStatus = outcome.applied ? 'metadata_repaired' : outcome.reason || 'metadata_source_changed';
+  }
+  async function processMetadataScopes(scopes: PreparedMetadataScope[]): Promise<void> {
+   if (scopes.length !== 1) throw new CollectionError(409, 'metadata_scope_ambiguous', 'Exactly one finite metadata scope is required.');
+   const scope = scopes[0]; assertPreparedMetadataScope(scope);
+   partial = true;
+   if (!policy.provider_enabled || deps.env('HOURLY_COLLECTION_PROVIDER_VERIFIED') !== 'true' || scope.purpose === 'repair' && deps.env('HOURLY_COLLECTION_METADATA_VERIFIED') !== 'true') { details.metadataStatus = 'metadata_provider_disabled'; return; }
+   if (!deps.store.reserveMetadata || !deps.store.recordMetadata || !deps.store.assertMetadataDispatch) throw unavailable();
+   // No native platform lookup or captions occur anywhere in this branch.
+   if (deps.now() > sourceDeadline - 30_000) throw new CollectionError(409, 'metadata_source_time_limit', 'The metadata source deadline is too close.');
+   const preflight = await deps.metadataPreflight(scope, policy.user_id, deps.env);
+   let jobId: string | undefined, intent: JoinedMetadataIntent | undefined;
+   try {
+    jobId = await deps.startJob({ ...source, url: scope.target.url, provider: 'apify', actorId: scope.contract.actorId }, policy.user_id, deps.env);
+    const reservation = await deps.store.reserveMetadata(claim, scope, jobId, preflight);
+    if (!reservation.claimed) { await deps.finishJob(jobId, policy.user_id, { status: 'blocked', errorCode: 'provider_already_claimed' }, deps.env); details.metadataStatus = 'metadata_already_admitted'; return; }
+    intent = reservation.intent;
+    assertPreparedMetadataScope(intent);
+    if (intent.scopeId !== scope.scopeId || intent.itemKey !== scope.itemKey || intent.requestSha256 !== scope.requestSha256 || intent.jobId !== jobId || intent.providerRunId !== null) throw new CollectionError(409, 'metadata_intent_changed', 'The saved metadata intent changed.');
+    const started = await retrievalAttempt(deps.log, { checkId: claim.checkId, itemKey: intent.itemKey }, 'youtube_metadata_candidate_launch', 'apify', 'content', async () => {
+     await deps.store.assertMetadataDispatch!(claim, intent!);
+     if (deps.now() > sourceDeadline - 30_000) throw new CollectionError(409, 'metadata_source_time_limit', 'The metadata source deadline changed before dispatch.');
+     return deps.metadataStart(intent!, policy.user_id, deps.env);
+    }, result => ({ status: 'partial', provider_run_id: result.providerRunId }));
+    await deps.store.recordMetadata(claim, intent, { kind: 'ack', runId: started.providerRunId, responseSha256: started.responseSha256, observedAt: started.observedAt });
+    intent = { ...intent, providerRunId: started.providerRunId, state: 'running' };
+    await reconcileMetadata(intent);
+   } catch (error) {
+    if (intent) {
+     // A claimed financial identity is never recycled after an uncertain POST
+     // or ACK. Its native row/hold remains recoverable under the SAME run.
+     if (!intent.providerRunId) try { await deps.store.providerPatch(intent.id, { state: 'ambiguous' }); } catch { /* Durable native admission remains held. */ }
+    } else if (jobId) await deps.finishJob(jobId, policy.user_id, { status: 'blocked', errorCode: error instanceof CollectionError ? error.code : 'metadata_admission_failed' }, deps.env);
+    throw error;
+   }
   }
   async function reconcileJob(job: StoredProviderJob): Promise<boolean> {
     // Touch only work we actually service, including no-run ambiguous holds.
@@ -441,6 +548,8 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    for (const task of candidates) {
     if (!remainingCaptionAttempts) break;
     let update = updates.get(hourlyItemKey(task.record.url)) || task.record;
+    const archived = await deps.store.currentArchive?.(claim, hourlyItemKey(update.url));
+    if (archived?.contentKind === 'transcript' && archived.content) { update = archived; task.record = archived; }
     if (deps.now() > sourceDeadline - 30_000) { partial = true; details.captionStatus = 'source_time_limit'; break; }
     const itemKey = hourlyItemKey(update.url), videoId = itemKey.slice(8);
     remainingCaptionAttempts--; attemptedIdentities.add(itemKey);
@@ -523,8 +632,26 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     details = { mode: 'unsupported', coverage: 'No inexpensive verified freshness adapter is configured for this platform. No supplier job was started; unchanged activity is unknown.' };
     await save(); return patch.status;
    }
+   if (source.platform === 'YouTube') {
+    const scopes = await deps.store.prepareMetadata?.(claim) || [];
+    if (scopes.length) {
+     metadataCheck = true;
+     await processMetadataScopes(scopes);
+     patch.status = 'partial'; await save(); return patch.status;
+    }
+    const pendingMetadata = await deps.store.pendingMetadata?.(claim) || [];
+    if (pendingMetadata.length) metadataCheck = true;
+    for (const intent of pendingMetadata) {
+     if (deps.now() > sourceDeadline - 30_000) break;
+     try { await reconcileMetadata(intent); } catch (error) { partial = true; details.metadataStatus = error instanceof CollectionError ? error.code : 'metadata_recovery_failed'; }
+    }
+    if (pendingMetadata.length) { patch.status = 'partial'; await save(); return patch.status; }
+   }
    // GET-only recovery; an ambiguous launch never becomes a second POST.
    for (const job of await deps.store.pending(claim)) {
+    // New candidate rows have an immutable joined contract. Never poll them
+    // through the legacy Streamers adapter, even if their side row is absent.
+    if (job.item_key.startsWith('youtube-format-v2:')) { partial = true; continue; }
     if (deps.now() >= Math.min(sourceDeadline - 30_000, sourceStartedAt + 45_000)) { partial = true; details.captionStatus = 'recovery_time_limit'; break; }
     await reconcileJob(job);
    }

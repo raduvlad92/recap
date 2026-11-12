@@ -1,3 +1,4 @@
+import {offlineProviderMetadata} from './helpers/provider-metadata';
 import {beforeEach,describe,expect,it,vi} from 'vitest';
 import {contentHash} from '../src/lib/content-processing';
 import type {SourceUpdate} from '../src/lib/types';
@@ -101,7 +102,7 @@ function fixture(initial:AnalysisClaim[],model:string=profiles[1].model){
  const named=(name:string)=>rpc.mock.calls.filter(([method])=>method===name).map(([,args])=>args);
  const run=(generate:AnalysisGenerator)=>{
   const workerEnv=env(),store=createAnalysisStore(workerEnv);if(state.missingCompletionMethod)delete store.completeComparison;
-  return createAnalysisWorker({env:workerEnv,store,generate,now:()=>0})();
+  return createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:workerEnv,store,generate,now:()=>0})();
  };
  return {queue,calls,state,rpc,from,named,run};
 }

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { metadataFixture } from './helpers/metadata-provider';
 import { database } from '../netlify/functions/_shared/admin-data';
 import { readApifyFeeEvidence, YOUTUBE_ACTOR_ID } from '../netlify/functions/_shared/apify';
 import { reconcileLateProviderFee } from '../netlify/functions/_shared/late-provider-fees';
@@ -60,5 +61,24 @@ describe('explicit late-fee service',()=>{
   const rpc=vi.fn().mockResolvedValueOnce({data:{provider_job_id:id,reservation_id:id,user_id:job.userId,provider_run_id:runId,actor_id:job.actorId,revision:'snapshot'}}).mockResolvedValueOnce({error:{code:'PT409'}});
   vi.mocked(database).mockReturnValue({rpc} as unknown as ReturnType<typeof database>);
   await expect(reconcileLateProviderFee(id,'stable-key',env,fetcherFor())).rejects.toMatchObject({status:409});expect(rpc).toHaveBeenCalledTimes(2);
+ });
+});
+
+describe('candidate late-fee immutable native snapshot', () => {
+ it('uses only the joined frozen actor/build/original consumer account and exact native maximum', async () => {
+  const f=metadataFixture();
+  const expected={provider_job_id:id,reservation_id:id,user_id:job.userId,provider_run_id:f.run.id,actor_id:f.contract.actorId,revision:'saved-native-revision',metadata_contract_digest:'a'.repeat(64),build_id:f.contract.buildId,original_account_id:f.contract.originalAccountId,max_usd:'0.005000'};
+  const rpc=vi.fn().mockResolvedValueOnce({data:expected}).mockResolvedValueOnce({data:{id:'receipt',outcome:'unchanged'}});
+  vi.mocked(database).mockReturnValue({rpc} as unknown as ReturnType<typeof database>);
+  const fetcher=vi.fn(async(input:RequestInfo|URL)=>String(input).endsWith('/users/me')?Response.json({data:{id:f.contract.originalAccountId}}):Response.json({data:f.run}));
+  await reconcileLateProviderFee(id,'candidate-stable-fee-key',env,fetcher);
+  expect(rpc.mock.calls[1]).toEqual(['record_late_provider_fee',expect.objectContaining({p_expected:expected,p_evidence:expect.objectContaining({actor_id:f.contract.actorId,build_id:f.contract.buildId,consumer_account:f.contract.originalAccountId,usage_usd:'0.0012',authenticated_owner:true})})]);
+  expect(fetcher.mock.calls.map(([url])=>String(url))).toEqual(['https://api.apify.com/v2/actor-runs/'+f.run.id,'https://api.apify.com/v2/users/me']);
+ });
+ it('does not downgrade an incomplete candidate authority to arbitrary legacy actor access', async()=>{
+  const f=metadataFixture(),rpc=vi.fn().mockResolvedValue({data:{provider_job_id:id,reservation_id:id,user_id:job.userId,provider_run_id:f.run.id,actor_id:f.contract.actorId,revision:'saved',metadata_contract_digest:'a'.repeat(64)}}),fetcher=vi.fn();
+  vi.mocked(database).mockReturnValue({rpc} as unknown as ReturnType<typeof database>);
+  await expect(reconcileLateProviderFee(id,'candidate-incomplete',env,fetcher)).rejects.toMatchObject({code:'metadata_intent_changed'});
+  expect(fetcher).not.toHaveBeenCalled();expect(rpc).toHaveBeenCalledTimes(1);
  });
 });

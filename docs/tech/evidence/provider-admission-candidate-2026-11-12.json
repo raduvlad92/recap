@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "kind": "offline-provider-admission-candidate",
+  "date": "2026-11-12",
+  "baseCommit": "7d777ba441c7606c838b1bb077f0cb8e439c9568",
+  "branch": "feat/provider-admission-20261112",
+  "implementation": [
+    "fresh bounded advertised-route price checks before new model reservations; immutable cached/unknown readback",
+    "source-free private call/attempt-bound diagnostic sidecar/composite RPC",
+    "finite original-account Actor admission/ACK-first same-run fee recovery",
+    "private named EnrichmentService and current archive caption guard",
+    "qualification import denial and explicitly reviewed grounded-control gate"
+  ],
+  "validation": {
+    "fullSuite": {
+      "passed": 4849,
+      "files": 161,
+      "skipped": 0
+    },
+    "catalogue": "pass",
+    "typecheck": "pass",
+    "build": "pass",
+    "guardedMigrationPlan": {
+      "passed": 11,
+      "skipped": 0,
+      "database": "isolated PostgreSQL17"
+    },
+    "independentGuardReview": {
+      "passed": 14,
+      "transport": "injected mocks"
+    },
+    "independentMigrationAdversarialReview": {
+      "passed": 5,
+      "exactRollback": true
+    },
+    "cloudflareRuntime": {
+      "checks": 37,
+      "passed": true,
+      "runtime": "workerd",
+      "outboundNetwork": "blocked",
+      "liveProviderRequests": 0,
+      "queueMessagesSent": 0
+    }
+  },
+  "newMigrations": {
+    "state": "local candidate only; not applied or registered",
+    "versions": [
+      "20261112041617",
+      "20261112041618"
+    ],
+    "transitions": 265,
+    "unchangedGuardEntries": 31,
+    "newEmptyTables": 5,
+    "authoritySeeded": false,
+    "metadataActivation": false
+  },
+  "production": {
+    "state": "unchanged by this implementation",
+    "acceptedServingCommit": "9bb3f1430115666d45d71212ab294bb3e1555de5",
+    "schemaCount": 60,
+    "lastNativeObservation": "2026-11-12T04:05:50.321441Z",
+    "paused": false,
+    "epoch": 7,
+    "originalDeliveryPreserved": true,
+    "reminders": false,
+    "destructiveLifecycleFlags": false,
+    "productionWrites": 0,
+    "newPaidActorCalls": 0,
+    "newModelCalls": 0,
+    "completedOldOperationsRetried": false,
+    "originalFailedPushPreserved": true
+  },
+  "lastDatedFinancialRead": {
+    "modelCallCount": 981,
+    "unknownModelHolds": 9,
+    "modelCommitmentUsd": "10.271676222",
+    "readerDailyCommitmentUsd": "0.095",
+    "readerLifetimeCommitmentUsd": "0.543",
+    "readerDailyHeadroomUsd": "0.005",
+    "oldUnknownReaderJobs": 12,
+    "ordinaryWindowSettledReservations": 15,
+    "ordinaryWindowSettledUsd": "0.021080441101",
+    "ordinaryWindowHeldReservations": 0,
+    "ledgersOverlapDoNotSum": true,
+    "twoHistorical404Holds": {
+      "eachMaximumUsd": "0.10",
+      "actualUsd": null,
+      "retryAuthorized": false
+    }
+  },
+  "unchangedLimits": {
+    "aiCumulativeUsd": "12",
+    "aiDailyUsd": "5",
+    "aiPerCallUsd": "0.10",
+    "sourceDailyUsd": "0.10",
+    "sourceLifetimeUsd": "1"
+  },
+  "remaining": {
+    "pr34ExactReleaseApproval": "pending; not extended to this candidate",
+    "liveProviderQualification": "unproved; five independently grounded controls for one contract; revise incompatible prior plan without silent expansion",
+    "actual404Cause": "unproved; historical bodies unavailable; no backfill",
+    "usefulFreshContent": false,
+    "ownerFourPointPublication": "keep held for review",
+    "usefulOrdinaryDailyCutoff": "not accepted",
+    "seventyTwoHourClockStarted": false,
+    "manualProofsExcluded": true
+  },
+  "nextEnabledCheckpoint": {
+    "nextRunAt": "2026-11-12T07:05:00.000Z",
+    "berlinTime": "2026-11-12T08:05:00+01:00",
+    "purpose": "genuine daily cutoff",
+    "source0405OneShotEnabled": false
+  }
+}

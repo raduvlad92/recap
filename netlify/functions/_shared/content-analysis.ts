@@ -9,11 +9,12 @@ import { parseAnalysisV2CallKey } from './content-analysis-grounded-v2-protocol'
 import { parseAnalysisV3CallKey, ANALYSIS_V3_CONTRACT_HASH } from './content-analysis-grounded-v3-protocol';
 import { parseAnalysisV4CallKey, ANALYSIS_V4_GENERATION_CONTRACT_HASH } from './content-analysis-grounded-v4-protocol';
 import { analyzeSummaryV4, analyzeKeywordsV4 } from './content-analysis-grounded-v4';
+import {createProviderMetadataGuard,assertProviderMetadataFresh,type ProviderMetadataGuard,type ProviderMetadataReceipt} from './content-analysis-provider-metadata';
 import { analysisRuntimeEnv } from './content-analysis-runtime';
 import { AnalysisError, AnalysisProviderHttpError, analysisFailure, analysisLimits, analysisExecutionIdentity, conservativeCallUsd, createGatewayGenerator, type AnalysisRejectionReceipt, type AnalysisExecutionIdentity, type AnalysisGenerator, type AnalysisLimits, type GenerationResult, type GenerationRequest } from './content-analysis-model';
 
 export interface AnalysisPolicy { user_id:string; enabled:boolean; model:string }
-export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null;rule_version?:'content-v1'|'content-v2'|'content-v3'|'content-v4';generation_contract_hash?:string|null;generation_predecessor_job_id?:string|null;generation_comparison_id?:string|null;generation_admission_id?:string|null }
+export interface AnalysisJob { id:string; user_id:string; update_id:string; source_id:string; content_hash:string;source_revision?:string; task:'summary'|'keywords'; state:string; result:AnalysisOutput|null;rule_version?:'content-v1'|'content-v2'|'content-v3'|'content-v4';generation_contract_hash?:string|null;generation_predecessor_job_id?:string|null;generation_comparison_id?:string|null;generation_admission_id?:string|null }
 export const ANALYSIS_COMPARISON_LIMITS = {chunkChars:1250,overlapChars:256,maxChunks:800,maxSourceChars:1_000_000,maxOutputTokens:3072,maxInputTokens:27700,maxCallUsd:.10} as const;
 export interface AnalysisGenerationContext { protocolVersion:'content-v3'|'content-v4';generationContractHash:string;predecessorJobId:string|null;emptyDisposition:'findings_expected'|'no_findings_reviewed'|'unreviewed';sourceReviewDigest:string|null;comparisonId?:string|null;admissionId?:string|null;purpose?:'summary_finalization'|'content_v4_evaluation'|'content_model_comparison';commonLimits?:typeof ANALYSIS_COMPARISON_LIMITS;prefixCalls?:{callId:string;callKey:string;requestHash:string}[];allowedFreshRequest?:{key:string;requestHash:string} }
 export interface AnalysisClaim { job:AnalysisJob; record:SourceUpdate; leaseToken:string;generationContext?:AnalysisGenerationContext }
@@ -34,6 +35,8 @@ export interface AnalysisStore {
  claim(userId:string):Promise<AnalysisClaim|null>;
  /** Optional for older fixture stores. Never grants provider permission. */
  cachedCalls?(claim:AnalysisClaim,keys:string[],afterKey:string|null,model:string):Promise<AnalysisCachePage>;
+ /** Noncreating legacy-key readback; no lease renewal or money writes. */
+ readCall?(claim:AnalysisClaim,key:string):Promise<AnalysisCall|undefined>;
  /** Save fresh prompts before reserving funds. Existing cached successes may
   * be reused without pretending their historical prompt was recorded. */
  recordPrompt?(claim:AnalysisClaim,request:GenerationRequest,model:string,requestHash:string):Promise<boolean>;
@@ -63,6 +66,14 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
   sync:(userId,configEpoch)=>rpc('sync_content_analysis_jobs_v2',{p_user_id:userId,p_limit:200,p_config_epoch:configEpoch??env('CONTENT_ANALYSIS_CONFIG_EPOCH')??''}),
   claim:userId=>rpc('claim_content_analysis_job_v2',{p_user_id:userId,p_lease_seconds:900}),
   cachedCalls:(claim,keys,afterKey,model)=>rpc('read_content_analysis_cached_calls_v2',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_keys:keys,p_after_key:afterKey,p_model:model}),
+  async readCall(claim,key){
+   if(!analysisDigest(claim.job.source_revision))return analysisFailure('analysis_source_changed');
+   const result=await db.from('reader_content_analysis_calls').select('id,call_key,user_id,source_revision,model,execution_identity,request_hash,result,state,actual_usd,observed_usd').eq('job_id',claim.job.id).eq('call_key',key).limit(2);
+   if(result.error||!Array.isArray(result.data)||result.data.length>1)return analysisFailure('analysis_storage_unavailable');
+   const call=result.data[0];
+   if(call&&(call.user_id!==claim.job.user_id||call.source_revision!==claim.job.source_revision))return analysisFailure('analysis_source_changed');
+   return call;
+  },
   async recordPrompt(claim,request,model,requestHash){
    const receipt=await rpc<{recorded:boolean;cached?:boolean;blockedReason?:string}>('record_admin_analysis_prompt',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_request_hash:requestHash,p_model:model,p_request:request});
    if(receipt?.blockedReason==='analysis_unknown_charge_hold'||receipt?.blockedReason==='analysis_provider_retry_exhausted')return analysisFailure(receipt.blockedReason);
@@ -78,7 +89,7 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
   fail:(claim,code,retryable,yielded=false)=>rpc<{state:string}>('fail_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_error_code:code,p_retryable:retryable,p_yield:yielded}),
  };
 }
-export interface AnalysisWorkerDependencies {env:Env;store:AnalysisStore;generate:AnalysisGenerator;limits:AnalysisLimits;now:()=>number}
+export interface AnalysisWorkerDependencies {env:Env;store:AnalysisStore;generate:AnalysisGenerator;limits:AnalysisLimits;now:()=>number;providerMetadata:ProviderMetadataGuard}
 function callKeyForInvalid(call:AnalysisCall):string {
  const key=call.call_key,parsed=typeof key==='string'?(parseAnalysisV2CallKey(key)||parseAnalysisV3CallKey(key)||parseAnalysisV4CallKey(key)):null;
  if(!parsed||parsed.repairAttempt||/^summary:v[34]:verify:0$/.test(parsed.baseKey))return analysisFailure('analysis_invalid_correction');
@@ -112,7 +123,7 @@ function cacheWindow(key:string):string[] {
   .flatMap(value=>/^summary:v[34]:verify:0$/.test(value)?[value]:[value,value+':repair:1']).sort();
 }
 export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependencies>={}) {
- const env=dependencies.env||runtimeEnv,now=dependencies.now||Date.now;
+ const env=dependencies.env||runtimeEnv,now=dependencies.now||Date.now,providerMetadata=dependencies.providerMetadata||createProviderMetadataGuard();
  return async()=>{
   const stats={enabled:env('CONTENT_ANALYSIS_ENABLED')==='true',synchronized:0,completed:0,evaluated:0,failed:0,blocked:0,yielded:0};
   if(!stats.enabled) return stats;
@@ -197,7 +208,8 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
      let windowKeys:string[]=[],windowCalls=new Map<string,AnalysisCall>();
      let finalizerFreshAttempted=false;
      const cachedCall=async(key:string):Promise<AnalysisCall|undefined>=>{
-      if(!grounded||!store.cachedCalls)return;
+      if(!grounded)return store.readCall?.(claim,key);
+      if(!store.cachedCalls)return;
       const keys=cacheWindow(key);
       if(keys[0]!==windowKeys[0]){
        windowKeys=keys;windowCalls=new Map();
@@ -253,6 +265,21 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
        }else if(request.key!==fresh.key||requestHash!==fresh.requestHash)return analysisFailure('analysis_generation_contract_changed');
        else if(!cached?.result&&finalizerFreshAttempted)return analysisFailure('analysis_admission_changed');
       }
+      // Old ambiguous calls are readback, never fresh inference. Preserve
+      // that state even when today's public metadata is unavailable.
+      if(cached&&!cached.result&&cached.actual_usd==null)return analysisFailure('analysis_unknown_charge_hold');
+      let metadata:ProviderMetadataReceipt|undefined;
+      if(!cached?.result&&executionIdentity.route==='openrouter'){
+       metadata=await providerMetadata(comparison?comparisonEnv:effectiveEnv,request);
+       // The reservation RPC repeats source/lease/policy checks under lock.
+       // Do not turn a long metadata wait into a call beyond this owner slice.
+       if(now()>ownerDeadline-GENERATION_HEADROOM_MS)return analysisFailure('analysis_worker_yield');
+       const currentLimits=dependencies.limits||analysisLimits(comparison?comparisonEnv:effectiveEnv);
+       if(stableJson(analysisExecutionIdentity(comparison?comparisonEnv:effectiveEnv,currentLimits))!==stableJson(executionIdentity)
+        ||analysisRequestHash(request,executionIdentity,executionIdentity.route==='openrouter'?{responseModel:effectiveEnv('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:effectiveEnv('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')}:undefined)!==requestHash)
+        return analysisFailure('analysis_configuration_required');
+       assertProviderMetadataFresh(metadata);
+      }
       // A cached correction was already authorized and charged. Repeating its
       // invalidity write on every replay can starve a long repaired prefix.
       // New corrections still commit the exact base marker before reservation.
@@ -265,6 +292,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       if(now()>ownerDeadline-GENERATION_HEADROOM_MS)return analysisFailure('analysis_worker_yield');
       if(!cached?.result&&store.recordPrompt&&!await store.recordPrompt(claim,request,limits.model,requestHash))
        return analysisFailure('analysis_prompt_not_recorded');
+      if(metadata){assertProviderMetadataFresh(metadata);if(now()>ownerDeadline-GENERATION_HEADROOM_MS)return analysisFailure('analysis_worker_yield');}
       const reservation=cached?.result?{claimed:false,call:cached}:await store.reserve(claim,request,maximumUsd,limits.model,executionIdentity,requestHash);
       if(!reservation.claimed) {
        if(reservation.reason==='analysis_provider_cooldown'||reservation.reason==='analysis_provider_rate_limited'){
@@ -289,7 +317,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
        finalizerFreshAttempted=true;
       }
       let result:GenerationResult;
-      try{result=await generate(request);}
+      try{if(metadata)assertProviderMetadataFresh(metadata);if(metadata&&now()>ownerDeadline-GENERATION_HEADROOM_MS)return analysisFailure('analysis_worker_yield');result=await generate(request);}
       catch(error){
        // One rate-limited route is shared by every reader in this run. Stop
        // even if receipt persistence/failure scheduling loses its source lease.

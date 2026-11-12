@@ -1,3 +1,4 @@
+import {offlineProviderMetadata} from './helpers/provider-metadata';
 import { execFileSync, spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -432,7 +433,7 @@ describe.skipIf(!available)('D38 actual disposable PostgreSQL private content-v2
    const p=JSON.parse(r.prompt),pass=p.interval.start===0?p.passages.find((v:{text:string})=>v.text.includes('Nvidia')):undefined;
    return {value:{readComplete:true,lastPassageId:p.requiredLastPassageId,candidates:pass?[{label:'Nvidia',kind:'brand',confidence:90,reason:'Literal synthetic brand',mention:'Nvidia',passageIds:[pass.id]}]:[]},actualUsd:.0001,observedUsd:.0001};
   };
-  expect((await createAnalysisWorker({env,store,limits:lim,generate,now:()=>clock})()).yielded).toBe(1);expect(saved).toBe(30);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits:lim,generate,now:()=>clock})()).yielded).toBe(1);expect(saved).toBe(30);
   const c={job:{id:service(`select id from public.reader_content_analysis_jobs where user_id=${q(f.owner)} and task='keywords';`)}} as Claim;
   expect(job(c).continuation_result_count).toBe(30);
   const rawPrefix=service(`select jsonb_agg(to_jsonb(c) order by call_key) from public.reader_content_analysis_calls c;`);
@@ -445,7 +446,7 @@ describe.skipIf(!available)('D38 actual disposable PostgreSQL private content-v2
   for(;turns<15&&job(c).state!=='published';turns++){
    service(`update public.reader_content_analysis_jobs set next_attempt_at='-infinity' where state='queued';`);
    const before=job(c).continuation_result_count;
-   await createAnalysisWorker({env,store,limits:lim,generate,now:()=>clock})();
+   await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits:lim,generate,now:()=>clock})();
    const current=job(c);expect(current.state).not.toBe('failed');expect(current.continuation_stalls).toBe(0);
    if(current.state==='queued')expect(current.continuation_result_count).toBeGreaterThan(before);
   }
@@ -505,7 +506,7 @@ describe.skipIf(!available)('D38 actual disposable PostgreSQL private content-v2
    fail:async(c,code,retryable,yielded)=>json(`select public.fail_content_analysis_job('${c.job.id}','${c.leaseToken}',${q(code)},${retryable},${!!yielded});`)};
   const id=service(`select id from public.reader_content_analysis_jobs where user_id=${q(f.owner)} and task='summary';`),c={job:{id}} as Claim;
   for(let turn=0;turn<3;turn++){
-   due(c);const result=await createAnalysisWorker({env,store,limits:lim,generate:async()=>{generations++;throw new Error('No model call');},now:()=>clock})();
+   due(c);const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits:lim,generate:async()=>{generations++;throw new Error('No model call');},now:()=>clock})();
    expect(result).toMatchObject(turn<2?{yielded:1,failed:0}:{yielded:0,failed:1});
   }
   expect(generations).toBe(0);expect(job(c)).toMatchObject({state:'failed',error_code:'analysis_no_progress',continuation_stalls:3,next_attempt_at:'infinity'});
