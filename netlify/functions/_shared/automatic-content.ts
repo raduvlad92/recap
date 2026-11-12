@@ -141,6 +141,44 @@ function automaticRecapRows(value:unknown):unknown[]{
  if(!object(value)||Object.keys(value).some(key=>!['readComplete','highlights'].includes(key))||value.readComplete!==true||!Array.isArray(value.highlights)||value.highlights.length>6)return fail('automatic_recap_invalid_draft');
  return value.highlights;
 }
+const recapQuantityAffixes=new Set(('usd eur gbp cad aud nzd sgd hkd jpy cny chf inr rub krw brl sek nok dkk pln try zar mxn '
+ +'b kb mb gb tb kib mib gib tib hz khz mhz ghz kg g mg lb lbs m cm mm km s ms min h hr hrs day days '
+ +'w kw mw wh kwh v mv a ma mah ah percent pct k million billion trillion items people units joule joules x st nd rd th').split(' '));
+function recapQuantities(value:string,content:string):string[]{
+ const normalized=value.normalize('NFKC').replaceAll('\u2212','-'),identifiers:Array<{start:number;end:number}>=[];
+ // Unsupported decimal digits/separators must not silently disappear from
+ // quantity checking. This guard does not infer a numeral translation.
+ if(/[\u066b\u066c]/u.test(normalized)||[...normalized].some(c=>/\p{Nd}/u.test(c)&&!/[0-9]/u.test(c)))return fail('automatic_recap_unsupported_draft');
+ const mixedIdentifier=/^\p{L}+\d+\p{L}[\p{L}\p{N}]*$/u,tokens=[...value.matchAll(/[\p{L}\p{N}\p{M}]+/gu)];
+ // Normalizing surrounding whitespace is safe; changing the identifier's
+ // own spelling is ambiguous and must not turn its digits into evidence.
+ if(tokens.some(([token])=>/\p{M}/u.test(token)&&/\p{L}/u.test(token)&&/\p{N}/u.test(token)||token.normalize('NFKC')!==token&&mixedIdentifier.test(token.normalize('NFKC'))))return fail('automatic_recap_unsupported_draft');
+ const candidates=tokens.filter(([token])=>mixedIdentifier.test(token)&&!/\d[eE]\d/u.test(token));
+ // This is lexical classification only. A source-backed identifier does NOT
+ // supply positive attribution or other evidence missing from the bound quote.
+ if(candidates.length){
+  const namedIdentifiers=new Set<string>(),sourceTokens=new Set<string>();
+  for(const token of content.matchAll(/[\p{L}\p{N}\p{M}]+/gu)){
+   sourceTokens.add(token[0]);
+   const before=content.slice(Math.max(0,token.index-80),token.index);
+   if(/(?:\b(?:named|called|name|handle|username|identifier)(?:\s+is)?|\b(?:goes|known)\s+by|\bknown\s+as)\s*[:=]?\s*["'“]?$/iu.test(before))namedIdentifiers.add(token[0].toLowerCase());
+  }
+  for(const match of candidates){
+   const token=match[0];
+   const prefix=token.match(/^\p{L}+/u)![0],suffix=token.match(/\p{L}+$/u)?.[0]??'';
+   // Keep currency/unit-affixed and ambiguous number forms quantitative.
+   if([prefix,suffix].some(part=>recapQuantityAffixes.has(part.toLowerCase())||part==='J'))continue;
+   // Exact source spelling plus an explicit naming cue is required. Opaque
+   // mixed tokens without that cue stay held instead of guessing an identity.
+   if(!sourceTokens.has(token)||!namedIdentifiers.has(token.toLowerCase()))return fail('automatic_recap_unsupported_draft');
+   const start=value.slice(0,match.index).normalize('NFKC').length;
+   identifiers.push({start,end:start+token.length});
+  }
+ }
+ return [...normalized.matchAll(/[+-]?\d+(?:[,.]\d+)*(?:[eE][+-]?\d+)?/gu)]
+  .filter(match=>!identifiers.some(token=>match.index>=token.start&&match.index+match[0].length<=token.end))
+  .map(([amount])=>amount);
+}
 export function validateAutomaticRecap(value:unknown,content:string,allowed?:RecapPoint[]):RecapPoint[]{
  const rows=automaticRecapRows(value);
  const seen=new Set<string>();
@@ -154,10 +192,10 @@ export function validateAutomaticRecap(value:unknown,content:string,allowed?:Rec
   const units=text.normalize('NFKC'),quotedUnits=quote.normalize('NFKC');
   if(recapCurrencies.some(currency=>currency.claim.test(units)&&!currency.quote.test(quotedUnits)))return fail('automatic_recap_unsupported_draft');
   if([...units.matchAll(/\p{Sc}/gu)].some(([symbol])=>!quotedUnits.includes(symbol)&&!recapCurrencies.some(currency=>currency.claim.test(symbol)&&currency.quote.test(quotedUnits))))return fail('automatic_recap_unsupported_draft');
-  // Locale separators are source evidence: 1,5 must never become 15.
-  const numeric=(value:string)=>[...value.matchAll(/\d+(?:[,.]\d+)*/gu)].map(([amount])=>amount);
-  const quoteNumbers=new Set(numeric(quotedUnits));
-  if(numeric(units).some(amount=>!quoteNumbers.has(amount)))return fail('automatic_recap_unsupported_draft');
+  // Preserve signs, locale separators and scientific notation; identifier
+  // digits are neither invented quantities nor quote evidence for quantities.
+  const quoteNumbers=new Set(recapQuantities(quote,content));
+  if(recapQuantities(text,content).some(amount=>!quoteNumbers.has(amount)))return fail('automatic_recap_unsupported_draft');
   if(allowed&&!allowed.some(point=>point.text===text&&point.evidenceQuote===quote))return fail('automatic_recap_changed_finding');
   seen.add(text);return {text,evidenceQuote:quote};
  });
@@ -209,7 +247,7 @@ async function recapProposals(claim:AutomaticContentClaim,run:(input:KeywordLear
  let points:RecapPoint[]=[],withheld=0;
  for(const chunk of chunks){
   const input=recapCall(claim,'draft:'+chunk.index,{task:'recap_draft',sourceHash:claim.task.content_hash,chunk:chunk.index,totalChunks:chunks.length,
-   instruction:'Read every supplied word, including the end. Propose up to six distinct useful main findings, each one atomic sentence of at most 38 words and 240 characters. Preserve speaker attribution, allegations, qualifications, exact numbers and units. Never infer a currency from a bare number or describe an impersonation/scam product as a genuine product sold by its victim. Attach an exact contiguous transcript quote of 15 to 1000 characters supporting the entire finding, including necessary qualifications. Do not write generic introductions or ad copy as findings. Return zero points only if there is no useful supported finding.',content:chunk.content});
+   instruction:'Read every supplied word, including the end. Propose up to six distinct useful main findings, each one atomic sentence of at most 38 words and 240 characters. Count both limits before returning; if necessary omit a whole secondary claim rather than truncate text or remove a qualification. Preserve speaker attribution, allegations, qualifications, exact numbers and units. Never infer a currency from a bare number or describe an impersonation/scam product as a genuine product sold by its victim. Attach an exact contiguous transcript quote of 15 to 1000 characters supporting the entire finding. Select enough contiguous text to include the named subject, resolve pronouns and retain the complete attribution and qualification. Match who actually says or reports each statement; do not invent a personal says/claims attribution for a narrator statement. Text outside that quote cannot provide positive support. If no bounded quote supports a useful finding within both limits, omit it. Do not write generic introductions or ad copy as findings. Return zero points only if there is no useful supported finding.',content:chunk.content});
   // A bad quote must not discard the other supported draft findings. Keep the
   // complete original response in its receipt; hold only valid distinct points.
   const rows=automaticRecapRows((await run(input)).value);

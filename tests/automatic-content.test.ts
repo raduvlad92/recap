@@ -120,6 +120,96 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
   expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'The reported figure is 15.',evidenceQuote:quote}]},quote)).toThrow('automatic_recap_unsupported_draft');
   expect(validateAutomaticRecap({readComplete:true,highlights:[{text:'The reported figure is 1,5.',evidenceQuote:quote}]},quote)).toHaveLength(1);
  });
+ it.each(['Audit7fox','Agent4q'])('classifies exact source-backed identifier %s without inventing a quantity',identifier=>{
+  const quote='The researcher described the final test result.',source=`The researcher uses the name ${identifier}. ${quote}`;
+  const p={text:`${identifier} described the final test result.`,evidenceQuote:quote};
+  expect(validateAutomaticRecap({readComplete:true,highlights:[p]},source)).toEqual([p]);
+ });
+ it.each(['Audit8fox','Audit7foxy','audit7fox','Absent7fox','Ａudit7fox'])('does not let missing or changed identifier %s borrow an unrelated matching digit',identifier=>{
+  const quote='The researcher described 7 tests and 8 results.',source=`The researcher uses the name Audit7fox. ${quote}`;
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:`${identifier} described the results.`,evidenceQuote:quote}]},source)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it.each(['The researcher described 7 test results.','The final cost was $7.'])('does not borrow a quantity from a verified named identifier in a quote: %s',text=>{
+  const quote='Audit7fox discussed dollars and the final test result.',source=`The researcher uses the name Audit7fox. ${quote}`;
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text,evidenceQuote:quote}]},source)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it('does not treat a verified identifier as evidence for an unsupported year',()=>{
+  const quote='Audit2026fox described the final test result.',source=`The researcher uses the name Audit2026fox. ${quote}`;
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'The test happened in 2026.',evidenceQuote:quote}]},source)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it('does not turn named-identifier digits into money through unrelated Unicode normalization in a quote',()=>{
+  const quote='Audit7fox discussed dollars\u00a0and the final test result.',source=`The researcher uses the name Audit7fox. ${quote}`;
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'The final cost was $7.',evidenceQuote:quote}]},source)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it.each(['Audit7fox\u00a0described the final test result.','The \ufb03 researcher Audit7fox described the final test result.'])('retains exact named identifiers when surrounding text normalizes: %s',quote=>{
+  const source=`The researcher uses the name Audit7fox. ${quote}`,p={text:'Audit7fox described the final test result.',evidenceQuote:quote};
+  expect(validateAutomaticRecap({readComplete:true,highlights:[p]},source)).toEqual([p]);
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'The report described 7 results.',evidenceQuote:quote}]},source)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it('holds an ambiguous mixed token rather than classifying source occurrence alone as an identifier',()=>{
+  const quote='The researcher described the final test result.',source=`An earlier figure was Audit7fox. ${quote}`;
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'Audit7fox described the final test result.',evidenceQuote:quote}]},source)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it.each(['goes by Audit7fox','is named Audit7fox','is called Audit7fox','is known as Audit7fox','has the handle: Audit7fox'])('recognizes an explicit source naming cue %s',declaration=>{
+  const quote='The researcher described the final test result.',source=`The researcher ${declaration}. ${quote}`,p={text:'Audit7fox described the final test result.',evidenceQuote:quote};
+  expect(validateAutomaticRecap({readComplete:true,highlights:[p]},source)).toEqual([p]);
+ });
+ it('requires the exact case variant to occur in the source when its naming cue uses another case',()=>{
+  const quote='The researcher described the final test result.',source=`The researcher goes by audit7fox. Audit7fox joined the test. ${quote}`,p={text:'Audit7fox described the final test result.',evidenceQuote:quote};
+  expect(validateAutomaticRecap({readComplete:true,highlights:[p]},source)).toEqual([p]);
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{...p,text:'AUDIT7FOX described the final test result.'}]},source)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it.each(['Audit7cafe\u0301','Audit7cafe\u0338'])('does not let adjacent combining marks change a named identifier: %s',identifier=>{
+  const quote='The researcher described 7 final test results.',source=`The researcher uses the name Audit7cafe. ${quote}`;
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:`${identifier} described the final test result.`,evidenceQuote:quote}]},source)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it.each([['\u221216','16'],['16','\u221216'],['-16','16']])('preserves a minus sign between claim %s and quote %s',(claimed,quoted)=>{
+  const quote=`The reported figure was ${quoted}.`;
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:`The reported figure was ${claimed}.`,evidenceQuote:quote}]},quote)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it('recognizes equivalent explicit mathematical minus signs without rewriting source text',()=>{
+  const quote='The reported figure was \u221216.',p={text:'The reported figure was -16.',evidenceQuote:quote};
+  expect(validateAutomaticRecap({readComplete:true,highlights:[p]},quote)).toEqual([p]);
+ });
+ it.each(['\u0661\u066b\u0665','1\u066b5','1\u066c500'])('holds unsupported non-ASCII numeric form %s instead of matching its fragments',amount=>{
+  const quote='The reported figures were 1, 5 and 500.';
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:`The reported figure was ${amount}.`,evidenceQuote:quote}]},quote)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it.each(['16GB','USD100','24%','1.5kg','1,500MB','1e3','1e+3','-16','Audit7kg','USD100m','v16GB','Audit1e3fox','Audit7x','Audit7th'])('does not exempt quantity/ambiguous form %s merely because it occurs elsewhere in the source',quantity=>{
+  const quote='The researcher described the final test result.',source=`The earlier identifier was ${quantity}. ${quote}`;
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:`The reported figure was ${quantity}.`,evidenceQuote:quote}]},source)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it.each([['1e3','1 and 3'],['1e+3','1 and 3'],['1.5','1 and 5'],['1,500','1 and 500'],['-16','16'],['2026-11-13','2026-11-12']])('does not turn separated quote digits %s into an unsupported amount', (amount,quoted)=>{
+  const quote=`The reported source figures were ${quoted}.`;
+  expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:`The reported figure was ${amount}.`,evidenceQuote:quote}]},quote)).toThrow('automatic_recap_unsupported_draft');
+ });
+ it.each(['16GB','24%','1.5kg','1,500MB','1e3','1e+3','-16'])('retains an exact quote-backed quantity %s',quantity=>{
+  const quote=`The reported figure was ${quantity}.`,p={text:quote,evidenceQuote:quote};
+  expect(validateAutomaticRecap({readComplete:true,highlights:[p]},quote)).toEqual([p]);
+ });
+ it('keeps source-backed identifier classification separate from quote-only attribution and immutable negative results',async()=>{
+  const quote='The final test lasted five hours.',source={...record,content:`The researcher uses the name Audit7fox. ${quote}`};
+  const draft={text:'Audit7fox says the final test lasted five hours.',evidenceQuote:quote};
+  const negative={readComplete:true,verdicts:[{index:0,supported:false,reason:'The assigned quote does not name the speaker or say who made the claim.'}]};
+  const original=JSON.stringify(negative);
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?checked(input,negative):successful({readComplete:true,highlights:[draft]}));
+  const output=await generateAutomaticContent(claim('recap',source),call);
+  expect(call).toHaveBeenCalledTimes(2);expect(output.proposal?.highlights).toEqual([draft]);expect(output.reason).toContain('questioned this draft');expect(JSON.stringify(negative)).toBe(original);
+  const checker=JSON.parse(call.mock.calls[1][0].request.prompt);expect(simpleFindings(checker)[0].evidenceQuote).toBe(quote);expect(checker.instruction).toContain('Context cannot replace missing support');
+  const guidance=JSON.parse(call.mock.calls[0][0].request.prompt).instruction;
+  expect(guidance).toContain('at most 38 words and 240 characters');expect(guidance).toContain('Count both limits');expect(guidance).toContain('named subject');expect(guidance).toContain('complete attribution and qualification');expect(guidance).toContain('do not invent a personal says/claims attribution');expect(guidance).toContain('Text outside that quote cannot provide positive support');
+ });
+ it('withholds an over-38-word finding without truncating it or sending it to the checker',async()=>{
+  const tooLong=Array(39).fill('word').join(' '),quote='The final test lasted five hours.',source={...record,content:quote};
+  const draft={readComplete:true,highlights:[{text:tooLong,evidenceQuote:quote},point]},original=JSON.stringify(draft);
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?checked(input,{readComplete:true,verdicts:[{index:0,supported:true,reason:'Supported.'}]}):successful(draft));
+  const output=await generateAutomaticContent(claim('recap',source),call);expect(call).toHaveBeenCalledTimes(2);expect(output.proposal?.highlights).toEqual([point]);expect(output.reason).toContain('1 draft point was withheld');expect(simpleFindings(JSON.parse(call.mock.calls[1][0].request.prompt))).toEqual([{index:0,...point}]);expect(JSON.stringify(draft)).toBe(original);
+ });
+ it('withholds a finding above240 characters without truncating even when its word count fits',async()=>{
+  const tooLong='Long'.repeat(61),draft={readComplete:true,highlights:[{text:tooLong,evidenceQuote:point.evidenceQuote},point]},original=JSON.stringify(draft);
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.endsWith(':check')?checked(input,{readComplete:true,verdicts:[{index:0,supported:true,reason:'Supported.'}]}):successful(draft));
+  const output=await generateAutomaticContent(claim('recap'),call);expect(call).toHaveBeenCalledTimes(2);expect(output.proposal?.highlights).toEqual([point]);expect(output.reason).toContain('1 draft point was withheld');expect(JSON.stringify(draft)).toBe(original);
+ });
  it('does not infer a dollar country or mistake a weight paraphrase for currency',()=>{
   const price='The final price was 199 dollars.';
   expect(()=>validateAutomaticRecap({readComplete:true,highlights:[{text:'The final price was 199 USD.',evidenceQuote:price}]},price)).toThrow('automatic_recap_unsupported_draft');
