@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "kind": "provider-quality-genuine-source-checkpoint",
-  "recordedAt": "2026-11-12T02:27:32.325Z",
+  "recordedAt": "2026-11-12T02:56:24.807Z",
   "native": {
     "observedAt": "2026-11-12T01:02:15.487038Z",
     "servingApplication": "9bb3f1430115666d45d71212ab294bb3e1555de5",
@@ -327,5 +327,44 @@
     "useful72HourClockStarted": false,
     "nextSourceRunAt": "2026-11-12T03:05:00.000Z",
     "nextDailyRunAt": "2026-11-12T07:05:00.000Z"
+  },
+  "releaseAcknowledgementTrackedCandidate": {
+    "recordedAt": "2026-11-12T02:56:24.807Z",
+    "previousHead": "f697c2357ca073e54f44a91a0a39e99dff73cd50",
+    "previousHeadAllSevenChecksAcceptable": true,
+    "previousCheckRunId": 43141677260,
+    "trackedAdapterSha256": "879f210be02ba1b15527774e1db8b1799373fbd1ec8528d897bedde19798f35a",
+    "coordinatorUnchanged": true,
+    "fullLocalTests": 4548,
+    "testFiles": 155,
+    "focusedReleaseTests": 58,
+    "independentReviewPassed": true,
+    "typecheckBuildCatalogue": true,
+    "workerdChecks": 37,
+    "productionChanges": 0,
+    "mergePerformed": false,
+    "deployed": false,
+    "newHeadHostedCiRequired": true,
+    "newReleaseOwnerExceptionRequired": true,
+    "newReleaseOwnerApproval": "not requested before final updated head CI",
+    "oldPrivate44TestCandidateUnchanged": true,
+    "privatePriceDiagnosticsAndActorCandidatesStillUnwired": true
+  },
+  "latestPreReleaseNativeObservation": {
+    "observedAt": "2026-11-12T02:41:08.212560Z",
+    "servingApplication": "9bb3f1430115666d45d71212ab294bb3e1555de5",
+    "documentationOnlyMain": "730c27d7b8f430b879e7c8a0253c512149fde379",
+    "epoch": 7,
+    "paused": false,
+    "originalDeliverySourceFlagsLifecycleParity": true,
+    "anonymousAdmin401": true,
+    "original967And96HashPreserved": true,
+    "modelCalls": 981,
+    "unknownModelHolds": 9,
+    "modelCommittedUsd": "10.271676222",
+    "archiveCollectedToday": 1,
+    "ordinaryFrames": 86,
+    "actualUsefulContentAcceptance": false,
+    "productionWrites": 0
   }
 }
