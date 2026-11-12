@@ -4,6 +4,8 @@ import { createHash } from 'node:crypto';
 import { createHourlyCollector, dispatchHourly, followedHourlySources, hourlyItemKey, hourlyWorkerAuthorized, nativeHourlyCaptions, parseHourlyYouTubeFeed, resolveHourlyYouTubeChannel, type HourlyClaim, type HourlyPolicy, type HourlyStore, type StoredProviderJob } from '../netlify/functions/_shared/hourly-collection';
 import { CollectionError } from '../netlify/functions/_shared/security';
 import type { Source, SourceUpdate, WorkspaceState } from '../src/lib/types';
+import { metadataFixture } from './helpers/metadata-provider';
+import { normalizeMetadataObservation, type MetadataPreflight, type MetadataPoll } from '../netlify/functions/_shared/youtube-format-provider';
 
 const channelId = 'UCabcdefghijklmnopqrstuv';
 const videoId = 'abcdefghijk';
@@ -369,5 +371,105 @@ describe('provider-only collection and separate metadata repair', () => {
   await createHourlyCollector({ ...t.deps, env: modeEnv() })();
   expect(t.deps.pollApify).toHaveBeenCalledWith(expect.objectContaining({ metadataOnly: true, feeOnly: true }), policy.user_id, expect.any(Function));
   expect(t.updates()).toEqual([]); expect(t.deps.startApify).not.toHaveBeenCalled();
+ });
+});
+
+describe('admitted candidate metadata collector and real service boundary', () => {
+ function candidate(purpose: 'qualification' | 'repair' = 'qualification') {
+  const f = metadataFixture(purpose), order: string[] = [];
+  const t = setup({ status: 304, policy: { ...policy, provider_enabled: true } });
+  const admitted = { ...f.intent, providerRunId: null, state: 'launch_claimed' as const };
+  t.store.prepareMetadata = vi.fn(async () => [f.intent]);
+  t.store.pendingMetadata = vi.fn(async () => []);
+  t.store.reserveMetadata = vi.fn(async () => { order.push('reserve'); return { claimed: true, id: admitted.id, reservationId: admitted.reservationId, intent: admitted }; });
+  t.store.assertMetadataDispatch = vi.fn(async () => { order.push('dispatch'); });
+  t.store.recordMetadata = vi.fn(async (_claim, _intent, evidence) => { order.push(String(evidence.kind)); return { observationId: '77777777-7777-4777-8777-777777777777', status: 'observed', fee: { actualUsd: '0.0012' } }; });
+  t.store.finishMetadata = vi.fn(async () => { order.push('apply'); return { applied: true }; });
+  t.deps.startJob.mockImplementation(async () => { order.push('job'); return admitted.jobId; });
+  const metadataPreflight = vi.fn(async (): Promise<MetadataPreflight> => { order.push('preflight'); return { contractDigest: 'a'.repeat(64), requestSha256: f.intent.requestSha256, actorId: f.contract.actorId, buildId: f.contract.buildId, buildNumber: f.contract.buildNumber, originalAccountId: f.contract.originalAccountId, maximumUsd: '0.005', maximumItems: 1, pricingSha256: f.contract.pricingSha256, inputSchemaSha256: f.contract.inputSchemaSha256, observedAt: '2026-11-12T01:00:00Z', responseSha256: 'b'.repeat(64) }; });
+  const metadataStart = vi.fn(async () => { order.push('POST'); return { providerRunId: f.run.id, run: f.run, observedAt: '2026-11-12T01:00:00Z', responseSha256: 'b'.repeat(64) }; });
+  const metadataPoll = vi.fn(async (): Promise<MetadataPoll> => { order.push('GET'); return { status: 'completed', run: f.run, rows: [f.row], datasetSha256: 'e'.repeat(64), fee: { runId: f.run.id, actorId: f.contract.actorId, buildId: f.contract.buildId, originalAccountId: f.contract.originalAccountId, status: 'SUCCEEDED', maximumUsd: '0.005', usageUsd: '0.0012', finishedAt: f.run.finishedAt, observedAt: '2026-11-12T01:00:00Z', responseSha256: 'b'.repeat(64) } }; });
+  const enrichMetadata = vi.fn(async (_id: string, run: unknown, rows: unknown) => { order.push('enrich'); return normalizeMetadataObservation(f.intent, run, rows); });
+  const run = (enabled = false) => createHourlyCollector({ ...t.deps, metadataPreflight, metadataStart, metadataPoll, enrichMetadata, env: key => key === 'HOURLY_COLLECTION_METADATA_VERIFIED' ? String(enabled) : envValues[key] })();
+  return { ...t, f, order, metadataPreflight, metadataStart, metadataPoll, enrichMetadata, run };
+ }
+ it('orders preflight/native intent/singlePOST/ACK/status/enrichment/result; qualification imports nothing with the metadata gateOFF', async () => {
+  const t = candidate(); await t.run();
+  expect(t.order).toEqual(['preflight','job','reserve','dispatch','POST','ack','GET','status','enrich','result']);
+  expect(t.updates()).toEqual([]); expect(t.store.finishMetadata).not.toHaveBeenCalled();
+  expect(t.patch()).not.toHaveProperty('pending_captions'); expect(t.patch()).not.toHaveProperty('cursor');
+  expect(t.patch().details).toMatchObject({ metadataStatus: 'qualification_observed_not_imported' });
+  expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.captions).not.toHaveBeenCalled(); expect(t.deps.startApify).not.toHaveBeenCalled(); expect(t.deps.settleBudget).not.toHaveBeenCalled();
+ });
+ it('uses only native guarded metadata apply for repair, retaining stale results/fees without source text replacement', async () => {
+  const t = candidate('repair'); vi.mocked(t.store.finishMetadata!).mockResolvedValue({ applied: false, reason: 'archive_changed' });
+  await t.run(true);
+  expect(t.store.finishMetadata).toHaveBeenCalledExactlyOnceWith(expect.any(Object), expect.objectContaining({ id: t.f.intent.id }), '77777777-7777-4777-8777-777777777777');
+  expect(t.updates()).toEqual([]); expect(t.patch().details).toMatchObject({ metadataStatus: 'archive_changed' });
+  expect(t.store.recordMetadata).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.objectContaining({ kind: 'status', usageUsd: '0.0012' }));
+  expect(t.deps.startApify).not.toHaveBeenCalled();
+ });
+ it('keeps repair disabled despite an admitted-looking scope while gateOFF', async () => {
+  const t = candidate('repair'); await t.run();
+  expect(t.metadataPreflight).not.toHaveBeenCalled(); expect(t.store.reserveMetadata).not.toHaveBeenCalled(); expect(t.metadataStart).not.toHaveBeenCalled(); expect(t.updates()).toEqual([]);
+ });
+ it('does not reserve/start a job when actual metadata preflight fails', async () => {
+  const t = candidate(); t.metadataPreflight.mockRejectedValue(new CollectionError(409, 'metadata_contract_changed', 'Changed pin'));
+  await t.run(); expect(t.deps.startJob).not.toHaveBeenCalled(); expect(t.store.reserveMetadata).not.toHaveBeenCalled(); expect(t.metadataStart).not.toHaveBeenCalled();
+ });
+ it('rechecks native authority after the retrieval-log async gap and retains the intent hold on failure without POST', async () => {
+  const t = candidate(); vi.mocked(t.store.assertMetadataDispatch!).mockRejectedValue(new CollectionError(409, 'metadata_dispatch_changed', 'Expired native capability'));
+  await t.run(); expect(t.metadataStart).not.toHaveBeenCalled(); expect(t.store.recordMetadata).not.toHaveBeenCalled();
+  expect(t.store.providerPatch).toHaveBeenCalledWith(t.f.intent.id, { state: 'ambiguous' }); expect(t.deps.settleBudget).not.toHaveBeenCalled();
+ });
+ it('does not redispatch after a lost POST response or ACK response', async () => {
+  for (const loss of ['post','ack']) {
+   const t = candidate();
+   if (loss === 'post') t.metadataStart.mockRejectedValue(new Error('Lost POST response'));
+   else vi.mocked(t.store.recordMetadata!).mockRejectedValue(new Error('Lost acknowledgement response'));
+   await t.run(); expect(t.metadataStart).toHaveBeenCalledTimes(1); expect(t.metadataPoll).not.toHaveBeenCalled();
+   expect(t.store.providerPatch).toHaveBeenCalledWith(t.f.intent.id, { state: 'ambiguous' });
+   expect(t.deps.startApify).not.toHaveBeenCalled(); expect(t.deps.download).not.toHaveBeenCalled();
+  }
+ });
+ it('recovers the SAME known run after a crash with no new preflight/reservation/POST or direct platform fallback', async () => {
+  const t = candidate(); vi.mocked(t.store.prepareMetadata!).mockResolvedValue([]); vi.mocked(t.store.pendingMetadata!).mockResolvedValue([t.f.intent]);
+  await t.run(); expect(t.metadataPoll).toHaveBeenCalledExactlyOnceWith(t.f.intent, policy.user_id, expect.any(Function));
+  expect(t.metadataStart).not.toHaveBeenCalled(); expect(t.metadataPreflight).not.toHaveBeenCalled(); expect(t.store.reserveMetadata).not.toHaveBeenCalled(); expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.captions).not.toHaveBeenCalled();
+ });
+ it('retains an ambiguous intent without GET, POST, fallback or hold release', async () => {
+  const t = candidate(); vi.mocked(t.store.prepareMetadata!).mockResolvedValue([]); vi.mocked(t.store.pendingMetadata!).mockResolvedValue([{ ...t.f.intent, providerRunId: null, state: 'ambiguous' }]);
+  await t.run(); expect(t.metadataStart).not.toHaveBeenCalled(); expect(t.metadataPoll).not.toHaveBeenCalled(); expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.settleBudget).not.toHaveBeenCalled();
+  expect(t.patch().details).toMatchObject({ metadataStatus: 'metadata_launch_ambiguous' });
+ });
+ it('records fee/status before withholding missing format or an unavailable enrichment service', async () => {
+  for (const reason of ['metadata_explicit_format_missing','metadata_service_unavailable']) {
+   const t = candidate(); t.enrichMetadata.mockRejectedValue(new CollectionError(503, reason, 'Unavailable'));
+   await t.run(); expect(t.store.recordMetadata).toHaveBeenCalledWith(expect.anything(), expect.anything(), expect.objectContaining({ kind: 'status', usageUsd: '0.0012' }));
+   expect(vi.mocked(t.store.recordMetadata!).mock.calls.some(([, , evidence]) => evidence.kind === 'result')).toBe(reason === 'metadata_explicit_format_missing');
+   expect(t.store.finishMetadata).not.toHaveBeenCalled(); expect(t.updates()).toEqual([]);
+  }
+ });
+ it('does not finalize a repair irreversibly before a terminal fee has matured natively', async () => {
+  const t = candidate('repair'); vi.mocked(t.store.recordMetadata!).mockResolvedValue({ observationId: '77777777-7777-4777-8777-777777777777', status: 'completed', fee: { actualUsd: null } });
+  await t.run(true); expect(t.store.finishMetadata).not.toHaveBeenCalled(); expect(t.patch().details).toMatchObject({ metadataStatus: 'metadata_fee_pending' });
+  expect(vi.mocked(t.store.recordMetadata!).mock.calls.some(([, , evidence]) => evidence.kind === 'result')).toBe(true);
+ });
+ it('never routes a v2 row without its joined native intent through the legacy Streamers adapter', async () => {
+  const t = setup({ status: 304, pending: [pending({ item_key: metadataFixture().intent.itemKey, actor_id: 'ActorMock123' })] }); await t.run();
+  expect(t.deps.pollApify).not.toHaveBeenCalled(); expect(t.deps.startApify).not.toHaveBeenCalled();
+ });
+ it('hydrates a retained live transcript before choosing a caption purchase from an older metadata-only queue snapshot', async () => {
+  const transcript = { ...update, contentKind: 'transcript' as const, content: 'Authoritative retained text.', videoFormat: { kind: 'unknown' as const, basis: 'provider' as const }, insights: ['Original annotation'] };
+  const t = setup({ status: 304, policy: { ...policy, provider_enabled: true }, state: { pending_captions: [{ record: update, attempts: 0, nextAttemptAt: new Date(0).toISOString() }] } });
+  t.store.currentArchive = vi.fn(async () => transcript);
+  await t.run(); expect(t.deps.startApify).not.toHaveBeenCalled(); expect(t.store.reserve).not.toHaveBeenCalled();
+  const task = (t.patch().pending_captions as NonNullable<HourlyClaim['state']['pending_captions']>)[0];
+  expect(task.record).toMatchObject({ content: transcript.content, insights: transcript.insights });
+ });
+ it('does not POST when native caption reservation discovers a newer transcript after hydration', async () => {
+  const t = setup({ status: 304, policy: { ...policy, provider_enabled: true }, state: { pending_captions: [{ record: update, attempts: 0, nextAttemptAt: new Date(0).toISOString() }] } });
+  t.store.currentArchive = vi.fn(async () => null); vi.mocked(t.store.reserve).mockRejectedValue(new CollectionError(409, 'hourly_state_changed', 'New live transcript'));
+  await t.run(); expect(t.store.reserve).toHaveBeenCalledTimes(1); expect(t.deps.startApify).not.toHaveBeenCalled();
  });
 });

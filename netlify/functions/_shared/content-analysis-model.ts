@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import {providerHttpDiagnostic,type AnalysisProviderHttpDiagnostic} from './provider-http-diagnostic';
 import { runtimeEnv, type Env } from './security';
 import { ANALYSIS_MODEL_IDS } from '../../../src/lib/analysis-settings-types';
 import { isAnalysisV2CallKey } from './content-analysis-grounded-v2-protocol';
@@ -21,7 +22,7 @@ export interface AnalysisRejectionReceipt {
  httpStatus:429;preGeneration:boolean;retryAfterSeconds:number|null;providerRequestId:string|null;receivedAt:string;
 }
 export class AnalysisProviderHttpError extends AnalysisError {
- constructor(public httpStatus:number,public rejection:AnalysisRejectionReceipt|null=null,code?:'analysis_provider_timeout'){super(code??`analysis_provider_http_${httpStatus}`);}
+ constructor(public httpStatus:number,public rejection:AnalysisRejectionReceipt|null=null,code?:'analysis_provider_timeout',public diagnostic:Readonly<AnalysisProviderHttpDiagnostic>|null=null){super(code??`analysis_provider_http_${httpStatus}`);}
 }
 export const analysisFailure=(code:string):never=>{throw new AnalysisError(code);};
 export interface AnalysisLimits {
@@ -120,7 +121,7 @@ function openRouterRejection(headers:Headers,receivedAt:number,preGeneration:boo
  return {httpStatus:429,preGeneration,retryAfterSeconds:retryAfterSeconds(headers.get('retry-after'),receivedAt),
   providerRequestId:safeRequestId(headers.get('x-request-id')),receivedAt:new Date(receivedAt).toISOString()};
 }
-function safeProviderFailure(error:unknown,route:string):AnalysisError {
+function safeProviderFailure(error:unknown,route:string,transport:Readonly<AnalysisProviderHttpDiagnostic>|null=null):AnalysisError {
  if(error instanceof AnalysisError)return error;
  if(error instanceof OpenAI.APIConnectionTimeoutError)return new AnalysisError('analysis_provider_timeout');
  if(error instanceof OpenAI.APIError&&typeof error.status==='number'&&Number.isInteger(error.status)&&error.status>=100&&error.status<=599){
@@ -132,7 +133,12 @@ function safeProviderFailure(error:unknown,route:string):AnalysisError {
   // https://openrouter.ai/blog/insights/reliability-failover/
   const rejection:AnalysisRejectionReceipt|null=route==='openrouter'&&httpStatus===429&&error.headers instanceof Headers
    ?openRouterRejection(error.headers,receivedAt,body?.code===429&&typeof body.message==='string'&&!!body.message.trim()):null;
-  return new AnalysisProviderHttpError(httpStatus,rejection);
+  const sameTransport=transport?.httpStatus===httpStatus?transport:null;
+  const diagnostic=route==='openrouter'?providerHttpDiagnostic({httpStatus,requestMethod:sameTransport?.requestMethod,
+   requestUrl:sameTransport?.requestUrl,responseUrl:sameTransport?.responseUrl,
+   providerRequestId:error.headers instanceof Headers?error.headers.get('x-request-id'):null,
+   providerCode:body?.code,receivedAt:sameTransport?.receivedAt??new Date(receivedAt).toISOString()}):null;
+  return new AnalysisProviderHttpError(httpStatus,rejection,undefined,diagnostic);
  }
  return new AnalysisError(error instanceof OpenAI.APIConnectionError?'analysis_provider_network_error':'analysis_generation_failed');
 }
@@ -184,7 +190,7 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
   // past timeout. One independent aborting deadline covers create + either body.
   // Status-only 429 evidence still pauses the worker and retains the full hold.
   const controller=new AbortController();
-  let httpStatus:number|undefined,rejection:AnalysisRejectionReceipt|null=null,expired=false;
+  let httpStatus:number|undefined,rejection:AnalysisRejectionReceipt|null=null,diagnostic:Readonly<AnalysisProviderHttpDiagnostic>|null=null,expired=false;
   // A per-request clone preserves the configured transport without mutating the
   // shared client. Observe headers before the SDK consumes a possible error body.
   const requestClient=client instanceof OpenAI?client.withOptions({}):client;
@@ -194,6 +200,8 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
     const response=await fetchWithTimeout(...args);
     if(!expired){
      httpStatus=response.status;
+     diagnostic=providerHttpDiagnostic({httpStatus,requestMethod:args[1]?.method,requestUrl:String(args[0]),responseUrl:response.url,
+      providerRequestId:response.headers.get('x-request-id'),receivedAt:new Date().toISOString()});
      if(response.status===429)rejection=openRouterRejection(response.headers,Date.now(),false);
     }
     return response;
@@ -203,14 +211,14 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
   const deadline=new Promise<never>((_resolve,reject)=>{
    timer=setTimeout(()=>{
     expired=true;
-    reject(httpStatus===undefined?new AnalysisError('analysis_provider_timeout'):new AnalysisProviderHttpError(httpStatus,rejection,'analysis_provider_timeout'));
+    reject(httpStatus===undefined?new AnalysisError('analysis_provider_timeout'):new AnalysisProviderHttpError(httpStatus,rejection,'analysis_provider_timeout',diagnostic));
     controller.abort();
    },timeoutMs);
   });
   let result:unknown;
   // Promise.race observes late success/rejection even if a transport ignores abort.
   try{result=await Promise.race([Promise.resolve().then(()=>requestClient.chat.completions.create(payload,{maxRetries:0,timeout:timeoutMs,signal:controller.signal})),deadline]);}
-  catch(error){throw safeProviderFailure(error,'openrouter');}
+  catch(error){throw safeProviderFailure(error,'openrouter',diagnostic);}
   finally{clearTimeout(timer);}
   const raw=object(result);
   if(!raw||raw.error!=null)return analysisFailure('analysis_incomplete_generation');

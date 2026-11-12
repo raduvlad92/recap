@@ -1,3 +1,4 @@
+import {offlineProviderMetadata} from './helpers/provider-metadata';
 import {describe,it,expect,vi} from 'vitest';
 import {contentHash} from '../src/lib/content-processing';
 import type {SourceUpdate} from '../src/lib/types';
@@ -46,7 +47,7 @@ function harness(finish:'stop'|'length',parsedNegative=false,durableKnown=true,r
  });
  const factory=(()=>({chat:{completions:{create}}})) as unknown as OpenAIClientFactory;
  const generate=createOpenRouterAnalysisGenerator(env,factory);
- const run=createAnalysisWorker({env,store,limits,generate,now:()=>0});
+ const run=createAnalysisWorker({providerMetadata:offlineProviderMetadata,env,store,limits,generate,now:()=>0});
  return {run,store,calls,create,trace,queue,claim,prepared:()=>prepared};
 }
 describe('R3 actual adapter -> worker -> engine: recognizable semantic negative is terminal',()=>{

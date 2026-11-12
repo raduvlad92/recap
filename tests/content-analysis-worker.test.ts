@@ -1,3 +1,4 @@
+import {offlineProviderMetadata} from './helpers/provider-metadata';
 import {describe,it,expect,vi} from 'vitest';
 import type {SourceUpdate} from '../src/lib/types';
 import {createAnalysisWorker,analysisRequestHash,analysisWorkerAuthorized,dispatchContentAnalysis,createAnalysisStatusHandler,type AnalysisCall,type AnalysisClaim,type AnalysisStore} from '../netlify/functions/_shared/content-analysis';
@@ -17,44 +18,69 @@ const generator:AnalysisGenerator=async request=>{const p=JSON.parse(request.pro
 describe('private durable automatic video analysis worker',()=>{
  it('processes independent summary/keyword tasks, saves metered results and publishes annotations',async()=>{
   const store=storeFor([claim('summary'),claim('keywords')]),generate=vi.fn(generator);
-  const result=await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   expect(result.completed).toBe(2);expect(generate).toHaveBeenCalledTimes(3);expect(store.reserve).toHaveBeenCalledTimes(3);expect(store.saveCall).toHaveBeenCalledTimes(3);expect(store.prepare).toHaveBeenCalledTimes(2);
  });
  it('never duplicates a model charge on duplicate claim delivery with durable cached call results',async()=>{
   const store=storeFor([claim('summary'),claim('summary')]),generate=vi.fn(generator);
-  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(2);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})()).completed).toBe(2);
   expect(generate).toHaveBeenCalledTimes(1);expect(store.saveCall).toHaveBeenCalledTimes(1);
  });
  it('reuses a valid v2 cached success without filling the new null pre-call hash',async()=>{
   const queue=[claim('summary')],store=storeFor(queue),generate=vi.fn(generator);
-  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
   const reserve=store.reserve.getMockImplementation()!;
   store.reserve.mockImplementation(async(...args)=>{const result=await reserve(...args);return {...result,call:{...result.call!,request_hash:null}};});
   queue.push(claim('summary'));
-  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
   expect(generate).toHaveBeenCalledTimes(1);expect(store.saveCall).toHaveBeenCalledTimes(1);expect(store.fail).not.toHaveBeenCalled();
  });
  it('blocks a v2 cache whose result identity disagrees with its immutable call identity',async()=>{
   const queue=[claim('summary')],store=storeFor(queue),generate=vi.fn(generator);
-  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   const reserve=store.reserve.getMockImplementation()!;
   store.reserve.mockImplementation(async(...args)=>{const result=await reserve(...args);return {...result,call:{...result.call!,request_hash:null,result:{...result.call!.result!,executionIdentity:{...result.call!.execution_identity!,provider:'another-provider'}}}};});
   queue.push(claim('summary'));
-  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).blocked).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})()).blocked).toBe(1);
   expect(generate).toHaveBeenCalledTimes(1);expect(store.fail.mock.calls[0][1]).toBe('analysis_cached_input_changed');
  });
  it('retains ambiguous reservations and does not relaunch a timed out model request',async()=>{
   const store=storeFor([claim('summary'),claim('summary')]),generate=vi.fn(async()=>{throw new Error('simulated timeout with unknown provider charge');});
-  const result=await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   expect(generate).toHaveBeenCalledTimes(1);expect(result.blocked).toBe(1);expect(store.fail.mock.calls[1][1]).toBe('analysis_unknown_charge_hold');
  });
  const routerModel='deepseek/deepseek-v4.1-flash-1017',routerLimits={...limits,model:routerModel};
  const routerEnv=env({CONTENT_ANALYSIS_ROUTE:'openrouter',CONTENT_ANALYSIS_OPENROUTER_PROVIDER:'deepinfra/fp8',CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME:'DeepInfra',CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL:routerModel});
  const receipt:AnalysisRejectionReceipt={httpStatus:429,preGeneration:true,retryAfterSeconds:120,providerRequestId:'req-fixture',receivedAt:'2026-10-24T20:30:00.000Z'};
  function routerStore(){const store=storeFor([claim('summary'),claim('keywords')]);store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model:routerModel},{user_id:'second',enabled:true,model:routerModel}]);return store;}
+ it('rejects a fresh legacy call before prompt or money writes when provider metadata is incompatible',async()=>{
+  const store=routerStore(),generate=vi.fn(generator),providerMetadata=vi.fn().mockRejectedValue(new AnalysisError('analysis_provider_metadata_price_exceeds_pin'));
+  const recordPrompt=vi.fn().mockResolvedValue(true);Object.assign(store,{recordPrompt});
+  const stats=await createAnalysisWorker({providerMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
+  expect(stats.failed).toBeGreaterThan(0);expect(store.reserve).not.toHaveBeenCalled();expect(recordPrompt).not.toHaveBeenCalled();expect(generate).not.toHaveBeenCalled();
+ });
+ it('reconciles an old unknown legacy call without any metadata, reservation or inference',async()=>{
+  const store=routerStore(),generate=vi.fn(generator),providerMetadata=vi.fn().mockRejectedValue(new Error('must not acquire metadata'));
+  Object.assign(store,{readCall:vi.fn(async()=>({id:'immutable-old-unknown',state:'unknown',actual_usd:null,result:null}))});
+  const stats=await createAnalysisWorker({providerMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
+  expect(stats.blocked).toBeGreaterThan(0);expect(providerMetadata).not.toHaveBeenCalled();expect(store.reserve).not.toHaveBeenCalled();expect(generate).not.toHaveBeenCalled();expect(store.saveCall).not.toHaveBeenCalled();
+ });
+ it('reuses an exact old legacy result when current metadata is unavailable',async()=>{
+  const queue=[claim('summary')],store=storeFor(queue),generate=vi.fn(generator),providerMetadata=vi.fn(offlineProviderMetadata);
+  store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model:routerModel}]);
+  expect((await createAnalysisWorker({providerMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})()).completed).toBe(1);
+  const saved=await store.saveCall.mock.results[0].value;Object.assign(store,{readCall:vi.fn(async()=>saved)});queue.push(claim('summary'));
+  providerMetadata.mockClear().mockRejectedValue(new Error('must not acquire metadata'));store.reserve.mockClear();generate.mockClear();
+  expect((await createAnalysisWorker({providerMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})()).completed).toBe(1);expect(providerMetadata).not.toHaveBeenCalled();expect(store.reserve).not.toHaveBeenCalled();expect(generate).not.toHaveBeenCalled();
+ });
+ it('yields before reserving if metadata I/O consumes its owner slice',async()=>{
+  let clock=0;const store=routerStore(),generate=vi.fn(generator),providerMetadata=vi.fn(async()=>{clock+=600000;return offlineProviderMetadata(routerEnv,{} as never);});
+  const stats=await createAnalysisWorker({providerMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>clock})();
+  expect(stats.yielded).toBe(1);expect(store.reserve).not.toHaveBeenCalled();expect(generate).not.toHaveBeenCalled();
+ });
  it('records only status and pauses the whole provider turn, preserving every financial hold until separate verification',async()=>{
   const store=routerStore(),generate=vi.fn(async()=>{throw new AnalysisProviderHttpError(429,receipt);});
-  const stats=await createAnalysisWorker({env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
+  const stats=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
   expect(stats).toMatchObject({failed:1,completed:0});expect(generate).toHaveBeenCalledTimes(1);
   expect(store.reserve).toHaveBeenCalledTimes(1);expect(store.claim).toHaveBeenCalledTimes(1);expect(store.sync).toHaveBeenCalledTimes(1);
   expect(store.saveCall).not.toHaveBeenCalled();expect(store.prepare).not.toHaveBeenCalled();expect(store.publish).not.toHaveBeenCalled();
@@ -67,49 +93,49 @@ describe('private durable automatic video analysis worker',()=>{
  it('stops even when status receipt persistence fails, without assuming any zero charge',async()=>{
   const store=routerStore(),generate=vi.fn(async()=>{throw new AnalysisProviderHttpError(429,receipt);});
   store.recordRejection.mockRejectedValue(new AnalysisError('analysis_storage_unavailable'));
-  await createAnalysisWorker({env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
   expect(generate).toHaveBeenCalledTimes(1);expect(store.claim).toHaveBeenCalledTimes(1);expect(store.saveCall).not.toHaveBeenCalled();
   expect(store.fail).toHaveBeenCalledWith(expect.anything(),'analysis_storage_unavailable',true,false);
  });
  it('stops after a 429 even when a concurrent deletion invalidates failure scheduling',async()=>{
   const store=routerStore(),generate=vi.fn(async()=>{throw new AnalysisProviderHttpError(429,receipt);});
   store.fail.mockRejectedValue(new AnalysisError('analysis_source_changed'));
-  await createAnalysisWorker({env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
   expect(generate).toHaveBeenCalledTimes(1);expect(store.claim).toHaveBeenCalledTimes(1);expect(store.sync).toHaveBeenCalledTimes(1);
  });
  it('records malformed-body 429 metadata as unknown and pauses without retrying generation',async()=>{
   const store=routerStore(),incomplete={...receipt,preGeneration:false},generate=vi.fn(async()=>{throw new AnalysisProviderHttpError(429,incomplete);});
-  await createAnalysisWorker({env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
   expect(store.recordRejection.mock.calls[0][4]).toEqual(incomplete);expect(store.fail.mock.calls[0][2]).toBe(false);expect(generate).toHaveBeenCalledTimes(1);
  });
  it('honors a shared durable provider cooldown across owners before any new financial reservation',async()=>{
   const store=routerStore(),generate=vi.fn(generator);
   store.reserve.mockResolvedValue({claimed:false,reason:'analysis_provider_cooldown',retryAt:'2026-10-24T20:32:00.000Z'});
-  await createAnalysisWorker({env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
   expect(generate).not.toHaveBeenCalled();expect(store.recordRejection).not.toHaveBeenCalled();expect(store.claim).toHaveBeenCalledTimes(1);expect(store.sync).toHaveBeenCalledTimes(1);
   expect(store.fail).toHaveBeenCalledWith(expect.anything(),'analysis_provider_cooldown',true,false);
  });
  it('passes only an explicitly reconciled reservation pause to the receipt-checked durable retry scheduler',async()=>{
   const store=routerStore(),generate=vi.fn(generator);
   store.reserve.mockResolvedValue({claimed:false,reason:'analysis_provider_rate_limited',retryAt:'2026-10-24T20:32:00.000Z'});
-  await createAnalysisWorker({env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:routerEnv,store,limits:routerLimits,generate,now:()=>0})();
   expect(generate).not.toHaveBeenCalled();expect(store.recordRejection).not.toHaveBeenCalled();expect(store.claim).toHaveBeenCalledTimes(1);
   expect(store.fail).toHaveBeenCalledWith(expect.anything(),'analysis_provider_rate_limited',true,false);
  });
  it('never saves a rejection receipt or retries an HTTP 200 generation failure',async()=>{
   const store=storeFor([claim('summary'),claim('summary')]),generate=vi.fn(async()=>{throw new AnalysisError('analysis_incomplete_generation');});
-  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   expect(generate).toHaveBeenCalledTimes(1);expect(store.recordRejection).not.toHaveBeenCalled();expect(store.fail.mock.calls[0][2]).toBe(false);expect(store.fail.mock.calls[1][1]).toBe('analysis_unknown_charge_hold');
  });
  it('requires the exact pre-call request hash before using new provider permission',async()=>{
   const store=storeFor([claim('summary')]),reserve=store.reserve.getMockImplementation()!,generate=vi.fn(generator);
   store.reserve.mockImplementation(async(...args)=>{const reservation=await reserve(...args);return {...reservation,call:{...reservation.call!,request_hash:'0'.repeat(64)}};});
-  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   expect(generate).not.toHaveBeenCalled();expect(store.fail.mock.calls[0][1]).toBe('analysis_configuration_required');
  });
  it('blocks known cached output when the prompt changes while retaining its stable call key',async()=>{
   const changed={...claim('summary'),record:{...record,content:record.content+' New source words.'}},store=storeFor([claim('summary'),changed]),generate=vi.fn(generator);
-  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   expect(generate).toHaveBeenCalledTimes(1);expect(store.fail.mock.calls[0][1]).toBe('analysis_cached_input_changed');expect(store.reserve.mock.calls.map(args=>args[1].key)).toEqual(['summary:0','summary:0']);
  });
  it.each([
@@ -119,32 +145,32 @@ describe('private durable automatic video analysis worker',()=>{
   {name:'pricing',pricingVersion:'fixture-prices-v2'},
  ])('blocks cached output after changing $name without changing stable call keys',async scenario=>{
   const queue=[claim('summary')],store=storeFor(queue),generate=vi.fn(generator);
-  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
   queue.push(claim('summary'));
   const nextLimits={...limits,...(scenario.model?{model:scenario.model}:{}),...(scenario.pricingVersion?{pricingVersion:scenario.pricingVersion}:{})};
   store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model:nextLimits.model}]);
-  const result=await createAnalysisWorker({env:env(scenario.patch),store,limits:nextLimits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(scenario.patch),store,limits:nextLimits,generate,now:()=>0})();
   expect(result.blocked).toBe(1);expect(generate).toHaveBeenCalledTimes(1);
   expect(store.fail.mock.calls.at(-1)?.[1]).toBe('analysis_cached_input_changed');
   expect(store.reserve.mock.calls.map(call=>call[1].key)).toEqual(['summary:0','summary:0']);
  });
  it('keeps an unknown-charge hold when the configured provider changes',async()=>{
   const queue=[claim('summary')],store=storeFor(queue),generate=vi.fn(async()=>{throw new Error('ambiguous timeout');});
-  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   queue.push(claim('summary'));
   const nextLimits={...limits,model:'deepseek/deepseek-v4.1-flash-1017'};
   store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model:nextLimits.model}]);
-  const result=await createAnalysisWorker({env:env({CONTENT_ANALYSIS_ROUTE:'openrouter',CONTENT_ANALYSIS_OPENROUTER_PROVIDER:'deepinfra/fp8'}),store,limits:nextLimits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env({CONTENT_ANALYSIS_ROUTE:'openrouter',CONTENT_ANALYSIS_OPENROUTER_PROVIDER:'deepinfra/fp8'}),store,limits:nextLimits,generate,now:()=>0})();
   expect(result.blocked).toBe(1);expect(generate).toHaveBeenCalledTimes(1);
   expect(store.fail.mock.calls.at(-1)?.[1]).toBe('analysis_unknown_charge_hold');
  });
  it('does not trust cached legacy calls without their independent execution identity',async()=>{
   const queue=[claim('summary')],store=storeFor(queue),generate=vi.fn(generator);
-  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   const reserve=store.reserve.getMockImplementation()!;
   store.reserve.mockImplementation(async(...args)=>{const result=await reserve(...args);return {...result,call:{...result.call!,execution_identity:null}};});
   queue.push(claim('summary'));
-  const result=await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   expect(result.blocked).toBe(1);expect(generate).toHaveBeenCalledTimes(1);
   expect(store.fail.mock.calls.at(-1)?.[1]).toBe('analysis_cached_input_changed');
  });
@@ -159,23 +185,23 @@ describe('private durable automatic video analysis worker',()=>{
  });
  it('does not let a failed keyword task block a valid summary',async()=>{
   const store=storeFor([claim('keywords'),claim('summary')]);
-  const result=await createAnalysisWorker({env:env(),store,limits,generate:async request=>{if(request.role==='extractor')throw new AnalysisError('analysis_unsupported_quote');return generator(request);},now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate:async request=>{if(request.role==='extractor')throw new AnalysisError('analysis_unsupported_quote');return generator(request);},now:()=>0})();
   expect(result).toMatchObject({completed:1,failed:1});
  });
  it('stops per-call/daily-cap reservations before model use',async()=>{
   const store=storeFor([claim('summary')]),generate=vi.fn(generator);store.reserve.mockRejectedValue(new AnalysisError('analysis_budget_exhausted'));
-  const result=await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   expect(result.blocked).toBe(1);expect(generate).not.toHaveBeenCalled();
  });
  it('persists credential/config blocked status after queue synchronization without model execution',async()=>{
   const store=storeFor([claim('summary')]);
-  const result=await createAnalysisWorker({env:env(),store,limits,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,now:()=>0})();
   expect(result.blocked).toBe(1);expect(store.sync).toHaveBeenCalledWith('owner','');expect(store.reserve).not.toHaveBeenCalled();expect(store.fail.mock.calls[0][1]).toBe('analysis_pricing_not_verified');
  });
  it('uses the saved admin model instead of stale environment model/provider settings',async()=>{
   const model='minimax/minimax-m3.1-flash',store=Object.assign(storeFor([claim('summary')]),{runtime:vi.fn(async()=>({selected_model:model,revision:7}))}),generate=vi.fn(generator);
   store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model}]);
-  const result=await createAnalysisWorker({env:env({CONTENT_ANALYSIS_MODEL:'google/gemini-2.5-flash-lite',CONTENT_ANALYSIS_OPENROUTER_PROVIDER:'google-ai-studio'}),store,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env({CONTENT_ANALYSIS_MODEL:'google/gemini-2.5-flash-lite',CONTENT_ANALYSIS_OPENROUTER_PROVIDER:'google-ai-studio'}),store,generate,now:()=>0})();
   expect(result.completed).toBe(1);expect(generate).toHaveBeenCalledTimes(1);
   expect(store.reserve.mock.calls[0][3]).toBe(model);
   expect(store.reserve.mock.calls[0][4]).toMatchObject({route:'openrouter',model});
@@ -183,13 +209,13 @@ describe('private durable automatic video analysis worker',()=>{
  });
  it('blocks an invalid saved model without falling back or reserving a charge',async()=>{
   const store=Object.assign(storeFor([claim('summary')]),{runtime:vi.fn(async()=>({selected_model:'google/gemini-2.5-flash-lite',revision:8}))}),generate=vi.fn(generator);
-  const result=await createAnalysisWorker({env:env(),store,generate,now:()=>0})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,generate,now:()=>0})();
   expect(result.blocked).toBe(1);expect(generate).not.toHaveBeenCalled();expect(store.reserve).not.toHaveBeenCalled();
  });
  it('resumes a prepared result through publication without generation',async()=>{
   const pending=claim('summary');pending.job.state='prepared';pending.job.result={state:'empty',patch:{},pending:[],evidence:{}};
   const store=storeFor([pending]),generate=vi.fn(generator);
-  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);expect(generate).not.toHaveBeenCalled();expect(store.reserve).not.toHaveBeenCalled();
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);expect(generate).not.toHaveBeenCalled();expect(store.reserve).not.toHaveBeenCalled();
  });
  it('yields a long owner job and continues another owner instead of returning globally',async()=>{
   let current=0;
@@ -197,10 +223,10 @@ describe('private durable automatic video analysis worker',()=>{
   const store=storeFor([]);
   store.policies.mockResolvedValue([{user_id:'owner',enabled:true,model:'fixture/model'},{user_id:'bbb',enabled:true,model:'fixture/model'}]);
   store.claim.mockImplementation(async userId=>userId==='owner'?(a.job.state==='running'?(a.job.state='claimed',a):null):(b.job.state==='running'?(b.job.state='claimed',b):null));
-  const result=await createAnalysisWorker({env:env(),store,limits,now:()=>current,generate:async request=>{const result=await generator(request);if(request.role==='extractor')current+=260000;return result;}})();
+  const result=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,now:()=>current,generate:async request=>{const result=await generator(request);if(request.role==='extractor')current+=260000;return result;}})();
   expect(result.yielded).toBe(1);expect(result.completed).toBe(1);expect(store.claim).toHaveBeenCalledWith('bbb');
  });
- it('returns before constructing resources when runtime is off',async()=>expect((await createAnalysisWorker({env:env({CONTENT_ANALYSIS_ENABLED:'false'})})()).enabled).toBe(false));
+ it('returns before constructing resources when runtime is off',async()=>expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env({CONTENT_ANALYSIS_ENABLED:'false'})})()).enabled).toBe(false));
 });
 describe('private dispatch and read-only owner status',()=>{
  it('denies browser GET and bad worker secrets',()=>{
@@ -268,7 +294,7 @@ describe('exact prompt receipts before new model spending',()=>{
   const events:string[]=[],store=Object.assign(storeFor([claim('summary')]),{recordPrompt:vi.fn<NonNullable<AnalysisStore['recordPrompt']>>(async()=>{events.push('prompt');return true;})});
   const reserve=store.reserve.getMockImplementation()!;store.reserve.mockImplementation(async(...args)=>{events.push('reserve');return reserve(...args);});
   const generate=vi.fn<AnalysisGenerator>(async request=>{events.push('provider');return generator(request);});
-  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
   expect(events).toEqual(['prompt','reserve','provider']);
   expect(store.recordPrompt.mock.calls[0][1]).toEqual(generate.mock.calls[0][0]);
   expect(store.recordPrompt.mock.calls[0][2]).toBe(limits.model);
@@ -276,23 +302,23 @@ describe('exact prompt receipts before new model spending',()=>{
  });
  it('does not reserve or spend when the exact request cannot be recorded',async()=>{
   const store=Object.assign(storeFor([claim('summary')]),{recordPrompt:vi.fn(async()=>false)}),generate=vi.fn(generator);
-  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   expect(store.fail.mock.calls[0][1]).toBe('analysis_prompt_not_recorded');
   expect(store.reserve).not.toHaveBeenCalled();expect(generate).not.toHaveBeenCalled();expect(store.saveCall).not.toHaveBeenCalled();
  });
  it('does not create a charge hold if prompt storage fails',async()=>{
   const store=Object.assign(storeFor([claim('summary')]),{recordPrompt:vi.fn(async()=>{throw new AnalysisError('analysis_storage_unavailable');})}),generate=vi.fn(generator);
-  await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();
+  await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();
   expect(store.fail.mock.calls[0][1]).toBe('analysis_storage_unavailable');expect(store.reserve).not.toHaveBeenCalled();expect(generate).not.toHaveBeenCalled();
  });
  it('replays grounded cached results without retroactively recording a historical prompt',async()=>{
   const source={...claim('summary'),job:{...claim('summary').job,rule_version:'content-v2' as const}},queue=[source],store=Object.assign(storeFor(queue),{recordPrompt:vi.fn(async()=>true)});
   const generate=vi.fn<AnalysisGenerator>(async request=>{const p=JSON.parse(request.prompt);return {value:p.task==='verify_summary'?{readComplete:true,verdicts:p.claims.map((c:{id:string})=>({id:c.id,supported:true,reason:'Source comparison is explicit.'}))}:{readComplete:true,lastPassageId:p.requiredLastPassageId,highlights:[{text:'The GPU benchmark improved from 30 to 45 frames per second.',passageIds:[p.passages[0].id]}]},actualUsd:.0001,observedUsd:.0001};});
-  const first=await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})();expect(store.fail.mock.calls.map(row=>row[1])).toEqual([]);expect(first.completed).toBe(1);
+  const first=await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})();expect(store.fail.mock.calls.map(row=>row[1])).toEqual([]);expect(first.completed).toBe(1);
   const paid=generate.mock.calls.length,cached=store.saveCall.mock.calls.map(([call,,result])=>({...call,call_key:call.id.slice('summary:'.length),state:'settled',actual_usd:.0001,result:result as AnalysisCall['result']}));
   Object.assign(store,{cachedCalls:vi.fn<NonNullable<AnalysisStore['cachedCalls']>>(async(_claim,keys)=>({calls:cached.filter(c=>keys.includes(c.call_key)).sort((a,b)=>a.call_key.localeCompare(b.call_key)),nextAfterKey:null}))});
   store.recordPrompt.mockClear();store.recordPrompt.mockRejectedValue(new Error('Must not invent a missing old prompt'));queue.push(source);
-  expect((await createAnalysisWorker({env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
+  expect((await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env(),store,limits,generate,now:()=>0})()).completed).toBe(1);
   expect(store.recordPrompt).not.toHaveBeenCalled();expect(generate).toHaveBeenCalledTimes(paid);expect(store.reserve).toHaveBeenCalledTimes(paid);
  });
 });

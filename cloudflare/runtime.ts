@@ -24,6 +24,8 @@ export const runWithBindings = <T>(bindings: Bindings, action: () => T): T => wi
   ...(bindings.pipeline ? {
     analysis: input => (input.request.role === 'checker' ? bindings.pipeline!.services.VerificationService : bindings.pipeline!.services.GenerationService).generate(bindings.pipeline!.capability, input),
     enrichInstagram: (raw, actorRef) => bindings.pipeline!.services.EnrichmentService.instagram(bindings.pipeline!.capability, raw, actorRef),
+    pipelineCapability: bindings.pipeline.capability,
+    enrichYouTubeFormat: (intentId, run, rows) => bindings.pipeline!.services.EnrichmentService.youtubeFormat(bindings.pipeline!.capability, intentId, run, rows),
   } : {}), download: (url, options) => {
   if (bindings.SOURCE_TRANSPORT_VERIFIED !== 'true') throw new CollectionError(503, 'source_transport_unverified', 'Source transport is still being verified.');
   return downloadFromSourceService(bindings.SOURCE_DOWNLOADER, url, options);

@@ -1,3 +1,4 @@
+import {offlineProviderMetadata} from './helpers/provider-metadata';
 import {beforeEach,describe,expect,it,vi} from 'vitest';
 import {contentHash} from '../src/lib/content-processing';
 import type {SourceUpdate} from '../src/lib/types';
@@ -97,7 +98,7 @@ function fixture(initial:AnalysisClaim[]){
  });
  transport.database.mockReturnValue({rpc,from});
  const named=(name:string)=>rpc.mock.calls.filter(([method])=>method===name).map(([,args])=>args);
- const run=(generate:AnalysisGenerator,workerEnv=env())=>createAnalysisWorker({env:workerEnv,store:createAnalysisStore(workerEnv),generate,now:()=>state.clock})();
+ const run=(generate:AnalysisGenerator,workerEnv=env())=>createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:workerEnv,store:createAnalysisStore(workerEnv),generate,now:()=>state.clock})();
  return {queue,calls,state,rpc,from,named,run,callKey};
 }
 function valid(request:GenerationRequest):GenerationResult {
@@ -403,7 +404,7 @@ describe('comparison payment namespace, durable cache and bounded correction',()
 
  it('performs zero database construction, RPCs or generation when runtime is off',async()=>{
   const f=fixture([claim()]),generate=vi.fn<AnalysisGenerator>();transport.database.mockClear();
-  expect(await createAnalysisWorker({env:env({CONTENT_ANALYSIS_ENABLED:'false'}),generate})()).toMatchObject({enabled:false,synchronized:0,completed:0});
+  expect(await createAnalysisWorker({providerMetadata:offlineProviderMetadata,env:env({CONTENT_ANALYSIS_ENABLED:'false'}),generate})()).toMatchObject({enabled:false,synchronized:0,completed:0});
   expect(transport.database).not.toHaveBeenCalled();expect(f.from).not.toHaveBeenCalled();expect(f.rpc).not.toHaveBeenCalled();expect(generate).not.toHaveBeenCalled();
  });
 });

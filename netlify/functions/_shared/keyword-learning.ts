@@ -3,7 +3,9 @@ import { isIP } from 'node:net';
 import { database, requireAdmin } from './admin-data';
 import { analysisWorkerAuthorized, analysisRequestHash } from './content-analysis';
 import { analysisRuntimeEnv } from './content-analysis-runtime';
-import { analysisExecutionIdentity, analysisLimits, conservativeCallUsd, createGatewayGenerator, createOpenRouterAnalysisGenerator, AnalysisError, type AnalysisGenerator, type GenerationRequest, type GenerationResult } from './content-analysis-model';
+import { analysisExecutionIdentity, analysisLimits, conservativeCallUsd, createGatewayGenerator, createOpenRouterAnalysisGenerator, AnalysisError, AnalysisProviderHttpError, type AnalysisGenerator, type AnalysisExecutionIdentity, type GenerationRequest, type GenerationResult } from './content-analysis-model';
+import {createProviderMetadataGuard,assertProviderMetadataFresh,type ProviderMetadataGuard} from './content-analysis-provider-metadata';
+import {finiteDiagnosticAttachment} from './provider-http-diagnostic';
 import { ANALYSIS_MODEL_IDS } from '../../../src/lib/analysis-settings-types';
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
 
@@ -51,24 +53,26 @@ function unwrap<T>(result:{data:T;error:{code?:string}|null}):T {
  if(result.error){const code=result.error.code;return fail(code==='PT402'?'analysis_budget_exhausted':code==='PT429'?'analysis_daily_budget_exhausted':code==='PT409'?'keyword_learning_state_conflict':code==='PT403'?'keyword_learning_not_released':'keyword_learning_storage_unavailable',code==='PT402'?402:code==='PT429'?429:code==='PT409'?409:code==='PT403'?403:502);}
  return result.data;
 }
-async function sourceFor(db:Database,input:KeywordLearningInput):Promise<void> {
+async function sourceFor(db:Database,input:KeywordLearningInput):Promise<string> {
  const s=unwrap(await db.from('keyword_learning_sessions').select('user_id,state,expires_at,sources,models').eq('id',input.sessionId).single());
  if(!s||s.state!=='released'||typeof s.user_id!=='string'||Date.parse(s.expires_at)<=Date.now()||!Array.isArray(s.models)||!s.models.includes(input.model)||!Array.isArray(s.sources))return fail('keyword_learning_not_released',403);
  const source=s.sources.find((x:Record<string,unknown>)=>x.ordinal===input.sourceOrdinal&&x.sourceHash===input.sourceHash);
  if(!source||typeof source.updateId!=='string')return fail('keyword_learning_source_changed',409);
  const row=unwrap(await db.from('reader_source_updates').select('record').eq('user_id',s.user_id).eq('id',source.updateId).single());
  if(!row||typeof row.record?.content!=='string'||hash(row.record.content)!==input.sourceHash)return fail('keyword_learning_source_changed',409);
+ return s.user_id;
 }
-interface Reservation {claimed:boolean;call:{id:string;lease_token:string;state:string;actual_usd:number|string|null;observed_usd:number|string|null;maximum_usd:number|string};result:GenerationResult|null;errorCode:string|null;requestHash:string}
-interface Dependencies {env:Env;db:()=>Database;authorize:typeof requireAdmin;workerAuthorized:typeof analysisWorkerAuthorized;generator:(env:Env)=>AnalysisGenerator}
+interface Reservation {claimed:boolean;call:{id:string;lease_token:string;state:string;actual_usd:number|string|null;observed_usd:number|string|null;maximum_usd:number|string;attempt_number:number;model:string;user_id:string;request_hash:string;execution_identity:AnalysisExecutionIdentity};result:GenerationResult|null;errorCode:string|null;requestHash:string}
+interface Dependencies {now:()=>number;env:Env;db:()=>Database;authorize:typeof requireAdmin;workerAuthorized:typeof analysisWorkerAuthorized;generator:(env:Env)=>AnalysisGenerator;providerMetadata:ProviderMetadataGuard}
 const response=(value:unknown,status=200)=>{const r=json(value,status);r.headers.set('x-robots-tag','noindex, nofollow');return r;};
 /** Deliberately separate from production queue flags. Only a manually released,
  * finite private session authorizes inference, while the shared durable ledger
  * still enforces all aggregate/day/owner/per-call monetary ceilings. */
-export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},options:{generateOnly?:boolean;generationTimeoutMs?:number}={}) {
+export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},options:{generateOnly?:boolean;generationTimeoutMs?:number;assertBeforeReservation?:()=>Promise<void>}={}) {
  if(options.generationTimeoutMs!==undefined&&(!options.generateOnly||!Number.isSafeInteger(options.generationTimeoutMs)||options.generationTimeoutMs<1||options.generationTimeoutMs>120000))throw new AnalysisError('analysis_configuration_required');
  const generator=(env:Env)=>options.generationTimeoutMs===undefined?createGatewayGenerator(env):createOpenRouterAnalysisGenerator(env,undefined,{timeoutMs:options.generationTimeoutMs});
- const deps:Dependencies={env:runtimeEnv,db:()=>database(overrides.env||runtimeEnv),authorize:requireAdmin,workerAuthorized:analysisWorkerAuthorized,generator,...overrides};
+ if(options.assertBeforeReservation!==undefined&&(!options.generateOnly||typeof options.assertBeforeReservation!=='function'))throw new AnalysisError('analysis_configuration_required');
+ const deps:Dependencies={now:Date.now,env:runtimeEnv,db:()=>database(overrides.env||runtimeEnv),authorize:requireAdmin,workerAuthorized:analysisWorkerAuthorized,generator,providerMetadata:createProviderMetadataGuard(),...overrides};
  return async(request:Request):Promise<Response>=>{
   try {
    if(request.method!=='POST')return response({error:{code:'method_not_allowed'}},405);
@@ -83,7 +87,7 @@ export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},
     return response(unwrap(await db.rpc('read_keyword_learning_call',{p_session_id:body.sessionId,p_call_key:body.callKey})));
    }
    const input=parseKeywordLearningInput(body);
-   await sourceFor(db,input);
+   const sourceOwner=await sourceFor(db,input);
    const env=analysisRuntimeEnv(deps.env,input.model,1),limits=analysisLimits(env),identity=analysisExecutionIdentity(env,limits);
    const estimateUsd=conservativeCallUsd(input.request,limits);
    if(estimateUsd>.10||estimateUsd>limits.maxCallUsd)return fail('analysis_call_limit',402);
@@ -93,19 +97,48 @@ export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},
    const maximumUsd=Math.min(.10,limits.maxCallUsd);
    const generationHash=analysisRequestHash(input.request,identity,{responseModel:env('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:env('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')});
    const requestHash=hash(JSON.stringify({generationHash,sourceOrdinal:input.sourceOrdinal,sourceHash:input.sourceHash,originalKey:input.originalKey??null,key:input.request.key}));
-   if(input.action==='preflight')return response({preflight:true,maximumUsd,requestHash,executionIdentity:identity,providerCall:false,reserved:false});
+   // Existing keys are immutable readback, independent of current public
+   // advertisements. Never reserve/retry an unknown or cached call again.
+   if(input.action==='generate'){
+    const prior=unwrap(await db.rpc('read_keyword_learning_call',{p_session_id:input.sessionId,p_call_key:input.request.key})) as Reservation|null;
+    if(prior){
+     if(!object(prior.call)||prior.requestHash!==requestHash||prior.call.request_hash!==requestHash||prior.call.model!==input.model
+      ||prior.call.user_id!==sourceOwner||Number(prior.call.maximum_usd)!==maximumUsd||!object(prior.call.execution_identity)
+      ||analysisRequestHash(input.request,prior.call.execution_identity,{responseModel:env('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:env('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')})!==generationHash)return fail('keyword_learning_state_conflict',409);
+     return response({...prior,cached:!!prior.result,providerCall:false},prior.call.actual_usd===null?202:200);
+    }
+   }
+   const providerMetadata=await deps.providerMetadata(env,input.request);
+   // Metadata may wait on I/O. Revalidate every current binding afterwards;
+   // SQL independently repeats frozen source/session/financial guards under lock.
+   if(await sourceFor(db,input)!==sourceOwner)return fail('keyword_learning_source_changed',409);
+   const freshEnv=analysisRuntimeEnv(deps.env,input.model,1),freshIdentity=analysisExecutionIdentity(freshEnv,analysisLimits(freshEnv));
+   if(analysisRequestHash(input.request,freshIdentity,{responseModel:freshEnv('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:freshEnv('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')})!==generationHash)return fail('keyword_learning_state_conflict',409);
+   await options.assertBeforeReservation?.();
+   assertProviderMetadataFresh(providerMetadata,deps.now());
+   if(input.action==='preflight')return response({preflight:true,maximumUsd,requestHash,executionIdentity:identity,providerMetadata,providerCall:false,reserved:false});
    const reservation=unwrap(await db.rpc('reserve_keyword_learning_call',{
     p_session_id:input.sessionId,p_call_key:input.request.key,p_source_ordinal:input.sourceOrdinal,p_source_hash:input.sourceHash,
     p_model:input.model,p_execution_identity:identity,p_request_hash:requestHash,p_maximum_usd:maximumUsd,
     p_request:{request:input.request,originalKey:input.originalKey??null,generationHash},
    })) as Reservation;
    if(!reservation.claimed)return response({...reservation,cached:!!reservation.result,providerCall:false},reservation.call.actual_usd===null?202:200);
-   let result:GenerationResult;
-   try{result=await deps.generator(env)(input.request);}
+   let result:GenerationResult,providerInvoked=false;
+   try{
+    await options.assertBeforeReservation?.();
+    if(await sourceFor(db,input)!==sourceOwner)return fail('keyword_learning_source_changed',409);
+    const dispatchEnv=analysisRuntimeEnv(deps.env,input.model,1),dispatchIdentity=analysisExecutionIdentity(dispatchEnv,analysisLimits(dispatchEnv));
+    if(analysisRequestHash(input.request,dispatchIdentity,{responseModel:dispatchEnv('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:dispatchEnv('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')})!==generationHash)throw new AnalysisError('keyword_learning_state_conflict');
+    assertProviderMetadataFresh(providerMetadata,deps.now());providerInvoked=true;result=await deps.generator(env)(input.request);}
    catch(error){
-    const code=error instanceof AnalysisError?error.code:'analysis_generation_failed';
-    const saved=unwrap(await db.rpc('record_keyword_learning_call',{p_session_id:input.sessionId,p_call_key:input.request.key,p_call_id:reservation.call.id,p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_result:null,p_error_code:code}));
-    return response({...saved,providerCall:true},202);
+    const code=error instanceof AnalysisError||error instanceof CollectionError?error.code:'analysis_generation_failed';
+    const binding={p_session_id:input.sessionId,p_call_key:input.request.key,p_call_id:reservation.call.id,p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_error_code:code};
+    let saved:unknown;
+    if(error instanceof AnalysisProviderHttpError&&error.diagnostic){
+     const attachment=finiteDiagnosticAttachment({sessionId:input.sessionId,callId:reservation.call.id,leaseToken:reservation.call.lease_token,requestHash,attemptNumber:reservation.call.attempt_number},error.diagnostic);
+     saved=unwrap(await db.rpc('record_keyword_learning_failure_with_diagnostic',{...binding,p_attempt_number:reservation.call.attempt_number,p_diagnostic:attachment.diagnostic}));
+    }else saved=unwrap(await db.rpc('record_keyword_learning_call',{...binding,p_result:null}));
+    return response({...saved as object,providerCall:providerInvoked},202);
    }
    const saved=unwrap(await db.rpc('record_keyword_learning_call',{p_session_id:input.sessionId,p_call_key:input.request.key,p_call_id:reservation.call.id,p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_result:result,p_error_code:result.validationError??null}));
    return response({...saved,providerCall:true});

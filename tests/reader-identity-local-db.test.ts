@@ -10,14 +10,20 @@ const migration = '20261107205636_stable_reader_ownership.sql';
 const q = (value: unknown) => "'" + JSON.stringify(value).replaceAll("'","''") + "'::jsonb";
 const issuerA = 'https://synthetic-a.example', issuerB = 'https://synthetic-b.example';
 describe.skipIf(!available)('reader identity on disposable socket-only PostgreSQL', () => {
- let root: string, args: string[], started = false, before: string, initialConfig: string, originalGuard: string, lifecycleInstalled: boolean;
+ let root: string, args: string[], started = false, before: string, initialConfig: string, originalGuard: string, lifecycleInstalled: boolean, metadataInstalled=false;
  const sql = (query: string) => execFileSync('psql',args,{input:query,encoding:'utf8',maxBuffer:16*1024*1024,stdio:['pipe','pipe','pipe']}).trim();
  const service = (query: string) => sql('set role service_role; ' + query);
  const reader = (query: string, subject = 'synthetic-provider-a', issuer: string | null = issuerA) => sql(`set role authenticated; set request.jwt.claims=${"'"+JSON.stringify({sub:subject,...(issuer ? {iss:issuer} : {})})+"'"}; ${query}`);
  const configure = (mode = 'linked', ready = true) => service(`select public.review_reader_identity_configuration('${mode}',${ready},array['${issuerA}','${issuerB}'],'synthetic-operator','synthetic-review');`);
  const bind = (subject = 'synthetic-provider-a', owner = 'synthetic-owner-a', issuer = issuerA) => `select public.bind_reader_identity_alias('${issuer}','${subject}','${owner}','synthetic-operator','synthetic-explicit-control-proof');`;
  const owner = (subject = 'synthetic-provider-a', issuer: string | null = issuerA) => reader('select public.current_reader_owner();',subject,issuer);
- const snapshot = () => sql('select public.synthetic_snapshot();');
+ // Preserve the original raw PostgreSQL JSON comparison. The four additive
+ // metadata tables are checked separately as empty, not silently omitted.
+ const metadataTables=['collection_metadata_contracts','collection_metadata_scopes','collection_metadata_intents','collection_metadata_observations'];
+ const snapshot = () => {
+  if(metadataInstalled)for(const table of metadataTables)expect(sql(`select count(*)from public.${table};`)).toBe('0');
+  return sql('select public.synthetic_snapshot();');
+ };
  beforeAll(() => {
   root = mkdtempSync(join(tmpdir(),'recap-reader-identity-')); mkdirSync(join(root,'socket'));
   execFileSync('initdb',['-D',join(root,'data'),'-A','trust','-U','postgres','--no-locale','-E','UTF8'],{stdio:'ignore'});
@@ -45,13 +51,14 @@ describe.skipIf(!available)('reader identity on disposable socket-only PostgreSQ
   sql(`create function public.synthetic_snapshot() returns jsonb language plpgsql stable set search_path=''as $$
    declare t record; result jsonb:='{}'; rows jsonb;
    begin
-    for t in select c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relname not like 'synthetic_%' loop
+    for t in select c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relname not like 'synthetic_%' and c.relname not in('collection_metadata_contracts','collection_metadata_scopes','collection_metadata_intents','collection_metadata_observations') loop
      execute format($query$select coalesce(jsonb_agg(to_jsonb(t) order by to_jsonb(t)::text),'[]'::jsonb)from public.%I t$query$,t.relname)into rows;
      result:=result||jsonb_build_object(t.relname,rows);
     end loop;return result;
    end$$;`);
   before = snapshot(); sql(readFileSync(new URL(migration,dir),'utf8'));
   for (const file of readdirSync(dir).filter(f=>f.endsWith('.sql')&&f>migration).sort()) sql(readFileSync(new URL(file,dir),'utf8'));
+  metadataInstalled=sql("select to_regclass('public.collection_metadata_contracts')is not null;")==='t';
   initialConfig=sql("select mode||':'||lifecycle_ready||':'||(select count(*)from recap_internal.reader_identity_issuers)||':'||(select count(*)from recap_internal.reader_identity_aliases) from recap_internal.reader_identity_settings;");
   originalGuard=sql("select pg_get_functiondef('recap_internal.reader_identity_allowed(text,text,text)'::regprocedure);");
   lifecycleInstalled=sql("select to_regclass('recap_internal.account_deletions') is not null;")==='t';
