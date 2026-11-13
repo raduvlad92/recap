@@ -65,7 +65,7 @@ describe('durable GitHub release checkpoints', () => {
   });
   it('does not acknowledge remote read failure or changed checkpoint content', async () => {
     const f = fixture(), remote = new ReleaseJournal(f.github, plan); f.state.failRead = true;
-    await expect(remote.save({ phase: 'prepared' })).rejects.toThrow('release_github_request_failed'); expect(remote.id).toBe(null);
+    await expect(remote.save({ phase: 'prepared' })).rejects.toThrow('release_github_request_failed'); expect(remote.id).toBe(1); expect(f.records.size).toBe(1);
     f.state.failRead = false; f.state.corruptRead = true; await expect(remote.save({ phase: 'prepared' })).rejects.toThrow('release_checkpoint_unacknowledged');
   });
   it('rejects restored data for another commit, artifact or GitHub app', async () => {

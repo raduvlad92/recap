@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { ReleaseError } from './cloudflare-release-state.mjs';
 const repository = 'raduvlad92/recap', checkName = 'cloudflare-release-checkpoint';
 const requireState = (condition, code) => { if (!condition) throw new ReleaseError(code); };
@@ -14,7 +15,8 @@ export class ReleaseGitHub {
     if (!response.ok) {
       await response.body?.cancel();
       if (response.status === 404 && allowMissing && (!method || method === 'GET') && !body) return null;
-      throw new ReleaseError(response.status === 409 ? 'release_github_conflict' : 'release_github_request_failed');
+      const error = new ReleaseError(response.status === 409 ? 'release_github_conflict' : 'release_github_request_failed');
+      error.httpStatus = response.status; throw error;
     }
     return response.status === 204 ? null : response.json();
   }
@@ -55,22 +57,80 @@ export class ReleaseGitHub {
 /** GitHub acknowledges the whole sanitized plan/journal before the coordinator
  * may mutate a provider. This survives runner loss; local artifacts are backup. */
 export class ReleaseJournal {
-  constructor(github, plan, id = null) { Object.assign(this, { github, plan, id }); }
+  constructor(github, plan, id = null) { Object.assign(this, { github, plan, id }); this.creationAttempted = false; this.conflictCode = null; }
+  #requireCompatible(condition, code) {
+    if (!condition) {
+      // The coordinator's error save must not overwrite the conflicting remote
+      // evidence we just observed. Reconciliation is read-only from here.
+      this.conflictCode ||= code;
+      throw new ReleaseError(this.conflictCode);
+    }
+  }
+  async #acknowledge(id, expected) {
+    let lastReadError = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      let read = null;
+      try {
+        // Mutable check URLs can expose an earlier acknowledged phase. Retry
+        // only fresh observations, never the POST/PATCH that wrote the intent.
+        read = await this.github.request('check-runs/' + id + '?ack_observation=' + randomUUID(), undefined, 'GET', true);
+        lastReadError = null;
+      } catch (error) {
+        if (error.httpStatus && error.httpStatus < 500) throw error;
+        lastReadError = error;
+      }
+      if (read) {
+        this.#requireCompatible(read.id === id && read.name === checkName && read.app?.slug === 'github-actions' && read.head_sha === this.plan.target && read.external_id === this.plan.digest, 'release_checkpoint_changed');
+        this.#requireCompatible(read.status === 'completed' ? read.conclusion === 'success' : read.conclusion == null, 'release_checkpoint_changed');
+        if (read.output?.summary === expected.output.summary && read.status === expected.status
+          && (expected.status !== 'completed' || read.conclusion === expected.conclusion)) return;
+        // A stale phase is reconcilable; another plan or an incompatible saved
+        // nonce is not an eventual-consistency excuse. Preserve the conflict.
+        let saved;
+        try { saved = JSON.parse(read.output?.summary); } catch { this.#requireCompatible(false, 'release_checkpoint_unacknowledged'); }
+        this.#requireCompatible(saved?.schema === 1 && JSON.stringify(saved.plan) === JSON.stringify(this.plan), 'release_checkpoint_changed');
+        const current = JSON.parse(expected.output.summary).journal;
+        if (saved.journal?.versions) this.#requireCompatible(JSON.stringify(saved.journal.versions) === JSON.stringify(current.versions), 'release_checkpoint_changed');
+        for (const [key, nonce] of Object.entries(saved.journal?.intents || {})) {
+          this.#requireCompatible(Object.hasOwn(current.intents || {}, key) && current.intents[key] === nonce, 'release_checkpoint_changed');
+        }
+      }
+      if (attempt < 2) await this.github.wait(200 * (attempt + 1));
+    }
+    if (lastReadError) throw lastReadError;
+    throw new ReleaseError('release_checkpoint_unacknowledged');
+  }
   async save(journal) {
+    if (this.conflictCode) throw new ReleaseError(this.conflictCode);
     const complete = journal.phase === 'complete';
+    // Never label a complete/error checkpoint successful or silently clear it.
+    // Legacy invalid completion needs explicit reconciliation, not a retry.
+    if (complete) requireState(journal.pending === null && journal.error === null, 'release_checkpoint_reconciliation_required');
     const data = { name: checkName, external_id: this.plan.digest, status: complete ? 'completed' : 'in_progress', ...(complete ? { conclusion: 'success', completed_at: new Date().toISOString() } : {}), output: { title: 'Cloudflare release: ' + journal.phase, summary: JSON.stringify({ schema: 1, plan: this.plan, journal }) } };
-    const result = this.id ? await this.github.request('check-runs/' + this.id, data, 'PATCH') : await this.github.request('check-runs', { ...data, head_sha: this.plan.target });
-    requireState(Number.isSafeInteger(result.id) && result.id > 0 && result.head_sha === this.plan.target && result.external_id === this.plan.digest && result.name === checkName && result.output?.summary === data.output.summary, 'release_checkpoint_unacknowledged');
-    const read = await this.github.request('check-runs/' + result.id);
-    requireState(read.head_sha === this.plan.target && read.external_id === this.plan.digest && read.output?.summary === data.output.summary, 'release_checkpoint_unacknowledged');
+    const existing = this.id;
+    if (!existing) {
+      requireState(!this.creationAttempted, 'release_checkpoint_creation_uncertain');
+      // No returned ID means an uncertain creation, not permission for catch()
+      // to create another check run. Restore its actual identity read-only.
+      this.creationAttempted = true;
+    }
+    const result = existing ? await this.github.request('check-runs/' + existing, data, 'PATCH') : await this.github.request('check-runs', { ...data, head_sha: this.plan.target });
+    this.#requireCompatible(Number.isSafeInteger(result.id) && result.id > 0 && (!existing || result.id === existing)
+      && result.head_sha === this.plan.target && result.external_id === this.plan.digest && result.name === checkName && result.app?.slug === 'github-actions', 'release_checkpoint_unacknowledged');
+    // Retain a validated created identity BEFORE its GET acknowledgement, so
+    // a subsequent error checkpoint updates the SAME ID rather than POSTing.
     this.id = result.id;
+    await this.#acknowledge(this.id, data);
   }
   static async restore(github, id, artifact) {
-    requireState(/^\d+$/.test(String(id)), 'invalid_release_checkpoint');
-    const result = await github.request('check-runs/' + id);
-    requireState(result.name === checkName && result.app?.slug === 'github-actions' && result.head_sha === artifact.release, 'release_checkpoint_changed');
+    const checkpointId = Number(id);
+    requireState(Number.isSafeInteger(checkpointId) && checkpointId > 0 && String(checkpointId) === String(id), 'invalid_release_checkpoint');
+    const result = await github.request('check-runs/' + checkpointId + '?restore_observation=' + randomUUID());
+    requireState(result.id === checkpointId && result.name === checkName && result.app?.slug === 'github-actions' && result.head_sha === artifact.release, 'release_checkpoint_changed');
     let data; try { data = JSON.parse(result.output.summary); } catch { throw new ReleaseError('release_checkpoint_changed'); }
     requireState(data.schema === 1 && data.plan?.target === artifact.release && result.external_id === data.plan.digest && ['web', 'jobs', 'sourceWorker', 'sourceContainer'].every(kind => data.plan.artifactHashes?.[kind] === artifact.hashes[kind]), 'release_checkpoint_changed');
-    return { plan: data.plan, prior: data.journal, remote: new ReleaseJournal(github, data.plan, Number(id)) };
+    if (data.journal?.phase === 'complete') requireState(data.journal.pending === null && data.journal.error === null && result.status === 'completed' && result.conclusion === 'success', 'release_checkpoint_reconciliation_required');
+    else requireState(result.status === 'in_progress' && result.conclusion == null, 'release_checkpoint_reconciliation_required');
+    return { plan: data.plan, prior: data.journal, remote: new ReleaseJournal(github, data.plan, checkpointId) };
   }
 }
