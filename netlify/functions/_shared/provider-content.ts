@@ -3,10 +3,10 @@ import { CollectionError, type Env } from './security';
 
 /** Opt-in replacement policy. An unaccepted/missing policy keeps the currently
  * serving route; a provider-only error never authorizes native platform I/O. */
-export function providerOnlyCollection(env: Env): boolean {
+export function providerOnlyCollection(env: Env, platform: 'YouTube' | 'Instagram'): boolean {
   const value = env('SOURCE_COLLECTION_POLICY');
-  if (value && !['native-first-v1', 'provider-only-v1'].includes(value)) throw new CollectionError(503, 'collection_policy_invalid', 'The collection policy requires review.');
-  return value === 'provider-only-v1';
+  if (value && !['native-first-v1', 'provider-only-v1', 'youtube-provider-only-v1'].includes(value)) throw new CollectionError(503, 'collection_policy_invalid', 'The collection policy requires review.');
+  return value === 'provider-only-v1' || (value === 'youtube-provider-only-v1' && platform === 'YouTube');
 }
 export const INSTAGRAM_REELS_ACTOR = 'apify/instagram-reel-scraper';
 export const INSTAGRAM_CONTENT_CONTRACT = 'instagram-reel-caption-speech-v1';

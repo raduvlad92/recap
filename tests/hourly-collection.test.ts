@@ -298,10 +298,38 @@ describe('provider-only collection and separate metadata repair', () => {
   const t = setup({ policy: { ...policy, provider_enabled: true } });
   await createHourlyCollector({ ...t.deps, env: modeEnv() })();
   expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.captions).not.toHaveBeenCalled(); expect(t.deps.discover).not.toHaveBeenCalled();
-  expect(t.deps.startDiscovery).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({id:source.id,url:source.url}), channelId, policy.user_id, expect.any(Function));
+  expect(t.deps.startDiscovery).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({id:source.id,url:source.url}), channelId, '1970-01-01', policy.user_id, expect.any(Function));
   expect(t.store.reserve).toHaveBeenCalledWith(expect.any(Object), expect.stringMatching(/^youtube-discovery:/), expect.any(String), .02);
   expect(t.patch()).toMatchObject({ status: 'partial', details: { mode: 'youtube_provider_only', gapPossible: true } });
   expect(t.updates()).toEqual([]);
+ });
+ it('scopes the YouTube-only route to the configured channel before any provider or platform call', async () => {
+  const t = setup({ policy: { ...policy, provider_enabled: true }, pending: [pending()] });
+  const env = (key: string) => key === 'SOURCE_COLLECTION_POLICY' ? 'youtube-provider-only-v1' : envValues[key];
+  await createHourlyCollector({ ...t.deps, env })();
+  expect(t.patch()).toMatchObject({ status: 'blocked', error_code: 'provider_channel_outside_scope' });
+  expect(t.deps.pollApify).not.toHaveBeenCalled();
+  expect(t.deps.startDiscovery).not.toHaveBeenCalled();
+  expect(t.deps.download).not.toHaveBeenCalled();
+  const allowed = setup({ policy: { ...policy, provider_enabled: true } });
+  await createHourlyCollector({ ...allowed.deps, env: key => key === 'YOUTUBE_PROVIDER_CHANNEL_ID' ? channelId : env(key) })();
+  expect(allowed.deps.startDiscovery).toHaveBeenCalledTimes(1);
+  expect(allowed.deps.download).not.toHaveBeenCalled();
+ });
+ it('imports fresh bundled captions, filters stale uploads, and avoids a redundant caption purchase', async () => {
+  const job = pending({ item_key: 'youtube-discovery:' + channelId + ':2026-10-26', maximum_usd: .02 });
+  const state = { pending_captions: [{ record: update, attempts: 0, nextAttemptAt: new Date(0).toISOString() }] };
+  const t = setup({ policy: { ...policy, provider_enabled: true }, pending: [job], state });
+  t.deps.now = () => Date.parse('2026-10-26T01:00:00Z');
+  vi.mocked(t.store.providerClaimed).mockResolvedValue(true);
+  const fresh = { ...update, contentKind: 'transcript' as const, content: 'Already included speech', videoFormat: { kind: 'regular' as const, basis: 'provider' as const } };
+  const stale = { ...update, url: 'https://www.youtube.com/watch?v=lmnopqrstuv', publishedAt: '2026-10-19T23:59:59Z' };
+  t.deps.pollApify.mockResolvedValue({ status: 'completed', result: { source, updates: [stale, fresh], notice: '' }, telemetry: { ledgerId: job.job_id, providerRunId: job.provider_run_id!, cost: .012 } });
+  await createHourlyCollector({ ...t.deps, env: modeEnv() })();
+  expect(t.updates()).toMatchObject([{ url: fresh.url, content: fresh.content, videoFormat: fresh.videoFormat }]);
+  expect(t.patch()).toMatchObject({ pending_captions: [], details: { outsideDiscoveryWindow: 1, gapPossible: true } });
+  expect(t.deps.startApify).not.toHaveBeenCalled();
+  expect(t.deps.download).not.toHaveBeenCalled();
  });
  it('does not silently return to platform pages when a provider preflight fails', async () => {
   const t = setup({ policy: { ...policy, provider_enabled: true } });

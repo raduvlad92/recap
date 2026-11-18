@@ -34,9 +34,12 @@ describe('typed provider content contracts', () => {
   expect(value.coverage).toContain('not established');
  });
  it('keeps the replacement policy opt-in and fails closed on an invalid configured version', () => {
-  expect(providerOnlyCollection(() => undefined)).toBe(false);
-  expect(providerOnlyCollection(() => 'native-first-v1')).toBe(false);
-  expect(providerOnlyCollection(() => 'provider-only-v1')).toBe(true);
-  expect(() => providerOnlyCollection(() => 'provider-only-v2')).toThrow();
+  expect(providerOnlyCollection(() => undefined, 'YouTube')).toBe(false);
+  expect(providerOnlyCollection(() => 'native-first-v1', 'YouTube')).toBe(false);
+  expect(providerOnlyCollection(() => 'provider-only-v1', 'YouTube')).toBe(true);
+  expect(providerOnlyCollection(() => 'provider-only-v1', 'Instagram')).toBe(true);
+  expect(providerOnlyCollection(() => 'youtube-provider-only-v1', 'YouTube')).toBe(true);
+  expect(providerOnlyCollection(() => 'youtube-provider-only-v1', 'Instagram')).toBe(false);
+  expect(() => providerOnlyCollection(() => 'provider-only-v2', 'YouTube')).toThrow();
  });
 });

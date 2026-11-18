@@ -10,6 +10,14 @@ create function pg_temp.reader_acl(p_acl aclitem[],p_owner oid,p_kind "char") re
  order by pg_temp.reader_role(grantor)collate "C",pg_temp.reader_role(grantee)collate "C",privilege_type collate "C",is_grantable),'[]')
  from aclexplode(coalesce(p_acl,acldefault(p_kind,p_owner)))
 $$;
+-- pg_attver is PostgreSQL 17.12's internal WAL-based attribute version.
+-- Exclude only this exact numeric key from portable logical definitions.
+-- Retain its raw value in native identity below, preserving before/after fences.
+create function pg_temp.reader_column_options(p_options text[]) returns text[] language sql immutable as $$
+ select case when p_options is null then null when cardinality(p_options)=0 then p_options else
+  (select array_agg(option order by position)from unnest(p_options)with ordinality opt(option,position)
+   where option is null or option!~'^pg_attver=[0-9]+$')end
+$$;
 create function pg_temp.reader_catalogue() returns table(key text,doc jsonb,identity text) language sql stable as $$
  with ns as(select * from pg_namespace where nspname in('public','recap_internal','supabase_migrations')),
  rel as(select c.*,n.nspname from pg_class c join ns n on n.oid=c.relnamespace),
@@ -25,8 +33,10 @@ create function pg_temp.reader_catalogue() returns table(key text,doc jsonb,iden
  'number',a.attnum,'type',format_type(a.atttypid,a.atttypmod),'notNull',a.attnotnull,'dropped',a.attisdropped,
  'identity',a.attidentity,'generated',a.attgenerated,'storage',a.attstorage,'compression',a.attcompression,
  'collation',case when a.attcollation<>0 then a.attcollation::regcollation::text end,
- 'options',a.attoptions,'fdwOptions',a.attfdwoptions,'acl',case when a.attacl is not null then pg_temp.reader_acl(a.attacl,r.relowner,'c')end,
- 'default',pg_get_expr(d.adbin,d.adrelid),'comment',col_description(a.attrelid,a.attnum)),r.oid::text||':'||a.attnum
+ 'options',pg_temp.reader_column_options(a.attoptions),'fdwOptions',a.attfdwoptions,'acl',case when a.attacl is not null then pg_temp.reader_acl(a.attacl,r.relowner,'c')end,
+ 'default',pg_get_expr(d.adbin,d.adrelid),'comment',col_description(a.attrelid,a.attnum)),r.oid::text||':'||a.attnum||':'||coalesce(
+  (select array_agg(option order by position)::text from unnest(a.attoptions)with ordinality opt(option,position)
+   where option~'^pg_attver=[0-9]+$'),'')
  from rel r join pg_attribute a on a.attrelid=r.oid and a.attnum>0 left join pg_attrdef d on d.adrelid=a.attrelid and d.adnum=a.attnum
  union all select 'constraint:'||n.nspname||'.'||coalesce(r.relname,t.typname)||'.'||c.conname,jsonb_build_object(
  'definition',pg_get_constraintdef(c.oid),'validated',c.convalidated,'deferrable',c.condeferrable,'deferred',c.condeferred,
@@ -90,6 +100,7 @@ export const cleanupSql = String.raw`
 drop function pg_temp.reader_capture();
 drop function pg_temp.reader_rows(boolean);
 drop function pg_temp.reader_catalogue();
+drop function pg_temp.reader_column_options(text[]);
 drop function pg_temp.reader_acl(aclitem[],oid,"char");
 drop function pg_temp.reader_role(oid);
 `;

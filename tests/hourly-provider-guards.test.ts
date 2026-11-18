@@ -150,10 +150,10 @@ describe('terminal fee telemetry survives bounded original-result failures', () 
 describe('bounded paid channel fallback',()=>{
  it('retrieves at most three uploads with available captions under the existing build and a fixed cash cap',async()=>{
   const fetcher=vi.fn(async(_url:RequestInfo|URL,_init?:RequestInit)=>body({data:{id:'RunDiscovery123',actId:YOUTUBE_ACTOR_ID,buildId:values.APIFY_YOUTUBE_BUILD_ID}}));
-  await startYouTubeDiscovery(source,'UCabcdefghijklmnopqrstuv','user_operator',env,fetcher);
+  await startYouTubeDiscovery(source,'UCabcdefghijklmnopqrstuv','2026-11-02','user_operator',env,fetcher);
   const [url,init]=fetcher.mock.calls[0];const options=new URL(String(url)).searchParams;
   expect(options.get('maxTotalChargeUsd')).toBe('0.02');expect(options.get('maxItems')).toBe('3');expect(options.get('restartOnError')).toBe('false');
-  expect(JSON.parse(String(init?.body))).toMatchObject({startUrls:[{url:'https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv'}],maxResults:3,transcriptionAndSubtitle:'ALWAYS_SUBTITLES',aiVideoDescription:false,aiVideoSummary:false});
+  expect(JSON.parse(String(init?.body))).toMatchObject({startUrls:[{url:'https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv'}],maxResults:3,oldestPostDate:'2026-10-27',transcriptionAndSubtitle:'ALWAYS_SUBTITLES',aiVideoDescription:false,aiVideoSummary:false});
  });
  const channelId = 'UCabcdefghijklmnopqrstuv';
  const discoveryJob = { providerRunId: 'RunDiscovery123', actorId: YOUTUBE_ACTOR_ID, source: { ...source, url: 'https://www.youtube.com/channel/' + channelId }, maxItems: 3, ledgerId: 'a9a43a2a-c01a-40eb-ae1e-a1d41b52b901', discoveryChannelId: channelId };

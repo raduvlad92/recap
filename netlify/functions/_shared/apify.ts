@@ -1,6 +1,6 @@
 import { retryKnownApifyRead } from './provider-read-retry';
 import { fetchNoRedirect } from './fetch-no-redirect';
-import { DISCOVERY_ITEMS, DISCOVERY_MAX_USD, exactPublicationTimestamp } from './youtube-discovery';
+import { DISCOVERY_ITEMS, DISCOVERY_MAX_USD, discoveryWindowStart, exactPublicationTimestamp } from './youtube-discovery';
 import { classifyProviderVideoFormat, videoFormatFields, youtubeVideoId } from '../../../src/lib/video-format';
 import { createHash } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
@@ -171,10 +171,10 @@ export async function startYouTubeMetadata(source: Source, userId: string, env: 
 }
 
 /** Channel discovery is a separate paid scope, never a caption-job identity. */
-export async function startYouTubeDiscovery(source: Source, channelId: string, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<{ providerRunId: string }> {
+export async function startYouTubeDiscovery(source: Source, channelId: string, day: string, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<{ providerRunId: string }> {
   const config = requireConfig(env, userId);
   if (!/^UC[A-Za-z0-9_-]{22}$/.test(channelId)) throw new CollectionError(400, 'invalid_job', 'Stable channel identity required.');
-  const input = youtubeInput({ ...source, url: 'https://www.youtube.com/channel/' + channelId }, DISCOVERY_ITEMS);
+  const input = { ...youtubeInput({ ...source, url: 'https://www.youtube.com/channel/' + channelId }, DISCOVERY_ITEMS), oldestPostDate: discoveryWindowStart(day) };
   const params = new URLSearchParams({ build: config.build, timeout: '120', maxItems: String(DISCOVERY_ITEMS), maxTotalChargeUsd: String(DISCOVERY_MAX_USD), restartOnError: 'false', waitForFinish: '0' });
   const run = object(object(await apifyRequest('acts/' + YOUTUBE_ACTOR + '/runs?' + params, config, fetcher, { method: 'POST', body: JSON.stringify(input) })).data);
   if (run.actId !== YOUTUBE_ACTOR_ID || run.buildId !== env('APIFY_YOUTUBE_BUILD_ID')) throw new CollectionError(502, 'provider_build_mismatch', 'The discovery run did not match its reviewed build.');
