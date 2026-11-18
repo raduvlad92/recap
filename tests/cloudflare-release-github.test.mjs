@@ -5,7 +5,7 @@ function fixture() {
   const records = new Map(), calls = []; let next = 1;
   const run = { head_sha: target, head_branch: 'main', event: 'push', repository: { full_name: 'raduvlad92/recap' }, path: '.github/workflows/cloudflare-duplicate.yml' };
   const jobs = { jobs: [{ name: 'verify', status: 'completed', conclusion: 'success' }] };
-  const state = { head: target, failRead: false, corruptRead: false, waits: [], onWait: null };
+  const state = { head: target, failRead: false, corruptRead: false, waits: [], onWait: null, readReplies: [], probeReads: [] };
   const fetcher = async (input, init = {}) => {
     const path = new URL(input).pathname.split('/recap/')[1]; calls.push([path, init.method || 'GET']);
     if (path === 'git/ref/heads/main') return Response.json({ object: { sha: state.head } });
@@ -15,7 +15,12 @@ function fixture() {
     if (path.startsWith('check-runs/')) {
       const id = Number(path.split('/')[1]); if (init.method === 'PATCH') { Object.assign(records.get(id), JSON.parse(init.body)); return Response.json(records.get(id)); }
       if (state.failRead) return Response.json({ message: 'private diagnostic' }, { status: 503 });
-      const value = structuredClone(records.get(id)); if (state.corruptRead) value.output.summary = 'changed'; return Response.json(value);
+      const observation = new URL(input).searchParams.get('probe_observation');
+      if (observation) state.probeReads.push(observation);
+      const value = structuredClone(records.get(id)); if (state.corruptRead) value.output.summary = 'changed';
+      const reply = state.readReplies.shift();
+      if (typeof reply === 'number') return Response.json({ message: 'Not visible' }, { status: reply });
+      return Response.json(reply ? reply(value) : value);
     }
     throw new Error('Unexpected fake GitHub endpoint');
   };
@@ -77,5 +82,29 @@ describe('durable GitHub release checkpoints', () => {
   it('keeps the transport probe separate from an executable release checkpoint', async () => {
     const f = fixture(); await f.github.probeCheckpoint(target); expect(f.records.get(1).name).toBe('cloudflare-release-journal-probe'); expect(f.records.get(1).conclusion).toBe('neutral');
     await expect(ReleaseJournal.restore(f.github, 1, { release: target })).rejects.toThrow('release_checkpoint_changed');
+  });
+  it('observes the same probe after an initial 404 and a stale completed-state read', async () => {
+    const f = fixture();
+    f.state.readReplies.push(404, value => value, value => ({ ...value, status: 'in_progress', conclusion: null }));
+    await f.github.probeCheckpoint(target);
+    expect(f.calls.map(([, method]) => method)).toEqual(['POST', 'GET', 'GET', 'PATCH', 'GET', 'GET']);
+    expect(f.calls.slice(1).every(([path]) => path === 'check-runs/1')).toBe(true);
+    expect(new Set(f.state.probeReads).size).toBe(4);
+    expect(f.state.waits).toEqual([250, 250]);
+    expect(f.records.get(1)).toMatchObject({ status: 'completed', conclusion: 'neutral' });
+  });
+  it('bounds missing probe reads and refuses to update an unverified record', async () => {
+    const f = fixture();
+    f.state.readReplies.push(404, 404, 404, 404, 404);
+    await expect(f.github.probeCheckpoint(target)).rejects.toThrow('release_checkpoint_unacknowledged');
+    expect(f.calls.map(([, method]) => method)).toEqual(['POST', 'GET', 'GET', 'GET', 'GET', 'GET']);
+    expect(f.records.get(1).status).toBe('in_progress');
+  });
+  it('stops immediately when a successful read identifies a different record', async () => {
+    const f = fixture();
+    f.state.readReplies.push(value => ({ ...value, id: 2 }));
+    await expect(f.github.probeCheckpoint(target)).rejects.toThrow('release_checkpoint_unacknowledged');
+    expect(f.calls.map(([, method]) => method)).toEqual(['POST', 'GET']);
+    expect(f.state.waits).toEqual([]);
   });
 });

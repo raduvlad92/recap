@@ -92,11 +92,6 @@ export async function probeHandoverJournal(github,target) {
   check(/^[a-f0-9]{40}$/.test(target), 'invalid_handover_probe_target');
   const name = 'cloudflare-handover-journal-probe';
   const output = step => ({ title: 'Handover checkpoint storage; no runtime action', summary: encode({ schema: 1, kind: 'transport-only-handover-journal', target, step, activatesProcessing: false, restorableCheckpoint: false }) });
-  const created = await github.request('check-runs',{ name, head_sha: target, status: 'in_progress', output: output('created') });
-  const verify = (record,step) => check(Number.isSafeInteger(record?.id) && record.id > 0 && record.id === created.id && record.name === name && record.app?.slug === 'github-actions' && record.head_sha === target && record.output?.summary === output(step).summary, 'handover_probe_unacknowledged');
-  verify(created,'created'); verify(await github.request('check-runs/' + created.id),'created');
-  verify(await github.request('check-runs/' + created.id,{ status: 'completed',conclusion: 'neutral',output: output('updated') },'PATCH'),'updated');
-  const final = await github.request('check-runs/' + created.id); verify(final,'updated');
-  check(final.status === 'completed' && final.conclusion === 'neutral', 'handover_probe_unacknowledged');
-  return { id: created.id, name, target, storageVerified: true, activatesProcessing: false, restorableCheckpoint: false };
+  const id = await github.probeCheckRun({ name, target, createdOutput: output('created'), completedOutput: output('updated'), errorCode: 'handover_probe_unacknowledged' });
+  return { id, name, target, storageVerified: true, activatesProcessing: false, restorableCheckpoint: false };
 }

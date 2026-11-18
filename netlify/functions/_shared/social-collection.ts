@@ -216,7 +216,7 @@ export function createSocialCollector(options: { env?: Env; store?: SocialStore;
    try {
     if (!runId) {
      if (launched) { await store.finish(job, [], { status: 'blocked', complete: false, returned: 0, accepted: 0, rejected: {}, reason: 'ambiguous_launch' }, null, false, 'ambiguous_launch'); failed++; continue; }
-     if (job.purpose !== 'proof' && ['Instagram', 'X'].includes(job.platform) && !(job.platform === 'Instagram' && providerOnlyCollection(env))) {
+     if (job.purpose !== 'proof' && ['Instagram', 'X'].includes(job.platform) && !(job.platform === 'Instagram' && providerOnlyCollection(env, 'Instagram'))) {
       try {
        const rows = await native(job, log, fetcher), normalized = await retrievalAttempt(log, { jobId: job.collection_job_id }, job.platform.toLowerCase() + '_native_validation', 'native', 'discovery', async () => normalizeSocialDataset(job, rows, true), value => ({ status: value.items.some(item => item.record.content?.trim()) ? 'partial' : 'empty', result_count: value.items.length, diagnostics: { rejected_rows: Object.values(value.coverage.rejected).reduce((sum, n) => sum + n, 0) } }));
        if (normalized.items.some(item => item.record.content?.trim())) {

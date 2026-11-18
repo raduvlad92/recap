@@ -6,6 +6,11 @@ import { fetchNoRedirect } from './fetch-no-redirect';
 const object = (v: unknown): Record<string, any> => v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, any> : {};
 export const DISCOVERY_ITEMS = 3;
 export const DISCOVERY_MAX_USD = .02;
+export function discoveryWindowStart(day: string): string {
+  const timestamp = exactPublicationTimestamp(day + 'T00:00:00Z');
+  if (!timestamp) throw new CollectionError(400, 'invalid_job', 'A valid discovery date is required.');
+  return new Date(Date.parse(timestamp) - 6 * 86_400_000).toISOString().slice(0, 10);
+}
 export interface YouTubeDiscovery { updates: SourceUpdate[]; gapPossible: boolean }
 /** Preserve an exact supplied instant; reject local dates and calendar rollover. */
 export function exactPublicationTimestamp(value: unknown): string | undefined {
