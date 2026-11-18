@@ -46,11 +46,44 @@ export class ReleaseGitHub {
   }
   async probeCheckpoint(target) {
     const summary = JSON.stringify({ schema: 1, kind: 'transport-only', target, activatesProcessing: false });
-    const created = await this.request('check-runs', { name: 'cloudflare-release-journal-probe', head_sha: target, status: 'in_progress', output: { title: 'Verify remote checkpoint storage', summary } });
-    requireState(Number.isSafeInteger(created.id), 'release_checkpoint_unacknowledged');
-    const read = await this.request('check-runs/' + created.id);
-    requireState(read.head_sha === target && read.output?.summary === summary, 'release_checkpoint_unacknowledged');
-    await this.request('check-runs/' + created.id, { status: 'completed', conclusion: 'neutral', output: { title: 'Remote checkpoint storage verified; no processing activated', summary } }, 'PATCH');
+    await this.probeCheckRun({
+      name: 'cloudflare-release-journal-probe', target, errorCode: 'release_checkpoint_unacknowledged',
+      createdOutput: { title: 'Verify remote checkpoint storage', summary },
+      completedOutput: { title: 'Remote checkpoint storage verified; no processing activated', summary },
+    });
+  }
+
+  async probeCheckRun({ name, target, createdOutput, completedOutput, errorCode }) {
+    const initial = { status: 'in_progress', output: createdOutput };
+    const complete = { status: 'completed', conclusion: 'neutral', output: completedOutput };
+    const created = await this.request('check-runs', { name, head_sha: target, ...initial });
+    const id = created?.id;
+    requireState(Number.isSafeInteger(id) && id > 0, errorCode);
+    const path = 'check-runs/' + id;
+    const assertIdentity = record => requireState(record?.id === id && record.name === name && record.head_sha === target && record.app?.slug === 'github-actions', errorCode);
+    const matches = (record, expected) => record.status === expected.status && (record.conclusion ?? null) === (expected.conclusion ?? null) && record.output?.summary === expected.output.summary;
+    const acknowledge = async (expected, previous) => {
+      // GitHub can return 404 for a newly acknowledged ID, or return the
+      // previous state after PATCH. Observe fresh URLs for that same ID.
+      for (const delay of [0, 250, 750, 1500, 3000]) {
+        if (delay) await this.wait(delay);
+        const read = await this.request(path + '?probe_observation=' + randomUUID(), undefined, 'GET', true);
+        if (!read) continue;
+        assertIdentity(read);
+        if (matches(read, expected)) return;
+        requireState(previous && matches(read, previous), errorCode);
+      }
+      throw new ReleaseError(errorCode);
+    };
+
+    assertIdentity(created);
+    requireState(matches(created, initial), errorCode);
+    await acknowledge(initial);
+    const updated = await this.request(path, complete, 'PATCH');
+    assertIdentity(updated);
+    requireState(matches(updated, complete) || matches(updated, initial), errorCode);
+    await acknowledge(complete, initial);
+    return id;
   }
 }
 
