@@ -540,9 +540,9 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     throw new CollectionError(503, 'provider_channel_identity_required', 'The provider route needs a checked channel identity.');
    });
    let pilotChannelId: string | undefined;
-   if (source.platform === 'YouTube' && deps.env('SOURCE_COLLECTION_POLICY') === 'youtube-provider-only-v1') {
-    pilotChannelId = await resolveProviderChannel();
-    if (deps.env('YOUTUBE_PROVIDER_CHANNEL_ID') !== pilotChannelId) {
+   if (deps.env('SOURCE_COLLECTION_POLICY') === 'youtube-provider-only-v1') {
+    if (source.platform === 'YouTube') pilotChannelId = await resolveProviderChannel();
+    if (!pilotChannelId || deps.env('YOUTUBE_PROVIDER_CHANNEL_ID') !== pilotChannelId) {
      patch = { status: 'blocked', error_code: 'provider_channel_outside_scope', new_count: 0 };
      details.mode = 'youtube_provider_only'; await save(); return patch.status;
     }

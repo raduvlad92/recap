@@ -316,6 +316,14 @@ describe('provider-only collection and separate metadata repair', () => {
   expect(allowed.deps.startDiscovery).toHaveBeenCalledTimes(1);
   expect(allowed.deps.download).not.toHaveBeenCalled();
  });
+ it('keeps scheduled publication feeds out of the scoped YouTube pilot', async () => {
+  const publication = { ...source, platform: 'Substack' as const, url: 'https://publication.example/' };
+  const t = setup({ source: publication });
+  await createHourlyCollector({ ...t.deps, env: key => key === 'SOURCE_COLLECTION_POLICY' ? 'youtube-provider-only-v1' : key === 'YOUTUBE_PROVIDER_CHANNEL_ID' ? channelId : envValues[key] })();
+  expect(t.patch()).toMatchObject({ status: 'blocked', error_code: 'provider_channel_outside_scope' });
+  expect(t.deps.download).not.toHaveBeenCalled();
+  expect(t.deps.startDiscovery).not.toHaveBeenCalled();
+ });
  it('imports fresh bundled captions, filters stale uploads, and avoids a redundant caption purchase', async () => {
   const job = pending({ item_key: 'youtube-discovery:' + channelId + ':2026-10-26', maximum_usd: .02 });
   const state = { pending_captions: [{ record: update, attempts: 0, nextAttemptAt: new Date(0).toISOString() }] };
