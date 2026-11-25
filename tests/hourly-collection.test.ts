@@ -316,6 +316,33 @@ describe('provider-only collection and separate metadata repair', () => {
   expect(allowed.deps.startDiscovery).toHaveBeenCalledTimes(1);
   expect(allowed.deps.download).not.toHaveBeenCalled();
  });
+ it('refuses an unlisted channel before any supplier read or reservation when the checked pilot is installed', async () => {
+  const t = setup({ policy: { ...policy, provider_enabled: true }, pending: [pending()] });
+  t.store.youtubePilot = async () => ({ readerId: policy.user_id, proofDay: '2026-10-23', recurring: true, channelIds: ['UCdBK94H6oZT2Q7l0-b0xmMg','UCeeFfhMcJa1kjtfZAGskOCA','UChIs72whgZI9w6d6FhwGGHA'] });
+  await createHourlyCollector({ ...t.deps, env: key => key === 'SOURCE_COLLECTION_POLICY' ? 'youtube-provider-only-v1' : envValues[key] })();
+  expect(t.patch()).toMatchObject({ status: 'blocked', error_code: 'provider_channel_outside_scope' });
+  expect(t.store.reserve).not.toHaveBeenCalled();
+  expect(t.deps.pollApify).not.toHaveBeenCalled();
+  expect(t.deps.startDiscovery).not.toHaveBeenCalled();
+ });
+ it('archives a fast checked discovery with corroborated format and skips another same-day launch', async () => {
+  const t = setup({ policy: { ...policy, provider_enabled: true } });
+  t.store.youtubePilot = async () => ({ readerId: policy.user_id, proofDay: '2026-10-23', recurring: true, channelIds: [channelId,'UCeeFfhMcJa1kjtfZAGskOCA','UChIs72whgZI9w6d6FhwGGHA'] });
+  t.deps.now = () => Date.parse('2026-10-23T01:00:00Z');
+  const original: SourceUpdate = { ...update, contentKind: 'transcript', content: 'Existing timed captions', duration: '00:05:00',
+   transcriptSegments: [{ startSeconds: 200, text: 'Existing timed captions' }], videoFormat: { kind: 'unknown', basis: 'provider' } };
+  t.deps.pollApify.mockResolvedValue({ status: 'completed', result: { source, updates: [original], notice: '' },
+   telemetry: { ledgerId: claim.checkId, providerRunId: 'Discovery12345', cost: .008 } });
+  const run = createHourlyCollector({ ...t.deps, env: key => key === 'SOURCE_COLLECTION_POLICY' ? 'youtube-provider-only-v1' : envValues[key] });
+  await run();
+  expect(t.store.reserve).toHaveBeenCalledWith(expect.anything(), 'youtube-discovery:' + channelId + ':2026-10-23', expect.anything(), .02, '2026-10-23');
+  expect(t.updates()).toMatchObject([{ content: original.content, transcriptSegments: original.transcriptSegments, isShort: false, videoFormat: { kind: 'regular' } }]);
+  expect(t.deps.settleBudget).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ terminal: true, actualUsd: .008 }), expect.anything());
+  vi.mocked(t.store.providerClaimed).mockResolvedValue(true);
+  await run();
+  expect(t.deps.startDiscovery).toHaveBeenCalledTimes(1);
+  expect(t.patch()).toMatchObject({ details: { discoveryStatus: 'already_attempted_today' } });
+ });
  it('keeps scheduled publication feeds out of the scoped YouTube pilot', async () => {
   const publication = { ...source, platform: 'Substack' as const, url: 'https://publication.example/' };
   const t = setup({ source: publication });
