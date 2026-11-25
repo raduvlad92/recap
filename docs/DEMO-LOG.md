@@ -1,5 +1,7 @@
 # Demo and evidence log
 
+**25 November, 12:32 UTC — release readback, incident ongoing.** Two reviewed migrations and the $20 cap are verified on `f36e8f7`. The continuation reached the verified checkpoint phase and failed acknowledgment. Production remains paused at epoch 9. Health returns HTTP 200, admin returns HTTP 503, and no post-release hourly tick has run. [Evidence](tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
+
 **25 November — scheduled ingestion regression.** A disposable PostgreSQL test simulates a vanished hourly invocation, keeps its transport evidence and completes the next tick. Mocked provider tests verify the new build and normalized pricing digest with metadata reads. [Candidate and live proof](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 
 **25 November, 01:29 UTC — production YouTube proof.** Three live runs produced six archived transcripts and three matched settled fees of USD 0.008. The repaired hourly transport processed an immediate queue message to completion. [Video links and receipts](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
