@@ -8,7 +8,7 @@ export const RECAP_QUALITY_CONTRACT = 'automatic-recap-atomic-v2';
 export const RECAP_GENERATED_POINT_CHARACTERS = 240;
 export interface RecapPoint { text:string; evidenceQuote:string }
 export interface RecapCorrectionAdmission { sourceHash:string; contractVersion:typeof RECAP_QUALITY_CONTRACT; remainingUsd:number; remainingCalls:number; completedStages?:string[] }
-export interface RecapQualityOptions { baseAdmission?:()=>Promise<RecapCorrectionAdmission|null>; correctionAdmission?:()=>Promise<RecapCorrectionAdmission|null> }
+export interface RecapQualityOptions { legacyVideoSession?:boolean; baseAdmission?:()=>Promise<RecapCorrectionAdmission|null>; correctionAdmission?:()=>Promise<RecapCorrectionAdmission|null> }
 export interface RecapVerdict { index:number; supported:boolean; reason:string; status:'entailed'|'contradicted'|'insufficient' }
 const fail=():never=>{throw new AnalysisError('automatic_recap_invalid_check');};
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v);
@@ -69,6 +69,26 @@ export function validateRecapVerification(value:unknown,points:RecapPoint[],cont
   const supported=raw.status==='entailed'&&raw.wholeClaimSupported&&!raw.contextConflict&&entailed;
   return {index:raw.index,supported,status:supported?'entailed':contradicted?'contradicted':'insufficient',reason:(!supported&&raw.wholeClaimSupported?'Quote-only atomic support was incomplete or contradicted; the overall positive was rejected. ':'')+raw.reason.trim()};
  });
+}
+
+/** Recover a mistyped offset only when its exact, unchanged text identifies a
+ * single span in the correct claim or quote. The stored receipt is untouched. */
+export function repairRecapVerificationOffsets(value:unknown,points:RecapPoint[]):unknown {
+ const bound=(span:Record<string,unknown>,source:string)=>{
+  if(typeof span.text!=='string'||!span.text)return span;
+  if(integer(span.start)&&integer(span.end)&&span.start>=0&&span.end===span.start+span.text.length&&source.slice(span.start,span.end)===span.text)return span;
+  const start=source.indexOf(span.text);
+  return start<0||source.indexOf(span.text,start+1)!==-1?span:{...span,start,end:start+span.text.length};
+ };
+ if(!object(value)||!Array.isArray(value.verdicts))return value;
+ return {...value,verdicts:value.verdicts.map(verdict=>{
+  if(!object(verdict)||!integer(verdict.index)||verdict.index<0||verdict.index>=points.length||!Array.isArray(verdict.atoms))return verdict;
+  const point=points[verdict.index];
+  return {...verdict,atoms:verdict.atoms.map(atom=>{
+   if(!object(atom)||!Array.isArray(atom.supportingSpans))return atom;
+   return {...bound(atom,point.text),supportingSpans:atom.supportingSpans.map(span=>object(span)?bound(span,point.evidenceQuote):span)};
+  })};
+ })};
 }
 
 export function correctionAdmitted(scope:RecapCorrectionAdmission|null|undefined,sourceHash:string):boolean {

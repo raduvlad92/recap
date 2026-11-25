@@ -2,6 +2,8 @@
 
 **25 November — release incident resolved and hourly scheduling verified.** The checked release restored the existing TechLinked scope. Two unattended frames completed under the $20 cap and the PM's separate browser audit verified signed-in admin access and Collection costs. Fresh transcript yield remains open after two partial, empty archive results. Continue content-yield validation within the existing scope before treating downstream analysis and daily cutoff as proven. [Release evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
 
+**Automatic video analysis reliability.** Verify the rebased candidate, then follow the checked migration and restoration checklist. After the PM confirms a healthy release and scoped replay, reconcile charge holds and admit exact archived jobs under a USD 5 batch ceiling. Measure whether at least 111 of 123 jobs produce valid pending drafts. [Replay plan](docs/tech/VIDEO-ANALYSIS-RELIABILITY-2026-11-25.md).
+
 **25 November — scheduled ingestion verification.** After owner approval, apply the hourly transport migration and release the checked build pin. Verify one ordinary scheduled tick through archived transcript readback, then take that source through analysis review and the daily cutoff. [Candidate and live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 
 **25 November — three-channel YouTube proof complete.** Six new transcript records were verified against three provider runs and the production archive. The live worker uses the checked replacement build. The automatic schedule remains scoped to TechLinked. Remaining YouTube work includes durable recovery for canceled hourly jobs, format classification and broader recurring coverage. [Live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).

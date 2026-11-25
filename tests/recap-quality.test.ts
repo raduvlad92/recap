@@ -2,12 +2,16 @@ import { createHash } from 'node:crypto';
 import { describe,it,expect,vi } from 'vitest';
 import type { SourceUpdate } from '../src/lib/types';
 import { contentHash } from '../src/lib/content-processing';
-import { generateAutomaticContent, readRecapCorrectionAdmission, type AutomaticContentClaim } from '../netlify/functions/_shared/automatic-content';
+import { generateAutomaticContent as generateContent, readRecapCorrectionAdmission, type AutomaticContentClaim } from '../netlify/functions/_shared/automatic-content';
 import { RECAP_QUALITY_CONTRACT, correctionAdmitted, planAutomaticRecap, recapEvidence, validateRecapVerification, type RecapPoint, type RecapCorrectionAdmission } from '../netlify/functions/_shared/recap-quality';
 import { analysisLimits, conservativeCallUsd, type GenerationResult } from '../netlify/functions/_shared/content-analysis-model';
 import { analysisRuntimeEnv } from '../netlify/functions/_shared/content-analysis-runtime';
 import type { KeywordLearningInput } from '../netlify/functions/_shared/keyword-learning';
 import {canonicalKeywordProductionJson} from '../netlify/functions/_shared/keyword-production-handler';
+
+// Historical receipt assertions still exercise the original video session path.
+const generateAutomaticContent = (...[claim, call, before, options]: Parameters<typeof generateContent>) =>
+ generateContent(claim, call, before, { ...options, legacyVideoSession: true });
 
 const content='The host said that impersonators advertised a fake cure. The final test lasted five hours.';
 const good={text:'The final test lasted five hours.',evidenceQuote:'The final test lasted five hours.'};

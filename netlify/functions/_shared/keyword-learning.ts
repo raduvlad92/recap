@@ -86,7 +86,7 @@ export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},
    }
    const input=parseKeywordLearningInput(body);
    await sourceFor(db,input);
-   const env=analysisRuntimeEnv(deps.env,input.model,1),limits=analysisLimits(env),identity=analysisExecutionIdentity(env,limits);
+   const env=analysisRuntimeEnv(deps.env,input.model,1,input.originalKey),limits=analysisLimits(env),identity=analysisExecutionIdentity(env,limits);
    const estimateUsd=conservativeCallUsd(input.request,limits);
    if(estimateUsd>.10||estimateUsd>limits.maxCallUsd)return fail('analysis_call_limit',402);
    // These private tests reserve the whole approved per-call allowance. A live

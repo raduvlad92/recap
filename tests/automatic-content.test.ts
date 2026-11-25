@@ -6,7 +6,11 @@ import { AnalysisError, type GenerationResult } from '../netlify/functions/_shar
 import type { KeywordLearningInput } from '../netlify/functions/_shared/keyword-learning';
 import * as learning from '../netlify/functions/_shared/keyword-learning';
 import { automaticContentRuntimeAllowed, automaticContentWorkerAuthorized, createAutomaticContentStore, createAutomaticContentWorker, createAutomaticLearningCaller, dispatchAutomaticContent,
- generateAutomaticContent, validateAutomaticRecap, type AutomaticContentClaim } from '../netlify/functions/_shared/automatic-content';
+ generateAutomaticContent as generateContent, validateAutomaticRecap, type AutomaticContentClaim } from '../netlify/functions/_shared/automatic-content';
+
+// Historical receipt assertions still exercise the original video session path.
+const generateAutomaticContent = (...[claim, call, before, options]: Parameters<typeof generateContent>) =>
+ generateContent(claim, call, before, { ...options, legacyVideoSession: true });
 
 const content='AeroBox supports C#. An ad mentions NovaPay. The final test lasted five hours.';
 const record:SourceUpdate={id:'video-fixture',sourceId:'source-fixture',contributorIds:[],title:'Do not use TitleOnlyBrand',summary:'Metadata only',
@@ -269,7 +273,7 @@ describe('automatic content review bridge, isolated model fixtures only',()=>{
  });
  it('finishes independent source tasks into the inbox and never calls the old queue/publication functions',async()=>{
   const store={sync:vi.fn().mockResolvedValue({synchronized:2}),claim:vi.fn().mockResolvedValueOnce(claim()).mockResolvedValueOnce(claim('recap')).mockResolvedValue(null),finish:vi.fn().mockResolvedValue({reviewCount:1})};
-  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.startsWith('automatic-recap')?recapCall(input):keywordCall(input));
+  const call=vi.fn(async(input:KeywordLearningInput)=>input.originalKey?.startsWith('automatic-video:v1:recap:')?recapCall(input):keywordCall(input));
   const result=await createAutomaticContentWorker({env:configuredEnv,store,call,now:()=>0})();
   expect(result).toMatchObject({synchronized:2,queuedForReview:2,blocked:0});expect(store.finish).toHaveBeenCalledTimes(2);
   expect(store.finish.mock.calls.every(([,value])=>value.callKeys.length>0)).toBe(true);

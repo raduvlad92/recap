@@ -2,6 +2,8 @@
 
 **25 November, 15:17 UTC — verified scheduled acceptance.** Both Workers served `6a794cb`, epoch 10 active, after the acknowledged release and scope-bound resume. The two genuine hourly frames completed at 14:01:07 and 15:01:05 UTC. Each returned no new transcript and partial coverage. No additional provider fees were recorded and commitment remained $9.669 of $20. The separate 14:48 UTC signed-in browser audit verified admin and Collection costs with HTTP 200. [Evidence](tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
 
+**25 November — offline video analysis replay.** Exercised settled malformed JSON, split capacity, full coverage of the retained 117,252-character transcript and an unresolved charge hold. Observed original-quote binding and bounded draft counts with simulated replacement responses and disposable PostgreSQL. Model and collection spend were USD 0. [Replay evidence](tech/VIDEO-ANALYSIS-RELIABILITY-2026-11-25.md).
+
 **25 November — scheduled ingestion regression.** A disposable PostgreSQL test simulates a vanished hourly invocation, keeps its transport evidence and completes the next tick. Mocked provider tests verify the new build and normalized pricing digest with metadata reads. [Candidate and live proof](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 
 **25 November, 01:29 UTC — production YouTube proof.** Three live runs produced six archived transcripts and three matched settled fees of USD 0.008. The repaired hourly transport processed an immediate queue message to completion. [Video links and receipts](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).

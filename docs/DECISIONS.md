@@ -1,5 +1,9 @@
 # Decisions and interview
 
+## 25 November 2026 — bound automatic video review drafts
+
+Use up to six cited takeaways and 15 literal keywords per automatic video. Recover only settled format and capacity errors through exact linked requests. Keep unclear charges held and drafts pending review. Production replay requires the confirmed shared monthly cap, healthy release readback and separate PM approval within USD 5. [Decision evidence](tech/VIDEO-ANALYSIS-RELIABILITY-2026-11-25.md).
+
 ## 25 November 2026 — recover expired hourly ticks
 
 The scheduled collector uses the same reviewed build and pricing as the live six-video check. Once an hourly transport lease expires, its outcome is uncertain. A later tick may start through the existing source and budget guards. [Candidate and live proof](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
