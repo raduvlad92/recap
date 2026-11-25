@@ -14,6 +14,28 @@ const changingVars = new Set([...executionFlags, 'RELEASE_SHA', 'HOSTING_MODE', 
 export const bindingHash = bindings => createHash('sha256').update(JSON.stringify(canonical(bindings.filter(item => item.type !== 'plain_text' || !changingVars.has(item.name)).sort((a, b) => a.name.localeCompare(b.name))))).digest('hex');
 const text = (bindings, name) => bindings.find(item => item.name === name)?.text;
 
+export async function verifyServingHealth({ release, mode, fetcher = fetch, wait = ms => new Promise(resolve => setTimeout(resolve, ms)), report = console.warn }) {
+  const backoff = [0, 500, 1_000, 2_000, 4_000];
+  for (const [index, delay] of backoff.entries()) {
+    if (delay) await wait(delay);
+    let status = null, observedRelease = null, observedMode = null;
+    try {
+      const response = await fetcher(origin + '/api/health', { redirect: 'error', cache: 'no-store', signal: AbortSignal.timeout(15000) });
+      status = response.status;
+      const health = await response.json();
+      const hosting = health?.hosting;
+      if (typeof hosting?.release === 'string' && /^[a-f0-9]{40}$/.test(hosting.release)) observedRelease = hosting.release;
+      if (hosting?.mode === 'active' || hosting?.mode === 'shadow') observedMode = hosting.mode;
+      if (status === 200 && observedRelease === release && observedMode === mode) return;
+    } catch {
+      // Keep the status if a response arrived but its body could not be read.
+    }
+    report(JSON.stringify({ event: 'release_health_observation_failed', attempt: index + 1,
+      status, observedRelease, observedMode, expectedRelease: release, expectedMode: mode }));
+  }
+  throw new ReleaseError('release_health_unverified');
+}
+
 export function checkedArtifact(root) {
   const build = join(root, '.local/cloudflare-build'), artifact = JSON.parse(readFileSync(join(build, 'release.json'), 'utf8'));
   requireState(/^[a-f0-9]{40}$/.test(artifact.release || '') && ['shadow', 'active'].includes(artifact.mode), 'invalid_release_artifact');
@@ -132,8 +154,7 @@ export class ReleasePlatform {
       requireState(current.version === versions[kind], 'release_promotion_unverified');
       await this.assertVersion(kind, current.version, artifact, plan.policy, mode, plan.bindings[kind]);
     }
-    const response = await this.fetcher(origin + '/api/health', { redirect: 'error', signal: AbortSignal.timeout(15000) });
-    const health = await response.json(); requireState(response.status === 200 && health.hosting?.release === artifact.release && health.hosting.mode === mode, 'release_health_unverified');
+    await verifyServingHealth({ release: artifact.release, mode, fetcher: this.fetcher });
     const assets = Object.entries(artifact.assets).filter(([name]) => !['_headers', 'robots.txt'].includes(name));
     let position = 0;
     await Promise.all(Array.from({ length: 4 }, async () => { while (position < assets.length) { const [name, expected] = assets[position++]; const path = name === 'index.html' ? '/' : '/' + name; const result = await this.fetcher(origin + path, { redirect: 'follow', signal: AbortSignal.timeout(15000) }); requireState(result.ok && createHash('sha256').update(new Uint8Array(await result.arrayBuffer())).digest('hex') === expected, 'release_asset_unverified'); } }));

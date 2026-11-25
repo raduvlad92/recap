@@ -29,6 +29,16 @@ The existing Netlify build-hook step remains available while no target is select
 
 Operation-specific revision UUIDs are saved before pause/advance/resume. Checked database RPCs compare owner, epoch, release and revision under the admission row lock. A retry can adopt only its own already-applied revision. Any intervening operator update, including another pause while already paused, invalidates the release. Lost replies therefore do not allow a deployment to override a later operator pause. Failures leave admission paused; no transaction waits for an external API.
 
+## Migration and failure gates
+
+For an active release, the controller compares the checked commit with the predecessor named in the release plan. If migration files changed, the operator applies them in timestamp order through the approved migration path after verifying the backup. The Cloudflare job checks the exact committed SQL against the matching Supabase migration journal entry before pausing work and again before promoting either Worker. A missing entry, changed hash, or unavailable migration witness fails the release. The deploy job uses the read-only `CLOUDFLARE_MIGRATION_READ_TOKEN` scoped to this project's `database_migrations_read` permission. A release with no migration changes requires no migration credential.
+
+The operator can generate an atomic migration and journal transaction locally with `node scripts/prepare-reviewed-release-migration.mjs <migration.sql> <reviewed SHA-256>`. Review its output before submission through the approved database path. The helper retains the exact source string as the journal entry. The controller reads migration metadata through the [Supabase Management API](https://supabase.com/docs/reference/api/v1-get-a-migration).
+
+After promotion, the public health check retries with bounded backoff while requiring HTTP 200, the exact target release and the expected hosting mode. Failed observations log the status, release and mode. The workflow adds a GitHub error annotation and job summary on deployment failure, with a fresh pause read and last saved checkpoint details when available. Reconcile the existing checkpoint and serving state before attempting another deployment.
+
+Verify the reviewed Apify build by supplying `APIFY_APPROVED_AUTHORITY_FILE` to `node scripts/verify-reviewed-apify-build.mjs`. Use the approved provider custody record. The helper reads Actor and build metadata from Apify and has no fallback to the runtime or preparation credentials. It does not start provider work.
+
 ## Verification and boundaries
 
 The [native review-copy rehearsal](evidence/cloudflare-release-adapter-shadow-2026-11-04.json) uploads both exact versions while the old versions continue serving, deliberately drops a successful upload reply and recovers the retained version without a second upload. It also drops a successful promotion reply and reconciles actual state without another promotion. Both versions are then promoted in **shadow mode**, with all nine execution flags false, source unchanged and Netlify ownership/revision unchanged. This proves the platform adapter against Cloudflare; it is not an active release or initial switch.

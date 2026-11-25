@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { planRelease, runRelease, ReleaseError } from './cloudflare-release-state.mjs';
 import { ReleasePlatform, checkedArtifact } from './cloudflare-release-platform.mjs';
 import { ReleaseGitHub, ReleaseJournal } from './cloudflare-release-github.mjs';
+import { verifyReleaseMigrations } from './cloudflare-release-migrations.mjs';
 
 // Normal active releases only. Initial switch/retirement have no entrypoint.
 try {
@@ -17,6 +18,9 @@ try {
   let plan, prior = null, remote;
   if (process.env.RELEASE_CHECKPOINT_ID) ({ plan, prior, remote } = await ReleaseJournal.restore(github, process.env.RELEASE_CHECKPOINT_ID, artifact));
   else { plan = planRelease(artifact, await platform.snapshot(artifact)); remote = new ReleaseJournal(github, plan); }
+  const verifyMigrations = () => verifyReleaseMigrations({ root, from: plan.expected.release, to: artifact.release,
+    token: process.env.CLOUDFLARE_MIGRATION_READ_TOKEN });
+  await verifyMigrations();
   const directory = join(root, '.local/cloudflare-release'); mkdirSync(directory, { recursive: true, mode: 0o700 });
   let latest = prior;
   const save = async journal => {
@@ -38,7 +42,14 @@ try {
     quiesce: (expected, nonce) => platform.rpc('quiesce_hosting_release_checked', { p_expected_epoch: expected.epoch, p_expected_release: expected.release, p_expected_revision: expected.revision, p_next_revision: nonce }),
     upload: async () => { const versions = {}; for (const kind of ['jobs', 'web']) versions[kind] = await platform.uploadVersion(kind, artifact, plan.policy, 'active', plan.bindings[kind], plan.digest); return versions; },
     transfer: (expected, target, revision, nonce) => mutateControl(expected, target, false, revision, nonce),
-    promote: async versions => { for (const kind of ['jobs', 'web']) { await github.assertCheckedRelease(artifact.release); await platform.assertSource(plan, artifact); await platform.promoteVersion(kind, versions[kind], [plan.priorVersions[kind]]); } },
+    promote: async versions => {
+      await verifyMigrations();
+      for (const kind of ['jobs', 'web']) {
+        await github.assertCheckedRelease(artifact.release);
+        await platform.assertSource(plan, artifact);
+        await platform.promoteVersion(kind, versions[kind], [plan.priorVersions[kind]]);
+      }
+    },
     verify: (_plan, versions) => platform.verify(plan, artifact, versions),
     resume: (expected, revision, nonce) => mutateControl(expected, plan.target, true, revision, nonce),
   };
