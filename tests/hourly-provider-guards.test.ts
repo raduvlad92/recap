@@ -1,13 +1,12 @@
-import { createHash } from 'node:crypto';
+import youtubeReview from '../actors/tech-collector/providers/youtube-reviewed-metadata.json';
 import { describe, expect, it, vi } from 'vitest';
 import type { Source } from '../src/lib/types';
 import { normalizeYouTubeItems, startYouTubeDiscovery, pollStoredApify, verifyHourlyApifyConfiguration, YOUTUBE_ACTOR_ID } from '../netlify/functions/_shared/apify';
 import { conditionalFeedHeaders } from '../netlify/functions/_shared/feed';
 import { createCollectHandler } from '../netlify/functions/_shared/collect-handler';
 const source: Source = { id: 'real-channel', name: 'A channel', platform: 'YouTube', url: 'https://www.youtube.com/watch?v=abcdefghijk', creatorIds: [], status: 'ready' };
-const pricing = { pricingModel: 'PAY_PER_EVENT', startedAt: '2026-09-02T00:00:00.000Z' };
-const priceHash = createHash('sha256').update(JSON.stringify(pricing)).digest('hex');
-const values: Record<string, string> = { APIFY_RUNTIME_ENABLED: 'true', APIFY_API_TOKEN: 'test-only', COLLECTION_JOB_SECRET: 'test-only-signing-secret-longer-than-thirty-two', APIFY_YOUTUBE_BUILD: '0.0.319', APIFY_YOUTUBE_BUILD_ID: 'Build123456789', APIFY_MAX_ITEMS: '1', APIFY_MAX_TOTAL_CHARGE_USD: '0.005', COLLECTION_ALLOWED_USER_IDS: 'user_operator', HOURLY_COLLECTION_ENABLED: 'true', HOURLY_COLLECTION_PROVIDER_VERIFIED: 'true', APIFY_YOUTUBE_PRICING_SHA256: priceHash };
+const pricing = youtubeReview.pricing;
+const values: Record<string, string> = { APIFY_RUNTIME_ENABLED: 'true', APIFY_API_TOKEN: 'test-only', COLLECTION_JOB_SECRET: 'test-only-signing-secret-longer-than-thirty-two', APIFY_YOUTUBE_BUILD: youtubeReview.buildNumber, APIFY_YOUTUBE_BUILD_ID: youtubeReview.buildId, APIFY_MAX_ITEMS: '1', APIFY_MAX_TOTAL_CHARGE_USD: '0.005', COLLECTION_ALLOWED_USER_IDS: 'user_operator', HOURLY_COLLECTION_ENABLED: 'true', HOURLY_COLLECTION_PROVIDER_VERIFIED: 'true', APIFY_YOUTUBE_PRICING_SHA256: youtubeReview.pricingSha256 };
 const env = (name: string) => values[name];
 const body = (value: unknown) => new Response(JSON.stringify(value), { headers: { 'content-type': 'application/json' } });
 
@@ -25,16 +24,26 @@ describe('free provider review before paid launch', () => {
   it('validates the exact actor build and reviewed effective pricing using GET only', async () => {
     const fetcher = vi.fn(async (url: RequestInfo | URL, init?: RequestInit) => {
       expect(init?.method).toBeUndefined();
-      return String(url).includes('actor-builds/') ? body({ data: { id: 'Build123456789', actId: YOUTUBE_ACTOR_ID, buildNumber: '0.0.319', status: 'SUCCEEDED' } }) : body({ data: { id: YOUTUBE_ACTOR_ID, pricingInfos: [pricing] } });
+      return String(url).includes('actor-builds/') ? body({ data: { id: youtubeReview.buildId, actId: YOUTUBE_ACTOR_ID, buildNumber: youtubeReview.buildNumber, status: 'SUCCEEDED' } }) : body({ data: { id: YOUTUBE_ACTOR_ID, pricingInfos: [pricing] } });
     });
     await verifyHourlyApifyConfiguration('user_operator', env, fetcher);
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
   it('blocks pricing changes and unreviewed builds', async () => {
-    const fetcher = vi.fn(async (url: RequestInfo | URL) => String(url).includes('actor-builds/') ? body({ data: { id: 'Build123456789', actId: YOUTUBE_ACTOR_ID, buildNumber: '0.0.320', status: 'SUCCEEDED' } }) : body({ data: { id: YOUTUBE_ACTOR_ID, pricingInfos: [pricing] } }));
+    const fetcher = vi.fn(async (url: RequestInfo | URL) => String(url).includes('actor-builds/') ? body({ data: { id: youtubeReview.buildId, actId: YOUTUBE_ACTOR_ID, buildNumber: '0.0.320', status: 'SUCCEEDED' } }) : body({ data: { id: YOUTUBE_ACTOR_ID, pricingInfos: [pricing] } }));
     await expect(verifyHourlyApifyConfiguration('user_operator', env, fetcher)).rejects.toMatchObject({ code: 'provider_review_changed' });
-    fetcher.mockImplementation(async (url) => String(url).includes('actor-builds/') ? body({ data: { id: 'Build123456789', actId: YOUTUBE_ACTOR_ID, buildNumber: '0.0.319', status: 'SUCCEEDED' } }) : body({ data: { id: YOUTUBE_ACTOR_ID, pricingInfos: [{ ...pricing, pricingModel: 'CHANGED' }] } }));
+    fetcher.mockImplementation(async (url) => String(url).includes('actor-builds/') ? body({ data: { id: youtubeReview.buildId, actId: YOUTUBE_ACTOR_ID, buildNumber: youtubeReview.buildNumber, status: 'SUCCEEDED' } }) : body({ data: { id: YOUTUBE_ACTOR_ID, pricingInfos: [{ ...pricing, pricingModel: 'CHANGED' }] } }));
     await expect(verifyHourlyApifyConfiguration('user_operator', env, fetcher)).rejects.toMatchObject({ code: 'provider_review_changed' });
+  });
+  it.each([
+    ['APIFY_YOUTUBE_BUILD', '0.0.319'],
+    ['APIFY_YOUTUBE_BUILD_ID', 'kOLogYtrERZU9YfGW'],
+    ['APIFY_YOUTUBE_PRICING_SHA256', '0'.repeat(64)],
+  ])('rejects a different %s before any provider request', async (binding, value) => {
+    const fetcher = vi.fn();
+    await expect(verifyHourlyApifyConfiguration('user_operator', name => name === binding ? value : env(name), fetcher))
+      .rejects.toMatchObject({ code: 'provider_review_required' });
+    expect(fetcher).not.toHaveBeenCalled();
   });
   it('rejects a higher per-run cap before making a provider request', async () => {
     const fetcher = vi.fn();

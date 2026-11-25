@@ -1,0 +1,28 @@
+# Live YouTube ingestion proof — 25 November 2026
+
+Three immediate Apify runs collected six distinct videos with timed captions. All six were newly present in the production archive on the 01:29 UTC readback.
+
+| Channel | Video | Caption segments |
+| --- | --- | ---: |
+| TechLinked | [Yaaay Number Go Back Up](https://www.youtube.com/watch?v=kibDx91B6eg) | 286 |
+| TechLinked | [The “Good Guys” Just Sold Out](https://www.youtube.com/watch?v=lKfft75VvfQ) | 340 |
+| ShortCircuit | [This Phone is Fire](https://www.youtube.com/watch?v=iTAsOxThOFA) | 582 |
+| ShortCircuit | [Professional 3D Printing for less](https://www.youtube.com/watch?v=GBCfagEoRDI) | 517 |
+| GamersNexus | [Jensen Returns to NVIDIA](https://www.youtube.com/watch?v=gF09cRVoX_w) | 1,396 |
+| GamersNexus | [HW News](https://www.youtube.com/watch?v=l8qxFcaLSM4) | 1,036 |
+
+The result covers existing timed captions. Video format is unknown for all six records. The test used the production source leases, provider reservations, normalization, and archive import. Supabase readback matched all six source/video identities and the three settled provider records.
+
+The pinned build `0.0.319` was unavailable. Replacement build `0.0.340` passed the same Actor, authenticated account, input schema and pricing checks. The three exact-video reservations were USD 0.008 each. Final authenticated provider readbacks reported USD 0.008 per run. Two initially lower fees were corrected with immutable upward receipts, and the initially unknown fee was settled. The proof envelope closed at USD 0.024. The pre-existing 12 reader fee holds and daily and lifetime caps were preserved.
+
+Both production Workers now serve the checked replacement configuration on application release `e6ce627`, epoch 8. The expired hourly job was recorded as uncertain. The other 135 stale ticks were recorded as superseded before start. One newly queued hourly frame completed at 01:28:57 UTC. The readback showed zero queued, running, or expired-running frames and anonymous admin HTTP 401. The transport check started zero additional Apify runs.
+
+The recurring pilot covers TechLinked with a finite USD 0.04 reserved envelope, subject to the existing reader caps. The three-channel proof ran immediately through the live provider and archive. Future recurring acquisitions on the new configuration and broader scheduled coverage need their own evidence. The live transport repair recovered one specific expired frame.
+
+## Scheduled collection candidate
+
+The repository now records Apify build `0.0.340` and the effective pricing digest in the [reviewed YouTube metadata](../../actors/tech-collector/providers/youtube-reviewed-metadata.json). The hourly launch checks the same build and price before admission. The standalone collector also uses this build for new work and retains the previous review for exact historical reconciliation.
+
+The candidate migration retires expired hourly transport claims as uncertain and lets the next tick claim a new lease. A late completion cannot promote an expired claim, and a duplicate cannot run it again. Live claims remain serialized. The migration leaves source checks, provider runs and budget reservations to their existing recovery paths. A disposable PostgreSQL test covers a vanished worker from expiry through the next successful tick.
+
+Owner approval is required before applying the migration or deploying the matching release. Then observe an ordinary scheduled tick through transcript readback before qualifying the analysis and daily briefing stages.

@@ -3,6 +3,7 @@ import { fetchNoRedirect } from './fetch-no-redirect';
 import { DISCOVERY_ITEMS, DISCOVERY_MAX_USD, discoveryWindowStart, exactPublicationTimestamp } from './youtube-discovery';
 import { classifyProviderVideoFormat, videoFormatFields, youtubeVideoId } from '../../../src/lib/video-format';
 import { createHash } from 'node:crypto';
+import youtubeReview from '../../../actors/tech-collector/providers/youtube-reviewed-metadata.json';
 import { SignJWT, jwtVerify } from 'jose';
 import type { CollectionResult, Source, SourceUpdate } from '../../../src/lib/types';
 import { parseTimedTranscript } from '../../../src/lib/video';
@@ -69,7 +70,8 @@ const stableJson = (value: unknown): string => Array.isArray(value) ? '[' + valu
 /** Free provider metadata only; call BEFORE claiming a paid launch reservation. */
 export async function verifyHourlyApifyConfiguration(userId: string, env: Env, fetcher: Fetcher = fetch): Promise<void> {
   const config = requireConfig(env, userId), buildId = env('APIFY_YOUTUBE_BUILD_ID'), pricingHash = env('APIFY_YOUTUBE_PRICING_SHA256');
-  if (env('HOURLY_COLLECTION_PROVIDER_VERIFIED') !== 'true' || config.maxItems !== 1 || config.maxCharge > 0.005 || !buildId || !/^[a-f0-9]{64}$/.test(pricingHash || '')) {
+  if (env('HOURLY_COLLECTION_PROVIDER_VERIFIED') !== 'true' || config.maxItems !== 1 || config.maxCharge > 0.005 ||
+    config.build !== youtubeReview.buildNumber || buildId !== youtubeReview.buildId || pricingHash !== youtubeReview.pricingSha256) {
     throw new CollectionError(503, 'provider_review_required', 'The bounded collector needs a reviewed build and price before it can run.');
   }
   const [actorResponse, buildResponse] = await Promise.all([

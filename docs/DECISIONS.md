@@ -1,5 +1,13 @@
 # Decisions and interview
 
+## 25 November 2026 — recover expired hourly ticks
+
+The scheduled collector uses the same reviewed build and pricing as the live six-video check. Once an hourly transport lease expires, its outcome is uncertain. A later tick may start through the existing source and budget guards. [Candidate and live proof](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
+
+## 25 November 2026 — restore YouTube ingestion and test immediately
+
+The founder requested a live restoration and an immediate test with at least six videos across three distinct channels. The proof matched six exact public video IDs across three channels and respected the existing per-reader and aggregate caps. The recurring pilot uses the verified replacement build and retains its TechLinked scope with a new finite USD 0.04 envelope. [Live proof](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
+
 ## 18 November 2026 — recover YouTube first
 
 The founder requested work to get YouTube ingestion operating, followed by a plan for other platforms. Use the existing account and bounded provider-first route for YouTube. Keep the failed historic push as failed, preserve unknown fees and review holds, and qualify the other platforms separately when their work is opened. [Evidence and acceptance plan](tech/INGESTION-RECOVERY-2026-11-18.md).

@@ -6,7 +6,8 @@ import { extractPostContext, resolveArchivedPostContext, xProviderPostIdentity }
 // Retain the original review unchanged: historical provider runs need their actual pins.
 const ORIGINAL_REVIEWED = JSON.parse(readFileSync(new URL('../providers/reviewed-metadata.json', import.meta.url), 'utf8'));
 const XQUIK_REVIEWED = JSON.parse(readFileSync(new URL('../providers/xquik-reviewed-metadata.json', import.meta.url), 'utf8'));
-export const REVIEWED = {...ORIGINAL_REVIEWED,X:XQUIK_REVIEWED};
+const YOUTUBE_REVIEWED = JSON.parse(readFileSync(new URL('../providers/youtube-reviewed-metadata.json', import.meta.url), 'utf8'));
+export const REVIEWED = {...ORIGINAL_REVIEWED,YouTube:YOUTUBE_REVIEWED,X:XQUIK_REVIEWED};
 export function reviewedProviderForRun(platform,actorId,buildId) {
   const candidates=[REVIEWED[platform],ORIGINAL_REVIEWED[platform]].filter(Boolean);
   const provider=candidates.find(review=>review.actorId===actorId && review.buildId===buildId);

@@ -12,11 +12,11 @@ The parent must be launched with API `memory=256`, `timeout=3600` and `maxTotalC
 
 ## Reviewed providers
 
-Read-only public Actor/build metadata, input schemas, output schemas and the effective pricing record were retrieved on 21 October 2026. The original reviews remain unchanged in [reviewed-metadata.json](providers/reviewed-metadata.json); the new X default is saved separately in [xquik-reviewed-metadata.json](providers/xquik-reviewed-metadata.json). A cloud run rechecks the effective pricing fingerprint and pinned build before a child request. It refuses monthly-rental/changed pricing. An operator must review and rebuild before accepting provider changes. `reviewedProviderForRun(platform, actorId, buildId)` resolves both the current default and exact historical reviews; reconciled history must use the actual run identity rather than the current platform default.
+Read-only public Actor/build metadata, input schemas, output schemas and the effective pricing record were retrieved on 21 October 2026. The original reviews remain unchanged in [reviewed-metadata.json](providers/reviewed-metadata.json); the current YouTube and X defaults are saved in [youtube-reviewed-metadata.json](providers/youtube-reviewed-metadata.json) and [xquik-reviewed-metadata.json](providers/xquik-reviewed-metadata.json). A cloud run rechecks the effective pricing fingerprint and pinned build before a child request. It refuses monthly-rental/changed pricing. An operator must review and rebuild before accepting provider changes. `reviewedProviderForRun(platform, actorId, buildId)` resolves both the current default and exact historical reviews; reconciled history must use the actual run identity rather than the current platform default.
 
 | Platform | Actor | Pinned build | Conservative reservation |
 | --- | --- | --- | --- |
-| YouTube | `streamers/youtube-scraper` | `0.0.319`, `kOLogYtrERZU9YfGW` | $0.004 per video + $0.0013 per dated result; Free rates |
+| YouTube | `streamers/youtube-scraper` | `0.0.340`, `GNskilOocLTUuCmFu` | $0.004 per video + $0.0013 per dated result; Free rates |
 | X | `xquik/x-tweet-scraper` | `1.12.394`, `0zYfRnonkqidzEkEF` | $0.00015 per allowed item plus a $0.005 per-run platform-usage allowance; 300 items reserve $0.05 |
 | Instagram | `apify/instagram-scraper` | `0.0.827`, `f15AnzQQyjtSsCgl0` | $0.0027 per public post record; Free rate |
 

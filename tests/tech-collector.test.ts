@@ -46,6 +46,13 @@ describe('bounded collector input and identity',()=>{
   expect(request.options).toMatchObject({build:'1.12.394',memory:256,timeout:120,maxTotalChargeUsd:0.05,restartOnError:false});expect(request.maxChargeUsd).toBe(0.05);
   expect(childRequest(input.sources[0],input,5).maxChargeUsd).toBe(0.00575);expect(request.body).not.toHaveProperty('start');expect(request.body).not.toHaveProperty('sort');
  });
+ it('launches the reviewed YouTube build and retains the original build for reconciliation',()=>{
+  const input=validateInput(raw(),now),request=childRequest(input.sources[0],input,3);
+  expect(request).toMatchObject({buildNumber:'0.0.340',buildId:'GNskilOocLTUuCmFu',options:{build:'0.0.340'}});
+  const historical=reviewedProviderForRun('YouTube',request.actorId,'kOLogYtrERZU9YfGW');
+  expect(historical.buildNumber).toBe('0.0.319');
+  expect(reviewedProviderForRun('YouTube',request.actorId,request.buildId)).toBe(REVIEWED.YouTube);
+ });
  it('looks up historical and current reviewed providers by exact platform, actor and build instead of a mutable default',()=>{
   const legacy=reviewedProviderForRun('X','nfp1fpt5gUlBwPcor','yaoXYYsyMoS92pVsj'),current=reviewedProviderForRun('X','wAusCMrm284Voaw86','0zYfRnonkqidzEkEF');
   expect(legacy.actor).toBe('apidojo/twitter-scraper-lite');expect(legacy.buildNumber).toBe('0.0.1037');expect(current).toBe(REVIEWED.X);expect(current.actor).toBe('xquik/x-tweet-scraper');
