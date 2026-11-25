@@ -6,7 +6,7 @@ const target='a'.repeat(40),plan={target,digest:'b'.repeat(64),artifactHashes:{w
 const pause='11111111-1111-4111-8111-111111111111';
 const journal=(phase='transferred',pending=null,error=null)=>({schema:2,planDigest:plan.digest,phase,pending,error,versions:{jobs:pause,web:'22222222-2222-4222-8222-222222222222'},revision:pause,intents:{pause}});
 function fixture(selectedPlan=plan){
- const state={records:new Map(),calls:[],readQueue:[],readError:null,postResponseLost:false,patchReplyStale:false};let next=1;
+ const state={records:new Map(),calls:[],observations:[],readQueue:[],readError:null,postResponseLost:false,patchReplyStale:false};let next=1;
  const github={wait:vi.fn(async()=>{}),request:async(path,body,method)=>{
   const verb=method||(body?'POST':'GET'),bare=path.split('?')[0];state.calls.push({path,verb,body:structuredClone(body)});
   if(bare==='check-runs'&&verb==='POST'){
@@ -18,15 +18,36 @@ function fixture(selectedPlan=plan){
   if(state.readError)throw state.readError;
   return structuredClone(state.readQueue.length?state.readQueue.shift():state.records.get(id));
  }};
- return{state,github,remote:new ReleaseJournal(github,selectedPlan)};
+ return{state,github,remote:new ReleaseJournal(github,selectedPlan,null,line=>state.observations.push(JSON.parse(line)))};
 }
 const creates=f=>f.state.calls.filter(c=>c.verb==='POST'),patches=f=>f.state.calls.filter(c=>c.verb==='PATCH'),gets=f=>f.state.calls.filter(c=>c.verb==='GET');
 describe('checkpoint acknowledgement reads never retry a write',()=>{
  it('reconciles a stale GET after PATCH using distinct fresh read URLs and unchanged nonce/version bindings',async()=>{
   const f=fixture();await f.remote.save(journal());const old=structuredClone(f.state.records.get(1));f.state.readQueue.push(old);f.state.calls=[];
   await f.remote.save(journal('transferred','promote'));
-  expect(patches(f)).toHaveLength(1);expect(creates(f)).toHaveLength(0);expect(gets(f)).toHaveLength(2);expect(new Set(gets(f).map(x=>x.path)).size).toBe(2);expect(gets(f).every(x=>new URL('https://fixture/'+x.path).searchParams.has('ack_observation'))).toBe(true);expect(f.github.wait.mock.calls).toEqual([[200]]);
+  expect(patches(f)).toHaveLength(1);expect(creates(f)).toHaveLength(0);expect(gets(f)).toHaveLength(2);expect(new Set(gets(f).map(x=>x.path)).size).toBe(2);expect(gets(f).every(x=>new URL('https://fixture/'+x.path).searchParams.has('ack_observation'))).toBe(true);expect(f.github.wait.mock.calls).toEqual([[250]]);
   const saved=JSON.parse(f.state.records.get(1).output.summary);expect(saved.plan).toEqual(plan);expect(saved.journal.intents).toEqual({pause});expect(saved.journal.versions).toEqual(journal().versions);
+ });
+ it('acknowledges a saved pause after 404 and stale reads outlast the former retry window', async () => {
+  const f = fixture();
+  const prepared = { ...journal('prepared', 'pause'), versions: null };
+  await f.remote.save(prepared);
+  const old = structuredClone(f.state.records.get(1));
+  f.state.readQueue.push(null, old, old, old);
+  f.state.calls = [];
+
+  const paused = { ...prepared, phase: 'paused', pending: null };
+  await f.remote.save(paused);
+
+  expect(patches(f)).toHaveLength(1);
+  expect(creates(f)).toHaveLength(0);
+  expect(gets(f)).toHaveLength(5);
+  expect(f.github.wait.mock.calls).toEqual([[250], [750], [1500], [3000]]);
+  expect(f.state.observations.map(({ phase, observation, httpStatus }) => ({ phase, observation, httpStatus }))).toEqual([
+   { phase:'paused', observation:'checkpoint_not_visible', httpStatus:404 },
+   ...Array(3).fill({ phase:'paused', observation:'compatible_different_checkpoint_value', httpStatus:200 }),
+  ]);
+  expect(JSON.parse(f.state.records.get(1).output.summary).journal).toEqual(paused);
  });
  it('also reconciles a stale PATCH response through reads, without repeating that PATCH',async()=>{
   const f=fixture();await f.remote.save(journal());f.state.calls=[];f.state.patchReplyStale=true;
@@ -34,13 +55,13 @@ describe('checkpoint acknowledgement reads never retry a write',()=>{
  });
  it('retains a validated created ID when all GET acknowledgements fail; later error save uses that same ID',async()=>{
   const f=fixture(),error=Object.assign(new ReleaseError('release_github_request_failed'),{httpStatus:503});f.state.readError=error;
-  await expect(f.remote.save(journal())).rejects.toBe(error);expect(f.remote.id).toBe(1);expect(creates(f)).toHaveLength(1);expect(gets(f)).toHaveLength(3);
+  await expect(f.remote.save(journal())).rejects.toBe(error);expect(f.remote.id).toBe(1);expect(creates(f)).toHaveLength(1);expect(gets(f)).toHaveLength(7);
   f.state.readError=null;await f.remote.save(journal('transferred',null,'release_github_request_failed'));
   expect(creates(f)).toHaveLength(1);expect(patches(f)).toHaveLength(1);expect(f.state.records.size).toBe(1);expect(JSON.parse(f.state.records.get(1).output.summary).journal.error).toBe('release_github_request_failed');
  });
- it('stops after three permanently stale reads and preserves the same created identity',async()=>{
-  const f=fixture();await f.remote.save(journal());const old=structuredClone(f.state.records.get(1));f.state.readQueue.push(old,old,old);f.state.calls=[];
-  await expect(f.remote.save(journal('transferred','promote'))).rejects.toThrow('release_checkpoint_unacknowledged');expect(patches(f)).toHaveLength(1);expect(gets(f)).toHaveLength(3);expect(f.remote.id).toBe(1);
+ it('stops after seven permanently stale reads and preserves the same created identity',async()=>{
+  const f=fixture();await f.remote.save(journal());const old=structuredClone(f.state.records.get(1));f.state.readQueue.push(...Array(7).fill(old));f.state.calls=[];
+  await expect(f.remote.save(journal('transferred','promote'))).rejects.toThrow('release_checkpoint_unacknowledged');expect(patches(f)).toHaveLength(1);expect(gets(f)).toHaveLength(7);expect(f.remote.id).toBe(1);
  });
  it('does not create a second checkpoint if the initial POST response loses its ID',async()=>{
   const f=fixture();f.state.postResponseLost=true;await expect(f.remote.save(journal())).rejects.toThrow('POST response lost');expect(f.remote.id).toBe(null);
@@ -108,9 +129,27 @@ describe('real coordinator plus private in-memory acknowledgement transport',()=
   const result=await runRelease(f.selectedPlan,f.api,value=>f.remote.save(value),f.prior);
   expect(result.phase).toBe('complete');expect(result.error).toBe(null);expect(result.pending).toBe(null);expect(result.versions).toEqual(f.prior.versions);expect(result.intents.pause).toBe(pause);expect(result.intents.transfer).toBe(f.prior.intents.transfer);expect(f.calls).toEqual(['promote','verify']);expect(f.status.control.paused).toBe(true);expect(f.status.work.uncertain).toBe(96);expect(creates(f)).toHaveLength(0);expect(patches(f)).toHaveLength(5);expect(gets(f)).toHaveLength(6);
  });
- it('records the same pending phase/error without any promotion if three promotion-intent observations stay stale',async()=>{
-  const f=continuationFixture();await f.remote.save(f.prior);const old=structuredClone(f.state.records.get(1));f.state.readQueue.push(old,old,old);f.state.calls=[];
+ it('acknowledges the verified checkpoint without replaying promotion or resuming a previously paused runtime', async () => {
+  const f = continuationFixture();
+  const promoted = { ...f.prior, phase: 'promoted', error: 'release_health_unverified' };
+  await f.remote.save(promoted);
+  const old = structuredClone(f.state.records.get(1));
+  f.state.readQueue.push(null, old, old, old);
+  f.state.calls=[];
+
+  const result = await runRelease(f.selectedPlan, f.api, value => f.remote.save(value), promoted);
+
+  expect(result).toMatchObject({ phase:'complete', error:null, versions:promoted.versions, revision:promoted.revision });
+  expect(f.calls).toEqual(['verify']);
+  expect(f.status.control.paused).toBe(true);
+  expect(creates(f)).toHaveLength(0);
+  expect(patches(f)).toHaveLength(3);
+  expect(gets(f)).toHaveLength(7);
+  expect(f.state.observations.every(observation => observation.phase==='verified')).toBe(true);
+ });
+ it('records the same pending phase/error without any promotion if all promotion-intent observations stay stale',async()=>{
+  const f=continuationFixture();await f.remote.save(f.prior);const old=structuredClone(f.state.records.get(1));f.state.readQueue.push(...Array(7).fill(old));f.state.calls=[];
   await expect(runRelease(f.selectedPlan,f.api,value=>f.remote.save(value),f.prior)).rejects.toThrow('release_checkpoint_unacknowledged');
-  const actual=JSON.parse(f.state.records.get(1).output.summary);expect(actual.journal.phase).toBe('transferred');expect(actual.journal.pending).toBe('promote');expect(actual.journal.error).toBe('release_checkpoint_unacknowledged');expect(actual.plan).toEqual(f.selectedPlan);expect(actual.journal.versions).toEqual(f.prior.versions);expect(actual.journal.intents).toEqual(f.prior.intents);expect(f.calls).toEqual([]);expect(f.status.control.paused).toBe(true);expect(f.status.work.uncertain).toBe(96);expect(creates(f)).toHaveLength(0);expect(patches(f)).toHaveLength(2);expect(gets(f)).toHaveLength(4);
+  const actual=JSON.parse(f.state.records.get(1).output.summary);expect(actual.journal.phase).toBe('transferred');expect(actual.journal.pending).toBe('promote');expect(actual.journal.error).toBe('release_checkpoint_unacknowledged');expect(actual.plan).toEqual(f.selectedPlan);expect(actual.journal.versions).toEqual(f.prior.versions);expect(actual.journal.intents).toEqual(f.prior.intents);expect(f.calls).toEqual([]);expect(f.status.control.paused).toBe(true);expect(f.status.work.uncertain).toBe(96);expect(creates(f)).toHaveLength(0);expect(patches(f)).toHaveLength(2);expect(gets(f)).toHaveLength(8);
  });
 });

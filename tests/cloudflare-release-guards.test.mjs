@@ -100,3 +100,10 @@ it('reads Apify metadata only with the explicitly selected approved credential',
     .resolves.toMatchObject({ buildNumber:'0.0.340', pricingVerified:true });
   await expect(verifyReviewedApifyBuild({ reviewed, fetcher })).rejects.toThrow('Approved Apify authority file required');
 });
+
+it('rejects the archived preparation credential before parsing it or contacting Apify', async () => {
+  const authorityFile = join(temp(), 'prepared-runtime-secrets.json');
+  writeFileSync(authorityFile, 'intentionally invalid JSON');
+  await expect(verifyReviewedApifyBuild({ authorityFile, fetcher: async () => { throw new Error('unexpected provider contact'); } }))
+    .rejects.toThrow('Preparation credentials are not approved for Apify');
+});

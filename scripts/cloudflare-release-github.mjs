@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { ReleaseError } from './cloudflare-release-state.mjs';
 const repository = 'raduvlad92/recap', checkName = 'cloudflare-release-checkpoint';
 const requireState = (condition, code) => { if (!condition) throw new ReleaseError(code); };
+const checkpointReadDelays = [0, 250, 750, 1500, 3000, 6000, 10000];
 
 export class ReleaseGitHub {
   constructor({ token, runId, fetcher = fetch, wait = ms => new Promise(resolve => setTimeout(resolve,ms)) }) {
@@ -65,7 +66,7 @@ export class ReleaseGitHub {
     const acknowledge = async (expected, previous) => {
       // GitHub can return 404 for a newly acknowledged ID, or return the
       // previous state after PATCH. Observe fresh URLs for that same ID.
-      for (const delay of [0, 250, 750, 1500, 3000]) {
+      for (const delay of checkpointReadDelays) {
         if (delay) await this.wait(delay);
         const read = await this.request(path + '?probe_observation=' + randomUUID(), undefined, 'GET', true);
         if (!read) continue;
@@ -90,7 +91,7 @@ export class ReleaseGitHub {
 /** GitHub acknowledges the whole sanitized plan/journal before the coordinator
  * may mutate a provider. This survives runner loss; local artifacts are backup. */
 export class ReleaseJournal {
-  constructor(github, plan, id = null) { Object.assign(this, { github, plan, id }); this.creationAttempted = false; this.conflictCode = null; }
+  constructor(github, plan, id = null, report = console.warn) { Object.assign(this, { github, plan, id, report }); this.creationAttempted = false; this.conflictCode = null; }
   #requireCompatible(condition, code) {
     if (!condition) {
       // The coordinator's error save must not overwrite the conflicting remote
@@ -100,8 +101,12 @@ export class ReleaseJournal {
     }
   }
   async #acknowledge(id, expected) {
+    const { journal: current } = JSON.parse(expected.output.summary);
     let lastReadError = null;
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (const [index, delay] of checkpointReadDelays.entries()) {
+      if (delay) await this.github.wait(delay);
+      const report = (observation, httpStatus, observedPhase = null) => this.report(JSON.stringify({ event: 'release_checkpoint_read_missed',
+        checkRunId: id, attempt: index + 1, phase: current.phase, pending: current.pending, observation, httpStatus, observedPhase }));
       let read = null;
       try {
         // Mutable check URLs can expose an earlier acknowledged phase. Retry
@@ -109,8 +114,10 @@ export class ReleaseJournal {
         read = await this.github.request('check-runs/' + id + '?ack_observation=' + randomUUID(), undefined, 'GET', true);
         lastReadError = null;
       } catch (error) {
+        report('github_request_failed', error.httpStatus ?? null);
         if (error.httpStatus && error.httpStatus < 500) throw error;
         lastReadError = error;
+        continue;
       }
       if (read) {
         this.#requireCompatible(read.id === id && read.name === checkName && read.app?.slug === 'github-actions' && read.head_sha === this.plan.target && read.external_id === this.plan.digest, 'release_checkpoint_changed');
@@ -122,13 +129,14 @@ export class ReleaseJournal {
         let saved;
         try { saved = JSON.parse(read.output?.summary); } catch { this.#requireCompatible(false, 'release_checkpoint_unacknowledged'); }
         this.#requireCompatible(saved?.schema === 1 && JSON.stringify(saved.plan) === JSON.stringify(this.plan), 'release_checkpoint_changed');
-        const current = JSON.parse(expected.output.summary).journal;
         if (saved.journal?.versions) this.#requireCompatible(JSON.stringify(saved.journal.versions) === JSON.stringify(current.versions), 'release_checkpoint_changed');
         for (const [key, nonce] of Object.entries(saved.journal?.intents || {})) {
           this.#requireCompatible(Object.hasOwn(current.intents || {}, key) && current.intents[key] === nonce, 'release_checkpoint_changed');
         }
-      }
-      if (attempt < 2) await this.github.wait(200 * (attempt + 1));
+        const phase = saved.journal?.phase;
+        report('compatible_different_checkpoint_value', 200,
+          /^(prepared|paused|drained|uploaded|transferred|promoted|verified|complete)$/.test(phase) ? phase : null);
+      } else report('checkpoint_not_visible', 404);
     }
     if (lastReadError) throw lastReadError;
     throw new ReleaseError('release_checkpoint_unacknowledged');

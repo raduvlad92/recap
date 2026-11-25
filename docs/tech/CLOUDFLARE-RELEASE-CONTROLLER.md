@@ -27,6 +27,8 @@ The existing Netlify build-hook step remains available while no target is select
 
 `ReleaseJournal` uses `cloudflare-release-checkpoint`, the target SHA and plan digest. Restore rejects another commit, artifact, app or changed journal. Before each external mutation the coordinator checks the current checked head, artifact/source pin and known serving versions. A checksum detects changed data; it is not approval or authorization.
 
+The trusted deploy job writes each checkpoint with its GitHub Actions token. The controller acknowledges that write by GETting the same check run and comparing the complete saved value and status. It makes up to seven fresh read-only observations with delays totaling 21.5 seconds. A missing record, compatible earlier value or transient request failure gets bounded read retries. Identity, nonce and permission failures stop the operation. The controller issues each checkpoint write once and logs the observed phase and HTTP status when an acknowledgment read misses.
+
 Operation-specific revision UUIDs are saved before pause/advance/resume. Checked database RPCs compare owner, epoch, release and revision under the admission row lock. A retry can adopt only its own already-applied revision. Any intervening operator update, including another pause while already paused, invalidates the release. Lost replies therefore do not allow a deployment to override a later operator pause. Failures leave admission paused; no transaction waits for an external API.
 
 ## Migration and failure gates
@@ -37,7 +39,7 @@ The operator can generate an atomic migration and journal transaction locally wi
 
 After promotion, the public health check retries with bounded backoff while requiring HTTP 200, the exact target release and the expected hosting mode. Failed observations log the status, release and mode. The workflow adds a GitHub error annotation and job summary on deployment failure, with a fresh pause read and last saved checkpoint details when available. Reconcile the existing checkpoint and serving state before attempting another deployment.
 
-Verify the reviewed Apify build by supplying `APIFY_APPROVED_AUTHORITY_FILE` to `node scripts/verify-reviewed-apify-build.mjs`. Use the approved provider custody record. The helper reads Actor and build metadata from Apify and has no fallback to the runtime or preparation credentials. It does not start provider work.
+Verify the reviewed Apify build by supplying `APIFY_APPROVED_AUTHORITY_FILE` to `node scripts/verify-reviewed-apify-build.mjs`. Use the approved provider custody record. The helper reads Actor and build metadata from Apify and has no fallback to the runtime or preparation credentials. It rejects the archived preparation credential file before reading it and never starts provider work.
 
 ## Verification and boundaries
 

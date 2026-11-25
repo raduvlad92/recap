@@ -1,5 +1,6 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, realpathSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const canonical = value => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object' ?
@@ -7,9 +8,11 @@ const canonical = value => Array.isArray(value) ? value.map(canonical) : value &
 
 export async function verifyReviewedApifyBuild({ authorityFile, reviewed, fetcher = fetch, at = Date.now() }) {
   if (!authorityFile) throw new Error('Approved Apify authority file required');
+  const approvedPath = realpathSync(authorityFile);
+  if (basename(approvedPath) === 'prepared-runtime-secrets.json') throw new Error('Preparation credentials are not approved for Apify');
   // Use only the explicitly selected approved custody file. Runtime and
   // preparation environment values are never used as an authentication fallback.
-  const token = JSON.parse(readFileSync(authorityFile, 'utf8')).APIFY_API_TOKEN;
+  const token = JSON.parse(readFileSync(approvedPath, 'utf8')).APIFY_API_TOKEN;
   if (typeof token !== 'string' || !token.trim()) throw new Error('Approved Apify credential missing');
   if (!/^[a-zA-Z0-9]+$/.test(reviewed?.buildId ?? '')) throw new Error('Reviewed Apify build identity missing');
   const get = async path => {
