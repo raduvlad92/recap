@@ -1,5 +1,5 @@
 import type { Source, SourceUpdate } from '../../../src/lib/types';
-import { watchPagePlayer } from '../../../src/lib/video-format';
+import { videoFormatKind, watchPagePlayer, youtubeVideoId } from '../../../src/lib/video-format';
 import { plainText, safeLink, type Download } from './feed';
 import { CollectionError, readTextLimited } from './security';
 import { fetchNoRedirect } from './fetch-no-redirect';
@@ -10,6 +10,20 @@ export function discoveryWindowStart(day: string): string {
   const timestamp = exactPublicationTimestamp(day + 'T00:00:00Z');
   if (!timestamp) throw new CollectionError(400, 'invalid_job', 'A valid discovery date is required.');
   return new Date(Date.parse(timestamp) - 6 * 86_400_000).toISOString().slice(0, 10);
+}
+/** Applies only to discovery records already validated against the exact pinned
+ * provider channel and video. A parsed cue beyond the Shorts ceiling backs up
+ * the supplied duration. A short duration supplies no positive Shorts evidence. */
+export function confirmDiscoveryVideoFormat(update: SourceUpdate): SourceUpdate {
+  const id = youtubeVideoId(update.url);
+  const duration = /^(\d{2,}):([0-5]\d):([0-5]\d)$/.exec(update.duration ?? '');
+  if (!id || update.url !== 'https://www.youtube.com/watch?v=' + id || !duration
+    || update.videoFormat?.basis !== 'provider' || videoFormatKind(update) !== 'unknown' || update.isShort !== undefined
+    || update.contentKind !== 'transcript' || !update.content) return update;
+  const seconds = Number(duration[1]) * 3600 + Number(duration[2]) * 60 + Number(duration[3]);
+  if (!Number.isSafeInteger(seconds) || seconds <= 180
+    || !update.transcriptSegments?.some(cue => cue.startSeconds > 180 && cue.startSeconds <= seconds && cue.text.trim())) return update;
+  return { ...update, isShort: false, videoFormat: { kind: 'regular', basis: 'provider' } };
 }
 export interface YouTubeDiscovery { updates: SourceUpdate[]; gapPossible: boolean }
 /** Preserve an exact supplied instant; reject local dates and calendar rollover. */

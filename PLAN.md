@@ -1,5 +1,7 @@
 # Tracked implementation and validation plan
 
+**26 November — prepare the checked three-channel pilot.** Verify its exact migration and serving release. Obtain scope installation and first scheduled proof through the checked restoration. The existing TechLinked schedule remains live pending that release. [Pilot operating plan](docs/tech/CHECKED-YOUTUBE-PILOT.md).
+
 **Abandoned HTTP frame expiry.** Review the schema-only migration and normal release preflight change on their own branch. Apply the migration in a separately authorized release window. No change to analysis activation is included. [Controller behavior](docs/tech/CLOUDFLARE-RELEASE-CONTROLLER.md#unleased-http-requests).
 
 **25 November — recover the signed-in tech feed.** Resolve the 36 format gaps starting with the eight newer videos, prove ordinary scheduled discovery across an expanded bounded cohort, complete the checked analysis deployment and verify reviewed takeaways and keywords on the cards before accepting the daily cutoff. [Ordered plan and pass criteria](docs/tech/TECH-FEED-RECOVERY-2026-11-25.md).

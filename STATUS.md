@@ -1,5 +1,7 @@
 # Current status
 
+**26 November — production tech feed recovered for existing uploads.** The approved format-only transaction changed 36 archive records. Production readback matched all 36 and all other record hashes. The signed-in headless main feed displayed all eight uploads newer than November 13 and excluded the confirmed Shorts. The three-channel pilot is a separate checked candidate. [Pilot operating plan](docs/tech/CHECKED-YOUTUBE-PILOT.md).
+
 **25 November — abandoned HTTP frame expiry candidate.** Disposable PostgreSQL verifies 60-second claim expiry and checked release drain for unleased HTTP. The current production release and automatic analysis flags are outside this follow-up. [Controller behavior](docs/tech/CLOUDFLARE-RELEASE-CONTROLLER.md#unleased-http-requests).
 
 **25 November, 22:36 UTC — tech feed diagnosis.** The database reconstruction reproduces November 13 at the top and 36 unclassified videos. All 36 have transcripts, including all eight newer uploads. The format filter sets them aside. Recurring YouTube collection is still scoped to TechLinked, and the analysis deployment remains blocked by an unavailable GitHub Actions secret. [Production evidence and recovery plan](docs/tech/TECH-FEED-RECOVERY-2026-11-25.md).
