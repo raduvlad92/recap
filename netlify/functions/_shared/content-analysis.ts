@@ -1,3 +1,5 @@
+import { monthlyBudgetDenied } from './monthly-provider-budget';
+import { monthlyProviderBudgetExhausted } from '../../../src/lib/monthly-provider-budget';
 import { timingSafeEqual } from 'node:crypto';
 import type { SourceUpdate } from '../../../src/lib/types';
 import type { ContentProcessing } from '../../../src/lib/processing-types';
@@ -53,6 +55,7 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
   if(result.error) {
    const safeConflicts=new Set(['analysis_source_changed','analysis_generation_contract_changed','analysis_cached_input_changed','analysis_unknown_charge_hold','analysis_admission_changed','analysis_admin_changed']);
    const conflict=typeof result.error.details==='string'&&safeConflicts.has(result.error.details)?result.error.details:'analysis_state_conflict';
+   if(monthlyBudgetDenied(result.error))throw new AnalysisError(monthlyProviderBudgetExhausted);
    throw new AnalysisError(result.error.code==='PT429'?'analysis_daily_budget_exhausted':result.error.code==='PT402'?'analysis_budget_exhausted':result.error.code==='PT403'?'analysis_runtime_disabled':result.error.code==='PT409'?conflict:name==='reserve_content_analysis_call_v3'&&result.error.code==='PT400'?'analysis_configuration_required':'analysis_storage_unavailable');
   }
   return result.data as T;
@@ -321,7 +324,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
      await finish();
     } catch(error) {
      const code=error instanceof AnalysisError?error.code:'analysis_generation_failed';
-     const yielded=code==='analysis_worker_yield',blocked=['analysis_daily_budget_exhausted','analysis_budget_exhausted','analysis_input_limit','analysis_call_limit','analysis_unknown_charge_hold','analysis_correction_charge_unknown','analysis_cached_input_changed','analysis_generation_contract_changed','analysis_admission_changed','analysis_admin_changed','analysis_state_conflict','analysis_model_policy_mismatch','analysis_credentials_required','analysis_configuration_required','analysis_pricing_not_verified','analysis_provider_not_verified','analysis_gateway_not_verified','analysis_runtime_disabled'].includes(code);
+     const yielded=code==='analysis_worker_yield',blocked=[monthlyProviderBudgetExhausted,'analysis_daily_budget_exhausted','analysis_budget_exhausted','analysis_input_limit','analysis_call_limit','analysis_unknown_charge_hold','analysis_correction_charge_unknown','analysis_cached_input_changed','analysis_generation_contract_changed','analysis_admission_changed','analysis_admin_changed','analysis_state_conflict','analysis_model_policy_mismatch','analysis_credentials_required','analysis_configuration_required','analysis_pricing_not_verified','analysis_provider_not_verified','analysis_gateway_not_verified','analysis_runtime_disabled'].includes(code);
      if(yielded)stats.yielded++;else if(blocked)stats.blocked++;else stats.failed++;
      // Network errors keep their durable call hold. They must never be retried as a new model charge.
      // The rate-limited state comes only from the reservation RPC after an
@@ -333,7 +336,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       // terminal stop. Report that outcome; older fixture stores return void.
       if(yielded&&failure?.state==='failed'){stats.yielded--;stats.failed++;}
      } catch { /* Source/deletion fence can invalidate the lease; never recreate it. */ }
-     if(stopProviderTurn)return stats;
+     if(stopProviderTurn||code===monthlyProviderBudgetExhausted)return stats;
      if(yielded) break;
     }
    }

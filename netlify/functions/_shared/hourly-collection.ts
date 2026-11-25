@@ -1,3 +1,5 @@
+import { monthlyProviderBudgetExhausted } from '../../../src/lib/monthly-provider-budget';
+import { monthlyBudgetDenied, readMonthlyProviderBudget } from './monthly-provider-budget';
 import { providerOnlyCollection } from './provider-content';
 import { fetchNoRedirect } from './fetch-no-redirect';
 import { createHash, timingSafeEqual } from 'node:crypto';
@@ -37,6 +39,7 @@ export type HourlyPatch = Record<string, unknown> & { status: 'unchanged' | 'col
 export type ConditionalDownload = Download & { status?: number; etag?: string; lastModified?: string; bytes?: number };
 export type HourlyDownload = (url: string, redirects?: number, validators?: { etag?: string; lastModified?: string }) => Promise<ConditionalDownload>;
 export interface HourlyStore {
+ paidProcessingPaused?(): Promise<boolean>;
  policies(): Promise<HourlyPolicy[]>;
  schedule(): Promise<Array<{ user_id: string; source_id: string }>>;
  serviced(claim: HourlyClaim, jobId: string): Promise<void>;
@@ -92,11 +95,12 @@ export function createHourlyStore(env: Env = runtimeEnv): HourlyStore {
  async function rpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
   const result = await db.rpc(name, args);
   if (result.error) throw new CollectionError(result.error.code === 'PT402' ? 402 : result.error.code === 'PT409' ? 409 : 503,
-   result.error.code === 'PT402' ? 'collection_budget_exhausted' : result.error.code === 'PT409' ? 'hourly_state_changed' : 'hourly_store_unavailable', 'Hourly collection could not safely continue.');
+   monthlyBudgetDenied(result.error) ? monthlyProviderBudgetExhausted : result.error.code === 'PT402' ? 'collection_budget_exhausted' : result.error.code === 'PT409' ? 'hourly_state_changed' : 'hourly_store_unavailable', 'Hourly collection could not safely continue.');
   return result.data as T;
  }
  return {
   async policies() { const r = await db.from('reader_collection_policies').select('*').eq('enabled', true).order('user_id'); if (r.error) throw unavailable(); return r.data as HourlyPolicy[]; },
+  paidProcessingPaused: async () => (await readMonthlyProviderBudget(db))?.paused === true,
   schedule: () => rpc('schedule_hourly_sources', {}),
   serviced: (claim, jobId) => rpc('service_hourly_provider', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_provider_job_id: jobId }),
   async workspace(userId) { const r = await db.from('reader_workspaces').select('state').eq('user_id', userId).maybeSingle(); if (r.error) throw unavailable(); return r.data?.state as WorkspaceState || null; },
@@ -266,7 +270,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
  const verified = new Set<string>();
  // Request sharing is scoped to one bounded worker run, never an isolate lifetime.
  let extractOriginal = createPublicOriginalExtractor(deps.download);
- async function processSource(policy: HourlyPolicy, sourceId: string, workerDeadline: number): Promise<string> {
+ async function processSource(policy: HourlyPolicy, sourceId: string, workerDeadline: number, paidProcessingPaused: boolean): Promise<string> {
   const claimed = await deps.store.claim(policy.user_id, sourceId); if (!claimed) return 'skipped';
   const claim: HourlyClaim = claimed;
   let source = claim.source;
@@ -428,6 +432,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     } catch (error) { partial = true; const reason = error instanceof CollectionError ? error.code : 'provider_poll_failed'; details.captionStatus = reason; const queued = captionQueue.get(targetKey); if (queued) { queued.status = 'blocked'; queued.reason = reason; } return false; }
   }
   async function launchProviderDiscovery(channelId: string): Promise<void> {
+     if (paidProcessingPaused) throw new CollectionError(402, monthlyProviderBudgetExhausted, 'The monthly provider budget is full.');
      const day = new Date(deps.now()).toISOString().slice(0, 10);
      const config = apifyConfig(deps.env), itemKey = 'youtube-discovery:' + channelId + ':' + day;
      if (policy.provider_enabled && config && deps.env('HOURLY_COLLECTION_PROVIDER_VERIFIED') === 'true' && config.allowedUsers.includes(policy.user_id) && !await deps.store.providerClaimed(claim, itemKey)) {
@@ -486,6 +491,9 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     if (task.reason === 'retrieval_log_unavailable') throw new CollectionError(503, task.reason, 'Retrieval could not be recorded.');
     const providerItemKey = metadataOnly ? 'youtube-format:' + videoId + ':' + digest(update.content!) : itemKey;
     const config = apifyConfig(deps.env);
+    if (paidProcessingPaused) {
+     task.status = 'retry'; task.reason = monthlyProviderBudgetExhausted; details.captionStatus = task.reason; continue;
+    }
     if (!policy.provider_enabled || deps.env('HOURLY_COLLECTION_PROVIDER_VERIFIED') !== 'true' || !config || config.maxItems !== 1 || config.maxCharge > 0.005 || !config.allowedUsers.includes(policy.user_id)) {
      task.status = captions?.captionStatus === 'unavailable' ? 'unavailable' : 'blocked'; task.reason ||= 'native_unavailable_provider_disabled'; details.captionStatus = 'native_unavailable_provider_disabled'; continue;
     }
@@ -520,7 +528,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
       await deps.pause(5_000);
      }
     } catch (error) {
-     const code = error instanceof CollectionError ? error.code : 'provider_start_ambiguous'; task.status = 'blocked'; task.reason = code; details.captionStatus = code;
+     const code = error instanceof CollectionError ? error.code : 'provider_start_ambiguous'; task.status = code === monthlyProviderBudgetExhausted ? 'retry' : 'blocked'; task.reason = code; details.captionStatus = code;
      if (reservation?.claimed) {
       try { await deps.store.providerPatch(reservation.id, { state: 'ambiguous' }); } catch { /* Pre-POST claim and global hold remain durable. */ }
      } else if (jobId) {
@@ -630,8 +638,9 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    const httpStatus = error instanceof CollectionError ? error.upstreamStatus ?? patch.http_status : patch.http_status;
    // Do not advance validators/cursors on a failed import. A retry must see the
    // same representation again rather than permanently skipping it via 304.
-   patch = { status: 'failed', error_code: code, new_count: Number(patch.new_count || 0), ...(httpStatus !== undefined ? { http_status: httpStatus } : {}) };
-   await save(); return 'failed';
+   const paused = code === monthlyProviderBudgetExhausted;
+   patch = { status: paused ? 'blocked' : 'failed', error_code: code, new_count: Number(patch.new_count || 0), ...(httpStatus !== undefined ? { http_status: httpStatus } : {}) };
+   await save(); return patch.status;
   }
  }
  return async function collectHourly(): Promise<{ enabled: boolean; checked: number; failed: number; skipped: number; statuses: Record<string, number> }> {
@@ -644,14 +653,14 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
   const policies = new Map((await deps.store.policies()).filter(p => p.enabled).map(p => [p.user_id, p]));
   // Global durable order spans owners. Reading the schedule changes no service
   // timestamp; only a successful database lease claim advances that source.
-  const scheduled = await deps.store.schedule();
+  const [scheduled, paidProcessingPaused] = await Promise.all([deps.store.schedule(), deps.store.paidProcessingPaused?.() ?? false]);
   let next = 0;
   await Promise.all(Array.from({ length: Math.min(3, scheduled.length) }, async () => {
    while (next < scheduled.length && deps.now() - started < 12 * 60_000 - 120_000) {
     const entry = scheduled[next++], policy = policies.get(entry.user_id);
     if (!policy) continue;
     try {
-     const status = await processSource(policy, entry.source_id, started + 12 * 60_000);
+     const status = await processSource(policy, entry.source_id, started + 12 * 60_000, paidProcessingPaused);
      statuses[status] = (statuses[status] || 0) + 1;
      if (status === 'skipped') skipped++; else { checked++; if (status === 'failed') failed++; }
     } catch { failed++; /* Existing running check survives and expires honestly. */ }

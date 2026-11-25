@@ -1,3 +1,5 @@
+import { monthlyBudgetDenied } from './monthly-provider-budget';
+import { monthlyProviderBudgetExhausted } from '../../../src/lib/monthly-provider-budget';
 import { createHash } from 'node:crypto';
 import { isIP } from 'node:net';
 import { database, requireAdmin } from './admin-data';
@@ -48,7 +50,7 @@ export function parseKeywordLearningInput(body:unknown):KeywordLearningInput {
  return body as unknown as KeywordLearningInput;
 }
 function unwrap<T>(result:{data:T;error:{code?:string}|null}):T {
- if(result.error){const code=result.error.code;return fail(code==='PT402'?'analysis_budget_exhausted':code==='PT429'?'analysis_daily_budget_exhausted':code==='PT409'?'keyword_learning_state_conflict':code==='PT403'?'keyword_learning_not_released':'keyword_learning_storage_unavailable',code==='PT402'?402:code==='PT429'?429:code==='PT409'?409:code==='PT403'?403:502);}
+ if(result.error){const code=result.error.code;if(monthlyBudgetDenied(result.error))return fail(monthlyProviderBudgetExhausted,402);return fail(code==='PT402'?'analysis_budget_exhausted':code==='PT429'?'analysis_daily_budget_exhausted':code==='PT409'?'keyword_learning_state_conflict':code==='PT403'?'keyword_learning_not_released':'keyword_learning_storage_unavailable',code==='PT402'?402:code==='PT429'?429:code==='PT409'?409:code==='PT403'?403:502);}
  return result.data;
 }
 async function sourceFor(db:Database,input:KeywordLearningInput):Promise<void> {

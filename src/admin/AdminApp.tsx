@@ -1,3 +1,4 @@
+import type { MonthlyProviderBudget } from '../lib/monthly-provider-budget';
 import { RetrievalAttempts } from './RetrievalAttempts';
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { Activity, ArrowLeft, ArrowUpRight, Check, ChevronLeft, ChevronRight, ClipboardList, Coins, Layers, LayoutDashboard, Library, LockKeyhole, RefreshCw, Search, ShieldCheck, Sparkles, Tags, Users } from 'lucide-react';
@@ -20,6 +21,7 @@ interface Payload {
   plans?: ProviderPlan[]; jobs?: CollectionJobRecord[]; events?: AdminAudit[]; keywords?: KeywordReviewRecord[]; reviews?: ContentReviewSummary[]; review?: ContentReviewDetail; published?: boolean; total?: number; page?: number; pageSize?: number;
   health?: { apifyEnabled: boolean; feedEnabled: boolean; automaticScheduling: boolean };
   costs?: CollectionActivityReport;
+  monthlyProviderBudget?: MonthlyProviderBudget | null;
   analysis?: AnalysisSettingsData; selection?: AnalysisModelSelection;
   connection?: AnalysisConnectionStatus;
   record?: CatalogueCreator | ProviderPlan | KeywordReviewRecord | ContentReviewSummary;
@@ -176,7 +178,7 @@ function PrivateAdmin({ userId }: { userId: string }) {
       {route.section === 'reviews' && <>{reviewFeedback && <p className="ra-save-success" role="status">{reviewFeedback}</p>}<AnalysisReviews data={resource.data} status={keywordStatus(route.status)} page={route.page} onStatusChange={status => { setReviewFeedback(''); focusAfterKeywordReload.current = true; go({ ...emptyRoute, section: 'reviews', status }); }} onPageChange={page => { setReviewFeedback(''); focusAfterKeywordReload.current = true; go({ ...route, page }); }} loadDetail={loadReview} decide={decideReview} reload={reloadReviews} onPendingChange={setKeywordBusy} /></>}
       {route.section === 'keywords' && <KeywordReviews data={resource.data} status={keywordStatus(route.status)} page={route.page} onStatusChange={status => { focusAfterKeywordReload.current = true; go({ ...emptyRoute, section: 'keywords', status }); }} onPageChange={page => { focusAfterKeywordReload.current = true; go({ ...route, page }); }} request={reviewKeyword} reload={reloadKeywords} onPendingChange={setKeywordBusy} />}
       {route.section === 'jobs' && <Jobs jobs={resource.data.jobs || []} total={resource.data.total || 0} pageSize={resource.data.pageSize} route={route} go={go} />}
-      {route.section === 'costs' && resource.data.costs && <CollectionCosts data={resource.data.costs} filters={route} onChange={filters => go({ ...route, ...filters })} openReader={id => go({ ...emptyRoute, section: 'user', id })} />}
+      {route.section === 'costs' && resource.data.costs && <CollectionCosts data={resource.data.costs} budget={resource.data.monthlyProviderBudget} filters={route} onChange={filters => go({ ...route, ...filters })} openReader={id => go({ ...emptyRoute, section: 'user', id })} />}
       {route.section === 'audit' && <Audit events={resource.data.events || []} total={resource.data.total || 0} pageSize={resource.data.pageSize} route={route} go={go} />}
     </> : <PanelMessage title="No data returned"><p>Refresh this view to try again.</p></PanelMessage>}
     <footer className="ra-footer">recap administration<span>Private views are excluded from search indexing.</span></footer></main></div>

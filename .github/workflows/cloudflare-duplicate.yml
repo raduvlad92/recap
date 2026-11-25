@@ -114,6 +114,8 @@ jobs:
       - name: Check application and PostgreSQL contracts
         # Native PostgreSQL fixture hashing exceeds five seconds on shared runners.
         # Keep every assertion and use a bounded CI deadline.
+        env:
+          READER_TEST_PG_BIN: /usr/lib/postgresql/17/bin
         run: |
           npm run catalogue:check
           npx vitest run --testTimeout=30000

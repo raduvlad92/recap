@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRecapAuth } from '../lib/auth';
-import { ReaderText, useReaderLanguage } from './ReaderLanguage';
+import { useReaderLanguage } from './ReaderLanguage';
 import { formatCount } from './ui';
 import type { CollectionActivityReport } from '../lib/collection-activity-types';
 
@@ -42,7 +42,7 @@ export function CollectionStatus() {
     {result?.error ? <p role="alert">{t(result.error === 'activitySignInAgain' ? 'activitySignInAgain' : 'activityFailed')} <button type="button" onClick={() => setRetry(value => value + 1)}>{t('retryShort')}</button></p> : !report ? <p role="status">{t('activityLoading')}</p> : <>
       <p><strong>{enabled ? t('hourlyEnabled') : t('hourlyOff')}</strong>{enabled && (' · ' + t(provider ? 'boundedPull' : 'nativeOnly'))}</p>
       {enabled && <p>{t('checksHelp')}</p>}
-      {policy && <p><ReaderText message="supplierLimits" values={{ daily: <strong>{fee(policy.dailyLimitUsd)}</strong>, total: <strong>{fee(policy.lifetimeLimitUsd)}</strong> }} /></p>}
+      {policy && <p>{t('providerDailySafeguard', { daily: fee(policy.dailyLimitUsd) })}</p>}
       {policy?.commitments && <p>{t('budgetCommitted', { daily: fee(policy.commitments.dailyUsd), total: fee(policy.commitments.lifetimeUsd) })}{policy.commitments.unfinalizedJobs > 0 && ' · ' + t('unfinishedCharges', { count: policy.commitments.unfinalizedJobs })}. {t('commitmentsHelp')}</p>}
       <p>{t('activityToday', { checks: report.summary.checks, items: report.summary.retrievedItems, fee: fee(report.summary.supplierCostUsd) })}{report.summary.unknownCostCount > 0 && ' · ' + t('unreportedCharges', { count: report.summary.unknownCostCount })}. {t('hostingUnmeasured')}</p>
       {report.sources.length > 0 && <details><summary>{t('costsBySource')}</summary><div className="reader-cost-table"><table><thead><tr><th scope="col">{t('sourceName')}</th><th scope="col">{t('checks')}</th><th scope="col">{t('pulls')}</th><th scope="col">{t('supplierFees')}</th></tr></thead><tbody>{report.sources.map(source => <tr key={source.key}><th scope="row">{source.label}</th><td>{formatCount(source.checks, locale)}</td><td>{formatCount(source.pulls, locale)}</td><td>{fee(source.supplierCostUsd)}{source.unknownCostCount > 0 && t('plusUnknown')}</td></tr>)}</tbody></table></div></details>}
