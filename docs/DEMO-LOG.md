@@ -1,5 +1,7 @@
 # Demo and evidence log
 
+**25 November, 01:29 UTC — production YouTube proof.** Three live runs produced six archived transcripts and three matched settled fees of USD 0.008. The repaired hourly transport processed an immediate queue message to completion. [Video links and receipts](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
+
 **18 November, 22:08 UTC — hosted CI transport evidence.** PR36’s application, guarded PostgreSQL, Cloudflare and artifact-integrity checks passed on `359a388`. The checkpoint-storage job failed during the first read of a newly created GitHub probe. The later read confirmed the same ID, head and transport-only metadata. Focused release and handover regressions cover delayed visibility, bounded failure and wrong-record refusal. [Evidence](tech/INGESTION-RECOVERY-2026-11-18.md).
 
 **18 November — YouTube recovery evidence.** Fresh health and database reads verified paused production. Three Apify metadata reads matched the original account and reviewed Actor/build/price. The two retained run readbacks verified actual stored fees, stale rows and subtitle tracks, with zero new Actor or model launches. Disposable PostgreSQL 17.12 passed 127 guarded checks. [Evidence and candidate scope](tech/INGESTION-RECOVERY-2026-11-18.md).
