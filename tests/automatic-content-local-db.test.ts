@@ -22,9 +22,9 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
   sync();service(`update public.automatic_content_tasks set state='blocked',error_code='fixture_skip'where task<>${q(kind)};`);
   return claim();
  }
- function reserve(t:any,key='one'){
+ function reserve(t:any,key='one',originalKey?:string,correction?:{baseKey:string;errorCode:string}){
   const callKey='keyword-learning:v1:automatic-fixture-'+key;
-  return json(`select public.reserve_keyword_learning_call(${q(t.task.session_id)},${q(callKey)},1,${q(hash)},${q(model)},${j(identity)},repeat('a',64),.10,${j({request:{key:callKey,role:'extractor',system:'Fixture exact instructions',prompt:content,schema:{type:'object'},maxOutputTokens:100}})});`);
+  return json(`select public.reserve_keyword_learning_call(${q(t.task.session_id)},${q(callKey)},1,${q(hash)},${q(model)},${j(identity)},repeat('a',64),.10,${j({originalKey,request:{key:callKey,correction,role:'extractor',system:'Fixture exact instructions',prompt:content,schema:{type:'object'},maxOutputTokens:100}})});`);
  }
  function settle(t:any,r:any,result:unknown={value:{names:['AeroBox Plus']},actualUsd:.001,observedUsd:.001,providerId:'fixture-provider'},error:string|null=null){
   return json(`select public.record_keyword_learning_call(${q(t.task.session_id)},${q(r.call.call_key)},${q(r.call.id)},${q(r.call.lease_token)},${q(r.requestHash)},${result===null?'null':j(result)},${error===null?'null':q(error)});`);
@@ -133,6 +133,25 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
   expect(v.provenance).toMatchObject({origin:'automatic_content',sessionId:t.task.session_id,callKeys:[r.call.call_key],sourceRevision:t.task.source_revision});expect(v.provenance.prompts).toBeUndefined();
   expect(service(`select state from public.keyword_learning_sessions where id=${q(t.task.session_id)};`)).toBe('closed');
   expect(()=>finish(t,keyword([r.call.call_key]))).toThrow();expect(service('select count(*)from public.admin_analysis_reviews;')).toBe('1');
+ });
+ it.each(['analysis_invalid_json','analysis_output_capacity'])('keeps the original settled %s receipt and requires its exact recovery to finish',code=>{
+  const t=task(),first=reserve(t,'failure','automatic-video:v1:recap:fixture');
+  const failure={value:{rawOutput:'{'},validationError:code,actualUsd:.002,observedUsd:.002,providerId:'fixture-provider'};
+  settle(t,first,failure,code);
+  expect(()=>finish(t,recap([first.call.call_key]))).toThrow();
+  const second=reserve(t,'recovery','automatic-video:v1:recap:fixture:recovery',{baseKey:first.call.call_key,errorCode:code});
+  settle(t,second);
+  expect(()=>finish(t,recap([second.call.call_key]))).toThrow();
+  expect(finish(t,recap([first.call.call_key,second.call.call_key]))).toEqual({state:'review',reviewCount:1});
+  const saved=json(`select public.read_keyword_learning_call(${q(t.task.session_id)},${q(first.call.call_key)});`);
+  expect(saved.result).toEqual(failure);expect(saved.errorCode).toBe(code);expect(saved.call.actual_usd).toBe(.002);
+ });
+ it('fences new video proposals at 15 literal mentions while preserving the older review contract',()=>{
+  const t=task('keywords'),r=reserve(t,'capped','automatic-video:v1:keywords:fixture');settle(t,r);
+  const key=[r.call.call_key],row={label:'AeroBox Plus',kind:'product'};
+  expect(()=>finish(t,keyword(key,Array.from({length:16},()=>row)))).toThrow();
+  expect(()=>finish(t,keyword(key,[{...row,label:'Invented Unmentioned Device'}]))).toThrow();
+  expect(finish(t,keyword(key,[row]))).toEqual({state:'review',reviewCount:1});
  });
  it('puts cited recap drafts into pending review without changing existing reader annotations',()=>{
   const t=task(),before=source(),r=reserve(t);settle(t,r);expect(finish(t,recap([r.call.call_key]))).toEqual({state:'review',reviewCount:1});expect(source()).toEqual(before);

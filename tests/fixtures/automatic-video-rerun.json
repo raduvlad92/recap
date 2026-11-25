@@ -1,0 +1,23 @@
+{
+  "provenance": "November 25 archived task receipts and over-limit cohort. Stop codes, charges and source lengths were retained. Raw provider text and transcript prose were replaced for public CI.",
+  "invalidJson": {
+    "value": { "rawOutput": "{\"sourceHash\":\"redacted\",\"verdicts\":[{\"reason\":\"The quote contains \"unescaped words\".\"}]}", "finishReason": "stop" },
+    "validationError": "analysis_invalid_json",
+    "actualUsd": 0.002901535
+  },
+  "outputCapacity": {
+    "value": { "rawOutput": "{\"sourceHash\":\"redacted\",\"verdicts\":[{\"index\":0},{\"index\":1,\"reason\":\"Truncated", "finishReason": "length" },
+    "validationError": "analysis_output_capacity",
+    "actualUsd": 0.00406453
+  },
+  "chargeHold": {
+    "errorCode": "analysis_incomplete_generation",
+    "actualUsd": null,
+    "maximumUsd": 0.1
+  },
+  "longRecap": {
+    "chars": 117252,
+    "oldStopCode": "analysis_input_limit",
+    "maximumCohortChars": 232555
+  }
+}

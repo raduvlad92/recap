@@ -241,15 +241,37 @@ function combinedInventory(chunk:KeywordProductionChunk,values:ChunkInventories,
  inventoryCache.set(chunk,{signature,rows});return rows;
 }
 
-export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories,policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown,profile:KeywordProductionGenerationProfile='legacy-v1'):KeywordProductionCall {
+export function keywordProductionCheckerCall(update:SourceUpdate,chunk:KeywordProductionChunk,values:ChunkInventories,policy:KeywordProductionCheckerPolicy='standard',sectionSweepChunks?:unknown,profile:KeywordProductionGenerationProfile='legacy-v1',batch?:{start:number;size:number}):KeywordProductionCall {
  profile=validateKeywordProductionGenerationProfile(profile);checkedChunk(update,chunk,profile);
  if(!['standard','alias-boundaries-v1','strict-context-v1'].includes(policy))return analysisFailure('keyword_production_checker_policy_invalid');
- const names=combinedInventory(chunk,values,secondExtractionMethod(update,chunk,sectionSweepChunks,profile),profile).map(row=>row.name);
+ const candidates=combinedInventory(chunk,values,secondExtractionMethod(update,chunk,sectionSweepChunks,profile),profile);
+ const names=(batch?candidates.slice(batch.start,batch.start+batch.size):candidates).map(row=>row.name);
  const baseLessons=policy==='standard'?frozen.checkerLessons:[...frozen.checkerLessons,ALIAS_BOUNDARY_LESSON,PARENT_ATTRIBUTION_LESSON,UNCLEAR_SOURCE_LESSON,...(policy==='strict-context-v1'?[STRICT_CONTEXT_LESSON]:[])];
  const lessons=profile==='legacy-v1'?baseLessons:CURRENT_CHECKER_LESSONS;
  const request=keywordCheckerRequest({content:chunk.content,names,lessons,maxOutputTokens:2000,includeReasons:false}) as GenerationRequest;
  return {chunkIndex:chunk.index,step:'checker',model:KEYWORD_PRODUCTION_CHECKER_MODEL,...(profile==='legacy-v1'?{}:{generationProfile:profile}),
-  request:requestCapacity(compactChecker(names,profile)?compactCheckerRequest(request,names):request)};
+  request:requestCapacity(batch?boundedVideoKeywordCheck(request,names):compactChecker(names,profile)?compactCheckerRequest(request,names):request)};
+}
+
+function boundedVideoKeywordCheck(request:GenerationRequest,names:string[]):GenerationRequest {
+ const compact=compactCheckerRequest(request,names);
+ const schema=compact.schema as {properties:{missingNames:Record<string,unknown>}};
+ const marker='\nUNTRUSTED TRANSCRIPT AND CANDIDATES\n',at=compact.prompt.lastIndexOf(marker);
+ const instructions=compact.prompt.slice(0,at).replace(/In a separate full-source sweep, add every eligible name missing from the supplied candidates to missingNames[^.]*\./u,
+  'This is one batch of supplied candidates. Return an empty missingNames array.');
+ return {...compact,prompt:instructions+compact.prompt.slice(at),schema:{...schema,properties:{...schema.properties,missingNames:{...schema.properties.missingNames,maxItems:0}}}};
+}
+
+export function videoKeywordCandidateCount(chunk:KeywordProductionChunk,values:ChunkInventories):number {
+ return combinedInventory(chunk,values,'context_roles','context-roles-v2').length;
+}
+
+export function videoKeywordBatchVerdicts(value:unknown,count:number,offset:number) {
+ // Validate consecutive local IDs before remapping to their unchanged
+ // positions in the complete candidate list. No shard may fill another's slot.
+ if(!record(value)||!Array.isArray(value.missingNames)||value.missingNames.length!==0)return analysisFailure('checker_incomplete');
+ decodedChecker(value,Array.from({length:count},(_,index)=>String(index)),'context-roles-v2');
+ return (value.verdicts as number[][]).map(([index,kind,disposition])=>[index+offset,kind,disposition]);
 }
 
 function compactChecker(names:string[],profile:KeywordProductionGenerationProfile='legacy-v1'):boolean {

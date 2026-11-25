@@ -39,6 +39,10 @@ const profiles: Readonly<Record<AnalysisModelId, ModelProfile>> = {
     provider: 'openai', providerName: 'OpenAI', input: 2, output: 10, cachedInput: .1, cacheWrite: 2.5, reasoning: 'low',
   },
 };
+export const VIDEO_CALL_PREFIX='automatic-video:v1:';
+const VIDEO_EXTRACTOR_PROFILE:ModelProfile={
+  ...profiles['deepseek/deepseek-v4.1-flash-1017'], input:.12, cachedInput:.003,
+};
 const PROFILE_VERSION = 'openrouter-2026-10-24-v2';
 
 const defaults: Readonly<Record<string, string>> = {
@@ -57,10 +61,14 @@ const defaults: Readonly<Record<string, string>> = {
  * The founder authorized $.10 per call on 26 October; database policies and
  * scoped admissions independently enforce their current ceilings.
  */
-export function analysisRuntimeEnv(env: Env, selectedModel: string, revision: number): Env {
+export function analysisRuntimeEnv(env: Env, selectedModel: string, revision: number, originalKey?:string): Env {
   if (!(ANALYSIS_MODEL_IDS as readonly string[]).includes(selectedModel)) return analysisFailure('analysis_model_not_allowed');
   if (!Number.isSafeInteger(revision) || revision < 1) return analysisFailure('analysis_configuration_required');
-  const profile = profiles[selectedModel as AnalysisModelId];
+  // Keep the earlier price/identity for previously reserved requests. This
+  // video namespace pins the Relace tariff verified on November 25.
+  const videoExtractor=selectedModel==='deepseek/deepseek-v4.1-flash-1017'&&originalKey?.startsWith(VIDEO_CALL_PREFIX);
+  const profile=videoExtractor?VIDEO_EXTRACTOR_PROFILE:profiles[selectedModel as AnalysisModelId];
+  const version=videoExtractor?'openrouter-2026-11-25-automatic-video':PROFILE_VERSION;
   // Preserve owner-triggered credential/config recovery, without copying an unbounded epoch into the DB.
   const baseEpoch = createHash('sha256').update(env('CONTENT_ANALYSIS_CONFIG_EPOCH') ?? '').digest('hex');
   const overrides: Readonly<Record<string, string | undefined>> = {
@@ -72,14 +80,14 @@ export function analysisRuntimeEnv(env: Env, selectedModel: string, revision: nu
     // Exact candidate only; an actual response with another identity must stop for review.
     CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL: selectedModel,
     CONTENT_ANALYSIS_PRICING_VERIFIED: 'true',
-    CONTENT_ANALYSIS_PRICING_VERSION: `${PROFILE_VERSION}:${selectedModel}:${profile.provider}`,
+    CONTENT_ANALYSIS_PRICING_VERSION: `${version}:${selectedModel}:${profile.provider}`,
     CONTENT_ANALYSIS_INPUT_USD_PER_MILLION: String(profile.input),
     CONTENT_ANALYSIS_OUTPUT_USD_PER_MILLION: String(profile.output),
     CONTENT_ANALYSIS_CACHED_INPUT_USD_PER_MILLION: String(profile.cachedInput),
     CONTENT_ANALYSIS_CACHE_WRITE_APPLIES: String(profile.cacheWrite !== undefined),
     CONTENT_ANALYSIS_CACHE_WRITE_USD_PER_MILLION: profile.cacheWrite === undefined ? undefined : String(profile.cacheWrite),
     CONTENT_ANALYSIS_REASONING_EFFORT: profile.reasoning,
-    CONTENT_ANALYSIS_CONFIG_EPOCH: `${PROFILE_VERSION}:${selectedModel}:${revision}:${baseEpoch}`,
+    CONTENT_ANALYSIS_CONFIG_EPOCH: `${version}:${selectedModel}:${revision}:${baseEpoch}`,
   };
   return name => Object.hasOwn(overrides, name) ? overrides[name] : env(name) ?? (Object.hasOwn(defaults, name) ? defaults[name] : undefined);
 }
