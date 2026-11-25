@@ -1,5 +1,7 @@
 # Current status
 
+**25 November, 15:17 UTC — TechLinked schedule restored and verified.** Cloudflare serves `6a794cb` at epoch 10 in active mode. The 14:00 and 15:00 UTC TechLinked frames completed unattended. Both had partial coverage, zero new transcripts and no additional recorded provider spend. November commitment remains $9.669 of $20. A separate PM-led signed-in browser audit returned HTTP 200 for admin and Collection costs. [Release evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
+
 **25 November — scheduled YouTube collection candidate.** The branch pins the live reviewed Apify build and price and recovers expired hourly claims. Focused PostgreSQL and provider tests passed. The migration awaits approval. [Candidate and live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 
 **25 November — YouTube ingestion restored.** Three immediate Apify runs on build `0.0.340` archived six new transcripts, two each from TechLinked, ShortCircuit and GamersNexus. Final verified supplier cost was USD 0.024. The stale hourly lease and 135 unstarted ticks were retired with their original records retained. A fresh manually queued hourly job completed on the serving worker. Scheduled collection is active for TechLinked within a finite USD 0.04 envelope. [Live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
