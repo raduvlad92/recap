@@ -13,7 +13,7 @@ import { apifyConfig, startApify, startYouTubeMetadata, startYouTubeDiscovery, p
 import { createRetrievalLog, retrievalAttempt, type RetrievalLog } from './retrieval-log';
 import { normalizePublicFeed } from './public-feed';
 import { createPublicOriginalExtractor, needsPublicOriginal, ORIGINAL_REQUESTS_PER_SOURCE } from './public-content';
-import { nativeYouTubeDiscovery, DISCOVERY_ITEMS, DISCOVERY_MAX_USD, discoveryWindowStart } from './youtube-discovery';
+import { confirmDiscoveryVideoFormat, nativeYouTubeDiscovery, DISCOVERY_ITEMS, DISCOVERY_MAX_USD, discoveryWindowStart } from './youtube-discovery';
 import { settleBudget } from './budget-ledger';
 import { startJob, finishJob } from './job-ledger';
 import { downloadPublic, downloadHourlySource, downloadYouTubeCaptions, youtubeCaptionUrl, plainText, safeLink, type Download } from './feed';
@@ -38,7 +38,9 @@ export interface StoredProviderJob {
 export type HourlyPatch = Record<string, unknown> & { status: 'unchanged' | 'collected' | 'partial' | 'unsupported' | 'blocked' | 'failed' };
 export type ConditionalDownload = Download & { status?: number; etag?: string; lastModified?: string; bytes?: number };
 export type HourlyDownload = (url: string, redirects?: number, validators?: { etag?: string; lastModified?: string }) => Promise<ConditionalDownload>;
+export interface HourlyYouTubePilot { readerId: string; channelIds: string[]; proofDay: string; recurring: boolean }
 export interface HourlyStore {
+ youtubePilot?(): Promise<HourlyYouTubePilot | null>;
  paidProcessingPaused?(): Promise<boolean>;
  policies(): Promise<HourlyPolicy[]>;
  schedule(): Promise<Array<{ user_id: string; source_id: string }>>;
@@ -50,7 +52,7 @@ export interface HourlyStore {
  providerClaimed(claim: HourlyClaim, itemKey: string): Promise<boolean>;
  jobCost(jobId: string, userId: string): Promise<number | null>;
  finish(claim: HourlyClaim, patch: HourlyPatch, updates: SourceUpdate[]): Promise<{ retrievedCount: number; importAccepted: boolean }>;
- reserve(claim: HourlyClaim, itemKey: string, jobId: string, maximumUsd: number): Promise<{ claimed: boolean; id: string; reservationId?: string }>;
+ reserve(claim: HourlyClaim, itemKey: string, jobId: string, maximumUsd: number, pilotDay?: string): Promise<{ claimed: boolean; id: string; reservationId?: string }>;
  providerPatch(id: string, patch: Partial<StoredProviderJob> & { finished_at?: string }): Promise<void>;
 }
 const object = (v: unknown): Record<string, unknown> => v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {};
@@ -99,6 +101,14 @@ export function createHourlyStore(env: Env = runtimeEnv): HourlyStore {
   return result.data as T;
  }
  return {
+  async youtubePilot() {
+   const result = await rpc<HourlyYouTubePilot | null>('read_hourly_youtube_pilot', {});
+   if (result === null) return null;
+   if (!result?.readerId || !Array.isArray(result.channelIds) || result.channelIds.length !== 3
+     || new Set(result.channelIds).size !== 3 || !result.channelIds.every(validChannel)
+     || !/^\d{4}-\d{2}-\d{2}$/.test(result.proofDay) || typeof result.recurring !== 'boolean') throw unavailable();
+   return result;
+  },
   async policies() { const r = await db.from('reader_collection_policies').select('*').eq('enabled', true).order('user_id'); if (r.error) throw unavailable(); return r.data as HourlyPolicy[]; },
   paidProcessingPaused: async () => (await readMonthlyProviderBudget(db))?.paused === true,
   schedule: () => rpc('schedule_hourly_sources', {}),
@@ -117,7 +127,12 @@ export function createHourlyStore(env: Env = runtimeEnv): HourlyStore {
   async providerClaimed(claim, itemKey) { const r = await db.from('reader_collection_provider_jobs').select('id').eq('user_id', claim.state.user_id).eq('source_id', claim.source.id).eq('item_key', itemKey).maybeSingle(); if (r.error) throw unavailable(); return !!r.data; },
   async jobCost(jobId, userId) { const r = await db.from('collection_jobs').select('observed_cost_usd').eq('id', jobId).eq('user_id', userId).single(); if (r.error) throw unavailable(); return r.data.observed_cost_usd === null ? null : Number(r.data.observed_cost_usd); },
   finish: (claim, patch, updates) => rpc('finish_hourly_source', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_patch: patch, p_items: updates.map(record => ({ itemKey: hourlyItemKey(record.url), record })) }),
-  reserve: (claim, itemKey, jobId, maximumUsd) => rpc('reserve_hourly_provider', { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_item_key: itemKey, p_job_id: jobId, p_actor_id: YOUTUBE_ACTOR_ID, p_maximum_usd: maximumUsd, p_parent_reservation_id: env('HOURLY_COLLECTION_BUDGET_PARENT_ID') || null }),
+  reserve: (claim, itemKey, jobId, maximumUsd, pilotDay) => {
+   const args = { p_check_id: claim.checkId, p_lease_token: claim.leaseToken, p_item_key: itemKey, p_job_id: jobId, p_maximum_usd: maximumUsd };
+   return pilotDay
+    ? rpc('reserve_hourly_youtube_pilot', { ...args, p_utc_day: pilotDay })
+    : rpc('reserve_hourly_provider', { ...args, p_actor_id: YOUTUBE_ACTOR_ID, p_parent_reservation_id: env('HOURLY_COLLECTION_BUDGET_PARENT_ID') || null });
+  },
   async providerPatch(id, patch) { const r = await db.from('reader_collection_provider_jobs').update(patch).eq('id', id).select('id').single(); if (r.error || !r.data) throw unavailable(); },
  };
 }
@@ -270,7 +285,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
  const verified = new Set<string>();
  // Request sharing is scoped to one bounded worker run, never an isolate lifetime.
  let extractOriginal = createPublicOriginalExtractor(deps.download);
- async function processSource(policy: HourlyPolicy, sourceId: string, workerDeadline: number, paidProcessingPaused: boolean): Promise<string> {
+ async function processSource(policy: HourlyPolicy, sourceId: string, workerDeadline: number, paidProcessingPaused: boolean, pilot: HourlyYouTubePilot | null, pilotDay: string): Promise<string> {
   const claimed = await deps.store.claim(policy.user_id, sourceId); if (!claimed) return 'skipped';
   const claim: HourlyClaim = claimed;
   let source = claim.source;
@@ -402,7 +417,8 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
       if (queued) { queued.status = 'retry'; queued.reason = result.status === 'failed' ? 'provider_failed' : metadataMatch ? 'video_format_unconfirmed' : 'provider_returned_no_captions'; partial = true; details.captionStatus = queued.reason; }
       completedJobs.push({ id: job.id, patch: { state: result.status === 'completed' ? 'completed' : 'failed', actual_cost_usd: cost, content_pending: false, ...(!job.finished_at ? { finished_at: new Date(deps.now()).toISOString() } : {}) } });
       ref.observedCostUsd = cost; ref.costStatus = cost === null ? 'unknown' : 'provider_reported';
-      if (!job.discard_result && job.source_fingerprint === claim.state.fingerprint && metadataSourceMatches) for (const update of result.result?.updates || []) {
+      if (!job.discard_result && job.source_fingerprint === claim.state.fingerprint && metadataSourceMatches) for (const providerUpdate of result.result?.updates || []) {
+       const update = pilot && discoveryChannelId ? confirmDiscoveryVideoFormat(providerUpdate) : providerUpdate;
        if (discovery && goodUpdate(update, source) && youtubeVideoId(update.url)) {
         partial = true; details.gapPossible = true;
         if (Date.parse(update.publishedAt) < Date.parse(discoveryWindowStart(discovery[2]))) {
@@ -431,14 +447,23 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      return terminal;
     } catch (error) { partial = true; const reason = error instanceof CollectionError ? error.code : 'provider_poll_failed'; details.captionStatus = reason; const queued = captionQueue.get(targetKey); if (queued) { queued.status = 'blocked'; queued.reason = reason; } return false; }
   }
+  const pilotAwaitingProof = pilot && !pilot.recurring && pilot.proofDay !== pilotDay;
+  function reserveProvider(itemKey: string, jobId: string, maximumUsd: number) {
+   return pilot ? deps.store.reserve(claim, itemKey, jobId, maximumUsd, pilotDay) : deps.store.reserve(claim, itemKey, jobId, maximumUsd);
+  }
   async function launchProviderDiscovery(channelId: string): Promise<void> {
+     if (pilotAwaitingProof) { details.discoveryStatus = 'pilot_proof_review_pending'; return; }
      if (paidProcessingPaused) throw new CollectionError(402, monthlyProviderBudgetExhausted, 'The monthly provider budget is full.');
-     const day = new Date(deps.now()).toISOString().slice(0, 10);
+     const day = pilot ? pilotDay : new Date(deps.now()).toISOString().slice(0, 10);
      const config = apifyConfig(deps.env), itemKey = 'youtube-discovery:' + channelId + ':' + day;
-     if (policy.provider_enabled && config && deps.env('HOURLY_COLLECTION_PROVIDER_VERIFIED') === 'true' && config.allowedUsers.includes(policy.user_id) && !await deps.store.providerClaimed(claim, itemKey)) {
+     if (policy.provider_enabled && config && deps.env('HOURLY_COLLECTION_PROVIDER_VERIFIED') === 'true' && config.allowedUsers.includes(policy.user_id)) {
+      if (await deps.store.providerClaimed(claim, itemKey)) {
+       if (pilot) details.discoveryStatus = 'already_attempted_today';
+       return;
+      }
       await deps.preflight(policy.user_id, deps.env);
       const jobId = await deps.startJob({ ...source, provider: 'apify', actorId: YOUTUBE_ACTOR_ID }, policy.user_id, deps.env);
-      const reservation = await deps.store.reserve(claim, itemKey, jobId, DISCOVERY_MAX_USD).catch(async reserveError => { await deps.finishJob(jobId, policy.user_id, { status: 'blocked', errorCode: reserveError instanceof CollectionError ? reserveError.code : 'provider_reservation_failed' }, deps.env); throw reserveError; });
+      const reservation = await reserveProvider(itemKey, jobId, DISCOVERY_MAX_USD).catch(async reserveError => { await deps.finishJob(jobId, policy.user_id, { status: 'blocked', errorCode: reserveError instanceof CollectionError ? reserveError.code : 'provider_reservation_failed' }, deps.env); throw reserveError; });
       if (reservation.claimed && reservation.reservationId) {
        const ref: ProviderReference = { jobId, providerRunId: null, actorId: YOUTUBE_ACTOR_ID, itemKey, reservedUsd: DISCOVERY_MAX_USD, observedCostUsd: null, costStatus: 'unknown' }; references.push(ref);
        try {
@@ -446,14 +471,27 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
         ref.providerRunId = started.providerRunId;
         await deps.settleBudget(reservation.reservationId, { providerRunId: started.providerRunId, terminal: false, actualUsd: null }, deps.env);
         await deps.finishJob(jobId, policy.user_id, { status: 'running', providerRunId: started.providerRunId }, deps.env);
+        if (pilot) {
+         const stored: StoredProviderJob = { id: reservation.id, user_id: policy.user_id, source_id: source.id, item_key: itemKey,
+          check_id: claim.checkId, job_id: jobId, reservation_id: reservation.reservationId, actor_id: YOUTUBE_ACTOR_ID, maximum_usd: DISCOVERY_MAX_USD,
+          provider_run_id: started.providerRunId, job_token: null, state: 'running', actual_cost_usd: null, source_fingerprint: claim.state.fingerprint, discard_result: false };
+         for (let attempt = 0; attempt < 5 && deps.now() < sourceDeadline - 25_000; attempt++) {
+          if (await reconcileJob(stored)) break;
+          if (attempt < 4) await deps.pause(5_000);
+         }
+        }
        } catch (launchError) {
         await deps.store.providerPatch(reservation.id, { state: 'ambiguous' });
         throw launchError;
        }
-      } else await deps.finishJob(jobId, policy.user_id, { status: 'blocked', errorCode: 'provider_already_claimed' }, deps.env);
-     }
+      } else {
+       if (pilot) details.discoveryStatus = 'already_attempted_today';
+       await deps.finishJob(jobId, policy.user_id, { status: 'blocked', errorCode: 'provider_already_claimed' }, deps.env);
+      }
+     } else if (pilot) throw new CollectionError(503, 'provider_configuration_unavailable', 'The reviewed YouTube pilot configuration is unavailable.');
   }
   async function processCaptionQueue() {
+   if (pilotAwaitingProof) { details.captionStatus = 'pilot_proof_review_pending'; return; }
    const useProviderOnly = providerOnlyCollection(deps.env, 'YouTube');
    const candidates = [...captionQueue.values()].filter(task => task.status !== 'provider_pending' && !attemptedIdentities.has(hourlyItemKey(task.record.url)) && Date.parse(task.nextAttemptAt) <= deps.now());
    for (const task of candidates) {
@@ -463,7 +501,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
     const itemKey = hourlyItemKey(update.url), videoId = itemKey.slice(8);
     remainingCaptionAttempts--; attemptedIdentities.add(itemKey);
     const hasTranscript = update.contentKind === 'transcript' && !!update.content;
-    const metadataOnly = hasTranscript && deps.env('HOURLY_COLLECTION_METADATA_VERIFIED') === 'true';
+    const metadataOnly = hasTranscript && !pilot && deps.env('HOURLY_COLLECTION_METADATA_VERIFIED') === 'true';
     if (hasTranscript && videoFormatKind(update) !== 'unknown') { captionQueue.delete(itemKey); continue; }
     // Back off source-stage retries, retaining the item through RSS 304/hash
     // responses, budget stops and temporary provider/configuration failures.
@@ -502,14 +540,15 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      if (!verified.has(policy.user_id)) { await deps.preflight(policy.user_id, deps.env); verified.add(policy.user_id); }
     } catch (error) { task.status = 'blocked'; task.reason = error instanceof CollectionError ? error.code : 'provider_preflight_failed'; details.captionStatus = task.reason; continue; }
     let jobId: string | undefined, reservation: { claimed: boolean; id: string; reservationId?: string } | undefined;
+    const maximumUsd = pilot ? 0.005 : config.maxCharge;
     try {
      jobId = await deps.startJob({ ...source, url: update.url, provider: 'apify', actorId: YOUTUBE_ACTOR_ID }, policy.user_id, deps.env);
-     reservation = await deps.store.reserve(claim, providerItemKey, jobId, config.maxCharge);
+     reservation = await reserveProvider(providerItemKey, jobId, maximumUsd);
      if (!reservation.claimed || !reservation.reservationId) {
       task.status = 'blocked'; task.reason = 'provider_already_claimed';
       await deps.finishJob(jobId, policy.user_id, { status: 'blocked', errorCode: 'provider_already_claimed' }, deps.env); continue;
      }
-     const ref: ProviderReference = { jobId, providerRunId: null, actorId: YOUTUBE_ACTOR_ID, itemKey: providerItemKey, reservedUsd: config.maxCharge, observedCostUsd: null, costStatus: 'unknown' };
+     const ref: ProviderReference = { jobId, providerRunId: null, actorId: YOUTUBE_ACTOR_ID, itemKey: providerItemKey, reservedUsd: maximumUsd, observedCostUsd: null, costStatus: 'unknown' };
      references.push(ref);
      const started = await retrievalAttempt(deps.log, { checkId: claim.checkId, itemKey: providerItemKey }, metadataOnly ? 'youtube_apify_metadata_launch' : 'youtube_apify_caption_launch', 'apify', 'content', async () => { const started = await (metadataOnly ? deps.startMetadata : deps.startApify)({ ...source, url: update.url }, policy.user_id, deps.env, undefined, jobId); await deps.store.providerPatch(reservation!.id, { state: 'running', provider_run_id: started.providerRunId, job_token: started.jobToken }); return started; }, result => ({ status: 'partial', provider_run_id: result.providerRunId }));
      ref.providerRunId = started.providerRunId;
@@ -520,7 +559,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      task.status = 'provider_pending'; task.reason = 'provider_pending'; details.captionStatus = 'provider_pending';
      // Try GET-only recovery immediately within this source's bounded slice. A slow run remains durable for a later hour; no new POST.
      const stored: StoredProviderJob = { id: reservation.id, user_id: policy.user_id, source_id: source.id, item_key: providerItemKey, check_id: claim.checkId, job_id: jobId,
-      reservation_id: reservation.reservationId, actor_id: YOUTUBE_ACTOR_ID, maximum_usd: config.maxCharge, provider_run_id: started.providerRunId,
+      reservation_id: reservation.reservationId, actor_id: YOUTUBE_ACTOR_ID, maximum_usd: maximumUsd, provider_run_id: started.providerRunId,
       job_token: started.jobToken, state: 'running', actual_cost_usd: null, source_fingerprint: claim.state.fingerprint, discard_result: false };
      for (let attempt = 0; attempt < 22; attempt++) {
       if (await reconcileJob(stored)) break;
@@ -550,7 +589,10 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    let pilotChannelId: string | undefined;
    if (deps.env('SOURCE_COLLECTION_POLICY') === 'youtube-provider-only-v1') {
     if (source.platform === 'YouTube') pilotChannelId = await resolveProviderChannel();
-    if (!pilotChannelId || deps.env('YOUTUBE_PROVIDER_CHANNEL_ID') !== pilotChannelId) {
+    const allowed = pilot
+     ? policy.user_id === pilot.readerId && !!pilotChannelId && pilot.channelIds.includes(pilotChannelId)
+     : !!pilotChannelId && deps.env('YOUTUBE_PROVIDER_CHANNEL_ID') === pilotChannelId;
+    if (!allowed) {
      patch = { status: 'blocked', error_code: 'provider_channel_outside_scope', new_count: 0 };
      details.mode = 'youtube_provider_only'; await save(); return patch.status;
     }
@@ -638,7 +680,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
    const httpStatus = error instanceof CollectionError ? error.upstreamStatus ?? patch.http_status : patch.http_status;
    // Do not advance validators/cursors on a failed import. A retry must see the
    // same representation again rather than permanently skipping it via 304.
-   const paused = code === monthlyProviderBudgetExhausted;
+   const paused = code === monthlyProviderBudgetExhausted || !!pilot && code === 'collection_budget_exhausted';
    patch = { status: paused ? 'blocked' : 'failed', error_code: code, new_count: Number(patch.new_count || 0), ...(httpStatus !== undefined ? { http_status: httpStatus } : {}) };
    await save(); return patch.status;
   }
@@ -653,14 +695,18 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
   const policies = new Map((await deps.store.policies()).filter(p => p.enabled).map(p => [p.user_id, p]));
   // Global durable order spans owners. Reading the schedule changes no service
   // timestamp; only a successful database lease claim advances that source.
-  const [scheduled, paidProcessingPaused] = await Promise.all([deps.store.schedule(), deps.store.paidProcessingPaused?.() ?? false]);
+  const [scheduled, paidProcessingPaused, pilot] = await Promise.all([
+   deps.store.schedule(), deps.store.paidProcessingPaused?.() ?? false,
+   deps.env('SOURCE_COLLECTION_POLICY') === 'youtube-provider-only-v1' ? deps.store.youtubePilot?.() ?? null : null,
+  ]);
+  const pilotDay = new Date(started).toISOString().slice(0, 10);
   let next = 0;
   await Promise.all(Array.from({ length: Math.min(3, scheduled.length) }, async () => {
    while (next < scheduled.length && deps.now() - started < 12 * 60_000 - 120_000) {
     const entry = scheduled[next++], policy = policies.get(entry.user_id);
     if (!policy) continue;
     try {
-     const status = await processSource(policy, entry.source_id, started + 12 * 60_000, paidProcessingPaused);
+     const status = await processSource(policy, entry.source_id, started + 12 * 60_000, paidProcessingPaused, pilot, pilotDay);
      statuses[status] = (statuses[status] || 0) + 1;
      if (status === 'skipped') skipped++; else { checked++; if (status === 'failed') failed++; }
     } catch { failed++; /* Existing running check survives and expires honestly. */ }

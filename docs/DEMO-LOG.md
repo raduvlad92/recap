@@ -1,5 +1,7 @@
 # Demo and evidence log
 
+**26 November — production format-only repair and reader acceptance.** At 22:57:42 UTC on November 25, one guarded transaction updated 36 archived video classifications. Independent readback found 32 regular and four Shorts with identical hashes for all other record fields. At 23:02 UTC, the headless signed-in feed displayed all eight newer uploads and omitted the four Shorts. The isolated 240-second audit session was revoked. The repair and audit incurred USD 0 in provider fees.
+
 **25 November, 22:36 UTC — production tech feed readback.** A read-only database and serving-code comparison reproduced the latest visible date and 36 unclassified videos. Nine scheduled frames completed, and the exact-main analysis deployment remained failed. New supplier spend was USD 0. [Readback and recovery plan](tech/TECH-FEED-RECOVERY-2026-11-25.md).
 
 **25 November, 15:17 UTC — verified scheduled acceptance.** Both Workers served `6a794cb`, epoch 10 active, after the acknowledged release and scope-bound resume. The two genuine hourly frames completed at 14:01:07 and 15:01:05 UTC. Each returned no new transcript and partial coverage. No additional provider fees were recorded and commitment remained $9.669 of $20. The separate 14:48 UTC signed-in browser audit verified admin and Collection costs with HTTP 200. [Evidence](tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).

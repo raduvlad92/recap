@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { exactPublicationTimestamp, nativeYouTubeDiscovery, pageJson } from '../netlify/functions/_shared/youtube-discovery';
-import type { Source } from '../src/lib/types';
+import { confirmDiscoveryVideoFormat, exactPublicationTimestamp, nativeYouTubeDiscovery, pageJson } from '../netlify/functions/_shared/youtube-discovery';
+import type { Source, SourceUpdate } from '../src/lib/types';
 import { pollStoredApify, YOUTUBE_ACTOR_ID } from '../netlify/functions/_shared/apify';
 const channel = 'UCabcdefghijklmnopqrstuv', video = 'abcdefghijk';
 const source: Source = { id: 'source', name: 'Channel', platform: 'YouTube', url: 'https://www.youtube.com/channel/' + channel, status: 'ready', creatorIds: [] };
@@ -63,5 +63,25 @@ describe('bounded retained-provider discovery pages', () => {
    const out=await pollStoredApify(job,'fixture-owner',env,provider(pages));
    expect(out.result).toBeUndefined();expect(out.contentError).toMatch(/^provider_(response_invalid|channel_unconfirmed)$/);expect(out.telemetry?.cost).toBe(.012);
   }
+ });
+});
+
+
+describe('corroborated format for checked provider discovery', () => {
+ const saved: SourceUpdate = { id: 'upload', sourceId: source.id, contributorIds: [], title: 'Upload', summary: '', url: 'https://www.youtube.com/watch?v=' + video,
+  publishedAt: '2026-11-10T19:00:00Z', format: 'video', topics: [], brands: [], sponsors: [], references: [], insights: [], isSample: false,
+  contentKind: 'transcript', content: 'Cue text', duration: '00:03:20', videoFormat: { basis: 'provider', kind: 'unknown' },
+  transcriptSegments: [{ startSeconds: 181, text: 'Cue text' }] };
+
+ it('promotes an exact watch original only when its duration and timed captions both exceed 180 seconds', () => {
+  expect(confirmDiscoveryVideoFormat(saved)).toEqual({ ...saved, isShort: false, videoFormat: { basis: 'provider', kind: 'regular' } });
+ });
+ it.each<Partial<SourceUpdate>>([
+  { duration: '00:03:00' }, { transcriptSegments: [{ startSeconds: 201, text: 'Cue text' }] },
+  { transcriptSegments: [{ startSeconds: 179, text: 'Cue text' }] }, { transcriptSegments: [] },
+  { url: 'https://www.youtube.com/shorts/' + video }, { isShort: true }, { contentKind: 'metadata_only' },
+ ])('preserves missing or contradictory evidence (%#)', fields => {
+  const update = { ...saved, ...fields };
+  expect(confirmDiscoveryVideoFormat(update)).toBe(update);
  });
 });
