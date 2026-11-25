@@ -1,5 +1,7 @@
 # Tracked implementation and validation plan
 
+**25 November — recover the signed-in tech feed.** Resolve the 36 format gaps starting with the eight newer videos, prove ordinary scheduled discovery across an expanded bounded cohort, complete the checked analysis deployment and verify reviewed takeaways and keywords on the cards before accepting the daily cutoff. [Ordered plan and pass criteria](docs/tech/TECH-FEED-RECOVERY-2026-11-25.md).
+
 **25 November — release incident resolved and hourly scheduling verified.** The checked release restored the existing TechLinked scope. Two unattended frames completed under the $20 cap and the PM's separate browser audit verified signed-in admin access and Collection costs. Fresh transcript yield remains open after two partial, empty archive results. Continue content-yield validation within the existing scope before treating downstream analysis and daily cutoff as proven. [Release evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
 
 **Automatic video analysis reliability.** Verify the rebased candidate, then follow the checked migration and restoration checklist. After the PM confirms a healthy release and scoped replay, reconcile charge holds and admit exact archived jobs under a USD 5 batch ceiling. Measure whether at least 111 of 123 jobs produce valid pending drafts. [Replay plan](docs/tech/VIDEO-ANALYSIS-RELIABILITY-2026-11-25.md).
