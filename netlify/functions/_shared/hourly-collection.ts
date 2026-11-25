@@ -467,7 +467,7 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
       if (reservation.claimed && reservation.reservationId) {
        const ref: ProviderReference = { jobId, providerRunId: null, actorId: YOUTUBE_ACTOR_ID, itemKey, reservedUsd: DISCOVERY_MAX_USD, observedCostUsd: null, costStatus: 'unknown' }; references.push(ref);
        try {
-        const started = await retrievalAttempt(deps.log, { checkId: claim.checkId, itemKey }, 'youtube_apify_discovery_launch', 'apify', 'discovery', async () => { const started = await deps.startDiscovery(source, channelId, day, policy.user_id, deps.env); await deps.store.providerPatch(reservation.id, { state: 'running', provider_run_id: started.providerRunId }); return started; }, result => ({ status: 'partial', provider_run_id: result.providerRunId }));
+        const started = await retrievalAttempt(deps.log, { checkId: claim.checkId, itemKey }, 'youtube_apify_discovery_launch', 'apify', 'discovery', async () => { const started = await deps.startDiscovery(source, channelId, day, policy.user_id, deps.env, undefined, runId => deps.store.providerPatch(reservation.id, { provider_run_id: runId })); await deps.store.providerPatch(reservation.id, { state: 'running', provider_run_id: started.providerRunId }); return started; }, result => ({ status: 'partial', provider_run_id: result.providerRunId }));
         ref.providerRunId = started.providerRunId;
         await deps.settleBudget(reservation.reservationId, { providerRunId: started.providerRunId, terminal: false, actualUsd: null }, deps.env);
         await deps.finishJob(jobId, policy.user_id, { status: 'running', providerRunId: started.providerRunId }, deps.env);
@@ -550,7 +550,11 @@ export function createHourlyCollector(overrides: Partial<Dependencies> = {}) {
      }
      const ref: ProviderReference = { jobId, providerRunId: null, actorId: YOUTUBE_ACTOR_ID, itemKey: providerItemKey, reservedUsd: maximumUsd, observedCostUsd: null, costStatus: 'unknown' };
      references.push(ref);
-     const started = await retrievalAttempt(deps.log, { checkId: claim.checkId, itemKey: providerItemKey }, metadataOnly ? 'youtube_apify_metadata_launch' : 'youtube_apify_caption_launch', 'apify', 'content', async () => { const started = await (metadataOnly ? deps.startMetadata : deps.startApify)({ ...source, url: update.url }, policy.user_id, deps.env, undefined, jobId); await deps.store.providerPatch(reservation!.id, { state: 'running', provider_run_id: started.providerRunId, job_token: started.jobToken }); return started; }, result => ({ status: 'partial', provider_run_id: result.providerRunId }));
+     const started = await retrievalAttempt(deps.log, { checkId: claim.checkId, itemKey: providerItemKey }, metadataOnly ? 'youtube_apify_metadata_launch' : 'youtube_apify_caption_launch', 'apify', 'content', async () => { const acknowledge = (runId: string) => deps.store.providerPatch(reservation!.id, { provider_run_id: runId });
+      const target = { ...source, url: update.url };
+      const started = metadataOnly
+       ? await deps.startMetadata(target, policy.user_id, deps.env, undefined, jobId, acknowledge)
+       : await deps.startApify(target, policy.user_id, deps.env, undefined, jobId, undefined, acknowledge); await deps.store.providerPatch(reservation!.id, { state: 'running', provider_run_id: started.providerRunId, job_token: started.jobToken }); return started; }, result => ({ status: 'partial', provider_run_id: result.providerRunId }));
      ref.providerRunId = started.providerRunId;
      // Persist the actual ID before any further provider request. A failed DB
      // write leaves the launch claimed, so the next hour cannot duplicate it.

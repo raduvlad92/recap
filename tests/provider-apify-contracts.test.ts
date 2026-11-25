@@ -17,6 +17,14 @@ describe('bounded metadata-only Apify contract', () => {
   expect(new URL(url).searchParams.get('restartOnError')).toBe('false');
   expect(JSON.parse(String(request.body)).transcriptionAndSubtitle).toBe('NONE');
  });
+ it('retains an exact Actor run acknowledgement even when content admission rejects its build', async () => {
+  const fetcher = vi.fn(async () => Response.json({ data: { id: 'Run12345', actId: YOUTUBE_ACTOR_ID, buildId: 'UnexpectedBuild' } }));
+  const acknowledge = vi.fn(async () => {});
+  await expect(startYouTubeMetadata(source, 'contract-user', env, fetcher, undefined, acknowledge))
+    .rejects.toMatchObject({code:'provider_build_mismatch'});
+  expect(acknowledge).toHaveBeenCalledExactlyOnceWith('Run12345');
+  expect(fetcher).toHaveBeenCalledTimes(1);
+ });
  it('blocks without its separate contract gate and never starts a provider run', async () => {
   const fetcher = vi.fn();
   await expect(startYouTubeMetadata(source, 'contract-user', name => name === 'HOURLY_COLLECTION_METADATA_VERIFIED' ? undefined : env(name), fetcher)).rejects.toMatchObject({ code: 'provider_metadata_review_required' });

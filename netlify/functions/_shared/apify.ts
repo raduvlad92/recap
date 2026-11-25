@@ -140,13 +140,19 @@ export async function readApifyFeeEvidence(job: { userId: string; providerRunId:
     observed_at: observedAt, response_sha256: createHash('sha256').update(raw).digest('hex'), authenticated_owner: true };
 }
 
-export async function startApify(source: Source, userId: string, env: Env, fetcher: Fetcher = fetch, ledgerId?: string, budgetReservationId?: string): Promise<{ status: 'running'; jobToken: string; message: string; providerRunId: string }> {
+type AcknowledgeApifyRun = (runId: string) => Promise<void>;
+
+export async function startApify(source: Source, userId: string, env: Env, fetcher: Fetcher = fetch, ledgerId?: string, budgetReservationId?: string, acknowledge?: AcknowledgeApifyRun): Promise<{ status: 'running'; jobToken: string; message: string; providerRunId: string }> {
   const config = requireConfig(env, userId);
   const input = youtubeInput(source, config.maxItems);
   const params = new URLSearchParams({ build: config.build, timeout: '120', maxItems: String(config.maxItems), maxTotalChargeUsd: String(config.maxCharge), restartOnError: 'false', waitForFinish: '0' });
   const response = object(await apifyRequest('actors/' + YOUTUBE_ACTOR + '/runs?' + params, config, fetcher, { method: 'POST', body: JSON.stringify(input) }));
   const run = object(response.data);
   const runId = providerId(run.id), actorId = providerId(run.actId);
+  if (acknowledge) {
+    if (actorId !== YOUTUBE_ACTOR_ID) throw new CollectionError(502, 'provider_run_mismatch', 'The caption run did not match its reviewed Actor.');
+    await acknowledge(runId);
+  }
   const jobToken = await new SignJWT({ runId, actorId, source, maxItems: config.maxItems, ...(ledgerId ? {ledgerId} : {}), ...(budgetReservationId ? { budgetReservationId } : {}) })
     .setProtectedHeader({ alg: 'HS256', typ: 'JWT' }).setSubject(userId).setIssuer('therecap-collection').setAudience('collection-job')
     .setIssuedAt().setExpirationTime('20m').sign(new TextEncoder().encode(config.secret));
@@ -156,7 +162,7 @@ export async function startApify(source: Source, userId: string, env: Env, fetch
 /** A distinct admitted metadata stage, never a replacement caption purchase.
  * The caller persists youtube-format:<video>:<content hash> BEFORE this POST.
  * The exact reviewed Actor/build and existing .005 job cap still apply. */
-export async function startYouTubeMetadata(source: Source, userId: string, env: Env, fetcher: Fetcher = fetch, ledgerId?: string): Promise<{ status: 'running'; jobToken: string; message: string; providerRunId: string }> {
+export async function startYouTubeMetadata(source: Source, userId: string, env: Env, fetcher: Fetcher = fetch, ledgerId?: string, acknowledge?: AcknowledgeApifyRun): Promise<{ status: 'running'; jobToken: string; message: string; providerRunId: string }> {
   const config = requireConfig(env, userId);
   if (env('HOURLY_COLLECTION_METADATA_VERIFIED') !== 'true' || config.maxItems !== 1 || config.maxCharge > .005 || !youtubeVideoId(source.url)) {
     throw new CollectionError(503, 'provider_metadata_review_required', 'Metadata enrichment requires its own reviewed bounded contract.');
@@ -164,8 +170,9 @@ export async function startYouTubeMetadata(source: Source, userId: string, env: 
   const input = youtubeInput(source, 1, 'metadata');
   const params = new URLSearchParams({ build: config.build, timeout: '120', maxItems: '1', maxTotalChargeUsd: String(config.maxCharge), restartOnError: 'false', waitForFinish: '0' });
   const run = object(object(await apifyRequest('actors/' + YOUTUBE_ACTOR + '/runs?' + params, config, fetcher, { method: 'POST', body: JSON.stringify(input) })).data);
-  if (run.actId !== YOUTUBE_ACTOR_ID || run.buildId !== env('APIFY_YOUTUBE_BUILD_ID')) throw new CollectionError(502, 'provider_build_mismatch', 'The metadata run did not match its reviewed identity.');
   const runId = providerId(run.id);
+  if (acknowledge && run.actId === YOUTUBE_ACTOR_ID) await acknowledge(runId);
+  if (run.actId !== YOUTUBE_ACTOR_ID || run.buildId !== env('APIFY_YOUTUBE_BUILD_ID')) throw new CollectionError(502, 'provider_build_mismatch', 'The metadata run did not match its reviewed identity.');
   const jobToken = await new SignJWT({ runId, actorId: YOUTUBE_ACTOR_ID, source, maxItems: 1, metadataOnly: true, ...(ledgerId ? { ledgerId } : {}) })
     .setProtectedHeader({ alg: 'HS256', typ: 'JWT' }).setSubject(userId).setIssuer('therecap-collection').setAudience('collection-job')
     .setIssuedAt().setExpirationTime('20m').sign(new TextEncoder().encode(config.secret));
@@ -173,14 +180,16 @@ export async function startYouTubeMetadata(source: Source, userId: string, env: 
 }
 
 /** Channel discovery is a separate paid scope, never a caption-job identity. */
-export async function startYouTubeDiscovery(source: Source, channelId: string, day: string, userId: string, env: Env, fetcher: Fetcher = fetch): Promise<{ providerRunId: string }> {
+export async function startYouTubeDiscovery(source: Source, channelId: string, day: string, userId: string, env: Env, fetcher: Fetcher = fetch, acknowledge?: AcknowledgeApifyRun): Promise<{ providerRunId: string }> {
   const config = requireConfig(env, userId);
   if (!/^UC[A-Za-z0-9_-]{22}$/.test(channelId)) throw new CollectionError(400, 'invalid_job', 'Stable channel identity required.');
   const input = { ...youtubeInput({ ...source, url: 'https://www.youtube.com/channel/' + channelId }, DISCOVERY_ITEMS), oldestPostDate: discoveryWindowStart(day) };
   const params = new URLSearchParams({ build: config.build, timeout: '120', maxItems: String(DISCOVERY_ITEMS), maxTotalChargeUsd: String(DISCOVERY_MAX_USD), restartOnError: 'false', waitForFinish: '0' });
   const run = object(object(await apifyRequest('acts/' + YOUTUBE_ACTOR + '/runs?' + params, config, fetcher, { method: 'POST', body: JSON.stringify(input) })).data);
+  const runId = providerId(run.id);
+  if (acknowledge && run.actId === YOUTUBE_ACTOR_ID) await acknowledge(runId);
   if (run.actId !== YOUTUBE_ACTOR_ID || run.buildId !== env('APIFY_YOUTUBE_BUILD_ID')) throw new CollectionError(502, 'provider_build_mismatch', 'The discovery run did not match its reviewed build.');
-  return { providerRunId: providerId(run.id) };
+  return { providerRunId: runId };
 }
 
 export function captionsText(value: unknown): string {

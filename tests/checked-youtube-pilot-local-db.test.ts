@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 // @ts-expect-error The shared disposable PostgreSQL harness is plain ESM.
 import { ReaderReleaseDb, readerSources, quote, jsonSql } from './helpers/reader-release-db.mjs';
 
-const migration = '20261125230323_checked_youtube_collection_pilot.sql';
+const migration = '20261125232024_provider_generation_ack.sql';
 const migrations = new URL('../supabase/migrations/', import.meta.url);
 const reviewed = ['UCdBK94H6oZT2Q7l0-b0xmMg', 'UCeeFfhMcJa1kjtfZAGskOCA', 'UChIs72whgZI9w6d6FhwGGHA'];
 const unlisted = 'UCabcdefghijklmnopqrstuv';
@@ -74,6 +74,7 @@ describe('checked YouTube pilot on disposable PostgreSQL', () => {
    10,${quote(sha)},${quote(pausedAgain)},${quote(rollbackRevision)},null,null)`));
   expect(reset).toMatchObject({revision:rollbackRevision,channelIds:null,control:{paused:false}});
   expect(f.service('select public.read_hourly_youtube_pilot() is null')).toBe('t');
+  expect(f.sql('select lifetime_limit_usd from public.reader_collection_policies')).toBe('1.000000');
   expect(f.sql(`select state from public.collection_budget_reservations where id=${quote(installed.envelopeId)}`)).toBe('held');
  });
 
@@ -121,12 +122,38 @@ describe('checked YouTube pilot on disposable PostgreSQL', () => {
   expect(f.sql('select count(*) from recap_internal.hourly_youtube_pilot_daily')).toBe('0');
   expect(JSON.parse(f.service('select public.read_hourly_youtube_pilot()'))).toMatchObject({proofDay:tomorrow,recurring:false});
  });
- it('enforces the $2.50 envelope and leaves the existing reader caps in place', () => {
+ it('refuses cap drift and leaves the release and envelope unchanged', () => {
+  const f=fixture();
+  f.sql("update public.reader_collection_policies set daily_limit_usd=.09");
+  expect(()=>f.scope()).toThrow(/PT409/);
+  expect(f.sql("select count(*) from public.collection_budget_reservations where request_key='hourly.youtube-tech-pilot.v1'")).toBe('0');
+  expect(JSON.parse(f.service('select public.read_hosting_release_status()'))).toMatchObject({revision:pause,control:{paused:true}});
+ });
+ it('enforces the $2.50 envelope and applies the reviewed reader ceilings', () => {
   const f=fixture();
   const {envelopeId}=JSON.parse(f.scope());
   f.service(`select public.reserve_collection_budget('fixture.nearly_full',2.49,'job',${quote(envelopeId)},'apify',${quote(actor)});`);
   expect(()=>f.reserve(0)).toThrow(/PT402[\s\S]*Envelope budget exhausted/);
   expect(f.sql('select count(*) from recap_internal.hourly_youtube_pilot_daily')).toBe('0');
-  expect(f.sql('select daily_limit_usd::numeric||\':\'||lifetime_limit_usd::numeric from public.reader_collection_policies')).toBe('0.100000:1.000000');
+  expect(f.sql('select daily_limit_usd::numeric||\':\'||lifetime_limit_usd::numeric from public.reader_collection_policies')).toBe('0.100000:3.500000');
+ });
+
+ it('binds a returned generation ID without releasing the hold, refuses drift and is service-only', () => {
+  const f=fixture();
+  const token='00000000-0000-4000-8000-000000000031';
+  const requestHash='c'.repeat(64);
+  const identity={adapterVersion:'fixture-v1',route:'openrouter',baseURL:'https://openrouter.ai/api/v1',provider:'deepinfra/fp8',
+    model:'fixture/test',reasoningEffort:null,pricing:{version:'fixture-v1',inputUsdPerMillion:.1,outputUsdPerMillion:.4,
+      cachedInputUsdPerMillion:null,cacheWriteApplies:false,cacheWriteUsdPerMillion:null}};
+  const id=f.sql(`insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,execution_identity,request_hash)
+   values('fixture-model-reader','fixture-call',${quote(token)},'fixture/test',repeat('a',64),.10,${jsonSql(identity)},${quote(requestHash)}) returning id`);
+  const ack=(generation:string,hash=requestHash)=>`select public.record_openrouter_generation_ack(${quote(id)},${quote(token)},${quote(hash)},${quote(generation)})`;
+  expect(()=>f.sql('set role authenticated; '+ack('gen-fixture'))).toThrow(/42501/);
+  expect(()=>f.service(ack('gen-fixture','b'.repeat(64)))).toThrow(/PT409/);
+  f.service(ack('gen-fixture'));
+  f.service(ack('gen-fixture'));
+  expect(()=>f.service(ack('gen-other'))).toThrow(/PT409/);
+  expect(f.sql(`select provider_id||':'||state||':'||(actual_usd is null)::text from public.reader_content_analysis_calls where id=${quote(id)}`))
+   .toBe('gen-fixture:reserved:true');
  });
 });

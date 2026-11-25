@@ -41,6 +41,7 @@ export interface AnalysisStore {
  recordPrompt?(claim:AnalysisClaim,request:GenerationRequest,model:string,requestHash:string):Promise<boolean>;
  reserve(claim:AnalysisClaim,request:GenerationRequest,maximumUsd:number,model:string,identity:AnalysisExecutionIdentity,requestHash:string):Promise<AnalysisReservation>;
  recordRejection(call:AnalysisCall,claim:AnalysisClaim,requestHash:string,identity:AnalysisExecutionIdentity,receipt:AnalysisRejectionReceipt):Promise<{retryEligible:false;retryAt:string}>;
+ acknowledgeGeneration?(call:AnalysisCall,claim:AnalysisClaim,requestHash:string,generationId:string):Promise<void>;
  saveCall(call:AnalysisCall,claim:AnalysisClaim,result:GenerationResult):Promise<AnalysisCall|void>;
  markInvalid?(claim:AnalysisClaim,call:AnalysisCall,requestHash:string,errorCode:string):Promise<AnalysisCall|void>;
  prepare(claim:AnalysisClaim,result:AnalysisOutput):Promise<void>;
@@ -73,6 +74,9 @@ export function createAnalysisStore(env:Env=runtimeEnv):AnalysisStore {
   },
   reserve:(claim,request,maximumUsd,model,identity,requestHash)=>rpc('reserve_content_analysis_call_v3',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_key:request.key,p_maximum_usd:maximumUsd,p_model:model,p_execution_identity:identity,p_request_hash:requestHash}),
   recordRejection:(call,claim,requestHash,identity,receipt)=>rpc('record_content_analysis_known_rejection',{p_call_id:call.id,p_lease_token:claim.leaseToken,p_request_hash:requestHash,p_execution_identity:identity,p_http_status:receipt.httpStatus,p_retry_after_seconds:receipt.retryAfterSeconds,p_provider_request_id:receipt.providerRequestId,p_received_at:receipt.receivedAt,p_pre_generation:receipt.preGeneration}),
+  acknowledgeGeneration:(call,claim,requestHash,generationId)=>rpc('record_openrouter_generation_ack',{
+   p_call_id:call.id,p_lease_token:claim.leaseToken,p_request_hash:requestHash,p_generation_id:generationId,
+  }),
   saveCall:(call,claim,result)=>rpc<AnalysisCall>('record_content_analysis_call_result',{p_call_id:call.id,p_lease_token:claim.leaseToken,p_result:result,p_usage:result.usage||{},p_provider_id:result.providerId||null,p_actual_usd:result.actualUsd??null,p_observed_usd:result.observedUsd}),
   markInvalid:(claim,call,requestHash,errorCode)=>rpc<AnalysisCall>('mark_content_analysis_call_invalid',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_call_key:callKeyForInvalid(call),p_request_hash:requestHash,p_error_code:errorCode}),
   async prepare(claim,result){await rpc('prepare_content_analysis_job',{p_job_id:claim.job.id,p_lease_token:claim.leaseToken,p_result:result});},
@@ -292,7 +296,10 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
        finalizerFreshAttempted=true;
       }
       let result:GenerationResult;
-      try{result=await generate(request);}
+      try{
+       const acknowledge=store.acknowledgeGeneration;
+       result=await generate(request,acknowledge?generationId=>acknowledge(call,claim,requestHash,generationId):undefined);
+      }
       catch(error){
        // One rate-limited route is shared by every reader in this run. Stop
        // even if receipt persistence/failure scheduling loses its source lease.

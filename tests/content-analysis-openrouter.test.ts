@@ -40,6 +40,14 @@ describe('OpenRouter analysis adapter, synthetic responses only',()=>{
    usage:{inputTokens:1000,outputTokens:100,totalTokens:1100,cachedInputTokens:500,cacheWriteTokens:100,reasoningOutputTokens:40},
    routing:{route:'openrouter',model:'deepseek/deepseek-v4.1-flash-1017',provider:'DeepInfra',providerSlug:'deepinfra/fp8',isByok:false,upstreamInferenceUsd:0}});
  });
+ it('records an exact generation acknowledgement before rejecting malformed model output', async () => {
+  const sdk=injected(fixture({choices:[]}));
+  const acknowledge=vi.fn(async()=>{});
+  await expect(createOpenRouterAnalysisGenerator(env(),sdk.factoryArg)(request,acknowledge))
+   .rejects.toThrow('analysis_incomplete_generation');
+  expect(acknowledge).toHaveBeenCalledExactlyOnceWith('gen-fixture');
+  expect(sdk.create).toHaveBeenCalledTimes(1);
+ });
  it('does not infer allowed response IDs from upstream bare IDs or request suffixes',async()=>{
   await expect(createOpenRouterAnalysisGenerator(env(),injected(fixture({model:'fixture-model'})).factoryArg)(request)).rejects.toThrow('analysis_provider_not_verified');
  });
