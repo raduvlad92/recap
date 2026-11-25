@@ -23,6 +23,24 @@ alter table recap_internal.hourly_youtube_pilot_daily enable row level security;
 revoke all on recap_internal.hourly_youtube_pilot,recap_internal.hourly_youtube_pilot_daily
   from public,anon,authenticated,service_role;
 
+-- Allow the higher daily ceiling only for the exact installed pilot reader.
+-- Defaults and the previous constraint for every other reader stay in effect.
+alter table public.reader_collection_policies drop constraint reader_collection_policies_daily_limit_usd_check,
+  add constraint reader_collection_policies_daily_limit_usd_check check (daily_limit_usd>0 and daily_limit_usd<=0.20);
+create function recap_internal.guard_hourly_youtube_pilot_ceilings() returns trigger
+language plpgsql security definer set search_path='' as $$
+begin
+  if new.daily_limit_usd>0.10 and (new.daily_limit_usd<>0.20 or new.lifetime_limit_usd<>3.50
+    or not exists(select 1 from recap_internal.hourly_youtube_pilot s where s.singleton and s.reader_id=new.user_id)) then
+    raise exception 'Higher reader ceiling requires the checked YouTube pilot' using errcode='PT409';
+  end if;
+  return new;
+end;
+$$;
+revoke all on function recap_internal.guard_hourly_youtube_pilot_ceilings() from public,anon,authenticated,service_role;
+create trigger guard_hourly_youtube_pilot_ceilings before insert or update of daily_limit_usd,lifetime_limit_usd
+  on public.reader_collection_policies for each row execute function recap_internal.guard_hourly_youtube_pilot_ceilings();
+
 -- Operator activation and rollback use the normal paused, drained release fence.
 -- The same reviewed envelope can be reused after a rollback. Its holds survive.
 create function public.restore_hourly_youtube_pilot_checked(
@@ -69,8 +87,8 @@ begin
 
   if channels is null then
     if scope.singleton is null then raise exception 'YouTube pilot is not installed' using errcode='PT409'; end if;
-    update public.reader_collection_policies set lifetime_limit_usd=1
-      where user_id=scope.reader_id and daily_limit_usd=.10 and lifetime_limit_usd=3.50;
+    update public.reader_collection_policies set daily_limit_usd=.10,lifetime_limit_usd=1
+      where user_id=scope.reader_id and daily_limit_usd=.20 and lifetime_limit_usd=3.50;
     if not found then raise exception 'YouTube pilot reader ceilings changed' using errcode='PT409'; end if;
     delete from recap_internal.hourly_youtube_pilot where singleton;
   else
@@ -83,7 +101,7 @@ begin
       raise exception 'YouTube pilot reader changed' using errcode='PT409';
     end if;
     select * into reader_policy from public.reader_collection_policies where user_id=p_reader_id for update;
-    if reader_policy.daily_limit_usd is distinct from .10::numeric
+    if reader_policy.daily_limit_usd is distinct from (case when scope.singleton is null then .10 else .20 end)
       or reader_policy.lifetime_limit_usd is distinct from (case when scope.singleton is null then 1.00 else 3.50 end) then
       raise exception 'YouTube pilot reader ceilings changed' using errcode='PT409';
     end if;
@@ -106,15 +124,15 @@ begin
     if envelope.state<>'held' or (public.read_monthly_provider_budget()->>'paused')::boolean is distinct from false then
       raise exception 'YouTube pilot envelope unavailable' using errcode='PT402';
     end if;
-    if scope.singleton is null then
-      update public.reader_collection_policies set lifetime_limit_usd=3.50
-        where user_id=p_reader_id and daily_limit_usd=.10 and lifetime_limit_usd=1;
-      if not found then raise exception 'YouTube pilot reader ceilings changed' using errcode='PT409'; end if;
-    end if;
     insert into recap_internal.hourly_youtube_pilot(reader_id,epoch,release,channel_ids,envelope_id,proof_day,recurring)
       values(p_reader_id,p_epoch,p_release,channels,envelope.id,p_proof_day,p_recurring)
       on conflict(singleton) do update set epoch=excluded.epoch,release=excluded.release,
         channel_ids=excluded.channel_ids,envelope_id=excluded.envelope_id,proof_day=excluded.proof_day,recurring=excluded.recurring;
+    if scope.singleton is null then
+      update public.reader_collection_policies set daily_limit_usd=.20,lifetime_limit_usd=3.50
+        where user_id=p_reader_id and daily_limit_usd=.10 and lifetime_limit_usd=1;
+      if not found then raise exception 'YouTube pilot reader ceilings changed' using errcode='PT409'; end if;
+    end if;
   end if;
 
   return public.advance_hosting_release_checked(p_epoch,p_release,p_expected_revision,p_release,true,p_resume_revision)

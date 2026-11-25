@@ -74,7 +74,7 @@ describe('checked YouTube pilot on disposable PostgreSQL', () => {
    10,${quote(sha)},${quote(pausedAgain)},${quote(rollbackRevision)},null,null)`));
   expect(reset).toMatchObject({revision:rollbackRevision,channelIds:null,control:{paused:false}});
   expect(f.service('select public.read_hourly_youtube_pilot() is null')).toBe('t');
-  expect(f.sql('select lifetime_limit_usd from public.reader_collection_policies')).toBe('1.000000');
+  expect(f.sql("select daily_limit_usd||':'||lifetime_limit_usd from public.reader_collection_policies")).toBe('0.100000:1.000000');
   expect(f.sql(`select state from public.collection_budget_reservations where id=${quote(installed.envelopeId)}`)).toBe('held');
  });
 
@@ -91,8 +91,14 @@ describe('checked YouTube pilot on disposable PostgreSQL', () => {
   expect(f.sql(`select count(*)||':'||sum(maximum_usd) from public.collection_budget_reservations where parent_id=${quote(envelopeId)}`)).toBe('3:0.060000');
  });
 
- it('caps one pending caption fallback per channel and preserves at most $0.075 of commitments on a day', () => {
+ it('admits the $0.075 proof with $0.075 carried and caps one caption fallback per channel', () => {
   const f=fixture();
+  const old=f.claims[4];
+  const oldFee=f.service(`select (public.reserve_collection_budget('fixture.retained_hold',.075,'job',null,'apify',${quote(actor)})).id`);
+  f.sql(`insert into public.reader_collection_provider_jobs(user_id,source_id,item_key,source_fingerprint,check_id,job_id,reservation_id,actor_id,maximum_usd,state,created_at)
+   select ${quote(reader)},s.source_id,'youtube:oldhold0001',s.fingerprint,${quote(old.checkId)},${quote(old.job)},${quote(oldFee)},${quote(actor)},.075,'ambiguous',clock_timestamp()-interval '1 day'
+   from public.reader_collection_source_state s where s.user_id=${quote(reader)} and s.source_id=${quote(old.sourceId)};`);
+  expect(()=>f.sql('update public.reader_collection_policies set daily_limit_usd=.20,lifetime_limit_usd=3.50')).toThrow(/PT409/);
   const {envelopeId}=JSON.parse(f.scope());
   const captionIds=['abcdefghijk','lmnopqrstuv','01234567890','abcdefghijZ'];
   for (let i=0;i<4;i++) {
@@ -110,6 +116,7 @@ describe('checked YouTube pilot on disposable PostgreSQL', () => {
   }
   expect(f.reserve(3,f.day,'youtube:'+captionIds[3],.005).claimed).toBe(false);
   expect(f.sql(`select count(*)||':'||sum(maximum_usd) from public.collection_budget_reservations where parent_id=${quote(envelopeId)}`)).toBe('6:0.075000');
+  expect(f.sql('select sum(maximum_usd) from public.reader_collection_provider_jobs')).toBe('0.150000');
  });
  it('blocks new launches outside the initial proof date until another checked restore', () => {
   const f=fixture();
@@ -135,7 +142,7 @@ describe('checked YouTube pilot on disposable PostgreSQL', () => {
   f.service(`select public.reserve_collection_budget('fixture.nearly_full',2.49,'job',${quote(envelopeId)},'apify',${quote(actor)});`);
   expect(()=>f.reserve(0)).toThrow(/PT402[\s\S]*Envelope budget exhausted/);
   expect(f.sql('select count(*) from recap_internal.hourly_youtube_pilot_daily')).toBe('0');
-  expect(f.sql('select daily_limit_usd::numeric||\':\'||lifetime_limit_usd::numeric from public.reader_collection_policies')).toBe('0.100000:3.500000');
+  expect(f.sql('select daily_limit_usd::numeric||\':\'||lifetime_limit_usd::numeric from public.reader_collection_policies')).toBe('0.200000:3.500000');
  });
 
  it('binds a returned generation ID without releasing the hold, refuses drift and is service-only', () => {

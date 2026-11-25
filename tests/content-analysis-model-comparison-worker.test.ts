@@ -183,7 +183,8 @@ describe('comparison claim association before H3 work or prepared publication',(
  it('keeps comparison association out of prompts, canonical keys and request fingerprints',async()=>{
   const original=claim('summary',null),comparison=claim(),f=fixture([original,comparison]),generate=vi.fn<AnalysisGenerator>(async request=>valid(request));
   expect((await f.run(generate)).completed).toBe(2);
-  expect(generate.mock.calls.slice(0,2)).toEqual(generate.mock.calls.slice(2));
+  const requests=generate.mock.calls.map(([request])=>request);
+  expect(requests.slice(0,2)).toEqual(requests.slice(2));
   const reservations=f.named(reserveRpc);
   expect(reservations.slice(0,2).map(args=>[args.p_call_key,args.p_request_hash])).toEqual(reservations.slice(2).map(args=>[args.p_call_key,args.p_request_hash]));
   expect(new Set(reservations.map(args=>args.p_job_id)).size).toBe(2);expect(f.calls.size).toBe(4);

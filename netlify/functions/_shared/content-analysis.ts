@@ -298,7 +298,7 @@ export function createAnalysisWorker(dependencies:Partial<AnalysisWorkerDependen
       let result:GenerationResult;
       try{
        const acknowledge=store.acknowledgeGeneration;
-       result=await generate(request,acknowledge?generationId=>acknowledge(call,claim,requestHash,generationId):undefined);
+       result=acknowledge?await generate(request,generationId=>acknowledge(call,claim,requestHash,generationId)):await generate(request);
       }
       catch(error){
        // One rate-limited route is shared by every reader in this run. Stop
