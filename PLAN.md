@@ -1,6 +1,6 @@
 # Tracked implementation and validation plan
 
-**25 November — release incident.** Diagnose the checkpoint acknowledgment failures before issuing another continuation. Require checked release acceptance before restoring the existing TechLinked schedule, then record two genuine hourly ticks and their provider-budget and archive outcomes. [Incident evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
+**25 November — release incident resolved and hourly scheduling verified.** The checked release restored the existing TechLinked scope. Two unattended frames completed under the $20 cap and the PM's separate browser audit verified signed-in admin access and Collection costs. Fresh transcript yield remains open after two partial, empty archive results. Continue content-yield validation within the existing scope before treating downstream analysis and daily cutoff as proven. [Release evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
 
 **25 November — scheduled ingestion verification.** After owner approval, apply the hourly transport migration and release the checked build pin. Verify one ordinary scheduled tick through archived transcript readback, then take that source through analysis review and the daily cutoff. [Candidate and live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 

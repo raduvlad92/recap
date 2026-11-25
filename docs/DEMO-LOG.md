@@ -1,6 +1,6 @@
 # Demo and evidence log
 
-**25 November, 12:32 UTC — release readback, incident ongoing.** Two reviewed migrations and the $20 cap are verified on `f36e8f7`. The continuation reached the verified checkpoint phase and failed acknowledgment. Production remains paused at epoch 9. Health returns HTTP 200, admin returns HTTP 503, and no post-release hourly tick has run. [Evidence](tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
+**25 November, 15:17 UTC — verified scheduled acceptance.** Both Workers served `6a794cb`, epoch 10 active, after the acknowledged release and scope-bound resume. The two genuine hourly frames completed at 14:01:07 and 15:01:05 UTC. Each returned no new transcript and partial coverage. No additional provider fees were recorded and commitment remained $9.669 of $20. The separate 14:48 UTC signed-in browser audit verified admin and Collection costs with HTTP 200. [Evidence](tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
 
 **25 November — scheduled ingestion regression.** A disposable PostgreSQL test simulates a vanished hourly invocation, keeps its transport evidence and completes the next tick. Mocked provider tests verify the new build and normalized pricing digest with metadata reads. [Candidate and live proof](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 

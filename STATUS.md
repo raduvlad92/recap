@@ -1,6 +1,6 @@
 # Current status
 
-**25 November, 12:32 UTC — release incident ongoing.** Cloudflare serves `f36e8f7` at epoch 9 with processing paused and admin HTTP 503. Both migrations and the $20 monthly cap are live. Exact-checkpoint continuation reached `verified` and failed acknowledgment. No post-release hourly ticks have run. [Evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
+**25 November, 15:17 UTC — TechLinked schedule restored and verified.** Cloudflare serves `6a794cb` at epoch 10 in active mode. The 14:00 and 15:00 UTC TechLinked frames completed unattended. Both had partial coverage, zero new transcripts and no additional recorded provider spend. November commitment remains $9.669 of $20. A separate PM-led signed-in browser audit returned HTTP 200 for admin and Collection costs. [Release evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
 
 **25 November — scheduled YouTube collection candidate.** The branch pins the live reviewed Apify build and price and recovers expired hourly claims. Focused PostgreSQL and provider tests passed. The migration awaits approval. [Candidate and live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 
