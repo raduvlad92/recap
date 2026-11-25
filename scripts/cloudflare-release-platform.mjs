@@ -64,7 +64,7 @@ export class ReleasePlatform {
     const data = await response.json(); requireState(response.ok && data.success !== false, 'cloudflare_release_request_failed'); return data.result;
   }
   async rpc(name, args = {}) {
-    requireState(this.databaseKey && ['read_hosting_release_status', 'quiesce_hosting_release_checked', 'advance_hosting_release_checked', 'commit_hosting_handover_checked'].includes(name), 'release_database_unconfigured');
+    requireState(this.databaseKey && ['read_hosting_release_status', 'read_hosting_release_drain_status', 'quiesce_hosting_release_checked', 'advance_hosting_release_checked', 'commit_hosting_handover_checked'].includes(name), 'release_database_unconfigured');
     const response = await this.fetcher('https://zlfdqzabsfndifxiqguo.supabase.co/rest/v1/rpc/' + name, { method: 'POST', headers: { apikey: this.databaseKey, authorization: 'Bearer ' + this.databaseKey, 'content-type': 'application/json' }, body: JSON.stringify(args), redirect: 'error', signal: AbortSignal.timeout(15000) });
     if (!response.ok) { await response.body?.cancel(); throw new ReleaseError('release_database_request_failed'); }
     return response.json();
@@ -93,8 +93,9 @@ export class ReleasePlatform {
     const live = { ...current, image: app?.configuration?.image?.split('@sha256:')[1], maximumInstances: app?.max_instances, publicRoute: !(route.enabled === false && route.previews_enabled === false && !domains.some(item => item.service === 'therecap-source')) };
     return { verified: canUseVerifiedSource(artifact, proof, live), pin: { version: live.version, image: live.image, workerHash: proof.workerHash, containerHash: proof.containerHash, enabled: live.enabled }, domain: domains.find(item => item.hostname === 'recap.filternode.dev' && item.service === 'therecap-web')?.hostname };
   }
-  async snapshot(artifact) {
-    const [web, jobs, source, status] = await Promise.all([this.current('web'), this.current('jobs'), this.source(artifact), this.status()]);
+  async snapshot(artifact, { ordinaryRelease = false } = {}) {
+    const statusRead = ordinaryRelease ? this.rpc('read_hosting_release_drain_status') : this.status();
+    const [web, jobs, source, status] = await Promise.all([this.current('web'), this.current('jobs'), this.source(artifact), statusRead]);
     return { ...status, workers: { web, jobs }, sourceVerified: source.verified, sourcePin: source.pin, domain: source.domain };
   }
   async assertSource(plan, artifact) {

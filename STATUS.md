@@ -1,5 +1,7 @@
 # Current status
 
+**25 November — abandoned HTTP frame expiry candidate.** Disposable PostgreSQL verifies 60-second claim expiry and checked release drain for unleased HTTP. The current production release and automatic analysis flags are outside this follow-up. [Controller behavior](docs/tech/CLOUDFLARE-RELEASE-CONTROLLER.md#unleased-http-requests).
+
 **25 November, 22:36 UTC — tech feed diagnosis.** The database reconstruction reproduces November 13 at the top and 36 unclassified videos. All 36 have transcripts, including all eight newer uploads. The format filter sets them aside. Recurring YouTube collection is still scoped to TechLinked, and the analysis deployment remains blocked by an unavailable GitHub Actions secret. [Production evidence and recovery plan](docs/tech/TECH-FEED-RECOVERY-2026-11-25.md).
 
 **25 November, 15:17 UTC — TechLinked schedule restored and verified.** Cloudflare serves `6a794cb` at epoch 10 in active mode. The 14:00 and 15:00 UTC TechLinked frames completed unattended. Both had partial coverage, zero new transcripts and no additional recorded provider spend. November commitment remains $9.669 of $20. A separate PM-led signed-in browser audit returned HTTP 200 for admin and Collection costs. [Release evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
