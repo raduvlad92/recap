@@ -1,3 +1,4 @@
+import { monthlyProviderBudgetExhausted } from '../../../src/lib/monthly-provider-budget';
 import type { AutomaticContentClaim, AutomaticContentResult, AutomaticContentStore, RecapCorrectionAdmission } from './automatic-content';
 import { generateAutomaticContent, createAutomaticLearningCaller, readRecapCorrectionAdmission } from './automatic-content';
 import { database } from './admin-data';
@@ -53,7 +54,7 @@ export function createSocialContentWorker(overrides:Partial<WorkerDependencies>=
    }catch(error){
     const code=errorCode(error);
     await store.finish(claim,null,code);
-    if(code==='automatic_worker_yield'){stats.yielded++;break;}
+    if(code==='automatic_worker_yield'||code===monthlyProviderBudgetExhausted){stats.yielded++;break;}
     stats.blocked++;
     if(['analysis_budget_exhausted','analysis_daily_budget_exhausted','analysis_unknown_charge_hold','keyword_learning_not_released'].includes(code))break;
    }

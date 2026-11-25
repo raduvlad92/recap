@@ -1,3 +1,4 @@
+import { monthlyProviderBudgetExhausted } from '../../../src/lib/monthly-provider-budget';
 import { createHash } from 'node:crypto';
 import type { SourceUpdate } from '../../../src/lib/types';
 import { contentHash } from '../../../src/lib/content-processing';
@@ -379,7 +380,7 @@ export function createAutomaticContentWorker(overrides:Partial<WorkerDependencie
    }catch(error){
     const code=errorCode(error);
     await store.finish(claim,null,code);
-    if(code==='automatic_worker_yield'){stats.yielded++;break;}
+    if(code==='automatic_worker_yield'||code===monthlyProviderBudgetExhausted){stats.yielded++;break;}
     stats.blocked++;
     if(['analysis_budget_exhausted','analysis_daily_budget_exhausted','analysis_unknown_charge_hold','keyword_learning_not_released'].includes(code))break;
    }

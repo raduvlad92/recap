@@ -4,7 +4,7 @@ import type { Source } from '../src/lib/types';
 import { apifyConfig, normalizeYouTubeItems, pollApify, startApify, youtubeInput } from '../netlify/functions/_shared/apify';
 import { collectionHealth, createCollectHandler, validateSource } from '../netlify/functions/_shared/collect-handler';
 import { collectFeed, normalizeFeed, plainText } from '../netlify/functions/_shared/feed';
-import { authenticateProviderSubject, isPublicAddress, publicHttpsUrl, validateClerkClaims, type Env } from '../netlify/functions/_shared/security';
+import { CollectionError, authenticateProviderSubject, isPublicAddress, publicHttpsUrl, validateClerkClaims, type Env } from '../netlify/functions/_shared/security';
 
 const feedSource: Source = { id: 'my-feed', name: 'A public blog', url: 'https://example.com', platform: 'Blog', creatorIds: [], status: 'pending' };
 const youtubeSource: Source = { ...feedSource, id: 'my-channel', platform: 'YouTube', url: 'https://www.youtube.com/@example' };
@@ -166,6 +166,20 @@ describe('durable collection observability',()=>{
     const handler=createCollectHandler({authenticate:async()=> 'user_operator',startJob:async()=>{throw new Error('ledger down');},collectFeed:source,startApify:provider});
     const response=await handler(new Request('https://recap.example/api/collect',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({source:youtubeSource})}));
     expect(response.status).toBeGreaterThanOrEqual(400);expect(source).not.toHaveBeenCalled();expect(provider).not.toHaveBeenCalled();
+  });
+  it('refuses a manual paid pull at the shared cap before any Apify request', async () => {
+    const reserveBudget = vi.fn().mockRejectedValue(new CollectionError(402, 'provider_monthly_budget_exhausted', 'Paid work is paused.'));
+    const startApify = vi.fn(), claimBudgetLaunch = vi.fn(), finishJob = vi.fn();
+    const handler = createCollectHandler({ env: providerEnv, authenticate: async () => 'user_operator',
+      startJob: async () => '00000000-0000-4000-8000-000000000001', reserveBudget, startApify, claimBudgetLaunch, finishJob });
+    const response = await handler(new Request('https://recap.example/api/collect', { method: 'POST',
+      headers: { 'content-type': 'application/json' }, body: JSON.stringify({ source: youtubeSource }) }));
+    expect(response.status).toBe(402);
+    expect(await response.json()).toMatchObject({ error: { code: 'provider_monthly_budget_exhausted' } });
+    expect(reserveBudget).toHaveBeenCalledWith(expect.objectContaining({ provider: 'apify', maximumUsd: .05 }), expect.any(Function));
+    expect(startApify).not.toHaveBeenCalled();
+    expect(claimBudgetLaunch).not.toHaveBeenCalled();
+    expect(finishJob).toHaveBeenCalledWith(expect.any(String), 'user_operator', expect.objectContaining({ status: 'blocked' }), expect.any(Function));
   });
   it('uses only the verified poll capability to select an owned ledger row and withholds private telemetry',async()=>{
     const finishJob=vi.fn(async()=>{});

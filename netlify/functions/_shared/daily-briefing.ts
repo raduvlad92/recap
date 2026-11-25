@@ -1,3 +1,4 @@
+import { readMonthlyProviderBudget } from './monthly-provider-budget';
 import { fetchNoRedirect } from './fetch-no-redirect';
 import { createHash } from 'node:crypto';
 import type { DailyBriefing, DailyBriefingCitation, DailyBriefingPage, DailyBriefingSnapshot, DailyBriefingSourceCoverage, DailyBriefingStatus, DailyBriefingTopic, DailyBriefingUpdate } from '../../../src/lib/daily-briefing-types';
@@ -230,9 +231,10 @@ export function createDailyBriefingsHandler(overrides: Partial<{ env: Env; db: (
       if (cursor && !dayPattern.test(cursor)) return fail('invalid_briefing_cursor', 400);
       let query = db.from('daily_briefings').select('*').eq('reader_id', readerId).is('deleted_at', null).order('local_date', { ascending: false }).limit(limit + 1);
       if (cursor) query = query.lt('local_date', cursor);
-      const [result, workspace, control, schedule] = await Promise.all([
+      const [result, workspace, control, schedule, budget] = await Promise.all([
         query, db.from('reader_workspaces').select('state').eq('user_id', readerId).maybeSingle(),
         db.from('daily_briefing_control').select('enabled').eq('id', true).maybeSingle(), db.from('daily_briefing_schedules').select('enabled,last_local_date').eq('reader_id', readerId).maybeSingle(),
+        readMonthlyProviderBudget(db),
       ]);
       if (result.error || workspace.error || control.error || schedule.error) return fail('briefing_read_failed', 502);
       const rows = result.data || [], briefings = rows.slice(0, limit).map(clientBriefing);
@@ -248,7 +250,7 @@ export function createDailyBriefingsHandler(overrides: Partial<{ env: Env; db: (
           }
         } catch { /* Invalid settings are a visible unscheduled state. */ }
       }
-      return json({ briefings, nextCursor: rows.length > limit ? briefings[briefings.length - 1].localDate : null, nextDueAt: enabled ? nextDueAt : null, enabled } satisfies DailyBriefingPage);
+      return json({ briefings, nextCursor: rows.length > limit ? briefings[briefings.length - 1].localDate : null, nextDueAt: enabled ? nextDueAt : null, enabled, ...(budget ? { paidProcessingPaused: budget.paused } : {}) } satisfies DailyBriefingPage);
     } catch (error) { return errorResponse(error); }
   };
 }

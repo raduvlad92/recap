@@ -1,3 +1,5 @@
+import { monthlyProviderBudgetExhausted } from '../../../src/lib/monthly-provider-budget';
+import { monthlyBudgetDenied } from './monthly-provider-budget';
 import { database } from './admin-data';
 import { CollectionError, runtimeEnv, type Env } from './security';
 
@@ -32,6 +34,7 @@ async function rpc<T>(name: string, args: Record<string, unknown>, env: Env): Pr
     const result = await database(env).rpc(name, args);
     if (result.error) {
       const code = result.error.code;
+      if (monthlyBudgetDenied(result.error)) throw new CollectionError(402, monthlyProviderBudgetExhausted, 'The monthly budget is full. New paid collection and analysis are paused.');
       if (code === 'PT402') throw new CollectionError(402, 'collection_budget_exhausted', 'The shared collection spending limit has been reached.');
       if (code === 'PT409') throw new CollectionError(409, 'budget_state_changed', 'The spending reservation changed or still has unresolved charges.');
       if (code === 'PT400') throw invalid();

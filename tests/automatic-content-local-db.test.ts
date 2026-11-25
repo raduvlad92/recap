@@ -41,7 +41,7 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
   const dir=new URL('../supabase/migrations/',import.meta.url);for(const name of readdirSync(dir).filter(x=>x.endsWith('.sql')).sort())sql(readFileSync(new URL(name,dir),'utf8'));
  },40000);
  beforeEach(()=>{
-  sql(`truncate public.hosting_work cascade;truncate public.keyword_learning_sessions cascade;truncate public.reader_workspaces cascade;truncate public.reader_source_updates cascade;truncate public.reader_content_analysis_calls cascade;truncate public.reader_content_analysis_policies;truncate public.content_analysis_provider_cooldowns;
+  sql(`truncate public.hosting_work cascade;truncate public.collection_budget_reservations cascade;truncate recap_internal.monthly_provider_budget_alerts;truncate public.keyword_learning_sessions cascade;truncate public.reader_workspaces cascade;truncate public.reader_source_updates cascade;truncate public.reader_content_analysis_calls cascade;truncate public.reader_content_analysis_policies;truncate public.content_analysis_provider_cooldowns;
    insert into public.content_analysis_budget(id,enabled,daily_limit_usd,lifetime_limit_usd)values(true,true,5,10)on conflict(id)do update set enabled=true,daily_limit_usd=5,lifetime_limit_usd=10;
    insert into public.reader_workspaces(user_id,state)values(${q(owner)},${j(workspace)});
    insert into public.reader_content_analysis_policies(user_id,enabled,daily_limit_usd,lifetime_limit_usd,per_call_limit_usd,model)values(${q(owner)},true,5,10,.1,${q(model)});
@@ -49,9 +49,9 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
    insert into public.automatic_content_policies(user_id,enabled,starts_at)values(${q(owner)},true,clock_timestamp()-interval'1 hour');`);
  });
  afterAll(()=>{if(started)execFileSync('pg_ctl',['-D',join(root,'data'),'stop','-m','immediate'],{stdio:'ignore'});if(root)rmSync(root,{recursive:true,force:true});});
- it('claims a new draft above the old trial total only within both renewed USD12 controls',()=>{
+ it('admits a recurring draft past the retired lifetime limit without dropping its prior unknown charge',()=>{
   sql(`insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,actual_usd,state,created_at)
-   select ${q(owner)},'historical-'||i,gen_random_uuid(),${q(model)},repeat('c',64),.1,.1,'settled',clock_timestamp()-interval'2 days'from generate_series(1,99)i;
+   select ${q(owner)},'historical-'||i,gen_random_uuid(),${q(model)},repeat('c',64),.1,.1,'settled',clock_timestamp()-interval'2 days'from generate_series(1,129)i;
    insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,state,created_at)
    values(${q(owner)},'historical-unknown',gen_random_uuid(),${q(model)},repeat('c',64),.05,'unknown',clock_timestamp()-interval'2 days');
    update public.content_analysis_budget set lifetime_limit_usd=12;update public.reader_content_analysis_policies set lifetime_limit_usd=12;`);
@@ -160,15 +160,33 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
   const t=task();sql('update public.content_analysis_budget set enabled=false;');expect(()=>reserve(t)).toThrow();expect(service('select count(*)from public.reader_content_analysis_calls;')).toBe('0');
   sql(`update public.content_analysis_budget set enabled=true;update public.reader_workspaces set state=jsonb_set(state,'{followedSourceIds}','[]');`);expect(()=>reserve(t)).toThrow();
  });
- it('blocks lifetime and UTC-day exhaustion before sessions or empty reviews and preserves old unknown holds',()=>{
+ it('blocks shared monthly and UTC-day exhaustion before sessions or empty reviews and preserves old unknown holds',()=>{
   sync();sql(`insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,state,created_at)values(${q(owner)},'old-unknown',gen_random_uuid(),${q(model)},repeat('c',64),.095,'unknown',clock_timestamp()-interval'2 days');update public.reader_content_analysis_policies set lifetime_limit_usd=.1;`);
-  expect(claim().reason).toBe('analysis_budget_exhausted');expect(service('select count(*)from public.admin_analysis_reviews;')).toBe('0');expect(service('select count(*)from public.keyword_learning_sessions;')).toBe('0');
-  sql('update public.reader_content_analysis_policies set lifetime_limit_usd=10,daily_limit_usd=.1;');expect(claim().reason).toBe('analysis_daily_budget_exhausted');expect(service("select actual_usd is null and state='unknown'from public.reader_content_analysis_calls where call_key='old-unknown';")).toBe('t');
+  const hold=service("select (public.reserve_collection_budget('monthly-fixture-hold',19.9,'job',null,'apify','FixtureActor')).id;");
+  expect(claim()).toMatchObject({claimed:false,reason:'provider_monthly_budget_exhausted'});
+  expect(service('select count(*)from public.admin_analysis_reviews;')).toBe('0');expect(service('select count(*)from public.keyword_learning_sessions;')).toBe('0');
+  service(`select public.release_collection_budget('${hold}'); update public.reader_content_analysis_policies set lifetime_limit_usd=10,daily_limit_usd=.1;`);expect(claim().reason).toBe('analysis_daily_budget_exhausted');expect(service("select actual_usd is null and state='unknown'from public.reader_content_analysis_calls where call_key='old-unknown';")).toBe('t');
  });
  it('yields with settled cache and resumes the same finite session without recreating paid calls',()=>{
   const t=task(),r=reserve(t);settle(t,r);expect(finish(t,null,'automatic_worker_yield')).toMatchObject({state:'queued',sessionId:t.task.session_id});
   const resumed=claim();expect(resumed.task.session_id).toBe(t.task.session_id);expect(resumed.leaseToken).not.toBe(t.leaseToken);expect(reserve(resumed).claimed).toBe(false);
   expect(service('select count(*)from public.reader_content_analysis_calls;')).toBe('1');expect(service('select count(*)from public.keyword_learning_sessions;')).toBe('1');
+ });
+ it('parks at the cross-provider limit and renews the same finite session with its saved result',()=>{
+  const t=task(),r=reserve(t);settle(t,r);
+  const sourceHold=service("select (public.reserve_collection_budget('monthly-midtask',19.999,'job',null,'apify','FixtureActor')).id;");
+  expect(()=>reserve(t,'second')).toThrow(/provider_monthly_budget_exhausted/);
+  expect(finish(t,null,'provider_monthly_budget_exhausted')).toMatchObject({state:'queued',sessionId:t.task.session_id});
+  expect(claim()).toMatchObject({claimed:false,reason:'provider_monthly_budget_exhausted'});
+  sql(`update public.keyword_learning_sessions set created_at=clock_timestamp()-interval'2 days',expires_at=clock_timestamp()-interval'1 day'
+    where id=${q(t.task.session_id)};
+    select public.release_collection_budget('${sourceHold}');`);
+  const resumed=claim();
+  expect(resumed.task.session_id).toBe(t.task.session_id);
+  expect(resumed.leaseToken).not.toBe(t.leaseToken);
+  expect(reserve(resumed)).toMatchObject({claimed:false,completed:true});
+  expect(service('select count(*)from public.reader_content_analysis_calls;')).toBe('1');
+  expect(service('select count(*)from public.admin_analysis_reviews;')).toBe('0');
  });
  it('resumes expired task leases using the same released session and blocks expired sessions permanently',()=>{
   const t=task();service(`update public.automatic_content_tasks set lease_until=clock_timestamp()-interval'1 minute'where id=${q(t.task.id)};`);const resumed=claim();expect(resumed.task.session_id).toBe(t.task.session_id);

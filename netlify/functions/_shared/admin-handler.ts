@@ -1,3 +1,4 @@
+import { readMonthlyProviderBudget } from './monthly-provider-budget';
 import { resolveReaderOwners } from './reader-identity';
 import { readRetrievalAttempts } from './retrieval-log';
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
@@ -68,10 +69,10 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
    if(section==='review') return success(await readContentReview(db,url,adminId));
    if(section==='costs') {
     const filters=activityQuery(url,true);
-    const report=await readCollectionActivity(db,filters,deps.env);
+    const [report, monthlyProviderBudget]=await Promise.all([readCollectionActivity(db,filters,deps.env),readMonthlyProviderBudget(db)]);
     const audit=await db.from('admin_audit_events').insert({admin_id:adminId,action:'collection_costs.viewed',target_id:filters.user||null,details:{from:filters.from,to:filters.to,page:filters.page}});
     if(audit.error)throw new CollectionError(503,'audit_unavailable','Collection activity was withheld because access logging is unavailable.');
-    return success({costs:report});
+    return success({costs:report,monthlyProviderBudget});
    }
    if(section==='overview') {
     const [metrics,count] = await Promise.all([db.rpc('admin_operating_metrics'),deps.clerk('/users/count',deps.env)]);

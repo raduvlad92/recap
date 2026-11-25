@@ -32,6 +32,10 @@ All protected financial/source data, original 967 model rows, all 977 pre-proof 
 
 **11 November, 22:47 UTC — execution record under the existing focused-repair authorization.** PR #32's exact checked head `4066f43` is merged; native migration 60 is applied once after real quiet, rollback rehearsal and preservation. The original-account key is uploaded through separately journaled unserved versions; normal release `43114648378` / main `9bb3f14` is pending native acceptance. No new account, cap, subscription, publication, lifecycle activation or spending authorization is inferred. Processing remains paused with consumer/crons absent. Original four-point owner decision remains **Keep held for review**. New manual semantic proof, provider qualification and ordinary useful daily acceptance remain separate gates; the 72-hour clock has not started. [Evidence](tech/evidence/provider-quality-native-checkpoint-2026-11-11.json).
 
+## 25 November 2026 — S2 monthly provider budget
+
+The founder approved up to USD 20 per month across Apify and OpenRouter. Show month-to-date spend in admin, alert at 50%, 80% and 100%, and pause paid collection and analysis at the limit. Keep historic charges, unresolved holds and saved recaps available. [Accounting and release order](tech/MONTHLY-PROVIDER-BUDGET.md).
+
 ## 11 November 2026 — implement the provider/quality plan with parallel agents; retain the original account
 
 Founder explicitly says “ok, do ALL OF THIS, prioritize the use of multiple agents where it makes sense”. This authorizes implementation of the focused acquisition/quality repair, superseding research-only/no-agents wording while preserving every financial, publication, lifecycle and operational boundary. Three bounded agents implement provider enrichment, independent verification and service/runtime infrastructure; integration and native acceptance remain separate gates. Backups stay deferred.

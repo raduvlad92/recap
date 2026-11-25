@@ -78,4 +78,5 @@ export interface DailyBriefingPage {
   nextCursor: string | null;
   nextDueAt: string | null;
   enabled: boolean;
+  paidProcessingPaused?: boolean;
 }

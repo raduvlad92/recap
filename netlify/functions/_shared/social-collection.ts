@@ -1,3 +1,5 @@
+import { monthlyBudgetDenied } from './monthly-provider-budget';
+import { monthlyProviderBudgetExhausted } from '../../../src/lib/monthly-provider-budget';
 import { retryKnownApifyRead } from './provider-read-retry';
 import { hostRuntime } from './host-runtime';
 import { INSTAGRAM_REELS_ACTOR, normalizeInstagramProviderContent, providerOnlyCollection, type InstagramProviderContent } from './provider-content';
@@ -195,7 +197,7 @@ export async function verifySocialConfiguration(config: SocialConfiguration, env
 }
 export function createSocialStore(env: Env = runtimeEnv): SocialStore {
  const db = database(env);
- async function rpc<T>(name: string, args: Record<string, unknown> = {}): Promise<T> { const result = await db.rpc(name, args); if (result.error) throw new CollectionError(result.error.code === 'PT402' ? 402 : result.error.code === 'PT409' ? 409 : 503, result.error.code === 'PT402' ? 'social_budget_exhausted' : 'social_state_changed', 'Social collection could not safely continue.'); return result.data as T; }
+ async function rpc<T>(name: string, args: Record<string, unknown> = {}): Promise<T> { const result = await db.rpc(name, args); if (result.error) throw new CollectionError(result.error.code === 'PT402' ? 402 : result.error.code === 'PT409' ? 409 : 503, monthlyBudgetDenied(result.error) ? monthlyProviderBudgetExhausted : result.error.code === 'PT402' ? 'social_budget_exhausted' : 'social_state_changed', 'Social collection could not safely continue.'); return result.data as T; }
  return { sync: () => rpc('sync_social_collection_sources'), claim: allowLaunch => rpc('claim_social_collection_job', { p_allow_launch: allowLaunch }), launch: job => rpc('mark_social_collection_launch', { p_id: job.id, p_lease: job.lease_token }), run: (job, runId, datasetId) => rpc('record_social_collection_run', { p_id: job.id, p_lease: job.lease_token, p_run_id: runId, p_dataset_id: datasetId }), finish: (job, items, coverage, actualUsd, terminal, error) => rpc('finish_social_collection_job', { p_id: job.id, p_lease: job.lease_token, p_items: items, p_coverage: coverage, p_actual_usd: actualUsd, p_terminal: terminal, p_error: error || null }) };
 }
 export function createSocialCollector(options: { env?: Env; store?: SocialStore; fetcher?: typeof fetch; now?: () => number; log?: RetrievalLog; native?: typeof nativeSocialRows } = {}) {
@@ -252,7 +254,12 @@ export function createSocialCollector(options: { env?: Env; store?: SocialStore;
     if (blocked && !normalized.items.length) await store.finish(job, normalized.items, coverage, fee, true, 'provider_blocked');
     else await store.finish(job, normalized.items, coverage, fee, true); checked++;
    } catch (error) {
-    await store.finish(job, [], { status: launched ? 'blocked' : 'failed', complete: false, returned: 0, accepted: 0, rejected: {}, reason: launched ? 'reconciliation_required' : 'configuration_failed' }, null, false, error instanceof CollectionError ? error.code : 'social_collection_failed'); failed++;
+    const code = error instanceof CollectionError ? error.code : 'social_collection_failed';
+    if (!launched && code === monthlyProviderBudgetExhausted) {
+     await store.finish(job, [], { status: 'blocked', complete: false, returned: 0, accepted: 0, rejected: {}, reason: code }, null, false, code);
+     break;
+    }
+    await store.finish(job, [], { status: launched ? 'blocked' : 'failed', complete: false, returned: 0, accepted: 0, rejected: {}, reason: launched ? 'reconciliation_required' : 'configuration_failed' }, null, false, code); failed++;
    }
   } };
   await Promise.all(Array.from({ length: 6 }, consume));

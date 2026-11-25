@@ -138,14 +138,14 @@ export async function readApifyFeeEvidence(job: { userId: string; providerRunId:
     observed_at: observedAt, response_sha256: createHash('sha256').update(raw).digest('hex'), authenticated_owner: true };
 }
 
-export async function startApify(source: Source, userId: string, env: Env, fetcher: Fetcher = fetch, ledgerId?: string): Promise<{ status: 'running'; jobToken: string; message: string; providerRunId: string }> {
+export async function startApify(source: Source, userId: string, env: Env, fetcher: Fetcher = fetch, ledgerId?: string, budgetReservationId?: string): Promise<{ status: 'running'; jobToken: string; message: string; providerRunId: string }> {
   const config = requireConfig(env, userId);
   const input = youtubeInput(source, config.maxItems);
   const params = new URLSearchParams({ build: config.build, timeout: '120', maxItems: String(config.maxItems), maxTotalChargeUsd: String(config.maxCharge), restartOnError: 'false', waitForFinish: '0' });
   const response = object(await apifyRequest('actors/' + YOUTUBE_ACTOR + '/runs?' + params, config, fetcher, { method: 'POST', body: JSON.stringify(input) }));
   const run = object(response.data);
   const runId = providerId(run.id), actorId = providerId(run.actId);
-  const jobToken = await new SignJWT({ runId, actorId, source, maxItems: config.maxItems, ...(ledgerId ? {ledgerId} : {}) })
+  const jobToken = await new SignJWT({ runId, actorId, source, maxItems: config.maxItems, ...(ledgerId ? {ledgerId} : {}), ...(budgetReservationId ? { budgetReservationId } : {}) })
     .setProtectedHeader({ alg: 'HS256', typ: 'JWT' }).setSubject(userId).setIssuer('therecap-collection').setAudience('collection-job')
     .setIssuedAt().setExpirationTime('20m').sign(new TextEncoder().encode(config.secret));
   return { status: 'running', jobToken, providerRunId: runId, message: 'Collecting up to ' + config.maxItems + ' recent videos and available captions. Missing captions will remain metadata only.' };
@@ -228,7 +228,7 @@ export function normalizeYouTubeItems(items: unknown, source: Source, maxItems =
   return [...updates.values()];
 }
 
-export interface ApifyPollResult { status: string; message?: string; result?: CollectionResult; contentError?: string; telemetry?: {ledgerId: string; providerRunId: string; cost: number | null} }
+export interface ApifyPollResult { status: string; message?: string; result?: CollectionResult; contentError?: string; telemetry?: {ledgerId: string; providerRunId: string; cost: number | null; budgetReservationId?: string} }
 export interface StoredApifyJob { providerRunId: string; actorId: string; source: Source; maxItems: number; ledgerId: string; feeOnly?: boolean; discoveryChannelId?: string; metadataOnly?: boolean }
 
 /** Server-only recovery: input must come from the private provider-job table, never a browser body. */
@@ -263,7 +263,10 @@ export async function pollApify(jobToken: string, userId: string, env: Env, fetc
   if (source.platform !== 'YouTube' || typeof source.id !== 'string' || !source.url) throw new CollectionError(403, 'invalid_job', 'This job has invalid source details.');
   const maxItems = Math.min(config.maxItems, Number(claims.maxItems) || 1, 5);
   const ledgerId = typeof claims.ledgerId === 'string' && /^[0-9a-f-]{36}$/i.test(claims.ledgerId) ? claims.ledgerId : undefined;
-  return readApifyRun(runId, actorId, source, maxItems, ledgerId, config, fetcher);
+  const budgetReservationId = typeof claims.budgetReservationId === 'string' && /^[0-9a-f-]{36}$/i.test(claims.budgetReservationId) ? claims.budgetReservationId : undefined;
+  const result = await readApifyRun(runId, actorId, source, maxItems, ledgerId, config, fetcher, undefined, !!budgetReservationId);
+  if (budgetReservationId && result.telemetry) result.telemetry.budgetReservationId = budgetReservationId;
+  return result;
 }
 
 async function readApifyRun(runId: string, actorId: string, source: Source, maxItems: number, ledgerId: string | undefined, config: ApifyConfig, fetcher: Fetcher, expectedBuildId?: string, preserveTerminalTelemetry = false, feeOnly = false, discoveryChannelId?: string, metadataOnly = false): Promise<ApifyPollResult> {

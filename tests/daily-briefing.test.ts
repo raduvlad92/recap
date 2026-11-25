@@ -140,6 +140,22 @@ describe('daily worker and private route', () => {
     const response = await createDailyBriefingsHandler({ env, db, verify: async () => 'reader', now: () => Date.parse('2026-10-31T02:00:00Z') })(new Request('https://recap.example/api/daily-briefings'));
     expect(response.status).toBe(200); expect((await response.json()).nextDueAt).toBe(expected);
   });
+  it('keeps the reader history available at the limit and shares only the pause state', async () => {
+    const summary = { monthStart: '2026-11-01', resetsAt: '2026-12-01T00:00:00Z', apifyUsd: 3, openrouterUsd: 15,
+      spentUsd: 18, committedUsd: 20, unresolvedUsd: 2, limitUsd: 20, paused: true, alerts: [50, 80, 100] };
+    const db = () => ({ rpc: vi.fn().mockResolvedValue({ error: null, data: summary }), from(table: string) {
+      const result = { error: null, data: table === 'daily_briefings' ? [] : { enabled: false } };
+      const query: any = { then: (resolve: any) => Promise.resolve(result).then(resolve), maybeSingle: async () => result };
+      for (const method of ['select', 'eq', 'is', 'order', 'limit']) query[method] = () => query;
+      return query;
+    } }) as any;
+    const response = await createDailyBriefingsHandler({ env, db, verify: async () => 'reader' })(new Request('https://recap.example/api/daily-briefings'));
+    expect(response.status).toBe(200);
+    const page = await response.json();
+    expect(page).toMatchObject({ briefings: [], paidProcessingPaused: true });
+    expect(page).not.toHaveProperty('spentUsd');
+    expect(page).not.toHaveProperty('monthlyProviderBudget');
+  });
   it('rejects malformed mutations without making a database call', async () => {
     const rpc = vi.fn(), db = () => ({ rpc }) as any;
     const handler = createDailyBriefingsHandler({ env, db, verify: async () => 'reader' });
