@@ -1,0 +1,149 @@
+{
+  "actorId": "h7sDV53CddomktSi5",
+  "actor": "streamers/youtube-scraper",
+  "buildId": "GNskilOocLTUuCmFu",
+  "buildNumber": "0.0.340",
+  "checkedAt": "2026-11-25T09:42:20.948Z",
+  "metadataUrl": "https://api.apify.com/v2/acts/streamers~youtube-scraper",
+  "buildUrl": "https://api.apify.com/v2/actor-builds/GNskilOocLTUuCmFu",
+  "pricingUrl": "https://apify.com/streamers/youtube-scraper/pricing",
+  "pricingSha256": "ae7b41fdd3643c6710e4b3dc2b7b1d41bb9f72cf7943f5863631e8052dea6452",
+  "pricing": {
+    "minimalMaxTotalChargeUsd": null,
+    "pricingModel": "PAY_PER_EVENT",
+    "isPriceChangeNotificationSuppressed": true,
+    "pricingPerEvent": {
+      "actorChargeEvents": {
+        "result": {
+          "eventTitle": "Video",
+          "eventDescription": "Each video written to the dataset.",
+          "isOneTimeEvent": false,
+          "eventTieredPricingUsd": {
+            "FREE": {
+              "tieredEventPriceUsd": 0.004
+            },
+            "BRONZE": {
+              "tieredEventPriceUsd": 0.003
+            },
+            "SILVER": {
+              "tieredEventPriceUsd": 0.0026
+            },
+            "GOLD": {
+              "tieredEventPriceUsd": 0.0024
+            },
+            "PLATINUM": {
+              "tieredEventPriceUsd": 0.0015
+            },
+            "DIAMOND": {
+              "tieredEventPriceUsd": 0.001
+            }
+          },
+          "isPrimaryEvent": true
+        },
+        "date-filter": {
+          "eventTitle": "Add-on: Date range for channels",
+          "eventDescription": "Extra cost when date filtering is used on channels.",
+          "isOneTimeEvent": false,
+          "eventTieredPricingUsd": {
+            "FREE": {
+              "tieredEventPriceUsd": 0.0013
+            },
+            "BRONZE": {
+              "tieredEventPriceUsd": 0.001
+            },
+            "SILVER": {
+              "tieredEventPriceUsd": 0.0008
+            },
+            "GOLD": {
+              "tieredEventPriceUsd": 0.0006
+            },
+            "PLATINUM": {
+              "tieredEventPriceUsd": 0.0003
+            },
+            "DIAMOND": {
+              "tieredEventPriceUsd": 0.00017
+            }
+          }
+        },
+        "ai-video-description": {
+          "eventTitle": "Add-on: AI description",
+          "eventDescription": "Extra cost for timestamped AI description of a video per minute.",
+          "isOneTimeEvent": false,
+          "eventTieredPricingUsd": {
+            "FREE": {
+              "tieredEventPriceUsd": 0.015
+            },
+            "BRONZE": {
+              "tieredEventPriceUsd": 0.01
+            },
+            "SILVER": {
+              "tieredEventPriceUsd": 0.0085
+            },
+            "GOLD": {
+              "tieredEventPriceUsd": 0.007
+            },
+            "PLATINUM": {
+              "tieredEventPriceUsd": 0.0043
+            },
+            "DIAMOND": {
+              "tieredEventPriceUsd": 0.0021
+            }
+          }
+        },
+        "ai-video-summary": {
+          "eventTitle": "Add-on: AI summary",
+          "eventDescription": "Extra cost for AI summary of a video per minute.",
+          "isOneTimeEvent": false,
+          "eventTieredPricingUsd": {
+            "FREE": {
+              "tieredEventPriceUsd": 0.015
+            },
+            "BRONZE": {
+              "tieredEventPriceUsd": 0.01
+            },
+            "SILVER": {
+              "tieredEventPriceUsd": 0.0085
+            },
+            "GOLD": {
+              "tieredEventPriceUsd": 0.007
+            },
+            "PLATINUM": {
+              "tieredEventPriceUsd": 0.0043
+            },
+            "DIAMOND": {
+              "tieredEventPriceUsd": 0.0021
+            }
+          }
+        },
+        "transcribeMinute": {
+          "eventTitle": "Add-on: Transcript minute",
+          "eventDescription": "Extra cost charged per started minute per video",
+          "isOneTimeEvent": false,
+          "eventTieredPricingUsd": {
+            "FREE": {
+              "tieredEventPriceUsd": 0.048
+            },
+            "BRONZE": {
+              "tieredEventPriceUsd": 0.041
+            },
+            "SILVER": {
+              "tieredEventPriceUsd": 0.033
+            },
+            "GOLD": {
+              "tieredEventPriceUsd": 0.027
+            },
+            "PLATINUM": {
+              "tieredEventPriceUsd": 0.02
+            },
+            "DIAMOND": {
+              "tieredEventPriceUsd": 0.015
+            }
+          }
+        }
+      }
+    },
+    "createdAt": "2026-09-02T13:52:04.236Z",
+    "startedAt": "2026-09-02T13:52:04.236Z",
+    "apifyMarginPercentage": 0.2
+  }
+}
