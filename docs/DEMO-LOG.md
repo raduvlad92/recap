@@ -1,5 +1,7 @@
 # Demo and evidence log
 
+**25 November — scheduled ingestion regression.** A disposable PostgreSQL test simulates a vanished hourly invocation, keeps its transport evidence and completes the next tick. Mocked provider tests verify the new build and normalized pricing digest with metadata reads. [Candidate and live proof](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
+
 **25 November, 01:29 UTC — production YouTube proof.** Three live runs produced six archived transcripts and three matched settled fees of USD 0.008. The repaired hourly transport processed an immediate queue message to completion. [Video links and receipts](tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 
 **18 November, 22:08 UTC — hosted CI transport evidence.** PR36’s application, guarded PostgreSQL, Cloudflare and artifact-integrity checks passed on `359a388`. The checkpoint-storage job failed during the first read of a newly created GitHub probe. The later read confirmed the same ID, head and transport-only metadata. Focused release and handover regressions cover delayed visibility, bounded failure and wrong-record refusal. [Evidence](tech/INGESTION-RECOVERY-2026-11-18.md).

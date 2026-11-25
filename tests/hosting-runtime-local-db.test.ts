@@ -17,6 +17,7 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     sql(readFileSync(new URL('../supabase/migrations/20261104095658_hosting_release_quiesce.sql', import.meta.url), 'utf8'));
     sql(readFileSync(new URL('../supabase/migrations/20261104110432_hosting_release_revision.sql', import.meta.url), 'utf8'));
     sql(readFileSync(new URL('../supabase/migrations/20261104115513_hosting_handover_checked.sql', import.meta.url), 'utf8'));
+    sql(readFileSync(new URL('../supabase/migrations/20261125030000_hourly_hosting_lease_recovery.sql', import.meta.url), 'utf8'));
   });
   afterAll(() => { if (started) execFileSync('pg_ctl', ['-D', join(root, 'data'), 'stop', '-m', 'immediate'], { stdio: 'ignore' }); if (root) rmSync(root, { recursive: true, force: true }); });
   it('starts paused, keeps all tables private, and denies public execution', () => {
@@ -56,6 +57,59 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     expect(sql('select to_jsonb(protected_fixture) from protected_fixture;')).toBe(before);
   });
   const isolated = (query: string, isolation = '') => sql(`begin ${isolation}; truncate hosting_work; update hosting_runtime_control set owner='cloudflare',epoch=10,release='${release}',paused=false,old_host_fenced=true; ${query}; rollback;`);
+  it('keeps hourly lease recovery service-only', () => {
+    for (const role of ['anon', 'authenticated', 'service_role']) {
+      for (const signature of ['begin_hosting_work(text,text,bigint,text)', 'finish_hosting_work(text,uuid,bigint,boolean)']) {
+        expect(sql(`select has_function_privilege('${role}','${signature}','execute')`)).toBe(role === 'service_role' ? 't' : 'f');
+      }
+    }
+  });
+  it('retires a vanished hourly tick and claims the next tick without replay', () => {
+    isolated(`do $$ declare original public.hosting_work; retired public.hosting_work; claim jsonb; begin
+      perform admit_hosting_work('cron:hourly-collection:10:1','hourly-collection',10,'${release}');
+      perform admit_hosting_work('cron:hourly-collection:10:2','hourly-collection',10,'${release}');
+      perform begin_hosting_work('cron:hourly-collection:10:1','hourly-collection',10,'${release}');
+      if begin_hosting_work('cron:hourly-collection:10:2','hourly-collection',10,'${release}') is distinct from '{"busy":true}'::jsonb
+        then raise exception 'Overlapping live hourly claim'; end if;
+      update hosting_work set lease_until=clock_timestamp()-interval '1 second'
+        where key='cron:hourly-collection:10:1' returning * into original;
+      claim:=begin_hosting_work('cron:hourly-collection:10:2','hourly-collection',10,'${release}');
+      if claim->>'token' is null or claim->>'token'=original.lease_token::text then raise exception 'No fresh claim'; end if;
+      select * into strict retired from hosting_work where key=original.key;
+      if retired.state<>'uncertain'
+        or to_jsonb(retired)-'state'-'updated_at' is distinct from to_jsonb(original)-'state'-'updated_at'
+        then raise exception 'Expired hourly evidence was lost'; end if;
+      if begin_hosting_work(original.key,original.kind,10,'${release}') is not null then raise exception 'Expired tick replayed'; end if;
+      begin
+        perform finish_hosting_work(original.key,original.lease_token,10,true);
+        raise exception 'Stale hourly worker finished';
+      exception when raise_exception then
+        if sqlerrm<>'Hosting lease changed' then raise; end if;
+      end;
+      perform finish_hosting_work('cron:hourly-collection:10:2',(claim->>'token')::uuid,10,true);
+      if (select state from hosting_work where key='cron:hourly-collection:10:2')<>'completed' then raise exception 'New tick did not finish'; end if;
+    end $$`);
+  });
+  it.each(['redelivery', 'late completion'])('records an expired hourly claim as uncertain on %s', action => {
+    const resolve = action === 'redelivery'
+      ? `perform begin_hosting_work('hourly','hourly-collection',10,'${release}');`
+      : `perform finish_hosting_work('hourly', (first_claim->>'token')::uuid,10,true);`;
+    const result = isolated(`do $$ declare first_claim jsonb; begin
+      perform admit_hosting_work('hourly','hourly-collection',10,'${release}');
+      first_claim:=begin_hosting_work('hourly','hourly-collection',10,'${release}');
+      update hosting_work set lease_until=clock_timestamp()-interval '1 second' where key='hourly';
+      ${resolve}
+    end $$; select state from hosting_work where key='hourly'`);
+    expect(result).toBe('uncertain');
+  });
+  it('keeps an expired claim of another kind under its existing recovery policy', () => {
+    const result = isolated(`select admit_hosting_work('social-a','social-collection',10,'${release}');
+      select admit_hosting_work('social-b','social-collection',10,'${release}');
+      select begin_hosting_work('social-a','social-collection',10,'${release}');
+      update hosting_work set lease_until=clock_timestamp()-interval '1 second' where key='social-a';
+      select begin_hosting_work('social-b','social-collection',10,'${release}')`);
+    expect(JSON.parse(result.split('\n').at(-1)!)).toEqual({ busy: true });
+  });
   it('keeps deployment status and pause RPCs service-only', () => {
     for (const role of ['anon', 'authenticated']) for (const signature of ['read_hosting_release_status()', 'quiesce_hosting_release(bigint,text)']) {
       expect(sql(`select has_function_privilege('${role}','${signature}','execute');`)).toBe('f');

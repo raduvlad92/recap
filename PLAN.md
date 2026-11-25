@@ -1,5 +1,7 @@
 # Tracked implementation and validation plan
 
+**25 November — scheduled ingestion verification.** After owner approval, apply the hourly transport migration and release the checked build pin. Verify one ordinary scheduled tick through archived transcript readback, then take that source through analysis review and the daily cutoff. [Candidate and live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
+
 **25 November — three-channel YouTube proof complete.** Six new transcript records were verified against three provider runs and the production archive. The live worker uses the checked replacement build. The automatic schedule remains scoped to TechLinked. Remaining YouTube work includes durable recovery for canceled hourly jobs, format classification and broader recurring coverage. [Live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 
 **18 November — recover YouTube first, plan the remaining platforms.** Verify the recovery head in CI, then use a distinct normal release while production stays paused. Require native readback before admitting a single selected YouTube channel under the existing caps. Prove fresh persisted captions and format through normal scheduled collection, then expand within measured budget. The remaining sequence is Substack, X, Instagram and LinkedIn. [Execution and acceptance plan](docs/tech/INGESTION-RECOVERY-2026-11-18.md).

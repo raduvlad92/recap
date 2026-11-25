@@ -1,5 +1,7 @@
 # Current status
 
+**25 November — scheduled YouTube collection candidate.** The branch pins the live reviewed Apify build and price and recovers expired hourly claims. Focused PostgreSQL and provider tests passed. The migration awaits approval. [Candidate and live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
+
 **25 November — YouTube ingestion restored.** Three immediate Apify runs on build `0.0.340` archived six new transcripts, two each from TechLinked, ShortCircuit and GamersNexus. Final verified supplier cost was USD 0.024. The stale hourly lease and 135 unstarted ticks were retired with their original records retained. A fresh manually queued hourly job completed on the serving worker. Scheduled collection is active for TechLinked within a finite USD 0.04 envelope. [Live proof](docs/tech/YOUTUBE-LIVE-PROOF-2026-11-25.md).
 
 **18 November, 22:08 UTC — hosted verification and artifact integrity passed for PR36 `359a388`; checkpoint-storage failed.** GitHub acknowledged probe creation and returned 404 on the immediate GET. A later GET found the same `github-actions` probe in progress. Both isolated probes now confirm the same ID through bounded fresh GETs after each single-attempt write. A new exact-head run is required before merge. [Evidence](docs/tech/INGESTION-RECOVERY-2026-11-18.md).
