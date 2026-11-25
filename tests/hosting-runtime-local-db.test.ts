@@ -12,12 +12,13 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     execFileSync('initdb', ['-D', join(root, 'data'), '-A', 'trust', '-U', 'postgres', '--no-locale', '-E', 'UTF8'], { stdio: 'ignore' });
     execFileSync('pg_ctl', ['-D', join(root, 'data'), '-l', join(root, 'log'), '-o', `-k ${join(root, 'socket')} -h '' -p 55621`, 'start'], { stdio: 'ignore' }); started = true;
     args = ['-X', '-qAt', '-v', 'ON_ERROR_STOP=1', '-h', join(root, 'socket'), '-p', '55621', '-U', 'postgres', '-d', 'postgres'];
-    sql('create role anon; create role authenticated; create role service_role;');
+    sql('create role anon; create role authenticated; create role service_role; create schema recap_internal;');
     sql(readFileSync(new URL('../supabase/migrations/20261104090000_hosting_runtime_handover.sql', import.meta.url), 'utf8'));
     sql(readFileSync(new URL('../supabase/migrations/20261104095658_hosting_release_quiesce.sql', import.meta.url), 'utf8'));
     sql(readFileSync(new URL('../supabase/migrations/20261104110432_hosting_release_revision.sql', import.meta.url), 'utf8'));
     sql(readFileSync(new URL('../supabase/migrations/20261104115513_hosting_handover_checked.sql', import.meta.url), 'utf8'));
     sql(readFileSync(new URL('../supabase/migrations/20261125030000_hourly_hosting_lease_recovery.sql', import.meta.url), 'utf8'));
+    sql(readFileSync(new URL('../supabase/migrations/20261125181000_expire_unleased_http_hosting_work.sql', import.meta.url), 'utf8'));
   });
   afterAll(() => { if (started) execFileSync('pg_ctl', ['-D', join(root, 'data'), 'stop', '-m', 'immediate'], { stdio: 'ignore' }); if (root) rmSync(root, { recursive: true, force: true }); });
   it('starts paused, keeps all tables private, and denies public execution', () => {
@@ -111,7 +112,7 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     expect(JSON.parse(result.split('\n').at(-1)!)).toEqual({ busy: true });
   });
   it('keeps deployment status and pause RPCs service-only', () => {
-    for (const role of ['anon', 'authenticated']) for (const signature of ['read_hosting_release_status()', 'quiesce_hosting_release(bigint,text)']) {
+    for (const role of ['anon', 'authenticated']) for (const signature of ['read_hosting_release_status()', 'read_hosting_release_drain_status()', 'quiesce_hosting_release(bigint,text)']) {
       expect(sql(`select has_function_privilege('${role}','${signature}','execute');`)).toBe('f');
     }
     expect(JSON.parse(isolated('set local role service_role; select read_hosting_release_status()'))).toMatchObject({ work: { queued: 0, running: 0, uncertain: 0 } });
@@ -153,6 +154,51 @@ describe.skipIf(!available)('hosting handover in disposable PostgreSQL', () => {
     expect(await finished).toBe(0); expect(await paused).not.toBe(0);
     expect(error).toContain('Drain queued hosting work before pausing');
     expect(JSON.parse(sql('select read_hosting_runtime();')).paused).toBe(false);
+  });
+  it('expires an abandoned HTTP frame without replay and permits a fresh browser poll', () => {
+    const result = isolated(`do $$ declare original public.hosting_work; retired public.hosting_work; begin
+      perform admit_hosting_work('http:abandoned','http',10,'${release}');
+      update hosting_work set created_at=clock_timestamp()-interval '61 seconds',
+        updated_at=clock_timestamp()-interval '61 seconds' where key='http:abandoned' returning * into original;
+      if begin_hosting_work('http:abandoned','http',10,'${release}') is not null
+        then raise exception 'Expired browser request ran'; end if;
+      select * into strict retired from hosting_work where key=original.key;
+      if retired.state<>'uncertain' or to_jsonb(retired)-'state'-'updated_at' is distinct from to_jsonb(original)-'state'-'updated_at'
+        then raise exception 'Original HTTP evidence was lost'; end if;
+      perform admit_hosting_work('http:next','http',10,'${release}');
+      if begin_hosting_work('http:next','http',10,'${release}')->>'token' is null then raise exception 'Fresh browser request did not start'; end if;
+    end $$; select read_hosting_release_status()`);
+    expect(JSON.parse(result).work).toEqual({ queued: 0, running: 1, expired_running: 0, uncertain: 1 });
+  });
+  it('retires aged HTTP admissions during the next hourly claim without touching fresh HTTP or another queue', () => {
+    const result = isolated(`select admit_hosting_work('http:old','http',10,'${release}');
+      select admit_hosting_work('http:fresh','http',10,'${release}');
+      select admit_hosting_work('cron:hourly','hourly-collection',10,'${release}');
+      select admit_hosting_work('cron:social','social-content',10,'${release}');
+      update hosting_work set created_at=clock_timestamp()-interval '61 seconds' where key in ('http:old','cron:social');
+      select begin_hosting_work('cron:hourly','hourly-collection',10,'${release}');
+      select jsonb_object_agg(key,state) from hosting_work`);
+    expect(JSON.parse(result.split('\n').at(-1)!)).toEqual({
+      'http:old': 'uncertain', 'http:fresh': 'queued', 'cron:hourly': 'running', 'cron:social': 'queued'
+    });
+  });
+  it('lets checked quiesce pass with unleased browser polling while preserving running HTTP work', () => {
+    const result = isolated(`do $$ declare revision uuid; status jsonb; begin
+      perform admit_hosting_work('http:pending','http',10,'${release}');
+      perform admit_hosting_work('http:running','http',10,'${release}');
+      perform begin_hosting_work('http:running','http',10,'${release}');
+      status:=read_hosting_release_status();
+      if status#>>'{work,queued}'<>'1' then raise exception 'Audit missed pending HTTP'; end if;
+      status:=read_hosting_release_drain_status();
+      if status#>>'{work,queued}'<>'0' then raise exception 'HTTP blocks ordinary preflight'; end if;
+      select release_revision into revision from hosting_runtime_control;
+      perform quiesce_hosting_release_checked(10,'${release}',revision,'33333333-3333-4333-8333-333333333333');
+      if (select state from hosting_work where key='http:pending')<>'uncertain' then raise exception 'Pending HTTP was not preserved'; end if;
+      if (select state from hosting_work where key='http:running')<>'running' then raise exception 'Live HTTP lease was touched'; end if;
+    end $$; select read_hosting_release_status()`);
+    expect(JSON.parse(result)).toMatchObject({ control: { paused: true }, work: { queued: 0, running: 1, uncertain: 1 } });
+    expect(() => isolated(`select admit_hosting_work('cron:protected','hourly-collection',10,'${release}');
+      select quiesce_hosting_release_checked(10,'${release}',release_revision,'33333333-3333-4333-8333-333333333333') from hosting_runtime_control`)).toThrow();
   });
   it('uses exact revision nonces for idempotent pause/transfer/resume and blocks initial ownership', () => {
     const pause = '33333333-3333-4333-8333-333333333333', transfer = '44444444-4444-4444-8444-444444444444', resume = '55555555-5555-4555-8555-555555555555';

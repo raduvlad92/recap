@@ -31,6 +31,10 @@ The trusted deploy job writes each checkpoint with its GitHub Actions token. The
 
 Operation-specific revision UUIDs are saved before pause/advance/resume. Checked database RPCs compare owner, epoch, release and revision under the admission row lock. A retry can adopt only its own already-applied revision. Any intervening operator update, including another pause while already paused, invalidates the release. Lost replies therefore do not allow a deployment to override a later operator pause. Failures leave admission paused; no transaction waits for an external API.
 
+### Unleased HTTP requests
+
+An interrupted browser request can leave a payload-free HTTP frame queued between admission and lease acquisition. A queued HTTP claim expires after 60 seconds. A late claim or the next hourly collection claim records aged rows as `uncertain` and preserves their original identity. Ordinary release planning excludes these unleased HTTP frames from the queue that must drain. Checked quiesce holds the admission lock and retires any remaining unleased HTTP frames before pausing. Existing leased requests and queued business jobs retain their drain checks. The existing status RPC still reports all rows for audit and initial handover. The migration adds definitions and leaves existing rows intact when applied.
+
 ## Migration and failure gates
 
 For an active release, the controller compares the checked commit with the predecessor named in the release plan. If migration files changed, the operator applies them in timestamp order through the approved migration path after verifying the backup. The Cloudflare job checks the exact committed SQL against the matching Supabase migration journal entry before pausing work and again before promoting either Worker. A missing entry, changed hash, or unavailable migration witness fails the release. The deploy job uses the read-only `CLOUDFLARE_MIGRATION_READ_TOKEN` scoped to this project's `database_migrations_read` permission. A release with no migration changes requires no migration credential.
