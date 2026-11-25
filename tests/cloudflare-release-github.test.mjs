@@ -95,9 +95,10 @@ describe('durable GitHub release checkpoints', () => {
   });
   it('bounds missing probe reads and refuses to update an unverified record', async () => {
     const f = fixture();
-    f.state.readReplies.push(404, 404, 404, 404, 404);
+    f.state.readReplies.push(...Array(7).fill(404));
     await expect(f.github.probeCheckpoint(target)).rejects.toThrow('release_checkpoint_unacknowledged');
-    expect(f.calls.map(([, method]) => method)).toEqual(['POST', 'GET', 'GET', 'GET', 'GET', 'GET']);
+    expect(f.calls.map(([, method]) => method)).toEqual(['POST', ...Array(7).fill('GET')]);
+    expect(f.state.waits).toEqual([250, 750, 1500, 3000, 6000, 10000]);
     expect(f.records.get(1).status).toBe('in_progress');
   });
   it('stops immediately when a successful read identifies a different record', async () => {
