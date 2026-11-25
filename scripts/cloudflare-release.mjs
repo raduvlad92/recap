@@ -17,7 +17,7 @@ try {
   const platform = new ReleasePlatform({ root, account: process.env.CLOUDFLARE_ACCOUNT_ID, token: process.env.CLOUDFLARE_API_TOKEN, databaseKey: process.env.SUPABASE_SECRET_KEY });
   let plan, prior = null, remote;
   if (process.env.RELEASE_CHECKPOINT_ID) ({ plan, prior, remote } = await ReleaseJournal.restore(github, process.env.RELEASE_CHECKPOINT_ID, artifact));
-  else { plan = planRelease(artifact, await platform.snapshot(artifact)); remote = new ReleaseJournal(github, plan); }
+  else { plan = planRelease(artifact, await platform.snapshot(artifact, { ordinaryRelease: true })); remote = new ReleaseJournal(github, plan); }
   const verifyMigrations = () => verifyReleaseMigrations({ root, from: plan.expected.release, to: artifact.release,
     token: process.env.CLOUDFLARE_MIGRATION_READ_TOKEN });
   await verifyMigrations();
