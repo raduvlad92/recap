@@ -43,27 +43,43 @@ describe('recap draft review', () => {
     ['The test found a steady improvement under sustained power.', 'The test found a steady improvement under sustained power.'],
     ['The adapter does not work with the older mount.', "The adapter doesn't work with the older mount, according to the test."],
     ['The unit may fail under sustained load.', 'The unit may fail under sustained load.'],
+    ['The unit could fail under sustained load.', 'The unit may fail under sustained load.'],
     ['The dock includes four ports.', 'The dock includes four ports, two on each side.'],
-  ])('keeps supported text and modest paraphrases', (text, evidenceQuote) => {
+    ['The backup finished at 01:30.', 'The backup completed at 01:30. The restore may run on Tuesday.'],
+    ['Swapping the fibre washer eliminated the leak at the connection.', 'Replacing the fibre washer stopped the water from dripping at the joint.'],
+    ['The team guessed the fan uses ceramic bearings and saw no marking that confirms it.', 'The team guessed that the fan uses ceramic bearings.'],
+    ['The permit was signed before the east gate opened.', 'The east gate opened after the permit was signed.'],
+    ['The council did not pay €500 to the suppliers.', 'The council set aside €500 for the suppliers.'],
+    ['The council paid €500 to the suppliers.', 'The council set aside €500 and then paid €500 to the suppliers.'],
+  ])('retains faithful paraphrases and scoped qualifications', (text, evidenceQuote) => {
     expect(recapDraftIssue(evidenceQuote, [{ text, evidenceQuote }])).toBeNull();
   });
 
   it.each([
     ['The cooler has 14 blades.', 'The cooler has 12 blades.', 'figures'],
-    ['Aster announced availability on Friday.', 'The company announced availability on Friday.', 'attribution'],
     ['The adapter works with the older mount.', "The adapter doesn't work with the older mount.", 'negation'],
     ['The unit fails under sustained load.', 'The unit may fail under sustained load.', 'uncertainty'],
-    ['Aster acquired Northwind.', 'Northwind acquired Aster.', 'whole claim'],
+    ['El equipo probó la batería con el cargador rápido.', 'El equipo no probó la batería con el cargador rápido.', 'negation'],
+    ['Aster acquired Northwind.', 'Northwind acquired Aster.', 'participants'],
     ['The outage started because the firewall rebooted.', 'The outage started before the firewall rebooted.', 'cause'],
-    ['The door locks securely. The test found an excellent warranty.', 'The door locks securely and has a steel handle.', 'whole claim'],
+    ['The east gate opened before the permit was signed.', 'The east gate opened after the permit was signed.', 'order'],
+    ['The council paid €500 to the suppliers.', 'The council set aside €500 for suppliers and paid €300 to contractors.', 'reserved'],
+    ['The council paid €500 to the suppliers.', 'The council paid €300 to contractors and set aside €500 for suppliers.', 'reserved'],
+    ['The council paid €500 to the suppliers.', 'The council set aside €500 for the suppliers but never paid €500.', 'reserved'],
   ])('flags a material change against the exact quote', (text, evidenceQuote, expected) => {
     expect(recapDraftIssue(evidenceQuote, [{ text, evidenceQuote }])).toContain(expected);
   });
 
-  it('uses nearby context to veto an absolute claim', () => {
+  it('uses an explicit nearby correction to veto an absolute claim', () => {
     const text = 'Every cable failed on the first run.';
-    expect(recapDraftIssue(text + ' However, the shielded cable worked on review.', [{ text, evidenceQuote: text }]))
+    expect(recapDraftIssue(text + ' Correction: the shielded cable worked on the first run.', [{ text, evidenceQuote: text }]))
       .toContain('nearby correction');
+  });
+
+  it('leaves nearby context alone when the correction is unrelated or the quote repeats', () => {
+    const text = 'Every cable failed on the first run.';
+    expect(recapDraftIssue(text + ' Correction: the cable label is blue.', [{ text, evidenceQuote: text }])).toBeNull();
+    expect(recapDraftIssue(text + ' Correction: the shielded cable worked. ' + text, [{ text, evidenceQuote: text }])).toBeNull();
   });
 
   it('identifies the affected point without replacing any claim or evidence', () => {

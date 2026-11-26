@@ -176,14 +176,15 @@ describe('November 25 automatic video replay without paid calls', () => {
   expect(result.proposal?.highlights).toHaveLength(6);
   expect(result.proposal?.highlights?.every(point=>content.includes(point.evidenceQuote))).toBe(true);
  });
- it('saves a checker-positive but unsupported claim for manual review with its original evidence', async () => {
-  const source = claim(primary);
-  const point = { text: 'Aster announced that the new casing passed the certification test.', evidenceQuote: primary };
+ it('saves a checker-positive contradiction for manual review with its original evidence', async () => {
+  const evidenceQuote = 'The council set aside $500 to reimburse the suppliers.';
+  const source = claim(evidenceQuote);
+  const point = { text: 'The council already paid $500 to reimburse the suppliers.', evidenceQuote };
   const store = { sync: vi.fn().mockResolvedValue({ synchronized: 1 }),
    claim: vi.fn().mockResolvedValueOnce(source).mockResolvedValue(null), finish: vi.fn() };
   const call = vi.fn(async (input: KeywordLearningInput) => input.request.role === 'extractor'
    ? settled({ readComplete: true, highlights: [point] })
-   : settled(verdicts(input, primary)));
+   : settled(verdicts(input, evidenceQuote)));
   const result = await createAutomaticContentWorker({ env, store, call })();
   expect(result).toMatchObject({ queuedForReview: 1, blocked: 0 });
   expect(call).toHaveBeenCalledTimes(2);

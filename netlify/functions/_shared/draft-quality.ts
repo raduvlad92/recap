@@ -1,6 +1,7 @@
 // @ts-expect-error The evaluator owns the shared Unicode and version boundaries.
 import { hasLiteralNameBoundaries } from '../../../scripts/lib/keyword-learning.mjs';
 import type { RecapPoint } from './recap-quality';
+import { recapContradiction } from './recap-contradictions.ts';
 
 type SourceText = { content: string; title: string };
 type Keyword = { label: string; kind: string };
@@ -84,75 +85,12 @@ export function createKeywordDraftGuard(source: SourceText) {
   };
 }
 
-const stopWords = new Set(('a an the this that these those is are was were be been being has have had do does did ' +
-  'i we you he she they it my our your his her their its them who of on in for to by at with and or as from ' +
-  'about there also').split(' '));
-const qualifiers = /\b(?:not|never|no|only|except|unless|some|possibly|may|might|could|allegedly|reportedly|roughly|approximately|if|up to|at least|at most|less than|more than)\b/giu;
-const absolute = /\b(?:all|always|every(?:one|thing)?|any|never|none|no matter)\b/iu;
-const adjacentCorrection = /^\W*(?:however|but|except|actually|correction|the only way)\b/iu;
-const cause = /\b(?:because|caused|resulted in|due to|led to|therefore)\b/iu;
-
-function normalizeClaim(text: string) {
-  return text.normalize('NFC').replaceAll('’', "'")
-    .replace(/\b(?:cannot|can't)\b/giu, 'can not').replace(/\bwon't\b/giu, 'will not')
-    .replace(/n't\b/giu, ' not').replace(/'s\b/giu, '');
-}
-
-const tokens = (text: string) => text.match(/[\p{L}\p{M}\p{N}]+/gu) ?? [];
-
-function stem(word: string): string {
-  const lower = word.toLowerCase();
-  if (!/^[a-z]{5,}$/u.test(lower)) return lower;
-  return lower.replace(/(?:ies|ied)$/u, 'y').replace(/(?:ing|ed|(?<!s)s)$/u, '');
-}
-
-function orderedMatches(claim: string[], quote: string[]): number {
-  // A shared vocabulary alone can hide switched subjects and objects.
-  const runs = new Uint16Array(claim.length + 1);
-  for (const word of quote) {
-    let previous = 0;
-    for (let i = 0; i < claim.length; i++) {
-      const next = runs[i + 1];
-      runs[i + 1] = word === claim[i] ? previous + 1 : Math.max(runs[i], next);
-      previous = next;
-    }
-  }
-  return runs[claim.length];
-}
-
 function recapPointIssue(content: string, { text, evidenceQuote }: RecapPoint): string | null {
   const at = content.indexOf(evidenceQuote);
   if (evidenceQuote.trim().length < 15 || at === -1) return 'find the exact supporting quote';
-  const normalizedQuote = normalizeClaim(evidenceQuote);
-  const quoteWords = tokens(normalizedQuote).map(stem);
-  const quoteTerms = new Set(quoteWords);
-  const quoteQualifiers = new Set(normalizedQuote.match(qualifiers)?.map(word => word.toLowerCase()) ?? []);
-  const context = content.slice(at + evidenceQuote.length, at + evidenceQuote.length + 100);
-
-  const sentences = normalizeClaim(text).split(/[.!?。！？]+(?:\s+|$)/u).filter(sentence => sentence.trim());
-  if (!sentences.length) return 'check the missing claim';
-  for (const sentence of sentences) {
-    const words = tokens(sentence);
-    const [firstWord] = words;
-    if (!firstWord) return 'check the missing claim';
-    const relevant = words.filter(word => !stopWords.has(word.toLowerCase()));
-    const missing = relevant.filter(word => !quoteTerms.has(stem(word)));
-    if (missing.some(word => /\p{N}/u.test(word))) return 'check the figures and identifiers against the quote';
-    if (missing.some(word => /^\p{Lu}/u.test(word) && word !== firstWord)
-      || missing.includes(firstWord) && /^\p{Lu}[\p{L}\p{M}-]+\s+(?:says?|said|reported|announced|told|claimed)\b/u.test(sentence.trim())) {
-      return 'check the named subject and attribution in the quote';
-    }
-
-    const sentenceQualifiers = new Set(sentence.match(qualifiers)?.map(word => word.toLowerCase()) ?? []);
-    if ([...quoteQualifiers].some(word => !sentenceQualifiers.has(word))
-      || [...sentenceQualifiers].some(word => !quoteQualifiers.has(word))) return 'check the negation, uncertainty or limits';
-    if (cause.test(sentence) && !cause.test(normalizedQuote)) return 'check the proposed cause against the quote';
-    if (!relevant.length || orderedMatches(relevant.map(stem), quoteWords) < relevant.length * 0.8) {
-      return 'check whether the quote supports the whole claim';
-    }
-    if (absolute.test(sentence) && adjacentCorrection.test(context)) return 'check the nearby correction or exception';
-  }
-  return null;
+  const end = at + evidenceQuote.length;
+  const following = content.indexOf(evidenceQuote, at + 1) === -1 ? content.slice(end, end + 120) : '';
+  return recapContradiction(text, evidenceQuote, following);
 }
 
 export function recapDraftIssue(content: string, highlights: readonly RecapPoint[]): string | null {
