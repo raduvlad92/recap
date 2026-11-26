@@ -4,9 +4,13 @@ set local lock_timeout = '3s';
 set local timezone = 'UTC';
 
 with bounds as materialized (
-  select coalesce(__FLOW9_START__, now() - interval '72 hours') as since, now() as until
+  select coalesce(__FLOW9_START__, now() - interval '72 hours') as since,
+    coalesce(__FLOW9_END__, now()) as until
 ), work as (
-  select h.kind, h.epoch, h.release, h.state, h.created_at, h.updated_at,
+  select h.key, h.kind, h.epoch, h.release, h.state, h.created_at, h.updated_at,
+    h.lease_token is not null as claimed,
+    case when h.lease_token is not null and h.kind = 'hourly-collection'
+      then h.lease_until - interval '15 minutes' end as hourly_claimed_at,
     case when h.key ~ ('^cron:' || h.kind || ':' || h.epoch::text || ':[0-9]{1,10}$')
     then to_timestamp(split_part(h.key, ':', 4)::bigint * 300) end as slot
   from public.hosting_work h cross join bounds b
@@ -25,7 +29,7 @@ with bounds as materialized (
 ), source_checks as (
   select c.*, exists (
     select 1 from scheduled f where f.kind = 'hourly-collection' and f.state = 'completed'
-      and c.started_at >= f.created_at and c.finished_at <= f.updated_at
+      and c.started_at >= f.hourly_claimed_at and c.finished_at <= least(f.updated_at,b.until)
   ) as scheduled
   from public.reader_collection_checks c cross join bounds b
   where c.started_at >= b.since and c.started_at <= b.until
@@ -169,7 +173,7 @@ select jsonb_build_object(
   'dailyEnabled',(select enabled from public.daily_briefing_control where id),
   'readers',(select coalesce(jsonb_agg(to_jsonb(r)-'user_id' order by reader),'[]') from readers r),
   'briefings',(select coalesce(jsonb_agg(s order by reader,cutoff_at),'[]') from briefings s),
-  'frames',(select coalesce(jsonb_agg(jsonb_build_object('kind',kind,'slot',slot,'finished',updated_at,'state',state,'release',release,'epoch',epoch) order by slot,kind),'[]') from scheduled),
+  'frames',(select coalesce(jsonb_agg(jsonb_build_object('key',key,'kind',kind,'slot',slot,'created',created_at,'updated',updated_at,'claimed',claimed,'state',state,'release',release,'epoch',epoch) order by slot,kind),'[]') from scheduled),
   'ingestion',jsonb_build_object(
     'checks',(select count(*) from source_checks where scheduled),
     'failedChecks',(select count(*) from source_checks where scheduled and status in ('failed','abandoned')),
@@ -219,5 +223,5 @@ select jsonb_build_object(
   'budget',(select coalesce(jsonb_agg(m order by month_start),'[]') from month_budget m)
 ) as evidence
 from bounds b
-where b.since < b.until and b.since >= b.until - interval '7 days';
+where b.since < b.until and b.until <= now() and b.since >= b.until - interval '7 days';
 rollback;

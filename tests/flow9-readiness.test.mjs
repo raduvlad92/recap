@@ -10,7 +10,7 @@ const health = { status: 200, homeStatus: 200, mode: 'active', release, jobsConf
 function fixture() {
   const frames = Array.from({ length: 72 }, (_, i) => {
     const slot = Date.parse(since) + i * hour;
-    return { kind: 'hourly-collection', slot: new Date(slot).toISOString(), finished: new Date(slot + 60_000).toISOString(),
+    return { kind: 'hourly-collection', slot: new Date(slot).toISOString(), updated: new Date(slot + 60_000).toISOString(), claimed: true,
       state: 'completed', release, epoch };
   });
   const briefings = expectedCutoffs(reader, Date.parse(since), Date.parse(until)).map((cutoff, i) => {
@@ -92,6 +92,32 @@ describe('read-only flow readiness', () => {
       activeUnchangedRelease: { status: 'FAIL' }, cap: { status: 'FAIL' }, noObservedIntervention: { status: 'FAIL' },
     });
   });
+  it('keeps blocked unclaimed slots distinct from started failures and late completions', () => {
+    const data = fixture();
+    Object.assign(data.frames[0], { state: 'uncertain', claimed: false });
+    Object.assign(data.frames[1], { state: 'uncertain', claimed: true });
+    data.frames[2].updated = '2026-11-23T11:16:00Z';
+    const r = scoreReadiness(data, health);
+    expect(r.scheduledWork['hourly-collection']).toMatchObject({ unclaimed: 1, uncertain: 1, failed: 0 });
+    expect(r.flow9.criteria.ingestionCadence).toMatchObject({ status: 'FAIL', evidence: { completedHours: 69 } });
+    expect(r.flow9.criteria.ingestionCadence.evidence.hourlySlots.slice(0, 3).map(slot => slot.frames[0].outcome))
+      .toEqual(['unclaimed', 'uncertain', 'completed_off_deadline']);
+  });
+  it('requires 72 matured hourly slots even when the wall clock has reached 72 hours', () => {
+    const data = fixture();
+    data.since = '2026-11-23T09:01:00Z';
+    data.until = '2026-11-26T09:01:00Z';
+    data.frames.shift();
+    expect(scoreReadiness(data, health).flow9.criteria.ingestionCadence)
+      .toMatchObject({ status: 'FAIL', evidence: { expectedHours: 71, completedHours: 71, missingHours: [] } });
+  });
+  it('preserves microseconds for an exact fixed historical window', () => {
+    const query = readinessQuery('2026-11-23T02:22:54.563573Z', '2026-11-26T02:22:54.563573Z');
+    expect(query).toContain("'2026-11-23T02:22:54.563573Z'::timestamptz");
+    expect(query).toContain("'2026-11-26T02:22:54.563573Z'::timestamptz");
+    expect(() => readinessQuery(until, since)).toThrow();
+  });
+
   it('fails the quality gate when few videos receive both drafts despite valid individual proposals', () => {
     const data = fixture();
     data.analysis.videosWithBothDrafts = 8;
