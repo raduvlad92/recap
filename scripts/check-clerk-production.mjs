@@ -185,7 +185,7 @@ async function checkDestination(env, mode) {
   return { records, users: await clerkList('/users', key, 'production_users') };
 }
 
-async function checkLive(env, entries) {
+export async function checkLive(env, entries) {
   const release = env.RECAP_EXPECTED_RELEASE;
   check(/^[a-f0-9]{40}$/.test(release ?? ''), 'expected_release_missing');
   const health = await getJson(site + '/api/health', {}, 'live_health');
@@ -199,6 +199,7 @@ async function checkLive(env, entries) {
   check(asset.ok && (await asset.text()).includes(env.RECAP_PROD_CLERK_PUBLISHABLE_KEY), 'live_frontend_key_mismatch');
   const owner = entries.find(entry => entry.role === 'owner');
   const reader = entries.find(entry => entry.role === 'reader');
+  const adminAccess = site + '/api/admin?section=access';
   const publicKey = env.RECAP_SUPABASE_PUBLISHABLE_KEY;
   check(publicKey, 'supabase_public_key_missing');
   async function checkSession(entry, jwt, admin) {
@@ -212,11 +213,11 @@ async function checkLive(env, entries) {
     const resolved = await getJson(database + '/rest/v1/rpc/current_reader_owner', { method: 'POST',
       headers: { ...headers, apikey: publicKey, 'content-type': 'application/json' }, body: '{}' }, 'live_owner_readback');
     check(resolved === entry.stableOwner, 'live_workspace_owner_mismatch');
-    const result = await fetch(site + '/api/admin/overview', { headers, redirect: 'error', signal: AbortSignal.timeout(12000) });
+    const result = await fetch(adminAccess, { headers, redirect: 'error', signal: AbortSignal.timeout(12000) });
     check(admin ? result.ok : result.status === 403, admin ? 'owner_admin_access_failed' : 'ordinary_reader_admin_denial_failed');
     await result.body?.cancel();
   }
-  const anonymous = await fetch(site + '/api/admin/overview', { redirect: 'error', signal: AbortSignal.timeout(12000) });
+  const anonymous = await fetch(adminAccess, { redirect: 'error', signal: AbortSignal.timeout(12000) });
   check(anonymous.status === 401, 'anonymous_admin_denial_failed');
   await anonymous.body?.cancel();
   await Promise.all([checkSession(owner, env.RECAP_OWNER_BROWSER_JWT, true), checkSession(reader, env.RECAP_READER_BROWSER_JWT, false)]);

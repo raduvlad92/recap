@@ -1,6 +1,6 @@
 # Production Clerk cutover · reader flow 1
 
-Target `https://recap.filternode.dev`, existing Clerk application **recap**, existing Supabase project `zlfdqzabsfndifxiqguo`. The production instance and DNS handoff can be prepared separately from the application cutover.
+Target `https://recap.filternode.dev`, existing Clerk application **recap**, existing Supabase project `zlfdqzabsfndifxiqguo`. The production instance and DNS handoff can be prepared separately from the application cutover. This runbook supplies the roster and readback tooling for the complementary [runtime configuration guard in #54](https://github.com/raduvlad92/recap/pull/54).
 
 The 26 November read-only source dry run found **three Clerk users and three existing workspaces**. The verified owner is eligible. The Clerk instance returned **zero allowlist identifiers**, so **two other existing workspaces remain outside the approved roster**. Resolve their disposition before cutover. Only an explicitly approved ordinary-reader roster may expand the migration, and flow 1 still needs non-admin acceptance. The owner's source account had one external sign-in connection, no password and no MFA. Rehearse the permitted production sign-in method before switching. No user was exported into Git, imported, linked or modified.
 
@@ -31,6 +31,7 @@ Clerk issues the three primary email target values after instance creation. The 
 | GitHub Actions variable | `CLOUDFLARE_CLERK_PUBLISHABLE_KEY` | Production `pk_live_…`. The build copies it to `VITE_CLERK_PUBLISHABLE_KEY`. |
 | Reviewed active build pin | `cloudflare/verified-public-config.json` | Update the SHA-256 for `VITE_CLERK_PUBLISHABLE_KEY` via the existing public-config review. Confirm the Supabase URL/key fingerprints still match. |
 | `therecap-web` and `therecap-jobs` server config | `CLERK_ISSUER_URL` | `https://clerk.recap.filternode.dev`, exactly as the new session JWT's `iss`. |
+| Both Worker runtime bindings | `VITE_CLERK_PUBLISHABLE_KEY` | Same reviewed live publishable key as the browser build. |
 | Both Worker secret bindings | `CLERK_SECRET_KEY` | Live `sk_live_…` from the same instance. Scope the credential to the server. |
 | Both Worker configs | `APP_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` | Existing origin and project settings. Keep the secret server-side. |
 | Web Worker admin controls | `ADMIN_ALLOWED_EMAILS`, `ADMIN_USER_IDS` | Keep the reviewed verified-primary admin emails; replace any configured legacy subject entries with their corresponding production admin subjects. Ordinary readers remain outside both admin controls. |
@@ -50,7 +51,7 @@ The Workers and browser artifacts must be staged together using the checked rele
 
 - Source inventory: `RECAP_SOURCE_CLERK_SECRET_KEY`, `RECAP_SOURCE_CLERK_ISSUER`, `RECAP_SUPABASE_SECRET_KEY`, `RECAP_OWNER_EMAIL`. Optional `RECAP_APPROVED_READER_ROSTER_FILE` points to the private JSON roster.
 - Add `RECAP_PROD_CLERK_SECRET_KEY` and `RECAP_PROD_CLERK_PUBLISHABLE_KEY` for `--dns` and `--preflight`.
-- Add `RECAP_EXPECTED_RELEASE` (full SHA), `RECAP_SUPABASE_PUBLISHABLE_KEY`, `RECAP_OWNER_BROWSER_JWT`, and `RECAP_READER_BROWSER_JWT` for `--accept`. Load browser JWTs privately in a short-lived process. The script checks the served release, shipped publishable key, browser issuer/origin/subject, both stable owners via their own session, owner admin access, ordinary-reader admin denial, and anonymous admin denial. Revoke audit sessions after evidence capture. Use the redacted browser audit path and keep raw trace/HAR recording off.
+- Add `RECAP_EXPECTED_RELEASE` (full SHA), `RECAP_SUPABASE_PUBLISHABLE_KEY`, `RECAP_OWNER_BROWSER_JWT`, and `RECAP_READER_BROWSER_JWT` for `--accept`. Load browser JWTs privately in a short-lived process. The script checks the served release, shipped publishable key, browser issuer/origin/subject, both stable owners via their own session, owner admin access, ordinary-reader admin denial, and anonymous admin denial through the existing `/api/admin?section=access` endpoint. Revoke audit sessions after evidence capture. Use the redacted browser audit path and keep raw trace/HAR recording off.
 
 ## Cutover and rollback
 

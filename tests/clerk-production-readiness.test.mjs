@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { buildReaderMigration, readProductionDns } from '../scripts/check-clerk-production.mjs';
+import { describe, expect, it, vi } from 'vitest';
+import { buildReaderMigration, checkLive, readProductionDns } from '../scripts/check-clerk-production.mjs';
 
 const user = (id, email, overrides = {}) => ({
   id, banned: false, locked: false, primary_email_address_id: 'primary',
@@ -51,4 +51,35 @@ describe('Clerk production cutover dry run', () => {
     domains[0].cname_targets[4].value = 'dkim2.other-fixture.clerk.services';
     expect(() => readProductionDns(domains, key)).toThrow('production_mail_targets_cross_instance');
   });
+});
+
+it('checks production sessions against the reader owner RPC and the deployed admin access endpoint', async () => {
+  const site = 'https://recap.filternode.dev', release = 'a'.repeat(40);
+  const entries = [{ role: 'owner', destinationSubject: 'user_ProdOwner', stableOwner: 'owner-stable' },
+    { role: 'reader', destinationSubject: 'user_ProdReader', stableOwner: 'reader-stable' }];
+  const token = entry => 'fixture.' + Buffer.from(JSON.stringify({
+    iss: 'https://clerk.recap.filternode.dev', azp: site, sub: entry.destinationSubject,
+    exp: Math.ceil(Date.now() / 1000) + 60, role: 'authenticated',
+  })).toString('base64url') + '.fixture';
+  const ownerJwt = token(entries[0]), readerJwt = token(entries[1]), key = 'pk_live_fixture';
+  const request = vi.fn(async (url, options) => {
+    if (url === site + '/api/health') return Response.json({ hosting: { release } });
+    if (url === site + '/') return new Response('<script type="module" crossorigin src="/assets/index-fixture.js"></script>');
+    if (url === site + '/assets/index-fixture.js') return new Response(key);
+    const auth = options?.headers?.authorization;
+    if (url.endsWith('/rest/v1/rpc/current_reader_owner')) return Response.json(auth === 'Bearer ' + ownerJwt ? 'owner-stable' : 'reader-stable');
+    if (url === site + '/api/admin?section=access') {
+      return Response.json({}, { status: !auth ? 401 : auth === 'Bearer ' + ownerJwt ? 200 : 403 });
+    }
+    throw new Error('Unexpected fixture URL');
+  });
+  vi.stubGlobal('fetch', request);
+  try {
+    const result = await checkLive({ RECAP_EXPECTED_RELEASE: release, RECAP_OWNER_BROWSER_JWT: ownerJwt,
+      RECAP_READER_BROWSER_JWT: readerJwt, RECAP_SUPABASE_PUBLISHABLE_KEY: 'fixture', RECAP_PROD_CLERK_PUBLISHABLE_KEY: key }, entries);
+    expect(result).toEqual({ release, liveBrowserSessionReadbacks: 2, anonymousAdminDenied: true });
+    expect(request.mock.calls.filter(([url]) => url === site + '/api/admin?section=access')).toHaveLength(3);
+  } finally {
+    vi.unstubAllGlobals();
+  }
 });
