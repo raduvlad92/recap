@@ -59,7 +59,7 @@ The Workers and browser artifacts must be staged together using the checked rele
 
 ### Readiness environment
 
-- Source inventory: `RECAP_SOURCE_CLERK_SECRET_KEY`, `RECAP_SOURCE_CLERK_ISSUER`, `RECAP_SUPABASE_SECRET_KEY`, `RECAP_OWNER_EMAIL`. Set `RECAP_APPROVED_READER_ROSTER_FILE` to the mode-0600 JSON roster with `approved` and `reviewLater` arrays of exact addresses and the `acceptance` string. Keep this file in the private operator handoff; it contains full addresses.
+- Source inventory: `RECAP_SOURCE_CLERK_SECRET_KEY`, `RECAP_SOURCE_CLERK_ISSUER`, `RECAP_SUPABASE_SECRET_KEY`, `RECAP_OWNER_EMAIL`. Set `RECAP_APPROVED_READER_ROSTER_FILE=/Users/vladeeno/.config/pm-secrets/recap-clerk-cutover-roster.json` for the mode-0600 JSON roster with `approved` and `reviewLater` arrays of exact addresses and the `acceptance` string. The parent directory is mode 0700. Keep the roster outside repo worktrees so release cleanup cannot remove it. It contains full addresses.
 - Add `RECAP_PROD_CLERK_SECRET_KEY` and `RECAP_PROD_CLERK_PUBLISHABLE_KEY` for `--dns` and `--preflight`.
 - Add `RECAP_EXPECTED_RELEASE` (full SHA), `RECAP_SUPABASE_PUBLISHABLE_KEY`, `RECAP_OWNER_BROWSER_JWT`, and `RECAP_READER_BROWSER_JWT` for `--accept`. Load browser JWTs privately in a short-lived process. The script checks the served release, shipped publishable key, browser issuer/origin/subject, both stable owners via their own session, owner admin access, ordinary-reader admin denial, and anonymous admin denial through the existing `/api/admin?section=access` endpoint. Revoke audit sessions after evidence capture. Use the redacted browser audit path and keep raw trace/HAR recording off.
 
