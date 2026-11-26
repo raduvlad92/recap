@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, useCallback, useRef, type ReactNode } from 'react';
 import { useReaderOwner, type ReaderIdentityStatus } from './reader-identity';
 import { ClerkProvider, useAuth, useClerk, useUser } from '@clerk/react';
+import { clerkProductionOrigin } from './clerk-origin';
 
 export interface RecapAuth {
   /** Actual Clerk subject, for provider/admin operations only. */
@@ -43,5 +44,6 @@ function ClerkBridge({ children }: { children: ReactNode }) {
 export function RecapAuthProvider({ children }: { children: ReactNode }) {
   const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
   if (!publishableKey) return <AuthContext.Provider value={guest}>{children}</AuthContext.Provider>;
-  return <ClerkProvider publishableKey={publishableKey} signInFallbackRedirectUrl="/" signUpFallbackRedirectUrl="/" appearance={{ variables: { colorPrimary: '#4f9989', borderRadius: '16px', fontFamily: 'Onest, sans-serif' } }}><ClerkBridge>{children}</ClerkBridge></ClerkProvider>;
+  const allowedRedirectOrigins = publishableKey.startsWith('pk_live_') ? [clerkProductionOrigin] : undefined;
+  return <ClerkProvider publishableKey={publishableKey} allowedRedirectOrigins={allowedRedirectOrigins} signInFallbackRedirectUrl="/" signUpFallbackRedirectUrl="/" appearance={{ variables: { colorPrimary: '#4f9989', borderRadius: '16px', fontFamily: 'Onest, sans-serif' } }}><ClerkBridge>{children}</ClerkBridge></ClerkProvider>;
 }

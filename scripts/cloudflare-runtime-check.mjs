@@ -3,14 +3,29 @@ import { readFileSync } from 'node:fs';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 import { build } from 'esbuild';
-const release = JSON.parse(readFileSync('.local/cloudflare-build/release.json', 'utf8')).release;
+const artifact = JSON.parse(readFileSync('.local/cloudflare-build/release.json', 'utf8'));
+const release = artifact.release;
 const config = JSON.parse(readFileSync('.local/cloudflare-build/web.json', 'utf8'));
+const origin = 'https://recap.filternode.dev';
+const browserKey = artifact.mode === 'active' ? process.env.VITE_CLERK_PUBLISHABLE_KEY : undefined;
+const liveFixture = browserKey?.startsWith('pk_live_');
+const issuer = liveFixture ? 'https://' + Buffer.from(browserKey.slice('pk_live_'.length), 'base64url').toString('utf8').slice(0, -1) : 'https://clerk.fixture.invalid';
+const fixtureClerk = {
+  CLERK_ISSUER_URL: issuer,
+  CLERK_SECRET_KEY: liveFixture ? 'sk_live_runtime_fixture' : 'fixture-only-clerk-secret',
+  ...(liveFixture ? { VITE_CLERK_PUBLISHABLE_KEY: browserKey } : {}),
+};
+const mixedClerk = {
+  ...fixtureClerk,
+  CLERK_SECRET_KEY: 'sk_test_runtime_fixture',
+  VITE_CLERK_PUBLISHABLE_KEY: liveFixture ? browserKey : 'pk_live_' + Buffer.from('clerk.recap.filternode.dev$').toString('base64url'),
+};
 // Exercise the actual Wrangler-bundled Worker under workerd. No credentials,
 // source traffic, live database or queue binding is available in this harness.
 const mf = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/web/web.js',
   compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
-  bindings: config.vars,
+  bindings: { ...config.vars, ...(liveFixture ? fixtureClerk : {}) },
   serviceBindings: { ASSETS: async () => new Response('<!doctype html><title>Workspace fixture</title>') },
   outboundService: async () => { throw new Error('Outbound networking is prohibited in the runtime harness'); },
 }));
@@ -41,9 +56,20 @@ try {
   assert.match(await robots.text(), /Sitemap: https:\/\/recap\.filternode\.dev\/sitemap\.xml/); checks++;
   console.log(JSON.stringify({ runtime: 'workerd', checks, passed: true, outboundNetwork: 'blocked', productionCredentials: false }));
 } finally { await mf.dispose(); }
+const mismatchedClerk = new Miniflare(convertV4MiniflareOptions({
+  modules: true, scriptPath: '.local/cloudflare-build/web/web.js',
+  compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
+  bindings: { ...config.vars, ...mixedClerk },
+  outboundService: async () => { throw new Error('A mixed Clerk config cannot make outbound calls'); },
+}));
+try {
+  const response = await mismatchedClerk.dispatchFetch(origin + '/api/health');
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).error.code, 'auth_not_configured');
+  checks++;
+} finally { await mismatchedClerk.dispose(); }
 // Full protected path in the actual bundled runtime, using only ephemeral
 // signing keys and fake provider responses. No real identity/database traffic.
-const origin = 'https://recap.filternode.dev', issuer = 'https://clerk.fixture.invalid';
 const { privateKey, publicKey } = await generateKeyPair('RS256');
 const jwk = { ...await exportJWK(publicKey), kid: 'runtime-fixture', alg: 'RS256', use: 'sig' };
 const sign = subject => new SignJWT({ azp: origin }).setProtectedHeader({ alg: 'RS256', kid: jwk.kid }).setIssuer(issuer).setSubject(subject).setIssuedAt().setExpirationTime('5m').sign(privateKey);
@@ -52,7 +78,7 @@ const outbound = [];
 const accountRuntime = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/web/web.js',
   compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
-  bindings: { ...config.vars, CLERK_ISSUER_URL: issuer, CLERK_SECRET_KEY: 'fixture-only-clerk-secret', ADMIN_USER_IDS: 'fixture-owner', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
+  bindings: { ...config.vars, ...fixtureClerk, ADMIN_USER_IDS: 'fixture-owner', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
   outboundService: async request => {
     const url = new URL(request.url); outbound.push({ origin: url.origin, path: url.pathname });
     if (url.href === issuer + '/.well-known/jwks.json') return Response.json({ keys: [jwk] });
@@ -97,7 +123,7 @@ let activeStateEmpty = false, finishFailure = false, activeFinishes = 0;
 const activeRuntime = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/web/web.js',
   compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
-  bindings: { ...config.vars, HOSTING_MODE: 'active', SOURCE_TRANSPORT_VERIFIED: 'true', CLERK_ISSUER_URL: issuer, CLERK_SECRET_KEY: 'fixture-only-clerk-secret', ADMIN_USER_IDS: 'fixture-owner', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
+  bindings: { ...config.vars, ...fixtureClerk, HOSTING_MODE: 'active', SOURCE_TRANSPORT_VERIFIED: 'true', ADMIN_USER_IDS: 'fixture-owner', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
   outboundService: async request => {
     const url = new URL(request.url);
     if (url.href === issuer + '/.well-known/jwks.json') return Response.json({ keys: [jwk] });
@@ -139,7 +165,7 @@ const jobCalls = [];
 const jobRuntime = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/jobs-fixture.js',
   compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
-  bindings: { ...config.vars, HOSTING_MODE: 'active', SOURCE_TRANSPORT_VERIFIED: 'true', HOURLY_COLLECTION_ENABLED: 'true', HOURLY_COLLECTION_WORKER_SECRET: 'fixture-only-hourly-worker-secret-32-characters', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
+  bindings: { ...config.vars, ...(liveFixture ? fixtureClerk : {}), HOSTING_MODE: 'active', SOURCE_TRANSPORT_VERIFIED: 'true', HOURLY_COLLECTION_ENABLED: 'true', HOURLY_COLLECTION_WORKER_SECRET: 'fixture-only-hourly-worker-secret-32-characters', VITE_SUPABASE_URL: 'https://zlfdqzabsfndifxiqguo.supabase.co', SUPABASE_SECRET_KEY: 'fixture-only-database-secret' },
   outboundService: async request => {
     const url = new URL(request.url), name = url.pathname.split('/').at(-1);
     assert.equal(url.origin, 'https://zlfdqzabsfndifxiqguo.supabase.co');
@@ -204,6 +230,20 @@ try {
   assert.deepEqual(jobCalls.splice(0), ['read_hosting_runtime']);
   console.log(JSON.stringify({ runtime: 'workerd', jobsChecks: 11, liveProviderRequests: 0, queueMessagesSent: 0, redirectedCredentials: false, nativeVoidStatus: 204 }));
 } finally { await jobRuntime.dispose(); }
+const mixedJobs = new Miniflare(convertV4MiniflareOptions({
+  modules: true, scriptPath: '.local/cloudflare-build/jobs-fixture.js',
+  compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
+  bindings: { ...config.vars, ...mixedClerk, HOSTING_MODE: 'active' },
+  outboundService: async () => { throw new Error('A mixed Clerk config cannot admit jobs'); },
+}));
+try {
+  for (const path of ['/cron', '/queue']) {
+    const response = await mixedJobs.dispatchFetch('https://jobs.fixture.invalid' + path);
+    assert.equal(response.status, 503);
+    assert.deepEqual(await response.json(), { completed: false, code: 'auth_not_configured' });
+  }
+  console.log(JSON.stringify({ runtime: 'workerd', mixedClerkJobChecks: 2, liveProviderRequests: 0 }));
+} finally { await mixedJobs.dispose(); }
 const source = new Miniflare(convertV4MiniflareOptions({
   modules: true, scriptPath: '.local/cloudflare-build/source-worker/source.js',
   compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,

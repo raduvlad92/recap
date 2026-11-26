@@ -7,8 +7,8 @@ import briefing from '../netlify/functions/daily-briefing-worker.mts';
 import reminder from '../netlify/functions/recap-reminder-worker.mts';
 import learning from '../netlify/functions/keyword-learning-worker.mts';
 import accountLifecycle from '../netlify/functions/account-lifecycle-worker.mts';
-import { assertActive, hostingRpc, readControl, runWithBindings, validMessage, type Bindings, type JobKind, type JobMessage, type RuntimeControl } from './runtime';
-import { json } from '../netlify/functions/_shared/security';
+import { assertActive, bindingEnv, hostingRpc, readControl, runWithBindings, validMessage, type Bindings, type JobKind, type JobMessage, type RuntimeControl } from './runtime';
+import { clerkAuthorizedParties, json } from '../netlify/functions/_shared/security';
 import { pipelineServices, type PipelineServices } from './pipeline-contract';
 export { CollectionService, EnrichmentService, GenerationService, VerificationService } from './pipeline-entrypoints';
 
@@ -33,6 +33,7 @@ export async function enqueue(bindings: Bindings, message: JobMessage, payload: 
 }
 export async function scheduleJobs(event: { cron: string; scheduledTime: number }, bindings: Bindings): Promise<void> {
   if (bindings.HOSTING_MODE !== 'active') return;
+  clerkAuthorizedParties(bindingEnv(bindings));
   const control = await readControl(bindings); assertActive(bindings, control);
   const kinds: JobKind[] = event.cron === '0 * * * *' ? ['hourly-collection']
     : event.cron === '*/5 * * * *' ? ['content-analysis', 'automatic-content', 'social-collection', 'social-content', 'daily-briefing', 'recap-reminders', 'account-lifecycle'] : [];
@@ -44,6 +45,7 @@ export async function scheduleJobs(event: { cron: string; scheduledTime: number 
   }
 }
 export async function consumeJobs(batch: { messages: QueueItem[] }, bindings: Bindings, services?: PipelineServices): Promise<void> {
+  if (bindings.HOSTING_MODE === 'active') clerkAuthorizedParties(bindingEnv(bindings));
   for (const message of batch.messages) {
     if (!validMessage(message.body)) { console.warn(JSON.stringify({ event: 'hosting_invalid_message' })); message.ack(); continue; }
     const item = message.body;

@@ -1,0 +1,239 @@
+{
+  "cohortSha256": "bfce32730d412587d7d90d432389aec3fed42f97689a609a1710d0d2c187b5f5",
+  "selected": {
+    "n": 241,
+    "valid": 214,
+    "retained": 63,
+    "mockOnly": 152,
+    "calls": 2937,
+    "stops": {
+      "unresolved_charge": 26,
+      "analysis_budget_exhausted": 1
+    }
+  },
+  "byClass": {
+    "prior_draft": {
+      "n": 112,
+      "valid": 112,
+      "retained": 0,
+      "mockOnly": 112,
+      "calls": 676,
+      "stops": {}
+    },
+    "keyword_learning_storage_unavailable": {
+      "n": 3,
+      "valid": 3,
+      "retained": 0,
+      "mockOnly": 3,
+      "calls": 62,
+      "stops": {}
+    },
+    "analysis_output_capacity": {
+      "n": 19,
+      "valid": 19,
+      "retained": 19,
+      "mockOnly": 0,
+      "calls": 245,
+      "stops": {}
+    },
+    "automatic_recap_empty_requires_review": {
+      "n": 2,
+      "valid": 2,
+      "retained": 0,
+      "mockOnly": 2,
+      "calls": 5,
+      "stops": {}
+    },
+    "analysis_generation_failed": {
+      "n": 1,
+      "valid": 1,
+      "retained": 0,
+      "mockOnly": 1,
+      "calls": 4,
+      "stops": {}
+    },
+    "analysis_invalid_json": {
+      "n": 44,
+      "valid": 44,
+      "retained": 44,
+      "mockOnly": 0,
+      "calls": 1148,
+      "stops": {}
+    },
+    "analysis_unknown_charge_hold": {
+      "n": 20,
+      "valid": 0,
+      "retained": 0,
+      "mockOnly": 0,
+      "calls": 0,
+      "stops": {
+        "unresolved_charge": 20
+      }
+    },
+    "analysis_input_limit": {
+      "n": 17,
+      "valid": 17,
+      "retained": 0,
+      "mockOnly": 17,
+      "calls": 549,
+      "stops": {}
+    },
+    "analysis_budget_exhausted": {
+      "n": 1,
+      "valid": 0,
+      "retained": 0,
+      "mockOnly": 1,
+      "calls": 1,
+      "stops": {
+        "analysis_budget_exhausted": 1
+      }
+    },
+    "automatic_recap_changed_finding": {
+      "n": 7,
+      "valid": 7,
+      "retained": 0,
+      "mockOnly": 7,
+      "calls": 122,
+      "stops": {}
+    },
+    "automatic_recap_reduction_failed": {
+      "n": 2,
+      "valid": 2,
+      "retained": 0,
+      "mockOnly": 2,
+      "calls": 24,
+      "stops": {}
+    },
+    "automatic_recap_invalid_check": {
+      "n": 3,
+      "valid": 3,
+      "retained": 0,
+      "mockOnly": 3,
+      "calls": 13,
+      "stops": {}
+    },
+    "automatic_recap_unsupported_draft": {
+      "n": 1,
+      "valid": 1,
+      "retained": 0,
+      "mockOnly": 1,
+      "calls": 18,
+      "stops": {}
+    },
+    "keyword_learning_invalid_input": {
+      "n": 3,
+      "valid": 3,
+      "retained": 0,
+      "mockOnly": 3,
+      "calls": 70,
+      "stops": {}
+    },
+    "unclaimed_charge_hold": {
+      "n": 6,
+      "valid": 0,
+      "retained": 0,
+      "mockOnly": 0,
+      "calls": 0,
+      "stops": {
+        "unresolved_charge": 6
+      }
+    }
+  },
+  "heldTasks": 26,
+  "distinctHeldVideos": 20,
+  "distinctVideos": 153,
+  "withBothTasks": 88,
+  "paired": {
+    "planned": 88,
+    "bothValid": 72,
+    "heldPairs": 15,
+    "onlyBlockedByCharge": 15,
+    "budgetHeldPairs": 1,
+    "admissionEligible": 72,
+    "admissionEligibleBothValid": 72,
+    "failedTaskClasses": {
+      "analysis_budget_exhausted / recap": 1,
+      "analysis_unknown_charge_hold / recap": 6,
+      "unclaimed_charge_hold / keywords": 6,
+      "analysis_unknown_charge_hold / keywords": 9
+    }
+  },
+  "bothValid": 72,
+  "anyValid": 142,
+  "priorBothAlreadyValid": 19,
+  "cost": {
+    "allValidPairs": {
+      "videos": 72,
+      "mean": 0.26725,
+      "stressMean": 0.415553,
+      "p90": 0.770888,
+      "total": 19.241991,
+      "stressTotal": 29.919791
+    },
+    "standardValidPairs": {
+      "videos": 57,
+      "mean": 0.143001,
+      "stressMean": 0.224464,
+      "p90": 0.352539,
+      "total": 8.151074,
+      "stressTotal": 12.794455
+    },
+    "hardestRecaps": {
+      "videos": 17,
+      "mean": 0.26367,
+      "stressMean": 0.411606,
+      "p90": 0.303607,
+      "total": 4.482383,
+      "stressTotal": 6.997308
+    },
+    "byChannel": {
+      "historical": {
+        "videos": 72,
+        "mean": 0.26725,
+        "stressMean": 0.415553,
+        "p90": 0.770888,
+        "total": 19.241991,
+        "stressTotal": 29.919791
+      }
+    },
+    "lowestTenPaired": {
+      "videos": 10,
+      "mean": 0.031582,
+      "stressMean": 0.052142,
+      "p90": 0.037822,
+      "total": 0.315818,
+      "stressTotal": 0.521417
+    },
+    "tenPairedWithEachChannel": {
+      "videos": 10,
+      "mean": 0.031582,
+      "stressMean": 0.052142,
+      "p90": 0.037822,
+      "total": 0.315818,
+      "stressTotal": 0.521417,
+      "byChannel": {
+        "historical": 10
+      }
+    },
+    "lowestTenRecap": {
+      "videos": 10,
+      "mean": 0.01635,
+      "stressMean": 0.028033,
+      "p90": 0.01821,
+      "total": 0.163504,
+      "stressTotal": 0.280332
+    }
+  },
+  "modelCalls": {
+    "deepseek/deepseek-v4.1-flash-1017": {
+      "count": 1408,
+      "input": 4536100,
+      "output": 985600
+    },
+    "openai/gpt-6.1-sol-pro": {
+      "count": 1529,
+      "input": 7685424,
+      "output": 764500
+    }
+  }
+}

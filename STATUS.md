@@ -1,5 +1,7 @@
 # Current status
 
+**26 November — expanded train 2 staged on frozen #46.** #57 adds the latest #56 scorer and a corrected #58 candidate. Upstream #58 needs the HTTP expiry fix. The #53-only rebase passed after simulated #46, #59 and #60 merges. O1 still gates #46 on the project-scoped Supabase migration-read bearer. [Train 2 release runbook](docs/tech/TRAIN-2-RELEASE.md).
+
 **26 November — production tech feed recovered for existing uploads.** The approved format-only transaction changed 36 archive records. Production readback matched all 36 and all other record hashes. The signed-in headless main feed displayed all eight uploads newer than November 13 and excluded the confirmed Shorts. The three-channel pilot is a separate checked candidate. [Pilot operating plan](docs/tech/CHECKED-YOUTUBE-PILOT.md).
 
 **26 November — video analysis and review candidates.** The offline November replay produced 210/241 valid draft shapes and both drafts for 69/88 paired videos. The three-channel model projects $4.26 base / $6.70 stress per month at 36 archived videos. Automatic analysis stays off pending the checked release and separate paid-proof authorization. The review queue candidate stages reversible bulk decisions before explicit apply. [Offline replay and proposed gates](docs/tech/VIDEO-ANALYSIS-REPLAY-2026-11-26.md) · [Review queue draft PR](https://github.com/raduvlad92/recap/pull/47).

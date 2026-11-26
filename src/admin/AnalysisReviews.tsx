@@ -1,15 +1,17 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import type { ContentReviewDecision, ContentReviewDecisionResult, ContentReviewDetail, ContentReviewKeyword, ContentReviewPage, ContentReviewPoint, ContentReviewProposal, ContentReviewStatus, ContentReviewSummary } from '../lib/content-review-types';
+import { VIDEO_REVIEW_BATCH_LIMIT, type VideoReviewTarget, type VideoReviewResult } from '../lib/content-review-types';
 import './analysis-reviews.css';
 
 export type LoadContentReview = (record: Pick<ContentReviewSummary, 'id' | 'origin'>, promptPage?: number) => Promise<ContentReviewDetail>;
 export type DecideContentReview = (body: ContentReviewDecision, options?: { silent?: boolean }) => Promise<ContentReviewDecisionResult>;
+export type ApplyVideoReviews = (targets: VideoReviewTarget[]) => Promise<VideoReviewResult[]>;
 interface ReviewProblem { status: number; message: string }
 interface Props {
   data: Partial<ContentReviewPage>; status: ContentReviewStatus; page: number;
   onStatusChange: (status: ContentReviewStatus) => void; onPageChange: (page: number) => void;
-  loadDetail: LoadContentReview; decide: DecideContentReview; reload: () => void; onPendingChange: (pending: boolean) => void;
+  loadDetail: LoadContentReview; decide: DecideContentReview; applyVideoReviews?: ApplyVideoReviews; reload: () => void; onPendingChange: (pending: boolean) => void;
 }
 const statuses = { pending: 'Pending', approved: 'Approved', rejected: 'Rejected' } as const;
 const keywordKinds = { brand: 'Brand', product: 'Product', game: 'Game', technology: 'Technology', category: 'Category' } as const;
@@ -30,13 +32,20 @@ interface BulkReviewOutcome {
 const reviewKey = (record: Pick<ContentReviewSummary, 'id' | 'origin'>) => record.origin + ':' + record.id;
 const uncertainDecision = (error: ReviewProblem) => error.status === 0 || error.status >= 500;
 
-export function AnalysisReviews({ data, status, page, onStatusChange, onPageChange, loadDetail, decide, reload, onPendingChange }: Props) {
+export function AnalysisReviews({ data, status, page, onStatusChange, onPageChange, loadDetail, decide, applyVideoReviews, reload, onPendingChange }: Props) {
   const [pendingKeys, setPendingKeys] = useState<Set<string>>(() => new Set()), [openKey, setOpenKey] = useState<string | null>(null), [selected, setSelected] = useState<Set<string>>(() => new Set()), [outcomes, setOutcomes] = useState<Record<string, BulkReviewOutcome>>({}), [bulk, setBulk] = useState<{ decision: ContentReviewDecision['decision']; total: number; running: boolean; results: Record<string, BulkReviewOutcome> } | null>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => new Set());
+  const [manualSelection, setManualSelection] = useState(false);
+  const [staged, setStaged] = useState<VideoReviewTarget[]>([]);
+  const [smartReport, setSmartReport] = useState('');
+  const [smartRunning, setSmartRunning] = useState(false);
+  const smartReportRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (smartReport) smartReportRef.current?.focus(); }, [smartReport]);
   const pending = useRef(new Set<string>()), bulkLocked = useRef(false), active = useRef(true), outcomesRef = useRef<Record<string, BulkReviewOutcome>>({}), selectPageRef = useRef<HTMLInputElement>(null);
   const records = Array.isArray(data.reviews) ? data.reviews : [], scope = status + ':' + page + ':' + records.map(record => reviewKey(record) + '@' + record.updatedAt).join('|'), currentScope = useRef(scope), selectionScope = useRef(scope);
   currentScope.current = scope;
   useEffect(() => { active.current = true; return () => { active.current = false; onPendingChange(false); }; }, [onPendingChange]);
-  useEffect(() => { setSelected(new Set()); setOutcomes({}); outcomesRef.current = {}; setBulk(null); setOpenKey(null); selectionScope.current = scope; }, [scope]);
+  useEffect(() => { setSelected(new Set()); setOutcomes({}); outcomesRef.current = {}; setBulk(null); setOpenKey(null); setExpandedGroups(new Set()); setManualSelection(false); setStaged([]); setSmartReport(''); setSmartRunning(false); selectionScope.current = scope; }, [scope]);
   const needsRowReload = (key: string) => { const error = outcomesRef.current[key]?.error; return !!error && (uncertainDecision(error) || [401, 403, 409].includes(error.status)); };
   const shownRecords = records.map(record => outcomes[reviewKey(record)]?.result?.record ?? record).filter(record => record.status === status), eligible = status === 'pending' ? shownRecords.filter(record => !pendingKeys.has(reviewKey(record)) && !outcomes[reviewKey(record)]?.error) : [];
   const selectedCount = selectionScope.current === scope ? eligible.filter(record => selected.has(reviewKey(record))).length : 0, allSelected = eligible.length > 0 && selectedCount === eligible.length, mixed = selectedCount > 0 && !allSelected;
@@ -53,14 +62,14 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
   };
   const save: DecideContentReview = async body => {
     const key = reviewKey(body), record = records.find(item => reviewKey(item) === key);
-    if (bulkLocked.current || pending.current.has(key) || outcomesRef.current[key]?.result || needsRowReload(key) || currentScope.current !== scope || !record) throw { status: 409, message: 'This item is saving, already decided, or needs a reload.' } satisfies ReviewProblem;
+    if (staged.length || bulkLocked.current || pending.current.has(key) || outcomesRef.current[key]?.result || needsRowReload(key) || currentScope.current !== scope || !record) throw { status: 409, message: 'This item is saving, already decided, or needs a reload.' } satisfies ReviewProblem;
     markPending(key, true); keep(key, { record }, scope);
     try { const result = validateResult(body, await decide(body, { silent: true })); keep(key, { record, result }, scope); return result; }
     catch (value) { keep(key, { record, error: problem(value) }, scope); throw value; }
     finally { markPending(key, false); }
   };
   const runBulk = async (decision: ContentReviewDecision['decision']) => {
-    if (bulkLocked.current || pending.current.size > 0 || status !== 'pending' || selectionScope.current !== scope || currentScope.current !== scope) return;
+    if (staged.length || bulkLocked.current || pending.current.size > 0 || status !== 'pending' || selectionScope.current !== scope || currentScope.current !== scope) return;
     const targets = records.filter(record => record.status === 'pending' && selected.has(reviewKey(record)) && !outcomesRef.current[reviewKey(record)]?.result && !outcomesRef.current[reviewKey(record)]?.error).slice(0, 50).map(record => ({ ...record }));
     if (!targets.length) return;
     const frozenScope = scope, results: Record<string, BulkReviewOutcome> = {};
@@ -86,43 +95,169 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
       if (active.current) { onPendingChange(pending.current.size > 0); if (currentScope.current === frozenScope) setBulk(previous => previous ? { ...previous, running: false } : null); }
     }
   };
+  const applyStaged = async () => {
+    if (!applyVideoReviews || !staged.length || selectionScope.current !== scope || currentScope.current !== scope
+      || bulkLocked.current || pending.current.size > 0) return;
+    const targets = staged.slice(0, VIDEO_REVIEW_BATCH_LIMIT).map(target => ({ ...target }));
+    const remaining = staged.length - targets.length;
+    const byId = new Map(eligible.filter(record => record.origin === 'analysis').map(record => [record.id, record]));
+    if (targets.some(target => {
+      const record = byId.get(target.id);
+      const outcome = record && outcomesRef.current[reviewKey(record)];
+      return record?.updatedAt !== target.expectedUpdatedAt || outcome?.result || outcome?.error;
+    })) return;
+    bulkLocked.current = true;
+    setSmartRunning(true);
+    onPendingChange(true);
+    try {
+      const response = await applyVideoReviews(targets);
+      const results = new Map(response.map(item => [item.id, item]));
+      if (response.length !== targets.length || targets.some(target => {
+        const result = results.get(target.id);
+        return !result || (result.error !== 'PT400' && result.error !== 'PT409' && result.published !== (target.decision === 'approve'));
+      })) throw { status: 502, message: 'Reload to check the saved decisions.' };
+      if (!active.current || currentScope.current !== scope) return;
+      let approved = 0, rejected = 0, failed = 0;
+      for (const target of targets) {
+        const record = byId.get(target.id)!, result = results.get(target.id)!, key = reviewKey(record);
+        if (result.error) {
+          failed++;
+          keep(key, { record, error: { status: 409, message: 'Review changed or needs individual attention. Reload before deciding.' } }, scope);
+        } else {
+          const published = target.decision === 'approve';
+          if (published) approved++; else rejected++;
+          keep(key, { record, result: { record: { ...record, status: published ? 'approved' : 'rejected' }, published } }, scope);
+        }
+      }
+      setStaged(previous => previous.filter(target => !results.has(target.id)));
+      setSmartReport(`${approved} published, ${rejected} rejected, ${failed} need attention.${remaining ? ` ${remaining} still staged.` : ''}`);
+    } catch (value) {
+      if (!active.current || currentScope.current !== scope) return;
+      const error = problem(value);
+      for (const target of targets) {
+        const record = byId.get(target.id)!;
+        keep(reviewKey(record), { record, error }, scope);
+      }
+      setStaged([]);
+      setSmartReport(error.message + (remaining ? ` Stage the remaining ${remaining} decisions again after reloading.` : ''));
+    } finally {
+      bulkLocked.current = false;
+      if (active.current && currentScope.current === scope) {
+        setSmartRunning(false);
+        onPendingChange(false);
+      }
+    }
+  };
+
   const validPage = Array.isArray(data.reviews) && Number.isInteger(data.total) && data.total! >= 0 && data.page === page && Number.isInteger(data.pageSize) && data.pageSize! > 0;
   if (!validPage) return <div className="ra-message ra-message-error" role="alert"><h2>Reviews could not be read</h2><p>The service did not return a complete list.</p><button className="ra-button" type="button" onClick={reload}>Retry</button></div>;
   const removed = records.filter(record => record.status === status && outcomes[reviewKey(record)]?.result && outcomes[reviewKey(record)]!.result!.record.status !== status).length;
   const pagingDirty = removed > 0 || Object.keys(outcomes).some(needsRowReload);
-  const total = Math.max(0, data.total! - removed), pageSize = data.pageSize!, busy = pendingKeys.size > 0 || bulk?.running === true, batchBusy = bulk?.running === true;
+  const total = Math.max(0, data.total! - removed), pageSize = data.pageSize!, busy = pendingKeys.size > 0 || bulk?.running === true || smartRunning, batchBusy = bulk?.running === true || smartRunning;
   const start = shownRecords.length ? page * pageSize + 1 : 0, end = shownRecords.length ? Math.min(page * pageSize + shownRecords.length, total) : 0;
   const successes = Object.values(bulk?.results ?? {}).filter(outcome => outcome.result).length, failures = Object.values(bulk?.results ?? {}).filter(outcome => outcome.error).length, unattempted = Object.values(bulk?.results ?? {}).filter(outcome => outcome.unattempted).length;
   const toggleSelected = (key: string) => { if (bulkLocked.current || pending.current.has(key) || outcomesRef.current[key]?.result || outcomesRef.current[key]?.error) return; const sameScope = selectionScope.current === scope; selectionScope.current = scope; setSelected(previous => { const next = sameScope ? new Set(previous) : new Set<string>(); if (next.has(key)) next.delete(key); else next.add(key); return next; }); };
+  const grouped = status === 'pending' && Number.isSafeInteger(data.groupTotal);
+  const showManual = !grouped || manualSelection;
+  const stagedTargets = selectionScope.current === scope ? staged : [];
+  const stagedIds = new Set(stagedTargets.map(target => target.id));
+  const stagedApprovals = stagedTargets.filter(target => target.decision === 'approve').length;
+  const nextApply = stagedTargets.slice(0, VIDEO_REVIEW_BATCH_LIMIT);
+  const applyLabel = nextApply.some(target => target.decision === 'approve') ? 'Apply and publish' : 'Apply rejections';
+  const stage = (items: ContentReviewSummary[], decision: VideoReviewTarget['decision']) => {
+    if (!applyVideoReviews || bulkLocked.current || pending.current.size > 0 || currentScope.current !== scope || selectionScope.current !== scope) return;
+    const affected = new Set(items.map(item => item.id));
+    setStaged(previous => {
+      const previousIds = new Set(previous.map(item => item.id));
+      const next = previous.filter(item => !affected.has(item.id));
+      if (items.every(item => previousIds.has(item.id))) return next;
+      return [...next, ...items.map(item => ({ id: item.id, expectedUpdatedAt: item.updatedAt, decision }))];
+    });
+    setSmartReport('');
+  };
+  const navigateReview = (event: KeyboardEvent<HTMLUListElement>) => {
+    if (!(event.target instanceof HTMLButtonElement) || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    const selector = event.target.matches('[data-video-toggle]') ? '[data-video-toggle]' :
+      event.target.matches('.ra-review-summary') ? '.ra-review-summary' : null;
+    if (!selector || !['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    const controls = [...event.currentTarget.querySelectorAll<HTMLButtonElement>(selector)]
+      .filter(control => !control.disabled && !control.closest('[hidden]'));
+    const current = controls.indexOf(event.target);
+    event.preventDefault();
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? controls.length - 1 :
+      current + (event.key === 'ArrowDown' ? 1 : -1);
+    controls[Math.max(0, Math.min(next, controls.length - 1))]?.focus();
+  };
+  const groupKey = (record: ContentReviewSummary) => record.sourceUrl || reviewKey(record);
   const sourceGroups = new Map<string, ContentReviewSummary[]>();
   for (const record of shownRecords) {
-    const key = record.sourceUrl || reviewKey(record);
+    const key = groupKey(record);
     sourceGroups.set(key, [...(sourceGroups.get(key) || []), record]);
   }
-  const groupedRecords = [...sourceGroups.values()].flat();
-  return <section className="ra-review-queue" aria-label="Keyword and recap reviews" aria-busy={batchBusy}>
-    <div className="ra-review-tools"><label htmlFor="ra-review-status">Status<select id="ra-review-status" value={status} disabled={busy} onChange={event => onStatusChange(event.target.value as ContentReviewStatus)}>{Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><p>{`${total.toLocaleString()} ${status} ${total === 1 ? 'item' : 'items'}`}</p></div>
-    {status === 'pending' && records.length > 0 && <div className="ra-review-bulk-tools" role="group" aria-label="Bulk review decisions">
+  const groupedRecords = [...sourceGroups.values()].flatMap(group => grouped
+    ? group.sort((left, right) => (right.qualityScore ?? -1) - (left.qualityScore ?? -1) || Number(right.kind === 'recap') - Number(left.kind === 'recap'))
+    : group);
+  const groupEnd = sourceGroups.size ? Math.min(page * pageSize + sourceGroups.size, data.groupTotal ?? 0) : 0;
+  const groupStart = sourceGroups.size ? page * pageSize + 1 : 0;
+  return <section className={grouped ? 'ra-review-queue ra-review-queue-grouped' : 'ra-review-queue'} aria-label="Keyword and recap reviews" aria-busy={batchBusy}>
+    <div className="ra-review-tools"><label htmlFor="ra-review-status">Status<select id="ra-review-status" value={status} disabled={busy || stagedTargets.length > 0} onChange={event => onStatusChange(event.target.value as ContentReviewStatus)}>{Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><p>{`${total.toLocaleString()} ${status} ${total === 1 ? 'item' : 'items'}`}</p></div>
+    {status === 'pending' && records.length > 0 && showManual && <div className="ra-review-bulk-tools" role="group" aria-label="Bulk review decisions">
       <label className="ra-review-select-page"><input ref={selectPageRef} type="checkbox" aria-label="Select this page" aria-checked={mixed ? 'mixed' : allSelected} checked={allSelected} disabled={batchBusy || !eligible.length} onChange={() => { if (!bulkLocked.current) { selectionScope.current = scope; setSelected(allSelected ? new Set() : new Set(eligible.map(reviewKey))); } }} /><span>Select this page</span></label>
       <button className="ra-text-button" type="button" disabled={busy || selectedCount === 0} onClick={() => setSelected(new Set())}>Clear</button><span className="ra-review-selected-count" role="status">{selectedCount} selected</span>
-      <div className="ra-review-bulk-actions"><button className="ra-button ra-button-primary ra-button-small" type="button" disabled={busy || selectedCount === 0} onClick={() => void runBulk('approve')}>Confirm and publish selected</button><button className="ra-button ra-button-small" type="button" disabled={busy || selectedCount === 0} onClick={() => void runBulk('reject')}>Reject selected</button></div>
-      <p className="ra-review-bulk-note">Uses saved proposals; save edits individually.</p>
+      <div className="ra-review-bulk-actions"><button className="ra-button ra-button-primary ra-button-small" type="button" disabled={busy || stagedTargets.length > 0 || selectedCount === 0 || selectedCount > 50} onClick={() => void runBulk('approve')}>Confirm and publish selected</button><button className="ra-button ra-button-small" type="button" disabled={busy || stagedTargets.length > 0 || selectedCount === 0 || selectedCount > 50} onClick={() => void runBulk('reject')}>Reject selected</button></div>
+      <p className="ra-review-bulk-note">{selectedCount > 50 ? 'Choose up to 50 drafts for a manual batch.' : 'Uses saved proposals; save edits individually.'}</p>
     </div>}
+    {grouped && <div className="ra-review-group-tools">
+      <p className="ra-review-keyboard">Use ↑ and ↓ to move between sources or drafts, and Enter to open. Scores of 100 have saved checker support, 50 need review, and 0 have no draft.</p>
+      {records.length > 0 && <button className="ra-text-button" type="button" aria-pressed={manualSelection} disabled={busy || stagedTargets.length > 0} onClick={() => {
+        setManualSelection(value => !value);
+        setSelected(new Set());
+      }}>{manualSelection ? 'Hide manual selection' : 'Select drafts manually'}</button>}
+    </div>}
+    {stagedTargets.length > 0 && <div className="ra-review-staged" role="group" aria-label="Staged review decisions">
+      <p role="status">{stagedApprovals} ready to publish, {stagedTargets.length - stagedApprovals} ready to reject</p>
+      <button className="ra-button ra-button-small" type="button" disabled={busy} onClick={() => setStaged([])}>Undo all</button>
+      <button className="ra-button ra-button-small ra-button-primary" type="button" disabled={busy} onClick={() => void applyStaged()}>{smartRunning ? 'Applying…' : applyLabel + (nextApply.length < stagedTargets.length ? ` (${nextApply.length})` : '')}</button>
+    </div>}
+    {smartReport && <div className="ra-review-bulk-report" role="status" ref={smartReportRef} tabIndex={-1}><p>{smartReport}</p></div>}
     {bulk && <div className="ra-review-bulk-report" role="status"><p>{bulk.running ? `Saving decisions: ${successes + failures} of ${bulk.total} checked.` : `${successes} ${bulk.decision === 'approve' ? 'confirmed and published' : 'rejected'}; ${failures} need attention; ${unattempted} not attempted.`}</p>{!bulk.running && <><p>You can continue with the remaining items.</p>{failures > 0 && <button className="ra-button ra-button-small" type="button" disabled={busy} onClick={reload}>Reload latest reviews</button>}</>}</div>}
-    {shownRecords.length ? <ul className="ra-review-list">{groupedRecords.map(record => {
+    {shownRecords.length ? <ul className="ra-review-list" onKeyDown={grouped ? navigateReview : undefined}>{groupedRecords.map(record => {
       const key = reviewKey(record), outcome = outcomes[key];
-      const group = sourceGroups.get(record.sourceUrl || key)!, first = group[0] === record;
+      const sourceKey = groupKey(record), group = sourceGroups.get(sourceKey)!, first = group[0] === record;
+      const groupOpen = !grouped || expandedGroups.has(sourceKey);
+      const ready = first && grouped ? group.filter(item => item.origin === 'analysis' && item.qualityScore === 100 && eligible.includes(item)) : [];
+      const low = first && grouped ? group.filter(item => item.origin === 'analysis' && item.qualityScore === 0 && eligible.includes(item)) : [];
+      const stageAction = (items: ContentReviewSummary[], decision: VideoReviewTarget['decision'], label: string, undo: string) => {
+        if (!applyVideoReviews || manualSelection || !items.length) return null;
+        const all = items.every(item => stagedIds.has(item.id));
+        return <button className="ra-button ra-button-small" type="button"
+          disabled={busy}
+          onClick={() => stage(items, decision)}>{all ? undo : label} ({items.length})</button>;
+      };
       const groupKeywords = group.filter(item => item.kind === 'keyword' && eligible.includes(item));
       const groupSelected = selectionScope.current === scope && groupKeywords.every(item => selected.has(reviewKey(item)));
-      return <li aria-busy={pendingKeys.has(key)} key={key + ':' + record.updatedAt}>
-        {first && <div className="ra-review-source-group"><span dir="auto">{record.sourceTitle || 'Untitled source'}</span><span>{group.length} on this page</span>{status === 'pending' && groupKeywords.length > 1 && <button className="ra-text-button" type="button" disabled={busy} aria-label={(groupSelected ? 'Clear' : 'Select') + ' keywords from ' + (record.sourceTitle || 'untitled source') + ' on this page'} onClick={() => {
+      return <li hidden={grouped && !first && !groupOpen} aria-busy={pendingKeys.has(key)} key={key + ':' + record.updatedAt}>
+        {first && grouped && <div className="ra-review-video">
+          <button className="ra-review-video-toggle" type="button" data-video-toggle aria-expanded={groupOpen} onClick={() => setExpandedGroups(previous => {
+            const next = new Set(previous);
+            if (next.has(sourceKey)) next.delete(sourceKey); else next.add(sourceKey);
+            return next;
+          })}>
+            <ChevronRight size={17} aria-hidden="true" /><span dir="auto">{record.sourceTitle || 'Untitled source'}</span><small>{group.length} {group.length === 1 ? 'draft' : 'drafts'}</small>
+          </button>
+          <div className="ra-review-video-actions">
+            {stageAction(ready, 'approve', 'Approve all grounded', 'Undo approval')}
+            {stageAction(low, 'reject', 'Reject low-score', 'Undo rejection')}
+          </div>
+        </div>}
+        {first && !grouped && <div className="ra-review-source-group"><span dir="auto">{record.sourceTitle || 'Untitled source'}</span><span>{group.length} on this page</span>{status === 'pending' && groupKeywords.length > 1 && <button className="ra-text-button" type="button" disabled={busy} aria-label={(groupSelected ? 'Clear' : 'Select') + ' keywords from ' + (record.sourceTitle || 'untitled source') + ' on this page'} onClick={() => {
           if (bulkLocked.current) return;
           const sameScope = selectionScope.current === scope; selectionScope.current = scope;
           setSelected(previous => { const next = sameScope ? new Set(previous) : new Set<string>(); for (const item of groupKeywords) { if (groupSelected) next.delete(reviewKey(item)); else next.add(reviewKey(item)); } return next; });
         }}>{groupSelected ? 'Clear keywords' : 'Select keywords'}</button>}</div>}
-        <div className={status === 'pending' ? 'ra-review-select-row' : undefined}>{status === 'pending' && <label className="ra-review-row-selection">{record.status === 'pending' && <input type="checkbox" aria-label={'Select ' + kindLabel(record.kind).toLowerCase() + ' ' + (record.label || 'unnamed item') + ' from ' + (record.sourceTitle || 'untitled source')} checked={selectionScope.current === scope && selected.has(key)} disabled={batchBusy || pendingKeys.has(key) || !!outcome?.error} onChange={() => toggleSelected(key)} />}</label>}<div className="ra-review-row-content"><ReviewRow record={record} open={openKey === key} toggle={() => setOpenKey(value => value === key ? null : key)} loadDetail={loadDetail} decide={save} disabled={batchBusy || pendingKeys.has(key)} writeDisabled={needsRowReload(key)} reloadDisabled={busy} pending={pendingKeys.has(key)} reload={reload} />{outcome?.error && <p className="ra-review-row-result">{uncertainDecision(outcome.error) ? 'Decision not confirmed: ' : 'Not saved: '}{outcome.error.message}</p>}{outcome?.unattempted && <p className="ra-review-row-result ra-muted">Not attempted.</p>}</div></div></li>;
+        <div hidden={!groupOpen} className={status === 'pending' && showManual ? 'ra-review-select-row' : undefined}>{status === 'pending' && showManual && <label className="ra-review-row-selection">{record.status === 'pending' && <input type="checkbox" aria-label={'Select ' + kindLabel(record.kind).toLowerCase() + ' ' + (record.label || 'unnamed item') + ' from ' + (record.sourceTitle || 'untitled source')} checked={selectionScope.current === scope && selected.has(key)} disabled={batchBusy || pendingKeys.has(key) || !!outcome?.error} onChange={() => toggleSelected(key)} />}</label>}<div className="ra-review-row-content"><ReviewRow record={record} open={openKey === key} toggle={() => setOpenKey(value => value === key ? null : key)} loadDetail={loadDetail} decide={save} disabled={batchBusy || pendingKeys.has(key)} writeDisabled={needsRowReload(key) || stagedTargets.length > 0} reloadDisabled={busy} pending={pendingKeys.has(key)} reload={reload} />{outcome?.error && <p className="ra-review-row-result">{uncertainDecision(outcome.error) ? 'Decision not confirmed: ' : 'Not saved: '}{outcome.error.message}</p>}{outcome?.unattempted && <p className="ra-review-row-result ra-muted">Not attempted.</p>}</div></div></li>;
     })}</ul> : <div className="ra-review-empty"><h2>{removed > 0 ? 'This loaded page is done' : page > 0 ? 'No items on this page' : `No ${status} reviews`}</h2><p>{removed > 0 ? 'Load remaining reviews when you are ready to continue.' : page > 0 ? 'Go to the previous page or refresh the list.' : status === 'pending' ? 'Held keywords and recaps will appear here.' : `Items you marked ${status} will appear here.`}</p></div>}
-    <div className="ra-pagination">{pagingDirty && <button className="ra-button ra-button-small" type="button" disabled={busy} onClick={reload}>Load remaining reviews</button>}<p>{start.toLocaleString()}–{end.toLocaleString()} of {total.toLocaleString()}</p><div><button className="ra-button ra-button-small" type="button" disabled={busy || pagingDirty || page === 0} onClick={() => onPageChange(page - 1)}><ChevronLeft size={15} aria-hidden="true" />Previous</button><button className="ra-button ra-button-small" type="button" disabled={busy || pagingDirty || (page + 1) * pageSize >= total} onClick={() => onPageChange(page + 1)}>Next<ChevronRight size={15} aria-hidden="true" /></button></div></div>
+    <div className="ra-pagination">{pagingDirty && <button className="ra-button ra-button-small" type="button" disabled={busy || stagedTargets.length > 0} onClick={reload}>Load remaining reviews</button>}<p>{grouped ? `${groupStart}–${groupEnd} of ${data.groupTotal} sources` : `${start.toLocaleString()}–${end.toLocaleString()} of ${total.toLocaleString()}`}</p><div><button className="ra-button ra-button-small" type="button" disabled={busy || stagedTargets.length > 0 || (!grouped && pagingDirty) || page === 0} onClick={() => onPageChange(page - 1)}><ChevronLeft size={15} aria-hidden="true" />Previous</button><button className="ra-button ra-button-small" type="button" disabled={busy || stagedTargets.length > 0 || pagingDirty || (page + 1) * pageSize >= (data.groupTotal ?? total)} onClick={() => onPageChange(page + 1)}>Next<ChevronRight size={15} aria-hidden="true" /></button></div></div>
   </section>;
 }
 
@@ -142,7 +277,7 @@ function ReviewRow({ record, open, toggle, loadDetail, decide, disabled, writeDi
   const expand = () => { toggle(); if (!open && !detail && !loadingRef.current) void load(); };
   return <>
     <button type="button" className="ra-review-summary" disabled={disabled} onClick={expand} aria-expanded={open} aria-controls={open ? prefix + '-detail' : undefined}>
-      <ChevronRight className="ra-review-chevron" size={15} aria-hidden="true" /><span className="ra-review-kind">{kindLabel(record.kind)}</span><span className="ra-review-label" dir="auto" title={record.label}>{record.label || (record.kind === 'recap' ? 'Recap needs a decision' : 'Keyword needs a decision')}</span><span className="ra-review-source" dir="auto" title={record.sourceTitle}>{record.sourceTitle || 'Untitled source'}</span><span className="ra-review-reason" dir="auto" title={record.reason}>{record.reason || record.decisionRequired}</span><span className="ra-review-state">{pending ? 'Saving…' : statuses[record.status]}</span>
+      <ChevronRight className="ra-review-chevron" size={15} aria-hidden="true" /><span className="ra-review-kind">{kindLabel(record.kind)}</span><span className="ra-review-label" dir="auto" title={record.label}>{record.label || (record.kind === 'recap' ? 'Recap needs a decision' : 'Keyword needs a decision')}</span><span className="ra-review-source" dir="auto" title={record.sourceTitle}>{record.sourceTitle || 'Untitled source'}</span><span className="ra-review-reason" dir="auto" title={record.reason}>{record.reason || record.decisionRequired}</span><span className="ra-review-state">{pending ? 'Saving…' : record.qualityScore === undefined ? statuses[record.status] : record.qualityScore === null ? 'Unscored' : record.qualityScore + '/100'}</span>
     </button>
     {open && <div className="ra-review-detail" id={prefix + '-detail'}>
       {loading ? <div className="ra-loading" role="status"><RefreshCw size={15} aria-hidden="true" />Loading source and prompt…</div> : error ? <div className="ra-save-error" role="alert"><p>{error.message}</p><button className="ra-button ra-button-small" type="button" onClick={() => void load()}>Retry details</button></div> : detail ? <ReviewDecisionPanel detail={detail} loadDetail={loadDetail} decide={decide} disabled={disabled} writeDisabled={writeDisabled} reloadDisabled={reloadDisabled} pending={pending} reload={reload} /> : null}

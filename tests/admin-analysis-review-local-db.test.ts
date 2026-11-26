@@ -41,6 +41,41 @@ describe.skipIf(!available)('compact review inbox, disposable PostgreSQL only',(
   for(const role of ['anon','authenticated'])for(const table of ['admin_analysis_reviews','admin_analysis_prompt_receipts','admin_analysis_review_queue'])expect(sql(`select has_table_privilege(${q(role)},${q('public.'+table)},'select');`)).toBe('f');
   for(const role of ['anon','authenticated'])for(const fn of ['record_admin_analysis_prompt(uuid,uuid,text,text,jsonb)','admin_decide_analysis_review(uuid,timestamptz,text,text,jsonb)','sync_admin_analysis_reviews(text,integer)','admin_analysis_published_recap(text,text,text,text,jsonb)','project_approved_keyword_subset()'])expect(sql(`select has_function_privilege(${q(role)},${q('public.'+fn)},'execute');`)).toBe('f');
  });
+ it('groups a whole video, scores only bound recent drafts and applies only explicitly staged eligible revisions', () => {
+  const youtube = { ...record, url: 'https://www.youtube.com/watch?v=abcdefghijk' };
+  service(`update public.reader_source_updates set record=${j(youtube)} where id='review-video';
+    insert into public.automatic_content_policies(user_id,enabled,starts_at) values(${q(owner)},true,'2026-11-25');`);
+  const task = service(`insert into public.automatic_content_tasks(user_id,update_id,source_id,content_hash,source_revision,source_fingerprint,source_snapshot,task,state,created_at)
+    values(${q(owner)},'review-video','review-source',${q(hash)},public.content_analysis_source_revision(${j(youtube)}),${q('0'.repeat(64))},${j(youtube)},'keywords','review','2026-11-25T00:00:00Z') returning id;`);
+  const save = (name: string, proposal: unknown, reason: string) => json(`insert into public.admin_analysis_reviews(user_id,update_id,source_id,content_hash,kind,dedupe_key,source_snapshot,proposal,reason,provenance)
+    values(${q(owner)},'review-video','review-source',${q(hash)},'keyword',${q('automatic:' + task + ':' + name)},${j(youtube)},${j(proposal)},${q(reason)},'{"origin":"automatic_content"}') returning to_jsonb(admin_analysis_reviews);`);
+  const ready = save('ready', { label: 'AeroBox', kind: 'brand' }, 'The AI checker accepted this suggestion.');
+  const partialName = save('partial', { label: 'Aero', kind: 'brand' }, 'The AI checker accepted this suggestion.');
+  const low = save('failure', {}, 'Automatic generation could not provide a validated draft (analysis_invalid_json).');
+  const hold = save('hold', {}, 'Automatic generation could not provide a validated draft (analysis_unknown_charge_hold).');
+  const originalHold = row('recap', { highlights: [] });
+  expect(source().url).toBe(youtube.url);
+  expect(json(`select count(*) from public.automatic_content_tasks where id=${q(task)} and created_at >= '2026-11-25';`)).toBe(1);
+  expect(json(`select public.admin_video_review_score(r,a) from public.admin_analysis_reviews r join public.reader_source_updates a on a.id=r.update_id and a.user_id=r.user_id where r.id=${q(ready.id)};`)).toBe(100);
+  const list = json('select public.admin_grouped_analysis_reviews(0);');
+  expect(list).toMatchObject({ groupTotal: 2, total: 5, pageSize: 6 });
+  const scores = Object.fromEntries(list.reviews.map((entry: any) => [entry.id, entry.quality_score]));
+  expect(scores).toEqual({ [ready.id]: 100, [partialName.id]: 50, [low.id]: 0, [hold.id]: 50, [originalHold.id]: null });
+  expect(JSON.stringify(list)).not.toContain(content);
+  const target = (r: any, decision: string, expected = r.updated_at) => ({ id: r.id, expected, decision });
+  const apply = (...targets: unknown[]) => json(`select public.admin_apply_video_reviews(${j(targets)},'admin:fixture');`);
+  expect(apply(target(ready, 'approve', '2026-11-24'), target(originalHold, 'reject'), target(hold, 'reject'), target(partialName, 'approve')))
+    .toEqual(expect.arrayContaining([ready, originalHold, hold, partialName].map(r => ({ id: r.id, error: 'PT409' }))));
+  expect(source().videoKeywords).toEqual([]);
+  expect(apply(target(ready, 'approve'), target(low, 'reject'))).toEqual(expect.arrayContaining([
+    { id: ready.id, published: true }, { id: low.id, published: false },
+  ]));
+  expect(source().videoKeywords).toEqual([{ label: 'AeroBox', ranges: [] }]);
+  expect(source().videoHighlights).toEqual(record.videoHighlights);
+  expect(apply(target(ready, 'approve'))).toEqual([{ id: ready.id, error: 'PT409' }]);
+  for (const role of ['anon', 'authenticated']) for (const fn of ['admin_grouped_analysis_reviews(integer)', 'admin_apply_video_reviews(jsonb,text)'])
+    expect(sql(`select has_function_privilege(${q(role)},${q('public.' + fn)},'execute');`)).toBe('f');
+ });
  it('approves or edits a literal keyword atomically through the durable old review decisions',()=>{
   const r=row(),out=decide(r,'approve',{label:'AeroBox',kind:'brand'});expect(out.published).toBe(true);expect(out.record.proposal).toEqual(r.proposal);expect(out.record.resolved).toEqual({label:'AeroBox',kind:'brand'});
   expect(source().videoKeywords).toEqual([{label:'AeroBox',ranges:[]}]);expect(source().videoHighlights).toEqual(record.videoHighlights);expect(source().processing.keywords).toBe('review');

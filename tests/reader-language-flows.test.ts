@@ -218,9 +218,40 @@ describe('reader and daily interface language flows', () => {
     form.props.onSubmit({ preventDefault() {} });
     expect(data.workspace.saveCollection).toHaveBeenCalledWith('Original collection name', [source.id], undefined);
     tree = h.render(); button(tree, t('manage')).props.onClick(); tree = h.render();
+    nodes(tree).find(node => node.type === 'input' && node.props.id === 'source-url')
+      .props.onChange({ target: { value: 'https://www.youtube.com/watch?v=abcdefghijk' } });
+    tree = h.render();
     form = nodes(tree).find(node => node.type === 'form' && node.props.className === 'source-add-form');
     form.props.onSubmit({ preventDefault() {} }); tree = h.render();
-    expect(markup(tree, id)).toContain(escaped(t('youtubeChannelLink'))); expect(fetch).not.toHaveBeenCalled();
+    expect(markup(tree, id)).toContain(escaped(t('youtubeChannelLink')));
+    expect(data.workspace.addSource).not.toHaveBeenCalled(); expect(fetch).not.toHaveBeenCalled();
+  });
+  it('previews a normalized channel locally and invalidates the preview when the link changes', () => {
+    const t = translator('en'), h = harness(App, {}, 'en');
+    let tree = h.render();
+    button(tree, t('manage')).props.onClick();
+    tree = h.render();
+    const setLink = (value: string) => nodes(tree).find(node => node.type === 'input' && node.props.id === 'source-url').props.onChange({ target: { value } });
+    const submit = () => nodes(tree).find(node => node.type === 'form' && node.props.className === 'source-add-form').props.onSubmit({ preventDefault() {} });
+    setLink('https://www.youtube.com/@preview/videos?utm_source=demo');
+    tree = h.render();
+    submit();
+    tree = h.render();
+    const html = markup(tree);
+    expect(html).toContain('https://youtube.com/@preview');
+    expect(html).toContain(escaped(t('sourcePreviewUnsaved')));
+    expect(data.workspace.addSource).not.toHaveBeenCalled();
+    setLink('https://youtube.com/@another');
+    tree = h.render();
+    expect(markup(tree)).not.toContain(escaped(t('sourcePreviewUnsaved')));
+    submit();
+    tree = h.render();
+    expect(data.workspace.addSource).not.toHaveBeenCalled();
+    submit();
+    expect(data.workspace.addSource).not.toHaveBeenCalled();
+    button(h.render(), t('add')).props.onClick();
+    expect(data.workspace.addSource).toHaveBeenCalledExactlyOnceWith('https://youtube.com/@another');
+    expect(fetch).not.toHaveBeenCalled();
   });
   it('applies a saved interface language to the confirmation without changing recap wording or consent', () => {
     data.workspace.state.settings = { ...data.workspace.state.settings, interfaceLanguage: 'en', recapLanguage: 'es', emailReminder: true };

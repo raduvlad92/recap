@@ -40,6 +40,9 @@ for (const kind of ['jobs', 'web']) {
   config.main = root + 'cloudflare/' + kind + '.ts';
   if (config.assets) config.assets.directory = root + 'dist-cloudflare';
   config.vars.RELEASE_SHA = release;
+  if (mode === 'active') {
+    config.define = { ...config.define, __RECAP_CLERK_BROWSER_KEY__: JSON.stringify(env.VITE_CLERK_PUBLISHABLE_KEY) };
+  }
   // Build configuration is always inert. Activating a deployment requires the
   // explicit checked cutover workflow and the database ownership gate.
   writeFileSync(root + '.local/cloudflare-build/' + kind + '.json', JSON.stringify(config, null, 2));

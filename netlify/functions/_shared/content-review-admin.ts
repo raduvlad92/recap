@@ -1,3 +1,4 @@
+import { VIDEO_REVIEW_BATCH_LIMIT, type VideoReviewResult } from '../../../src/lib/content-review-types';
 import { createHash } from 'node:crypto';
 import type { ContentReviewDecisionResult, ContentReviewDetail, ContentReviewKind, ContentReviewOrigin, ContentReviewPage, ContentReviewPrompt, ContentReviewProposal, ContentReviewStatus, ContentReviewSummary } from '../../../src/lib/content-review-types';
 import type { KeywordReviewKind } from '../../../src/lib/keyword-review-types';
@@ -84,6 +85,18 @@ async function auditRead(db: Database, adminId: string, action: string, id: stri
 export async function listContentReviews(db: Database, url: URL, page: number, adminId: string): Promise<ContentReviewPage> {
   const status = url.searchParams.get('status') ?? 'pending';
   if (!['pending','approved','rejected'].includes(status)) return bad('Choose pending, approved or rejected reviews.');
+  if (status === 'pending' && url.searchParams.get('group') === 'source') {
+    const grouped = unwrap(await db.rpc('admin_grouped_analysis_reviews', { p_page: page })) as Row;
+    if (!object(grouped) || !Array.isArray(grouped.reviews) || !Number.isSafeInteger(grouped.total)
+      || !Number.isSafeInteger(grouped.groupTotal) || grouped.page !== page || grouped.pageSize !== 6)
+      throw new CollectionError(502, 'invalid_review_page', 'The grouped reviews could not be confirmed.');
+    const reviews = grouped.reviews.map((row: Row): ContentReviewSummary => {
+      const score = row.quality_score;
+      return { ...summary(row, originOf(row.origin)), qualityScore: score === 0 || score === 50 || score === 100 ? score : null };
+    });
+    await auditRead(db, adminId, 'analysis_reviews.listed', null, { status, page, group: 'source' });
+    return { reviews, total: grouped.total as number, groupTotal: grouped.groupTotal as number, page, pageSize: 6 };
+  }
   const result = await db.from('admin_analysis_review_queue').select(summaryColumns,{count:'exact'}).eq('status',status)
     .order('created_at',{ascending:false}).order('id',{ascending:false}).order('origin',{ascending:false}).range(page*50,page*50+49);
   const rows = unwrap(result) as Row[] | null;
@@ -308,4 +321,29 @@ export async function decideContentReview(db: Database, body: Row, adminId: stri
   const snapshot=object(resolved.source_snapshot)?resolved.source_snapshot:{};
   if (resolved.id!==body.id || resolved.status!==(body.decision==='approve'?'approved':'rejected') || !revision(resolved.updated_at)) throw new CollectionError(502,'invalid_review_result','The saved decision could not be confirmed. Reload the queue.');
   return {record:summary({...resolved,source_title:snapshot.title,source_url:snapshot.url},'analysis'),published:body.decision==='approve'};
+}
+
+export async function applyVideoReviews(db: Database, body: Row, adminId: string): Promise<{ decisions: VideoReviewResult[] }> {
+  if (Object.keys(body).some(key => key !== 'action' && key !== 'targets') || !Array.isArray(body.targets)
+    || body.targets.length < 1 || body.targets.length > VIDEO_REVIEW_BATCH_LIMIT) return bad('Choose up to 250 staged reviews.');
+  const ids = new Map<string, boolean>();
+  const targets = body.targets.map((target: unknown) => {
+    if (!object(target) || Object.keys(target).length !== 3 || typeof target.id !== 'string' || !UUID.test(target.id)
+      || ids.has(target.id.toLowerCase()) || !revision(target.expectedUpdatedAt)
+      || (target.decision !== 'approve' && target.decision !== 'reject')) return bad('Reload before applying these staged reviews.');
+    ids.set(target.id.toLowerCase(), target.decision === 'approve');
+    return { id: target.id.toLowerCase(), expected: target.expectedUpdatedAt, decision: target.decision };
+  });
+  const saved = unwrap(await db.rpc('admin_apply_video_reviews', { p_targets: targets, p_admin: adminId })) as unknown;
+  if (!Array.isArray(saved) || saved.length !== targets.length) throw new CollectionError(502, 'invalid_review_result', 'Reload to check the saved decisions.');
+  const decisions = saved.map((item: unknown): VideoReviewResult => {
+    if (!object(item) || typeof item.id !== 'string' || !ids.has(item.id))
+      throw new CollectionError(502, 'invalid_review_result', 'Reload to check the saved decisions.');
+    const publish = ids.get(item.id);
+    ids.delete(item.id);
+    if (item.error === 'PT400' || item.error === 'PT409') return { id: item.id, error: item.error };
+    if (item.published === publish) return { id: item.id, published: item.published as boolean };
+    throw new CollectionError(502, 'invalid_review_result', 'Reload to check the saved decisions.');
+  });
+  return { decisions };
 }
