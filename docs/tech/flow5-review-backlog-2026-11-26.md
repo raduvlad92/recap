@@ -1,8 +1,8 @@
 # Flow 5 review backlog — 26 November 2026
 
-**The current backlog cannot be cleared in five minutes.** Production held **4,240 visible pending review rows**, including **3,297 November 25 draft items on 93 videos** and **109 additional November 25 failure or hold records**. **12 of 50 sampled rows passed** the content and citation checks (**24%, against a 90% reference bar**). The narrower rate for rows containing content was **12/32 (37.5%)**. The owner’s **Keep held for review** decision applies.
+**The current backlog cannot be cleared in five minutes.** Production held **4,240 visible pending review rows**, including **3,297 November 25 draft items on 93 videos** and **109 additional November 25 failure or hold records**. **15 of 50 sampled drafts passed** content and citation review (**30%, against a 90% reference bar**). A separate inbox sample that included failure records passed **12/50 (24%)**. The owner’s **Keep held for review** decision applies.
 
-The audit used the existing Supabase production connection between 03:46 and 04:00 UTC. Every data query ran in a `BEGIN READ ONLY` transaction with an explicit `ROLLBACK` and reported `transaction_read_only = on`. Bounded reads replaced a combined query that exceeded its statement timeout. Analysis and collection spend for this audit was **$0**. The [November replay](VIDEO-ANALYSIS-REPLAY-2026-11-26.md) and [owner decision](../DECISIONS.md#11-november-2026--founder-explicitly-keeps-the-corrected-recap-held) provide the starting context.
+The audit used the existing Supabase production connection between 03:46 and 04:03 UTC. Every data query ran in a `BEGIN READ ONLY` transaction with an explicit `ROLLBACK` and reported `transaction_read_only = on`. Bounded reads replaced a combined query that exceeded its statement timeout. Analysis and collection spend for this audit was **$0**. The [November replay](VIDEO-ANALYSIS-REPLAY-2026-11-26.md) and [owner decision](../DECISIONS.md#11-november-2026--founder-explicitly-keeps-the-corrected-recap-held) provide the starting context.
 
 ## What is pending
 
@@ -22,20 +22,20 @@ The November 11 automatic cohort has **106 protected rows**. Another **35** have
 
 ## Quality sample
 
-I took 35 keyword rows and 15 recap rows from the visible inbox using a fixed ID-hash order within each type, channel and age band. The selection covered **22 of 23 channels, 36 channel × age cells and 50 distinct type × channel × age strata**, one row from each selected stratum. The full inbox had 82 strata. The takeaways quota gives recaps enough representation to see their failure modes. Small strata and empty attempt records are deliberately represented. The rates describe this audit sample. The V1 flow 4 proof tests whether **both drafts** on the same newly analyzed video are usable. It needs a separate paired test.
+The primary sample contains **50 nonempty pending proposals** from the 4,012 with content in the visible inbox. I took 35 keyword drafts and 15 recap drafts using a fixed ID-hash order within each type, channel and age band. It covered **20 channels, 36 channel × age cells and 50 of the 60 nonempty type × channel × age strata**. The recap quota gives takeaways enough representation to see their failure modes. The mix gives smaller strata more representation than a simple random draw. The rates describe this sample. The V1 flow 4 proof tests whether **both drafts** on the same newly analyzed video are usable. It needs a separate paired test.
 
-I checked saved archive identity, URL and source hash for each row. For keywords I required an exact recoverable mention, a sensible identity and the correct type in its local context. Newer keyword rows cite through the saved original and a recoverable literal mention. Legacy examples also have a saved quote. For recaps I required every takeaway to be useful and supported by its own exact attached quote, with attribution, numbers and qualifications intact. Nearby context could disqualify a claim. This was a single-reviewer check against bounded archive excerpts without external fact checking or exhaustive keyword recall analysis. [Keyword rubric](../design/KEYWORD-EXTRACTION-RULE.md)
+I checked saved archive identity, URL and source hash for each draft. Keywords needed an exact recoverable mention, a sensible identity and the correct type in its local context. Newer keywords cite through the saved original and a recoverable literal mention. Legacy examples also have a saved quote. Recaps needed every takeaway to be useful and supported by its own exact attached quote, with attribution, numbers and qualifications intact. Nearby context could disqualify a claim. This was a single-reviewer check using bounded archive excerpts and source attribution. Keyword inventory completeness and real-world truth require separate verification. [Keyword rubric](../design/KEYWORD-EXTRACTION-RULE.md)
 
-| Sample | Passed | Reviewed | Rate |
+| Primary sample | Passed | Reviewed | Rate |
 | --- | ---: | ---: | ---: |
-| Keywords | 12 | 35 | 34.3% |
+| Keywords | 15 | 35 | 42.9% |
 | Recaps | 0 | 15 | 0% |
-| **All pending rows sampled** | **12** | **50** | **24.0%** |
-| Nonempty proposals | 12 | 32 | 37.5% |
+| **All 50 nonempty drafts** | **15** | **50** | **30.0%** |
 
-- **18** empty attempts. Seven had unresolved charges, three invalid JSON, one insufficient output capacity, two altered findings, and five other named causes in the sample log.
-- **15** literal keywords needed correction or rejection. Seven used the wrong category or naming role, five had ambiguous or faulty names, and three identified incidental people.
-- **5** nonempty recaps had exact quotes in the correct archive. Four quotes left material parts of claims unsupported. One draft omitted a qualification visible in the adjacent context. An exact quote checks provenance. Entailment still requires reading it.
+- **20 keyword drafts** needed correction or rejection. Eight used the wrong category or naming role, seven had ambiguous or faulty names, four identified incidental people, and one lacked a standalone literal match.
+- **15 recap drafts** had exact attached quotes in the correct archive. In 14, the quote left material parts of a claim unsupported. One omitted a qualification visible in the adjacent context. Quoted text can match the archive exactly even when it omits the facts asserted alongside it.
+
+The broader inbox sample included **18 empty attempts**. Seven had unresolved charges, three invalid JSON, one insufficient output capacity, two altered findings, and five other named causes in the sample log. **12/50 rows passed**, including **12/32 nonempty rows**. Those 32 proposals also appear in the draft-only sample. The two samples answer different questions and share evidence.
 
 ## What train 2 changes
 
@@ -332,7 +332,65 @@ Channel and video aliases identify groups within this audit. Production row IDs,
 </details>
 
 <details>
-<summary>50 sampled rows and verdicts</summary>
+<summary>Primary sample and verdicts (50 nonempty drafts)</summary>
+
+| Sample | Type | Channel | Draft age | Verdict and reason |
+| --- | --- | --- | --- | --- |
+| D01 | keyword | C20 | 15–30d | K-TYPE. Brand label lifts a fragment from the name of a color standard. |
+| D02 | keyword | C15 | 0–2d | PASS. Product generation is identified by explicit watch context. |
+| D03 | keyword | C07 | 15–30d | K-NAME. Caption spelling leaves the branded rig identity ambiguous. |
+| D04 | keyword | C06 | 0–2d | PASS. Brand is explicitly named in the discussion. |
+| D05 | keyword | C19 | 0–2d | PASS. Concrete home-video format is useful as a category. |
+| D06 | keyword | C20 | 0–2d | K-TYPE. Named wallpaper is categorized as a general category. |
+| D07 | keyword | C11 | 15–30d | PASS. The named work-surface product is explicit in context. |
+| D08 | keyword | C04 | 0–2d | PASS. Vehicle brand is unambiguous in the introduction. |
+| D09 | keyword | C17 | 0–2d | K-TYPE. Country abbreviation in a price is treated as a technology category. |
+| D10 | keyword | C10 | 15–30d | PASS. Operating-system technology is named explicitly. |
+| D11 | keyword | C14 | 0–2d | K-TYPE. A generic device category is classified as a specific product. |
+| D12 | keyword | C23 | 15–30d | K-PERSON. Incidental family nickname. |
+| D13 | keyword | C06 | 15–30d | K-NAME. The phrase could be ordinary speech or a game allusion. |
+| D14 | keyword | C07 | 0–2d | K-PERSON. Incidental first name. |
+| D15 | keyword | C22 | 0–2d | PASS. The connector standard is explicit. |
+| D16 | keyword | C11 | 0–2d | PASS. The GPU model and its function are explicit. |
+| D17 | keyword | C21 | 0–2d | PASS. Retailer brand is explicitly named. |
+| D18 | keyword | C18 | 15–30d | K-PERSON. Person name is presented as a category. |
+| D19 | keyword | C12 | 15–30d | PASS. Concrete technology is explicit and relevant. |
+| D20 | keyword | C08 | 0–2d | PASS. Recognizable game franchise occurs in the full game title. |
+| D21 | keyword | C03 | 0–2d | K-TYPE. Store compatibility badge is classified as a technology. |
+| D22 | keyword | C05 | 0–2d | K-TYPE. A named online platform is classified as a generic technology. |
+| D23 | keyword | C21 | 31d+ | K-NAME. GPU series fragment leaves the intended model family ambiguous as written. |
+| D24 | keyword | C21 | 15–30d | K-TYPE. Incidental crowdfunding reference is classified as a technology. |
+| D25 | keyword | C05 | 15–30d | K-NAME. Transcribed product spelling requires correction. |
+| D26 | keyword | C10 | 0–2d | PASS. Publisher name is explicit in the game discussion. |
+| D27 | keyword | C14 | 15–30d | K-NAME. Caption fragment fails to identify a credible brand. |
+| D28 | keyword | C17 | 15–30d | K-BOUNDARY. The only match is attached to a prefix in the saved transcript. |
+| D29 | keyword | C13 | 0–2d | K-NAME. Transcript spelling conflicts with the product name in the archived title. |
+| D30 | keyword | C12 | 0–2d | PASS. The operating system is clearly identified in the headset discussion. |
+| D31 | keyword | C22 | 15–30d | K-NAME. The transcription does not identify the referenced website reliably. |
+| D32 | keyword | C15 | 15–30d | PASS. A specific input technology is named in its context. |
+| D33 | keyword | C08 | 15–30d | K-PERSON. A person’s handle is entered as a category. |
+| D34 | keyword | C01 | 15–30d | PASS. The named holiday provides the direct context for the post. |
+| D35 | keyword | C13 | 15–30d | K-TYPE. The setup-screen reference does not identify a distinct technology. |
+| D36 | recap | C20 | 15–30d | R-QUOTE. The quotes omit the named devices or announcement attribution. |
+| D37 | recap | C15 | 0–2d | R-CONTEXT. Adjacent transcript qualifies the claim that every cable failed. |
+| D38 | recap | C06 | 0–2d | R-QUOTE. A quote omits speaker identity and part of the alleged referral arrangement. |
+| D39 | recap | C19 | 0–2d | R-QUOTE. Quoted wording and the named actor are missing from the relevant attached quotes. |
+| D40 | recap | C04 | 0–2d | R-QUOTE. The opening quote omits the prototype and walkaround details. |
+| D41 | recap | C17 | 0–2d | R-QUOTE. A quote explains the overload test and omits the claimed result. |
+| D42 | recap | C10 | 15–30d | R-QUOTE. Quotes omit a promised fix and a regulatory detail asserted by the draft. |
+| D43 | recap | C14 | 0–2d | R-QUOTE. One quote documents an instruction, while the draft claims the action occurred. |
+| D44 | recap | C23 | 0–2d | R-QUOTE. The eligibility quote includes competing figures that the takeaway drops. |
+| D45 | recap | C07 | 0–2d | R-QUOTE. Several specifics, including duration and component condition, are absent from their attached quotes. |
+| D46 | recap | C22 | 0–2d | R-QUOTE. Attached quotes omit the causal lead-in and the named speaker. |
+| D47 | recap | C11 | 0–2d | R-QUOTE. The quote under the discovery finding omits the claimed scale of the source material. |
+| D48 | recap | C18 | 15–30d | R-QUOTE. The teaser’s figurative phrase is reported as a literal claim about a person. |
+| D49 | recap | C03 | 0–2d | R-QUOTE. The interview excerpts omit the named speaker’s identity. |
+| D50 | recap | C05 | 0–2d | R-QUOTE. Quotes omit the asserted causal explanation and contrast with other reviewers. |
+
+</details>
+
+<details>
+<summary>Inbox sample with empty attempts (50 rows)</summary>
 
 | Sample | Type | Channel | Draft age | Verdict and reason |
 | --- | --- | --- | --- | --- |
@@ -391,7 +449,7 @@ Channel and video aliases identify groups within this audit. Production row IDs,
 
 ## Exact evidence SQL
 
-The successful reads below return private audit fields for authorized local inspection. Keep raw results outside the repository. The inventory was captured at 03:52:53 UTC, the sample at 03:50:47 UTC, and the #47 dry run at 03:54:25 UTC. The protected and train-target reads completed before 04:00 UTC.
+The successful reads below return private audit fields for authorized local inspection. Keep raw results outside the repository. The inventory was captured at 03:52:53 UTC, the inbox sample at 03:50:47 UTC and the #47 dry run at 03:54:25 UTC. The protected and train-target reads completed before 04:00 UTC. The draft-only sample was captured at 04:02:44 UTC.
 
 <details>
 <summary>Inbox baseline and function presence</summary>
@@ -631,6 +689,101 @@ WITH population AS MATERIALIZED (
 SELECT current_setting('transaction_read_only') AS read_only, transaction_timestamp() AS captured_at,
   (SELECT jsonb_agg(to_jsonb(x)) FROM (SELECT kind, count(*) AS strata, sum(n) AS rows
     FROM (SELECT kind,channel_key,age,count(*) n FROM population GROUP BY 1,2,3) agg GROUP BY 1 ORDER BY 1) x) AS population,
+  (SELECT jsonb_agg(to_jsonb(x) ORDER BY sample_number) FROM (
+    SELECT sample_number, id, origin, kind, channel_alias, age, stratum_size, created_at,
+      left(reason,240) AS reason, source_url, source_title, current_record->>'url' AS current_url,
+      evidence_record->>'url' AS evidence_url, evidence_record->>'contentKind' AS evidence_kind,
+      archive_exists, current_channel=channel_key AS channel_matches, current_text,
+      body IS NOT NULL AS exact_evidence, proposal='{}'::jsonb AS empty_attempt, keyword,
+      proposal->>'kind' AS keyword_kind,
+      CASE WHEN kind='keyword' THEN legacy_quote END AS legacy_quote,
+      CASE WHEN kind='keyword' AND nullif(keyword,'') IS NOT NULL THEN (
+        SELECT jsonb_agg(context ORDER BY n) FROM (
+          SELECT ord AS n,right(part,140)||keyword||left(next_part,140) AS context
+          FROM (SELECT part,ord,lead(part) OVER (ORDER BY ord) AS next_part
+                FROM unnest(string_to_array(flat_body,keyword)) WITH ORDINALITY u(part,ord)) exact
+          WHERE next_part IS NOT NULL ORDER BY ord LIMIT 4
+        ) snippets
+      ) END AS keyword_contexts,
+      CASE WHEN kind='recap' AND jsonb_typeof(proposal->'highlights')='array' THEN (
+        SELECT jsonb_agg(jsonb_build_object(
+          'claim', item->>'text', 'quote', item->>'evidenceQuote',
+          'position', nullif(strpos(body,nullif(item->>'evidenceQuote','')),0),
+          'context', CASE WHEN strpos(body,nullif(item->>'evidenceQuote','')) > 0 THEN
+            substring(body FROM greatest(1,strpos(body,item->>'evidenceQuote')-165)
+              FOR char_length(item->>'evidenceQuote')+330) END
+        ) ORDER BY ord)
+        FROM jsonb_array_elements(proposal->'highlights') WITH ORDINALITY highlights(item,ord)
+      ) END AS recap_points
+    FROM evidence
+  ) x) AS sample;
+ROLLBACK;
+```
+
+</details>
+
+<details>
+<summary>Deterministic 50-proposal sample</summary>
+
+```sql
+BEGIN READ ONLY;
+SET LOCAL statement_timeout = '15s';
+WITH population AS MATERIALIZED (
+  SELECT q.*, coalesce(r.user_id,k.user_id) AS owner_key,
+    coalesce(r.update_id,k.update_id) AS update_key,
+    coalesce(r.source_id,k.source_id) AS channel_key,
+    coalesce(r.content_hash,k.content_hash) AS draft_hash,
+    r.source_snapshot, r.job_id, k.evidence_quote AS legacy_quote,
+    CASE WHEN q.created_at >= transaction_timestamp()-interval '2 days' THEN '0–2d'
+      WHEN q.created_at >= transaction_timestamp()-interval '14 days' THEN '3–14d'
+      WHEN q.created_at >= transaction_timestamp()-interval '30 days' THEN '15–30d' ELSE '31d+' END AS age
+  FROM public.admin_analysis_review_queue q
+  LEFT JOIN public.admin_analysis_reviews r ON q.origin='analysis' AND r.id=q.id
+  LEFT JOIN public.admin_keyword_reviews k ON q.origin='legacy_keyword' AND k.id=q.id
+  WHERE q.status='pending'
+), aliased AS (
+  SELECT *, 'C'||lpad(dense_rank() OVER (ORDER BY channel_key)::text,2,'0') AS channel_alias
+  FROM population
+), actual_drafts AS MATERIALIZED (
+  SELECT * FROM aliased WHERE proposal<>'{}'::jsonb
+), within_stratum AS (
+  SELECT *,
+    count(*) OVER (PARTITION BY kind,channel_key,age) AS stratum_size,
+    row_number() OVER (PARTITION BY kind,channel_key,age
+      ORDER BY md5('flow5-2026-11-26/'||id::text),id) AS stratum_rank
+  FROM actual_drafts
+), by_kind AS (
+  SELECT *, row_number() OVER (PARTITION BY kind ORDER BY
+    (stratum_rank-1)::numeric/stratum_size, md5('flow5-stratum/'||channel_key||'/'||age),id) AS kind_rank
+  FROM within_stratum
+), chosen AS MATERIALIZED (
+  SELECT *, row_number() OVER (ORDER BY kind,kind_rank) AS sample_number
+  FROM by_kind WHERE kind_rank <= CASE kind WHEN 'keyword' THEN 35 ELSE 15 END
+), bound AS MATERIALIZED (
+  SELECT s.*, a.record AS current_record,
+    a.source_id AS current_channel, a.id IS NOT NULL AS archive_exists,
+    CASE WHEN encode(sha256(convert_to(s.source_snapshot->>'content','UTF8')),'hex')=s.draft_hash
+      THEN s.source_snapshot
+      WHEN encode(sha256(convert_to(p.source_snapshot->>'content','UTF8')),'hex')=s.draft_hash
+      THEN p.source_snapshot
+      WHEN encode(sha256(convert_to(a.record->>'content','UTF8')),'hex')=s.draft_hash THEN a.record
+      END AS evidence_record,
+    encode(sha256(convert_to(a.record->>'content','UTF8')),'hex')=s.draft_hash AS current_text
+  FROM chosen s
+  LEFT JOIN public.reader_source_updates a ON (a.user_id,a.id)=(s.owner_key,s.update_key)
+  LEFT JOIN LATERAL (
+    SELECT p.source_snapshot FROM public.admin_analysis_prompt_receipts p
+    WHERE p.job_id=s.job_id AND p.source_snapshot IS NOT NULL ORDER BY p.created_at,p.id LIMIT 1
+  ) p ON s.source_snapshot IS NULL
+), evidence AS (
+  SELECT s.*, s.evidence_record->>'content' AS body,
+    regexp_replace(s.evidence_record->>'content','[[:space:]]+',' ','g') AS flat_body,
+    s.proposal->>'label' AS keyword
+  FROM bound s
+)
+SELECT current_setting('transaction_read_only') AS read_only, transaction_timestamp() AS captured_at,
+  (SELECT jsonb_agg(to_jsonb(x)) FROM (SELECT kind, count(*) AS strata, sum(n) AS rows
+    FROM (SELECT kind,channel_key,age,count(*) n FROM actual_drafts GROUP BY 1,2,3) agg GROUP BY 1 ORDER BY 1) x) AS population,
   (SELECT jsonb_agg(to_jsonb(x) ORDER BY sample_number) FROM (
     SELECT sample_number, id, origin, kind, channel_alias, age, stratum_size, created_at,
       left(reason,240) AS reason, source_url, source_title, current_record->>'url' AS current_url,
