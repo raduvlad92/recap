@@ -1,0 +1,317 @@
+{
+  "schema": "therecap-recap-holdout-v1",
+  "cases": [
+    {
+      "id": "F01",
+      "category": "explicit-experiment",
+      "expected": "valid",
+      "annotation": "The comparison is lower after the redesign. The invalid draft reverses it.",
+      "content": "After the mount redesign, the laboratory measured a lower vibration level during the twelve-hour test.",
+      "highlights": [
+        {
+          "text": "The laboratory measured lower vibration during the twelve-hour test.",
+          "evidenceQuote": "After the mount redesign, the laboratory measured a lower vibration level during the twelve-hour test."
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "category": "explicit-experiment",
+      "expected": "invalid",
+      "annotation": "The comparison is lower after the redesign. The invalid draft reverses it.",
+      "content": "After the mount redesign, the laboratory measured a lower vibration level during the twelve-hour test.",
+      "highlights": [
+        {
+          "text": "The laboratory measured higher vibration during the twelve-hour test.",
+          "evidenceQuote": "After the mount redesign, the laboratory measured a lower vibration level during the twelve-hour test."
+        }
+      ]
+    },
+    {
+      "id": "F03",
+      "category": "safe-paraphrase",
+      "expected": "valid",
+      "annotation": "Everyone used the north gate while the west entrance stayed shut.",
+      "content": "The west entrance stayed shut throughout the trial. Everyone taking part entered through the north gate.",
+      "highlights": [
+        {
+          "text": "Participants entered through the north gate while the west entrance was closed for the trial.",
+          "evidenceQuote": "The west entrance stayed shut throughout the trial. Everyone taking part entered through the north gate."
+        }
+      ]
+    },
+    {
+      "id": "F04",
+      "category": "safe-paraphrase",
+      "expected": "invalid",
+      "annotation": "Everyone used the north gate while the west entrance stayed shut.",
+      "content": "The west entrance stayed shut throughout the trial. Everyone taking part entered through the north gate.",
+      "highlights": [
+        {
+          "text": "Participants used both entrances throughout the trial.",
+          "evidenceQuote": "The west entrance stayed shut throughout the trial. Everyone taking part entered through the north gate."
+        }
+      ]
+    },
+    {
+      "id": "F05",
+      "category": "supported-synonyms",
+      "expected": "valid",
+      "annotation": "The repair identified in the source is a new washer.",
+      "content": "Replacing the fibre washer stopped the water from dripping at the joint.",
+      "highlights": [
+        {
+          "text": "Swapping the fibre washer eliminated the leak at the connection.",
+          "evidenceQuote": "Replacing the fibre washer stopped the water from dripping at the joint."
+        }
+      ]
+    },
+    {
+      "id": "F06",
+      "category": "supported-synonyms",
+      "expected": "invalid",
+      "annotation": "The repair identified in the source is a new washer.",
+      "content": "Replacing the fibre washer stopped the water from dripping at the joint.",
+      "highlights": [
+        {
+          "text": "Adding more pressure eliminated the leak at the connection.",
+          "evidenceQuote": "Replacing the fibre washer stopped the water from dripping at the joint."
+        }
+      ]
+    },
+    {
+      "id": "F07",
+      "category": "unrelated-qualification",
+      "expected": "valid",
+      "annotation": "The schedule hedge applies to the restore, not the completed backup.",
+      "content": "The backup completed at 01:30. The restore may run on Tuesday.",
+      "highlights": [
+        {
+          "text": "The backup completed at 01:30.",
+          "evidenceQuote": "The backup completed at 01:30. The restore may run on Tuesday."
+        }
+      ]
+    },
+    {
+      "id": "F08",
+      "category": "unrelated-qualification",
+      "expected": "invalid",
+      "annotation": "The schedule hedge applies to the restore, not the completed backup.",
+      "content": "The backup completed at 01:30. The restore may run on Tuesday.",
+      "highlights": [
+        {
+          "text": "The restore will run on Tuesday.",
+          "evidenceQuote": "The backup completed at 01:30. The restore may run on Tuesday."
+        }
+      ]
+    },
+    {
+      "id": "F09",
+      "category": "adjacent-unrelated-exception",
+      "expected": "valid",
+      "annotation": "The nearby release-date caveat does not change the test result or establish certification.",
+      "content": "Every sample passed the conductivity test. However, the release date is still being discussed.",
+      "highlights": [
+        {
+          "text": "Every sample passed the conductivity test.",
+          "evidenceQuote": "Every sample passed the conductivity test."
+        }
+      ]
+    },
+    {
+      "id": "F10",
+      "category": "adjacent-unrelated-exception",
+      "expected": "invalid",
+      "annotation": "The nearby release-date caveat does not change the test result or establish certification.",
+      "content": "Every sample passed the conductivity test. However, the release date is still being discussed.",
+      "highlights": [
+        {
+          "text": "Every sample passed the certification test.",
+          "evidenceQuote": "Every sample passed the conductivity test."
+        }
+      ]
+    },
+    {
+      "id": "F11",
+      "category": "qualification-of-same-claim",
+      "expected": "valid",
+      "annotation": "The same source retracts the claim of unrestricted access.",
+      "content": "The chair said all lanes were open. Correction: the right lane remains closed to trucks.",
+      "highlights": [
+        {
+          "text": "The right lane is still closed to trucks.",
+          "evidenceQuote": "the right lane remains closed to trucks."
+        }
+      ]
+    },
+    {
+      "id": "F12",
+      "category": "qualification-of-same-claim",
+      "expected": "invalid",
+      "annotation": "The same source retracts the claim of unrestricted access.",
+      "content": "The chair said all lanes were open. Correction: the right lane remains closed to trucks.",
+      "highlights": [
+        {
+          "text": "All lanes are open.",
+          "evidenceQuote": "The chair said all lanes were open."
+        }
+      ]
+    },
+    {
+      "id": "F13",
+      "category": "attribution",
+      "expected": "valid",
+      "annotation": "The supplier is the only source for the reading.",
+      "content": "The supplier reported that the motor reached 120 degrees Celsius on the first run. Our own instrument failed to record that run.",
+      "highlights": [
+        {
+          "text": "The supplier reported that the motor reached 120 degrees Celsius on the first run.",
+          "evidenceQuote": "The supplier reported that the motor reached 120 degrees Celsius on the first run. Our own instrument failed to record that run."
+        }
+      ]
+    },
+    {
+      "id": "F14",
+      "category": "attribution",
+      "expected": "invalid",
+      "annotation": "The supplier is the only source for the reading.",
+      "content": "The supplier reported that the motor reached 120 degrees Celsius on the first run. Our own instrument failed to record that run.",
+      "highlights": [
+        {
+          "text": "Independent testing confirmed that the motor reached 120 degrees Celsius on the first run.",
+          "evidenceQuote": "The supplier reported that the motor reached 120 degrees Celsius on the first run. Our own instrument failed to record that run."
+        }
+      ]
+    },
+    {
+      "id": "F15",
+      "category": "swapped-roles",
+      "expected": "valid",
+      "annotation": "The passenger gave the radio to the driver.",
+      "content": "The passenger lent the driver a spare radio after the battery failed during the trip.",
+      "highlights": [
+        {
+          "text": "The passenger lent the driver a spare radio after the battery failed.",
+          "evidenceQuote": "The passenger lent the driver a spare radio after the battery failed during the trip."
+        }
+      ]
+    },
+    {
+      "id": "F16",
+      "category": "swapped-roles",
+      "expected": "invalid",
+      "annotation": "The passenger gave the radio to the driver.",
+      "content": "The passenger lent the driver a spare radio after the battery failed during the trip.",
+      "highlights": [
+        {
+          "text": "The driver lent the passenger a spare radio after the battery failed.",
+          "evidenceQuote": "The passenger lent the driver a spare radio after the battery failed during the trip."
+        }
+      ]
+    },
+    {
+      "id": "F17",
+      "category": "condition-preserved-or-lost",
+      "expected": "valid",
+      "annotation": "The source specifies a falling pressure and a threshold.",
+      "content": "If the pressure drops below ten bars, the relief valve can open without an operator command.",
+      "highlights": [
+        {
+          "text": "The relief valve can open without an operator command if pressure drops below ten bars.",
+          "evidenceQuote": "If the pressure drops below ten bars, the relief valve can open without an operator command."
+        }
+      ]
+    },
+    {
+      "id": "F18",
+      "category": "condition-preserved-or-lost",
+      "expected": "invalid",
+      "annotation": "The source specifies a falling pressure and a threshold.",
+      "content": "If the pressure drops below ten bars, the relief valve can open without an operator command.",
+      "highlights": [
+        {
+          "text": "The relief valve can open without an operator command whenever the pressure rises.",
+          "evidenceQuote": "If the pressure drops below ten bars, the relief valve can open without an operator command."
+        }
+      ]
+    },
+    {
+      "id": "F19",
+      "category": "time-versus-cause",
+      "expected": "valid",
+      "annotation": "The order of events is stated. Causation is unestablished.",
+      "content": "The alarm sounded after the technician restarted the pump.",
+      "highlights": [
+        {
+          "text": "The alarm sounded after the technician restarted the pump.",
+          "evidenceQuote": "The alarm sounded after the technician restarted the pump."
+        }
+      ]
+    },
+    {
+      "id": "F20",
+      "category": "time-versus-cause",
+      "expected": "invalid",
+      "annotation": "The order of events is stated. Causation is unestablished.",
+      "content": "The alarm sounded after the technician restarted the pump.",
+      "highlights": [
+        {
+          "text": "The alarm sounded because the technician restarted the pump.",
+          "evidenceQuote": "The alarm sounded after the technician restarted the pump."
+        }
+      ]
+    },
+    {
+      "id": "F21",
+      "category": "de-quantity",
+      "expected": "valid",
+      "annotation": "The recorded weight is 430 g.",
+      "content": "Das Ersatzteil wiegt 430 Gramm und ist für den größeren Rahmen vorgesehen.",
+      "highlights": [
+        {
+          "text": "Das Ersatzteil wiegt 430 Gramm und ist für den größeren Rahmen vorgesehen.",
+          "evidenceQuote": "Das Ersatzteil wiegt 430 Gramm und ist für den größeren Rahmen vorgesehen."
+        }
+      ]
+    },
+    {
+      "id": "F22",
+      "category": "de-quantity",
+      "expected": "invalid",
+      "annotation": "The recorded weight is 430 g.",
+      "content": "Das Ersatzteil wiegt 430 Gramm und ist für den größeren Rahmen vorgesehen.",
+      "highlights": [
+        {
+          "text": "Das Ersatzteil wiegt 340 Gramm und ist für den größeren Rahmen vorgesehen.",
+          "evidenceQuote": "Das Ersatzteil wiegt 430 Gramm und ist für den größeren Rahmen vorgesehen."
+        }
+      ]
+    },
+    {
+      "id": "F23",
+      "category": "es-negation",
+      "expected": "valid",
+      "annotation": "The source explicitly says the team did not test the fast charger.",
+      "content": "El equipo no probó la batería con el cargador rápido durante la primera prueba.",
+      "highlights": [
+        {
+          "text": "El equipo no probó la batería con el cargador rápido durante la primera prueba.",
+          "evidenceQuote": "El equipo no probó la batería con el cargador rápido durante la primera prueba."
+        }
+      ]
+    },
+    {
+      "id": "F24",
+      "category": "es-negation",
+      "expected": "invalid",
+      "annotation": "The source explicitly says the team did not test the fast charger.",
+      "content": "El equipo no probó la batería con el cargador rápido durante la primera prueba.",
+      "highlights": [
+        {
+          "text": "El equipo probó la batería con el cargador rápido durante la primera prueba.",
+          "evidenceQuote": "El equipo no probó la batería con el cargador rápido durante la primera prueba."
+        }
+      ]
+    }
+  ]
+}
