@@ -1,5 +1,7 @@
 # Demo and evidence log
 
+**26 November — #61 accepted for train 2.** Exact head `b87ee1c` over `ff2a9c1` passed hosted verify, artifact integrity and checkpoint storage. Disposable PG17 accepted its published migration journal and passed the $18 boundary, funded-launch denial, exact retry and late-settlement checks. Scratch rebases passed with and without #58. Production rollout awaits O1 and fresh checks after retargeting. [Release runbook](tech/TRAIN-2-RELEASE.md).
+
 **26 November — O1 and docs-merge rehearsal.** Disposable PG17 verified the four journal entries from the documented serving SHA to frozen #46, including #39's catch-up, then all three currently staged train 2 entries. The #53-only rebase and later layers replayed after simulated #46, #59 and #60 squashes. Both documentation changes stayed on main in the rehearsal. No production access or supplier spend. [Release evidence](tech/TRAIN-2-RELEASE.md).
 
 **26 November — expanded train 2 integration.** #58's original SQL passed its own hourly case and failed the combined case by leasing a stale empty HTTP request and leaving a separate abandoned HTTP frame queued. The integration candidate restores both #46 guards. The updated #56 scorer remains a separate release PR. [Digests and release decisions](tech/TRAIN-2-RELEASE.md).
