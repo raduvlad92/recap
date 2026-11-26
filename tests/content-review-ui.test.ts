@@ -12,7 +12,7 @@ vi.mock('react', async importOriginal => {
   };
 });
 import { AnalysisReviews, ReviewDecisionPanel, ReviewEvidence } from '../src/admin/AnalysisReviews';
-import type { ContentReviewDetail, ContentReviewSummary } from '../src/lib/content-review-types';
+import type { ContentReviewDetail, ContentReviewSummary, VideoReviewTarget } from '../src/lib/content-review-types';
 
 const keyword: ContentReviewDetail = {
   id: 'synthetic-review', origin: 'analysis', kind: 'keyword', label: 'Quiet mode', sourceTitle: 'A synthetic product walkthrough', sourceUrl: 'https://example.com/video',
@@ -308,5 +308,56 @@ describe('video review batches', () => {
     previous.props.onClick();
     await tick();
     expect(applyVideoReviews).not.toHaveBeenCalled();
+  });
+
+  it('keeps the rest of a 271-draft video staged after one explicit apply of 250', async () => {
+    const grounded = Array.from({ length: 271 }, (_, index) => ({ ...row(`grounded-${index + 1}`), qualityScore: 100 as const }));
+    const empty = Array.from({ length: 62 }, (_, index) => ({ ...row(`empty-${index + 1}`), qualityScore: 0 as const }));
+    const records = [...grounded, ...empty];
+    const applyVideoReviews = vi.fn(async (targets: VideoReviewTarget[]) =>
+      targets.map(target => ({ id: target.id, published: target.decision === 'approve' })));
+    const h = reviewHarness({ ...props(), applyVideoReviews, data: { ...page(records), pageSize: 6, groupTotal: 1 } });
+
+    const stage = button(h.render(), 'Approve all grounded (271)');
+    expect(stage.props.disabled).toBe(false);
+    stage.props.onClick();
+    expect(nodeText(h.render())).toContain('271 ready to publish');
+    expect(applyVideoReviews).not.toHaveBeenCalled();
+
+    const firstApply = button(h.render(), 'Apply and publish (250)');
+    firstApply.props.onClick();
+    await tick();
+    firstApply.props.onClick();
+    await tick();
+    expect(applyVideoReviews).toHaveBeenCalledTimes(1);
+    expect(applyVideoReviews.mock.calls[0][0].map(target => target.id)).toEqual(grounded.slice(0, 250).map(record => record.id));
+    expect(nodeText(h.render())).toContain('250 published, 0 rejected, 0 need attention. 21 still staged.');
+
+    button(h.render(), 'Reject low-score (62)').props.onClick();
+    expect(nodeText(h.render())).toContain('21 ready to publish, 62 ready to reject');
+    button(h.render(), 'Apply and publish').props.onClick();
+    await tick();
+    expect(applyVideoReviews).toHaveBeenCalledTimes(2);
+    const secondBatch = applyVideoReviews.mock.calls[1][0];
+    expect(secondBatch.filter(target => target.decision === 'approve').map(target => target.id)).toEqual(grounded.slice(250).map(record => record.id));
+    expect(secondBatch.filter(target => target.decision === 'reject').map(target => target.id)).toEqual(empty.map(record => record.id));
+    expect(nodeText(h.render())).toContain('21 published, 62 rejected, 0 need attention.');
+  });
+
+  it('leaves the unsent rows eligible after an unconfirmed request and never advances automatically', async () => {
+    const records = Array.from({ length: 271 }, (_, index) => ({ ...row(`grounded-${index + 1}`), qualityScore: 100 as const }));
+    const applyVideoReviews = vi.fn(async (_targets: VideoReviewTarget[]) => []);
+    const h = reviewHarness({ ...props(), applyVideoReviews, data: { ...page(records), pageSize: 6, groupTotal: 1 } });
+    button(h.render(), 'Approve all grounded (271)').props.onClick();
+    button(h.render(), 'Apply and publish (250)').props.onClick();
+    await tick();
+
+    const tree = h.render();
+    expect(applyVideoReviews).toHaveBeenCalledTimes(1);
+    expect(applyVideoReviews.mock.calls[0][0]).toHaveLength(250);
+    expect(nodeText(tree)).toContain('Reload to check the saved decisions. Stage the remaining 21 decisions again after reloading.');
+    expect(reviewRow(tree, 'grounded-250').props.writeDisabled).toBe(true);
+    expect(reviewRow(tree, 'grounded-251').props.writeDisabled).toBe(false);
+    expect(button(tree, 'Approve all grounded (21)').props.disabled).toBe(false);
   });
 });
