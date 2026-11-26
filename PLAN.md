@@ -1,6 +1,6 @@
 # Tracked implementation and validation plan
 
-**26 November — follow #46 with train 2.** After #46's accepted release and pilot readback, rebase the #53-only ref onto its squash and refresh checks. Under one checked pause, deploy #53 after review and proof migrations, then #58 once its actual head includes the HTTP guard fix, then #56. Restore the approved scope against the final release. [Merge, restoration and rollback steps](docs/tech/TRAIN-2-RELEASE.md).
+**26 November — follow #46 with train 2.** After O1, the checked #46 release and the separate #59/#60 docs merges, rebase the #53-only ref onto main and refresh checks. Deploy #53, corrected #58 and #56 under one checked pause. The $18 guard can follow if its combined verification passes. Restore the approved scope against the final release. [Merge, restoration and rollback steps](docs/tech/TRAIN-2-RELEASE.md).
 
 **26 November — prepare the checked three-channel pilot.** After the migration-read credential is available and the PM merges the reviewed head, verify the exact migrations and serving release. Install the scope through checked restoration, then observe the first scheduled proof and the next tick for deduplication. The existing TechLinked schedule remains live pending that release. [Pilot operating plan](docs/tech/CHECKED-YOUTUBE-PILOT.md).
 

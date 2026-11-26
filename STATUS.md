@@ -1,6 +1,6 @@
 # Current status
 
-**26 November — expanded train 2 staged on frozen #46.** #57 adds the latest #56 scorer and a corrected #58 candidate. The original #58 head drops #46's HTTP expiry when it replaces the same function and must wait for the compatibility fix. #53 has a separate rebase ref. Train 1 remains gated on R1 and the checked #46 rollout. [Train 2 release runbook](docs/tech/TRAIN-2-RELEASE.md).
+**26 November — expanded train 2 staged on frozen #46.** #57 adds the latest #56 scorer and a corrected #58 candidate. Upstream #58 needs the HTTP expiry fix. The #53-only rebase passed after simulated #46, #59 and #60 merges. O1 still gates #46 on the project-scoped Supabase migration-read bearer. [Train 2 release runbook](docs/tech/TRAIN-2-RELEASE.md).
 
 **26 November — production tech feed recovered for existing uploads.** The approved format-only transaction changed 36 archive records. Production readback matched all 36 and all other record hashes. The signed-in headless main feed displayed all eight uploads newer than November 13 and excluded the confirmed Shorts. The three-channel pilot is a separate checked candidate. [Pilot operating plan](docs/tech/CHECKED-YOUTUBE-PILOT.md).
 
