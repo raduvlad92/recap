@@ -31,9 +31,11 @@ interface BulkReviewOutcome {
 }
 const reviewKey = (record: Pick<ContentReviewSummary, 'id' | 'origin'>) => record.origin + ':' + record.id;
 const uncertainDecision = (error: ReviewProblem) => error.status === 0 || error.status >= 500;
+const canStageKeywordApproval = (record: ContentReviewSummary) =>
+  record.kind === 'keyword' && record.origin === 'analysis' && record.qualityScore === 100;
 
 export function AnalysisReviews({ data, status, page, onStatusChange, onPageChange, loadDetail, decide, applyVideoReviews, reload, onPendingChange }: Props) {
-  const [pendingKeys, setPendingKeys] = useState<Set<string>>(() => new Set()), [openKey, setOpenKey] = useState<string | null>(null), [selected, setSelected] = useState<Set<string>>(() => new Set()), [outcomes, setOutcomes] = useState<Record<string, BulkReviewOutcome>>({}), [bulk, setBulk] = useState<{ decision: ContentReviewDecision['decision']; total: number; running: boolean; results: Record<string, BulkReviewOutcome> } | null>(null);
+  const [pendingKeys, setPendingKeys] = useState<Set<string>>(() => new Set()), [openKey, setOpenKey] = useState<string | null>(null), [selected, setSelected] = useState<Set<string>>(() => new Set()), [outcomes, setOutcomes] = useState<Record<string, BulkReviewOutcome>>({}), [bulk, setBulk] = useState<{ total: number; running: boolean; results: Record<string, BulkReviewOutcome> } | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(() => new Set());
   const [manualSelection, setManualSelection] = useState(false);
   const [staged, setStaged] = useState<VideoReviewTarget[]>([]);
@@ -48,7 +50,8 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
   useEffect(() => { setSelected(new Set()); setOutcomes({}); outcomesRef.current = {}; setBulk(null); setOpenKey(null); setExpandedGroups(new Set()); setManualSelection(false); setStaged([]); setSmartReport(''); setSmartRunning(false); selectionScope.current = scope; }, [scope]);
   const needsRowReload = (key: string) => { const error = outcomesRef.current[key]?.error; return !!error && (uncertainDecision(error) || [401, 403, 409].includes(error.status)); };
   const shownRecords = records.map(record => outcomes[reviewKey(record)]?.result?.record ?? record).filter(record => record.status === status), eligible = status === 'pending' ? shownRecords.filter(record => !pendingKeys.has(reviewKey(record)) && !outcomes[reviewKey(record)]?.error) : [];
-  const selectedCount = selectionScope.current === scope ? eligible.filter(record => selected.has(reviewKey(record))).length : 0, allSelected = eligible.length > 0 && selectedCount === eligible.length, mixed = selectedCount > 0 && !allSelected;
+  const selectedItems = selectionScope.current === scope ? eligible.filter(record => selected.has(reviewKey(record))) : [];
+  const selectedCount = selectedItems.length, allSelected = eligible.length > 0 && selectedCount === eligible.length, mixed = selectedCount > 0 && !allSelected;
   useEffect(() => { if (selectPageRef.current) selectPageRef.current.indeterminate = mixed; }, [mixed]);
   const markPending = (key: string, value: boolean) => { if (value) pending.current.add(key); else pending.current.delete(key); if (active.current) { setPendingKeys(new Set(pending.current)); onPendingChange(pending.current.size > 0 || bulkLocked.current); } };
   const keep = (key: string, outcome: BulkReviewOutcome, savedScope: string) => {
@@ -68,19 +71,19 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
     catch (value) { keep(key, { record, error: problem(value) }, scope); throw value; }
     finally { markPending(key, false); }
   };
-  const runBulk = async (decision: ContentReviewDecision['decision']) => {
+  const rejectSelected = async () => {
     if (staged.length || bulkLocked.current || pending.current.size > 0 || status !== 'pending' || selectionScope.current !== scope || currentScope.current !== scope) return;
     const targets = records.filter(record => record.status === 'pending' && selected.has(reviewKey(record)) && !outcomesRef.current[reviewKey(record)]?.result && !outcomesRef.current[reviewKey(record)]?.error).slice(0, 50).map(record => ({ ...record }));
     if (!targets.length) return;
     const frozenScope = scope, results: Record<string, BulkReviewOutcome> = {};
-    bulkLocked.current = true; setBulk({ decision, total: targets.length, running: true, results: {} }); onPendingChange(true);
+    bulkLocked.current = true; setBulk({ total: targets.length, running: true, results: {} }); onPendingChange(true);
     const keepBulk = (key: string, outcome: BulkReviewOutcome) => { results[key] = outcome; keep(key, outcome, frozenScope); if (active.current && currentScope.current === frozenScope) setBulk(previous => previous ? { ...previous, results: { ...results } } : null); };
     try {
       for (let index = 0; index < targets.length; index++) {
         if (!active.current || currentScope.current !== frozenScope) break;
         const record = targets[index], key = reviewKey(record); markPending(key, true);
         try {
-          const body: ContentReviewDecision = { action: 'review', id: record.id, origin: record.origin, expectedUpdatedAt: record.updatedAt, decision };
+          const body: ContentReviewDecision = { action: 'review', id: record.id, origin: record.origin, expectedUpdatedAt: record.updatedAt, decision: 'reject' };
           const result = validateResult(body, await decide(body, { silent: true })); keepBulk(key, { record, result });
         } catch (value) {
           const error = problem(value); keepBulk(key, { record, error });
@@ -104,7 +107,8 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
     if (targets.some(target => {
       const record = byId.get(target.id);
       const outcome = record && outcomesRef.current[reviewKey(record)];
-      return record?.updatedAt !== target.expectedUpdatedAt || outcome?.result || outcome?.error;
+      return !record || record.updatedAt !== target.expectedUpdatedAt || outcome?.result || outcome?.error
+        || (target.decision === 'approve' && !canStageKeywordApproval(record));
     })) return;
     bulkLocked.current = true;
     setSmartRunning(true);
@@ -166,6 +170,7 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
   const applyLabel = nextApply.some(target => target.decision === 'approve') ? 'Apply and publish' : 'Apply rejections';
   const stage = (items: ContentReviewSummary[], decision: VideoReviewTarget['decision']) => {
     if (!applyVideoReviews || bulkLocked.current || pending.current.size > 0 || currentScope.current !== scope || selectionScope.current !== scope) return;
+    if (!items.length || (decision === 'approve' && !items.every(canStageKeywordApproval))) return;
     const affected = new Set(items.map(item => item.id));
     setStaged(previous => {
       const previousIds = new Set(previous.map(item => item.id));
@@ -204,11 +209,11 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
     {status === 'pending' && records.length > 0 && showManual && <div className="ra-review-bulk-tools" role="group" aria-label="Bulk review decisions">
       <label className="ra-review-select-page"><input ref={selectPageRef} type="checkbox" aria-label="Select this page" aria-checked={mixed ? 'mixed' : allSelected} checked={allSelected} disabled={batchBusy || !eligible.length} onChange={() => { if (!bulkLocked.current) { selectionScope.current = scope; setSelected(allSelected ? new Set() : new Set(eligible.map(reviewKey))); } }} /><span>Select this page</span></label>
       <button className="ra-text-button" type="button" disabled={busy || selectedCount === 0} onClick={() => setSelected(new Set())}>Clear</button><span className="ra-review-selected-count" role="status">{selectedCount} selected</span>
-      <div className="ra-review-bulk-actions"><button className="ra-button ra-button-primary ra-button-small" type="button" disabled={busy || stagedTargets.length > 0 || selectedCount === 0 || selectedCount > 50} onClick={() => void runBulk('approve')}>Confirm and publish selected</button><button className="ra-button ra-button-small" type="button" disabled={busy || stagedTargets.length > 0 || selectedCount === 0 || selectedCount > 50} onClick={() => void runBulk('reject')}>Reject selected</button></div>
-      <p className="ra-review-bulk-note">{selectedCount > 50 ? 'Choose up to 50 drafts for a manual batch.' : 'Uses saved proposals; save edits individually.'}</p>
+      <div className="ra-review-bulk-actions">{applyVideoReviews && <button className="ra-button ra-button-primary ra-button-small" type="button" disabled={busy || stagedTargets.length > 0 || selectedCount === 0 || selectedCount > 50 || !selectedItems.every(canStageKeywordApproval)} onClick={() => stage(selectedItems, 'approve')}>Stage selected keywords</button>}<button className="ra-button ra-button-small" type="button" disabled={busy || stagedTargets.length > 0 || selectedCount === 0 || selectedCount > 50} onClick={() => void rejectSelected()}>Reject selected</button></div>
+      <p className="ra-review-bulk-note">{selectedCount > 50 ? 'Choose up to 50 drafts for a manual batch.' : 'Bulk approval requires a verified keyword citation.'}</p>
     </div>}
     {grouped && <div className="ra-review-group-tools">
-      <p className="ra-review-keyboard">Use ↑ and ↓ to move between sources or drafts, and Enter to open. Scores of 100 have saved checker support, 50 need review, and 0 have no draft.</p>
+      <p className="ra-review-keyboard">Use ↑ and ↓ to move between sources or drafts, and Enter to open. Keywords with a score of 100 have a verified source citation. Open each recap to approve it.</p>
       {records.length > 0 && <button className="ra-text-button" type="button" aria-pressed={manualSelection} disabled={busy || stagedTargets.length > 0} onClick={() => {
         setManualSelection(value => !value);
         setSelected(new Set());
@@ -220,12 +225,12 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
       <button className="ra-button ra-button-small ra-button-primary" type="button" disabled={busy} onClick={() => void applyStaged()}>{smartRunning ? 'Applying…' : applyLabel + (nextApply.length < stagedTargets.length ? ` (${nextApply.length})` : '')}</button>
     </div>}
     {smartReport && <div className="ra-review-bulk-report" role="status" ref={smartReportRef} tabIndex={-1}><p>{smartReport}</p></div>}
-    {bulk && <div className="ra-review-bulk-report" role="status"><p>{bulk.running ? `Saving decisions: ${successes + failures} of ${bulk.total} checked.` : `${successes} ${bulk.decision === 'approve' ? 'confirmed and published' : 'rejected'}; ${failures} need attention; ${unattempted} not attempted.`}</p>{!bulk.running && <><p>You can continue with the remaining items.</p>{failures > 0 && <button className="ra-button ra-button-small" type="button" disabled={busy} onClick={reload}>Reload latest reviews</button>}</>}</div>}
+    {bulk && <div className="ra-review-bulk-report" role="status"><p>{bulk.running ? `Saving decisions: ${successes + failures} of ${bulk.total} checked.` : `${successes} rejected; ${failures} need attention; ${unattempted} not attempted.`}</p>{!bulk.running && <><p>You can continue with the remaining items.</p>{failures > 0 && <button className="ra-button ra-button-small" type="button" disabled={busy} onClick={reload}>Reload latest reviews</button>}</>}</div>}
     {shownRecords.length ? <ul className="ra-review-list" onKeyDown={grouped ? navigateReview : undefined}>{groupedRecords.map(record => {
       const key = reviewKey(record), outcome = outcomes[key];
       const sourceKey = groupKey(record), group = sourceGroups.get(sourceKey)!, first = group[0] === record;
       const groupOpen = !grouped || expandedGroups.has(sourceKey);
-      const ready = first && grouped ? group.filter(item => item.origin === 'analysis' && item.qualityScore === 100 && eligible.includes(item)) : [];
+      const ready = first && grouped ? group.filter(item => canStageKeywordApproval(item) && eligible.includes(item)) : [];
       const low = first && grouped ? group.filter(item => item.origin === 'analysis' && item.qualityScore === 0 && eligible.includes(item)) : [];
       const stageAction = (items: ContentReviewSummary[], decision: VideoReviewTarget['decision'], label: string, undo: string) => {
         if (!applyVideoReviews || manualSelection || !items.length) return null;
@@ -246,7 +251,7 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
             <ChevronRight size={17} aria-hidden="true" /><span dir="auto">{record.sourceTitle || 'Untitled source'}</span><small>{group.length} {group.length === 1 ? 'draft' : 'drafts'}</small>
           </button>
           <div className="ra-review-video-actions">
-            {stageAction(ready, 'approve', 'Approve all grounded', 'Undo approval')}
+            {stageAction(ready, 'approve', 'Approve grounded keywords', 'Undo approval')}
             {stageAction(low, 'reject', 'Reject low-score', 'Undo rejection')}
           </div>
         </div>}
