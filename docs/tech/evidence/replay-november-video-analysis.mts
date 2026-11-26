@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { AnalysisError, analysisLimits, conservativeCallUsd, type GenerationResult } from '../../../netlify/functions/_shared/content-analysis-model';
 import { generateAutomaticContent, type AutomaticContentClaim } from '../../../netlify/functions/_shared/automatic-content';
 import { analysisRuntimeEnv } from '../../../netlify/functions/_shared/content-analysis-runtime';
-import { parseKeywordLearningInput, type KeywordLearningInput } from '../../../netlify/functions/_shared/keyword-learning';
+import { parseKeywordLearningInput, retryVideoLearningStorage, type KeywordLearningInput } from '../../../netlify/functions/_shared/keyword-learning';
 import { validateContentReviewProposal } from '../../../netlify/functions/_shared/content-review-admin';
 import { findLiteralNameOccurrences } from '../../../scripts/lib/keyword-learning.mjs';
 
@@ -100,7 +100,16 @@ async function main() {
      return saved.result;
     }
     if (row.failure === 'analysis_budget_exhausted') throw new AnalysisError('analysis_budget_exhausted');
-    if (row.failure === 'keyword_learning_storage_unavailable') throw new AnalysisError('keyword_learning_storage_unavailable');
+    if (row.failure === 'keyword_learning_storage_unavailable' && outcome.calls === 1) {
+     // Historical receipts identify a storage stop but do not identify the
+     // infrastructure status. Exercise one transient failure before an exact
+     // retry using the same function as the handler.
+     let attempts = 0;
+     const storage = await retryVideoLearningStorage(async () => ({
+      error: ++attempts === 1 ? { code: '57014' } : null,
+     }), true);
+     if (storage.error) throw new AnalysisError('keyword_learning_storage_unavailable');
+    }
     return mock(input,row.content);
    });
    if (row.task === 'recap' && result.proposal && result.proposal.highlights.length <= 6) {
@@ -122,6 +131,13 @@ async function main() {
   p90:rows.length ? round(rows.map(r=>r.cost).sort((a,b)=>a-b)[Math.floor((rows.length-1)*.9)]) : null,
   total:round(rows.reduce((n,r)=>n+r.cost,0)), stressTotal:round(rows.reduce((n,r)=>n+r.conservative,0)),
  });
+ const pairs = byVideo.filter(rows => new Set(rows.map(r => r.task)).size === 2);
+ const failedPairs = pairs.filter(rows => rows.some(r => !r.valid));
+ const admissionStops = new Set(['unresolved_charge','analysis_budget_exhausted']);
+ const eligiblePairs = pairs.filter(rows => rows.every(row => !admissionStops.has(row.stop)));
+ const onlyBlockedByCharge = failedPairs.filter(rows => rows.every(r => r.valid || r.stop === 'unresolved_charge'));
+ const sourceClassCounts = (rows: typeof outcomes) => Object.fromEntries(
+  Object.entries(Object.groupBy(rows, r => r.failure + ' / ' + r.task)).map(([key, values]) => [key, values!.length]));
  const modeled = byVideo.filter(rows=>rows.some(r=>r.task==='keywords'&&r.valid)&&rows.some(r=>r.task==='recap'&&r.valid))
   .map(rows=>({channel:rows[0].channel,cost:rows.reduce((n,r)=>n+r.cost,0),conservative:rows.reduce((n,r)=>n+r.conservative,0),chars:Math.max(...rows.map(r=>r.chars))}));
  const byChannel = Object.groupBy(modeled, r=>r.channel??'historical');
@@ -130,7 +146,16 @@ async function main() {
  const shortWave = [...channelMinimums, ...leastCost(modeled.filter(row => !channelMinimums.includes(row)))].slice(0,10);
  console.log(JSON.stringify({
   cohortSha256:digest(raw), selected:sumStats(outcomes), byClass:Object.fromEntries(Object.entries(Object.groupBy(outcomes,r=>r.failure)).map(([k,v])=>[k,sumStats(v!)])),
+  heldTasks: outcomes.filter(row => row.stop === 'unresolved_charge').length,
+  distinctHeldVideos: byVideo.filter(rows => rows.some(row => row.stop === 'unresolved_charge')).length,
   distinctVideos:byVideo.length, withBothTasks:byVideo.filter(rows=>new Set(rows.map(r=>r.task)).size===2).length,
+  paired: {
+   planned: pairs.length, bothValid: modeled.length, heldPairs: pairs.filter(rows => rows.some(r => r.stop === 'unresolved_charge')).length,
+   onlyBlockedByCharge: onlyBlockedByCharge.length,
+   budgetHeldPairs: pairs.filter(rows => rows.some(r => r.stop === 'analysis_budget_exhausted')).length,
+   admissionEligible: eligiblePairs.length, admissionEligibleBothValid: eligiblePairs.filter(rows => rows.every(r => r.valid)).length,
+   failedTaskClasses: sourceClassCounts(failedPairs.flat().filter(r => !r.valid)),
+  },
   bothValid:modeled.length, anyValid:byVideo.filter(rows=>rows.some(r=>r.valid)).length,
   priorBothAlreadyValid:byVideo.filter(rows=>rows.filter(r=>r.historical).length===2).length,
   cost: { allValidPairs:cost(modeled), standardValidPairs:cost(modeled.filter(r=>r.chars<117252)),
