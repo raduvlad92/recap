@@ -98,9 +98,14 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
   const applyStaged = async () => {
     if (!applyVideoReviews || !staged.length || selectionScope.current !== scope || currentScope.current !== scope
       || bulkLocked.current || pending.current.size > 0) return;
-    const targets = staged.map(target => ({ ...target }));
+    const targets = staged.slice(0, VIDEO_REVIEW_BATCH_LIMIT).map(target => ({ ...target }));
+    const remaining = staged.length - targets.length;
     const byId = new Map(eligible.filter(record => record.origin === 'analysis').map(record => [record.id, record]));
-    if (targets.some(target => byId.get(target.id)?.updatedAt !== target.expectedUpdatedAt)) return;
+    if (targets.some(target => {
+      const record = byId.get(target.id);
+      const outcome = record && outcomesRef.current[reviewKey(record)];
+      return record?.updatedAt !== target.expectedUpdatedAt || outcome?.result || outcome?.error;
+    })) return;
     bulkLocked.current = true;
     setSmartRunning(true);
     onPendingChange(true);
@@ -124,7 +129,8 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
           keep(key, { record, result: { record: { ...record, status: published ? 'approved' : 'rejected' }, published } }, scope);
         }
       }
-      setSmartReport(`${approved} published, ${rejected} rejected, ${failed} need attention.`);
+      setStaged(previous => previous.filter(target => !results.has(target.id)));
+      setSmartReport(`${approved} published, ${rejected} rejected, ${failed} need attention.${remaining ? ` ${remaining} still staged.` : ''}`);
     } catch (value) {
       if (!active.current || currentScope.current !== scope) return;
       const error = problem(value);
@@ -132,11 +138,11 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
         const record = byId.get(target.id)!;
         keep(reviewKey(record), { record, error }, scope);
       }
-      setSmartReport(error.message);
+      setStaged([]);
+      setSmartReport(error.message + (remaining ? ` Stage the remaining ${remaining} decisions again after reloading.` : ''));
     } finally {
       bulkLocked.current = false;
       if (active.current && currentScope.current === scope) {
-        setStaged([]);
         setSmartRunning(false);
         onPendingChange(false);
       }
@@ -154,15 +160,17 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
   const grouped = status === 'pending' && Number.isSafeInteger(data.groupTotal);
   const showManual = !grouped || manualSelection;
   const stagedTargets = selectionScope.current === scope ? staged : [];
-  const stagedById = new Map(stagedTargets.map(target => [target.id, target]));
+  const stagedIds = new Set(stagedTargets.map(target => target.id));
   const stagedApprovals = stagedTargets.filter(target => target.decision === 'approve').length;
+  const nextApply = stagedTargets.slice(0, VIDEO_REVIEW_BATCH_LIMIT);
+  const applyLabel = nextApply.some(target => target.decision === 'approve') ? 'Apply and publish' : 'Apply rejections';
   const stage = (items: ContentReviewSummary[], decision: VideoReviewTarget['decision']) => {
     if (!applyVideoReviews || bulkLocked.current || pending.current.size > 0 || currentScope.current !== scope || selectionScope.current !== scope) return;
     const affected = new Set(items.map(item => item.id));
     setStaged(previous => {
+      const previousIds = new Set(previous.map(item => item.id));
       const next = previous.filter(item => !affected.has(item.id));
-      if (items.every(item => previous.some(target => target.id === item.id))) return next;
-      if (next.length + items.length > VIDEO_REVIEW_BATCH_LIMIT) return previous;
+      if (items.every(item => previousIds.has(item.id))) return next;
       return [...next, ...items.map(item => ({ id: item.id, expectedUpdatedAt: item.updatedAt, decision }))];
     });
     setSmartReport('');
@@ -209,7 +217,7 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
     {stagedTargets.length > 0 && <div className="ra-review-staged" role="group" aria-label="Staged review decisions">
       <p role="status">{stagedApprovals} ready to publish, {stagedTargets.length - stagedApprovals} ready to reject</p>
       <button className="ra-button ra-button-small" type="button" disabled={busy} onClick={() => setStaged([])}>Undo all</button>
-      <button className="ra-button ra-button-small ra-button-primary" type="button" disabled={busy} onClick={() => void applyStaged()}>{smartRunning ? 'Applying…' : stagedApprovals ? 'Apply and publish' : 'Apply rejections'}</button>
+      <button className="ra-button ra-button-small ra-button-primary" type="button" disabled={busy} onClick={() => void applyStaged()}>{smartRunning ? 'Applying…' : applyLabel + (nextApply.length < stagedTargets.length ? ` (${nextApply.length})` : '')}</button>
     </div>}
     {smartReport && <div className="ra-review-bulk-report" role="status" ref={smartReportRef} tabIndex={-1}><p>{smartReport}</p></div>}
     {bulk && <div className="ra-review-bulk-report" role="status"><p>{bulk.running ? `Saving decisions: ${successes + failures} of ${bulk.total} checked.` : `${successes} ${bulk.decision === 'approve' ? 'confirmed and published' : 'rejected'}; ${failures} need attention; ${unattempted} not attempted.`}</p>{!bulk.running && <><p>You can continue with the remaining items.</p>{failures > 0 && <button className="ra-button ra-button-small" type="button" disabled={busy} onClick={reload}>Reload latest reviews</button>}</>}</div>}
@@ -221,10 +229,9 @@ export function AnalysisReviews({ data, status, page, onStatusChange, onPageChan
       const low = first && grouped ? group.filter(item => item.origin === 'analysis' && item.qualityScore === 0 && eligible.includes(item)) : [];
       const stageAction = (items: ContentReviewSummary[], decision: VideoReviewTarget['decision'], label: string, undo: string) => {
         if (!applyVideoReviews || manualSelection || !items.length) return null;
-        const stagedCount = items.filter(item => stagedById.has(item.id)).length;
-        const all = stagedCount === items.length;
+        const all = items.every(item => stagedIds.has(item.id));
         return <button className="ra-button ra-button-small" type="button"
-          disabled={busy || (!all && stagedTargets.length + items.length - stagedCount > VIDEO_REVIEW_BATCH_LIMIT)}
+          disabled={busy}
           onClick={() => stage(items, decision)}>{all ? undo : label} ({items.length})</button>;
       };
       const groupKeywords = group.filter(item => item.kind === 'keyword' && eligible.includes(item));
