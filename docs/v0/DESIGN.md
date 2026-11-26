@@ -4,7 +4,7 @@ The founder's supplied reference is the visual authority: a quiet, creator-led r
 
 ## Tokens and layout
 
-- Canvas `#f8f8f6`, paper `#ffffff`, ink `#20231f`, muted `#858b82`, line `#dedfd9`, teal `#519c8d`.
+- Canvas `#f8f8f6`, paper `#ffffff`, ink `#20231f`, muted `#626d60`, line `#dedfd9`, teal `#519c8d`.
 - Onest variable sans throughout. Tight, large 56px desktop headline; readable 16px body; 12–14px utility text. No external font requests.
 - Desktop: 250px following/library rail, flexible central feed, 280px signal/context rail. Compact sticky header holds view tabs, search and account controls. Cards pair locally hosted abstract cover artwork with clear creator, source, summary and topic metadata.
 - Tablet: right rail moves below the reading column. Phone: header and source drawer collapse gracefully; reading cards become vertical; all actions remain reachable by touch and keyboard.

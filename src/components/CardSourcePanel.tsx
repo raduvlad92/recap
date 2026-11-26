@@ -20,7 +20,9 @@ export function TextPostPreview({ label }: { label?: string }) {
 export function CardImagePreview({ image, duration, label, onOpen }: { image?: string; duration?: string; label: string; onOpen: () => void }) {
   const { t } = useReaderLanguage();
   const [failedImage, setFailedImage] = useState<string>();
-  return <button className="card-thumbnail" aria-label={label} onClick={onOpen}>{image && failedImage !== image ? <img src={image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedImage(image)} /> : <TextPostPreview label={image ? t('previewUnavailable') : t('readSource')} />}{duration && <span className="duration-pill">{duration}</span>}</button>;
+  const fallback = image ? t('previewUnavailable') : t('readSource');
+  const imageVisible = !!image && failedImage !== image;
+  return <button className="card-thumbnail" aria-label={[imageVisible ? '' : fallback, label, duration].filter(Boolean).join(' ')} onClick={onOpen}>{imageVisible ? <img src={image} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedImage(image)} /> : <TextPostPreview label={fallback} />}{duration && <span className="duration-pill">{duration}</span>}</button>;
 }
 
 export function CardSourcePanel({ name, avatar, date, publishedAt, platform, preview, actions, onChannel, secondary }: {
@@ -31,7 +33,7 @@ export function CardSourcePanel({ name, avatar, date, publishedAt, platform, pre
   return <div className="card-source-panel">
     <div className="card-source-preview">{preview || <div className="card-text-preview"><FileText size={23} strokeWidth={1.3} aria-hidden="true" /><span>{t('sourcePreview')}</span></div>}</div>
     <div className="card-source-meta">
-      <button className="card-source-channel" aria-label={t('viewChannelNamed', { name })} onClick={onChannel}>{avatar}<strong>{name}</strong></button>
+      <button className="card-source-channel" title={t('viewChannelNamed', { name })} onClick={onChannel}>{avatar}<strong>{name}</strong></button>
       {secondary}
       <div className="card-source-date"><span className="card-platform-icon" role="img" aria-label={platform || t('sourceName')} title={platform || t('sourceName')}><SourcePlatformIcon platform={platform} /></span><time dateTime={publishedAt || undefined}>{date}</time></div>
       <div className="card-source-actions">{actions}</div>
