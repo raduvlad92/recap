@@ -21,6 +21,7 @@ export interface ContentReviewSummary {
   status: ContentReviewStatus;
   updatedAt: string;
   createdAt: string;
+  qualityScore?: 0 | 50 | 100 | null;
 }
 export interface ContentReviewPrompt {
   role: string;
@@ -58,6 +59,7 @@ export interface ContentReviewPage {
   total: number;
   page: number;
   pageSize: number;
+  groupTotal?: number;
 }
 /** An edited proposal is approved only after the same source checks. */
 export interface ContentReviewDecision {
@@ -72,3 +74,15 @@ export interface ContentReviewDecisionResult {
   record: ContentReviewSummary;
   published: boolean;
 }
+
+export interface VideoReviewTarget {
+  id: string;
+  expectedUpdatedAt: string;
+  decision: ContentReviewDecision['decision'];
+}
+export interface VideoReviewResult {
+  id: string;
+  published?: boolean;
+  error?: 'PT400' | 'PT409';
+}
+export const VIDEO_REVIEW_BATCH_LIMIT = 250;
