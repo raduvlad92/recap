@@ -1,0 +1,65 @@
+# Analysis enablement for V1 flows 4 and 5 — 26 November 2026
+
+**Keep scheduled analysis off.** After the checked recovery and capped-proof release, use the PM’s pre-authorized **$0.75** for one ten-video proof. Advance only if at least nine of the ten videos have usable recaps **and** keywords on their first review. Keep each draft private until the owner explicitly approves it. Train 1 is blocked on R1, the owner’s project-scoped migration-read credential. Later waves and backlog dispositions need separate approval.
+
+## November budget
+
+The production ledger at **06:15:18 UTC on November 26** reported the following in USD. The month resets at **00:00 UTC December 1**.
+
+| Ledger measure | USD |
+| --- | ---: |
+| Apify settled in November | 3.315732458061 |
+| OpenRouter settled in November | 1.932804792000 |
+| **Settled total** | **5.248537250061** |
+| Unresolved reservations and cost differences | 4.420027191000 |
+| **Committed total** | **9.668564441061** |
+| Headroom to #61’s $18 operating stop | 8.331435558939 |
+| Headroom to the hard $20 cap | 10.331435558939 |
+
+The **$18 stop** applies to both providers’ commitments, including unresolved amounts carried from earlier months. It bars a new reservation that would take the total above $18 and bars new launches when the total is already at $18, including pre-funded Apify launches. The $20 ceiling remains the accounting limit. This read found neither the #61 stop nor the #51 proof RPC installed. Require the checked migration and serving-release readback before spending. The global and pilot-owner OpenRouter day gates each showed **$4.025827191 committed of $5**, leaving **$0.974172809** at capture. The participating policy allows **$0.10 per call**, **$0.30 per task** and **100 calls per session**. Check all of these again against the actual manifest. [Operating stop](https://github.com/raduvlad92/recap/pull/61) · [Capped proof](https://github.com/raduvlad92/recap/pull/51)
+
+The archived 36-video month replay projects **$4.26 base / $6.70 stress** for paired analysis. Adding the full as-yet-unbooked **$2.50 Apify pilot allowance**, **$0.75 proof** and **$6.704100 stress** to the current commitment reaches **$19.622664441061**. It exceeds $18 by **$1.622664441061**. Plan with the full remaining collection allocation, including retries and idle discovery, and count amounts already in the shared ledger once. Provider billing and later holds can move these estimates. Evaluating the current ledger at the December boundary carries **$4.420027191** into the new month even with zero settled December spend. Refresh the actual ledger after rollover. [Cost replay](VIDEO-ANALYSIS-REPLAY-2026-11-26.md) · [Three-channel collection envelope](https://github.com/raduvlad92/recap/pull/46)
+
+## Waves and admission
+
+| Wave | Frozen scope | Maximum additional commitment | Gate to advance |
+| --- | --- | ---: | --- |
+| 0 · Offline | A2 replay and a separately labelled holdout with at least 10 valid and 10 invalid drafts of **each** type | $0 | Flag ≥90% of invalids and keep ≥90% of valids per type. Include valid paraphrased recaps. |
+| 1 · Short videos | 10 unattempted, regular YouTube videos with short current transcripts and both tasks | **$0.75** | ≥9/10 paired passes. Exercise the full receipt and pending-review path. |
+| 2 · Broaden coverage | 10 new archived videos across the three pilot channels, including medium-length transcripts. Two frozen batches of five | **$1.50**, $0.75 per batch | ≥9/10 paired passes and report failure and cost by channel and length. Stop between batches to check quality and charges. |
+| 3 · Confirm coverage | 10 different archived videos, including harder/longer cases whose request plans fit the task limits. Batches of four, three and three | **$2.25**, $0.75 per batch | ≥9/10 paired passes. Demonstrate that the tested channel and length mix fits the limits. Keep out-of-budget bands out of the automation scope. |
+| 4 · Scheduled pilot | Up to the first six eligible arrivals over 72 hours in one workspace and the tested channels and lengths | **$1.50**, enforced for the whole window | Observe two genuine five-minute frames and require ≥90% of eligible pairs within that six-video window. A small or quiet window is operational evidence. For expansion, require ≥27/30 on the last 30 representative attempts. |
+
+The first three paid waves and full collection allowance would take the November snapshot to **$16.668564441061** at their ceilings. Adding wave 4 at its ceiling would take it to **$18.168564441061**. Wait or use freshly demonstrated headroom from lower settled spend. Budget future operating volume and approved waves together and count overlapping videos once. A UTC boundary grants no fresh proof authorization.
+
+R1 must clear before accepting [train 1](https://github.com/raduvlad92/recap/pull/46). Verify the exact live SHA, epoch and checkpoint, the source and review migrations, recovered inference, and the proof and stop guards before wave 1. Keep automatic scheduling off for waves 1–3. Record the existing post-release approval against the exact wave-1 manifest and release through the [proof runbook](https://github.com/raduvlad92/recap/blob/6daf6affd6185d319387cbf8ff055f34bf6a1570/docs/tech/CAPPED-VIDEO-ANALYSIS-PROOF-2026-11-26.md). If [#63](https://github.com/raduvlad92/recap/pull/63) is still awaiting train 3, run its guard against proof drafts offline and keep batch approval out of the proof. Require the deployed guard for scheduled use. The proof RPC supports one manifest of up to ten videos at a hard $0.75 cap. Waves 2–3 reuse that cap in separately authorized manifests. Wave 4 needs deployed, tested admission that enforces the workspace, source, new-only window, task count and $1.50 ceiling before each reservation. The broad automatic sync and monthly cap alone do not enforce that scope.
+
+Before each batch, freeze ordered update IDs, source hashes, revisions, task pairs and price/route assumptions. Use existing archived transcripts. The ten cheapest replay profiles cost **$0.611 stress**, leaving room for a full **$0.10** next reservation. The lowest tested mix covering all three channels costs **$0.742 stress** and leaves too little room. Select the short profiles first, then remeasure each broader batch and task. Require projected shared commitments ≤$18 after all outstanding allowances, and room for the next full reservation in the proof, daily and task limits. Process serially. Count the larger of actual and observed cost for settled calls and the larger of reservation and observed cost for unsettled calls. Retries and splits draw from the same limits. A refused or dropped video stays in the denominator. During scheduled operation, freeze each eligible arrival at admission and reconcile the list with the archive so cost-blocked arrivals are counted.
+
+## Quality and review
+
+The recovery replay produced **210/241** structurally valid task drafts and **69/88** structurally valid video pairs with simulated replacements. A2 judged **15/50** real nonempty drafts acceptable, including **0/15** recaps. The #63 replay flagged **35/35** failures and kept **15/15** passes. All passes were keywords. This measures triage on the audit used to develop the guard. Freeze a blinded holdout from saved, separately reviewed drafts for wave 0. Reuse the scorer’s guard functions and rate calculation with the new manifest. The A2 command expects the original 50 aliases. [A2 audit](https://github.com/raduvlad92/recap/pull/62) · [A3 scorer and evidence](https://github.com/raduvlad92/recap/pull/63)
+
+For every paid wave, record the scorer disposition for each proposed keyword and recap and report pass rates by draft type, valid pairs and actual vs committed dollars. An independent reviewer checks each pair before seeing the scorer result. A pair passes only when it has both usable drafts, clears the guard and meets all three conditions below. Missing outputs, holds, unsupported claims and edits needed to pass count as misses for that wave. Sample and report any false holds separately.
+
+- Every recap point has an original link and exact quote tied to the frozen source. The quote and nearby context support the named attribution, figures, conditions and degree of certainty. An omitted qualification can fail the whole recap.
+- Every proposed keyword occurrence is a recoverable whole literal mention, with the identity, type and relevance confirmed in context. A plausible title or checker verdict cannot replace original evidence.
+- Each draft and its charge receipt match the frozen task and remain in private review. Any missing evidence on a candidate, unsolicited publication or unresolved new provider charge stops advancement. Check the first one-day owner review from opening the queue through saved decisions and signed-in library citations, with a five-minute target. Verify inclusion in the ordinary daily recap at a separately authorized cutoff.
+
+### Reduce the active backlog without row-by-row owner review
+
+Recheck the **4,240** visible rows against the current archive and review revision before applying any policy. Of those, **141** are protected or unresolved and **62** were score-0 empty format/capacity failures. The other **4,037** include **2,729** score-100 suggestions and **1,308** manual rows. The ~11.4 hours in A2’s model already assumes favorable bulk handling. A score of 100 and a guard pass both still need content review.
+
+1. **Automatic rejection is limited to empty terminal attempts.** After approval of the exact disposition policy and a dry run, reject only empty, known-settled invalid-JSON or output-capacity failures whose exact evidence and revision still match and whose rows are outside all holds. Preserve their terminal reason, prompts and financial record. Expect up to the audited 62. #47 supplies staged, explicit rejection. Policy-driven execution would need a checked implementation and authorization. Every other failure or uncertain semantic draft stays available for individual review.
+2. **Keep protected holds intact.** The 106 November 11 rows and 35 same-revision unsettled rows remain held. Exclude them from rejection, batch approval and the ordinary worklist. Reconcile charges from receipt evidence and require the owner to change their review decision separately.
+3. **Put the rest in a reversible, private history view.** Preselect the newest reader-relevant videos with both types. Give the owner up to eight decisions per worklist and three five-minute sessions to start, including navigation and readback. Decide or correct only what the owner actually reviews. On A2’s snapshot, choosing 24 candidates would place 4,013 of the 4,037 in deferred review. Expose the deferred count and a restore-to-worklist action. Access by source and date stays available. Parking takes those rows out of daily first-pass review while preserving their pending status. Until a checked deferred view exists, use a short private worklist and keep the backlog as pending. Never apply a whole-group approval based on its score. Use staged apply for decisions actually reviewed, and keep each request at or below 250. Track reviewed, rejected, deferred and protected counts independently. Stop expanding if the timed owner worklist misses five minutes.
+
+## Stop and roll back
+
+On insufficient budget, failed quality or review-time gate, unexpected publication, source or release drift, or an ambiguous call, stop the next claim and close the bounded proof against its exact ID and manifest. Read back an ambiguous settlement before doing anything else. Keep the serving and jobs Worker automatic-analysis flags false or return them to false through the checked release path. Keep the general content-analysis and keyword-learning schedules off. If queued work remains, fence launch admission and let known attempts settle against their original receipts. Preserve all paid holds, call keys, pending drafts, owner decisions and collection settings. Leave additive migrations installed.
+
+Verify the stopped state on the exact serving revision, no new analysis reservations or task starts in the next two genuine five-minute frames, and preserved draft and ledger counts with any known settlements explained. Restore a deferred row through its audited worklist action. A content error already approved by the owner follows the existing correction process. The team records the failure and requires a new checked manifest before continuing.
+
+## Evidence and scope
+
+The aggregate read used the existing authenticated connection with `BEGIN READ ONLY`, a local 12-second statement timeout and `ROLLBACK`. It reported `transaction_read_only = on`. It sampled `monthly_provider_budget_snapshot` at transaction time and at its reported reset, summed today’s and unresolved OpenRouter commitments globally and per enabled automatic policy, checked function presence, and counted pending inbox rows by type. No new credentials were issued. This proposal incurred **$0 provider spend**, zero production writes and zero Apify or analysis runs.
