@@ -27,7 +27,7 @@ function stub() {
     q.maybeSingle=vi.fn(async()=>({data:table==='reader_source_updates'?{record:state.current}:table==='admin_analysis_prompt_receipts'?{source_snapshot:source}:table==='keyword_learning_sessions'?state.session:state.row,error:null}));
     q.insert=vi.fn(async()=>({data:null,error:state.auditError}));queries.set(table,q);return q;
   });
-  const rpc=vi.fn(async(name:string,args:Record<string,unknown>)=>({data:name==='read_admin_analysis_review_prompts'?{prompts:[],total:0,page:args.p_page,pageSize:3}:name==='admin_analysis_published_recap'?state.publishedRecap:name==='admin_review_keyword'?{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved_label:args.p_label,resolved_kind:args.p_kind,updated_at:nextRev}:{record:{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved:args.p_proposal,updated_at:nextRev},published:state.published??args.p_decision==='approve'},error:state.rpcError}));
+  const rpc=vi.fn(async(name:string,args:Record<string,unknown>): Promise<{ data: unknown; error: unknown }>=>({data:name==='read_admin_analysis_review_prompts'?{prompts:[],total:0,page:args.p_page,pageSize:3}:name==='admin_analysis_published_recap'?state.publishedRecap:name==='admin_review_keyword'?{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved_label:args.p_label,resolved_kind:args.p_kind,updated_at:nextRev}:{record:{...state.row,status:args.p_decision==='approve'?'approved':'rejected',resolved:args.p_proposal,updated_at:nextRev},published:state.published??args.p_decision==='approve'},error:state.rpcError}));
   const db=vi.fn(()=>({from,rpc})) as unknown as NonNullable<Parameters<typeof createAdminHandler>[0]>['db'];
   const run=(request:Request)=>createAdminHandler({authorize:authorized,db})(request);
   return {state,from,rpc,db,run,queries};
@@ -57,6 +57,31 @@ describe('compact private content review API',()=>{
     const s=stub(),response=await createAdminHandler({db:s.db})(request);
     expect(response.status).toBe(401);expect(s.db).not.toHaveBeenCalled();expect(response.headers.get('cache-control')).toBe('no-store');
     expect(response.headers.get('x-robots-tag')).toContain('noindex');
+  });
+  it('authorizes the grouped list and returns only safe summaries and scores', async () => {
+    const s = stub();
+    s.rpc.mockResolvedValueOnce({ data: { reviews: [{ ...original, origin: 'analysis', quality_score: 100, source_title: source.title, source_url: source.url }],
+      total: 1, groupTotal: 1, page: 0, pageSize: 6 }, error: null });
+    const response = await s.run(get('section=reviews&status=pending&group=source'));
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload).toMatchObject({ total: 1, groupTotal: 1, reviews: [{ id, qualityScore: 100 }] });
+    expect(JSON.stringify(payload)).not.toContain(content);
+    expect(JSON.stringify(payload)).not.toContain('user_private');
+    expect(s.rpc).toHaveBeenCalledWith('admin_grouped_analysis_reviews', { p_page: 0 });
+  });
+  it('validates batch revisions and authorization before the decision RPC', async () => {
+    const s = stub(), target = { id, expectedUpdatedAt: rev, decision: 'approve' };
+    const body = { action: 'apply_video_reviews', targets: [target] };
+    expect((await createAdminHandler({ db: s.db })(patch(body))).status).toBe(401);
+    expect((await s.run(patch({ ...body, targets: [target, target] }))).status).toBe(400);
+    expect(s.rpc).not.toHaveBeenCalled();
+    s.rpc.mockResolvedValueOnce({ data: [{ id, published: true }], error: null });
+    const response = await s.run(patch(body));
+    expect(await response.json()).toMatchObject({ decisions: [{ id, published: true }] });
+    expect(s.rpc).toHaveBeenCalledWith('admin_apply_video_reviews', {
+      p_targets: [{ id, expected: rev, decision: 'approve' }], p_admin: 'user_real_admin',
+    });
   });
   it('does not accept the worker secret as administrator identity',async()=>{
     const s=stub(),response=await createAdminHandler({db:s.db,env:n=>n==='CONTENT_ANALYSIS_WORKER_SECRET'?'a'.repeat(40):undefined})(new Request('https://app.example/api/admin?section=reviews',{headers:{'x-content-analysis-secret':'a'.repeat(40)}}));

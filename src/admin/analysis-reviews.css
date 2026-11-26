@@ -95,3 +95,32 @@
 }
 .ra-review-source-group{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:12px 14px 5px;color:var(--muted);font-size:12px}
 .ra-review-source-group>span:first-child{font-weight:600;overflow-wrap:anywhere;flex:1;min-width:0}
+
+.ra-review-queue [hidden] { display: none; }
+.ra-review-keyboard { margin: 0 0 12px; font-size: 12px; color: #54664a; }
+.ra-review-video { display: flex; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 6px 12px; background: #f5f8f1; }
+.recap-admin .ra-review-video-toggle { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 42px; flex: 1; padding: 0; border: 0; background: transparent; color: #20231f; font: inherit; font-size: 14px; font-weight: 650; text-align: start; cursor: pointer; }
+.ra-review-video-toggle span { min-width: 0; overflow-wrap: anywhere; }
+.ra-review-video-toggle svg, .ra-review-video-toggle small { flex: none; }
+.ra-review-video-toggle[aria-expanded="true"] svg { transform: rotate(90deg); }
+.ra-review-video-toggle small { color: #54664a; font-size: 11px; font-weight: 500; }
+.ra-review-video-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.ra-review-staged { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: #edf5ec; padding: 10px 12px; border: 1px solid #b2c5ac; border-radius: 7px; margin-bottom: 12px; }
+.ra-review-staged p { flex: 1 1 210px; margin: 0; font-size: 13px; }
+@media (max-width: 600px) {
+  .ra-review-video { display: block; padding: 5px 10px 7px; }
+  .recap-admin .ra-review-video-toggle { width: 100%; }
+  .ra-review-video-actions { margin-left: 24px; }
+  .recap-admin .ra-review-video-actions button { min-height: 36px; }
+}
+.ra-review-queue-grouped .ra-review-source { display: none; }
+.recap-admin .ra-review-queue-grouped .ra-review-summary { grid-template-columns: 18px 64px minmax(0,1fr) minmax(0,1.5fr) 65px; }
+@media (max-width: 1000px) {
+  .recap-admin .ra-review-queue-grouped .ra-review-summary { grid-template-columns: 18px 60px minmax(0,1fr) 60px; }
+  .ra-review-queue-grouped .ra-review-reason { grid-row: 2; }
+}
+@media (max-width: 600px) {
+  .recap-admin .ra-review-queue-grouped .ra-review-summary { grid-template-columns: 15px 49px minmax(0,1fr) 56px; }
+}
+.ra-review-group-tools { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 5px 14px; margin: 0 0 12px; }
+.ra-review-group-tools p { margin: 0; }
