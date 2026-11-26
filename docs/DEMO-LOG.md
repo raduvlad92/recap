@@ -1,5 +1,7 @@
 # Demo and evidence log
 
+**26 November — train 2 local rehearsal.** On #53's tree over frozen #46, disposable PG17 accepted all five exact journal entries in order and rejected missing or changed SQL. The Node suite passed 230 tests and offline Workerd passed. A simulated #46 squash and rebase reproduced the train tree. #56 merged cleanly before and after the rebase and passed 18 scorer fixtures. Preparation cost USD 0. [Evidence and release runbook](tech/TRAIN-2-RELEASE.md).
+
 **26 November — production format-only repair and reader acceptance.** At 22:57:42 UTC on November 25, one guarded transaction updated 36 archived video classifications. Independent readback found 32 regular and four Shorts with identical hashes for all other record fields. At 23:02 UTC, the headless signed-in feed displayed all eight newer uploads and omitted the four Shorts. The sign-in ticket had a 240-second lifetime, and the isolated session was revoked. The repair and audit incurred USD 0 in provider fees.
 
 **26 November — offline replay and headless review.** The private November manifest produced 210/241 valid draft shapes offline with 63 recorded provider failures and simulated replacements. The actual review component passed keyboard flow, undo, fixture apply and width checks at 1440 and 390 px. No production write or supplier spend. [Aggregate results](tech/VIDEO-ANALYSIS-REPLAY-2026-11-26.md) · [Review screenshots and tests](https://github.com/raduvlad92/recap/pull/47).
