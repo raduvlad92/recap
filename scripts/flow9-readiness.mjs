@@ -13,11 +13,16 @@ const time = value => typeof value === 'string' ? Date.parse(value) : NaN;
 const iso = value => new Date(value).toISOString();
 const percentage = (good, total) => total > 0 ? Math.round(10000 * good / total) / 100 : null;
 
-export function readinessQuery(start) {
-  if (start === undefined) return sql.replace('__FLOW9_START__', 'null::timestamptz');
-  if (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?Z$/.test(start) || !Number.isFinite(time(start)) ||
-      !iso(time(start)).startsWith(start.slice(0, 19))) throw new Error('Start must be a valid UTC ISO timestamp.');
-  return sql.replace('__FLOW9_START__', `'${iso(time(start))}'::timestamptz`);
+function timestampLiteral(value) {
+  if (value === undefined) return 'null::timestamptz';
+  if (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,6})?Z$/.test(value) || !Number.isFinite(time(value)) ||
+      !iso(time(value)).startsWith(value.slice(0, 19))) throw new Error('Window bounds must be valid UTC ISO timestamps.');
+  return `'${value.includes('.') ? value : iso(time(value))}'::timestamptz`;
+}
+
+export function readinessQuery(start, end) {
+  if (end !== undefined && (start === undefined || time(start) >= time(end))) throw new Error('Provide the start before the end.');
+  return sql.replace('__FLOW9_START__', timestampLiteral(start)).replace('__FLOW9_END__', timestampLiteral(end));
 }
 
 function wallClock(timezone) {
@@ -90,23 +95,39 @@ export function scoreReadiness(data, health) {
       !data.control || !data.ingestion || !data.analysis || !data.intervention) throw new Error('Read-only evidence is missing or invalid.');
 
   const frameCounts = {};
+  const hourlyFrames = new Map();
   for (const frame of data.frames) {
-    const counts = frameCounts[frame.kind] ??= { count: 0, completed: 0, failed: 0, incomplete: 0 };
+    const counts = frameCounts[frame.kind] ??= { count: 0, completed: 0, failed: 0, unclaimed: 0, uncertain: 0, incomplete: 0 };
     counts.count++;
     if (frame.state === 'completed') counts.completed++;
-    else if (['uncertain', 'failed'].includes(frame.state)) counts.failed++;
+    else if (frame.state === 'failed') counts.failed++;
+    else if (frame.claimed === false) counts.unclaimed++;
+    else if (frame.state === 'uncertain') counts.uncertain++;
     else counts.incomplete++;
+
+    if (frame.kind === 'hourly-collection') {
+      const slot = time(frame.slot);
+      if (!hourlyFrames.has(slot)) hourlyFrames.set(slot, []);
+      hourlyFrames.get(slot).push(frame);
+    }
   }
-  const completedHours = new Set(data.frames.filter(f => f.kind === 'hourly-collection' && f.state === 'completed' &&
-    time(f.finished) >= time(f.slot) && time(f.finished) <= time(f.slot) + grace).map(f => time(f.slot)));
-  const missingHours = [];
-  let expectedHours = 0;
+  const hourlySlots = [];
   for (let slot = Math.ceil(since / hour) * hour; slot + grace <= until; slot += hour) {
-    expectedHours++;
-    if (!completedHours.has(slot)) missingHours.push(iso(slot));
+    const frames = (hourlyFrames.get(slot) ?? []).map(frame => {
+      const updated = time(frame.updated);
+      const outcome = frame.state === 'completed'
+        ? (updated >= slot && updated <= slot + grace ? 'on_time' : 'completed_off_deadline')
+        : frame.state === 'failed' ? 'failed'
+        : frame.claimed === false ? 'unclaimed'
+        : frame.state === 'uncertain' ? 'uncertain' : 'incomplete';
+      return { key: frame.key, epoch: frame.epoch, created: frame.created, updated: frame.updated, outcome };
+    });
+    hourlySlots.push({ slot: iso(slot), onTime: frames.some(f => f.outcome === 'on_time'), frames });
   }
+  const expectedHours = hourlySlots.length;
+  const missingHours = hourlySlots.filter(slot => !slot.onTime).map(slot => slot.slot);
   const overdueWork = data.frames.filter(f => time(f.slot) + grace <= until && f.state !== 'completed').length;
-  const cadence = { expectedHours, completedHours: expectedHours - missingHours.length, missingHours, overdueWork };
+  const cadence = { expectedHours, completedHours: expectedHours - missingHours.length, missingHours, overdueWork, hourlySlots };
 
   const readers = data.readers.map(reader => {
     try {
@@ -142,7 +163,7 @@ export function scoreReadiness(data, health) {
   const flow9 = {
     elapsed: criterion(until - since >= 72 * hour, { hours: (until - since) / hour }),
     activeUnchangedRelease: criterion(publicHealth && stableScope, { publicHealth, stableScope }),
-    ingestionCadence: criterion(health.automaticScheduling === true && expectedHours > 0 && missingHours.length === 0 && overdueWork === 0 &&
+    ingestionCadence: criterion(health.automaticScheduling === true && expectedHours >= 72 && missingHours.length === 0 && overdueWork === 0 &&
       data.ingestion.failedChecks === 0 && data.ingestion.failedSocialJobs === 0,
       { ...cadence, failedChecks: data.ingestion.failedChecks, failedSocialJobs: data.ingestion.failedSocialJobs }),
     scheduledTranscriptYield: criterion(data.ingestion.transcriptsDuringScheduledChecks > 0,
@@ -214,14 +235,15 @@ async function readDatabase(query, token) {
 if (import.meta.main) {
   try {
     const args = process.argv.slice(2);
-    if (args.length !== 0 && (args.length !== 2 || args[0] !== '--start')) throw new Error('Usage: node scripts/flow9-readiness.mjs [--start UTC_ISO]');
-    const [data, health] = await Promise.all([readDatabase(readinessQuery(args[1]), process.env.FLOW9_SUPABASE_TOKEN), readPublicHealth()]);
+    if (args.length !== 0 && !([2, 4].includes(args.length) && args[0] === '--start' && (args.length === 2 || args[2] === '--end')))
+      throw new Error('Usage: node scripts/flow9-readiness.mjs [--start UTC_ISO [--end UTC_ISO]]');
+    const [data, health] = await Promise.all([readDatabase(readinessQuery(args[1], args[3]), process.env.FLOW9_SUPABASE_TOKEN), readPublicHealth()]);
     const report = scoreReadiness(data, health);
     console.log(JSON.stringify(report, null, 2));
     if (report.flow6.status === 'FAIL' || report.flow9.status === 'FAIL') process.exitCode = 2;
   } catch (error) {
     const message = error.message?.startsWith('Supabase read-only query returned HTTP ') ? error.message :
-      'Observation unavailable. Check the private database connection and the UTC start (within the last seven days).';
+      'Observation unavailable. Check the private database connection and the UTC bounds (a window of up to seven days).';
     console.error(message);
     process.exitCode = 1;
   }
