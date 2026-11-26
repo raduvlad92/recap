@@ -1,5 +1,7 @@
 # Current status
 
+**26 November — video analysis and review candidates.** The offline November replay produced 210/241 valid draft shapes and both drafts for 69/88 paired videos. The three-channel model projects $4.26 base / $6.70 stress per month at 36 archived videos. Automatic analysis stays off pending the checked release and separate paid-proof authorization. The review queue candidate stages reversible bulk decisions before explicit apply. [Offline replay and proposed gates](docs/tech/VIDEO-ANALYSIS-REPLAY-2026-11-26.md) · [Review queue draft PR](https://github.com/raduvlad92/recap/pull/47).
+
 **25 November, 22:36 UTC — tech feed diagnosis.** The database reconstruction reproduces November 13 at the top and 36 unclassified videos. All 36 have transcripts, including all eight newer uploads. The format filter sets them aside. Recurring YouTube collection is still scoped to TechLinked, and the analysis deployment remains blocked by an unavailable GitHub Actions secret. [Production evidence and recovery plan](docs/tech/TECH-FEED-RECOVERY-2026-11-25.md).
 
 **25 November, 15:17 UTC — TechLinked schedule restored and verified.** Cloudflare serves `6a794cb` at epoch 10 in active mode. The 14:00 and 15:00 UTC TechLinked frames completed unattended. Both had partial coverage, zero new transcripts and no additional recorded provider spend. November commitment remains $9.669 of $20. A separate PM-led signed-in browser audit returned HTTP 200 for admin and Collection costs. [Release evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
