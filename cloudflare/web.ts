@@ -58,8 +58,9 @@ export async function handleWeb(request: Request, bindings: Bindings): Promise<R
         // Background/scheduler URLs have no public execution path here.
         if (!handler && name !== 'keyword-learning-worker') return secureResponse(json({ error: { code: 'not_found' } }, 404), true);
         if (name === 'health' && request.method === 'GET') {
-          const original = await (await handler(request)).json();
-          return secureResponse(json({ ...original, hosting: { provider: 'cloudflare', mode: bindings.HOSTING_MODE, release: bindings.RELEASE_SHA, jobsConfigured: bindings.HOSTING_MODE === 'active' } }), true);
+          const response = await handler(request);
+          if (!response.ok) return secureResponse(response, true);
+          return secureResponse(json({ ...await response.json(), hosting: { provider: 'cloudflare', mode: bindings.HOSTING_MODE, release: bindings.RELEASE_SHA, jobsConfigured: bindings.HOSTING_MODE === 'active' } }), true);
         }
         const limiter = bindings['LIMIT_' + name.replace(/-/g, '_').toUpperCase()] as { limit(options: { key: string }): Promise<{ success: boolean }> } | undefined;
         if (limiter && limits[name]) {
