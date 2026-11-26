@@ -10,6 +10,8 @@
 
 **26 November — offline replay and headless review.** The private November manifest produced 210/241 valid draft shapes offline with 63 recorded provider failures and simulated replacements. The actual review component passed keyboard flow, undo, fixture apply and width checks at 1440 and 390 px. No production write or supplier spend. [Aggregate results](tech/VIDEO-ANALYSIS-REPLAY-2026-11-26.md) · [Review screenshots and tests](https://github.com/raduvlad92/recap/pull/47).
 
+**26 November — final train 2 replay.** #53 → #58 → #56 → #61 replayed on frozen #46 and after simulated train 1 and the three separate docs squashes. The replay matched the checked integration candidate across application, migration, build and test paths. Provider spend was USD 0. [Release checklist and evidence](tech/release-train-2-2026-11-26.md).
+
 **25 November — abandoned HTTP frame regression.** Disposable PostgreSQL rejects a late HTTP lease, lets a fresh request start, retires aged frames on the next hourly claim, and preserves running HTTP and queued business work at checked pause. [Controller behavior](tech/CLOUDFLARE-RELEASE-CONTROLLER.md#unleased-http-requests).
 
 **25 November, 22:36 UTC — production tech feed readback.** A read-only database and serving-code comparison reproduced the latest visible date and 36 unclassified videos. Nine scheduled frames completed, and the exact-main analysis deployment remained failed. New supplier spend was USD 0. [Readback and recovery plan](tech/TECH-FEED-RECOVERY-2026-11-25.md).

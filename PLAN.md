@@ -8,6 +8,8 @@
 
 **Abandoned HTTP frame expiry.** The schema-only migration and release preflight change are now part of the combined checked release. Apply the migration in the authorized release window. Automatic analysis stays off. [Controller behavior](docs/tech/CLOUDFLARE-RELEASE-CONTROLLER.md#unleased-http-requests).
 
+**26 November — train 2 release sequence.** After R1 and accepted #46, advance #53, #58, #56 and #61 under one checked pause, then restore the approved scope against the final release. [Release checklist](docs/tech/release-train-2-2026-11-26.md).
+
 **25 November — recover the signed-in tech feed.** Resolve the 36 format gaps starting with the eight newer videos, prove ordinary scheduled discovery across an expanded bounded cohort, complete the checked analysis deployment and verify reviewed takeaways and keywords on the cards before accepting the daily cutoff. [Ordered plan and pass criteria](docs/tech/TECH-FEED-RECOVERY-2026-11-25.md).
 
 **25 November — release incident resolved and hourly scheduling verified.** The checked release restored the existing TechLinked scope. Two unattended frames completed under the $20 cap and the PM's separate browser audit verified signed-in admin access and Collection costs. Fresh transcript yield remains open after two partial, empty archive results. Continue content-yield validation within the existing scope before treating downstream analysis and daily cutoff as proven. [Release evidence](docs/tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).
