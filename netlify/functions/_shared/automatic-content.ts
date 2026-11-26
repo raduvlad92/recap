@@ -394,7 +394,21 @@ async function videoRecapProposals(claim:AutomaticContentClaim,run:(input:Keywor
    return validateRecapVerification(repairRecapVerificationOffsets(result.value,points),points,content,claim.task.content_hash)
     .filter(verdict=>verdict.supported).sort((a,b)=>a.index-b.index).map(verdict=>points[verdict.index]);
   }catch(error){
-   if(!(error instanceof SettledVideoOutputError)||error.failure!=='analysis_output_capacity'||points.length!==2)throw error;
+   if(!(error instanceof SettledVideoOutputError)||error.failure!=='analysis_output_capacity')throw error;
+   if(points.length===1){
+    const limits=analysisLimits(analysisRuntimeEnv(runtimeEnv,request.model,1,request.originalKey));
+    const cap=Math.min(.10,limits.maxCallUsd);
+    const {maxOutputTokens,...unchanged}=request.request;
+    // Keep the same source window and atom contract. Reserve the same full
+    // per-call ceiling, with extra output only when the exact wire fits.
+    const expanded=[5000,4500,4000,3500,3000].find(size=>
+     size>maxOutputTokens&&conservativeCallUsd({...unchanged,maxOutputTokens:size},limits)<=cap);
+    if(!expanded)throw error;
+    const retry=videoRecovery(error,request,stage+':expanded',{...unchanged,maxOutputTokens:expanded});
+    const result=await runVideoCall(retry,run);
+    return validateRecapVerification(repairRecapVerificationOffsets(result.value,points),points,content,claim.task.content_hash)
+     .filter(verdict=>verdict.supported).map(verdict=>points[verdict.index]);
+   }
    const first=await verify(points.slice(0,1),window,stage+':0',error);
    const second=await verify(points.slice(1),window,stage+':1',error);
    return [...first,...second];

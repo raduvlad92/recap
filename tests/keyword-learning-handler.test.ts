@@ -58,6 +58,41 @@ describe('private keyword evaluation handler, synthetic adapters only',()=>{
   expect(f.rpc.mock.calls[2][1]).toMatchObject({p_result:{providerId:'gen-fixture',actualUsd:null,observedUsd:null},
    p_error_code:'analysis_incomplete_generation'});
  });
+ it('reissues an ambiguous video reservation with the exact key and respects the existing held call',async()=>{
+  const f=fixture(),video={...input,originalKey:'automatic-video:v1:keywords:direct:0'};
+  f.rpc.mockResolvedValueOnce({data:null,error:{code:'57014'}} as never)
+   .mockResolvedValueOnce({data:{claimed:false,call:{state:'reserved',actual_usd:null},result:null},error:null} as never);
+  const response=await f.send(video);
+  expect(response.status).toBe(202);
+  expect(f.rpc.mock.calls[0]).toEqual(f.rpc.mock.calls[1]);
+  expect(f.generate).not.toHaveBeenCalled();
+ });
+ it.each([true,false])('reconciles the identical video settlement after a storage timeout (committed %s)',async committed=>{
+  const f=fixture(),rpc=f.rpc.getMockImplementation()!;
+  let settlements=0;
+  f.rpc.mockImplementation(async(name,args)=>{
+   if(name==='record_keyword_learning_call'&&++settlements===1)return {data:null,error:{code:'PGRST003'}} as never;
+   if(name==='read_keyword_learning_call') {
+    const {p_request_hash}=f.rpc.mock.calls[0][1];
+    return {error:null,data:{requestHash:p_request_hash,completed:committed,result:committed?result:null,
+      call:{id:'call-fixture',lease_token:'lease-fixture',state:committed?'settled':'reserved',actual_usd:committed?.001:null}}} as never;
+   }
+   return rpc(name,args);
+  });
+  const response=await f.send({...input,originalKey:'automatic-video:v1:keywords:direct:0'});
+  expect(response.status).toBe(200);
+  expect(f.rpc.mock.calls[2][0]).toBe('read_keyword_learning_call');
+  if(committed)expect(settlements).toBe(1);
+  else expect(f.rpc.mock.calls[1]).toEqual(f.rpc.mock.calls[3]);
+  expect(f.generate).toHaveBeenCalledTimes(1);
+ });
+ it.each(['PT402','PT409','PT403','XX000'])('does not retry a video reservation on %s',async code=>{
+  const f=fixture();f.rpc.mockResolvedValueOnce({data:null,error:{code}} as never);
+  const response=await f.send({...input,originalKey:'automatic-video:v1:keywords:direct:0'});
+  expect(response.ok).toBe(false);
+  expect(f.rpc).toHaveBeenCalledTimes(1);
+  expect(f.generate).not.toHaveBeenCalled();
+ });
  it('never sends again when reservation returns an existing unsettled request',async()=>{
   const f=fixture();f.rpc.mockResolvedValueOnce({data:{claimed:false,call:{state:'unknown',actual_usd:null},result:null,errorCode:'analysis_provider_timeout'},error:null} as never);
   const r=await f.send();expect(r.status).toBe(202);expect(f.generate).not.toHaveBeenCalled();expect((await r.json()).providerCall).toBe(false);
