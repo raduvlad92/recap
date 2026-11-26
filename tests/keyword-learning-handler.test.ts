@@ -58,6 +58,26 @@ describe('private keyword evaluation handler, synthetic adapters only',()=>{
   expect(f.rpc.mock.calls[2][1]).toMatchObject({p_result:{providerId:'gen-fixture',actualUsd:null,observedUsd:null},
    p_error_code:'analysis_incomplete_generation'});
  });
+ it('reconciles a timed-out video settlement even when generation failed after acknowledgment',async()=>{
+  const f=fixture(),rpc=f.rpc.getMockImplementation()!;
+  let settlements=0;
+  f.generate.mockImplementationOnce(async (_request,acknowledge)=>{
+   await acknowledge('gen-fixture');
+   throw new AnalysisError('analysis_incomplete_generation');
+  });
+  f.rpc.mockImplementation(async(name,args)=>{
+   if(name==='record_keyword_learning_call'&&++settlements===1)return {data:null,error:{code:'PGRST003'}} as never;
+   if(name==='read_keyword_learning_call')return {error:null,data:{requestHash:f.rpc.mock.calls[0][1].p_request_hash,
+    completed:false,call:{id:'call-fixture',lease_token:'lease-fixture',state:'reserved',actual_usd:null}}} as never;
+   return rpc(name,args);
+  });
+  expect((await f.send({...input,originalKey:'automatic-video:v1:keywords:direct:0'})).status).toBe(202);
+  expect(f.rpc.mock.calls.map(([name])=>name)).toEqual(['reserve_keyword_learning_call','record_openrouter_generation_ack',
+   'record_keyword_learning_call','read_keyword_learning_call','record_keyword_learning_call']);
+  expect(f.rpc.mock.calls[2][1]).toMatchObject({p_result:{providerId:'gen-fixture',actualUsd:null}});
+  expect(f.rpc.mock.calls[2]).toEqual(f.rpc.mock.calls[4]);
+  expect(f.generate).toHaveBeenCalledOnce();
+ });
  it('reissues an ambiguous video reservation with the exact key and respects the existing held call',async()=>{
   const f=fixture(),video={...input,originalKey:'automatic-video:v1:keywords:direct:0'};
   f.rpc.mockResolvedValueOnce({data:null,error:{code:'57014'}} as never)
