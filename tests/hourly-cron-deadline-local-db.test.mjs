@@ -7,6 +7,7 @@ const migration = name => readFileSync(new URL('../supabase/migrations/' + name,
 const pgBin = process.env.READER_TEST_PG_BIN || '/opt/homebrew/opt/postgresql@17/bin';
 const release = 'a'.repeat(40);
 const previous = '20261125030000_hourly_hosting_lease_recovery.sql';
+const httpExpiry = '20261125181000_expire_unleased_http_hosting_work.sql';
 const deadline = '20261126032659_expire_queued_hourly_cron_slots.sql';
 const cronKey = (offset, epoch = 10) => `'cron:hourly-collection:${epoch}:' || (floor(extract(epoch from now()) / 300)::bigint + (${offset}))::text`;
 const claim = key => `public.begin_hosting_work(${key},'hourly-collection',10,'${release}')`;
@@ -20,6 +21,7 @@ describe.skipIf(!existsSync(join(pgBin, 'initdb')))('hourly cron deadlines in di
     const database = db.fresh();
     const sql = query => db.sql(database, query);
     sql(migration(previous));
+    sql(migration(httpExpiry));
     if (withDeadline) sql(migration(deadline));
     sql(`update public.hosting_runtime_control
       set owner='cloudflare', epoch=10, release='${release}', paused=false, old_host_fenced=true;`);
@@ -74,5 +76,21 @@ describe.skipIf(!existsSync(join(pgBin, 'initdb')))('hourly cron deadlines in di
     expect(() => sql(`set role anon; select ${claim(fresh)};`)).toThrow(/permission denied/);
     sql('update public.hosting_runtime_control set paused=false;');
     expect(sql(`set role service_role; select ${claim(fresh)};`)).toBe('{"busy": true}');
+  });
+
+  it('keeps the predecessor HTTP expiry when the hourly deadline migration follows it', () => {
+    const sql = fixture();
+    const fresh = cronKey(0);
+    sql(`insert into public.hosting_work(key,kind,epoch,release,state,created_at,payload) values
+      ('http:late','http',10,'${release}','queued',now()-interval '61 seconds',null),
+      ('http:abandoned','http',10,'${release}','queued',now()-interval '61 seconds',null),
+      ('http:live','http',10,'${release}','queued',now(),null),
+      ('http:has-payload','http',10,'${release}','queued',now()-interval '61 seconds','{"fixture":true}');
+      select public.admit_hosting_work(${fresh},'hourly-collection',10,'${release}');`);
+    expect(sql(`select public.begin_hosting_work('http:late','http',10,'${release}') is null;
+      select ${claim(fresh)}->>'token' is not null;
+      select key,state,lease_token is null,lease_until is null
+      from public.hosting_work where kind='http' order by key;`))
+      .toBe('t\nt\nhttp:abandoned|uncertain|t|t\nhttp:has-payload|queued|t|t\nhttp:late|uncertain|t|t\nhttp:live|queued|t|t');
   });
 });

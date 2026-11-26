@@ -1,5 +1,6 @@
 -- Leave overdue hourly cron slots in the ledger without claiming or replaying them.
 -- Existing running leases and all source/provider receipts retain their own bounds.
+-- Preserve the unleased HTTP expiry installed by 20261125181000.
 begin;
 
 create or replace function public.begin_hosting_work(p_key text,p_kind text,p_epoch bigint,p_release text)
@@ -11,7 +12,12 @@ begin
  if c.owner<>'cloudflare' or c.paused or not c.old_host_fenced or c.epoch<>p_epoch or c.release<>p_release then raise exception 'Hosting runtime is paused or stale'; end if;
  select * into w from public.hosting_work where key=p_key for update;
  if not found or w.epoch<>p_epoch or w.release<>p_release or w.kind<>p_kind then return null; end if;
+ if recap_internal.unleased_http_hosting_work(w) and w.created_at<=clock_timestamp()-interval '60 seconds' then
+  update public.hosting_work set state='uncertain',updated_at=clock_timestamp() where key=w.key;
+  return null;
+ end if;
  if w.kind='hourly-collection' and w.state in ('queued','running') then
+  perform recap_internal.retire_unleased_http_hosting_work(clock_timestamp()-interval '60 seconds');
   -- This lease starts inside the queue invocation and covers its 15-minute
   -- wall-time limit. Preserve the original token and deadline as evidence.
   claimed_at:=clock_timestamp();
