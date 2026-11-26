@@ -42,7 +42,7 @@ export function YouTubeCard({ update, channelName, channelIcon, date, actions, c
   const transcript = useMemo(() => getVideoTranscript(update), [update]);
   const keywords = useMemo(() => getVideoKeywords(update), [update]);
   return <article className={`update-card youtube-card source-layout-card ${compact ? 'update-card-compact' : ''}`}>
-    <CardSourcePanel name={channelName} avatar={channelIcon} date={date} publishedAt={update.publishedAt} platform="YouTube" actions={actions} onChannel={onChannel} preview={<button className="card-thumbnail" aria-label={t('readDetailsNamed', { title: update.title })} onClick={onOpen}><Artwork update={update} />{update.duration && <span className="duration-pill"><Play size={11} aria-hidden="true" />{update.duration}</span>}</button>} />
+    <CardSourcePanel name={channelName} avatar={channelIcon} date={date} publishedAt={update.publishedAt} platform="YouTube" actions={actions} onChannel={onChannel} preview={<button className="card-thumbnail" aria-label={[t('readDetailsNamed', { title: update.title }), update.duration].filter(Boolean).join(' ')} onClick={onOpen}><Artwork update={update} />{update.duration && <span className="duration-pill"><Play size={11} aria-hidden="true" />{update.duration}</span>}</button>} />
     <div className="update-card-body">
       <button className="update-title-button" onClick={onOpen}><h2>{update.title}</h2></button>
       <VideoTakeaways update={update} processing={processing} />
