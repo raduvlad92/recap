@@ -27,3 +27,15 @@ describe('monthly provider spend in admin', () => {
     expect(renderToStaticMarkup(createElement(MonthlyProviderSpend))).toContain('spend is unavailable');
   });
 });
+
+it('shows the $18 live stop, including holds, and the latest refused reservation', () => {
+  const html = renderToStaticMarkup(createElement(MonthlyProviderSpend, { budget: {
+    ...fixture, operatingLimitUsd: 18, committedUsd: 18, unresolvedUsd: 9, paused: true,
+    pauseReason: 'provider_operating_stop_reached',
+    lastRefusal: { at: '2026-11-26T07:00:00Z', reason: 'provider_operating_stop_would_exceed' },
+  } }));
+  expect(html).toContain('$18.00 / $18.00');
+  expect(html).toContain('$18.00 monthly operating stop reached, including open holds');
+  expect(html).toContain('The requested reservation would have exceeded the monthly operating stop.');
+  expect(html).not.toContain('100% limit reached');
+});

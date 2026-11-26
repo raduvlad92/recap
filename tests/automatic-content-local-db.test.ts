@@ -291,7 +291,7 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
  });
  it('blocks shared monthly and UTC-day exhaustion before sessions or empty reviews and preserves old unknown holds',()=>{
   sync();sql(`insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,state,created_at)values(${q(owner)},'old-unknown',gen_random_uuid(),${q(model)},repeat('c',64),.095,'unknown',clock_timestamp()-interval'2 days');update public.reader_content_analysis_policies set lifetime_limit_usd=.1;`);
-  const hold=service("select (public.reserve_collection_budget('monthly-fixture-hold',19.9,'job',null,'apify','FixtureActor')).id;");
+  const hold=service("select (public.reserve_collection_budget('monthly-fixture-hold',17.9,'job',null,'apify','FixtureActor')).id;");
   expect(claim()).toMatchObject({claimed:false,reason:'provider_monthly_budget_exhausted'});
   expect(service('select count(*)from public.admin_analysis_reviews;')).toBe('0');expect(service('select count(*)from public.keyword_learning_sessions;')).toBe('0');
   service(`select public.release_collection_budget('${hold}'); update public.reader_content_analysis_policies set lifetime_limit_usd=10,daily_limit_usd=.1;`);expect(claim().reason).toBe('analysis_daily_budget_exhausted');expect(service("select actual_usd is null and state='unknown'from public.reader_content_analysis_calls where call_key='old-unknown';")).toBe('t');
@@ -303,7 +303,7 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
  });
  it('parks at the cross-provider limit and renews the same finite session with its saved result',()=>{
   const t=task(),r=reserve(t);settle(t,r);
-  const sourceHold=service("select (public.reserve_collection_budget('monthly-midtask',19.999,'job',null,'apify','FixtureActor')).id;");
+  const sourceHold=service("select (public.reserve_collection_budget('monthly-midtask',17.999,'job',null,'apify','FixtureActor')).id;");
   expect(()=>reserve(t,'second')).toThrow(/provider_monthly_budget_exhausted/);
   expect(finish(t,null,'provider_monthly_budget_exhausted')).toMatchObject({state:'queued',sessionId:t.task.session_id});
   expect(claim()).toMatchObject({claimed:false,reason:'provider_monthly_budget_exhausted'});

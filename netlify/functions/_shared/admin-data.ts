@@ -1,3 +1,4 @@
+import { observeProviderAdmissionRefusals } from './monthly-provider-budget';
 import { createClient } from '@supabase/supabase-js';
 import type { AdminChannelIdentity, AdminFollow, AdminUser, CollectionJobRecord } from '../../../src/lib/admin-types';
 import { isFictionalSource, LEGACY_SAMPLE_SOURCE_IDS, removeFictionalWorkspaceContent } from '../../../src/lib/fixtures';
@@ -8,7 +9,10 @@ export function database(env: Env = runtimeEnv, privileged = true) {
   const url = env('VITE_SUPABASE_URL');
   const key = privileged ? env('SUPABASE_SECRET_KEY') : env('VITE_SUPABASE_PUBLISHABLE_KEY');
   if (!url || !key) throw new CollectionError(503, 'database_unavailable', 'The catalogue service is not configured.');
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    ...(privileged && { global: { fetch: observeProviderAdmissionRefusals(url, key) } }),
+  });
 }
 export async function clerkRequest(path: string, env: Env, fetcher: typeof fetch = fetch, options: { method?: 'GET' | 'POST' | 'DELETE'; allowMissing?: boolean } = {}): Promise<unknown> {
   const key = env('CLERK_SECRET_KEY');

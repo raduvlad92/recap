@@ -145,7 +145,7 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
  });
  it('retains the shared cash ceiling and platform daily envelope', () => {
   result('select public.sync_social_collection_sources();'); sql('update public.social_collection_platforms set daily_limit_usd=.04 where platform=\'X\';'); const free=claim();expect(free.id).toBeTruthy();expect(() => launch(free)).toThrow();finish(free,[],null,false,'budget_stopped');
-  sql(`update public.social_collection_platforms set daily_limit_usd=.5 where platform='X';select public.reserve_collection_budget('preexisting-proof',19.99,'envelope');`); sql("update public.social_collection_sources set next_check_at=clock_timestamp()-interval'1 minute';");const next=claim();expect(next.id).toBeTruthy();expect(() => launch(next)).toThrow();
+  sql(`update public.social_collection_platforms set daily_limit_usd=.5 where platform='X';select public.reserve_collection_budget('preexisting-proof',17.99,'envelope');`); sql("update public.social_collection_sources set next_check_at=clock_timestamp()-interval'1 minute';");const next=claim();expect(next.id).toBeTruthy();expect(() => launch(next)).toThrow();
  });
  it('keeps an ambiguous launch and its full reservation instead of re-posting', () => {
   result('select public.sync_social_collection_sources();'); const job = claim(); launch(job); finish(job, [], null, false, 'ambiguous_launch');
@@ -176,7 +176,7 @@ describe.skipIf(!available)('social discovery on disposable PostgreSQL', () => {
  });
  it('imports native text with no reservation even when the paid account is exhausted',()=>{
   result('select public.sync_social_collection_sources();');
-  sql("select public.reserve_collection_budget('exhausted-paid-envelope',20,'envelope');");
+  sql("select public.reserve_collection_budget('exhausted-paid-envelope',18,'envelope');");
   const job=claim();expect(job.reservation_id).toBeNull();expect(() => launch(job)).toThrow();
   const coverage={status:'partial',complete:false,returned:1,accepted:1,rejected:{},retrieval:'native'};
   const out=result(`select public.finish_social_collection_job(${q(job.id)},${q(job.lease_token)},${j([item(job)])},${j(coverage)},0,true,null);`);
