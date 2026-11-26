@@ -1,5 +1,7 @@
 # Demo and evidence log
 
+**26 November — offline replay and headless review.** The private November manifest produced 210/241 valid draft shapes offline with 63 recorded provider failures and simulated replacements. The actual review component passed keyboard flow, undo, fixture apply and width checks at 1440 and 390 px. No production write or supplier spend. [Aggregate results](tech/VIDEO-ANALYSIS-REPLAY-2026-11-26.md) · [Review screenshots and tests](https://github.com/raduvlad92/recap/pull/47).
+
 **25 November, 22:36 UTC — production tech feed readback.** A read-only database and serving-code comparison reproduced the latest visible date and 36 unclassified videos. Nine scheduled frames completed, and the exact-main analysis deployment remained failed. New supplier spend was USD 0. [Readback and recovery plan](tech/TECH-FEED-RECOVERY-2026-11-25.md).
 
 **25 November, 15:17 UTC — verified scheduled acceptance.** Both Workers served `6a794cb`, epoch 10 active, after the acknowledged release and scope-bound resume. The two genuine hourly frames completed at 14:01:07 and 15:01:05 UTC. Each returned no new transcript and partial coverage. No additional provider fees were recorded and commitment remained $9.669 of $20. The separate 14:48 UTC signed-in browser audit verified admin and Collection costs with HTTP 200. [Evidence](tech/YOUTUBE-BUDGET-RELEASE-2026-11-25.md).

@@ -1,0 +1,119 @@
+{
+  "cohortSha256": "4028a802e04f67c36912658459a9b0c576fdd89c78cf72e94f1097db7ab3c215",
+  "selected": {
+    "n": 72,
+    "valid": 72,
+    "retained": 0,
+    "mockOnly": 72,
+    "calls": 516,
+    "stops": {}
+  },
+  "byClass": {
+    "fresh_profile": {
+      "n": 72,
+      "valid": 72,
+      "retained": 0,
+      "mockOnly": 72,
+      "calls": 516,
+      "stops": {}
+    }
+  },
+  "distinctVideos": 36,
+  "withBothTasks": 36,
+  "bothValid": 36,
+  "anyValid": 36,
+  "priorBothAlreadyValid": 0,
+  "cost": {
+    "allValidPairs": {
+      "videos": 36,
+      "mean": 0.118369,
+      "stressMean": 0.186225,
+      "p90": 0.250329,
+      "total": 4.26127,
+      "stressTotal": 6.7041
+    },
+    "standardValidPairs": {
+      "videos": 36,
+      "mean": 0.118369,
+      "stressMean": 0.186225,
+      "p90": 0.250329,
+      "total": 4.26127,
+      "stressTotal": 6.7041
+    },
+    "hardestRecaps": {
+      "videos": 0,
+      "mean": null,
+      "stressMean": null,
+      "p90": null,
+      "total": 0,
+      "stressTotal": 0
+    },
+    "byChannel": {
+      "GamersNexus": {
+        "videos": 10,
+        "mean": 0.243754,
+        "stressMean": 0.380537,
+        "p90": 0.317684,
+        "total": 2.437539,
+        "stressTotal": 3.805373
+      },
+      "ShortCircuit": {
+        "videos": 10,
+        "mean": 0.095522,
+        "stressMean": 0.151287,
+        "p90": 0.117619,
+        "total": 0.955219,
+        "stressTotal": 1.512872
+      },
+      "TechLinked": {
+        "videos": 16,
+        "mean": 0.054282,
+        "stressMean": 0.086616,
+        "p90": 0.074974,
+        "total": 0.868513,
+        "stressTotal": 1.385854
+      }
+    },
+    "lowestTenPaired": {
+      "videos": 10,
+      "mean": 0.037047,
+      "stressMean": 0.061095,
+      "p90": 0.054136,
+      "total": 0.370475,
+      "stressTotal": 0.610946
+    },
+    "tenPairedWithEachChannel": {
+      "videos": 10,
+      "mean": 0.045244,
+      "stressMean": 0.074164,
+      "p90": 0.054136,
+      "total": 0.452444,
+      "stressTotal": 0.741637,
+      "byChannel": {
+        "GamersNexus": 1,
+        "ShortCircuit": 3,
+        "TechLinked": 6
+      }
+    },
+    "lowestTenRecap": {
+      "videos": 10,
+      "mean": 0.018298,
+      "stressMean": 0.031295,
+      "p90": 0.02306,
+      "total": 0.182975,
+      "stressTotal": 0.312951
+    }
+  },
+  "modelCalls": {
+    "deepseek/deepseek-v4.1-flash-1017": {
+      "count": 225,
+      "input": 628054,
+      "output": 157500
+    },
+    "openai/gpt-6.1-sol-pro": {
+      "count": 291,
+      "input": 1326077,
+      "output": 145500
+    }
+  }
+}
