@@ -22,11 +22,23 @@ The check window continues to use the latest check within six hours of cutoff. P
 
 The read-only export includes eight regular YouTube uploads with saved transcripts from TechLinked, ShortCircuit and GamersNexus. Six were archived on November 25 and two on November 19. All eight had no matching current-hash recap or keyword review. Format evidence was applied at 22:57 UTC on November 25, after that day's cutoff. This is a retrospective replay of the saved archive, using the scheduled 08:00 Berlin window and recovered format. All eight are late arrivals for that window. The actual production-wide historical coverage input reconstructed at readback had 0 checked, 1 partial, 20 blocked and 18 unknown sources, with 39 updates awaiting review and two without usable content. The replay narrows the scope to the three public channels and eight recovered uploads.
 
-The tracked fixture contains public item identifiers, titles, links, dates, hashes, short source excerpts and separately labelled mock responses. Full private transcripts stay in the local ignored snapshot. The test verifies that the held-state replay yields zero topics. The second run supplies five mock approvals in-process and prints the resulting **Partial** briefing. Neither run calls a model or changes review data. [Fixture](../../tests/fixtures/daily-briefing/archive-2026-11-25.json) · [Printed output](../demos/daily-briefing-2026-11-25.md)
+The tracked fixture contains public item identifiers, titles, links, dates, hashes, short source excerpts and separately labelled mock responses. Full private transcripts stay in the local ignored snapshot. The test verifies that the held-state replay yields zero topics. The second run supplies five mock approvals in-process and prints the resulting **Partial** briefing. Neither run calls a model or changes review data. [Fixture](../../tests/fixtures/daily-briefing/archive-2026-11-25.json)
 
 ```sh
 DAILY_BRIEFING_REPLAY_PRINT=1 npx vitest run --disableConsoleIntercept tests/daily-briefing-replay.test.ts
 ```
+
+### Replay output for 25 November at 08:00 Berlin
+
+**Partial** · Three sources · 0 checked · 0 quiet · 1 partial · 0 failed · 2 blocked
+
+Offline replay using eight archived regular uploads. Five mock approvals yielded five cited topics and three updates awaiting review. The actual review-state replay yielded zero topics and eight updates awaiting review. Original publication times are UTC. Links below include the saved caption cue.
+
+- **Storage** — GamersNexus reports that NVIDIA and AMD GPU driver problems caused high writes on SSDs and hard drives. [GamersNexus, 2026-11-22 13:27 UTC](https://www.youtube.com/watch?v=l8qxFcaLSM4&t=18s)
+- **3D printing** — ShortCircuit puts the new Formlabs resin printer at $699. [ShortCircuit, 2026-11-21 18:09 UTC](https://www.youtube.com/watch?v=GBCfagEoRDI&t=7s)
+- **PC gaming** — TechLinked says the Windows conversion it covered could not boot at the time of reporting. [TechLinked, 2026-11-24 02:15 UTC](https://www.youtube.com/watch?v=kibDx91B6eg&t=154s)
+- **Rugged phones** — ShortCircuit lists a 20,000 mAh battery and a 64-megapixel camera on the Oukitel WP63. [ShortCircuit, 2026-11-22 18:37 UTC](https://www.youtube.com/watch?v=iTAsOxThOFA&t=12s)
+- **Networks** — TechLinked reports that a new fiber-optic router was installed as part of an upgrade from copper equipment. [TechLinked, 2026-11-17 00:56 UTC](https://www.youtube.com/watch?v=w2VoBbhOVcQ&t=47s)
 
 ## Cost and headroom
 
