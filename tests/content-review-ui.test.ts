@@ -156,28 +156,28 @@ describe('visible-page bulk review decisions', () => {
     checkbox(tree, 'Select keyword first').props.onChange(); tree = h.render();
     expect(nodeText(tree)).toContain('1 selected'); expect(checkbox(tree, 'Select this page').props['aria-checked']).toBe('mixed'); expect(input.indeterminate).toBe(true);
     checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); expect(nodeText(tree)).toContain('2 selected'); expect(checkbox(tree, 'Select this page').props.checked).toBe(true);
-    button(tree, 'Clear').props.onClick(); tree = h.render(); expect(nodeText(tree)).toContain('0 selected'); expect(button(tree, 'Confirm and publish selected').props.disabled).toBe(true);
+    button(tree, 'Clear').props.onClick(); tree = h.render(); expect(nodeText(tree)).toContain('0 selected'); expect(button(tree, 'Reject selected').props.disabled).toBe(true);
   });
   it('uses saved CAS revisions sequentially, preserves partial failures and does not blindly retry', async () => {
     const records = [row('first'), row('invalid'), row('stale'), row('last')], first = deferred<ReturnType<typeof confirmed>>(), actions = props(); let calls = 0;
-    actions.decide.mockImplementation(async body => { calls++; if (calls === 1) return first.promise; if (body.id === 'invalid') throw { status: 400, message: 'This recap needs supporting quotes.' }; if (body.id === 'stale') throw { status: 409, message: 'The source changed.' }; return confirmed(records.find(r => r.id === body.id)!); });
-    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Confirm and publish selected').props.onClick(); tree = h.render();
+    actions.decide.mockImplementation(async body => { calls++; if (calls === 1) return first.promise; if (body.id === 'invalid') throw { status: 400, message: 'This recap needs supporting quotes.' }; if (body.id === 'stale') throw { status: 409, message: 'The source changed.' }; return confirmed(records.find(r => r.id === body.id)!, 'reject'); });
+    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Reject selected').props.onClick(); tree = h.render();
     expect(actions.decide).toHaveBeenCalledTimes(1); expect(button(tree, 'Reject selected').props.disabled).toBe(true);
     const expanded = nodes(tree).find(node => typeof node.type === 'function' && node.props.record?.id === 'last');
     await expect(expanded.props.decide({ action: 'review', id: 'last', origin: 'analysis', expectedUpdatedAt: records[3].updatedAt, decision: 'reject' })).rejects.toMatchObject({ status: 409 });
-    first.resolve(confirmed(records[0])); await tick(); tree = h.render();
+    first.resolve(confirmed(records[0], 'reject')); await tick(); tree = h.render();
     expect(actions.decide).toHaveBeenCalledTimes(4); expect(actions.decide.mock.calls.every(([body, options]) => body.expectedUpdatedAt === summary.updatedAt && options?.silent === true && !('proposal' in body))).toBe(true);
-    expect(nodeText(tree)).toContain('2 confirmed and published; 2 need attention; 0 not attempted.'); expect(nodeText(tree)).toContain('This recap needs supporting quotes.'); expect(nodeText(tree)).toContain('The source changed.');
+    expect(nodeText(tree)).toContain('2 rejected; 2 need attention; 0 not attempted.'); expect(nodeText(tree)).toContain('This recap needs supporting quotes.'); expect(nodeText(tree)).toContain('The source changed.');
     expect(checkbox(tree, 'Select keyword invalid').props.checked).toBe(false); expect(checkbox(tree, 'Select keyword stale').props.checked).toBe(false); expect(checkbox(tree, 'Select keyword invalid').props.disabled).toBe(true);
-    expect(actions.reload).not.toHaveBeenCalled(); expect(nodeText(tree)).toContain('Uses saved proposals; save edits individually.');
+    expect(actions.reload).not.toHaveBeenCalled(); expect(nodeText(tree)).toContain('Bulk approval requires a verified keyword citation.');
     expect(button(tree, 'Previous').props.disabled).toBe(true); expect(button(tree, 'Next').props.disabled).toBe(true);
-    button(tree, 'Confirm and publish selected').props.onClick(); await tick(); expect(actions.decide).toHaveBeenCalledTimes(4);
+    button(tree, 'Reject selected').props.onClick(); await tick(); expect(actions.decide).toHaveBeenCalledTimes(4);
   });
   it.each([0, 401, 403, 502, 503])('stops after an uncertain or unauthorized response (%s)', async status => {
     const records = [row('first'), row('blocked'), row('not-started')], actions = props();
-    actions.decide.mockImplementation(async body => { if (body.id === 'blocked') throw { status, message: 'The decision could not be confirmed.' }; return confirmed(records.find(r => r.id === body.id)!); });
-    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Confirm and publish selected').props.onClick(); await tick(); tree = h.render();
-    expect(actions.decide).toHaveBeenCalledTimes(2); expect(nodeText(tree)).toContain('1 confirmed and published; 1 need attention; 1 not attempted.');
+    actions.decide.mockImplementation(async body => { if (body.id === 'blocked') throw { status, message: 'The decision could not be confirmed.' }; return confirmed(records.find(r => r.id === body.id)!, 'reject'); });
+    const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); button(tree, 'Reject selected').props.onClick(); await tick(); tree = h.render();
+    expect(actions.decide).toHaveBeenCalledTimes(2); expect(nodeText(tree)).toContain('1 rejected; 1 need attention; 1 not attempted.');
     expect(nodeText(tree)).toContain('Not attempted.'); expect(checkbox(tree, 'Select keyword not-started').props.checked).toBe(true);
     expect(actions.onPendingChange.mock.calls.at(-1)).toEqual([false]);
   });
@@ -189,9 +189,9 @@ describe('visible-page bulk review decisions', () => {
     expect(nodeText(tree)).toContain('2 rejected; 0 need attention; 0 not attempted.'); expect(nodeText(tree)).toContain('0 selected'); expect(actions.reload).not.toHaveBeenCalled();
   });
   it('does not reuse a selection for a replacement revision before reset effects run', async () => {
-    const records = [row('same-id')], actions = props(), h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); const oldAction = button(tree, 'Confirm and publish selected');
+    const records = [row('same-id')], actions = props(), h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); const oldAction = button(tree, 'Reject selected');
     tree = h.update({ data: page([{ ...records[0], updatedAt: '2026-10-29T03:00:00Z' }]) }, false);
-    expect(nodeText(tree)).toContain('0 selected'); button(tree, 'Confirm and publish selected').props.onClick(); oldAction.props.onClick(); await tick(); expect(actions.decide).not.toHaveBeenCalled();
+    expect(nodeText(tree)).toContain('0 selected'); button(tree, 'Reject selected').props.onClick(); oldAction.props.onClick(); await tick(); expect(actions.decide).not.toHaveBeenCalled();
   });
   it('resets visible selection on page and status changes without carrying hidden choices', async () => {
     const actions = props(), h = reviewHarness({ ...actions, data: page([row('first')]) }); let tree = h.render(); checkbox(tree, 'Select this page').props.onChange(); tree = h.render(); expect(nodeText(tree)).toContain('1 selected');
@@ -254,7 +254,7 @@ describe('instant individual review decisions', () => {
     const records = [row('first-batch'), row('second-batch')], actions = props();
     actions.decide.mockImplementation(async body => confirmed(records.find(record => record.id === body.id)!, body.decision));
     const h = reviewHarness({ ...actions, data: page(records) }); let tree = h.render();
-    checkbox(tree, 'Select keyword first-batch').props.onChange(); tree = h.render(); button(tree, 'Confirm and publish selected').props.onClick(); await tick(); tree = h.render();
+    checkbox(tree, 'Select keyword first-batch').props.onChange(); tree = h.render(); button(tree, 'Reject selected').props.onClick(); await tick(); tree = h.render();
     expect(nodeText(tree)).toContain('1 pending item'); checkbox(tree, 'Select keyword second-batch').props.onChange(); tree = h.render();
     expect(button(tree, 'Reject selected').props.disabled).toBe(false); button(tree, 'Reject selected').props.onClick(); await tick(); tree = h.render();
     expect(actions.decide).toHaveBeenCalledTimes(2); expect(nodeText(tree)).toContain('1 rejected; 0 need attention; 0 not attempted.');
@@ -268,6 +268,42 @@ describe('instant individual review decisions', () => {
 });
 
 describe('video review batches', () => {
+  it('keeps a recap out of both approval shortcuts even if the listed score is 100', async () => {
+    const citedKeyword = { ...row('cited-keyword'), qualityScore: 100 as const };
+    const recap = { ...row('cited-recap'), kind: 'recap' as const, qualityScore: 100 as const };
+    const uncertain = { ...row('uncertain-keyword'), qualityScore: 50 as const };
+    const actions = props();
+    actions.decide.mockResolvedValue(confirmed(recap));
+    const applyVideoReviews = vi.fn(async () => [{ id: citedKeyword.id, published: true }]);
+    const h = reviewHarness({ ...actions, applyVideoReviews, data: { ...page([citedKeyword, recap, uncertain]), pageSize: 6, groupTotal: 1 } });
+    let tree = h.render();
+    expect(button(tree, 'Approve grounded keywords (1)').props.disabled).toBe(false);
+    button(tree, 'Select drafts manually').props.onClick();
+    tree = h.render();
+    checkbox(tree, 'Select this page').props.onChange();
+    tree = h.render();
+    expect(button(tree, 'Stage selected keywords').props.disabled).toBe(true);
+    button(tree, 'Stage selected keywords').props.onClick();
+    expect(applyVideoReviews).not.toHaveBeenCalled();
+    expect(actions.decide).not.toHaveBeenCalled();
+    button(tree, 'Clear').props.onClick();
+    tree = h.render();
+    checkbox(tree, 'Select keyword cited-keyword').props.onChange();
+    tree = h.render();
+    button(tree, 'Stage selected keywords').props.onClick();
+    tree = h.render();
+    expect(applyVideoReviews).not.toHaveBeenCalled();
+    button(tree, 'Apply and publish').props.onClick();
+    await tick();
+    tree = h.render();
+    expect(applyVideoReviews).toHaveBeenCalledExactlyOnceWith([
+      { id: citedKeyword.id, expectedUpdatedAt: citedKeyword.updatedAt, decision: 'approve' },
+    ]);
+    expect(actions.decide).not.toHaveBeenCalled();
+    await reviewRow(tree, recap.id).props.decide(decisionFor(recap));
+    expect(actions.decide).toHaveBeenCalledExactlyOnceWith(decisionFor(recap), { silent: true });
+  });
+
   it('ranks grounded drafts first, stages both decisions, and undoes them before any request', async () => {
     const records = [
       { ...row('unknown'), qualityScore: null },
@@ -279,7 +315,7 @@ describe('video review batches', () => {
     const h = reviewHarness({ ...actions, applyVideoReviews, data: { ...page(records), pageSize: 6, groupTotal: 1 } });
     let tree = h.render();
     expect(nodes(tree).filter(node => node.props.record).map(node => node.props.record.id)).toEqual(['grounded', 'needs-review', 'low', 'unknown']);
-    button(tree, 'Approve all grounded (1)').props.onClick();
+    button(tree, 'Approve grounded keywords (1)').props.onClick();
     tree = h.render();
     button(tree, 'Reject low-score (1)').props.onClick();
     tree = h.render();
@@ -290,7 +326,7 @@ describe('video review batches', () => {
     tree = h.render();
     expect(applyVideoReviews).not.toHaveBeenCalled();
     expect(actions.decide).not.toHaveBeenCalled();
-    button(tree, 'Approve all grounded (1)').props.onClick();
+    button(tree, 'Approve grounded keywords (1)').props.onClick();
     tree = h.render();
     button(tree, 'Apply and publish').props.onClick();
     await tick();
@@ -302,7 +338,7 @@ describe('video review batches', () => {
     const first = { ...row('grounded'), qualityScore: 100 as const };
     const applyVideoReviews = vi.fn(), data = { ...page([first]), pageSize: 6, groupTotal: 1 };
     const h = reviewHarness({ ...props(), applyVideoReviews, data });
-    button(h.render(), 'Approve all grounded (1)').props.onClick();
+    button(h.render(), 'Approve grounded keywords (1)').props.onClick();
     const previous = button(h.render(), 'Apply and publish');
     h.update({ data: { ...data, reviews: [{ ...first, updatedAt: '2026-11-26T02:00:00Z' }] } }, false);
     previous.props.onClick();
@@ -318,7 +354,7 @@ describe('video review batches', () => {
       targets.map(target => ({ id: target.id, published: target.decision === 'approve' })));
     const h = reviewHarness({ ...props(), applyVideoReviews, data: { ...page(records), pageSize: 6, groupTotal: 1 } });
 
-    const stage = button(h.render(), 'Approve all grounded (271)');
+    const stage = button(h.render(), 'Approve grounded keywords (271)');
     expect(stage.props.disabled).toBe(false);
     stage.props.onClick();
     expect(nodeText(h.render())).toContain('271 ready to publish');
@@ -348,7 +384,7 @@ describe('video review batches', () => {
     const records = Array.from({ length: 271 }, (_, index) => ({ ...row(`grounded-${index + 1}`), qualityScore: 100 as const }));
     const applyVideoReviews = vi.fn(async (_targets: VideoReviewTarget[]) => []);
     const h = reviewHarness({ ...props(), applyVideoReviews, data: { ...page(records), pageSize: 6, groupTotal: 1 } });
-    button(h.render(), 'Approve all grounded (271)').props.onClick();
+    button(h.render(), 'Approve grounded keywords (271)').props.onClick();
     button(h.render(), 'Apply and publish (250)').props.onClick();
     await tick();
 
@@ -358,6 +394,6 @@ describe('video review batches', () => {
     expect(nodeText(tree)).toContain('Reload to check the saved decisions. Stage the remaining 21 decisions again after reloading.');
     expect(reviewRow(tree, 'grounded-250').props.writeDisabled).toBe(true);
     expect(reviewRow(tree, 'grounded-251').props.writeDisabled).toBe(false);
-    expect(button(tree, 'Approve all grounded (21)').props.disabled).toBe(false);
+    expect(button(tree, 'Approve grounded keywords (21)').props.disabled).toBe(false);
   });
 });
