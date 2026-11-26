@@ -6,6 +6,8 @@
 
 **26 November — video analysis and review candidates.** The offline November replay produced 210/241 valid draft shapes and both drafts for 69/88 paired videos. The three-channel model projects $4.26 base / $6.70 stress per month at 36 archived videos. Automatic analysis stays off pending the checked release and separate paid-proof authorization. The review queue candidate stages reversible bulk decisions before explicit apply. [Offline replay and proposed gates](docs/tech/VIDEO-ANALYSIS-REPLAY-2026-11-26.md) · [Review queue draft PR](https://github.com/raduvlad92/recap/pull/47).
 
+**26 November — train 2 preparation.** #58 preserves #46’s HTTP expiry, #53 carries the 250-plus-21 review split, and #61 is rebased onto current #57. The code stack replayed cleanly on frozen #46 and the simulated main sequence. R1 still gates train 1. [Pinned heads and release checklist](docs/tech/release-train-2-2026-11-26.md).
+
 **25 November — abandoned HTTP frame expiry candidate.** Disposable PostgreSQL verifies 60-second claim expiry and checked release drain for unleased HTTP. The current production release and automatic analysis flags are outside this follow-up. [Controller behavior](docs/tech/CLOUDFLARE-RELEASE-CONTROLLER.md#unleased-http-requests).
 
 **25 November, 22:36 UTC — tech feed diagnosis.** The database reconstruction reproduces November 13 at the top and 36 unclassified videos. All 36 have transcripts, including all eight newer uploads. The format filter sets them aside. Recurring YouTube collection is still scoped to TechLinked, and the analysis deployment remains blocked by an unavailable GitHub Actions secret. [Production evidence and recovery plan](docs/tech/TECH-FEED-RECOVERY-2026-11-25.md).

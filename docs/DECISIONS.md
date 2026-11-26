@@ -2,6 +2,8 @@
 
 **26 November — preserve explicit review and paid gates.** The existing Keep held decision remains binding. The queue candidate stages and can undo before apply, and the earlier held proof is outside the shortcuts. The $0.75 paid sample is proposed, with no spend or runtime enablement authorized by this evidence. [Analysis and review gates](tech/VIDEO-ANALYSIS-REPLAY-2026-11-26.md).
 
+**26 November — train 2 compatibility and review decision.** Ship HTTP expiry through #46 and retain it in #58’s hourly claim migration. Stage the full video, with each explicit apply capped at 250 decisions. The PM owns the checked release and restore. Preparation authority covers read-only production and provider reads, one retry for expected reads, scoped short-lived test access, and train-only branch and check fixes. [Release checklist](tech/release-train-2-2026-11-26.md).
+
 ## 25 November 2026 — bound automatic video review drafts
 
 Use up to six cited takeaways and 15 literal keywords per automatic video. Recover only settled format and capacity errors through exact linked requests. Keep unclear charges held and drafts pending review. Production replay requires the confirmed shared monthly cap, healthy release readback and separate PM approval within USD 5. [Decision evidence](tech/VIDEO-ANALYSIS-RELIABILITY-2026-11-25.md).
