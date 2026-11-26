@@ -3,6 +3,7 @@ import {mkdtempSync,mkdirSync,readFileSync,readdirSync,rmSync} from 'node:fs';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {afterAll,beforeAll,beforeEach,describe,expect,it} from 'vitest';
+import {draftReviewReason} from '../netlify/functions/_shared/draft-quality';
 const available=['initdb','pg_ctl','psql'].every(bin=>{try{execFileSync(bin,['--version'],{stdio:'ignore'});return true;}catch{return false;}});
 const q=(s:string)=>"'"+s.replaceAll("'","''")+"'",j=(v:unknown)=>q(JSON.stringify(v))+'::jsonb';
 const owner='admin-analysis-fixture',content='🚀 AeroBox uses a quiet focus setting. The laboratory found a measurable improvement over the older design.';
@@ -51,6 +52,8 @@ describe.skipIf(!available)('compact review inbox, disposable PostgreSQL only',(
     values(${q(owner)},'review-video','review-source',${q(hash)},'keyword',${q('automatic:' + task + ':' + name)},${j(youtube)},${j(proposal)},${q(reason)},'{"origin":"automatic_content"}') returning to_jsonb(admin_analysis_reviews);`);
   const ready = save('ready', { label: 'AeroBox', kind: 'brand' }, 'The AI checker accepted this suggestion.');
   const partialName = save('partial', { label: 'Aero', kind: 'brand' }, 'The AI checker accepted this suggestion.');
+  const flagged = save('flagged', { label: 'AeroBox', kind: 'category' },
+    draftReviewReason('The AI checker accepted this suggestion.', 'Check the keyword identity and type against its use in the source.'));
   const low = save('failure', {}, 'Automatic generation could not provide a validated draft (analysis_invalid_json).');
   const hold = save('hold', {}, 'Automatic generation could not provide a validated draft (analysis_unknown_charge_hold).');
   const originalHold = row('recap', { highlights: [] });
@@ -58,14 +61,16 @@ describe.skipIf(!available)('compact review inbox, disposable PostgreSQL only',(
   expect(json(`select count(*) from public.automatic_content_tasks where id=${q(task)} and created_at >= '2026-11-25';`)).toBe(1);
   expect(json(`select public.admin_video_review_score(r,a) from public.admin_analysis_reviews r join public.reader_source_updates a on a.id=r.update_id and a.user_id=r.user_id where r.id=${q(ready.id)};`)).toBe(100);
   const list = json('select public.admin_grouped_analysis_reviews(0);');
-  expect(list).toMatchObject({ groupTotal: 2, total: 5, pageSize: 6 });
+  expect(list).toMatchObject({ groupTotal: 2, total: 6, pageSize: 6 });
   const scores = Object.fromEntries(list.reviews.map((entry: any) => [entry.id, entry.quality_score]));
-  expect(scores).toEqual({ [ready.id]: 100, [partialName.id]: 50, [low.id]: 0, [hold.id]: 50, [originalHold.id]: null });
+  expect(scores).toEqual({ [ready.id]: 100, [partialName.id]: 50, [flagged.id]: 50, [low.id]: 0, [hold.id]: 50, [originalHold.id]: null });
   expect(JSON.stringify(list)).not.toContain(content);
   const target = (r: any, decision: string, expected = r.updated_at) => ({ id: r.id, expected, decision });
   const apply = (...targets: unknown[]) => json(`select public.admin_apply_video_reviews(${j(targets)},'admin:fixture');`);
-  expect(apply(target(ready, 'approve', '2026-11-24'), target(originalHold, 'reject'), target(hold, 'reject'), target(partialName, 'approve')))
-    .toEqual(expect.arrayContaining([ready, originalHold, hold, partialName].map(r => ({ id: r.id, error: 'PT409' }))));
+  expect(apply(target(ready, 'approve', '2026-11-24'), target(originalHold, 'reject'), target(hold, 'reject'), target(partialName, 'approve'), target(flagged, 'approve')))
+    .toEqual(expect.arrayContaining([ready, originalHold, hold, partialName, flagged].map(r => ({ id: r.id, error: 'PT409' }))));
+  expect(json(`select to_jsonb(r) from public.admin_analysis_reviews r where id=${q(flagged.id)};`))
+    .toMatchObject({ status: 'pending', proposal: flagged.proposal, reason: flagged.reason });
   expect(source().videoKeywords).toEqual([]);
   expect(apply(target(ready, 'approve'), target(low, 'reject'))).toEqual(expect.arrayContaining([
     { id: ready.id, published: true }, { id: low.id, published: false },

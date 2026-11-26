@@ -176,6 +176,22 @@ describe('November 25 automatic video replay without paid calls', () => {
   expect(result.proposal?.highlights).toHaveLength(6);
   expect(result.proposal?.highlights?.every(point=>content.includes(point.evidenceQuote))).toBe(true);
  });
+ it('saves a checker-positive but unsupported claim for manual review with its original evidence', async () => {
+  const source = claim(primary);
+  const point = { text: 'Aster announced that the new casing passed the certification test.', evidenceQuote: primary };
+  const store = { sync: vi.fn().mockResolvedValue({ synchronized: 1 }),
+   claim: vi.fn().mockResolvedValueOnce(source).mockResolvedValue(null), finish: vi.fn() };
+  const call = vi.fn(async (input: KeywordLearningInput) => input.request.role === 'extractor'
+   ? settled({ readComplete: true, highlights: [point] })
+   : settled(verdicts(input, primary)));
+  const result = await createAutomaticContentWorker({ env, store, call })();
+  expect(result).toMatchObject({ queuedForReview: 1, blocked: 0 });
+  expect(call).toHaveBeenCalledTimes(2);
+  expect(store.finish).toHaveBeenCalledExactlyOnceWith(source, {
+   kind: 'recap', proposal: { highlights: [point] }, callKeys: call.mock.calls.map(([input]) => input.request.key),
+   reason: expect.stringMatching(/^Needs manual review\. point 1,/),
+  });
+ });
  it('keeps an unresolved charge in its original reservation and sends no retry or subsequent job', async () => {
   const source = claim(), saved = replay.chargeHold;
   const store = { sync: vi.fn().mockResolvedValue({synchronized:2}), claim: vi.fn().mockResolvedValue(source), finish: vi.fn() };
@@ -194,6 +210,7 @@ describe('November 25 automatic video replay without paid calls', () => {
  it('shards dense keyword checks and keeps the strongest 15 distinct source mentions', async () => {
   const names = ['Alderbox','Birchbox','Cedarbox','Dogwoodbox','Elmcrate','Fircrate','Ginkgobox','Hawthorncase','Ironwoodcase','Junipercase','Kapokcase','Larchcase','Maplecase','Nutcase','Oakcase','Pinecase','Quincecase','Redwoodcase','Sprucecase','Teakcase','Umbrellacase','Vinecase','Willowcase','Yewcase','Zebracase','Appletower','Banyantower','Citrustower','Duriantower','Eldertower','Figtower','Grapetower','Hazeltower','Ivorytower','Jacarandatower','Kiwitower','Limetower','Myrtletower'];
   const source = claim(names.join(' ') + ' ' + names.at(-1) + ' ' + names.at(-1), 'keywords');
+  source.record.title = names.at(-1)! + ' review';
   const checkSizes: number[] = [];
   let truncated = false;
   const result = await generateAutomaticContent(source, async input => {
@@ -209,6 +226,8 @@ describe('November 25 automatic video replay without paid calls', () => {
   expect(result.proposals).toHaveLength(15);
   expect(new Set(result.proposals?.map(p => p.label)).size).toBe(15);
   expect(result.proposals?.[0].label).toBe(names.at(-1));
+  expect(result.proposals?.[0].reason).toMatch(/^The AI checker accepted/);
+  expect(result.proposals?.slice(1).every(proposal => proposal.reason.startsWith('Needs manual review. '))).toBe(true);
   expect(result.proposals?.every(proposal => names.includes(proposal.label))).toBe(true);
  });
 });

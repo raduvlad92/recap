@@ -14,6 +14,7 @@ import { publicHttpsUrl, runtimeEnv, type Env } from './security';
 import { hostRuntime } from './host-runtime';
 import { videoKeywordOutput } from './automatic-video-keywords';
 import { bindVideoCall, runVideoCall, SettledVideoOutputError, videoRecovery } from './automatic-video-calls';
+import { createKeywordDraftGuard, draftReviewReason, recapDraftIssue } from './draft-quality';
 import { RECAP_QUALITY_CONTRACT, RECAP_GENERATED_POINT_CHARACTERS, correctionAdmitted, planAutomaticRecap, recapEvidence, repairRecapVerificationOffsets, recapVerificationSchema, validateRecapVerification, type RecapCorrectionAdmission, type RecapPoint, type RecapQualityOptions, type RecapVerdict } from './recap-quality';
 export { planAutomaticRecap, RECAP_QUALITY_CONTRACT } from './recap-quality';
 export type { RecapPoint, RecapCorrectionAdmission, RecapQualityOptions } from './recap-quality';
@@ -486,9 +487,13 @@ export async function generateAutomaticContent(claim:AutomaticContentClaim,call:
  const run=async(input:KeywordLearningInput)=>{beforeCall();if(!callKeys.includes(input.request.key))callKeys.push(input.request.key);return call(input);};
  if(claim.task.task==='recap'){
   const recap=video?await videoRecapProposals(claim,run):await recapProposals(claim,run,options);
-  return {kind:'recap',callKeys,proposal:{highlights:recap.highlights},reason:recap.reason};
+  return {kind:'recap',callKeys,proposal:{highlights:recap.highlights},
+   reason:draftReviewReason(recap.reason,recapDraftIssue(claim.record.content,recap.highlights))};
  }
  if(claim.task.task!=='keywords')return fail('automatic_content_invalid_task');
+ const assessKeyword=createKeywordDraftGuard({content:claim.record.content,title:claim.record.title});
+ const withDraftReason=(proposal:{label:string;kind:string;reason:string})=>
+  ({...proposal,reason:draftReviewReason(proposal.reason,assessKeyword(proposal))});
  const output=video?await videoKeywordOutput(claim.record,{sessionId:claim.task.session_id,sourceOrdinal:1,sourceHash:claim.task.content_hash},run):await analyzeProductionKeywords(claim.record,productionCall=>run(bindKeywordProductionCall(claim.task.session_id,1,claim.task.content_hash,productionCall) as KeywordLearningInput),undefined,'context-roles-v2');
  if(video){
   const supported=(rows:unknown)=>Array.isArray(rows)?rows.filter(row=>{
@@ -504,7 +509,7 @@ export async function generateAutomaticContent(claim:AutomaticContentClaim,call:
    reason:(row.disposition==='accepted'?'The AI checker accepted this literal mention. Your approval is required.':'The AI checker was uncertain about this literal mention. Verify its naming role.'),
   }));
   if(!proposals.length)return fail('empty_keyword_inventory_requires_manual_review');
-  return {kind:'keywords',callKeys,proposals};
+  return {kind:'keywords',callKeys,proposals:proposals.map(withDraftReason)};
  }
  const proposals:Array<{label:string;kind:string;reason:string}>=[],seen=new Set<string>();
  for(const [disposition,rows] of [['accepted',output.evidence.accepted],['review',output.pending],['review',output.evidence.unmatchedReview]] as const){
@@ -522,7 +527,7 @@ export async function generateAutomaticContent(claim:AutomaticContentClaim,call:
   }
  }
  if(!proposals.length)return fail('empty_keyword_inventory_requires_manual_review');
- return {kind:'keywords',callKeys,proposals};
+ return {kind:'keywords',callKeys,proposals:proposals.map(withDraftReason)};
 }
 
 interface WorkerDependencies {env:Env;store:AutomaticContentStore;call:(input:KeywordLearningInput)=>Promise<GenerationResult>;now:()=>number;recapAdmission:(claim:AutomaticContentClaim)=>Promise<RecapCorrectionAdmission|null>;correctionAdmission:(claim:AutomaticContentClaim)=>Promise<RecapCorrectionAdmission|null>}
