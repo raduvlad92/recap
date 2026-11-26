@@ -30,11 +30,14 @@ function check(ok, code) {
   if (!ok) throw new CheckError(code);
 }
 
-export function buildReaderMigration({ owner, allowed, users, owners, workspaces, destination = [] }) {
+export function buildReaderMigration({ owner, allowed, reviewLater = [], acceptance, users, owners, workspaces, destination = [] }) {
   const ownerEmail = emailKey(owner);
   check(ownerEmail, 'owner_incumbent_email_missing');
-  const emails = new Set([ownerEmail, ...allowed.map(emailKey)]);
-  check(!emails.has(''), 'approved_roster_invalid');
+  const deferred = new Set(reviewLater.map(emailKey));
+  const emails = new Set([ownerEmail, ...allowed.map(emailKey), ...deferred]);
+  const acceptanceEmail = emailKey(acceptance);
+  check(!emails.has('') && !deferred.has(ownerEmail) && (!acceptance || acceptanceEmail && !emails.has(acceptanceEmail)),
+    'approved_roster_invalid');
   const entries = Array.from(emails, email => {
     const matched = users.filter(user => user.email_addresses?.some(item => emailKey(item.email_address) === email));
     check(matched.length === 1, 'source_reader_missing_or_ambiguous');
@@ -51,12 +54,23 @@ export function buildReaderMigration({ owner, allowed, users, owners, workspaces
       target.banned === false && target.locked === false && targetEmail?.verification?.status === 'verified' &&
       emailKey(targetEmail.email_address) === email, 'destination_reader_conflict');
 
-    return { role: email === ownerEmail ? 'owner' : 'reader', email, sourceSubject: source.id, stableOwner,
+    return { role: email === ownerEmail ? 'owner' : 'reader', reviewLater: deferred.has(email), email, sourceSubject: source.id, stableOwner,
       destinationSubject: target?.id ?? null, passwordEnabled: source.password_enabled === true,
       mfaEnabled: source.two_factor_enabled === true || source.totp_enabled === true || source.backup_code_enabled === true,
       externalAccountCount: source.external_accounts?.length ?? 0 };
   });
   check(new Set(entries.map(entry => entry.stableOwner)).size === entries.length, 'source_workspace_alias_collision');
+  if (acceptanceEmail) {
+    const found = destination.filter(user => user.email_addresses?.some(item => emailKey(item.email_address) === acceptanceEmail));
+    check(found.length <= 1, 'acceptance_reader_ambiguous');
+    const target = found[0], address = target && primary(target);
+    if (target) check(subjectId.test(target.id) && target.banned === false && target.locked === false &&
+      !target.external_id && address?.verification?.status === 'verified' && emailKey(address.email_address) === acceptanceEmail &&
+      !entries.some(entry => entry.stableOwner === target.id || entry.destinationSubject === target.id),
+    'acceptance_reader_not_new_and_verified');
+    entries.push({ role: 'acceptance', reviewLater: false, email: acceptanceEmail, sourceSubject: null,
+      destinationSubject: target?.id ?? null, stableOwner: target?.id ?? null });
+  }
   check(destination.length === entries.filter(entry => entry.destinationSubject).length, 'destination_contains_unreviewed_users');
   return entries;
 }
@@ -115,13 +129,15 @@ async function clerkList(path, secret, tag) {
   throw new CheckError(tag + '_inventory_bound');
 }
 
-async function rosterEmails(path) {
-  if (!path) return [];
+async function readRoster(path) {
+  if (!path) return { approved: [], reviewLater: [] };
   const file = await stat(path).catch(() => null);
   check(file?.isFile() && (file.mode & 0o077) === 0, 'roster_requires_private_file');
-  const rows = JSON.parse(await readFile(path, 'utf8'));
-  check(Array.isArray(rows) && rows.length <= 99 && rows.every(emailKey), 'roster_invalid');
-  return rows;
+  const roster = JSON.parse(await readFile(path, 'utf8'));
+  check(roster && !Array.isArray(roster) && Array.isArray(roster.approved) && Array.isArray(roster.reviewLater) &&
+    roster.approved.length + roster.reviewLater.length <= 99 && [...roster.approved, ...roster.reviewLater].every(emailKey) &&
+    (!('acceptance' in roster) || emailKey(roster.acceptance)), 'roster_invalid');
+  return roster;
 }
 
 async function checkSource(env, destination = []) {
@@ -133,17 +149,17 @@ async function checkSource(env, destination = []) {
   check(typeof service === 'string' && service.length > 20, 'supabase_read_credential_missing');
   const admin = env.RECAP_OWNER_EMAIL;
   check(emailKey(admin), 'owner_incumbent_email_missing');
-  const [domains, allowlist, users, extra] = await Promise.all([
+  const [domains, allowlist, users, roster] = await Promise.all([
     clerkList('/domains', secret, 'source_domains'),
     clerkList('/allowlist_identifiers', secret, 'source_allowlist'),
     clerkList('/users', secret, 'source_users'),
-    rosterEmails(env.RECAP_APPROVED_READER_ROSTER_FILE),
+    readRoster(env.RECAP_APPROVED_READER_ROSTER_FILE),
   ]);
   check(domains.some(row => !row.is_satellite &&
     [row.frontend_api_url, row.name].some(value => apiHost(value) === new URL(issuer).hostname)), 'source_issuer_key_mismatch');
   const clerkEmails = allowlist.filter(row => row.identifier_type === 'email_address' || (!row.identifier_type && emailKey(row.identifier)));
   check(clerkEmails.length === allowlist.length, 'source_allowlist_contains_non_email_identifiers');
-  const allowed = [...clerkEmails.map(row => row.identifier), ...extra];
+  const allowed = [...clerkEmails.map(row => row.identifier), ...roster.approved];
   const subjects = users.map(row => row.id);
   check(subjects.length && subjects.length <= 100 && new Set(subjects).size === subjects.length && subjects.every(id => subjectId.test(id)), 'source_user_inventory_invalid');
   const headers = { apikey: service, 'content-type': 'application/json' };
@@ -163,7 +179,7 @@ async function checkSource(env, destination = []) {
     check(Array.isArray(rows) && rows.length <= 1 && rows.every(row => row.user_id === owner), 'source_workspace_shape');
     if (rows.length) workspaces.add(owner);
   }
-  return { entries: buildReaderMigration({ owner: admin, allowed, users, owners, workspaces, destination }),
+  return { entries: buildReaderMigration({ owner: admin, allowed, reviewLater: roster.reviewLater, acceptance: roster.acceptance, users, owners, workspaces, destination }),
     observedSourceUsers: subjects.length, clerkAllowlistEntries: clerkEmails.length, existingWorkspaces: workspaces.size };
 }
 
@@ -198,7 +214,7 @@ export async function checkLive(env, entries) {
   const asset = await fetch(site + entry, { redirect: 'error', signal: AbortSignal.timeout(12000) });
   check(asset.ok && (await asset.text()).includes(env.RECAP_PROD_CLERK_PUBLISHABLE_KEY), 'live_frontend_key_mismatch');
   const owner = entries.find(entry => entry.role === 'owner');
-  const reader = entries.find(entry => entry.role === 'reader');
+  const reader = entries.find(entry => entry.role === 'acceptance') ?? entries.find(entry => entry.role === 'reader');
   const adminAccess = site + '/api/admin?section=access';
   const publicKey = env.RECAP_SUPABASE_PUBLISHABLE_KEY;
   check(publicKey, 'supabase_public_key_missing');
@@ -235,11 +251,15 @@ async function main() {
   if (mode !== '--dns') {
     const inventory = await checkSource(process.env, destination?.users);
     const { entries, ...counts } = inventory;
-    Object.assign(summary, counts, { eligible: entries.length, owner: entries.filter(x => x.role === 'owner').length,
-      readers: entries.filter(x => x.role === 'reader').length, passwords: entries.filter(x => x.passwordEnabled).length,
-      mfa: entries.filter(x => x.mfaEnabled).length, externalAccounts: entries.reduce((total, x) => total + x.externalAccountCount, 0),
-      destinationMatched: entries.filter(x => x.destinationSubject).length,
-      existingWorkspacesOutsideRoster: counts.existingWorkspaces - entries.length });
+    const existing = entries.filter(entry => entry.sourceSubject);
+    const acceptance = entries.find(entry => entry.role === 'acceptance');
+    Object.assign(summary, counts, { eligible: existing.length, owner: existing.filter(x => x.role === 'owner').length,
+      readers: existing.filter(x => x.role === 'reader').length, reviewLater: existing.filter(x => x.reviewLater).length,
+      acceptancePlanned: !!acceptance, acceptanceVerified: !!acceptance?.destinationSubject,
+      passwords: existing.filter(x => x.passwordEnabled).length, mfa: existing.filter(x => x.mfaEnabled).length,
+      externalAccounts: existing.reduce((total, x) => total + x.externalAccountCount, 0),
+      destinationMatched: existing.filter(x => x.destinationSubject).length,
+      existingWorkspacesOutsideRoster: counts.existingWorkspaces - existing.length });
     if (plan) {
       check(plan.startsWith('.local/') && !plan.split('/').includes('..'), 'plan_output_requires_ignored_local_path');
       await writeFile(plan, JSON.stringify(entries, null, 2) + '\n', { mode: 0o600, flag: 'wx' });

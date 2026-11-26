@@ -83,3 +83,21 @@ it('checks production sessions against the reader owner RPC and the deployed adm
     vi.unstubAllGlobals();
   }
 });
+
+it('preserves review-later workspaces and separates the new acceptance account from existing owners', () => {
+  const f = fixture();
+  const acceptance = 'owner+recap-reader@example.org';
+  const planInput = { ...f, reviewLater: ['pilot@example.org'], acceptance };
+  expect(buildReaderMigration(planInput)).toMatchObject([
+    { role: 'owner', reviewLater: false, stableOwner: 'owner-stable' },
+    { role: 'reader', reviewLater: true, stableOwner: 'pilot-stable' },
+    { role: 'acceptance', sourceSubject: null, destinationSubject: null, stableOwner: null },
+  ]);
+  const target = user('user_Acceptance', acceptance);
+  expect(buildReaderMigration({ ...planInput, destination: [target] }).at(-1)).toMatchObject({
+    role: 'acceptance', sourceSubject: null, destinationSubject: target.id, stableOwner: target.id,
+  });
+  expect(() => buildReaderMigration({ ...planInput, destination: [{ ...target, external_id: 'user_ExistingOwner' }] }))
+    .toThrow('destination_reader_conflict');
+  expect(() => buildReaderMigration({ ...planInput, acceptance: f.owner })).toThrow('approved_roster_invalid');
+});
