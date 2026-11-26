@@ -437,3 +437,9 @@ Resume by reading STATUS.md, SPEC.md, PLAN.md and docs/DECISIONS.md, then taking
 Replace one-reader sizing assumptions with at least 3,900 follows; model unknown source overlap and platform mix. [Architecture/cost options](docs/tech/COLLECTION-50-USERS.md) recommend a shared source/item inventory, durable queues, sufficient discovery quota, provider fallback, reusable source analysis and private reader views. Plan worst-case no reuse, measure empty-check/full-content costs, and aggregate cost reporting in the database. No application or supplier change is authorized merely by this planning scenario.
 
 11 November CI follow-up: merged verification passes; existing release gates hold automatic delivery. Skip CI-only automatic delivery after an exact commit/path comparison, retaining explicit manual release and every runtime gate. This is workflow work, with no application activation or source collection.
+
+## Daily briefing and 72-hour run — 26 November
+
+1. Verify the daily-only candidate locally and on its draft PR. The PM batches this with the checked release after R1.
+2. While paused, verify the reviewed daily migration and exact serving artifact. Enable the same daily flag on both Workers through the checked restoration receipt, preserving review, budget, reminder and acquisition gates.
+3. Observe a genuine local cutoff with useful eligible approved material. Once that gate passes, collect read-only cutoff receipts for 72 hours under the same checked release and epoch. [Acceptance predicates and observer](docs/tech/DAILY-BRIEFING-CUTOFF.md)

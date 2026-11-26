@@ -7,7 +7,7 @@ import { composeDailyBriefing } from '../netlify/functions/_shared/daily-briefin
 const available = ['initdb', 'pg_ctl', 'psql'].every(bin => { try { execFileSync(bin, ['--version'], { stdio: 'ignore' }); return true; } catch { return false; } });
 const q = (s: string) => "'" + s.replaceAll("'", "''") + "'", j = (v: unknown) => q(JSON.stringify(v)) + '::jsonb';
 const owner = 'daily-fixture-owner', stranger = 'daily-fixture-other';
-const continuityMigration = '20261031013730_daily_briefing_continuity.sql';
+const dailyMigrations = ['20261031013730_daily_briefing_continuity.sql', '20261126004132_daily_briefing_cutoff_evidence.sql'];
 const content = 'The AeroBox device uses less power in the reported test. This is a bounded fixture and not a real source.';
 const hash = createHash('sha256').update(content).digest('hex');
 const finding = { text: 'The AeroBox device uses less power in the reported test.', evidenceQuote: 'The AeroBox device uses less power in the reported test.' };
@@ -32,7 +32,7 @@ describe.skipIf(!available)('persisted daily briefings, disposable PostgreSQL', 
     args = ['-X', '-qAt', '-v', 'ON_ERROR_STOP=1', '-h', join(root, 'socket'), '-p', '55567', '-U', 'postgres', '-d', 'postgres'];
     sql(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create function auth.jwt()returns jsonb language sql stable as $$select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb;$$;grant usage on schema public,auth to anon,authenticated,service_role;alter default privileges in schema public grant all on tables to service_role;`);
     const dir = new URL('../supabase/migrations/', import.meta.url);
-    for (const name of readdirSync(dir).filter(x => x.endsWith('.sql') && (x <= '20261031002813_daily_briefings.sql' || x === continuityMigration)).sort()) sql(readFileSync(new URL(name, dir), 'utf8'));
+    for (const name of readdirSync(dir).filter(x => x.endsWith('.sql') && (x <= '20261031002813_daily_briefings.sql' || dailyMigrations.includes(x))).sort()) sql(readFileSync(new URL(name, dir), 'utf8'));
     cutoff = sql(`select to_char(clock_timestamp()at time zone'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"');`);
     periodStart = new Date(Date.parse(cutoff) - 86400000).toISOString(); day = cutoff.slice(0, 10); sourcePublished = new Date(Date.parse(cutoff) - 3600000).toISOString();
   }, 40000);
@@ -67,6 +67,30 @@ describe.skipIf(!available)('persisted daily briefings, disposable PostgreSQL', 
     sql('delete from public.admin_analysis_reviews;');
     const c = claim(); expect(c.input.updates[0].findings).toEqual([]); expect(composeDailyBriefing(c.input).status).toBe('awaiting_review');
   });
+  it('excludes originals archived after the chosen cutoff and picks them up on the next day', () => {
+    const late = new Date(Date.parse(cutoff) + 1000).toISOString();
+    sql(`update public.reader_source_updates set collected_at=${q(late)},updated_at=${q(late)} where user_id=${q(owner)};`);
+    const c = claim();
+    expect(c.input.updates).toEqual([]);
+    const next = new Date(Date.parse(cutoff) + 86400000).toISOString();
+    const carried = data(`select public.daily_briefing_input(${q(owner)},${q(cutoff)},${q(next)},${q(next.slice(0,10))});`);
+    expect(carried.updates[0]).toMatchObject({ updateId: record.id, lateArrival: true });
+  });
+  it('defers findings when the saved publication state changed after cutoff', () => {
+    sql(`update public.reader_source_updates set record=record||'{"summary":"New annotation"}'::jsonb where user_id=${q(owner)};`);
+    const c = claim();
+    expect(c.input.updates[0]).toMatchObject({ updateId: record.id, state: 'awaiting_review', findings: [] });
+    const next = new Date(Date.parse(cutoff) + 86400000).toISOString();
+    const carried = data(`select public.daily_briefing_input(${q(owner)},${q(cutoff)},${q(next)},${q(next.slice(0,10))});`);
+    expect(carried.updates[0]).toMatchObject({ updateId: record.id, state: 'available', lateArrival: true });
+  });
+  it('rejects a quiet finish on incomplete coverage', () => {
+    sql(`delete from public.reader_source_updates; update public.reader_collection_checks set status='partial';`);
+    const c = claim(), result = composeDailyBriefing(c.input);
+    expect(result.status).toBe('awaiting_review');
+    expect(() => finish(c, { ...result, status: 'quiet' })).toThrow();
+    expect(finish(c)).toBe(c.id);
+  });
   it('allows only one active claim and one permanent briefing for the logical date', () => {
     const c = claim(); expect(claim()).toBeNull(); finish(c); expect(claim()).toBeNull();
     expect(service('select count(*)from public.daily_briefings;')).toBe('1');
@@ -87,12 +111,13 @@ describe.skipIf(!available)('persisted daily briefings, disposable PostgreSQL', 
     expect(() => finish(c, changed)).toThrow();
   });
   it('preserves a crashed earlier day and carries its source forward after a multi-day outage', () => {
-    const currentCutoff=cutoff,currentDay=day,currentStart=periodStart;
     const oldCutoff=new Date(Date.parse(cutoff)-2*86400000).toISOString(),oldStart=new Date(Date.parse(cutoff)-3*86400000).toISOString(),oldPublication=new Date(Date.parse(oldCutoff)-3600000).toISOString();
-    sql(`update public.reader_source_updates set published_at=${q(oldPublication)},record=jsonb_set(record,'{publishedAt}',${j(oldPublication)});`);
+    sql(`update public.reader_source_updates set published_at=${q(oldPublication)},collected_at=${q(oldPublication)},record=jsonb_set(record,'{publishedAt}',${j(oldPublication)});`);
     const c=candidate(),old=data(`select public.claim_daily_briefing(${q(owner)},${q(c.generation)},${q(c.workspaceRevision)},${q(oldCutoff.slice(0,10))},${q(oldCutoff)},${q(oldStart)});`);
     expect(old.input.updates).toHaveLength(1);
     sql(`update public.daily_briefing_jobs set lease_until=clock_timestamp()-interval'1 second';`);
+    const currentCutoff=sql(`select to_char(clock_timestamp()at time zone'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"');`);
+    const currentStart=new Date(Date.parse(currentCutoff)-86400000).toISOString(),currentDay=currentCutoff.slice(0,10);
     const latest=data(`select public.claim_daily_briefing(${q(owner)},${q(c.generation)},${q(c.workspaceRevision)},${q(currentDay)},${q(currentCutoff)},${q(currentStart)});`);
     expect(latest.input.updates[0].findings).toHaveLength(1);
     expect(service(`select state from public.daily_briefing_jobs where id=${q(old.id)};`)).toBe('failed');
@@ -109,8 +134,8 @@ describe.skipIf(!available)('persisted daily briefings, disposable PostgreSQL', 
     const nextStart=new Date(Date.parse(cutoff)+6*3600000).toISOString(),nextCutoff=new Date(Date.parse(cutoff)+30*3600000).toISOString();
     const gapAt=new Date(Date.parse(cutoff)+2*3600000).toISOString();
     const gapRecord={...record,id:'daily-gap-video',publishedAt:gapAt,videoSummary:undefined,videoHighlights:[]};
-    sql(`insert into public.reader_source_updates(user_id,id,source_id,collection_id,published_at,updated_at,record)
-      values(${q(owner)},'daily-gap-video','daily-fixture-source','fixture',${q(gapAt)},${q(gapAt)},${j(gapRecord)});
+    sql(`insert into public.reader_source_updates(user_id,id,source_id,collection_id,published_at,collected_at,updated_at,record)
+      values(${q(owner)},'daily-gap-video','daily-fixture-source','fixture',${q(gapAt)},${q(gapAt)},${q(gapAt)},${j(gapRecord)});
       update public.reader_source_updates set record=jsonb_set(record,'{summary}','"Metadata refreshed after the early cycle"')where user_id=${q(owner)}and id='daily-fixture-video';`);
     const next=data(`select public.daily_briefing_input(${q(owner)},${q(nextStart)},${q(nextCutoff)},${q(nextCutoff.slice(0,10))});`);
     expect(next.periodStart).not.toBe(early.input.periodStart);
@@ -141,10 +166,18 @@ describe.skipIf(!available)('persisted daily briefings, disposable PostgreSQL', 
     const c = claim(); service(`select public.fail_daily_briefing(${q(c.id)},${q(c.leaseToken)},'daily_source_changed');`);
     const b = data(`select to_jsonb(b)from public.daily_briefings b where id=${q(c.id)};`);
     expect(b.status).toBe('awaiting_review'); expect(b.published_at).toBeNull(); expect(b.snapshot.topics).toEqual([]);
+    expect(b.snapshot.failureCode).toBe('daily_source_changed');
+    expect(b.snapshot.coverage.pendingReviewUpdates).toBe(0);
     expect(() => service(`update public.daily_briefings set snapshot=jsonb_set(snapshot,'{notice}','"A silent rewrite"')where id=${q(c.id)};`)).toThrow();
   });
   it('rechecks source changes and approval withdrawal before publication', () => {
     const c = claim(); sql(`update public.reader_source_updates set record=jsonb_set(record,'{content}','"A changed original text invalidates the old approved finding."');`); expect(() => finish(c)).toThrow();
+  });
+  it('rechecks the keyword publication gate when a frozen claim finishes', () => {
+    const c = claim();
+    sql(`update public.reader_source_updates set record=record-'videoKeywords' where user_id=${q(owner)};`);
+    expect(() => finish(c)).toThrow();
+    expect(service('select count(*)from public.daily_briefings;')).toBe('0');
   });
   it('keeps daily history isolated from other readers and denies public/reader writes', () => {
     const c = claim(); finish(c);

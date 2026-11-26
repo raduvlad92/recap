@@ -2,6 +2,7 @@ import { readMonthlyProviderBudget } from './monthly-provider-budget';
 import { fetchNoRedirect } from './fetch-no-redirect';
 import { createHash } from 'node:crypto';
 import type { DailyBriefing, DailyBriefingCitation, DailyBriefingPage, DailyBriefingSnapshot, DailyBriefingSourceCoverage, DailyBriefingStatus, DailyBriefingTopic, DailyBriefingUpdate } from '../../../src/lib/daily-briefing-types';
+import { countBriefingSources } from '../../../src/lib/daily-briefing-coverage';
 import type { ReaderSettings } from '../../../src/lib/types';
 import { database } from './admin-data';
 import { analysisWorkerAuthorized } from './content-analysis';
@@ -89,7 +90,7 @@ export function composeDailyBriefing(input: DailyBriefingInput): DailyBriefingCo
   const sharedPoints = new Map<string, { text: string; citations: DailyBriefingCitation[] }>();
   const keys = new Set<string>(), included = new Set<string>();
   for (const update of input.updates) {
-    if (!update.findings.length) continue;
+    if (update.state !== 'available' || !update.findings.length) continue;
     const topic = update.topics.find(t => interests.includes(t.toLocaleLowerCase())) || update.topics[0] || update.sourceName;
     let group = groups.get(topic);
     if (!group) { group = { points: new Map(), score: interests.includes(topic.toLocaleLowerCase()) ? 1 : 0, latest: update.publishedAt }; groups.set(topic, group); }
@@ -97,14 +98,14 @@ export function composeDailyBriefing(input: DailyBriefingInput): DailyBriefingCo
     for (const finding of update.findings) {
       // Repeated cross-posted wording is one point with multiple citations,
       // never evidence of independent corroboration.
-      const text = finding.text.trim();
-      if (!text || text.length > 500 || text.split(/\s+/u).length > 38 || !uuidPattern.test(finding.citation.reviewId) || !/^[a-f0-9]{64}$/.test(finding.citation.contentHash) || !finding.citation.evidenceQuote.trim()) return fail('invalid_approved_briefing_finding');
+      const text = finding.text;
+      if (!text.trim() || text.length > 500 || text.trim().split(/\s+/u).length > 38 || !uuidPattern.test(finding.citation.reviewId) || !/^[a-f0-9]{64}$/.test(finding.citation.contentHash) || !finding.citation.evidenceQuote.trim()) return fail('invalid_approved_briefing_finding');
       try { publicHttpsUrl(finding.citation.url); } catch { return fail('invalid_approved_briefing_citation'); }
       keys.add(finding.citation.findingKey);
-      const pointKey = text.toLocaleLowerCase().replace(/\s+/gu, ' '), existing = sharedPoints.get(pointKey);
+      const existing = sharedPoints.get(text);
       if (existing) {
         if (!existing.citations.some(c => c.findingKey === finding.citation.findingKey)) existing.citations.push(finding.citation);
-      } else { const point = { text, citations: [finding.citation] }; group.points.set(pointKey, point); sharedPoints.set(pointKey, point); }
+      } else { const point = { text, citations: [finding.citation] }; group.points.set(text, point); sharedPoints.set(text, point); }
     }
   }
   const topics: DailyBriefingTopic[] = [...groups.entries()].filter(([, group]) => group.points.size > 0).sort((a, b) => b[1].score - a[1].score || b[1].latest.localeCompare(a[1].latest) || a[0].localeCompare(b[0])).slice(0, 5).map(([title, group]) => {
@@ -113,14 +114,20 @@ export function composeDailyBriefing(input: DailyBriefingInput): DailyBriefingCo
     return { title, points, updatedSourceCount: new Set(points.flatMap(p => p.citations.map(c => c.sourceId))).size };
   });
   for (const update of allUpdates) if (included.has(update.updateId)) update.state = 'included';
-  const checked = input.sources.filter(s => s.state === 'checked').length;
-  const pending = allUpdates.filter(u => u.state === 'awaiting_review').length, missing = allUpdates.filter(u => u.state === 'content_missing').length;
-  const hasGaps = checked < input.sources.length || pending > 0 || missing > 0 || input.omittedUpdates > 0 || input.missedCycles > 0;
-  const status = topics.length ? hasGaps ? 'partial' : 'ready' : pending || missing || checked < input.sources.length || input.omittedUpdates ? 'awaiting_review' : 'quiet';
-  const noticeParts = ['Approved findings are shown in their original approved wording; translation and new cross-source synthesis have not been generated.'];
+  const sourceCounts = countBriefingSources(input.sources, allUpdates, input.omittedUpdates);
+  const checked = sourceCounts.checked;
+  const pending = allUpdates.filter(u => u.state === 'awaiting_review').length;
+  const missing = allUpdates.filter(u => u.state === 'content_missing').length;
+  const unsupported = allUpdates.filter(u => u.state === 'unsupported_language').length;
+  const hasGaps = input.sources.length === 0 || checked < input.sources.length || pending > 0 ||
+    missing > 0 || unsupported > 0 || input.omittedUpdates > 0 || input.missedCycles > 0;
+  const status = topics.length ? (hasGaps ? 'partial' : 'ready') : (hasGaps || allUpdates.length > 0 ? 'awaiting_review' : 'quiet');
+  const noticeParts = topics.length ? ['Findings use the wording approved for the original updates.'] : [];
   if (status === 'quiet') noticeParts.push('Checked sources supplied no new items for this period.');
-  if (pending) noticeParts.push(`${pending} update${pending === 1 ? '' : 's'} await administrator review.`);
-  if (missing) noticeParts.push(`${missing} update${missing === 1 ? '' : 's'} lack usable underlying content.`);
+  if (!input.sources.length) noticeParts.push('There were no followed sources to check for this briefing.');
+  if (pending) noticeParts.push(`${pending} ${pending === 1 ? 'update has' : 'updates have'} no approved findings yet.`);
+  if (missing) noticeParts.push(`${missing} ${missing === 1 ? 'update lacks' : 'updates lack'} usable underlying content.`);
+  if (unsupported) noticeParts.push(`${unsupported} ${unsupported === 1 ? 'update uses' : 'updates use'} an unsupported language.`);
   if (checked < input.sources.length) noticeParts.push(`${input.sources.length - checked} source${input.sources.length - checked === 1 ? '' : 's'} have incomplete or unknown checks.`);
   if (input.omittedUpdates) noticeParts.push(`At least ${input.omittedUpdates} additional updates exceeded this snapshot's bounded inventory.`);
   if (input.missedCycles) noticeParts.push('Earlier scheduled cycles were missed; this is the latest due briefing, without extra reminder sends.');
@@ -129,7 +136,7 @@ export function composeDailyBriefing(input: DailyBriefingInput): DailyBriefingCo
     timezone: settings.timezone, deliveryTime: settings.deliveryTime, recapLanguage: settings.recapLanguage, interfaceLanguage: settings.interfaceLanguage,
     interests: [...settings.interests], topics, allUpdates,
     coverage: { followedSources: input.sources.length, checkedSources: checked, updatedSources: new Set(allUpdates.map(u => u.sourceId)).size, includedUpdates: included.size,
-      availableUpdates: allUpdates.length, pendingReviewUpdates: pending, missingContentUpdates: missing, omittedUpdates: input.omittedUpdates, sources: input.sources },
+      availableUpdates: allUpdates.length, pendingReviewUpdates: pending, missingContentUpdates: missing, omittedUpdates: input.omittedUpdates, sources: input.sources, sourceCounts },
     notice: noticeParts.join(' '), correction: null,
   } };
 }
@@ -157,7 +164,7 @@ export function createDailyBriefingStore(db: DB): DailyBriefingStore {
     async fail(claim, code) { await rpc('fail_daily_briefing', { p_job_id: claim.id, p_lease_token: claim.leaseToken, p_error_code: code }); },
   };
 }
-export const dailyBriefingRuntimeAllowed = (env: Env = runtimeEnv): boolean => env('DAILY_BRIEFING_ENABLED') !== 'false';
+export const dailyBriefingRuntimeAllowed = (env: Env = runtimeEnv): boolean => env('DAILY_BRIEFING_ENABLED') === 'true';
 function configured(env: Env): boolean { const secret = env('CONTENT_ANALYSIS_WORKER_SECRET') || ''; if (secret.length < 32 || secret.length > 256) return false; try { publicHttpsUrl(env('APP_URL')); return true; } catch { return false; } }
 export function createDailyBriefingWorker(overrides: Partial<{ env: Env; store: DailyBriefingStore; now: () => number }> = {}) {
   const env = overrides.env || runtimeEnv, now = overrides.now || Date.now;
@@ -231,16 +238,18 @@ export function createDailyBriefingsHandler(overrides: Partial<{ env: Env; db: (
       if (cursor && !dayPattern.test(cursor)) return fail('invalid_briefing_cursor', 400);
       let query = db.from('daily_briefings').select('*').eq('reader_id', readerId).is('deleted_at', null).order('local_date', { ascending: false }).limit(limit + 1);
       if (cursor) query = query.lt('local_date', cursor);
-      const [result, workspace, control, schedule, budget] = await Promise.all([
+      const [result, workspace, control, schedule, collection, budget] = await Promise.all([
         query, db.from('reader_workspaces').select('state').eq('user_id', readerId).maybeSingle(),
         db.from('daily_briefing_control').select('enabled').eq('id', true).maybeSingle(), db.from('daily_briefing_schedules').select('enabled,last_local_date').eq('reader_id', readerId).maybeSingle(),
+        db.from('reader_collection_policies').select('enabled').eq('user_id', readerId).maybeSingle(),
         readMonthlyProviderBudget(db),
       ]);
-      if (result.error || workspace.error || control.error || schedule.error) return fail('briefing_read_failed', 502);
+      if (result.error || workspace.error || control.error || schedule.error || collection.error) return fail('briefing_read_failed', 502);
       const rows = result.data || [], briefings = rows.slice(0, limit).map(clientBriefing);
       let nextDueAt: string | null = null;
       const settings = workspace.data?.state?.settings;
-      const enabled = dailyBriefingRuntimeAllowed(env) && control.data?.enabled === true && schedule.data?.enabled === true;
+      const enabled = dailyBriefingRuntimeAllowed(env) && configured(env) && control.data?.enabled === true &&
+        schedule.data?.enabled === true && collection.data?.enabled === true;
       if (settings && typeof settings.timezone === 'string' && typeof settings.deliveryTime === 'string') {
         try {
           nextDueAt = briefingCycle(now(), settings.timezone, settings.deliveryTime).nextDueAt;
