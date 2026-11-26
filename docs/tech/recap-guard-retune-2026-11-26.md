@@ -1,6 +1,54 @@
 # Recap guard retune — 26 November 2026
 
-The retuned guard met the agreed replay thresholds. It kept **12/12** valid archived-source recaps, flagged **11/12** invalid ones, and introduced **no fictional-fixture regressions**. Keep findings in individual review when support is unclear. Passing the guard establishes the absence of a detected conflict. It does not establish full source support.
+**The fresh production holdout failed the release gate.** The frozen retune kept all **11/11** valid drafts and held **2/13** invalid drafts. Its 15.4% recall falls below the 80% gate. The two evaluations below used the same code. Passing the guard establishes the absence of a detected conflict. It does not establish full source support.
+
+## Fresh production holdout
+
+The sample contains **24 unchanged production drafts from 24 distinct sources**. It includes 21 stored review proposals, two complete saved extraction outputs and one saved analysis-job draft. The 107 takeaways include 23 transcript-based drafts and one feed-text draft. The saved extraction and analysis drafts broaden the positive-candidate pool. The table also reports the review queue subset.
+
+The three exports used explicit `BEGIN READ ONLY` transactions and `ROLLBACK`. Production returned `transaction_read_only = on` at 06:43:50, 06:46:20 and 06:46:26 UTC on November 26. The sampler excluded the prior tuning sources by video ID and content hash, and excluded source URLs and draft IDs from both A2 samples. Each selected draft retained its original complete proposal and cited text, and each bound transcript or post matched its saved hash. The two recruitment strata each held 12 likely cases before labelling. They used editorial screening without guard output. Final labels follow the rubric. No production writes, provider calls or provider spend occurred.
+
+The randomized packet used only case alias, complete source text and quoted draft inputs. The two annotators labelled it separately before replay. The packet, reused rubric, initial labels and adjudication remain mode 0600 outside the worktree. The frozen packet SHA-256 is `8c94936a949f4ba9e0cb90a0ffc82eb1a39228ac1cb88bb50af1ab04b2e7c95f`. The frozen production originals SHA-256 is `db2b33378254606da1f2ee025eaf4eeb1c663821759215df12d96f35a83cc3b9`.
+
+### Label agreement and adjudication
+
+| First label | Second valid | Second invalid |
+| --- | ---: | ---: |
+| Valid | 10 | 0 |
+| Invalid | 8 | 6 |
+
+The first annotator labelled 10 valid and 14 invalid. The second labelled 18 valid and six invalid. Observed agreement was **16/24 (66.7%)**. Expected agreement from the marginals was **11/24 (45.8%)**, giving **Cohen’s κ = 0.385**. Neither annotator used the uncertain label. Before scoring, adjudication resolved the quote’s own referents and explicit contrasts using the surrounding passage. Additional factual assertions still needed support in the attached quote.
+
+| Case | First review | Second review | Consensus and reason |
+| --- | --- | --- | --- |
+| C01 | Invalid. The excerpt omits the gaming and multimedia comparison. | Valid. The preceding remarks establish the comparison, with a slightly ambiguous referent. | **Valid.** The cited sentence opens with an explicit contrast and refers back to the screen just discussed for general use, gaming and multimedia. The context resolves that contrast. |
+| C03 | Invalid. The draft applies a software lineage claim to the device. | Valid. The attributed description and the narrator’s hyperbole fit the transcript. | **Invalid.** The quote attributes iPad lineage to the operating system. It separately calls the device a similar consumption device. The recap conflates them. |
+| C06 | Invalid. Least affected by the update does not establish no downsides. | Valid. The full passage describes the update as least impactful and says there were no downsides. | **Invalid.** The no-downsides conclusion follows the attached excerpt and a caveat about personal usage. The quoted relative judgment alone leaves that conclusion out. |
+| C12 | Invalid. The draft gives a specific unit for an ambiguous caption token. | Valid. The figures and lab results read as millivolts. | **Invalid.** All three quoted units are transcribed as “molts.” The surrounding text leaves the units unconfirmed. |
+| C14 | Invalid. The excerpt establishes the lost sport-mode sound and omits the sound that remained. | Valid. The translated and original-language points accurately describe the review. | **Invalid.** The comparison to a vacuum is a distinct later observation outside the attached quote. The language mix does not affect the label. |
+| C17 | Invalid. The attached quote is about reopening a force-closed app. | Valid. The statements and speaker attribution fit the interview. | **Invalid.** The quote ends before the separate explanation of a suspended app’s retained context. |
+| C18 | Invalid. The attached quote omits the older camera’s aperture count. | Valid. The aperture and other event details match the discussion overall. | **Invalid.** The older camera’s count is outside this quote. The passage gives the new count and compares aperture movement and sensor size. |
+| C21 | Invalid. The attached quote gives the measured efficiency but leaves out the peer comparison. | Valid. The figures and tested performance match the full lab review. | **Invalid.** The efficiency comparison and the claim that dropout performance is high each appear after their attached quotes. Those separate judgments matter to the draft. |
+
+Both agreed C10 was invalid because it comments on the absence of substantive content and supplies no useful takeaway. C13 expands a proposal about making metadata available into compulsory storage and transfer of broader sensitive data. C20 assigns a specific anchor and mounting method to a quote that only explains why the speaker wanted to avoid the studs. Both remain invalid.
+
+### Guard result
+
+The replay used the exact runtime at `535c437adc5bfce89b3f1378ece6fed4ac2406f5`. The 24 consensus labels were frozen before the first replay. The gate requires at least 90% valid retention and 80% recall of invalid drafts.
+
+| Cohort | Flag precision | Invalid recall | Valid retention | Result |
+| --- | ---: | ---: | ---: | --- |
+| Prior consensus used for tuning | 11/11 (100%) | 11/12 (91.7%) | 12/12 (100%) | Meets thresholds on the tuning sample |
+| Fresh production consensus | 2/2 (100%) | 2/13 (15.4%) | 11/11 (100%) | **Fails recall** |
+| Fresh review-queue subset | 2/2 (100%) | 2/13 (15.4%) | 8/8 (100%) | **Fails recall** |
+
+The guard held C05 and C18. It missed **C02, C03, C06, C08, C10, C12, C13, C14, C17, C20 and C21**. These misses include added or uncited device specifications, a software lineage claim expanded to hardware, an omitted qualification or contrast, an inferred measurement unit, overstated data handling, and a draft with no useful finding. Most failures came from extra or weakly cited claims without the kind of direct contradiction the retune recognizes. The fresh result also shows substantial disagreement between annotators over which nearby facts the quote supports. The sample is purposefully enriched and small.
+
+The frozen code received no further tuning. Keep #63 draft and outside the release trains on this result.
+
+## Prior tuning replay
+
+The retuned guard cleared both thresholds on the sample used for tuning and introduced no fictional-fixture regressions.
 
 ## Blind agreement
 
