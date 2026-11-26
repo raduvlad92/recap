@@ -25,6 +25,7 @@
     "netlify",
     "tests",
     "scripts/keyword-learning.mts",
+    "scripts/run-capped-video-analysis-proof.mts",
     "vite.config.ts",
     "cloudflare",
     "vite.cloudflare.config.ts",

@@ -22,9 +22,12 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
   sync();service(`update public.automatic_content_tasks set state='blocked',error_code='fixture_skip'where task<>${q(kind)};`);
   return claim();
  }
- function reserve(t:any,key='one',originalKey?:string,correction?:{baseKey:string;errorCode:string}){
+ function reserveStatement(t:any,key:string,originalKey?:string,correction?:{baseKey:string;errorCode:string}){
   const callKey='keyword-learning:v1:automatic-fixture-'+key;
-  return json(`select public.reserve_keyword_learning_call(${q(t.task.session_id)},${q(callKey)},1,${q(hash)},${q(model)},${j(identity)},repeat('a',64),.10,${j({originalKey,request:{key:callKey,correction,role:'extractor',system:'Fixture exact instructions',prompt:content,schema:{type:'object'},maxOutputTokens:100}})});`);
+  return `select public.reserve_keyword_learning_call(${q(t.task.session_id)},${q(callKey)},1,${q(hash)},${q(model)},${j(identity)},repeat('a',64),.10,${j({originalKey,request:{key:callKey,correction,role:'extractor',system:'Fixture exact instructions',prompt:content,schema:{type:'object'},maxOutputTokens:100}})});`;
+ }
+ function reserve(t:any,key='one',originalKey?:string,correction?:{baseKey:string;errorCode:string}){
+  return json(reserveStatement(t,key,originalKey,correction));
  }
  function settle(t:any,r:any,result:unknown={value:{names:['AeroBox Plus']},actualUsd:.001,observedUsd:.001,providerId:'fixture-provider'},error:string|null=null){
   return json(`select public.record_keyword_learning_call(${q(t.task.session_id)},${q(r.call.call_key)},${q(r.call.id)},${q(r.call.lease_token)},${q(r.requestHash)},${result===null?'null':j(result)},${error===null?'null':q(error)});`);
@@ -49,6 +52,113 @@ describe.skipIf(!available)('automatic new-content drafts, disposable PostgreSQL
    insert into public.automatic_content_policies(user_id,enabled,starts_at)values(${q(owner)},true,clock_timestamp()-interval'1 hour');`);
  });
  afterAll(()=>{if(started)execFileSync('pg_ctl',['-D',join(root,'data'),'stop','-m','immediate'],{stdio:'ignore'});if(root)rmSync(root,{recursive:true,force:true});});
+ const proofId='ca038128-af54-44f1-ad70-6a59c604e9ee', approval='212785f0-8675-47da-b9b7-f64631a8979e';
+ const proofRelease='e'.repeat(40);
+ function prepareProof() {
+  sql(`update public.hosting_runtime_control set owner='cloudflare', epoch=6, release=${q(proofRelease)}, paused=false, old_host_fenced=true;
+   update public.automatic_content_policies set session_budget_usd=.75 where user_id=${q(owner)};`);
+  return json(`select public.prepare_video_analysis_proof(${q(proofId)},${q(owner)},${q(proofRelease)},
+   jsonb_build_array(jsonb_build_object('updateId','automatic-video','sourceHash',${q(hash)},'sourceRevision',public.content_analysis_source_revision(${j(record)}))));`);
+ }
+ const proofScope=(p:any)=>`${q(p.id)},${q(p.manifestSha256)}`;
+ const authorizeProof=(p:any)=>service(`select public.authorize_video_analysis_proof(${proofScope(p)},${q(approval)});`);
+ const proofClaim=(p:any)=>json(`select public.claim_video_analysis_proof_task(${proofScope(p)});`);
+ const proofReceipt=(p:any)=>json(`select public.read_video_analysis_proof(${proofScope(p)});`);
+ const closeProof=(p:any)=>json(`select public.close_video_analysis_proof(${proofScope(p)});`);
+ const proofReserve=(t:any,key:string)=>reserve(t,key,`automatic-video:v1:${t.task.task}:draft:0:3`);
+ it('keeps the proof inert until a distinct authorization of the exact manifest and old-host-fenced release',()=>{
+  const p=prepareProof();
+  expect(prepareProof()).toEqual(p);
+  expect(p).toMatchObject({capUsd:.75,videos:1});
+  expect(proofReceipt(p)).toMatchObject({targets:[{state:'unstarted',task:'keywords'},{state:'unstarted',task:'recap'}],calls:0,authorizedAt:null});
+  expect(()=>proofClaim(p)).toThrow(/closed, expired or outside its approved release/);
+  expect(()=>authorizeProof({...p,manifestSha256:'0'.repeat(64)})).toThrow(/Unconfirmed/);
+  sql("update hosting_runtime_control set paused=true;");
+  expect(()=>authorizeProof(p)).toThrow(/outside its approved release/);
+  sql("update hosting_runtime_control set paused=false;");
+  authorizeProof(p);authorizeProof(p);
+  const t=proofClaim(p);
+  expect(t).toMatchObject({claimed:true,task:{task:'recap',content_hash:hash,update_id:'automatic-video'}});
+  expect(proofClaim(p)).toEqual({claimed:false,reason:'video_proof_unresolved'});
+  expect(()=>reserve(t,'wrong-kind','automatic-video:v1:keywords:direct:0')).toThrow(/outside its frozen target/);
+  expect(proofReceipt(p)).toMatchObject({calls:0,committedUsd:0,authorizationRef:approval});
+  const r=proofReserve(t,'valid');
+  expect(r.claimed).toBe(true);
+  expect(proofReserve(t,'valid').claimed).toBe(false);
+  expect(()=>proofReserve(t,'would-race')).toThrow(/remains held|Unresolved/);
+  expect(proofReceipt(p)).toMatchObject({calls:1,unresolved:1,committedUsd:.1});
+  expect(closeProof(p)).toMatchObject({committedUsd:.1,unresolved:1});
+  // A genuine late receipt still settles the existing hold after closure.
+  settle(t,r,{value:{highlights:[]},actualUsd:.02,observedUsd:.03,providerId:'fixture-provider'});
+  expect(proofReceipt(p)).toMatchObject({committedUsd:.03,settledUsd:.03,unresolved:0,calls:1});
+  expect(()=>proofReserve(t,'closed')).toThrow(/closed, expired/);
+  expect(()=>proofClaim(p)).toThrow();
+ });
+ it('uses one exact-money ceiling across both sessions, including partial settlement and observed fees',()=>{
+  const p=prepareProof();
+  authorizeProof(p);
+  const a=proofClaim(p);
+  const book=(t:any,key:string,actualUsd:number,observedUsd=actualUsd)=>{
+   const call=proofReserve(t,key);
+   settle(t,call,{value:{fixture:true},actualUsd,observedUsd,providerId:'fixture-provider'});
+   return call.call.call_key;
+  };
+  const recapKeys=Array.from({length:4},(_,i)=>book(a,'recap-'+i,.10));
+  expect(finish(a,recap(recapKeys))).toMatchObject({state:'review',reviewCount:1});
+  const b=proofClaim(p);
+  expect(b.task.task).toBe('keywords');
+  book(b,'keywords-0',.10);book(b,'keywords-1',.10);
+  const partial=proofReserve(b,'partial');
+  expect(proofReceipt(p)).toMatchObject({committedUsd:.70,unresolved:1,calls:7});
+  settle(b,partial,{value:{fixture:true},actualUsd:.02,observedUsd:.04,providerId:'fixture-provider'});
+  expect(proofReceipt(p)).toMatchObject({committedUsd:.64,settledUsd:.64,unresolved:0,calls:7});
+  const eighth=proofReserve(b,'eighth');
+  expect(proofReceipt(p)).toMatchObject({committedUsd:.74,unresolved:1,calls:8});
+  settle(b,eighth,{value:{fixture:true},actualUsd:.10,observedUsd:.10,providerId:'fixture-provider'});
+  expect(()=>proofReserve(b,'blocked-ninth')).toThrow(/Video proof hard cap exhausted/);
+  const receipt=closeProof(p);
+  expect(receipt).toMatchObject({calls:8,committedUsd:.74,settledUsd:.74,unresolved:0});
+  expect(receipt.targets[0].calls).toHaveLength(4);
+  expect(receipt.targets[1].calls).toHaveLength(4);
+  expect(service('select count(*) from public.reader_content_analysis_calls;')).toBe('8');
+  expect(source().videoHighlights).toBeUndefined();
+  expect(source().videoKeywords).toEqual([]);
+  expect(service("select count(*) from public.admin_analysis_reviews where status='pending';")).toBe('1');
+ });
+ it('rejects a stale source or hosting revision and denies reader access to proof operations',()=>{
+  const p=prepareProof();
+  authorizeProof(p);
+  sql("update public.hosting_runtime_control set release_revision=gen_random_uuid();");
+  expect(()=>proofClaim(p)).toThrow(/outside its approved release/);
+  const roleList=['anon','authenticated'];
+  for (const role of roleList) for(const fn of [
+   'prepare_video_analysis_proof(uuid,text,text,jsonb)', 'authorize_video_analysis_proof(uuid,text,uuid)',
+   'claim_video_analysis_proof_task(uuid,text)', 'read_video_analysis_proof(uuid,text)', 'close_video_analysis_proof(uuid,text)',
+  ]) expect(sql(`select has_function_privilege(${q(role)},${q('public.'+fn)},'execute');`)).toBe('f');
+  expect(proofReceipt(p)).toMatchObject({calls:0,unresolved:0,committedUsd:0});
+ });
+ it('serializes competing proof reservations and never leaves the rejected call row behind', async () => {
+  const p=prepareProof();
+  authorizeProof(p);
+  const t=proofClaim(p);
+  const reserveInClient=(key:string)=>new Promise<{ ok: boolean; err: string }>(resolve=>{
+   const statement=reserveStatement(t,key,'automatic-video:v1:recap:draft:0:3');
+   execFile('psql',[...args,'-c','set role service_role;'+statement],
+     (error,_stdout,stderr)=>resolve({ok:!error,err:stderr}));
+  });
+  const results=await Promise.all([reserveInClient('concurrent-one'),reserveInClient('concurrent-two')]);
+  expect(results.filter(result=>result.ok)).toHaveLength(1);
+  expect(results.find(result=>!result.ok)?.err).toMatch(/remains held|Unresolved/);
+  expect(proofReceipt(p)).toMatchObject({calls:1,committedUsd:.1,unresolved:1});
+  expect(service('select count(*) from public.reader_content_analysis_calls;')).toBe('1');
+ });
+ it('fails closed if the exact archive changes after preparation',()=>{
+  const p=prepareProof();
+  authorizeProof(p);
+  sql(`update public.reader_source_updates set record=record||'{"title":"Changed upstream"}'::jsonb where id='automatic-video';`);
+  expect(()=>proofClaim(p)).toThrow(/Proof transcript or its charge state changed/);
+  expect(proofReceipt(p)).toMatchObject({calls:0,committedUsd:0});
+ });
  it('admits a recurring draft past the retired lifetime limit without dropping its prior unknown charge',()=>{
   sql(`insert into public.reader_content_analysis_calls(user_id,call_key,lease_token,model,source_revision,maximum_usd,actual_usd,state,created_at)
    select ${q(owner)},'historical-'||i,gen_random_uuid(),${q(model)},repeat('c',64),.1,.1,'settled',clock_timestamp()-interval'2 days'from generate_series(1,129)i;

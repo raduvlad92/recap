@@ -97,6 +97,29 @@ describe('November 25 automatic video replay without paid calls', () => {
   expect(result.callKeys).toHaveLength(4);
   expect(result.proposal?.highlights).toEqual([makePoint(primary), makePoint(secondary)]);
  });
+ it('rechecks a single truncated finding once with a larger in-budget output limit and unchanged evidence', async () => {
+  const source = claim(primary), checks: KeywordLearningInput[] = [];
+  const result = await generateAutomaticContent(source, async input => {
+   wire(input);
+   if (input.request.role === 'checker') {
+    checks.push(input);
+    if (checks.length === 1) return fromFailure(replay.outputCapacity as SavedFailure);
+   }
+   return modelResponse(input, primary, [primary]);
+  });
+  expect(checks).toHaveLength(2);
+  expect(checks[1].request.maxOutputTokens).toBeGreaterThan(checks[0].request.maxOutputTokens);
+  expect(checks[1].request).toMatchObject({
+   prompt: checks[0].request.prompt,
+   schema: checks[0].request.schema,
+   correction: {baseKey: checks[0].request.key, errorCode:'analysis_output_capacity'},
+  });
+  expect(result.proposal?.highlights).toEqual([makePoint(primary)]);
+  const alwaysTruncated = vi.fn(async (input: KeywordLearningInput) => input.request.role === 'checker'
+   ? fromFailure(replay.outputCapacity as SavedFailure) : modelResponse(input, primary, [primary]));
+  await expect(generateAutomaticContent(source, alwaysTruncated)).rejects.toThrow('analysis_output_capacity');
+  expect(alwaysTruncated).toHaveBeenCalledTimes(3);
+ });
  it('reads the retained over-limit length through the final source window and preserves original evidence offsets', async () => {
   const filler = 'A description of the lab and its ordinary work. ';
   const content = primary + ' ' + filler.repeat(replay.longRecap.chars).slice(0, replay.longRecap.chars - primary.length - tail.length - 2) + ' ' + tail;

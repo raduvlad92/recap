@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { isIP } from 'node:net';
 import { database, requireAdmin } from './admin-data';
 import { analysisWorkerAuthorized, analysisRequestHash } from './content-analysis';
-import { analysisRuntimeEnv } from './content-analysis-runtime';
+import { analysisRuntimeEnv, VIDEO_CALL_PREFIX } from './content-analysis-runtime';
 import { analysisExecutionIdentity, analysisLimits, conservativeCallUsd, createGatewayGenerator, createOpenRouterAnalysisGenerator, AnalysisError, type AnalysisGenerator, type GenerationRequest, type GenerationResult } from './content-analysis-model';
 import { ANALYSIS_MODEL_IDS } from '../../../src/lib/analysis-settings-types';
 import { CollectionError, errorResponse, json, readTextLimited, runtimeEnv, type Env } from './security';
@@ -53,15 +53,30 @@ function unwrap<T>(result:{data:T;error:{code?:string}|null}):T {
  if(result.error){const code=result.error.code;if(monthlyBudgetDenied(result.error))return fail(monthlyProviderBudgetExhausted,402);return fail(code==='PT402'?'analysis_budget_exhausted':code==='PT429'?'analysis_daily_budget_exhausted':code==='PT409'?'keyword_learning_state_conflict':code==='PT403'?'keyword_learning_not_released':'keyword_learning_storage_unavailable',code==='PT402'?402:code==='PT429'?429:code==='PT409'?409:code==='PT403'?403:502);}
  return result.data;
 }
+const transientStorageCodes = new Set(['', '40001', '57014', 'PGRST000', 'PGRST001', 'PGRST002', 'PGRST003']);
+const transientStorage = (error: { code?: string } | null) => !!error && transientStorageCodes.has(error.code ?? '');
+
+/** Reissue one identical read, reservation or settlement after an infrastructure
+ * error. The database's request key and immutable receipt prevent a second
+ * provider launch in the previously reserved or settled cases. */
+export async function retryVideoLearningStorage<T extends { error: { code?: string } | null }>(
+  run: () => PromiseLike<T>, video: boolean,
+): Promise<T> {
+  const first = await run();
+  if (video && transientStorage(first.error)) return run();
+  return first;
+}
+
 async function sourceFor(db:Database,input:KeywordLearningInput):Promise<void> {
- const s=unwrap(await db.from('keyword_learning_sessions').select('user_id,state,expires_at,sources,models').eq('id',input.sessionId).single());
+ const video=input.originalKey?.startsWith(VIDEO_CALL_PREFIX)===true;
+ const s=unwrap(await retryVideoLearningStorage(() => db.from('keyword_learning_sessions').select('user_id,state,expires_at,sources,models').eq('id',input.sessionId).single(),video));
  if(!s||s.state!=='released'||typeof s.user_id!=='string'||Date.parse(s.expires_at)<=Date.now()||!Array.isArray(s.models)||!s.models.includes(input.model)||!Array.isArray(s.sources))return fail('keyword_learning_not_released',403);
  const source=s.sources.find((x:Record<string,unknown>)=>x.ordinal===input.sourceOrdinal&&x.sourceHash===input.sourceHash);
  if(!source||typeof source.updateId!=='string')return fail('keyword_learning_source_changed',409);
- const row=unwrap(await db.from('reader_source_updates').select('record').eq('user_id',s.user_id).eq('id',source.updateId).single());
+ const row=unwrap(await retryVideoLearningStorage(() => db.from('reader_source_updates').select('record').eq('user_id',s.user_id).eq('id',source.updateId).single(),video));
  if(!row||typeof row.record?.content!=='string'||hash(row.record.content)!==input.sourceHash)return fail('keyword_learning_source_changed',409);
 }
-interface Reservation {claimed:boolean;call:{id:string;lease_token:string;state:string;actual_usd:number|string|null;observed_usd:number|string|null;maximum_usd:number|string};result:GenerationResult|null;errorCode:string|null;requestHash:string}
+interface Reservation {claimed:boolean;call:{id:string;lease_token:string;state:string;actual_usd:number|string|null;observed_usd:number|string|null;maximum_usd:number|string};result:GenerationResult|null;errorCode:string|null;requestHash:string;completed?:boolean}
 interface Dependencies {env:Env;db:()=>Database;authorize:typeof requireAdmin;workerAuthorized:typeof analysisWorkerAuthorized;generator:(env:Env)=>AnalysisGenerator}
 const response=(value:unknown,status=200)=>{const r=json(value,status);r.headers.set('x-robots-tag','noindex, nofollow');return r;};
 /** Deliberately separate from production queue flags. Only a manually released,
@@ -96,12 +111,28 @@ export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},
    const generationHash=analysisRequestHash(input.request,identity,{responseModel:env('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL'),providerName:env('CONTENT_ANALYSIS_OPENROUTER_PROVIDER_NAME')});
    const requestHash=hash(JSON.stringify({generationHash,sourceOrdinal:input.sourceOrdinal,sourceHash:input.sourceHash,originalKey:input.originalKey??null,key:input.request.key}));
    if(input.action==='preflight')return response({preflight:true,maximumUsd,requestHash,executionIdentity:identity,providerCall:false,reserved:false});
-   const reservation=unwrap(await db.rpc('reserve_keyword_learning_call',{
+   const video=input.originalKey?.startsWith(VIDEO_CALL_PREFIX)===true;
+   const reservation=unwrap(await retryVideoLearningStorage(() => db.rpc('reserve_keyword_learning_call',{
     p_session_id:input.sessionId,p_call_key:input.request.key,p_source_ordinal:input.sourceOrdinal,p_source_hash:input.sourceHash,
     p_model:input.model,p_execution_identity:identity,p_request_hash:requestHash,p_maximum_usd:maximumUsd,
     p_request:{request:input.request,originalKey:input.originalKey??null,generationHash},
-   })) as Reservation;
+   }),video)) as Reservation;
    if(!reservation.claimed)return response({...reservation,cached:!!reservation.result,providerCall:false},reservation.call.actual_usd===null?202:200);
+   const record = async (result: GenerationResult | null, errorCode: string | null) => {
+    const args = {p_session_id:input.sessionId,p_call_key:input.request.key,p_call_id:reservation.call.id,
+     p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_result:result,p_error_code:errorCode};
+    const stored = await db.rpc('record_keyword_learning_call',args);
+    if(!video||!transientStorage(stored.error))return unwrap(stored);
+    // A lost acknowledgement may have committed the original receipt. Return
+    // that receipt without settling it again. An in-progress row may receive
+    // the same exact result once more, using the original lease and hash.
+    const witness = unwrap(await retryVideoLearningStorage(() => db.rpc('read_keyword_learning_call',{
+     p_session_id:input.sessionId,p_call_key:input.request.key,
+    }),true)) as Reservation;
+    if(witness?.call?.id!==reservation.call.id||witness.requestHash!==requestHash||
+     witness.call.lease_token!==reservation.call.lease_token)return fail('keyword_learning_state_conflict',409);
+    return witness.completed ? witness : unwrap(await db.rpc('record_keyword_learning_call',args));
+   };
    let result:GenerationResult, acknowledgedId:string|undefined;
    try{
     result=await deps.generator(env)(input.request,async generationId=>{
@@ -113,11 +144,10 @@ export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},
    }
    catch(error){
     const code=error instanceof AnalysisError?error.code:'analysis_generation_failed';
-    const saved=unwrap(await db.rpc('record_keyword_learning_call',{p_session_id:input.sessionId,p_call_key:input.request.key,p_call_id:reservation.call.id,p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_result:acknowledgedId?{providerId:acknowledgedId,value:null,actualUsd:null,observedUsd:null}:null,p_error_code:code}));
-    return response({...saved,providerCall:true},202);
+    const receipt=acknowledgedId?{providerId:acknowledgedId,value:null,actualUsd:null,observedUsd:null}:null;
+    return response({...await record(receipt,code),providerCall:true},202);
    }
-   const saved=unwrap(await db.rpc('record_keyword_learning_call',{p_session_id:input.sessionId,p_call_key:input.request.key,p_call_id:reservation.call.id,p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_result:result,p_error_code:result.validationError??null}));
-   return response({...saved,providerCall:true});
+   return response({...await record(result,result.validationError??null),providerCall:true});
   }catch(error){
    if(error instanceof AnalysisError)return response({error:{code:error.code,message:'The private evaluation failed its model or capacity preflight.'}},error.code==='analysis_input_limit'?413:error.code==='analysis_call_limit'?402:503);
    return errorResponse(error);
