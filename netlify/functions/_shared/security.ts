@@ -3,6 +3,7 @@ import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 import { isIP } from 'node:net';
 import { hostRuntime } from './host-runtime';
 import { accountAccessAllowed } from './account-access';
+import { clerkProductionOrigin } from '../../../src/lib/clerk-origin';
 
 export type Env = (name: string) => string | undefined;
 
@@ -31,8 +32,34 @@ export function allowedOrigins(env: Env): string[] {
   return origins;
 }
 
-export function validateClerkClaims(payload: JWTPayload, origins: string[]): string {
-  if (!payload.sub || typeof payload.azp !== 'string' || !origins.includes(payload.azp) || payload.sts === 'pending') {
+// Checked active Cloudflare builds define the exact public key baked into
+// the browser asset. Other entrypoints read the normal Vite environment.
+declare const __RECAP_CLERK_BROWSER_KEY__: string | undefined;
+
+function clerkConfigurationError() {
+  return new CollectionError(503, 'auth_not_configured', 'Collection sign-in is not configured yet.');
+}
+
+export function clerkAuthorizedParties(env: Env): string[] {
+  const runtimeKey = env('VITE_CLERK_PUBLISHABLE_KEY');
+  const browserKey = typeof __RECAP_CLERK_BROWSER_KEY__ === 'undefined' ? runtimeKey : __RECAP_CLERK_BROWSER_KEY__;
+  const secret = env('CLERK_SECRET_KEY');
+  const productionRequested = browserKey?.startsWith('pk_live_') || runtimeKey?.startsWith('pk_live_') || secret?.startsWith('sk_live_');
+  if (!productionRequested) return allowedOrigins(env);
+
+  const keyBody = /^pk_live_([A-Za-z0-9+/_-]+={0,2})$/.exec(browserKey ?? '')?.[1];
+  if (!keyBody || browserKey !== runtimeKey || !/^sk_live_[A-Za-z0-9+/_-]+={0,2}$/.test(secret ?? '') ||
+      env('APP_URL') !== clerkProductionOrigin || env('CONTEXT') !== 'production') throw clerkConfigurationError();
+
+  const decoded = Buffer.from(keyBody, 'base64url').toString('utf8');
+  const hostname = /^([a-z0-9.-]+)\$$/.exec(decoded)?.[1];
+  if (!hostname || !hostname.endsWith('.filternode.dev') ||
+      `https://${hostname}` === clerkProductionOrigin || env('CLERK_ISSUER_URL') !== `https://${hostname}`) throw clerkConfigurationError();
+  return [clerkProductionOrigin];
+}
+
+export function validateClerkClaims(payload: JWTPayload, authorizedParties: readonly string[]): string {
+  if (!payload.sub || typeof payload.azp !== 'string' || !authorizedParties.includes(payload.azp) || payload.sts === 'pending') {
     throw new CollectionError(401, 'invalid_session', 'Sign in again to collect your sources.');
   }
   return payload.sub;
@@ -47,15 +74,15 @@ export async function authenticateIdentity(request: Request, env: Env): Promise<
   }
   const issuer = env('CLERK_ISSUER_URL');
   const app = env('APP_URL');
-  if (!issuer || !app) throw new CollectionError(503, 'auth_not_configured', 'Collection sign-in is not configured yet.');
+  if (!issuer || !app) throw clerkConfigurationError();
   let issuerUrl: URL;
-  try { issuerUrl = new URL(issuer); } catch { throw new CollectionError(503, 'auth_not_configured', 'Collection sign-in is not configured yet.'); }
+  try { issuerUrl = new URL(issuer); } catch { throw clerkConfigurationError(); }
   if (issuerUrl.protocol !== 'https:' || issuerUrl.username || issuerUrl.password || issuerUrl.search || issuerUrl.hash) {
-    throw new CollectionError(503, 'auth_not_configured', 'Collection sign-in is not configured yet.');
+    throw clerkConfigurationError();
   }
-  const origins = allowedOrigins(env);
+  const authorizedParties = clerkAuthorizedParties(env);
   const origin = request.headers.get('origin');
-  if (origin && !origins.includes(origin)) throw new CollectionError(403, 'origin_not_allowed', 'Open collection from this app.');
+  if (origin && !authorizedParties.includes(origin)) throw new CollectionError(403, 'origin_not_allowed', 'Open collection from this app.');
   let keys = jwks.get(issuer);
   if (!keys) {
     keys = createRemoteJWKSet(new URL(issuer.replace(/\/$/, '') + '/.well-known/jwks.json'), { timeoutDuration: 5000 });
@@ -65,7 +92,7 @@ export async function authenticateIdentity(request: Request, env: Env): Promise<
     const { payload } = await jwtVerify(authorization.slice(7), keys, {
       issuer, algorithms: ['RS256'], requiredClaims: ['sub', 'exp', 'iat'], clockTolerance: 5,
     });
-    validateClerkClaims(payload, origins);
+    validateClerkClaims(payload, authorizedParties);
     return payload;
   } catch (error) {
     if (error instanceof CollectionError) throw error;
