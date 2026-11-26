@@ -16,18 +16,26 @@ export function MonthlyProviderSpend({ budget }: { budget?: MonthlyProviderBudge
   if (!budget) return <p className="ra-note" role="status">Month-to-date provider spend is unavailable.</p>;
   const month = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(budget.monthStart));
   const threshold = budget.alerts.at(-1);
+  const operatingStop = budget.operatingLimitUsd === undefined ? null : money(budget.operatingLimitUsd);
+  const refusal = budget.lastRefusal;
+  const limitLabel = operatingStop ? `${money(budget.limitUsd)} approved ceiling` : 'monthly limit';
   return <section className="ra-paper" aria-label="Monthly provider budget">
     <div className="ra-section-top"><h2>Provider budget</h2><span className="ra-muted">{month} (UTC)</span></div>
     <dl className="ra-inline-facts">
       <div><dt>Month-to-date spend</dt><dd>{money(budget.spentUsd)}</dd></div>
       <div><dt>Apify</dt><dd>{money(budget.apifyUsd)}</dd></div>
       <div><dt>OpenRouter</dt><dd>{money(budget.openrouterUsd)}</dd></div>
-      <div><dt>Committed / limit</dt><dd>{money(budget.committedUsd)} / {money(budget.limitUsd)}</dd></div>
+      <div><dt>{operatingStop ? 'Committed / operating stop' : 'Committed / limit'}</dt><dd>{money(budget.committedUsd)} / {operatingStop ?? money(budget.limitUsd)}</dd></div>
     </dl>
     {budget.unresolvedUsd > 0 && <p className="ra-note">{money(budget.unresolvedUsd)} held for open or unconfirmed charges.</p>}
-    {budget.paused ? <p className="ra-warning" role="status">100% limit reached. New paid collection and analysis are paused.</p>
-      : threshold === 100 ? <p className="ra-note" role="status">The 100% limit was reached earlier this month. Processing can resume when there is room for the next request.</p>
-      : threshold ? <p className="ra-warning" role="status">{threshold}% of the monthly limit was reached.</p> : null}
+    {budget.paused ? <p className="ra-warning" role="status">{budget.pauseReason && operatingStop
+      ? `${operatingStop} monthly operating stop reached, including open holds.`
+      : '100% limit reached.'} New paid collection and analysis are paused.</p>
+      : threshold === 100 ? <p className="ra-note" role="status">The {limitLabel} was reached earlier this month. Processing can resume when there is room for the next request.</p>
+      : threshold ? <p className="ra-warning" role="status">{threshold}% of the {limitLabel} was reached.</p> : null}
+    {refusal && <p className="ra-note">Last refused admission at {time(refusal.at)}. {refusal.reason === 'provider_operating_stop_reached'
+      ? 'The monthly operating stop had been reached.'
+      : 'The requested reservation would have exceeded the monthly operating stop.'}</p>}
   </section>;
 }
 

@@ -8,6 +8,16 @@ The admin collection costs screen shows recorded Apify and OpenRouter spend by p
 
 The limit applies to admissions under Therecap's financial ledgers. Provider reports that exceed a reservation are preserved and suspend new spending when they consume the available allowance. Monthly cost totals are ledger-backed during the first release, with known legacy Apify runs included where they are absent from the reservation ledger.
 
+## $18 operating stop for Flows 6 and 9
+
+The candidate keeps the $20 approved UTC-month ceiling and stops new Apify and OpenRouter work at **$18 committed**, including unresolved holds carried into the month. The same transaction lock serializes both providers. A request below $18 may use up to the remaining headroom. At $18, new requests and new launches against an existing Apify hold are refused. Cached results, known-run reconciliation, settlement and late fees keep their existing paths. A late fee can still raise recorded commitment above the stop.
+
+Collection costs shows the effective stop, current pause reason and the latest refusal recorded by the privileged server. The database returns a fixed reason for an admission that reached or would exceed $18. The server records it separately after the denied transaction rolls back. A receipt write failure leaves the original denial intact. Only the UTC month, reason and time are retained in the monthly refusal record.
+
+Apply the operating-stop migration after the earlier train migrations while paused. Confirm the exact journal digest, then verify that the deployed Collection costs screen and budget readback show the $18 stop alongside the existing $20 accounting ceiling. Keep the review-first policy and the independent $0.75 analysis proof cap. The train owner decides which release carries this migration. Paid scope and flag activation still require the checked switch-on steps. [Switch-on plan](https://github.com/raduvlad92/recap/pull/60)
+
+Disposable PostgreSQL 17 tests cover the last cent at $17.99, refusals at $18.00, two concurrent providers competing for one cent, rollover holds, a pre-funded launch refusal and successful settlement. The combined train tests also exercise the existing $0.75 analysis proof and free source import with paid work blocked.
+
 ## Release order
 
 Apply the new SQL during the approved release window before enabling this worker build. Coordinate the merge with that migration because the main workflow can deploy automatically. The production pilot's existing finite Apify envelope still bounds any job that uses it. Moving the pilot onto the recurring allowance requires a separate checked runtime configuration change. Observe a scheduled ingestion and review-first analysis run with actual readback before enabling unattended briefing delivery.
