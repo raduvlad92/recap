@@ -168,7 +168,7 @@ describe('hourly provider authorization, ambiguity and recovery', () => {
   await t.run();
   expect(t.updates()).toHaveLength(0);
  });
- it('reserves durable global/user budget before the exact single-video paid POST', async () => { const t = setup({ policy: { ...policy, provider_enabled: true } }); await t.run(); expect(t.deps.preflight.mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(t.store.reserve).mock.invocationCallOrder[0]); expect(vi.mocked(t.store.reserve).mock.invocationCallOrder[0]).toBeLessThan(t.deps.startApify.mock.invocationCallOrder[0]); expect(t.deps.startApify).toHaveBeenCalledWith(expect.objectContaining({ url: update.url }), policy.user_id, expect.any(Function), undefined, expect.any(String)); expect(t.deps.pollApify).toHaveBeenCalled(); expect(t.updates()[0].content).toBe('Real source captions'); expect(JSON.stringify(t.patch())).not.toContain('never-public-token'); });
+ it('reserves durable global/user budget before the exact single-video paid POST', async () => { const t = setup({ policy: { ...policy, provider_enabled: true } }); await t.run(); expect(t.deps.preflight.mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(t.store.reserve).mock.invocationCallOrder[0]); expect(vi.mocked(t.store.reserve).mock.invocationCallOrder[0]).toBeLessThan(t.deps.startApify.mock.invocationCallOrder[0]); expect(t.deps.startApify).toHaveBeenCalledWith(expect.objectContaining({ url: update.url }), policy.user_id, expect.any(Function), undefined, expect.any(String), undefined, expect.any(Function)); expect(t.deps.pollApify).toHaveBeenCalled(); expect(t.updates()[0].content).toBe('Real source captions'); expect(JSON.stringify(t.patch())).not.toContain('never-public-token'); });
  it('changed provider preflight starts no job and makes no reservation', async () => { const t = setup({ policy: { ...policy, provider_enabled: true } }); t.deps.preflight.mockRejectedValue(new CollectionError(503, 'provider_review_changed', 'private detail')); await t.run(); expect(t.deps.startJob).not.toHaveBeenCalled(); expect(t.store.reserve).not.toHaveBeenCalled(); expect(t.patch()).toMatchObject({ details: { captionStatus: 'provider_review_changed' } }); });
  it('daily/global cap failure prevents paid POST while still archiving real RSS metadata', async () => { const t = setup({ policy: { ...policy, provider_enabled: true } }); vi.mocked(t.store.reserve).mockRejectedValue(new CollectionError(402, 'collection_budget_exhausted', 'budget')); await t.run(); expect(t.deps.startApify).not.toHaveBeenCalled(); expect(t.updates()[0].contentKind).toBe('metadata_only'); expect(t.deps.finishJob).toHaveBeenCalledWith(expect.any(String), policy.user_id, { status: 'blocked', errorCode: 'collection_budget_exhausted' }, expect.any(Function)); });
  it('an already-claimed provider item never gets another POST', async () => { const t = setup({ policy: { ...policy, provider_enabled: true } }); vi.mocked(t.store.reserve).mockResolvedValue({ claimed: false, id: 'old' }); await t.run(); expect(t.deps.startApify).not.toHaveBeenCalled(); });
@@ -298,7 +298,7 @@ describe('provider-only collection and separate metadata repair', () => {
   const t = setup({ policy: { ...policy, provider_enabled: true } });
   await createHourlyCollector({ ...t.deps, env: modeEnv() })();
   expect(t.deps.download).not.toHaveBeenCalled(); expect(t.deps.captions).not.toHaveBeenCalled(); expect(t.deps.discover).not.toHaveBeenCalled();
-  expect(t.deps.startDiscovery).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({id:source.id,url:source.url}), channelId, '1970-01-01', policy.user_id, expect.any(Function));
+  expect(t.deps.startDiscovery).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({id:source.id,url:source.url}), channelId, '1970-01-01', policy.user_id, expect.any(Function), undefined, expect.any(Function));
   expect(t.store.reserve).toHaveBeenCalledWith(expect.any(Object), expect.stringMatching(/^youtube-discovery:/), expect.any(String), .02);
   expect(t.patch()).toMatchObject({ status: 'partial', details: { mode: 'youtube_provider_only', gapPossible: true } });
   expect(t.updates()).toEqual([]);
@@ -315,6 +315,33 @@ describe('provider-only collection and separate metadata repair', () => {
   await createHourlyCollector({ ...allowed.deps, env: key => key === 'YOUTUBE_PROVIDER_CHANNEL_ID' ? channelId : env(key) })();
   expect(allowed.deps.startDiscovery).toHaveBeenCalledTimes(1);
   expect(allowed.deps.download).not.toHaveBeenCalled();
+ });
+ it('refuses an unlisted channel before any supplier read or reservation when the checked pilot is installed', async () => {
+  const t = setup({ policy: { ...policy, provider_enabled: true }, pending: [pending()] });
+  t.store.youtubePilot = async () => ({ readerId: policy.user_id, proofDay: '2026-10-23', recurring: true, channelIds: ['UCdBK94H6oZT2Q7l0-b0xmMg','UCeeFfhMcJa1kjtfZAGskOCA','UChIs72whgZI9w6d6FhwGGHA'] });
+  await createHourlyCollector({ ...t.deps, env: key => key === 'SOURCE_COLLECTION_POLICY' ? 'youtube-provider-only-v1' : envValues[key] })();
+  expect(t.patch()).toMatchObject({ status: 'blocked', error_code: 'provider_channel_outside_scope' });
+  expect(t.store.reserve).not.toHaveBeenCalled();
+  expect(t.deps.pollApify).not.toHaveBeenCalled();
+  expect(t.deps.startDiscovery).not.toHaveBeenCalled();
+ });
+ it('archives a fast checked discovery with corroborated format and skips another same-day launch', async () => {
+  const t = setup({ policy: { ...policy, provider_enabled: true } });
+  t.store.youtubePilot = async () => ({ readerId: policy.user_id, proofDay: '2026-10-23', recurring: true, channelIds: [channelId,'UCeeFfhMcJa1kjtfZAGskOCA','UChIs72whgZI9w6d6FhwGGHA'] });
+  t.deps.now = () => Date.parse('2026-10-23T01:00:00Z');
+  const original: SourceUpdate = { ...update, contentKind: 'transcript', content: 'Existing timed captions', duration: '00:05:00',
+   transcriptSegments: [{ startSeconds: 200, text: 'Existing timed captions' }], videoFormat: { kind: 'unknown', basis: 'provider' } };
+  t.deps.pollApify.mockResolvedValue({ status: 'completed', result: { source, updates: [original], notice: '' },
+   telemetry: { ledgerId: claim.checkId, providerRunId: 'Discovery12345', cost: .008 } });
+  const run = createHourlyCollector({ ...t.deps, env: key => key === 'SOURCE_COLLECTION_POLICY' ? 'youtube-provider-only-v1' : envValues[key] });
+  await run();
+  expect(t.store.reserve).toHaveBeenCalledWith(expect.anything(), 'youtube-discovery:' + channelId + ':2026-10-23', expect.anything(), .02, '2026-10-23');
+  expect(t.updates()).toMatchObject([{ content: original.content, transcriptSegments: original.transcriptSegments, isShort: false, videoFormat: { kind: 'regular' } }]);
+  expect(t.deps.settleBudget).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ terminal: true, actualUsd: .008 }), expect.anything());
+  vi.mocked(t.store.providerClaimed).mockResolvedValue(true);
+  await run();
+  expect(t.deps.startDiscovery).toHaveBeenCalledTimes(1);
+  expect(t.patch()).toMatchObject({ details: { discoveryStatus: 'already_attempted_today' } });
  });
  it('keeps scheduled publication feeds out of the scoped YouTube pilot', async () => {
   const publication = { ...source, platform: 'Substack' as const, url: 'https://publication.example/' };

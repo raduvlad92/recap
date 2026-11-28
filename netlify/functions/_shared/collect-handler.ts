@@ -82,8 +82,12 @@ export function createCollectHandler(overrides: Partial<Dependencies> = {}) {
           throw new CollectionError(409, 'provider_already_claimed', 'This collection request has already been claimed.');
         }
         providerStarted=true;
-        const result=await deps.startApify(source,userId,deps.env,undefined,ledgerId,reservation.id);
-        await deps.settleBudget(reservation.id, { providerRunId: result.providerRunId, actualUsd: null, terminal: false }, deps.env);
+        let acknowledged=false;
+        const result=await deps.startApify(source,userId,deps.env,undefined,ledgerId,reservation.id,async providerRunId=>{
+          await deps.settleBudget(reservation.id,{providerRunId,actualUsd:null,terminal:false},deps.env);
+          acknowledged=true;
+        });
+        if(!acknowledged)await deps.settleBudget(reservation.id, { providerRunId: result.providerRunId, actualUsd: null, terminal: false }, deps.env);
         await deps.finishJob(ledgerId,userId,{status:'running',providerRunId:result.providerRunId},deps.env);
         return json(result,202);
       }

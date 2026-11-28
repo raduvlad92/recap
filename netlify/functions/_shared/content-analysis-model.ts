@@ -13,7 +13,7 @@ export interface GenerationResult {
  validationError?:'analysis_invalid_json'|'analysis_output_capacity'|'analysis_provider_refusal';
  routing?:{route:'openrouter';model:string;provider:string|null;providerSlug:string;isByok:boolean|null;upstreamInferenceUsd:number|null;upstreamPromptUsd:number|null;upstreamCompletionUsd:number|null};
 }
-export type AnalysisGenerator=(request:GenerationRequest)=>Promise<GenerationResult>;
+export type AnalysisGenerator=(request:GenerationRequest, acknowledge?: (generationId:string)=>Promise<void>)=>Promise<GenerationResult>;
 export class AnalysisError extends Error {constructor(public code:string){super(code);}}
 /** Transport status is operational evidence, never proof of a zero charge.
  * No SDK error, message, raw body, headers or cause crosses this boundary. */
@@ -167,7 +167,7 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
  const responseModel=env('CONTENT_ANALYSIS_OPENROUTER_RESPONSE_MODEL')?.trim();
  if(!providerName||providerName.length>150||!responseModel||responseModel.length>150||!/^[A-Za-z0-9_./:-]+$/.test(responseModel))return analysisFailure('analysis_provider_not_verified');
  const client=factory({apiKey:key,baseURL:OPENROUTER_BASE_URL});
- return async request=>{
+ return async (request,acknowledge)=>{
   if(!Number.isSafeInteger(request.maxOutputTokens)||request.maxOutputTokens<1)return analysisFailure('analysis_input_limit');
   if(conservativeCallUsd(request,limits)>limits.maxCallUsd)return analysisFailure('analysis_call_limit');
   // OpenRouter max_tokens includes reasoning and visible output. require_parameters refuses unsupported settings.
@@ -213,6 +213,8 @@ export function createOpenRouterAnalysisGenerator(env:Env=runtimeEnv,factory:Ope
   catch(error){throw safeProviderFailure(error,'openrouter');}
   finally{clearTimeout(timer);}
   const raw=object(result);
+  // Bind provider billing identity before any output, model or usage validation.
+  if (acknowledge && typeof raw?.id === 'string' && /^gen-[A-Za-z0-9_-]{1,240}$/.test(raw.id)) await acknowledge(raw.id);
   if(!raw||raw.error!=null)return analysisFailure('analysis_incomplete_generation');
   if(raw.model!==responseModel||(raw.provider!=null&&raw.provider!==providerName)||typeof raw.id!=='string'||!raw.id.trim())return analysisFailure('analysis_provider_not_verified');
   const choices=raw.choices,choice=Array.isArray(choices)&&choices.length===1?object(choices[0]):undefined,message=object(choice?.message);

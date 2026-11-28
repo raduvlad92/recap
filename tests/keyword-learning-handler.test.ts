@@ -42,7 +42,21 @@ describe('private keyword evaluation handler, synthetic adapters only',()=>{
   expect(r.status).toBe(200);expect(body).toMatchObject({providerCall:true,result});
   expect(f.rpc.mock.calls[0][0]).toBe('reserve_keyword_learning_call');expect(f.rpc.mock.calls[1][0]).toBe('record_keyword_learning_call');
   expect(f.rpc.mock.calls[0][1]).toMatchObject({p_source_hash:sourceHash,p_model:input.model,p_maximum_usd:.1,p_request:{request:input.request}});
-  expect(f.generate).toHaveBeenCalledExactlyOnceWith(input.request);expect(r.headers.get('cache-control')).toBe('no-store');
+  expect(f.generate).toHaveBeenCalledExactlyOnceWith(input.request,expect.any(Function));expect(r.headers.get('cache-control')).toBe('no-store');
+ });
+ it('keeps the acknowledged generation ID on malformed output without claiming a charge',async()=>{
+  const f=fixture();
+  f.generate.mockImplementationOnce(async (_request,acknowledge)=>{
+   await acknowledge('gen-fixture');
+   throw new AnalysisError('analysis_incomplete_generation');
+  });
+  expect((await f.send()).status).toBe(202);
+  expect(f.rpc.mock.calls.map(([name])=>name)).toEqual([
+   'reserve_keyword_learning_call','record_openrouter_generation_ack','record_keyword_learning_call',
+  ]);
+  expect(f.rpc.mock.calls[1][1]).toMatchObject({p_generation_id:'gen-fixture',p_call_id:'call-fixture',p_lease_token:'lease-fixture'});
+  expect(f.rpc.mock.calls[2][1]).toMatchObject({p_result:{providerId:'gen-fixture',actualUsd:null,observedUsd:null},
+   p_error_code:'analysis_incomplete_generation'});
  });
  it('never sends again when reservation returns an existing unsettled request',async()=>{
   const f=fixture();f.rpc.mockResolvedValueOnce({data:{claimed:false,call:{state:'unknown',actual_usd:null},result:null,errorCode:'analysis_provider_timeout'},error:null} as never);
@@ -66,15 +80,15 @@ describe('private keyword evaluation handler, synthetic adapters only',()=>{
   try{
    const worker=createKeywordLearningHandler(deps,{generateOnly:true,generationTimeoutMs:120000});
    await worker(new Request('https://example.test/.netlify/functions/keyword-learning-worker',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(input)}));
-   expect(openrouter).toHaveBeenCalledExactlyOnceWith(expect.any(Function),undefined,{timeoutMs:120000});expect(gateway).not.toHaveBeenCalled();expect(generate).toHaveBeenCalledExactlyOnceWith(input.request);
+   expect(openrouter).toHaveBeenCalledExactlyOnceWith(expect.any(Function),undefined,{timeoutMs:120000});expect(gateway).not.toHaveBeenCalled();expect(generate).toHaveBeenCalledExactlyOnceWith(input.request,expect.any(Function));
    openrouter.mockClear();generate.mockClear();
    await createKeywordLearningHandler(deps)(new Request('https://example.test/.netlify/functions/keyword-learning',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(input)}));
-   expect(gateway).toHaveBeenCalledExactlyOnceWith(expect.any(Function));expect(openrouter).not.toHaveBeenCalled();expect(generate).toHaveBeenCalledExactlyOnceWith(input.request);
+   expect(gateway).toHaveBeenCalledExactlyOnceWith(expect.any(Function));expect(openrouter).not.toHaveBeenCalled();expect(generate).toHaveBeenCalledExactlyOnceWith(input.request,expect.any(Function));
   }finally{openrouter.mockRestore();gateway.mockRestore();}
  });
  it('preserves injected generators when the background transport has a longer deadline',async()=>{
   const f=fixture(),handler=createKeywordLearningHandler({env:f.env,db:()=>f.db as never,authorize:f.authorize,workerAuthorized:f.workerAuthorized,generator:()=>f.generate},{generateOnly:true,generationTimeoutMs:120000});
-  await handler(new Request('https://example.test/.netlify/functions/keyword-learning-worker',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(input)}));expect(f.generate).toHaveBeenCalledExactlyOnceWith(input.request);
+  await handler(new Request('https://example.test/.netlify/functions/keyword-learning-worker',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(input)}));expect(f.generate).toHaveBeenCalledExactlyOnceWith(input.request,expect.any(Function));
  });
  it.each([{generationTimeoutMs:120000},{generateOnly:true,generationTimeoutMs:120001},{generateOnly:true,generationTimeoutMs:0},{generateOnly:true,generationTimeoutMs:NaN}])('rejects an unsafe worker-only transport option %j before dispatch',options=>{
   const f=fixture();expect(()=>createKeywordLearningHandler({db:()=>f.db as never},options)).toThrow('analysis_configuration_required');expect(f.rpc).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
@@ -92,7 +106,7 @@ describe('private keyword evaluation handler, synthetic adapters only',()=>{
   });
   const url='https://example.test/.netlify/functions/keyword-learning-worker';
   await f.send(input,url);const repeated=await f.send(input,url),body=await repeated.json();
-  expect(repeated.status).toBe(state==='settled'?200:202);expect(body.providerCall).toBe(false);expect(f.generate).toHaveBeenCalledExactlyOnceWith(input.request);
+  expect(repeated.status).toBe(state==='settled'?200:202);expect(body.providerCall).toBe(false);expect(f.generate).toHaveBeenCalledExactlyOnceWith(input.request,expect.any(Function));
   expect(f.rpc.mock.calls.filter(([name])=>name==='record_keyword_learning_call')).toHaveLength(1);
  });
  it('persists a provider timeout as unknown cost and never refunds/retries it',async()=>{

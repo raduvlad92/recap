@@ -102,11 +102,18 @@ export function createKeywordLearningHandler(overrides:Partial<Dependencies>={},
     p_request:{request:input.request,originalKey:input.originalKey??null,generationHash},
    })) as Reservation;
    if(!reservation.claimed)return response({...reservation,cached:!!reservation.result,providerCall:false},reservation.call.actual_usd===null?202:200);
-   let result:GenerationResult;
-   try{result=await deps.generator(env)(input.request);}
+   let result:GenerationResult, acknowledgedId:string|undefined;
+   try{
+    result=await deps.generator(env)(input.request,async generationId=>{
+     acknowledgedId=generationId;
+     unwrap(await db.rpc('record_openrouter_generation_ack',{
+      p_call_id:reservation.call.id,p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_generation_id:generationId,
+     }));
+    });
+   }
    catch(error){
     const code=error instanceof AnalysisError?error.code:'analysis_generation_failed';
-    const saved=unwrap(await db.rpc('record_keyword_learning_call',{p_session_id:input.sessionId,p_call_key:input.request.key,p_call_id:reservation.call.id,p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_result:null,p_error_code:code}));
+    const saved=unwrap(await db.rpc('record_keyword_learning_call',{p_session_id:input.sessionId,p_call_key:input.request.key,p_call_id:reservation.call.id,p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_result:acknowledgedId?{providerId:acknowledgedId,value:null,actualUsd:null,observedUsd:null}:null,p_error_code:code}));
     return response({...saved,providerCall:true},202);
    }
    const saved=unwrap(await db.rpc('record_keyword_learning_call',{p_session_id:input.sessionId,p_call_key:input.request.key,p_call_id:reservation.call.id,p_lease_token:reservation.call.lease_token,p_request_hash:requestHash,p_result:result,p_error_code:result.validationError??null}));

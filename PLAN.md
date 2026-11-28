@@ -1,6 +1,10 @@
 # Tracked implementation and validation plan
 
+**26 November — prepare the checked three-channel pilot.** After the migration-read credential is available and the PM merges the reviewed head, verify the exact migrations and serving release. Install the scope through checked restoration, then observe the first scheduled proof and the next tick for deduplication. The existing TechLinked schedule remains live pending that release. [Pilot operating plan](docs/tech/CHECKED-YOUTUBE-PILOT.md).
+
 **26 November — video analysis rollout.** Keep the automatic worker off through R1. Prepare and rehearse a $0.75 manifest-bound gate before a separately approved ten-video short-transcript proof. Require both acceptable drafts on at least nine videos, then representative coverage before enabling the scheduler. Coordinate the grouped review queue migration and owner timing as separate post-R1 work. [Replay and enablement plan](docs/tech/VIDEO-ANALYSIS-REPLAY-2026-11-26.md).
+
+**Abandoned HTTP frame expiry.** The schema-only migration and release preflight change are now part of the combined checked release. Apply the migration in the authorized release window. Automatic analysis stays off. [Controller behavior](docs/tech/CLOUDFLARE-RELEASE-CONTROLLER.md#unleased-http-requests).
 
 **25 November — recover the signed-in tech feed.** Resolve the 36 format gaps starting with the eight newer videos, prove ordinary scheduled discovery across an expanded bounded cohort, complete the checked analysis deployment and verify reviewed takeaways and keywords on the cards before accepting the daily cutoff. [Ordered plan and pass criteria](docs/tech/TECH-FEED-RECOVERY-2026-11-25.md).
 
