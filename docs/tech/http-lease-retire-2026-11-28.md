@@ -31,7 +31,11 @@ The queued unleased frame's full-row SHA-256 matched on both reads. Neither the 
 
 ## Next ordinary hourly tick
 
-The first slot after the commit is **01:00 UTC** on 28 November. Its readback is pending. Wait for the persisted cron frame and scoped collection receipt.
+The **01:00 UTC** slot on 28 November completed on epoch 10 and release `6a794cb`. The 01:16:39 UTC read-only transaction matched persisted frame `cron:hourly-collection:10:5986092`. It was admitted at 01:00:52.811196, claimed at 01:00:55.898085, and completed at 01:01:08.133200 UTC. All four retired frames were still `uncertain`, and the empty unleased frame was still queued.
+
+The TechLinked check ran from 01:00:59.821391 to 01:01:02.996832 UTC, inside that frame's lease. It failed with `collection_budget_exhausted` and retrieved zero items. The saved provider job was blocked before launch and carried no provider run reference or fee. The scheduler completed, and source collection remained blocked.
+
+The TechLinked pilot's $0.0400 envelope had $0.0265 allocated, leaving $0.0135 against the $0.0200 discovery reservation. The reader had $0.075 committed against its $0.10 daily limit, and shared monthly commitment was $9.6686 against $20. The source error is consistent with the finite pilot envelope. Both readbacks ran in read-only transactions. [Pilot budget baseline](YOUTUBE-BUDGET-RELEASE-2026-11-25.md#scheduled-techlinked-readback)
 
 ## Revert SQL
 
