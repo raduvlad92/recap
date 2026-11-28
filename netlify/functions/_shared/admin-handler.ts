@@ -6,7 +6,7 @@ import { clerkRequest, database, requireAdmin, userSummary, type ClerkUser, type
 import { collectionHealth } from './collect-handler';
 import type { AdminChannelIdentity, CollectionJobRecord } from '../../../src/lib/admin-types';
 import { listKeywordReviews, reviewKeyword } from './keyword-admin';
-import { listContentReviews, readContentReview, decideContentReview } from './content-review-admin';
+import { listContentReviews, readContentReview, decideContentReview, applyVideoReviews } from './content-review-admin';
 import { activityQuery, readCollectionActivity } from './collection-activity';
 import { readAnalysisSettings, saveAnalysisModel } from './analysis-settings-admin';
 import { checkOpenRouterConnection } from './content-analysis-runtime';
@@ -48,6 +48,7 @@ export function createAdminHandler(overrides: Partial<Dependencies>={}) {
     let body:Record<string,unknown>;try {body=JSON.parse(await readTextLimited(new Response(request.body),32000));}catch{throw new CollectionError(400,'invalid_input','The saved details could not be read.');}
     if(!body||Array.isArray(body)||typeof body!=='object') throw new CollectionError(400,'invalid_input','Send record details.');
     if(body.action==='keyword') return success(await reviewKeyword(db,body,adminId));
+    if(body.action==='apply_video_reviews') return success(await applyVideoReviews(db,body,adminId));
     if(body.action==='review') return success(await decideContentReview(db,body,adminId));
     const id=exactText(body.id,160),expected=exactText(body.expectedUpdatedAt,60);
     if(!id||!expected||!Number.isFinite(Date.parse(expected))) throw new CollectionError(400,'invalid_input','Reload the record before editing.');

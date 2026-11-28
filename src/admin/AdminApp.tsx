@@ -7,8 +7,8 @@ import { useRecapAuth } from '../lib/auth';
 import type { AdminAudit, AdminOverview, AdminUser, CatalogueCreator, CollectionActivityReport, CollectionJobRecord, ProviderPlan } from '../lib/admin-types';
 import type { KeywordReviewRecord } from '../lib/keyword-review-types';
 import { KeywordReviews, type KeywordReviewRequest } from './KeywordReviews';
-import { AnalysisReviews, type DecideContentReview, type LoadContentReview } from './AnalysisReviews';
-import type { ContentReviewDetail, ContentReviewSummary } from '../lib/content-review-types';
+import { AnalysisReviews, type ApplyVideoReviews, type DecideContentReview, type LoadContentReview } from './AnalysisReviews';
+import type { ContentReviewDetail, ContentReviewSummary, VideoReviewResult } from '../lib/content-review-types';
 import { CollectionCosts, CostFilterForm } from './CollectionCosts';
 import { AnalysisSettings, type SaveAnalysisModelRequest, type CheckAnalysisConnectionRequest } from './AnalysisSettings';
 import type { AnalysisConnectionStatus, AnalysisModelSelection, AnalysisSettings as AnalysisSettingsData } from '../lib/analysis-settings-types';
@@ -18,7 +18,7 @@ type Section = 'overview' | 'users' | 'user' | 'creators' | 'plans' | 'jobs' | '
 interface Route { section: Section; page: number; q: string; id: string; status: string; provider: string; user: string; from: string; to: string; source: string }
 interface Payload {
   overview?: AdminOverview; development?: boolean; users?: AdminUser[]; creators?: CatalogueCreator[];
-  plans?: ProviderPlan[]; jobs?: CollectionJobRecord[]; events?: AdminAudit[]; keywords?: KeywordReviewRecord[]; reviews?: ContentReviewSummary[]; review?: ContentReviewDetail; published?: boolean; total?: number; page?: number; pageSize?: number;
+  plans?: ProviderPlan[]; jobs?: CollectionJobRecord[]; events?: AdminAudit[]; keywords?: KeywordReviewRecord[]; reviews?: ContentReviewSummary[]; review?: ContentReviewDetail; published?: boolean; decisions?: VideoReviewResult[]; groupTotal?: number; total?: number; page?: number; pageSize?: number;
   health?: { apifyEnabled: boolean; feedEnabled: boolean; automaticScheduling: boolean };
   costs?: CollectionActivityReport;
   monthlyProviderBudget?: MonthlyProviderBudget | null;
@@ -121,7 +121,9 @@ function PrivateAdmin({ userId }: { userId: string }) {
   useEffect(() => { const listener = () => setRoute(readRoute()); window.addEventListener('popstate', listener); return () => window.removeEventListener('popstate', listener); }, []);
   useEffect(() => {
     let cancelled = false; setResource({ data: null, loading: true, error: null, query });
-    void request(new URLSearchParams(query)).then(data => { if (!cancelled) setResource({ data, loading: false, error: null, query }); }).catch(error => { if (!cancelled && !aborted(error)) setResource({ data: null, loading: false, error: asProblem(error), query }); });
+    const params = new URLSearchParams(query);
+    if (params.get('section') === 'reviews' && params.get('status') === 'pending') params.set('group', 'source');
+    void request(params).then(data => { if (!cancelled) setResource({ data, loading: false, error: null, query }); }).catch(error => { if (!cancelled && !aborted(error)) setResource({ data: null, loading: false, error: asProblem(error), query }); });
     return () => { cancelled = true; };
   }, [query, refresh, request]);
   useEffect(() => { titleRef.current?.focus({ preventScroll: true }); }, [route.section, route.id]);
@@ -133,7 +135,7 @@ function PrivateAdmin({ userId }: { userId: string }) {
   }, [resource.loading, resource.query, query, route.section]);
   const retry = () => setRefresh(value => value + 1), pageTitle = route.section === 'user' ? 'Reader details' : route.section === 'keywords' ? 'Keyword review' : sections.find(section => section.id === route.section)?.label || 'Overview';
   const reloadKeywords = () => { focusAfterKeywordReload.current = true; retry(); };
-  const reloadReviews = () => { focusAfterKeywordReload.current = true; if (route.page > 0) go({ ...route, page: 0 }); else retry(); };
+  const reloadReviews = () => { focusAfterKeywordReload.current = true; if (route.page > 0 && keywordStatus(route.status) !== 'pending') go({ ...route, page: 0 }); else retry(); };
   const replaceCreator = (record: CatalogueCreator) => setResource(previous => ({ ...previous, data: previous.data ? { ...previous.data, creators: previous.data.creators?.map(item => item.id === record.id ? { ...item, ...record, catalogue_channels: item.catalogue_channels } : item) } : null }));
   const replacePlan = (record: ProviderPlan) => setResource(previous => ({ ...previous, data: previous.data ? { ...previous.data, plans: previous.data.plans?.map(item => item.platform === record.platform ? record : item) } : null }));
   const reviewKeyword: KeywordReviewRequest = async body => {
@@ -152,6 +154,12 @@ function PrivateAdmin({ userId }: { userId: string }) {
     if (!record || !('origin' in record) || record.id !== body.id || record.origin !== body.origin || record.status !== (body.decision === 'approve' ? 'approved' : 'rejected') || result.published !== (body.decision === 'approve')) throw { status: 502, message: 'The server did not confirm this decision. Reload before trying again.' } satisfies ApiProblem;
     if (!options?.silent) setReviewFeedback(body.decision === 'approve' ? 'Confirmed and published.' : 'Rejected.');
     return { record, published: result.published };
+  }, [request]);
+  const applyVideoReviews: ApplyVideoReviews = useCallback(async targets => {
+    setReviewFeedback('');
+    const result = await request(new URLSearchParams(), { action: 'apply_video_reviews', targets });
+    if (!Array.isArray(result.decisions)) throw { status: 502, message: 'Reload to check the saved decisions.' } satisfies ApiProblem;
+    return result.decisions;
   }, [request]);
   const saveAnalysis: SaveAnalysisModelRequest = async body => {
     const { selection } = await request(new URLSearchParams({ section: 'analysis' }), { ...body });
@@ -175,7 +183,7 @@ function PrivateAdmin({ userId }: { userId: string }) {
       {route.section === 'creators' && <Creators creators={resource.data.creators || []} total={resource.data.total || 0} route={route} pageSize={resource.data.pageSize} go={go} request={request} onSaved={replaceCreator} reload={retry} />}
       {route.section === 'plans' && <Plans plans={resource.data.plans || []} health={resource.data.health} request={request} onSaved={replacePlan} reload={retry} />}
       {route.section === 'analysis' && (resource.data.analysis ? <AnalysisSettings settings={resource.data.analysis} request={saveAnalysis} checkConnection={checkAnalysisConnection} reload={retry} onPendingChange={setAnalysisBusy} /> : <PanelMessage error title="Analysis settings unavailable"><p>Reload to read the latest model selection.</p><button type="button" className="ra-button" onClick={retry}>Reload latest selection</button></PanelMessage>)}
-      {route.section === 'reviews' && <>{reviewFeedback && <p className="ra-save-success" role="status">{reviewFeedback}</p>}<AnalysisReviews data={resource.data} status={keywordStatus(route.status)} page={route.page} onStatusChange={status => { setReviewFeedback(''); focusAfterKeywordReload.current = true; go({ ...emptyRoute, section: 'reviews', status }); }} onPageChange={page => { setReviewFeedback(''); focusAfterKeywordReload.current = true; go({ ...route, page }); }} loadDetail={loadReview} decide={decideReview} reload={reloadReviews} onPendingChange={setKeywordBusy} /></>}
+      {route.section === 'reviews' && <>{reviewFeedback && <p className="ra-save-success" role="status">{reviewFeedback}</p>}<AnalysisReviews data={resource.data} status={keywordStatus(route.status)} page={route.page} onStatusChange={status => { setReviewFeedback(''); focusAfterKeywordReload.current = true; go({ ...emptyRoute, section: 'reviews', status }); }} onPageChange={page => { setReviewFeedback(''); focusAfterKeywordReload.current = true; go({ ...route, page }); }} loadDetail={loadReview} decide={decideReview} applyVideoReviews={applyVideoReviews} reload={reloadReviews} onPendingChange={setKeywordBusy} /></>}
       {route.section === 'keywords' && <KeywordReviews data={resource.data} status={keywordStatus(route.status)} page={route.page} onStatusChange={status => { focusAfterKeywordReload.current = true; go({ ...emptyRoute, section: 'keywords', status }); }} onPageChange={page => { focusAfterKeywordReload.current = true; go({ ...route, page }); }} request={reviewKeyword} reload={reloadKeywords} onPendingChange={setKeywordBusy} />}
       {route.section === 'jobs' && <Jobs jobs={resource.data.jobs || []} total={resource.data.total || 0} pageSize={resource.data.pageSize} route={route} go={go} />}
       {route.section === 'costs' && resource.data.costs && <CollectionCosts data={resource.data.costs} budget={resource.data.monthlyProviderBudget} filters={route} onChange={filters => go({ ...route, ...filters })} openReader={id => go({ ...emptyRoute, section: 'user', id })} />}

@@ -266,3 +266,47 @@ describe('instant individual review decisions', () => {
     expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Confirm and publish<\/button>/);
   });
 });
+
+describe('video review batches', () => {
+  it('ranks grounded drafts first, stages both decisions, and undoes them before any request', async () => {
+    const records = [
+      { ...row('unknown'), qualityScore: null },
+      { ...row('low'), qualityScore: 0 as const },
+      { ...row('grounded'), qualityScore: 100 as const },
+      { ...row('needs-review'), qualityScore: 50 as const },
+    ];
+    const actions = props(), applyVideoReviews = vi.fn(async () => [{ id: 'grounded', published: true }]);
+    const h = reviewHarness({ ...actions, applyVideoReviews, data: { ...page(records), pageSize: 6, groupTotal: 1 } });
+    let tree = h.render();
+    expect(nodes(tree).filter(node => node.props.record).map(node => node.props.record.id)).toEqual(['grounded', 'needs-review', 'low', 'unknown']);
+    button(tree, 'Approve all grounded (1)').props.onClick();
+    tree = h.render();
+    button(tree, 'Reject low-score (1)').props.onClick();
+    tree = h.render();
+    expect(nodeText(tree)).toContain('1 ready to publish, 1 ready to reject');
+    button(tree, 'Undo rejection (1)').props.onClick();
+    tree = h.render();
+    button(tree, 'Undo all').props.onClick();
+    tree = h.render();
+    expect(applyVideoReviews).not.toHaveBeenCalled();
+    expect(actions.decide).not.toHaveBeenCalled();
+    button(tree, 'Approve all grounded (1)').props.onClick();
+    tree = h.render();
+    button(tree, 'Apply and publish').props.onClick();
+    await tick();
+    expect(applyVideoReviews).toHaveBeenCalledExactlyOnceWith([{ id: 'grounded', expectedUpdatedAt: summary.updatedAt, decision: 'approve' }]);
+    expect(nodeText(h.render())).toContain('1 published, 0 rejected, 0 need attention.');
+  });
+
+  it('does not apply a selection after the listed revision changes', async () => {
+    const first = { ...row('grounded'), qualityScore: 100 as const };
+    const applyVideoReviews = vi.fn(), data = { ...page([first]), pageSize: 6, groupTotal: 1 };
+    const h = reviewHarness({ ...props(), applyVideoReviews, data });
+    button(h.render(), 'Approve all grounded (1)').props.onClick();
+    const previous = button(h.render(), 'Apply and publish');
+    h.update({ data: { ...data, reviews: [{ ...first, updatedAt: '2026-11-26T02:00:00Z' }] } }, false);
+    previous.props.onClick();
+    await tick();
+    expect(applyVideoReviews).not.toHaveBeenCalled();
+  });
+});
