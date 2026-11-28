@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { ReaderSettings } from '../src/lib/types';
+import { briefingDayOutcome } from '../src/lib/daily-briefing-coverage';
 import { briefingCycle, composeDailyBriefing, createDailyBriefingWorker, createDailyBriefingsHandler, dailyBriefingWorkerAuthorized, dailyFindingKey, dispatchDailyBriefings, localBriefingCutoff, type DailyBriefingCandidate, type DailyBriefingInput } from '../netlify/functions/_shared/daily-briefing';
 
 const settings: ReaderSettings = { interests: ['Devices'], interfaceLanguage: 'en', recapLanguage: 'de', timezone: 'Europe/Berlin', deliveryTime: '08:00', emailReminder: false };
-const env = (key: string) => ({ APP_URL: 'https://recap.example', CONTENT_ANALYSIS_WORKER_SECRET: 's'.repeat(40) } as Record<string, string>)[key];
+const env = (key: string) => ({ DAILY_BRIEFING_ENABLED: 'true', APP_URL: 'https://recap.example', CONTENT_ANALYSIS_WORKER_SECRET: 's'.repeat(40) } as Record<string, string>)[key];
 const reviewId = '11111111-1111-4111-8111-111111111111';
 const contentHash = 'a'.repeat(64);
 function input(): DailyBriefingInput {
@@ -68,6 +69,22 @@ describe('deterministic approved daily assembly', () => {
     expect(result.status).toBe('partial');
     expect(result.snapshot.coverage).toMatchObject({ pendingReviewUpdates: 1, missingContentUpdates: 1, includedUpdates: 1, checkedSources: 0 });
   });
+  it('labels quiet, partial and failed days without publishing uncertain days', () => {
+    const source = input();
+    source.updates = [];
+    const readOutcome = () => {
+      const { status, snapshot } = composeDailyBriefing(source);
+      return { status, outcome: briefingDayOutcome({ id: reviewId, localDate: source.localDate, periodStart: source.periodStart, cutoffAt: source.cutoffAt, createdAt: source.cutoffAt, publishedAt: null, status, snapshot }), counts: snapshot.coverage.sourceCounts };
+    };
+    expect(readOutcome()).toMatchObject({ status: 'quiet', outcome: 'quiet', counts: { checked: 1, quiet: 1 } });
+    source.missedCycles = 1;
+    expect(readOutcome()).toMatchObject({ status: 'awaiting_review', outcome: 'partial' });
+    source.missedCycles = 0;
+    source.sources[0].state = 'failed';
+    expect(readOutcome()).toMatchObject({ status: 'awaiting_review', outcome: 'failed', counts: { checked: 0, quiet: 0, failed: 1 } });
+    source.sources = [];
+    expect(readOutcome()).toMatchObject({ status: 'awaiting_review', outcome: 'partial' });
+  });
   it('groups identical cross-post wording into one point while retaining each original', () => {
     const source = input(), other = structuredClone(source.updates[0]);
     other.updateId = 'other'; other.sourceId = 'other-source'; other.findings[0].citation.updateId = 'other'; other.findings[0].citation.sourceId = 'other-source'; other.findings[0].citation.findingKey = dailyFindingKey('other', contentHash, other.findings[0].text);
@@ -76,6 +93,19 @@ describe('deterministic approved daily assembly', () => {
     expect(result.snapshot.topics[0].points).toHaveLength(1);
     expect(result.snapshot.topics[0].points[0].citations).toHaveLength(2);
     expect(result.snapshot.topics[0].updatedSourceCount).toBe(2);
+  });
+  it('keeps differently cased claims and their own citations separate', () => {
+    const source = input(), other = structuredClone(source.updates[0]);
+    other.updateId = 'other';
+    const f = other.findings[0];
+    f.text = f.text.toUpperCase();
+    f.citation.updateId = other.updateId;
+    f.citation.findingKey = dailyFindingKey(other.updateId, contentHash, f.text);
+    source.updates.push(other);
+    const points = composeDailyBriefing(source).snapshot.topics[0].points;
+    expect(points.map(point => [point.text, point.citations[0].updateId])).toEqual([
+      [source.updates[0].findings[0].text, 'item-one'], [f.text, 'other'],
+    ]);
   });
   it('keeps five topics and bounded main points, leaving other updates inspectable', () => {
     const source = input();

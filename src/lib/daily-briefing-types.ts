@@ -44,6 +44,15 @@ export interface DailyBriefingCoverage {
   missingContentUpdates: number;
   omittedUpdates: number;
   sources: DailyBriefingSourceCoverage[];
+  sourceCounts?: DailyBriefingSourceCounts;
+}
+export interface DailyBriefingSourceCounts {
+  checked: number;
+  quiet: number;
+  partial: number;
+  failed: number;
+  blocked: number;
+  unknown: number;
 }
 export interface DailyBriefingSnapshot {
   version: 1;
@@ -62,6 +71,7 @@ export interface DailyBriefingSnapshot {
   allUpdates: DailyBriefingUpdate[];
   notice: string;
   correction: null;
+  failureCode?: string;
 }
 export interface DailyBriefing {
   id: string;

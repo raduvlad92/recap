@@ -1,0 +1,194 @@
+{
+  "description": "Three public channels from a read-only production archive read. Formats were recovered later on 25 November. Mock responses and approvals apply only in the offline replay.",
+  "readAt": "2026-11-26T00:40:38.961021Z",
+  "localDate": "2026-11-25",
+  "periodStart": "2026-11-24T07:00:00.000Z",
+  "cutoffAt": "2026-11-25T07:00:00.000Z",
+  "sourceChecks": [
+    {
+      "sourceId": "public-techlinked",
+      "sourceName": "TechLinked",
+      "platform": "YouTube",
+      "state": "partial",
+      "checkedAt": "2026-11-25T06:00:59.692567Z",
+      "reason": null
+    },
+    {
+      "sourceId": "public-shortcircuit",
+      "sourceName": "ShortCircuit",
+      "platform": "YouTube",
+      "state": "blocked",
+      "checkedAt": "2026-11-25T06:00:58.507745Z",
+      "reason": "provider_channel_outside_scope"
+    },
+    {
+      "sourceId": "public-gamersnexus",
+      "sourceName": "GamersNexus",
+      "platform": "YouTube",
+      "state": "blocked",
+      "checkedAt": "2026-11-25T06:00:58.391970Z",
+      "reason": "provider_channel_outside_scope"
+    }
+  ],
+  "archive": [
+    {
+      "id": "kibDx91B6eg",
+      "sourceId": "public-techlinked",
+      "title": "Yaaay Number Go Back Up",
+      "url": "https://www.youtube.com/watch?v=kibDx91B6eg",
+      "publishedAt": "2026-11-24T02:15:20+00:00",
+      "collectedAt": "2026-11-25T01:24:29.558427+00:00",
+      "formatConfirmedAt": "2026-11-25T22:57:43.009857+00:00",
+      "format": "regular",
+      "sourceName": "TechLinked",
+      "contentHash": "ac280e1e787c88350098fe0f96ac1a5c5a6654abbdc7b65fa86da110701dc65c",
+      "transcriptCharacters": 10585,
+      "realReviewStates": [],
+      "evidence": {
+        "quote": "run on Windows without an emulator. and it says the game does not boot yet.",
+        "startSeconds": 154.4
+      }
+    },
+    {
+      "id": "gF09cRVoX_w",
+      "sourceId": "public-gamersnexus",
+      "title": "JENSEN RETURNS TO NVIDIA. THE CIRCUS MUST CONTINUE.",
+      "url": "https://www.youtube.com/watch?v=gF09cRVoX_w",
+      "publishedAt": "2026-11-23T18:54:54+00:00",
+      "collectedAt": "2026-11-25T01:24:34.467891+00:00",
+      "formatConfirmedAt": "2026-11-25T22:57:42.916068+00:00",
+      "format": "regular",
+      "sourceName": "GamersNexus",
+      "contentHash": "fe2ec023cc4f9e0151657b4f58b64062ef7ac81ecaf89acb3934085a5671e56e",
+      "transcriptCharacters": 51631,
+      "realReviewStates": []
+    },
+    {
+      "id": "iTAsOxThOFA",
+      "sourceId": "public-shortcircuit",
+      "title": "This Phone is Fire - Oukitel WP63",
+      "url": "https://www.youtube.com/watch?v=iTAsOxThOFA",
+      "publishedAt": "2026-11-22T18:37:56+00:00",
+      "collectedAt": "2026-11-25T01:24:45.919976+00:00",
+      "formatConfirmedAt": "2026-11-25T22:57:42.991018+00:00",
+      "format": "regular",
+      "sourceName": "ShortCircuit",
+      "contentHash": "08eb7638f062692129893b55f3748bfaf5b05b921133bbc79e56dedf92d4adb2",
+      "transcriptCharacters": 19698,
+      "realReviewStates": [],
+      "evidence": {
+        "quote": "20,000 mAh battery, a 64 megapixel AI camera",
+        "startSeconds": 12.2
+      }
+    },
+    {
+      "id": "l8qxFcaLSM4",
+      "sourceId": "public-gamersnexus",
+      "title": "HW News - DRAM Cartel in Court, GPU Drivers Eat SSDs, NVIDIA Cracks Show, PCB Shortage",
+      "url": "https://www.youtube.com/watch?v=l8qxFcaLSM4",
+      "publishedAt": "2026-11-22T13:27:14+00:00",
+      "collectedAt": "2026-11-25T01:24:34.488577+00:00",
+      "formatConfirmedAt": "2026-11-25T22:57:43.036918+00:00",
+      "format": "regular",
+      "sourceName": "GamersNexus",
+      "contentHash": "40b00763ad652580bf408c2aaab49fa9067e03bf153ef311e77c37a039fea7c2",
+      "transcriptCharacters": 37513,
+      "realReviewStates": [],
+      "evidence": {
+        "quote": "driver problems with Nvidia GPU and AMD GPU drivers causing high drive writes on SSDs and hard drives",
+        "startSeconds": 18
+      }
+    },
+    {
+      "id": "GBCfagEoRDI",
+      "sourceId": "public-shortcircuit",
+      "title": "Professional 3D Printing for less - Formlabs Studio 1 Resin Printer",
+      "url": "https://www.youtube.com/watch?v=GBCfagEoRDI",
+      "publishedAt": "2026-11-21T18:09:50+00:00",
+      "collectedAt": "2026-11-25T01:24:45.911906+00:00",
+      "formatConfirmedAt": "2026-11-25T22:57:42.894197+00:00",
+      "format": "regular",
+      "sourceName": "ShortCircuit",
+      "contentHash": "ab50cda4f3346421a11b69666bca999a5e36bfeefbc52b7dfae0288dcd1a2650",
+      "transcriptCharacters": 18785,
+      "realReviewStates": [],
+      "evidence": {
+        "quote": "They just came out with a budget 3D printer. At $699, this thing is well below $1,000",
+        "startSeconds": 7.4
+      }
+    },
+    {
+      "id": "lKfft75VvfQ",
+      "sourceId": "public-techlinked",
+      "title": "The “Good Guys” Just Sold Out",
+      "url": "https://www.youtube.com/watch?v=lKfft75VvfQ",
+      "publishedAt": "2026-11-21T02:07:54+00:00",
+      "collectedAt": "2026-11-25T01:24:29.591203+00:00",
+      "formatConfirmedAt": "2026-11-25T22:57:43.071503+00:00",
+      "format": "regular",
+      "sourceName": "TechLinked",
+      "contentHash": "5f334d8d27f028e654a3fd076393b0a16e7f44c1bbfe44c41dcc907e4885bc46",
+      "transcriptCharacters": 11809,
+      "realReviewStates": []
+    },
+    {
+      "id": "w2VoBbhOVcQ",
+      "sourceId": "public-techlinked",
+      "title": "So WTF Happened Here?",
+      "url": "https://www.youtube.com/watch?v=w2VoBbhOVcQ",
+      "publishedAt": "2026-11-17T00:56:01+00:00",
+      "collectedAt": "2026-11-19T00:01:11.739414+00:00",
+      "formatConfirmedAt": "2026-11-25T22:57:43.207932+00:00",
+      "format": "regular",
+      "sourceName": "TechLinked",
+      "contentHash": "3c8d498548c4011f34cdecb57132c6415a08d25569797d1905b124dddeaae605",
+      "transcriptCharacters": 8834,
+      "realReviewStates": [],
+      "evidence": {
+        "quote": "new fiber optic router installed by contractor L3 Harris as part of a routine upgrade to older copper equipment.",
+        "startSeconds": 47.8
+      }
+    },
+    {
+      "id": "yzeGWuNxreo",
+      "sourceId": "public-techlinked",
+      "title": "What will Nvidia do now?",
+      "url": "https://www.youtube.com/watch?v=yzeGWuNxreo",
+      "publishedAt": "2026-11-14T01:56:41+00:00",
+      "collectedAt": "2026-11-19T00:01:11.787677+00:00",
+      "formatConfirmedAt": "2026-11-25T22:57:43.215074+00:00",
+      "format": "regular",
+      "sourceName": "TechLinked",
+      "contentHash": "f1eb2d8ef96f29452e8bb26ae0b986769f9c52a88c8eead7d72bceb8bc87cce2",
+      "transcriptCharacters": 10741,
+      "realReviewStates": []
+    }
+  ],
+  "mockResponses": [
+    {
+      "id": "kibDx91B6eg",
+      "topic": "PC gaming",
+      "text": "TechLinked says the Windows conversion it covered could not boot at the time of reporting."
+    },
+    {
+      "id": "iTAsOxThOFA",
+      "topic": "Rugged phones",
+      "text": "ShortCircuit lists a 20,000 mAh battery and a 64-megapixel camera on the Oukitel WP63."
+    },
+    {
+      "id": "l8qxFcaLSM4",
+      "topic": "Storage",
+      "text": "GamersNexus reports that NVIDIA and AMD GPU driver problems caused high writes on SSDs and hard drives."
+    },
+    {
+      "id": "GBCfagEoRDI",
+      "topic": "3D printing",
+      "text": "ShortCircuit puts the new Formlabs resin printer at $699."
+    },
+    {
+      "id": "w2VoBbhOVcQ",
+      "topic": "Networks",
+      "text": "TechLinked reports that a new fiber-optic router was installed as part of an upgrade from copper equipment."
+    }
+  ]
+}
